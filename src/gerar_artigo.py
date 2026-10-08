@@ -1,5 +1,8 @@
 import html
+import os
 import re
+
+from google import genai
 
 
 def limpar_texto(texto):
@@ -17,17 +20,159 @@ def limpar_texto(texto):
 
 def criar_introducao(titulo, palavra_chave):
     """
-    Cria uma introdução base para o artigo.
-    Depois este conteúdo poderá ser produzido pela IA.
+    Cria uma introdução de segurança caso a IA não esteja disponível.
     """
     titulo = limpar_texto(titulo)
     palavra_chave = limpar_texto(palavra_chave)
 
     return (
         f"Se você está pesquisando sobre {palavra_chave}, "
-        f"este guia foi preparado para ajudar você a entender "
-        f"o assunto de forma prática antes de tomar uma decisão."
+        f"este guia reúne informações práticas para ajudar você "
+        f"a entender melhor o assunto e tomar boas decisões para sua casa."
     )
+
+
+def gerar_conteudo_gemini(titulo, palavra_chave, categoria):
+    """
+    Gera o conteúdo principal do artigo usando a API do Gemini.
+    """
+
+    api_key = os.getenv("GEMINI_API_KEY")
+
+    if not api_key:
+        print("GEMINI_API_KEY não encontrada. Usando conteúdo de segurança.")
+        return None
+
+    client = genai.Client(api_key=api_key)
+
+    prompt = f"""
+Você é um redator especializado em SEO, conteúdo útil e Casa e Decoração.
+
+Escreva um artigo original em português do Brasil para o blog
+"Achados para Casa".
+
+TÍTULO:
+{titulo}
+
+PALAVRA-CHAVE PRINCIPAL:
+{palavra_chave}
+
+CATEGORIA:
+{categoria}
+
+OBJETIVO:
+Criar um conteúdo realmente útil para pessoas que pesquisam soluções,
+ideias e orientações para casa, decoração e organização.
+
+REQUISITOS:
+
+- Escreva entre 900 e 1300 palavras.
+- Use linguagem natural, clara e agradável.
+- Responda diretamente à intenção de busca.
+- Inclua a palavra-chave principal naturalmente.
+- Use termos semanticamente relacionados.
+- Evite repetição excessiva de palavras-chave.
+- Evite frases genéricas e conteúdo superficial.
+- Não invente estatísticas, pesquisas ou especialistas.
+- Não mencione que o texto foi criado por inteligência artificial.
+- Não inclua preço.
+- Não inclua links externos.
+- Não faça promessas exageradas.
+- Não copie textos de outros sites.
+- Crie uma introdução envolvente.
+- Divida o conteúdo em seções úteis.
+- Utilize subtítulos H2.
+- Use H3 somente quando realmente necessário.
+- Inclua dicas práticas e exemplos quando forem úteis.
+- Termine com uma conclusão natural.
+- Não coloque o título principal dentro do conteúdo.
+- Não use Markdown.
+- Retorne somente HTML compatível com o Blogger.
+
+HTML PERMITIDO:
+<p>
+<h2>
+<h3>
+<ul>
+<ol>
+<li>
+<strong>
+
+Não use:
+<html>
+<head>
+<body>
+<script>
+<style>
+
+O artigo deve começar diretamente com um parágrafo <p>.
+"""
+
+    try:
+        resposta = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
+
+        conteudo = resposta.text
+
+        if not conteudo:
+            return None
+
+        conteudo = conteudo.strip()
+
+        # Remove cercas Markdown caso o modelo as inclua.
+        conteudo = re.sub(
+            r"^```(?:html)?\s*",
+            "",
+            conteudo,
+            flags=re.IGNORECASE,
+        )
+        conteudo = re.sub(r"\s*```$", "", conteudo)
+
+        return conteudo.strip()
+
+    except Exception as erro:
+        print(f"Erro ao gerar artigo com Gemini: {erro}")
+        return None
+
+
+def criar_conteudo_fallback(titulo, palavra_chave):
+    """
+    Conteúdo de segurança usado se o Gemini não responder.
+    """
+
+    introducao = criar_introducao(titulo, palavra_chave)
+
+    partes = [
+        f"<p>{html.escape(introducao)}</p>",
+        f"<h2>O que saber sobre {html.escape(palavra_chave)}</h2>",
+        (
+            "<p>Antes de escolher uma solução para sua casa, vale analisar "
+            "o espaço disponível, a praticidade e as necessidades reais "
+            "do ambiente.</p>"
+        ),
+        "<h2>Principais pontos para avaliar</h2>",
+        (
+            "<p>Observe materiais, medidas, acabamento, facilidade de uso "
+            "e manutenção. Esses detalhes ajudam a encontrar alternativas "
+            "mais adequadas para a rotina.</p>"
+        ),
+        "<h2>Como fazer uma boa escolha</h2>",
+        (
+            "<p>Compare as opções com calma e considere como cada solução "
+            "pode contribuir para organização, conforto e funcionalidade "
+            "no dia a dia.</p>"
+        ),
+        "<h2>Conclusão</h2>",
+        (
+            f"<p>Avaliar cuidadosamente os detalhes relacionados a "
+            f"{html.escape(palavra_chave)} ajuda a escolher soluções "
+            "mais adequadas para cada ambiente da casa.</p>"
+        ),
+    ]
+
+    return "\n".join(partes)
 
 
 def criar_estrutura_artigo(
@@ -39,70 +184,39 @@ def criar_estrutura_artigo(
     conclusao=""
 ):
     """
-    Monta um artigo estruturado em HTML compatível com o Blogger.
+    Cria o artigo e mantém o mesmo formato esperado pelo main.py.
+
+    Os parâmetros introducao, secoes e conclusao são mantidos
+    por compatibilidade com a versão anterior do sistema.
     """
 
     titulo = limpar_texto(titulo)
     palavra_chave = limpar_texto(palavra_chave)
     categoria = limpar_texto(categoria)
 
-    if not introducao:
-        introducao = criar_introducao(titulo, palavra_chave)
+    print("\nGerando artigo com Gemini...")
 
-    if secoes is None:
-        secoes = [
-            {
-                "titulo": f"O que saber sobre {palavra_chave}",
-                "conteudo": (
-                    f"Antes de escolher, vale analisar as características "
-                    f"mais importantes relacionadas a {palavra_chave}."
-                )
-            },
-            {
-                "titulo": "Principais vantagens",
-                "conteudo": (
-                    "Observe praticidade, funcionalidade, espaço disponível "
-                    "e como a solução pode facilitar a rotina da casa."
-                )
-            },
-            {
-                "titulo": "Como escolher",
-                "conteudo": (
-                    "Compare materiais, medidas, acabamento, facilidade de uso "
-                    "e as necessidades reais do ambiente."
-                )
-            }
-        ]
+    conteudo_html = gerar_conteudo_gemini(
+        titulo=titulo,
+        palavra_chave=palavra_chave,
+        categoria=categoria,
+    )
 
-    if not conclusao:
-        conclusao = (
-            f"A melhor escolha depende das necessidades de cada ambiente. "
-            f"Avaliar com atenção os detalhes de {palavra_chave} ajuda a "
-            f"encontrar uma opção mais adequada para sua casa."
+    if conteudo_html:
+        print("Artigo gerado pelo Gemini com sucesso.")
+    else:
+        print("Gemini indisponível. Ativando conteúdo de segurança.")
+
+        conteudo_html = criar_conteudo_fallback(
+            titulo=titulo,
+            palavra_chave=palavra_chave,
         )
-
-    partes = []
-
-    partes.append(f"<p>{html.escape(introducao)}</p>")
-
-    for secao in secoes:
-        titulo_secao = limpar_texto(secao.get("titulo", ""))
-        conteudo_secao = limpar_texto(secao.get("conteudo", ""))
-
-        if titulo_secao:
-            partes.append(f"<h2>{html.escape(titulo_secao)}</h2>")
-
-        if conteudo_secao:
-            partes.append(f"<p>{html.escape(conteudo_secao)}</p>")
-
-    partes.append("<h2>Conclusão</h2>")
-    partes.append(f"<p>{html.escape(conclusao)}</p>")
 
     return {
         "titulo": titulo,
         "palavra_chave": palavra_chave,
         "categoria": categoria,
-        "conteudo_html": "\n".join(partes)
+        "conteudo_html": conteudo_html,
     }
 
 
@@ -125,19 +239,22 @@ def validar_artigo(artigo):
     if not conteudo:
         erros.append("Conteúdo do artigo ausente.")
 
-    if len(conteudo) < 300:
-        erros.append("Conteúdo ainda muito curto.")
+    if len(conteudo) < 1000:
+        erros.append("Conteúdo do artigo está muito curto.")
+
+    if "<h2" not in conteudo.lower():
+        erros.append("Artigo sem subtítulos H2.")
 
     return {
         "valido": len(erros) == 0,
-        "erros": erros
+        "erros": erros,
     }
 
 
 if __name__ == "__main__":
     teste = criar_estrutura_artigo(
         titulo="Como organizar uma cozinha pequena de forma prática",
-        palavra_chave="organização de cozinha pequena"
+        palavra_chave="organização de cozinha pequena",
     )
 
     verificacao = validar_artigo(teste)
