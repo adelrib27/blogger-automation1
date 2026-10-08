@@ -1,6 +1,7 @@
 import html
 import os
 import re
+import time
 
 from google import genai
 
@@ -108,33 +109,68 @@ Não use:
 O artigo deve começar diretamente com um parágrafo <p>.
 """
 
-    try:
-        resposta = client.models.generate_content(
-            model="gemini-3.8-flash",
-            contents=prompt,
-        )
+    tentativas = 3
+    esperas = [5, 15]
 
-        conteudo = resposta.text
+    for tentativa in range(1, tentativas + 1):
+        try:
+            print(f"Tentativa {tentativa}/{tentativas} com Gemini...")
 
-        if not conteudo:
-            return None
+            resposta = client.models.generate_content(
+                model="gemini-3.8-flash",
+                contents=prompt,
+            )
 
-        conteudo = conteudo.strip()
+            conteudo = resposta.text
 
-        # Remove cercas Markdown caso o modelo as inclua.
-        conteudo = re.sub(
-            r"^```(?:html)?\s*",
-            "",
-            conteudo,
-            flags=re.IGNORECASE,
-        )
-        conteudo = re.sub(r"\s*```$", "", conteudo)
+            if not conteudo:
+                raise RuntimeError("Gemini retornou uma resposta sem conteúdo.")
 
-        return conteudo.strip()
+            conteudo = conteudo.strip()
 
-    except Exception as erro:
-        print(f"Erro ao gerar artigo com Gemini: {erro}")
-        return None
+            # Remove cercas Markdown caso o modelo as inclua.
+            conteudo = re.sub(
+                r"^```(?:html)?\s*",
+                "",
+                conteudo,
+                flags=re.IGNORECASE,
+            )
+            conteudo = re.sub(r"\s*```$", "", conteudo)
+
+            return conteudo.strip()
+
+        except Exception as erro:
+            print(
+                f"Erro na tentativa {tentativa}/{tentativas} "
+                f"com Gemini: {erro}"
+            )
+
+            mensagem_erro = str(erro)
+
+            erro_temporario = any(
+                codigo in mensagem_erro
+                for codigo in (
+                    "429",
+                    "503",
+                    "RESOURCE_EXHAUSTED",
+                    "UNAVAILABLE",
+                )
+            )
+
+            if not erro_temporario:
+                print("Erro não temporário. As novas tentativas foram interrompidas.")
+                break
+
+            if tentativa < tentativas:
+                espera = esperas[tentativa - 1]
+                print(
+                    f"Aguardando {espera} segundos "
+                    "antes da próxima tentativa..."
+                )
+                time.sleep(espera)
+
+    print("Gemini indisponível após as tentativas.")
+    return None
 
 
 def criar_conteudo_fallback(titulo, palavra_chave):
