@@ -159,6 +159,11 @@ def executar():
     print("ALT:", imagem["alt_text"])
     print("Artigo validado:", validacao["valido"])
 
+    # Exibe o artigo completo apenas para revisão durante os testes.
+    print("\n=== INÍCIO DO ARTIGO GERADO ===")
+    print(artigo["conteudo_html"])
+    print("=== FIM DO ARTIGO GERADO ===")
+
     if config.get("publicacao_automatica", False):
         print("\nPublicação automática habilitada.")
         print("A conexão final com o Blogger será executada nesta etapa.")
