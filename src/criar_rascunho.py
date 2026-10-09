@@ -4,45 +4,118 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 
-def main():
-    credentials = Credentials(
+ESCOPO_BLOGGER = "https://www.googleapis.com/auth/blogger"
+
+
+def criar_credenciais():
+    """
+    Cria as credenciais OAuth usadas para acessar a Blogger API.
+    """
+    variaveis_obrigatorias = (
+        "BLOGGER_REFRESH_TOKEN",
+        "BLOGGER_CLIENT_ID",
+        "BLOGGER_CLIENT_SECRET",
+    )
+
+    ausentes = [
+        nome
+        for nome in variaveis_obrigatorias
+        if not os.getenv(nome)
+    ]
+
+    if ausentes:
+        raise RuntimeError(
+            "Variáveis do Blogger ausentes: "
+            + ", ".join(ausentes)
+        )
+
+    return Credentials(
         token=None,
         refresh_token=os.environ["BLOGGER_REFRESH_TOKEN"],
         token_uri="https://oauth2.googleapis.com/token",
         client_id=os.environ["BLOGGER_CLIENT_ID"],
         client_secret=os.environ["BLOGGER_CLIENT_SECRET"],
-        scopes=["https://www.googleapis.com/auth/blogger"],
+        scopes=[ESCOPO_BLOGGER],
     )
 
-    blogger = build("blogger", "v3", credentials=credentials)
 
-    blog_id = os.environ["BLOGGER_BLOG_ID"]
+def criar_servico_blogger():
+    """
+    Cria e retorna o serviço da Blogger API.
+    """
+    credentials = criar_credenciais()
+
+    return build(
+        "blogger",
+        "v3",
+        credentials=credentials,
+        cache_discovery=False,
+    )
+
+
+def criar_rascunho(
+    titulo,
+    conteudo_html,
+    categoria=None,
+):
+    """
+    Cria um post como RASCUNHO no Blogger.
+
+    Esta função nunca publica o artigo diretamente.
+    """
+    blog_id = os.getenv("BLOGGER_BLOG_ID")
+
+    if not blog_id:
+        raise RuntimeError(
+            "BLOGGER_BLOG_ID não encontrado."
+        )
+
+    titulo = str(titulo or "").strip()
+    conteudo_html = str(conteudo_html or "").strip()
+    categoria = str(categoria or "").strip()
+
+    if not titulo:
+        raise ValueError(
+            "Não é possível criar rascunho sem título."
+        )
+
+    if not conteudo_html:
+        raise ValueError(
+            "Não é possível criar rascunho sem conteúdo."
+        )
 
     post = {
         "kind": "blogger#post",
-        "title": "TESTE — Automação Blogger funcionando",
-        "content": """
-        <h2>Teste de automação</h2>
-        <p>Este artigo foi criado automaticamente pelo GitHub Actions através da Blogger API.</p>
-        <p>Se você está vendo este conteúdo nos rascunhos, a integração está funcionando corretamente.</p>
-        """
+        "title": titulo,
+        "content": conteudo_html,
     }
+
+    if categoria:
+        post["labels"] = [categoria]
+
+    blogger = criar_servico_blogger()
 
     resultado = (
         blogger.posts()
         .insert(
             blogId=blog_id,
             body=post,
-            isDraft=True
+            isDraft=True,
         )
         .execute()
     )
 
-    print("RASCUNHO CRIADO COM SUCESSO!")
-    print("Título:", resultado.get("title"))
-    print("Post ID:", resultado.get("id"))
-    print("Status:", resultado.get("status"))
+    return {
+        "id": resultado.get("id"),
+        "titulo": resultado.get("title"),
+        "url": resultado.get("url"),
+        "status": resultado.get("status"),
+        "labels": resultado.get("labels", []),
+    }
 
 
 if __name__ == "__main__":
-    main()
+    print(
+        "Módulo Blogger carregado com sucesso. "
+        "Nenhum rascunho foi criado."
+    )
