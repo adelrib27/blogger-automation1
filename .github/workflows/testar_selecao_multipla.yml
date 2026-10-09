@@ -1,0 +1,25 @@
+name: Testar Seleção Múltipla de Produtos
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar-produtos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe
+        run: |
+          python -m py_compile src/selecionar_produtos.py
+          python -m py_compile src/testar_selecao_multipla.py
+
+      - name: Testar seleção em várias pautas
+        run: python -u src/testar_selecao_multipla.py
