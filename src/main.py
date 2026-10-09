@@ -667,11 +667,8 @@ def executar():
     )
 
     if publicacao_automatica:
-        raise RuntimeError(
-            "Publicação automática está "
-            "habilitada na configuração, "
-            "mas esta etapa ainda não foi "
-            "liberada pelo sistema."
+        print(
+            "Modo de publicação automática habilitado."
         )
 
     print(
@@ -1172,10 +1169,16 @@ def executar():
     # ========================================================
 
     if criar_rascunho_ativo:
-        print(
-            "\nEnvio de rascunho "
-            "autorizado pela configuração."
-        )
+        if publicacao_automatica:
+            print(
+                "\nPublicação automática autorizada "
+                "pela configuração."
+            )
+        else:
+            print(
+                "\nEnvio de rascunho "
+                "autorizado pela configuração."
+            )
 
         try:
             resultado_blogger = (
@@ -1185,6 +1188,7 @@ def executar():
                         "conteudo_html"
                     ],
                     categoria=categoria,
+                    publicar=publicacao_automatica,
                 )
             )
 
@@ -1192,10 +1196,16 @@ def executar():
                 "blogger"
             ] = resultado_blogger
 
-            print(
-                "\n=== RASCUNHO CRIADO "
-                "NO BLOGGER ==="
-            )
+            if publicacao_automatica:
+                print(
+                    "\n=== POST PUBLICADO "
+                    "NO BLOGGER ==="
+                )
+            else:
+                print(
+                    "\n=== RASCUNHO CRIADO "
+                    "NO BLOGGER ==="
+                )
 
             print(
                 "Título:",
@@ -1227,8 +1237,8 @@ def executar():
 
         except Exception as erro:
             print(
-                "\nERRO AO CRIAR "
-                "RASCUNHO NO BLOGGER:"
+                "\nERRO AO ENVIAR "
+                "CONTEÚDO AO BLOGGER:"
             )
 
             print(
@@ -1248,8 +1258,8 @@ def executar():
         )
 
         print(
-            "A criação de rascunho "
-            "no Blogger está desativada."
+            "O envio ao Blogger "
+            "está desativado."
         )
 
         print(
