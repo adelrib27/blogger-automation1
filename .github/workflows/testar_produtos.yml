@@ -1,0 +1,23 @@
+name: Testar Seleção de Produtos
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar-produtos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe
+        run: python -m py_compile src/selecionar_produtos.py
+
+      - name: Testar seleção de produtos
+        run: python -u src/selecionar_produtos.py
