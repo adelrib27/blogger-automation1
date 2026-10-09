@@ -1,0 +1,61 @@
+name: Testar Anti-Repetição
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar-pautas:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Testar motor anti-repetição
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "src")
+
+          from pautas import comparar_com_historico
+
+          testes = [
+              {
+                  "titulo": "Luminária de mesa cabeceira touch: vale a pena?",
+                  "palavra_chave": "luminária de mesa cabeceira touch",
+              },
+              {
+                  "titulo": "Como organizar uma cozinha pequena de forma prática",
+                  "palavra_chave": "organização de cozinha pequena",
+              },
+          ]
+
+          print("=== TESTE DO ANTI-REPETIÇÃO ===")
+
+          for teste in testes:
+              resultado = comparar_com_historico(
+                  titulo=teste["titulo"],
+                  palavra_chave=teste["palavra_chave"],
+              )
+
+              print()
+              print("Pauta:", teste["titulo"])
+              print("Repetida:", resultado["repetida"])
+              print("Motivo:", resultado["motivo"])
+
+              existente = resultado.get("item") or {}
+
+              if existente:
+                  print(
+                      "Encontrado no histórico:",
+                      existente.get("titulo"),
+                  )
+
+          print()
+          print("=== TESTE CONCLUÍDO ===")
+          PY
