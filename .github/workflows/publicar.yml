@@ -3,6 +3,9 @@ name: Automação Blogger
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   gerar-conteudo:
     runs-on: ubuntu-latest
@@ -21,6 +24,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Sincronizar publicados e rascunhos
+        env:
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: python src/importar_posts.py
+
       - name: Executar automação
         env:
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
@@ -29,3 +40,25 @@ jobs:
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python src/main.py
+
+      - name: Verificar alterações nos dados
+        if: always()
+        id: dados
+        run: |
+          if [ -n "$(git status --porcelain -- data/historico.json data/rascunhos.json)" ]; then
+            echo "alterado=true" >> "$GITHUB_OUTPUT"
+            echo "Dados do Blogger possuem alterações."
+            git status --short -- data/historico.json data/rascunhos.json
+          else
+            echo "alterado=false" >> "$GITHUB_OUTPUT"
+            echo "Histórico e rascunhos sem alterações."
+          fi
+
+      - name: Salvar dados sincronizados
+        if: always() && steps.dados.outputs.alterado == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/historico.json data/rascunhos.json
+          git commit -m "Atualizar dados do Blogger antes da automação"
+          git push
