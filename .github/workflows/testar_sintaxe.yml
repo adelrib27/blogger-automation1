@@ -1,0 +1,23 @@
+name: Testar Sintaxe Python
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar-sintaxe:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe de todos os arquivos Python
+        run: python -m compileall -q src
+
+      - name: Confirmar resultado
+        run: echo "Todos os arquivos Python passaram na verificação de sintaxe."
