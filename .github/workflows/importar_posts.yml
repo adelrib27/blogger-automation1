@@ -3,6 +3,9 @@ name: Importar Posts do Blogger
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   importar-posts:
     runs-on: ubuntu-latest
@@ -21,10 +24,30 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Ler posts publicados
+      - name: Sincronizar posts publicados
         env:
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
         run: python src/importar_posts.py
+
+      - name: Verificar alteração do histórico
+        id: historico
+        run: |
+          if git diff --quiet -- data/historico.json; then
+            echo "alterado=false" >> "$GITHUB_OUTPUT"
+            echo "Histórico sem alterações."
+          else
+            echo "alterado=true" >> "$GITHUB_OUTPUT"
+            echo "Histórico atualizado."
+          fi
+
+      - name: Salvar histórico no repositório
+        if: steps.historico.outputs.alterado == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/historico.json
+          git commit -m "Atualizar histórico de posts do Blogger"
+          git push
