@@ -6,6 +6,23 @@ import time
 from google import genai
 
 
+# ============================================================
+# MODELOS PARA GERAÇÃO DE ARTIGOS
+# ============================================================
+#
+# Aqui priorizamos qualidade editorial.
+# Os modelos Flash Lite ficam no final como reserva.
+#
+MODELOS_ARTIGO = [
+    "gemini-3.8-flash",
+    "gemini-3.7-flash",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.1-flash-lite",
+]
+
+
 def limpar_texto(texto):
     """
     Remove espaços desnecessários e normaliza o texto.
@@ -51,7 +68,12 @@ def limpar_html_gemini(conteudo):
         conteudo,
         flags=re.IGNORECASE,
     )
-    conteudo = re.sub(r"\s*```$", "", conteudo)
+
+    conteudo = re.sub(
+        r"\s*```$",
+        "",
+        conteudo,
+    )
 
     # Remove estruturas HTML completas caso apareçam por engano.
     conteudo = re.sub(
@@ -72,18 +94,224 @@ def limpar_html_gemini(conteudo):
     return conteudo.strip()
 
 
-def gerar_conteudo_gemini(titulo, palavra_chave, categoria):
+def erro_de_cota(erro):
     """
-    Gera o conteúdo principal do artigo usando a API do Gemini.
-    """
+    Detecta cota esgotada ou indisponível para o modelo.
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    Um erro 429 não deve ficar repetindo a mesma chamada.
+    O sistema deve passar ao próximo modelo.
+    """
+    mensagem = str(erro).upper()
+
+    return (
+        "429" in mensagem
+        or "RESOURCE_EXHAUSTED" in mensagem
+        or "QUOTA EXCEEDED" in mensagem
+    )
+
+
+def erro_temporario(erro):
+    """
+    Detecta indisponibilidade temporária.
+
+    Para erros 503 vale a pena tentar novamente
+    no mesmo modelo.
+    """
+    mensagem = str(erro).upper()
+
+    return (
+        "503" in mensagem
+        or "UNAVAILABLE" in mensagem
+        or "HIGH DEMAND" in mensagem
+    )
+
+
+def gerar_com_modelo(
+    client,
+    modelo,
+    prompt,
+):
+    """
+    Tenta produzir o artigo usando um modelo específico.
+
+    429:
+        passa imediatamente para o próximo modelo.
+
+    503:
+        tenta novamente no mesmo modelo antes de desistir.
+
+    Resposta vazia ou estruturalmente inadequada:
+        permite nova tentativa.
+    """
+    tentativas = 3
+    esperas = [5, 15]
+
+    for tentativa in range(
+        1,
+        tentativas + 1,
+    ):
+        try:
+            print(
+                f"\nModelo de artigo: {modelo}"
+            )
+
+            print(
+                f"Tentativa {tentativa}/"
+                f"{tentativas} com {modelo}..."
+            )
+
+            resposta = (
+                client.models.generate_content(
+                    model=modelo,
+                    contents=prompt,
+                )
+            )
+
+            conteudo = resposta.text
+
+            if not conteudo:
+                raise RuntimeError(
+                    "Gemini retornou uma "
+                    "resposta sem conteúdo."
+                )
+
+            conteudo = limpar_html_gemini(
+                conteudo
+            )
+
+            if not conteudo:
+                raise RuntimeError(
+                    "O conteúdo ficou vazio "
+                    "após a limpeza."
+                )
+
+            print(
+                f"Artigo recebido com sucesso "
+                f"do modelo {modelo}."
+            )
+
+            return conteudo
+
+        except Exception as erro:
+            print(
+                f"Erro no modelo {modelo}, "
+                f"tentativa {tentativa}/"
+                f"{tentativas}: {erro}"
+            )
+
+            # Cota esgotada:
+            # não desperdiça novas tentativas.
+            if erro_de_cota(erro):
+                print(
+                    f"Cota do modelo {modelo} "
+                    "indisponível ou esgotada."
+                )
+
+                print(
+                    "Pulando imediatamente "
+                    "para o próximo modelo..."
+                )
+
+                raise
+
+            # Indisponibilidade temporária.
+            if erro_temporario(erro):
+                if tentativa >= tentativas:
+                    print(
+                        f"O modelo {modelo} "
+                        "continua temporariamente "
+                        "indisponível."
+                    )
+                    raise
+
+                espera = esperas[
+                    tentativa - 1
+                ]
+
+                print(
+                    f"Aguardando {espera} segundos "
+                    "antes de tentar novamente "
+                    "o mesmo modelo..."
+                )
+
+                time.sleep(
+                    espera
+                )
+
+                continue
+
+            # Respostas vazias podem ser ocasionais.
+            mensagem = str(erro)
+
+            erro_resposta = (
+                "sem conteúdo" in mensagem
+                or "vazio após a limpeza" in mensagem
+            )
+
+            if erro_resposta:
+                if tentativa >= tentativas:
+                    raise
+
+                espera = esperas[
+                    tentativa - 1
+                ]
+
+                print(
+                    f"Aguardando {espera} segundos "
+                    "antes de solicitar novamente "
+                    "o artigo..."
+                )
+
+                time.sleep(
+                    espera
+                )
+
+                continue
+
+            # Qualquer erro desconhecido não deve
+            # ficar consumindo requisições.
+            print(
+                f"Erro não recuperável no "
+                f"modelo {modelo}."
+            )
+
+            raise
+
+    raise RuntimeError(
+        f"O modelo {modelo} não conseguiu "
+        "gerar o artigo."
+    )
+
+
+def gerar_conteudo_gemini(
+    titulo,
+    palavra_chave,
+    categoria,
+):
+    """
+    Gera o conteúdo principal usando uma fila
+    automática de modelos Gemini.
+
+    Retorna:
+        (conteudo_html, modelo_utilizado)
+
+    Se todos os modelos falharem:
+        (None, None)
+    """
+    api_key = os.getenv(
+        "GEMINI_API_KEY"
+    )
 
     if not api_key:
-        print("GEMINI_API_KEY não encontrada. Usando conteúdo de segurança.")
-        return None
+        print(
+            "GEMINI_API_KEY não encontrada. "
+            "Usando conteúdo de segurança."
+        )
+        return None, None
 
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(
+        api_key=api_key
+    )
 
     prompt = f"""
 Você é um redator editorial especializado em SEO, conteúdo útil,
@@ -200,86 +428,89 @@ O primeiro caractere útil da resposta deve fazer parte de uma tag <p>.
 Não escreva comentários ou explicações antes ou depois do artigo.
 """
 
-    tentativas = 3
-    esperas = [5, 15]
+    print(
+        "\n=== FILA DE MODELOS PARA ARTIGO ==="
+    )
 
-    for tentativa in range(1, tentativas + 1):
+    for numero, modelo in enumerate(
+        MODELOS_ARTIGO,
+        start=1,
+    ):
+        print(
+            f"{numero}. {modelo}"
+        )
+
+    ultimo_erro = None
+
+    for numero, modelo in enumerate(
+        MODELOS_ARTIGO,
+        start=1,
+    ):
+        print(
+            f"\n=== MODELO DE ARTIGO "
+            f"{numero}/{len(MODELOS_ARTIGO)} ==="
+        )
+
         try:
-            print(f"Tentativa {tentativa}/{tentativas} com Gemini...")
-
-            resposta = client.models.generate_content(
-                model="gemini-3.8-flash",
-                contents=prompt,
+            conteudo = gerar_com_modelo(
+                client=client,
+                modelo=modelo,
+                prompt=prompt,
             )
 
-            conteudo = resposta.text
-
-            if not conteudo:
-                raise RuntimeError(
-                    "Gemini retornou uma resposta sem conteúdo."
-                )
-
-            conteudo = limpar_html_gemini(conteudo)
-
-            if not conteudo:
-                raise RuntimeError(
-                    "O conteúdo ficou vazio após a limpeza."
-                )
-
-            return conteudo
+            return conteudo, modelo
 
         except Exception as erro:
+            ultimo_erro = erro
+
             print(
-                f"Erro na tentativa {tentativa}/{tentativas} "
-                f"com Gemini: {erro}"
+                f"Modelo {modelo} não pôde "
+                "concluir o artigo."
             )
 
-            mensagem_erro = str(erro)
-
-            erro_temporario = any(
-                codigo in mensagem_erro
-                for codigo in (
-                    "429",
-                    "503",
-                    "RESOURCE_EXHAUSTED",
-                    "UNAVAILABLE",
-                )
-            )
-
-            if not erro_temporario:
+            if numero < len(
+                MODELOS_ARTIGO
+            ):
                 print(
-                    "Erro não temporário. "
-                    "As novas tentativas foram interrompidas."
-                )
-                break
-
-            if tentativa < tentativas:
-                espera = esperas[tentativa - 1]
-
-                print(
-                    f"Aguardando {espera} segundos "
-                    "antes da próxima tentativa..."
+                    "Tentando o próximo modelo "
+                    "da fila..."
                 )
 
-                time.sleep(espera)
+    print(
+        "\nTodos os modelos configurados "
+        "para artigos falharam."
+    )
 
-    print("Gemini indisponível após as tentativas.")
-    return None
+    if ultimo_erro:
+        print(
+            "Último erro:",
+            ultimo_erro,
+        )
+
+    return None, None
 
 
-def criar_conteudo_fallback(titulo, palavra_chave):
+def criar_conteudo_fallback(
+    titulo,
+    palavra_chave,
+):
     """
-    Conteúdo de segurança usado se o Gemini não responder.
+    Conteúdo de segurança usado se nenhum modelo responder.
 
     Este conteúdo não deve ser publicado automaticamente.
     A validação exige um artigo completo.
     """
-
-    introducao = criar_introducao(titulo, palavra_chave)
+    introducao = criar_introducao(
+        titulo,
+        palavra_chave,
+    )
 
     partes = [
         f"<p>{html.escape(introducao)}</p>",
-        f"<h2>O que considerar sobre {html.escape(palavra_chave)}</h2>",
+        (
+            f"<h2>O que considerar sobre "
+            f"{html.escape(palavra_chave)}</h2>"
+        ),
         (
             "<p>Antes de escolher uma solução para sua casa, analise "
             "o espaço disponível, a praticidade e as necessidades "
@@ -299,7 +530,9 @@ def criar_conteudo_fallback(titulo, palavra_chave):
         ),
     ]
 
-    return "\n".join(partes)
+    return "\n".join(
+        partes
+    )
 
 
 def criar_estrutura_artigo(
@@ -308,7 +541,7 @@ def criar_estrutura_artigo(
     categoria="Casa e Decoração",
     introducao="",
     secoes=None,
-    conclusao=""
+    conclusao="",
 ):
     """
     Cria o artigo e mantém o mesmo formato esperado pelo main.py.
@@ -316,14 +549,24 @@ def criar_estrutura_artigo(
     Os parâmetros introducao, secoes e conclusao são mantidos
     por compatibilidade com a versão anterior do sistema.
     """
+    titulo = limpar_texto(
+        titulo
+    )
+    palavra_chave = limpar_texto(
+        palavra_chave
+    )
+    categoria = limpar_texto(
+        categoria
+    )
 
-    titulo = limpar_texto(titulo)
-    palavra_chave = limpar_texto(palavra_chave)
-    categoria = limpar_texto(categoria)
+    print(
+        "\nGerando artigo com Gemini..."
+    )
 
-    print("\nGerando artigo com Gemini...")
-
-    conteudo_html = gerar_conteudo_gemini(
+    (
+        conteudo_html,
+        modelo_utilizado,
+    ) = gerar_conteudo_gemini(
         titulo=titulo,
         palavra_chave=palavra_chave,
         categoria=categoria,
@@ -332,16 +575,31 @@ def criar_estrutura_artigo(
     fonte = "gemini"
 
     if conteudo_html:
-        print("Artigo gerado pelo Gemini com sucesso.")
-    else:
-        print("Gemini indisponível. Ativando conteúdo de segurança.")
+        print(
+            "Artigo gerado pelo Gemini "
+            "com sucesso."
+        )
 
-        conteudo_html = criar_conteudo_fallback(
-            titulo=titulo,
-            palavra_chave=palavra_chave,
+        print(
+            "Modelo utilizado:",
+            modelo_utilizado,
+        )
+
+    else:
+        print(
+            "Gemini indisponível. "
+            "Ativando conteúdo de segurança."
+        )
+
+        conteudo_html = (
+            criar_conteudo_fallback(
+                titulo=titulo,
+                palavra_chave=palavra_chave,
+            )
         )
 
         fonte = "fallback"
+        modelo_utilizado = None
 
     return {
         "titulo": titulo,
@@ -349,6 +607,7 @@ def criar_estrutura_artigo(
         "categoria": categoria,
         "conteudo_html": conteudo_html,
         "fonte": fonte,
+        "modelo_gemini": modelo_utilizado,
     }
 
 
@@ -360,9 +619,21 @@ def extrair_texto_html(conteudo):
     if not conteudo:
         return ""
 
-    texto = re.sub(r"<[^>]+>", " ", conteudo)
-    texto = html.unescape(texto)
-    texto = re.sub(r"\s+", " ", texto)
+    texto = re.sub(
+        r"<[^>]+>",
+        " ",
+        conteudo,
+    )
+
+    texto = html.unescape(
+        texto
+    )
+
+    texto = re.sub(
+        r"\s+",
+        " ",
+        texto,
+    )
 
     return texto.strip()
 
@@ -371,22 +642,43 @@ def validar_artigo(artigo):
     """
     Faz verificações antes de o artigo seguir para publicação.
     """
-
     erros = []
 
-    titulo = artigo.get("titulo", "")
-    palavra_chave = artigo.get("palavra_chave", "")
-    conteudo = artigo.get("conteudo_html", "")
-    fonte = artigo.get("fonte", "")
+    titulo = artigo.get(
+        "titulo",
+        "",
+    )
+
+    palavra_chave = artigo.get(
+        "palavra_chave",
+        "",
+    )
+
+    conteudo = artigo.get(
+        "conteudo_html",
+        "",
+    )
+
+    fonte = artigo.get(
+        "fonte",
+        "",
+    )
 
     if not titulo:
-        erros.append("Título ausente.")
+        erros.append(
+            "Título ausente."
+        )
 
     if not palavra_chave:
-        erros.append("Palavra-chave ausente.")
+        erros.append(
+            "Palavra-chave ausente."
+        )
 
     if not conteudo:
-        erros.append("Conteúdo do artigo ausente.")
+        erros.append(
+            "Conteúdo do artigo ausente."
+        )
+
         return {
             "valido": False,
             "erros": erros,
@@ -396,19 +688,28 @@ def validar_artigo(artigo):
     # Ele nunca deve ser considerado pronto para publicação.
     if fonte == "fallback":
         erros.append(
-            "Conteúdo de segurança utilizado; artigo não pode ser publicado."
+            "Conteúdo de segurança utilizado; "
+            "artigo não pode ser publicado."
         )
 
-    conteudo_minusculo = conteudo.lower()
+    conteudo_minusculo = (
+        conteudo.lower()
+    )
 
     if "<h2" not in conteudo_minusculo:
-        erros.append("Artigo sem subtítulos H2.")
+        erros.append(
+            "Artigo sem subtítulos H2."
+        )
 
     if "<p" not in conteudo_minusculo:
-        erros.append("Artigo sem parágrafos HTML.")
+        erros.append(
+            "Artigo sem parágrafos HTML."
+        )
 
     if "<h1" in conteudo_minusculo:
-        erros.append("O conteúdo não deve conter H1.")
+        erros.append(
+            "O conteúdo não deve conter H1."
+        )
 
     tags_proibidas = (
         "<script",
@@ -421,10 +722,13 @@ def validar_artigo(artigo):
     for tag in tags_proibidas:
         if tag in conteudo_minusculo:
             erros.append(
-                f"HTML não permitido encontrado no artigo: {tag}"
+                f"HTML não permitido encontrado "
+                f"no artigo: {tag}"
             )
 
-    texto_puro = extrair_texto_html(conteudo)
+    texto_puro = extrair_texto_html(
+        conteudo
+    )
 
     palavras = re.findall(
         r"\b[\wÀ-ÿ'-]+\b",
@@ -432,16 +736,20 @@ def validar_artigo(artigo):
         flags=re.UNICODE,
     )
 
-    quantidade_palavras = len(palavras)
+    quantidade_palavras = len(
+        palavras
+    )
 
     if quantidade_palavras < 750:
         erros.append(
-            f"Artigo muito curto: {quantidade_palavras} palavras."
+            f"Artigo muito curto: "
+            f"{quantidade_palavras} palavras."
         )
 
     if quantidade_palavras > 1600:
         erros.append(
-            f"Artigo muito longo: {quantidade_palavras} palavras."
+            f"Artigo muito longo: "
+            f"{quantidade_palavras} palavras."
         )
 
     quantidade_h2 = len(
@@ -454,43 +762,84 @@ def validar_artigo(artigo):
 
     if quantidade_h2 < 3:
         erros.append(
-            f"Poucos subtítulos H2: {quantidade_h2} encontrados."
+            f"Poucos subtítulos H2: "
+            f"{quantidade_h2} encontrados."
         )
 
     if palavra_chave:
-        ocorrencias_palavra_chave = texto_puro.lower().count(
-            palavra_chave.lower()
+        ocorrencias_palavra_chave = (
+            texto_puro.lower().count(
+                palavra_chave.lower()
+            )
         )
 
         if ocorrencias_palavra_chave == 0:
             erros.append(
-                "A palavra-chave principal não aparece no artigo."
+                "A palavra-chave principal "
+                "não aparece no artigo."
             )
 
-        # Evita repetição exagerada sem impor densidade artificial.
+        # Evita repetição exagerada sem impor
+        # densidade artificial.
         if ocorrencias_palavra_chave > 12:
             erros.append(
-                "A palavra-chave principal aparece em excesso."
+                "A palavra-chave principal "
+                "aparece em excesso."
             )
 
     return {
         "valido": len(erros) == 0,
         "erros": erros,
-        "quantidade_palavras": quantidade_palavras,
+        "quantidade_palavras": (
+            quantidade_palavras
+        ),
         "quantidade_h2": quantidade_h2,
     }
 
 
 if __name__ == "__main__":
     teste = criar_estrutura_artigo(
-        titulo="Como organizar uma cozinha pequena de forma prática",
-        palavra_chave="organização de cozinha pequena",
+        titulo=(
+            "Como organizar uma cozinha "
+            "pequena de forma prática"
+        ),
+        palavra_chave=(
+            "organização de cozinha pequena"
+        ),
     )
 
-    verificacao = validar_artigo(teste)
+    verificacao = validar_artigo(
+        teste
+    )
 
-    print("Módulo de geração de artigos iniciado com sucesso.")
-    print("Título:", teste["titulo"])
-    print("Palavra-chave:", teste["palavra_chave"])
-    print("Fonte:", teste["fonte"])
-    print("Validação:", verificacao)
+    print(
+        "Módulo de geração de artigos "
+        "iniciado com sucesso."
+    )
+
+    print(
+        "Título:",
+        teste["titulo"],
+    )
+
+    print(
+        "Palavra-chave:",
+        teste["palavra_chave"],
+    )
+
+    print(
+        "Fonte:",
+        teste["fonte"],
+    )
+
+    print(
+        "Modelo Gemini:",
+        teste.get(
+            "modelo_gemini"
+        ),
+    )
+
+    print(
+        "Validação:",
+        verificacao,
+    )
