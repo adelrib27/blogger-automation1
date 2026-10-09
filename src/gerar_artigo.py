@@ -425,17 +425,71 @@ QUALIDADE E CONFIABILIDADE:
   especialistas, certificações ou dados.
 - Não apresente como fato algo que dependa de
   condições específicas.
-- Evite afirmações absolutas quando não forem necessárias.
+- Não faça afirmações categóricas sem base nas
+  informações fornecidas.
+- Quando uma orientação puder variar conforme ambiente,
+  material, fabricante, instalação, condição de uso ou
+  preferência pessoal, deixe essa condição clara.
 - Para recomendações de segurança, instalação,
-  conservação ou uso, utilize linguagem responsável
-  e contextualizada.
+  conservação, armazenamento, limpeza, saúde ou uso,
+  utilize linguagem prudente, responsável e
+  contextualizada.
+- Não apresente recomendações de saúde, higiene ou
+  segurança como regras universais.
+- Quando uma recomendação depender das instruções do
+  fabricante, indique que o leitor deve consultar as
+  orientações específicas do produto.
+- Não invente benefícios funcionais.
+- Não invente desempenho.
+- Não invente durabilidade.
+- Não invente capacidade.
+- Não invente dimensões.
+- Não invente materiais.
+- Não invente composição.
+- Não invente potência.
+- Não invente resistência.
+- Não invente certificações.
+- Não invente compatibilidades.
+- Não atribua ao produto características que não estejam
+  explicitamente presentes no nome fornecido.
+- Não deduza características apenas porque seriam comuns
+  em produtos semelhantes.
+- Não transforme uma característica genérica da categoria
+  em característica específica do produto principal.
+- Se determinada característica do produto não foi
+  informada, simplesmente não a mencione.
 - Não faça promessas exageradas.
 - Não dê garantias de resultado.
+- Não diga ou sugira que o produto resolve definitivamente
+  um problema.
+- Não use superlativos comerciais sem informação que os
+  sustente, como "melhor", "mais eficiente", "superior",
+  "premium" ou equivalentes.
 - Não copie textos de outros sites.
 - Não inclua preços.
 - Não inclua links externos.
-- Não invente marcas, produtos ou características
-  técnicas.
+- Não invente marcas ou produtos.
+
+REGRA ESPECIAL PARA O PRODUTO PRINCIPAL:
+
+- Considere o nome do produto recebido neste prompt como
+  a ÚNICA fonte de características específicas desse
+  produto.
+- Você pode mencionar somente características que estejam
+  literalmente sustentadas por esse nome.
+- Não complete mentalmente informações ausentes.
+- Não suponha características com base no tipo de produto.
+- Não atribua vantagens específicas ao produto sem que
+  elas estejam sustentadas pelo nome fornecido.
+- O artigo pode explicar benefícios gerais da categoria,
+  desde que fique claro que são orientações gerais e não
+  características garantidas do produto principal.
+- A função do produto principal é servir como opção
+  relacionada ao contexto do artigo, e não como fonte de
+  alegações técnicas.
+- Não escreva o link do produto.
+- Não invente nem tente reconstruir URL.
+- O Python fará a inserção do link afiliado posteriormente.
 
 SEO NATURAL:
 
