@@ -1,142 +1,223 @@
 from main import (
     adicionar_produtos_ao_artigo,
     criar_bloco_produtos,
+    preparar_produto_principal,
+    selecionar_complementares,
 )
-
-from selecionar_produtos import (
-    selecionar_produtos,
-)
+from seo import preparar_seo
 
 
 def executar_teste():
     print("=" * 70)
-    print("TESTE DE PRODUTOS AFILIADOS NO ARTIGO")
+    print("TESTE — PRODUTO PRINCIPAL + COMPLEMENTARES")
     print("=" * 70)
 
-    titulo = (
-        "Como deixar o banheiro mais "
-        "prático e organizado"
-    )
+    # ========================================================
+    # PAUTA SIMULADA
+    # ========================================================
 
-    palavra_chave = (
-        "banheiro organizado"
-    )
-
-    categoria = "Banheiro"
-
-    descricao = (
-        "Dicas para melhorar a organização, "
-        "o conforto e a praticidade do banheiro."
-    )
-
-    palavras_secundarias = [
-        "organização do banheiro",
-        "toalhas de banho",
-        "limpeza do banheiro",
-    ]
+    pauta = {
+        "titulo": (
+            "Guia de armazenamento: como organizar "
+            "alimentos na geladeira"
+        ),
+        "palavra_chave": (
+            "armazenamento de alimentos na geladeira"
+        ),
+        "categoria": "Cozinha",
+        "descricao": (
+            "Dicas práticas para armazenar alimentos, "
+            "organizar a geladeira e conservar melhor "
+            "comidas e ingredientes."
+        ),
+        "palavras_secundarias": [
+            "como guardar comida",
+            "conservação de alimentos",
+            "organização da geladeira",
+            "potes para alimentos",
+        ],
+        "produto_principal": {
+            "nome": (
+                "Kit de Potes para Alimentos 800ml "
+                "com Travas Laterais"
+            ),
+            "link_afiliado": (
+                "https://vt.tiktok.com/"
+                "ZS9DVmNxuKAVr-oyWt7/"
+            ),
+        },
+    }
 
     conteudo_original = """
-<p>Um banheiro organizado facilita a rotina e ajuda
-a aproveitar melhor o espaço disponível.</p>
+<p>Organizar corretamente os alimentos ajuda a aproveitar
+melhor o espaço disponível na geladeira.</p>
 
-<h2>Organize os itens de uso diário</h2>
+<h2>Separe os alimentos por categoria</h2>
 
-<p>Mantenha os objetos mais utilizados em locais
-de fácil acesso e evite acumular itens
-desnecessários.</p>
+<p>Uma organização simples facilita a rotina e ajuda
+a visualizar o que já está armazenado.</p>
 
-<h2>Facilite a limpeza do ambiente</h2>
+<h2>Use recipientes adequados</h2>
 
-<p>Uma rotina simples de limpeza ajuda a manter
-o banheiro mais agradável e funcional.</p>
+<p>Recipientes apropriados ajudam a manter os alimentos
+organizados e facilitam o armazenamento.</p>
 
-<h2>Cuide do conforto</h2>
+<h2>Mantenha uma rotina de organização</h2>
 
-<p>Pequenos detalhes podem tornar o uso diário
-do banheiro mais prático e confortável.</p>
+<p>Revisar periodicamente o conteúdo da geladeira evita
+acúmulos e melhora o aproveitamento do espaço.</p>
 """.strip()
 
-    print()
-    print("PAUTA:")
-    print(titulo)
+    # ========================================================
+    # PRODUTO PRINCIPAL
+    # ========================================================
 
-    print()
-    print("Selecionando produtos...")
-
-    produtos = selecionar_produtos(
-        titulo=titulo,
-        palavra_chave=palavra_chave,
-        categoria=categoria,
-        descricao=descricao,
-        palavras_secundarias=(
-            palavras_secundarias
-        ),
-        limite=3,
+    produto_principal = preparar_produto_principal(
+        pauta["produto_principal"]
     )
 
-    print()
+    print("\nPRODUTO PRINCIPAL")
+    print("-" * 70)
     print(
-        "Quantidade selecionada:",
-        len(produtos),
+        produto_principal["nome"]
+    )
+    print(
+        produto_principal["link_afiliado"]
     )
 
-    print()
+    # ========================================================
+    # SEO SIMULADO
+    # ========================================================
 
-    for indice, produto in enumerate(
-        produtos,
-        start=1,
-    ):
+    seo = preparar_seo(
+        titulo=pauta["titulo"],
+        palavra_chave=pauta["palavra_chave"],
+        descricao=pauta["descricao"],
+        palavras_secundarias=(
+            pauta["palavras_secundarias"]
+        ),
+        titulo_max=60,
+        meta_max=155,
+    )
+
+    # ========================================================
+    # COMPLEMENTARES
+    # ========================================================
+
+    complementares = selecionar_complementares(
+        pauta=pauta,
+        seo=seo,
+        categoria=pauta["categoria"],
+        palavras_secundarias=(
+            pauta["palavras_secundarias"]
+        ),
+        produto_principal=produto_principal,
+    )
+
+    print("\nPRODUTOS COMPLEMENTARES")
+    print("-" * 70)
+
+    if complementares:
+        for numero, produto in enumerate(
+            complementares,
+            start=1,
+        ):
+            print(
+                f"{numero}. {produto['nome']}"
+            )
+            print(
+                "   Pontuação:",
+                produto.get(
+                    "pontuacao",
+                    "",
+                ),
+            )
+            print(
+                "   Link:",
+                produto["link_afiliado"],
+            )
+    else:
         print(
-            f"{indice}. "
-            f"{produto['nome']}"
+            "Nenhum complementar selecionado."
         )
 
-        print(
-            "   Pontuação:",
-            produto["pontuacao"],
-        )
+    # ========================================================
+    # BLOCO HTML
+    # ========================================================
 
-        print(
-            "   Link:",
-            produto["link_afiliado"],
-        )
+    bloco = criar_bloco_produtos(
+        produto_principal=produto_principal,
+        complementares=complementares,
+    )
 
-        print()
+    artigo_final = adicionar_produtos_ao_artigo(
+        conteudo_html=conteudo_original,
+        produto_principal=produto_principal,
+        complementares=complementares,
+    )
 
-    print("=" * 70)
+    print("\n" + "=" * 70)
     print("BLOCO HTML DOS PRODUTOS")
     print("=" * 70)
     print()
-
-    bloco = criar_bloco_produtos(
-        produtos
-    )
-
     print(bloco)
 
-    print()
-    print("=" * 70)
+    print("\n" + "=" * 70)
     print("ARTIGO FINAL SIMULADO")
     print("=" * 70)
     print()
+    print(artigo_final)
 
-    artigo_final = (
-        adicionar_produtos_ao_artigo(
-            conteudo_html=conteudo_original,
-            produtos=produtos,
+    # ========================================================
+    # VERIFICAÇÕES
+    # ========================================================
+
+    nome_principal = (
+        produto_principal["nome"]
+    )
+
+    link_principal = (
+        produto_principal["link_afiliado"]
+    )
+
+    ocorrencias_nome_principal = (
+        bloco.count(
+            nome_principal
         )
     )
 
-    print(artigo_final)
+    ocorrencias_link_principal = (
+        bloco.count(
+            link_principal
+        )
+    )
 
-    print()
-    print("=" * 70)
-    print("VERIFICAÇÕES")
-    print("=" * 70)
+    nomes_complementares = {
+        produto["nome"]
+        for produto in complementares
+    }
+
+    principal_duplicado = (
+        nome_principal
+        in nomes_complementares
+    )
 
     verificacoes = {
-        "Tem produtos": (
-            len(produtos) > 0
+        "Produto principal presente": (
+            nome_principal in bloco
+        ),
+        "Link principal exato": (
+            link_principal in bloco
+        ),
+        "Principal aparece uma vez": (
+            ocorrencias_nome_principal == 1
+            and ocorrencias_link_principal == 1
+        ),
+        "Principal não virou complementar": (
+            not principal_duplicado
+        ),
+        "Máximo de 2 complementares": (
+            len(complementares) <= 2
         ),
         "Tem aviso de afiliado": (
             "links de afiliados"
@@ -156,7 +237,11 @@ do banheiro mais prático e confortável.</p>
         ),
     }
 
-    tudo_correto = True
+    print("\n" + "=" * 70)
+    print("VERIFICAÇÕES")
+    print("=" * 70)
+
+    falhou = False
 
     for nome, resultado in (
         verificacoes.items()
@@ -164,7 +249,7 @@ do banheiro mais prático e confortável.</p>
         status = (
             "OK"
             if resultado
-            else "ERRO"
+            else "FALHOU"
         )
 
         print(
@@ -172,19 +257,18 @@ do banheiro mais prático e confortável.</p>
         )
 
         if not resultado:
-            tudo_correto = False
+            falhou = True
 
-    print()
-
-    if tudo_correto:
-        print(
-            "TESTE CONCLUÍDO COM SUCESSO."
-        )
-    else:
+    if falhou:
         raise RuntimeError(
             "Uma ou mais verificações "
-            "do bloco de afiliados falharam."
+            "do teste falharam."
         )
+
+    print()
+    print(
+        "TESTE CONCLUÍDO COM SUCESSO."
+    )
 
 
 if __name__ == "__main__":
