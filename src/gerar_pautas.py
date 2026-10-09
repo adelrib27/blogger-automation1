@@ -8,7 +8,22 @@ from google import genai
 from pautas import comparar_com_historico
 
 
-MODELO_GEMINI = "gemini-3.8-flash"
+# ============================================================
+# MODELOS PARA GERAÇÃO DE PAUTAS
+# ============================================================
+#
+# A ordem importa.
+# Os modelos com maior cota ficam primeiro.
+# Se um modelo esgotar a cota ou ficar indisponível,
+# o sistema tenta automaticamente o próximo.
+#
+MODELOS_GEMINI = [
+    "gemini-3.5-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.5-flash",
+    "gemini-3.6-flash",
+    "gemini-3.7-flash",
+]
 
 
 def limpar_json_resposta(texto):
@@ -82,6 +97,222 @@ def validar_pauta(pauta):
     return True
 
 
+def erro_de_cota(erro):
+    """
+    Detecta quando a cota do modelo foi esgotada.
+
+    Nesse caso não adianta esperar alguns segundos:
+    o sistema deve passar imediatamente ao próximo modelo.
+    """
+    mensagem = str(erro).upper()
+
+    return (
+        "429" in mensagem
+        or "RESOURCE_EXHAUSTED" in mensagem
+        or "QUOTA EXCEEDED" in mensagem
+    )
+
+
+def erro_temporario(erro):
+    """
+    Detecta indisponibilidade temporária do serviço.
+
+    Para esses erros vale a pena tentar novamente
+    no mesmo modelo antes de usar o próximo.
+    """
+    mensagem = str(erro).upper()
+
+    return (
+        "503" in mensagem
+        or "UNAVAILABLE" in mensagem
+        or "HIGH DEMAND" in mensagem
+    )
+
+
+def gerar_candidatas_com_modelo(
+    client,
+    modelo,
+    prompt,
+):
+    """
+    Tenta gerar as pautas usando um modelo específico.
+
+    Retorna:
+        lista de pautas válidas, se funcionar.
+
+    Pode lançar exceção para que a camada superior
+    decida se deve tentar outro modelo.
+    """
+
+    tentativas = 3
+    esperas = [5, 15]
+
+    for tentativa in range(1, tentativas + 1):
+        try:
+            print(
+                f"\nModelo: {modelo}"
+            )
+            print(
+                f"Tentativa {tentativa}/{tentativas} "
+                "para gerar novas pautas..."
+            )
+
+            resposta = client.models.generate_content(
+                model=modelo,
+                contents=prompt,
+            )
+
+            texto = resposta.text
+
+            if not texto:
+                raise RuntimeError(
+                    "Gemini retornou resposta vazia."
+                )
+
+            texto_json = limpar_json_resposta(
+                texto
+            )
+
+            if not texto_json:
+                raise RuntimeError(
+                    "Não foi possível localizar JSON "
+                    "na resposta do Gemini."
+                )
+
+            pautas = json.loads(
+                texto_json
+            )
+
+            if not isinstance(
+                pautas,
+                list,
+            ):
+                raise RuntimeError(
+                    "A resposta não contém "
+                    "uma lista de pautas."
+                )
+
+            pautas_validas = [
+                pauta
+                for pauta in pautas
+                if validar_pauta(pauta)
+            ]
+
+            if not pautas_validas:
+                raise RuntimeError(
+                    "Nenhuma pauta válida foi gerada."
+                )
+
+            print(
+                f"Modelo {modelo} respondeu "
+                "com sucesso."
+            )
+
+            return pautas_validas
+
+        except Exception as erro:
+            print(
+                f"Erro no modelo {modelo}, "
+                f"tentativa {tentativa}/{tentativas}: "
+                f"{erro}"
+            )
+
+            # Cota esgotada:
+            # não desperdiça novas tentativas.
+            if erro_de_cota(erro):
+                print(
+                    f"Cota do modelo {modelo} "
+                    "indisponível ou esgotada."
+                )
+                print(
+                    "Pulando imediatamente "
+                    "para o próximo modelo..."
+                )
+                raise
+
+            # Erro temporário:
+            # vale a pena tentar novamente.
+            if erro_temporario(erro):
+                if tentativa >= tentativas:
+                    print(
+                        f"O modelo {modelo} continua "
+                        "temporariamente indisponível."
+                    )
+                    raise
+
+                espera = esperas[
+                    tentativa - 1
+                ]
+
+                print(
+                    f"Aguardando {espera} segundos "
+                    "antes de tentar novamente "
+                    "o mesmo modelo..."
+                )
+
+                time.sleep(
+                    espera
+                )
+
+                continue
+
+            mensagem = str(erro)
+
+            erro_json = isinstance(
+                erro,
+                json.JSONDecodeError,
+            )
+
+            erro_estrutural = (
+                erro_json
+                or "JSON" in mensagem
+                or "pauta válida" in mensagem
+                or "lista de pautas" in mensagem
+                or "resposta vazia" in mensagem
+            )
+
+            # Resposta malformada:
+            # damos nova chance ao mesmo modelo.
+            if erro_estrutural:
+                if tentativa >= tentativas:
+                    print(
+                        f"O modelo {modelo} não "
+                        "conseguiu produzir uma "
+                        "resposta válida."
+                    )
+                    raise
+
+                espera = esperas[
+                    tentativa - 1
+                ]
+
+                print(
+                    f"Aguardando {espera} segundos "
+                    "antes de solicitar uma "
+                    "nova resposta..."
+                )
+
+                time.sleep(
+                    espera
+                )
+
+                continue
+
+            # Erro desconhecido:
+            # não insistimos no modelo.
+            print(
+                f"Erro não recuperável no modelo "
+                f"{modelo}."
+            )
+
+            raise
+
+    raise RuntimeError(
+        f"O modelo {modelo} não conseguiu "
+        "gerar pautas válidas."
+    )
+
+
 def gerar_candidatas_gemini(
     quantidade=8,
     nicho="Casa e Decoração",
@@ -90,18 +321,25 @@ def gerar_candidatas_gemini(
     Pede ao Gemini uma lista de pautas candidatas.
 
     A decisão final sobre repetição NÃO fica com o Gemini.
-    As pautas serão comparadas posteriormente com o
-    historico.json pelo nosso próprio motor.
+    As pautas serão comparadas posteriormente com
+    publicados e rascunhos pelo nosso próprio motor.
+
+    Se um modelo não estiver disponível, o sistema
+    tenta automaticamente o próximo da fila.
     """
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv(
+        "GEMINI_API_KEY"
+    )
 
     if not api_key:
         raise RuntimeError(
             "GEMINI_API_KEY não encontrada."
         )
 
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(
+        api_key=api_key
+    )
 
     prompt = f"""
 Você é um estrategista editorial especializado em conteúdo útil,
@@ -176,106 +414,56 @@ Não use ```json.
 Não escreva explicações antes ou depois do JSON.
 """
 
-    tentativas = 3
-    esperas = [5, 15]
+    print(
+        "\n=== FILA DE MODELOS PARA PAUTAS ==="
+    )
 
-    for tentativa in range(1, tentativas + 1):
+    for numero, modelo in enumerate(
+        MODELOS_GEMINI,
+        start=1,
+    ):
+        print(
+            f"{numero}. {modelo}"
+        )
+
+    ultimo_erro = None
+
+    for numero, modelo in enumerate(
+        MODELOS_GEMINI,
+        start=1,
+    ):
+        print(
+            f"\n=== MODELO {numero}/"
+            f"{len(MODELOS_GEMINI)} ==="
+        )
+
         try:
-            print(
-                f"Tentativa {tentativa}/{tentativas} "
-                "para gerar novas pautas..."
+            return gerar_candidatas_com_modelo(
+                client=client,
+                modelo=modelo,
+                prompt=prompt,
             )
-
-            resposta = client.models.generate_content(
-                model=MODELO_GEMINI,
-                contents=prompt,
-            )
-
-            texto = resposta.text
-
-            if not texto:
-                raise RuntimeError(
-                    "Gemini retornou resposta vazia."
-                )
-
-            texto_json = limpar_json_resposta(texto)
-
-            if not texto_json:
-                raise RuntimeError(
-                    "Não foi possível localizar JSON "
-                    "na resposta do Gemini."
-                )
-
-            pautas = json.loads(texto_json)
-
-            if not isinstance(pautas, list):
-                raise RuntimeError(
-                    "A resposta não contém uma lista de pautas."
-                )
-
-            pautas_validas = [
-                pauta
-                for pauta in pautas
-                if validar_pauta(pauta)
-            ]
-
-            if not pautas_validas:
-                raise RuntimeError(
-                    "Nenhuma pauta válida foi gerada."
-                )
-
-            return pautas_validas
 
         except Exception as erro:
+            ultimo_erro = erro
+
             print(
-                f"Erro na tentativa "
-                f"{tentativa}/{tentativas}: {erro}"
+                f"Modelo {modelo} não pôde "
+                "concluir a geração."
             )
 
-            mensagem = str(erro)
-
-            temporario = any(
-                codigo in mensagem
-                for codigo in (
-                    "429",
-                    "503",
-                    "RESOURCE_EXHAUSTED",
-                    "UNAVAILABLE",
+            if numero < len(
+                MODELOS_GEMINI
+            ):
+                print(
+                    "Tentando o próximo modelo "
+                    "da fila..."
                 )
-            )
-
-            # Erros de JSON também podem ser resolvidos
-            # solicitando uma nova geração.
-            erro_json = isinstance(
-                erro,
-                json.JSONDecodeError,
-            )
-
-            if tentativa >= tentativas:
-                break
-
-            if not temporario and not erro_json:
-                # Para respostas estruturalmente ruins,
-                # também permitimos uma nova tentativa.
-                if (
-                    "JSON" not in mensagem
-                    and "pauta válida" not in mensagem
-                    and "lista de pautas" not in mensagem
-                ):
-                    break
-
-            espera = esperas[tentativa - 1]
-
-            print(
-                f"Aguardando {espera} segundos "
-                "antes da próxima tentativa..."
-            )
-
-            time.sleep(espera)
 
     raise RuntimeError(
-        "Não foi possível gerar pautas válidas "
-        "com o Gemini."
+        "Todos os modelos configurados para "
+        "geração de pautas falharam. "
+        f"Último erro: {ultimo_erro}"
     )
 
 
@@ -286,29 +474,40 @@ def selecionar_pauta_inedita(pautas):
     Retorna a primeira pauta considerada inédita.
     """
 
-    print("\n=== ANÁLISE ANTI-REPETIÇÃO ===")
+    print(
+        "\n=== ANÁLISE ANTI-REPETIÇÃO ==="
+    )
 
     for numero, pauta in enumerate(
         pautas,
         start=1,
     ):
         titulo = pauta["titulo"]
-        palavra_chave = pauta["palavra_chave"]
+        palavra_chave = pauta[
+            "palavra_chave"
+        ]
 
         resultado = comparar_com_historico(
             titulo=titulo,
             palavra_chave=palavra_chave,
         )
 
-        print(f"\nCandidata {numero}:")
-        print("Título:", titulo)
+        print(
+            f"\nCandidata {numero}:"
+        )
+        print(
+            "Título:",
+            titulo,
+        )
         print(
             "Palavra-chave:",
             palavra_chave,
         )
 
         if resultado["repetida"]:
-            print("Resultado: REJEITADA")
+            print(
+                "Resultado: REJEITADA"
+            )
             print(
                 "Motivo:",
                 resultado["motivo"],
@@ -327,10 +526,25 @@ def selecionar_pauta_inedita(pautas):
                     ),
                 )
 
+                fonte = existente.get(
+                    "_fonte_antirrepeticao",
+                    "",
+                )
+
+                if fonte:
+                    print(
+                        "Fonte:",
+                        fonte,
+                    )
+
             continue
 
-        print("Resultado: APROVADA")
-        print("Motivo: pauta inédita")
+        print(
+            "Resultado: APROVADA"
+        )
+        print(
+            "Motivo: pauta inédita"
+        )
 
         return pauta
 
@@ -342,7 +556,14 @@ def gerar_pauta_automatica(
 ):
     """
     Executa o fluxo completo:
-    Gemini -> validação -> histórico -> pauta inédita.
+
+    modelos Gemini
+        ->
+    validação
+        ->
+    anti-repetição
+        ->
+    pauta inédita
     """
 
     print(
@@ -355,7 +576,7 @@ def gerar_pauta_automatica(
     )
 
     print(
-        f"Pautas válidas geradas: "
+        f"\nPautas válidas geradas: "
         f"{len(candidatas)}"
     )
 
@@ -397,7 +618,9 @@ def gerar_pauta_automatica(
     )
     print(
         "Palavra-chave:",
-        escolhida["palavra_chave"],
+        escolhida[
+            "palavra_chave"
+        ],
     )
     print(
         "Categoria:",
@@ -413,6 +636,7 @@ if __name__ == "__main__":
     print(
         "\n=== RESULTADO FINAL DO TESTE ==="
     )
+
     print(
         json.dumps(
             pauta,
