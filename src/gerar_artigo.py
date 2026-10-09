@@ -3,16 +3,14 @@ import os
 import re
 import time
 import unicodedata
+
 from google import genai
 
 
 # ============================================================
 # MODELOS PARA GERAÇÃO DE ARTIGOS
 # ============================================================
-#
-# Aqui priorizamos qualidade editorial.
-# Os modelos Flash Lite ficam no final como reserva.
-#
+
 MODELOS_ARTIGO = [
     "gemini-3.8-flash",
     "gemini-3.7-flash",
@@ -23,45 +21,71 @@ MODELOS_ARTIGO = [
 ]
 
 
+MARCADOR_PRODUTO_PRINCIPAL = (
+    "[[PRODUTO_PRINCIPAL]]"
+)
+
+
 def limpar_texto(texto):
     """
     Remove espaços desnecessários e normaliza o texto.
     """
+
     if not texto:
         return ""
 
     texto = str(texto).strip()
-    texto = re.sub(r"\s+", " ", texto)
+
+    texto = re.sub(
+        r"\s+",
+        " ",
+        texto,
+    )
 
     return texto
 
 
-def criar_introducao(titulo, palavra_chave):
+def criar_introducao(
+    titulo,
+    palavra_chave,
+):
     """
-    Cria uma introdução de segurança caso a IA não esteja disponível.
+    Cria uma introdução de segurança caso
+    a IA não esteja disponível.
     """
-    titulo = limpar_texto(titulo)
-    palavra_chave = limpar_texto(palavra_chave)
+
+    titulo = limpar_texto(
+        titulo
+    )
+
+    palavra_chave = limpar_texto(
+        palavra_chave
+    )
 
     return (
-        f"Se você está pesquisando sobre {palavra_chave}, "
-        f"este guia reúne informações práticas para ajudar você "
-        f"a entender melhor o assunto e encontrar soluções adequadas "
-        f"para sua casa."
+        f"Se você está pesquisando sobre "
+        f"{palavra_chave}, este guia reúne "
+        "informações práticas para ajudar você "
+        "a entender melhor o assunto e encontrar "
+        "soluções adequadas para sua casa."
     )
 
 
-def limpar_html_gemini(conteudo):
+def limpar_html_gemini(
+    conteudo,
+):
     """
-    Faz uma limpeza básica na resposta do Gemini sem alterar
-    a estrutura útil do artigo.
+    Faz uma limpeza básica na resposta do Gemini
+    sem alterar a estrutura útil do artigo.
+
+    O marcador do produto principal é preservado.
     """
+
     if not conteudo:
         return ""
 
     conteudo = conteudo.strip()
 
-    # Remove cercas Markdown caso o modelo as inclua.
     conteudo = re.sub(
         r"^```(?:html)?\s*",
         "",
@@ -75,7 +99,6 @@ def limpar_html_gemini(conteudo):
         conteudo,
     )
 
-    # Remove estruturas HTML completas caso apareçam por engano.
     conteudo = re.sub(
         r"</?(?:html|head|body)[^>]*>",
         "",
@@ -83,25 +106,29 @@ def limpar_html_gemini(conteudo):
         flags=re.IGNORECASE,
     )
 
-    # Remove título H1 caso o modelo repita o título do post.
     conteudo = re.sub(
         r"<h1[^>]*>.*?</h1>",
         "",
         conteudo,
-        flags=re.IGNORECASE | re.DOTALL,
+        flags=(
+            re.IGNORECASE
+            | re.DOTALL
+        ),
     )
 
     return conteudo.strip()
 
 
-def erro_de_cota(erro):
+def erro_de_cota(
+    erro,
+):
     """
-    Detecta cota esgotada ou indisponível para o modelo.
+    Detecta cota esgotada ou indisponível.
+    """
 
-    Um erro 429 não deve ficar repetindo a mesma chamada.
-    O sistema deve passar ao próximo modelo.
-    """
-    mensagem = str(erro).upper()
+    mensagem = str(
+        erro
+    ).upper()
 
     return (
         "429" in mensagem
@@ -110,14 +137,16 @@ def erro_de_cota(erro):
     )
 
 
-def erro_temporario(erro):
+def erro_temporario(
+    erro,
+):
     """
     Detecta indisponibilidade temporária.
-
-    Para erros 503 vale a pena tentar novamente
-    no mesmo modelo.
     """
-    mensagem = str(erro).upper()
+
+    mensagem = str(
+        erro
+    ).upper()
 
     return (
         "503" in mensagem
@@ -132,17 +161,10 @@ def gerar_com_modelo(
     prompt,
 ):
     """
-    Tenta produzir o artigo usando um modelo específico.
-
-    429:
-        passa imediatamente para o próximo modelo.
-
-    503:
-        tenta novamente no mesmo modelo antes de desistir.
-
-    Resposta vazia ou estruturalmente inadequada:
-        permite nova tentativa.
+    Tenta produzir o artigo usando
+    um modelo específico.
     """
+
     tentativas = 3
     esperas = [5, 15]
 
@@ -152,12 +174,14 @@ def gerar_com_modelo(
     ):
         try:
             print(
-                f"\nModelo de artigo: {modelo}"
+                f"\nModelo de artigo: "
+                f"{modelo}"
             )
 
             print(
                 f"Tentativa {tentativa}/"
-                f"{tentativas} com {modelo}..."
+                f"{tentativas} com "
+                f"{modelo}..."
             )
 
             resposta = (
@@ -175,8 +199,10 @@ def gerar_com_modelo(
                     "resposta sem conteúdo."
                 )
 
-            conteudo = limpar_html_gemini(
-                conteudo
+            conteudo = (
+                limpar_html_gemini(
+                    conteudo
+                )
             )
 
             if not conteudo:
@@ -186,8 +212,9 @@ def gerar_com_modelo(
                 )
 
             print(
-                f"Artigo recebido com sucesso "
-                f"do modelo {modelo}."
+                "Artigo recebido com "
+                "sucesso do modelo "
+                f"{modelo}."
             )
 
             return conteudo
@@ -199,9 +226,9 @@ def gerar_com_modelo(
                 f"{tentativas}: {erro}"
             )
 
-            # Cota esgotada:
-            # não desperdiça novas tentativas.
-            if erro_de_cota(erro):
+            if erro_de_cota(
+                erro
+            ):
                 print(
                     f"Cota do modelo {modelo} "
                     "indisponível ou esgotada."
@@ -214,14 +241,16 @@ def gerar_com_modelo(
 
                 raise
 
-            # Indisponibilidade temporária.
-            if erro_temporario(erro):
+            if erro_temporario(
+                erro
+            ):
                 if tentativa >= tentativas:
                     print(
                         f"O modelo {modelo} "
                         "continua temporariamente "
                         "indisponível."
                     )
+
                     raise
 
                 espera = esperas[
@@ -229,9 +258,9 @@ def gerar_com_modelo(
                 ]
 
                 print(
-                    f"Aguardando {espera} segundos "
-                    "antes de tentar novamente "
-                    "o mesmo modelo..."
+                    f"Aguardando {espera} "
+                    "segundos antes de tentar "
+                    "novamente o mesmo modelo..."
                 )
 
                 time.sleep(
@@ -240,12 +269,16 @@ def gerar_com_modelo(
 
                 continue
 
-            # Respostas vazias podem ser ocasionais.
-            mensagem = str(erro)
+            mensagem = str(
+                erro
+            )
 
             erro_resposta = (
                 "sem conteúdo" in mensagem
-                or "vazio após a limpeza" in mensagem
+                or (
+                    "vazio após a limpeza"
+                    in mensagem
+                )
             )
 
             if erro_resposta:
@@ -257,9 +290,9 @@ def gerar_com_modelo(
                 ]
 
                 print(
-                    f"Aguardando {espera} segundos "
-                    "antes de solicitar novamente "
-                    "o artigo..."
+                    f"Aguardando {espera} "
+                    "segundos antes de solicitar "
+                    "novamente o artigo..."
                 )
 
                 time.sleep(
@@ -268,10 +301,8 @@ def gerar_com_modelo(
 
                 continue
 
-            # Qualquer erro desconhecido não deve
-            # ficar consumindo requisições.
             print(
-                f"Erro não recuperável no "
+                "Erro não recuperável no "
                 f"modelo {modelo}."
             )
 
@@ -283,42 +314,67 @@ def gerar_com_modelo(
     )
 
 
-def gerar_conteudo_gemini(
+def criar_prompt_artigo(
     titulo,
     palavra_chave,
     categoria,
+    produto_principal="",
 ):
     """
-    Gera o conteúdo principal usando uma fila
-    automática de modelos Gemini.
+    Monta o prompt editorial.
 
-    Retorna:
-        (conteudo_html, modelo_utilizado)
+    Quando existe produto principal, o Gemini
+    recebe somente o nome do produto.
 
-    Se todos os modelos falharem:
-        (None, None)
+    O link afiliado nunca é enviado ao modelo.
     """
-    api_key = os.getenv(
-        "GEMINI_API_KEY"
+
+    produto_principal = limpar_texto(
+        produto_principal
     )
 
-    if not api_key:
-        print(
-            "GEMINI_API_KEY não encontrada. "
-            "Usando conteúdo de segurança."
-        )
-        return None, None
+    instrucao_produto = ""
 
-    client = genai.Client(
-        api_key=api_key
-    )
+    if produto_principal:
+        instrucao_produto = f"""
+PRODUTO PRINCIPAL RELACIONADO À PAUTA:
 
-    prompt = f"""
-Você é um redator editorial especializado em SEO, conteúdo útil,
-Casa, Organização e Decoração.
+{produto_principal}
 
-Escreva um artigo original em português do Brasil para o blog
-"Achados para Casa".
+INTEGRAÇÃO EDITORIAL DO PRODUTO:
+
+- O produto acima originou esta pauta e tem relação
+  direta com o assunto.
+- Desenvolva primeiro o conteúdo editorial normalmente.
+- Identifique a seção em que esse produto seja mais
+  útil e natural para o leitor.
+- Nesse ponto, insira EXATAMENTE este marcador:
+
+{MARCADOR_PRODUTO_PRINCIPAL}
+
+- O marcador deve aparecer sozinho entre blocos HTML.
+- Use o marcador EXATAMENTE UMA VEZ.
+- Não altere o marcador.
+- Não coloque o marcador dentro de <p>, <li>, <h2>
+  ou <h3>.
+- Não escreva URL.
+- Não crie link.
+- Não invente preço.
+- Não invente desconto.
+- Não invente características adicionais do produto.
+- Não transforme o artigo em propaganda.
+- Não faça review do produto.
+- Não repita o nome do produto diversas vezes.
+- O texto antes e depois do marcador deve continuar
+  naturalmente, como parte do mesmo artigo.
+"""
+
+    return f"""
+Você é um redator editorial especializado em SEO,
+conteúdo útil, Casa, Organização e Decoração.
+
+Escreva um artigo original em português do Brasil
+para o blog "Achados para Casa".
 
 TÍTULO DO POST:
 {titulo}
@@ -329,14 +385,18 @@ PALAVRA-CHAVE PRINCIPAL:
 CATEGORIA:
 {categoria}
 
-OBJETIVO PRINCIPAL:
-Produzir um artigo que resolva de verdade a dúvida ou necessidade
-de quem fez essa pesquisa, com informações práticas que possam
-ser aplicadas no cotidiano.
+{instrucao_produto}
 
-O conteúdo deve ser útil primeiro para a pessoa e otimizado para
-mecanismos de busca de forma natural, sem parecer escrito para
-um algoritmo.
+OBJETIVO PRINCIPAL:
+
+Produzir um artigo que resolva de verdade a dúvida
+ou necessidade de quem fez essa pesquisa, com
+informações práticas que possam ser aplicadas
+no cotidiano.
+
+O conteúdo deve ser útil primeiro para a pessoa e
+otimizado para mecanismos de busca de forma natural,
+sem parecer escrito para um algoritmo.
 
 ESTILO EDITORIAL:
 
@@ -345,42 +405,52 @@ ESTILO EDITORIAL:
 - Prefira frases diretas e específicas.
 - Varie o tamanho das frases e dos parágrafos.
 - Evite tom robótico, acadêmico ou excessivamente formal.
-- Evite introduções genéricas que poderiam servir para qualquer tema.
+- Evite introduções genéricas que poderiam servir
+  para qualquer tema.
 - Entre no assunto rapidamente.
-- Não encha o artigo apenas para atingir uma quantidade de palavras.
+- Não encha o artigo apenas para atingir uma quantidade
+  de palavras.
 - Evite repetir a mesma ideia com palavras diferentes.
-- Evite conclusões artificiais ou excessivamente motivacionais.
+- Evite conclusões artificiais ou excessivamente
+  motivacionais.
 - Não use frases como "neste artigo vamos explorar",
   "no mundo de hoje", "é importante ressaltar",
-  "vale ressaltar" ou outras expressões genéricas semelhantes.
-- Não mencione inteligência artificial, SEO, palavra-chave,
-  mecanismos de busca ou estas instruções.
+  "vale ressaltar" ou expressões genéricas semelhantes.
+- Não mencione inteligência artificial, SEO,
+  palavra-chave, mecanismos de busca ou estas instruções.
 
 QUALIDADE E CONFIABILIDADE:
 
-- Não invente pesquisas, estudos, estatísticas, especialistas,
-  certificações ou dados.
-- Não apresente como fato algo que dependa de condições específicas.
+- Não invente pesquisas, estudos, estatísticas,
+  especialistas, certificações ou dados.
+- Não apresente como fato algo que dependa de
+  condições específicas.
 - Evite afirmações absolutas quando não forem necessárias.
-- Para recomendações de segurança, instalação, conservação ou uso,
-  utilize linguagem responsável e contextualizada.
+- Para recomendações de segurança, instalação,
+  conservação ou uso, utilize linguagem responsável
+  e contextualizada.
 - Não faça promessas exageradas.
 - Não dê garantias de resultado.
 - Não copie textos de outros sites.
 - Não inclua preços.
 - Não inclua links externos.
-- Não invente marcas, produtos ou características técnicas.
+- Não invente marcas, produtos ou características
+  técnicas.
 
 SEO NATURAL:
 
-- Responda diretamente à intenção de busca representada pelo título.
+- Responda diretamente à intenção de busca
+  representada pelo título.
 - Use a palavra-chave principal naturalmente no texto.
-- Tente utilizar a palavra-chave principal na parte inicial do artigo,
-  desde que a frase permaneça natural.
-- Utilize sinônimos, variações e termos semanticamente relacionados.
+- Tente utilizar a palavra-chave principal na parte
+  inicial do artigo, desde que a frase permaneça natural.
+- Utilize sinônimos, variações e termos semanticamente
+  relacionados.
 - Não repita a palavra-chave de forma forçada.
-- Os subtítulos devem descrever claramente o conteúdo das seções.
-- Não crie subtítulos apenas para inserir a palavra-chave.
+- Os subtítulos devem descrever claramente o conteúdo
+  das seções.
+- Não crie subtítulos apenas para inserir
+  a palavra-chave.
 - Não repita o título principal dentro do conteúdo.
 - Não crie H1.
 
@@ -388,21 +458,25 @@ ESTRUTURA:
 
 - Produza aproximadamente 900 a 1300 palavras.
 - Comece diretamente com uma introdução útil em <p>.
-- Depois da introdução, organize o conteúdo em seções com <h2>.
-- Use <h3> somente quando houver uma subdivisão realmente útil.
+- Depois da introdução, organize o conteúdo em
+  seções com <h2>.
+- Use <h3> somente quando houver uma subdivisão
+  realmente útil.
 - Use listas quando elas facilitarem a leitura.
-- Inclua exemplos práticos quando ajudarem a entender a orientação.
-- Dê preferência a recomendações que o leitor consiga aplicar.
-- Quando houver diferentes opções, explique em que situação cada
-  uma pode fazer mais sentido.
-- Termine de maneira natural, reforçando os pontos mais úteis sem
-  simplesmente repetir toda a introdução.
+- Inclua exemplos práticos quando ajudarem a entender
+  a orientação.
+- Dê preferência a recomendações que o leitor
+  consiga aplicar.
+- Quando houver diferentes opções, explique em que
+  situação cada uma pode fazer mais sentido.
+- Termine de maneira natural, reforçando os pontos
+  mais úteis sem simplesmente repetir toda a introdução.
 - O último subtítulo não precisa se chamar "Conclusão".
 
 FORMATAÇÃO:
 
-Retorne SOMENTE o conteúdo HTML que será inserido no corpo
-de uma postagem do Blogger.
+Retorne SOMENTE o conteúdo HTML que será inserido
+no corpo de uma postagem do Blogger.
 
 HTML PERMITIDO:
 <p>
@@ -424,9 +498,59 @@ Markdown
 blocos ```html
 links inventados
 
-O primeiro caractere útil da resposta deve fazer parte de uma tag <p>.
-Não escreva comentários ou explicações antes ou depois do artigo.
+O marcador {MARCADOR_PRODUTO_PRINCIPAL}, quando
+solicitado acima, é a única exceção de texto que
+pode aparecer fora de uma tag HTML.
+
+O primeiro caractere útil da resposta deve fazer
+parte de uma tag <p>.
+
+Não escreva comentários ou explicações antes ou
+depois do artigo.
 """
+
+
+def gerar_conteudo_gemini(
+    titulo,
+    palavra_chave,
+    categoria,
+    produto_principal="",
+):
+    """
+    Gera o conteúdo principal usando uma fila
+    automática de modelos Gemini.
+
+    Retorna:
+        (conteudo_html, modelo_utilizado)
+
+    Se todos os modelos falharem:
+        (None, None)
+    """
+
+    api_key = os.getenv(
+        "GEMINI_API_KEY"
+    )
+
+    if not api_key:
+        print(
+            "GEMINI_API_KEY não encontrada. "
+            "Usando conteúdo de segurança."
+        )
+
+        return None, None
+
+    client = genai.Client(
+        api_key=api_key
+    )
+
+    prompt = criar_prompt_artigo(
+        titulo=titulo,
+        palavra_chave=palavra_chave,
+        categoria=categoria,
+        produto_principal=(
+            produto_principal
+        ),
+    )
 
     print(
         "\n=== FILA DE MODELOS PARA ARTIGO ==="
@@ -448,7 +572,8 @@ Não escreva comentários ou explicações antes ou depois do artigo.
     ):
         print(
             f"\n=== MODELO DE ARTIGO "
-            f"{numero}/{len(MODELOS_ARTIGO)} ==="
+            f"{numero}/"
+            f"{len(MODELOS_ARTIGO)} ==="
         )
 
         try:
@@ -495,43 +620,73 @@ def criar_conteudo_fallback(
     palavra_chave,
 ):
     """
-    Conteúdo de segurança usado se nenhum modelo responder.
+    Conteúdo de segurança usado se nenhum
+    modelo responder.
 
-    Este conteúdo não deve ser publicado automaticamente.
-    A validação exige um artigo completo.
+    Este conteúdo nunca deve ser publicado
+    automaticamente.
     """
+
     introducao = criar_introducao(
         titulo,
         palavra_chave,
     )
 
     partes = [
-        f"<p>{html.escape(introducao)}</p>",
+        (
+            f"<p>{html.escape(introducao)}</p>"
+        ),
         (
             f"<h2>O que considerar sobre "
             f"{html.escape(palavra_chave)}</h2>"
         ),
         (
-            "<p>Antes de escolher uma solução para sua casa, analise "
-            "o espaço disponível, a praticidade e as necessidades "
-            "reais do ambiente.</p>"
+            "<p>Antes de escolher uma solução "
+            "para sua casa, analise o espaço "
+            "disponível, a praticidade e as "
+            "necessidades reais do ambiente.</p>"
         ),
-        "<h2>Pontos que merecem atenção</h2>",
         (
-            "<p>Medidas, materiais, facilidade de uso, manutenção e "
-            "adequação à rotina são alguns dos aspectos que podem ser "
-            "comparados antes de tomar uma decisão.</p>"
+            "<h2>Pontos que merecem "
+            "atenção</h2>"
         ),
-        "<h2>Como avaliar as opções</h2>",
         (
-            "<p>Considere como cada alternativa se encaixa no espaço "
-            "e na rotina da casa. Uma solução útil é aquela que atende "
-            "à necessidade do ambiente sem criar novas dificuldades.</p>"
+            "<p>Medidas, materiais, facilidade "
+            "de uso, manutenção e adequação à "
+            "rotina são alguns dos aspectos que "
+            "podem ser comparados antes de tomar "
+            "uma decisão.</p>"
+        ),
+        (
+            "<h2>Como avaliar as opções</h2>"
+        ),
+        (
+            "<p>Considere como cada alternativa "
+            "se encaixa no espaço e na rotina da "
+            "casa. Uma solução útil é aquela que "
+            "atende à necessidade do ambiente sem "
+            "criar novas dificuldades.</p>"
         ),
     ]
 
     return "\n".join(
         partes
+    )
+
+
+def contar_marcadores_produto(
+    conteudo,
+):
+    """
+    Conta quantas vezes o marcador reservado
+    ao produto principal aparece no artigo.
+    """
+
+    if not conteudo:
+        return 0
+
+    return conteudo.count(
+        MARCADOR_PRODUTO_PRINCIPAL
     )
 
 
@@ -542,21 +697,31 @@ def criar_estrutura_artigo(
     introducao="",
     secoes=None,
     conclusao="",
+    produto_principal="",
 ):
     """
-    Cria o artigo e mantém o mesmo formato esperado pelo main.py.
+    Cria o artigo e mantém o mesmo formato
+    esperado pelo main.py.
 
-    Os parâmetros introducao, secoes e conclusao são mantidos
-    por compatibilidade com a versão anterior do sistema.
+    Quando produto_principal é informado,
+    o artigo deve reservar exatamente um ponto
+    contextual para a inserção posterior.
     """
+
     titulo = limpar_texto(
         titulo
     )
+
     palavra_chave = limpar_texto(
         palavra_chave
     )
+
     categoria = limpar_texto(
         categoria
+    )
+
+    produto_principal = limpar_texto(
+        produto_principal
     )
 
     print(
@@ -570,6 +735,9 @@ def criar_estrutura_artigo(
         titulo=titulo,
         palavra_chave=palavra_chave,
         categoria=categoria,
+        produto_principal=(
+            produto_principal
+        ),
     )
 
     fonte = "gemini"
@@ -584,6 +752,19 @@ def criar_estrutura_artigo(
             "Modelo utilizado:",
             modelo_utilizado,
         )
+
+        if produto_principal:
+            quantidade_marcadores = (
+                contar_marcadores_produto(
+                    conteudo_html
+                )
+            )
+
+            print(
+                "Marcadores de produto "
+                "principal encontrados:",
+                quantidade_marcadores,
+            )
 
     else:
         print(
@@ -608,16 +789,29 @@ def criar_estrutura_artigo(
         "conteudo_html": conteudo_html,
         "fonte": fonte,
         "modelo_gemini": modelo_utilizado,
+        "produto_principal": (
+            produto_principal
+        ),
     }
 
 
-def extrair_texto_html(conteudo):
+def extrair_texto_html(
+    conteudo,
+):
     """
-    Remove as tags HTML para permitir verificações sobre
-    o texto efetivamente produzido.
+    Remove as tags HTML para permitir
+    verificações sobre o texto produzido.
     """
+
     if not conteudo:
         return ""
+
+    # O marcador é controle interno,
+    # não é conteúdo editorial.
+    conteudo = conteudo.replace(
+        MARCADOR_PRODUTO_PRINCIPAL,
+        " ",
+    )
 
     texto = re.sub(
         r"<[^>]+>",
@@ -637,14 +831,18 @@ def extrair_texto_html(conteudo):
 
     return texto.strip()
 
-def normalizar_para_comparacao(texto):
-    """
-    Normaliza texto para comparações sem diferenciar acentos.
 
-    Exemplo:
-    iluminação -> iluminacao
+def normalizar_para_comparacao(
+    texto,
+):
     """
-    texto = str(texto or "").lower()
+    Normaliza texto para comparações
+    sem diferenciar acentos.
+    """
+
+    texto = str(
+        texto or ""
+    ).lower()
 
     texto = unicodedata.normalize(
         "NFD",
@@ -654,7 +852,9 @@ def normalizar_para_comparacao(texto):
     texto = "".join(
         caractere
         for caractere in texto
-        if unicodedata.category(caractere) != "Mn"
+        if unicodedata.category(
+            caractere
+        ) != "Mn"
     )
 
     texto = re.sub(
@@ -664,10 +864,19 @@ def normalizar_para_comparacao(texto):
     )
 
     return texto.strip()
-def validar_artigo(artigo):
+
+
+def validar_artigo(
+    artigo,
+):
     """
-    Faz verificações antes de o artigo seguir para publicação.
+    Faz verificações antes de o artigo
+    seguir para publicação.
+
+    Se existe produto principal associado,
+    exige exatamente um marcador contextual.
     """
+
     erros = []
 
     titulo = artigo.get(
@@ -687,6 +896,11 @@ def validar_artigo(artigo):
 
     fonte = artigo.get(
         "fonte",
+        "",
+    )
+
+    produto_principal = artigo.get(
+        "produto_principal",
         "",
     )
 
@@ -710,8 +924,6 @@ def validar_artigo(artigo):
             "erros": erros,
         }
 
-    # O fallback existe apenas como segurança operacional.
-    # Ele nunca deve ser considerado pronto para publicação.
     if fonte == "fallback":
         erros.append(
             "Conteúdo de segurança utilizado; "
@@ -748,8 +960,28 @@ def validar_artigo(artigo):
     for tag in tags_proibidas:
         if tag in conteudo_minusculo:
             erros.append(
-                f"HTML não permitido encontrado "
+                "HTML não permitido encontrado "
                 f"no artigo: {tag}"
+            )
+
+    if produto_principal:
+        quantidade_marcadores = (
+            contar_marcadores_produto(
+                conteudo
+            )
+        )
+
+        if quantidade_marcadores == 0:
+            erros.append(
+                "Produto principal informado, "
+                "mas o marcador contextual "
+                "não foi inserido no artigo."
+            )
+
+        elif quantidade_marcadores > 1:
+            erros.append(
+                "O marcador do produto principal "
+                "aparece mais de uma vez."
             )
 
     texto_puro = extrair_texto_html(
@@ -793,12 +1025,16 @@ def validar_artigo(artigo):
         )
 
     if palavra_chave:
-        texto_normalizado = normalizar_para_comparacao(
-            texto_puro
+        texto_normalizado = (
+            normalizar_para_comparacao(
+                texto_puro
+            )
         )
 
-        palavra_chave_normalizada = normalizar_para_comparacao(
-            palavra_chave
+        palavra_chave_normalizada = (
+            normalizar_para_comparacao(
+                palavra_chave
+            )
         )
 
         ocorrencias_palavra_chave = (
@@ -813,8 +1049,6 @@ def validar_artigo(artigo):
                 "não aparece no artigo."
             )
 
-        # Evita repetição exagerada sem impor
-        # densidade artificial.
         if ocorrencias_palavra_chave > 12:
             erros.append(
                 "A palavra-chave principal "
@@ -822,12 +1056,21 @@ def validar_artigo(artigo):
             )
 
     return {
-        "valido": len(erros) == 0,
+        "valido": len(
+            erros
+        ) == 0,
         "erros": erros,
         "quantidade_palavras": (
             quantidade_palavras
         ),
-        "quantidade_h2": quantidade_h2,
+        "quantidade_h2": (
+            quantidade_h2
+        ),
+        "quantidade_marcadores_produto": (
+            contar_marcadores_produto(
+                conteudo
+            )
+        ),
     }
 
 
