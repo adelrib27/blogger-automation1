@@ -57,11 +57,13 @@ def criar_rascunho(
     titulo,
     conteudo_html,
     categoria=None,
+    publicar=False,
 ):
     """
-    Cria um post como RASCUNHO no Blogger.
+    Envia um post ao Blogger.
 
-    Esta função nunca publica o artigo diretamente.
+    Por padrão, cria um RASCUNHO.
+    Quando publicar=True, publica o artigo diretamente.
     """
     blog_id = os.getenv("BLOGGER_BLOG_ID")
 
@@ -76,12 +78,12 @@ def criar_rascunho(
 
     if not titulo:
         raise ValueError(
-            "Não é possível criar rascunho sem título."
+            "Não é possível enviar um post sem título."
         )
 
     if not conteudo_html:
         raise ValueError(
-            "Não é possível criar rascunho sem conteúdo."
+            "Não é possível enviar um post sem conteúdo."
         )
 
     post = {
@@ -100,7 +102,7 @@ def criar_rascunho(
         .insert(
             blogId=blog_id,
             body=post,
-            isDraft=True,
+            isDraft=not publicar,
         )
         .execute()
     )
@@ -117,5 +119,5 @@ def criar_rascunho(
 if __name__ == "__main__":
     print(
         "Módulo Blogger carregado com sucesso. "
-        "Nenhum rascunho foi criado."
+        "Nenhum post foi enviado."
     )
