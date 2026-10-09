@@ -5,7 +5,14 @@ from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ARQUIVO_HISTORICO = BASE_DIR / "data" / "historico.json"
+
+ARQUIVO_HISTORICO = (
+    BASE_DIR / "data" / "historico.json"
+)
+
+ARQUIVO_RASCUNHOS = (
+    BASE_DIR / "data" / "rascunhos.json"
+)
 
 
 PALAVRAS_FRACAS = {
@@ -81,15 +88,15 @@ def normalizar(texto):
     return texto.strip()
 
 
-def carregar_historico():
+def carregar_lista_json(caminho):
     """
-    Carrega os conteúdos já registrados no histórico.
+    Carrega com segurança um arquivo JSON que contenha uma lista.
     """
-    if not ARQUIVO_HISTORICO.exists():
+    if not caminho.exists():
         return []
 
     try:
-        with ARQUIVO_HISTORICO.open(
+        with caminho.open(
             "r",
             encoding="utf-8",
         ) as arquivo:
@@ -102,6 +109,61 @@ def carregar_historico():
         return []
 
     return []
+
+
+def carregar_historico():
+    """
+    Carrega somente os conteúdos publicados.
+
+    Este histórico continua sendo a fonte utilizada
+    pelos outros componentes que trabalham apenas
+    com posts realmente publicados.
+    """
+    return carregar_lista_json(
+        ARQUIVO_HISTORICO
+    )
+
+
+def carregar_rascunhos():
+    """
+    Carrega os rascunhos sincronizados do Blogger.
+
+    Eles participam somente da proteção
+    contra repetição.
+    """
+    return carregar_lista_json(
+        ARQUIVO_RASCUNHOS
+    )
+
+
+def carregar_base_antirrepeticao():
+    """
+    Monta a base usada pelo motor anti-repetição.
+
+    PUBLICADOS + RASCUNHOS.
+
+    Os arquivos permanecem separados no disco.
+    """
+    publicados = carregar_historico()
+    rascunhos = carregar_rascunhos()
+
+    base = []
+
+    for item in publicados:
+        registro = dict(item)
+        registro["_fonte_antirrepeticao"] = (
+            "publicado"
+        )
+        base.append(registro)
+
+    for item in rascunhos:
+        registro = dict(item)
+        registro["_fonte_antirrepeticao"] = (
+            "rascunho"
+        )
+        base.append(registro)
+
+    return base
 
 
 def palavras(texto, remover_fracas=False):
@@ -196,7 +258,7 @@ def palavra_chave_no_titulo(
 ):
     """
     Verifica se os termos relevantes da palavra-chave
-    aparecem de forma significativa no título histórico.
+    aparecem de forma significativa no título existente.
     """
     termos_chave = palavras(
         palavra_chave,
@@ -215,8 +277,6 @@ def palavra_chave_no_titulo(
         termos_titulo
     )
 
-    # Para palavras-chave com apenas um termo relevante,
-    # exige correspondência direta.
     if len(termos_chave) == 1:
         return termos_chave.issubset(
             termos_titulo
@@ -237,18 +297,25 @@ def comparar_com_historico(
     limite_assunto=0.75,
 ):
     """
-    Compara uma pauta com todo o histórico.
+    Compara uma nova pauta com:
 
-    Retorna informações sobre eventual conflito.
+    - posts publicados;
+    - rascunhos existentes no Blogger.
+
+    Dessa forma, um assunto que ainda está em rascunho
+    também fica protegido contra duplicação.
     """
-    historico = carregar_historico()
+    base_antirrepeticao = (
+        carregar_base_antirrepeticao()
+    )
 
     titulo_normalizado = normalizar(titulo)
+
     palavra_normalizada = normalizar(
         palavra_chave
     )
 
-    for item in historico:
+    for item in base_antirrepeticao:
         titulo_antigo = normalizar(
             item.get("titulo", "")
         )
@@ -285,7 +352,7 @@ def comparar_com_historico(
             }
 
         # 3. Palavra-chave atual já representada
-        # pelo título de um artigo antigo.
+        # pelo título de um conteúdo existente.
         if (
             palavra_chave
             and palavra_chave_no_titulo(
@@ -348,8 +415,8 @@ def pauta_ja_utilizada(
     limite=0.60,
 ):
     """
-    Mantém compatibilidade com o main.py e com
-    chamadas existentes do sistema.
+    Mantém compatibilidade com chamadas
+    existentes do sistema.
     """
     resultado = comparar_com_historico(
         titulo=titulo,
@@ -364,8 +431,7 @@ def filtrar_pautas(pautas):
     """
     Retorna somente pautas ainda não utilizadas.
 
-    Também informa no log quando uma pauta é rejeitada,
-    facilitando a auditoria do sistema.
+    Considera tanto publicados quanto rascunhos.
     """
     aprovadas = []
 
@@ -390,23 +456,36 @@ def filtrar_pautas(pautas):
                 "item"
             ) or {}
 
+            fonte = item.get(
+                "_fonte_antirrepeticao",
+                "não identificada",
+            )
+
             print(
                 "\nPauta ignorada por repetição:"
             )
+
             print(
                 "- Nova pauta:",
                 titulo,
             )
+
             print(
                 "- Motivo:",
                 resultado["motivo"],
             )
+
             print(
                 "- Conteúdo existente:",
                 item.get(
                     "titulo",
                     "Não identificado",
                 ),
+            )
+
+            print(
+                "- Fonte:",
+                fonte,
             )
 
             continue
@@ -417,13 +496,24 @@ def filtrar_pautas(pautas):
 
 
 if __name__ == "__main__":
-    historico = carregar_historico()
+    publicados = carregar_historico()
+    rascunhos = carregar_rascunhos()
 
     print(
         "Motor de pautas iniciado com sucesso."
     )
 
     print(
-        "Itens registrados no histórico:",
-        len(historico),
+        "Publicados registrados:",
+        len(publicados),
+    )
+
+    print(
+        "Rascunhos registrados:",
+        len(rascunhos),
+    )
+
+    print(
+        "Total protegido contra repetição:",
+        len(publicados) + len(rascunhos),
     )
