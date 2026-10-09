@@ -14,7 +14,14 @@ from google.genai import types
 # ============================================================
 
 MODELOS_IMAGEM = [
-    "gemini-3.1-flash-image",
+    {
+        "modelo": "gemini-3.1-flash-image",
+        "resolucao": "2K",
+    },
+    {
+        "modelo": "gemini-3.1-flash-lite-image",
+        "resolucao": "1K",
+    },
 ]
 
 PASTA_IMAGENS = Path("data/imagens")
@@ -347,6 +354,7 @@ def gerar_com_modelo(
     client,
     modelo,
     prompt,
+    resolucao,
 ):
     """
     Solicita uma imagem ao Gemini usando
@@ -354,7 +362,8 @@ def gerar_com_modelo(
     """
 
     print(
-        f"Enviando solicitação para {modelo}...",
+        f"Enviando solicitação para {modelo} "
+        f"em {resolucao}...",
         flush=True,
     )
 
@@ -362,12 +371,12 @@ def gerar_com_modelo(
         model=modelo,
         contents=[prompt],
         config=types.GenerateContentConfig(
-    response_modalities=["IMAGE"],
-    image_config=types.ImageConfig(
-        aspect_ratio=FORMATO_IMAGEM,
-        image_size=RESOLUCAO_IMAGEM,
-    ),
-),
+            response_modalities=["IMAGE"],
+            image_config=types.ImageConfig(
+                aspect_ratio=FORMATO_IMAGEM,
+                image_size=resolucao,
+            ),
+        ),
     )
 
     print(
@@ -469,14 +478,17 @@ def gerar_imagem_destacada(
     print("Resolução:", dados["resolucao"])
     print()
 
-    for modelo in MODELOS_IMAGEM:
+    for configuracao in MODELOS_IMAGEM:
 
-        print(
-            f"Tentando modelo de imagem: "
-            f"{modelo}"
-        )
+    modelo = configuracao["modelo"]
+    resolucao = configuracao["resolucao"]
 
-        tentativas = 3
+    print(
+        f"Tentando modelo de imagem: "
+        f"{modelo} ({resolucao})"
+    )
+
+    tentativas = 3
 
         for tentativa in range(
             1,
@@ -485,12 +497,13 @@ def gerar_imagem_destacada(
 
             try:
                 bytes_imagem = (
-                    gerar_com_modelo(
-                        client=client,
-                        modelo=modelo,
-                        prompt=dados["prompt"],
-                    )
-                )
+    gerar_com_modelo(
+        client=client,
+        modelo=modelo,
+        prompt=dados["prompt"],
+        resolucao=resolucao,
+    )
+)
 
                 with open(
                     caminho,
