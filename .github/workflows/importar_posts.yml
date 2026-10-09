@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Sincronizar posts publicados
+      - name: Sincronizar publicados e rascunhos
         env:
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
@@ -32,22 +32,23 @@ jobs:
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
         run: python src/importar_posts.py
 
-      - name: Verificar alteração do histórico
-        id: historico
+      - name: Verificar alterações
+        id: dados
         run: |
-          if git diff --quiet -- data/historico.json; then
-            echo "alterado=false" >> "$GITHUB_OUTPUT"
-            echo "Histórico sem alterações."
-          else
+          if [ -n "$(git status --porcelain -- data/historico.json data/rascunhos.json)" ]; then
             echo "alterado=true" >> "$GITHUB_OUTPUT"
-            echo "Histórico atualizado."
+            echo "Dados do Blogger possuem alterações."
+            git status --short -- data/historico.json data/rascunhos.json
+          else
+            echo "alterado=false" >> "$GITHUB_OUTPUT"
+            echo "Histórico e rascunhos sem alterações."
           fi
 
-      - name: Salvar histórico no repositório
-        if: steps.historico.outputs.alterado == 'true'
+      - name: Salvar dados no repositório
+        if: steps.dados.outputs.alterado == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/historico.json
-          git commit -m "Atualizar histórico de posts do Blogger"
+          git add data/historico.json data/rascunhos.json
+          git commit -m "Atualizar publicados e rascunhos do Blogger"
           git push
