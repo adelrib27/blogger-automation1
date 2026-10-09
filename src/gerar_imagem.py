@@ -458,14 +458,14 @@ def gerar_imagem_destacada(
     )
 
     client = genai.Client(
-    api_key=api_key,
-    http_options=types.HttpOptions(
-        timeout=90000,
-        retry_options=types.HttpRetryOptions(
-            attempts=1,
+        api_key=api_key,
+        http_options=types.HttpOptions(
+            timeout=90000,
+            retry_options=types.HttpRetryOptions(
+                attempts=1,
+            ),
         ),
-    ),
-)
+    )
 
     ultimo_erro = None
 
@@ -475,20 +475,23 @@ def gerar_imagem_destacada(
     )
     print("Arquivo:", dados["nome_arquivo"])
     print("Formato:", dados["formato"])
-    print("Resolução:", dados["resolucao"])
+    print(
+        "Resolução preferencial:",
+        dados["resolucao"],
+    )
     print()
 
     for configuracao in MODELOS_IMAGEM:
 
-    modelo = configuracao["modelo"]
-    resolucao = configuracao["resolucao"]
+        modelo = configuracao["modelo"]
+        resolucao = configuracao["resolucao"]
 
-    print(
-        f"Tentando modelo de imagem: "
-        f"{modelo} ({resolucao})"
-    )
+        print(
+            f"Tentando modelo de imagem: "
+            f"{modelo} ({resolucao})"
+        )
 
-    tentativas = 3
+        tentativas = 3
 
         for tentativa in range(
             1,
@@ -496,14 +499,12 @@ def gerar_imagem_destacada(
         ):
 
             try:
-                bytes_imagem = (
-    gerar_com_modelo(
-        client=client,
-        modelo=modelo,
-        prompt=dados["prompt"],
-        resolucao=resolucao,
-    )
-)
+                bytes_imagem = gerar_com_modelo(
+                    client=client,
+                    modelo=modelo,
+                    prompt=dados["prompt"],
+                    resolucao=resolucao,
+                )
 
                 with open(
                     caminho,
@@ -526,6 +527,7 @@ def gerar_imagem_destacada(
                     "Imagem gerada com sucesso."
                 )
                 print("Modelo:", modelo)
+                print("Resolução:", resolucao)
                 print("Caminho:", caminho)
                 print(
                     "Tamanho:",
@@ -536,6 +538,7 @@ def gerar_imagem_destacada(
                     **dados,
                     "gerada": True,
                     "modelo": modelo,
+                    "resolucao": resolucao,
                     "caminho": str(caminho),
                     "tamanho_bytes": tamanho,
                     "erro": None,
@@ -616,9 +619,11 @@ def gerar_imagem_destacada(
         "modelo": None,
         "caminho": None,
         "tamanho_bytes": 0,
-        "erro": str(ultimo_erro)
-        if ultimo_erro
-        else "Erro desconhecido.",
+        "erro": (
+            str(ultimo_erro)
+            if ultimo_erro
+            else "Erro desconhecido."
+        ),
     }
 
 
