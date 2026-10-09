@@ -376,7 +376,7 @@ def possui_incompatibilidade_forte(
     temas_produto,
 ):
     for tema_artigo in temas_artigo:
-        incompatíveis = (
+        incompativeis = (
             INCOMPATIBILIDADES_FORTES.get(
                 tema_artigo,
                 set(),
@@ -384,7 +384,7 @@ def possui_incompatibilidade_forte(
         )
 
         for tema_produto in temas_produto:
-            if tema_produto in incompatíveis:
+            if tema_produto in incompativeis:
                 return True
 
     return False
@@ -515,7 +515,6 @@ def selecionar_produtos(
     )
 
     avaliados = []
-
     nomes_usados = set()
 
     for produto in produtos:
@@ -541,7 +540,6 @@ def selecionar_produtos(
             continue
 
         item = dict(produto)
-
         item["pontuacao"] = pontuacao
 
         avaliados.append(
@@ -553,7 +551,30 @@ def selecionar_produtos(
         reverse=True,
     )
 
-    return avaliados[:limite]
+    if not avaliados:
+        return []
+
+    melhor_pontuacao = avaliados[0][
+        "pontuacao"
+    ]
+
+    # Filtro dinâmico:
+    # além da pontuação mínima absoluta,
+    # produtos secundários precisam alcançar
+    # pelo menos 45% da pontuação do melhor.
+    limite_relativo = max(
+        pontuacao_minima,
+        int(melhor_pontuacao * 0.45),
+    )
+
+    selecionados = [
+        produto
+        for produto in avaliados
+        if produto["pontuacao"]
+        >= limite_relativo
+    ]
+
+    return selecionados[:limite]
 
 
 def exibir_resultado(
