@@ -6,6 +6,7 @@ from seo import preparar_seo
 from gerar_artigo import criar_estrutura_artigo, validar_artigo
 from gerar_imagem import preparar_imagem
 from criar_rascunho import criar_rascunho
+from links_internos import adicionar_links_internos
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -180,6 +181,7 @@ def executar():
         ),
     )
 
+    # Primeiro validamos o conteúdo produzido pela IA.
     validacao = validar_artigo(artigo)
 
     if not validacao["valido"]:
@@ -192,6 +194,60 @@ def executar():
             "\nNada foi enviado ao Blogger."
         )
         return
+
+    print(
+        "\nArtigo aprovado antes dos links internos."
+    )
+
+    # Os links internos são adicionados somente depois
+    # da geração e validação do artigo.
+    #
+    # As URLs vêm exclusivamente do historico.json.
+    resultado_links = adicionar_links_internos(
+        conteudo_html=artigo["conteudo_html"],
+        titulo=seo["titulo"],
+        palavra_chave=pauta["palavra_chave"],
+        categoria=pauta.get(
+            "categoria",
+            "Casa e Decoração",
+        ),
+        limite=3,
+    )
+
+    artigo["conteudo_html"] = resultado_links[
+        "conteudo_html"
+    ]
+
+    print("\n=== LINKS INTERNOS ===")
+    print(
+        "Quantidade inserida:",
+        resultado_links["quantidade"],
+    )
+
+    if resultado_links["links"]:
+        for numero, link in enumerate(
+            resultado_links["links"],
+            start=1,
+        ):
+            print()
+            print(f"Link {numero}:")
+            print(
+                "Título:",
+                link["titulo"],
+            )
+            print(
+                "URL:",
+                link["url"],
+            )
+            print(
+                "Pontuação:",
+                link["pontuacao"],
+            )
+    else:
+        print(
+            "Nenhum post suficientemente relacionado "
+            "foi encontrado."
+        )
 
     imagem = preparar_imagem(
         titulo=seo["titulo"],
@@ -207,6 +263,7 @@ def executar():
         "seo": seo,
         "artigo": artigo,
         "imagem": imagem,
+        "links_internos": resultado_links,
     }
 
     print("\n=== PACOTE GERADO COM SUCESSO ===")
@@ -250,9 +307,13 @@ def executar():
             "Não informado",
         ),
     )
+    print(
+        "Links internos:",
+        resultado_links["quantidade"],
+    )
 
-    # Durante os testes, mantemos o artigo visível
-    # no log para revisão editorial.
+    # Durante os testes, mantemos o artigo completo
+    # visível no log para revisão editorial.
     print(
         "\n=== INÍCIO DO ARTIGO GERADO ==="
     )
@@ -309,13 +370,12 @@ def executar():
                 ),
             )
 
-            # IMPORTANTE:
-            # ainda não registramos o rascunho no
-            # historico.json.
-            #
-            # O histórico definitivo será atualizado
-            # somente quando houver uma publicação
-            # real confirmada.
+            # O rascunho ainda não entra no histórico.
+            # O histórico definitivo continua reservado
+            # para posts realmente publicados.
+            print(
+                "\nRascunho não registrado no histórico."
+            )
 
         except Exception as erro:
             print(
