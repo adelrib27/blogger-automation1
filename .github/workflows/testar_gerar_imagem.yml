@@ -24,10 +24,12 @@ jobs:
       - name: Verificar sintaxe
         run: python -m py_compile src/gerar_imagem.py
 
-      - name: Testar geração de imagem
+            - name: Testar geração de imagem
+        timeout-minutes: 5
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python src/gerar_imagem.py
+          PYTHONUNBUFFERED: "1"
+        run: python -u src/gerar_imagem.py
 
       - name: Mostrar imagem gerada
         if: always()
