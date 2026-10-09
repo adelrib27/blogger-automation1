@@ -24,7 +24,7 @@ jobs:
       - name: Verificar sintaxe
         run: python -m py_compile src/gerar_imagem.py
 
-            - name: Testar geração de imagem
+      - name: Testar geração de imagem
         timeout-minutes: 5
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
