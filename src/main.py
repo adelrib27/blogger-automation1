@@ -50,20 +50,6 @@ def escolher_pauta():
     """
     pautas = [
         {
-            "titulo": "Como organizar uma cozinha pequena de forma prática",
-            "palavra_chave": "organização de cozinha pequena",
-            "categoria": "Organização",
-            "descricao": (
-                "Ideias práticas para aproveitar melhor o espaço "
-                "e manter uma cozinha pequena organizada."
-            ),
-            "palavras_secundarias": [
-                "cozinha pequena",
-                "organização da cozinha",
-                "otimização de espaço",
-            ],
-        },
-        {
             "titulo": "Como deixar a sala mais bonita gastando pouco",
             "palavra_chave": "decoração de sala barata",
             "categoria": "Decoração",
