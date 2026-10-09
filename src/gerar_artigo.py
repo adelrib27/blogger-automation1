@@ -2,7 +2,7 @@ import html
 import os
 import re
 import time
-
+import unicodedata
 from google import genai
 
 
@@ -637,7 +637,33 @@ def extrair_texto_html(conteudo):
 
     return texto.strip()
 
+def normalizar_para_comparacao(texto):
+    """
+    Normaliza texto para comparações sem diferenciar acentos.
 
+    Exemplo:
+    iluminação -> iluminacao
+    """
+    texto = str(texto or "").lower()
+
+    texto = unicodedata.normalize(
+        "NFD",
+        texto,
+    )
+
+    texto = "".join(
+        caractere
+        for caractere in texto
+        if unicodedata.category(caractere) != "Mn"
+    )
+
+    texto = re.sub(
+        r"\s+",
+        " ",
+        texto,
+    )
+
+    return texto.strip()
 def validar_artigo(artigo):
     """
     Faz verificações antes de o artigo seguir para publicação.
@@ -767,11 +793,19 @@ def validar_artigo(artigo):
         )
 
     if palavra_chave:
-        ocorrencias_palavra_chave = (
-            texto_puro.lower().count(
-                palavra_chave.lower()
-            )
+    texto_normalizado = normalizar_para_comparacao(
+        texto_puro
+    )
+
+    palavra_chave_normalizada = normalizar_para_comparacao(
+        palavra_chave
+    )
+
+    ocorrencias_palavra_chave = (
+        texto_normalizado.count(
+            palavra_chave_normalizada
         )
+    )
 
         if ocorrencias_palavra_chave == 0:
             erros.append(
