@@ -113,11 +113,7 @@ def carregar_lista_json(caminho):
 
 def carregar_historico():
     """
-    Carrega somente os conteúdos publicados.
-
-    Este histórico continua sendo a fonte utilizada
-    pelos outros componentes que trabalham apenas
-    com posts realmente publicados.
+    Carrega somente conteúdos publicados.
     """
     return carregar_lista_json(
         ARQUIVO_HISTORICO
@@ -127,9 +123,6 @@ def carregar_historico():
 def carregar_rascunhos():
     """
     Carrega os rascunhos sincronizados do Blogger.
-
-    Eles participam somente da proteção
-    contra repetição.
     """
     return carregar_lista_json(
         ARQUIVO_RASCUNHOS
@@ -138,11 +131,11 @@ def carregar_rascunhos():
 
 def carregar_base_antirrepeticao():
     """
-    Monta a base usada pelo motor anti-repetição.
+    Monta a base do motor anti-repetição:
 
     PUBLICADOS + RASCUNHOS.
 
-    Os arquivos permanecem separados no disco.
+    Os arquivos continuam separados.
     """
     publicados = carregar_historico()
     rascunhos = carregar_rascunhos()
@@ -168,10 +161,7 @@ def carregar_base_antirrepeticao():
 
 def palavras(texto, remover_fracas=False):
     """
-    Transforma um texto em conjunto de palavras.
-
-    Quando remover_fracas=True, palavras genéricas são
-    descartadas para dar mais peso ao assunto real.
+    Transforma um texto em conjunto de palavras relevantes.
     """
     conjunto = set(
         normalizar(texto).split()
@@ -186,6 +176,75 @@ def palavras(texto, remover_fracas=False):
         }
 
     return conjunto
+
+
+def radical_simples(palavra):
+    """
+    Faz uma redução conservadora de algumas terminações
+    comuns para melhorar a comparação temática.
+
+    Não tenta substituir um algoritmo linguístico completo.
+    """
+    palavra = normalizar(palavra)
+
+    if len(palavra) <= 4:
+        return palavra
+
+    terminacoes = (
+        "ando",
+        "endo",
+        "indo",
+        "ados",
+        "adas",
+        "idos",
+        "idas",
+        "ado",
+        "ada",
+        "ido",
+        "ida",
+        "ar",
+        "er",
+        "ir",
+    )
+
+    for terminacao in terminacoes:
+        if (
+            palavra.endswith(terminacao)
+            and len(palavra) - len(terminacao) >= 4
+        ):
+            return palavra[
+                : -len(terminacao)
+            ]
+
+    # Singularização conservadora.
+    if (
+        palavra.endswith("s")
+        and len(palavra) > 5
+    ):
+        return palavra[:-1]
+
+    return palavra
+
+
+def nucleos(texto):
+    """
+    Extrai os núcleos relevantes de um título/palavra-chave.
+
+    Exemplo:
+    'Como organizar uma cozinha pequena'
+    tende a produzir conceitos como:
+    organizar, cozinha, pequena.
+    """
+    termos = palavras(
+        texto,
+        remover_fracas=True,
+    )
+
+    return {
+        radical_simples(termo)
+        for termo in termos
+        if radical_simples(termo)
+    }
 
 
 def similaridade(texto_a, texto_b):
@@ -220,9 +279,6 @@ def sobreposicao_assunto(texto_a, texto_b):
     """
     Mede quanto dos termos relevantes do texto menor
     aparece no outro texto.
-
-    Isso ajuda a identificar pautas sobre o mesmo assunto
-    mesmo quando os títulos são escritos de formas diferentes.
     """
     conjunto_a = palavras(
         texto_a,
@@ -252,13 +308,74 @@ def sobreposicao_assunto(texto_a, texto_b):
     return len(intersecao) / menor_conjunto
 
 
+def sobreposicao_nucleo(texto_a, texto_b):
+    """
+    Mede a sobreposição dos núcleos temáticos.
+
+    É uma camada adicional para identificar intenções
+    editoriais muito próximas mesmo quando existem
+    palavras complementares diferentes.
+    """
+    conjunto_a = nucleos(texto_a)
+    conjunto_b = nucleos(texto_b)
+
+    if not conjunto_a or not conjunto_b:
+        return {
+            "grau": 0.0,
+            "comuns": set(),
+        }
+
+    comuns = conjunto_a.intersection(
+        conjunto_b
+    )
+
+    menor = min(
+        len(conjunto_a),
+        len(conjunto_b),
+    )
+
+    if menor == 0:
+        return {
+            "grau": 0.0,
+            "comuns": set(),
+        }
+
+    return {
+        "grau": len(comuns) / menor,
+        "comuns": comuns,
+    }
+
+
+def mesmo_nucleo_tematico(texto_a, texto_b):
+    """
+    Detecta pautas com núcleo editorial muito próximo.
+
+    Para bloquear, exigimos pelo menos três conceitos
+    relevantes em comum. Isso reduz o risco de rejeitar
+    pautas apenas porque compartilham uma palavra genérica
+    como 'cozinha', 'sala' ou 'banheiro'.
+    """
+    resultado = sobreposicao_nucleo(
+        texto_a,
+        texto_b,
+    )
+
+    comuns = resultado["comuns"]
+    grau = resultado["grau"]
+
+    return (
+        len(comuns) >= 3
+        and grau >= 0.60
+    )
+
+
 def palavra_chave_no_titulo(
     palavra_chave,
     titulo,
 ):
     """
     Verifica se os termos relevantes da palavra-chave
-    aparecem de forma significativa no título existente.
+    aparecem significativamente no título existente.
     """
     termos_chave = palavras(
         palavra_chave,
@@ -297,13 +414,8 @@ def comparar_com_historico(
     limite_assunto=0.75,
 ):
     """
-    Compara uma nova pauta com:
-
-    - posts publicados;
-    - rascunhos existentes no Blogger.
-
-    Dessa forma, um assunto que ainda está em rascunho
-    também fica protegido contra duplicação.
+    Compara uma nova pauta com posts publicados
+    e rascunhos existentes no Blogger.
     """
     base_antirrepeticao = (
         carregar_base_antirrepeticao()
@@ -336,7 +448,7 @@ def comparar_com_historico(
                 "item": item,
             }
 
-        # 2. Mesma palavra-chave já registrada.
+        # 2. Mesma palavra-chave.
         if (
             palavra_normalizada
             and palavra_antiga
@@ -351,8 +463,8 @@ def comparar_com_historico(
                 "item": item,
             }
 
-        # 3. Palavra-chave atual já representada
-        # pelo título de um conteúdo existente.
+        # 3. Palavra-chave já representada
+        # pelo título existente.
         if (
             palavra_chave
             and palavra_chave_no_titulo(
@@ -369,7 +481,7 @@ def comparar_com_historico(
                 "item": item,
             }
 
-        # 4. Similaridade geral entre títulos.
+        # 4. Similaridade geral dos títulos.
         grau_similaridade = similaridade(
             titulo_normalizado,
             titulo_antigo,
@@ -402,6 +514,37 @@ def comparar_com_historico(
                 "item": item,
             }
 
+        # 6. Núcleo temático/intenção editorial.
+        if mesmo_nucleo_tematico(
+            titulo_normalizado,
+            titulo_antigo,
+        ):
+            return {
+                "repetida": True,
+                "motivo": (
+                    "núcleo temático muito semelhante"
+                ),
+                "item": item,
+            }
+
+        # 7. Também compara a palavra-chave atual
+        # diretamente com o título existente.
+        if (
+            palavra_chave
+            and mesmo_nucleo_tematico(
+                palavra_chave,
+                titulo_antigo,
+            )
+        ):
+            return {
+                "repetida": True,
+                "motivo": (
+                    "intenção da palavra-chave "
+                    "muito semelhante"
+                ),
+                "item": item,
+            }
+
     return {
         "repetida": False,
         "motivo": "",
@@ -415,8 +558,7 @@ def pauta_ja_utilizada(
     limite=0.60,
 ):
     """
-    Mantém compatibilidade com chamadas
-    existentes do sistema.
+    Mantém compatibilidade com chamadas existentes.
     """
     resultado = comparar_com_historico(
         titulo=titulo,
@@ -431,7 +573,7 @@ def filtrar_pautas(pautas):
     """
     Retorna somente pautas ainda não utilizadas.
 
-    Considera tanto publicados quanto rascunhos.
+    Considera publicados e rascunhos.
     """
     aprovadas = []
 
