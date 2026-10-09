@@ -305,16 +305,16 @@ def adicionar_links_internos(
 
 if __name__ == "__main__":
     links = selecionar_links_internos(
-        titulo=(
-            "Como organizar uma cozinha "
-            "pequena de forma prática"
-        ),
-        palavra_chave=(
-            "organização de cozinha pequena"
-        ),
-        categoria="Organização",
-        limite=3,
-    )
+    titulo=(
+        "Iluminação para sala de estar "
+        "aconchegante usando luz indireta"
+    ),
+    palavra_chave=(
+        "iluminação para sala"
+    ),
+    categoria="Iluminação",
+    limite=3,
+)
 
     print("=== TESTE DE LINKS INTERNOS ===")
     print(
