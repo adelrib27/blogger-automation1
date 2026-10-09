@@ -5,6 +5,7 @@ from pautas import filtrar_pautas
 from seo import preparar_seo
 from gerar_artigo import criar_estrutura_artigo, validar_artigo
 from gerar_imagem import preparar_imagem
+from criar_rascunho import criar_rascunho
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,8 +42,10 @@ def carregar_historico():
 
 def escolher_pauta():
     """
-    Pautas iniciais para testar o motor.
-    Depois esta etapa será alimentada automaticamente pela IA.
+    Pautas temporárias usadas durante a construção do sistema.
+
+    Depois esta etapa será substituída pelo motor automático
+    de geração e seleção de pautas.
     """
     pautas = [
         {
@@ -92,7 +95,9 @@ def escolher_pauta():
     disponiveis = filtrar_pautas(pautas)
 
     if not disponiveis:
-        raise RuntimeError("Nenhuma pauta inédita disponível.")
+        raise RuntimeError(
+            "Nenhuma pauta inédita disponível."
+        )
 
     return disponiveis[0]
 
@@ -102,9 +107,44 @@ def executar():
 
     config = carregar_config()
 
-    print("Blog:", config.get("nome_blog", "Não definido"))
-    print("Nicho:", config.get("nicho", "Não definido"))
-    print("Publicação automática:", config.get("publicacao_automatica", False))
+    nome_blog = config.get(
+        "nome_blog",
+        "Não definido",
+    )
+
+    nicho = config.get(
+        "nicho",
+        "Não definido",
+    )
+
+    criar_rascunho_ativo = config.get(
+        "criar_rascunho_blogger",
+        False,
+    )
+
+    publicacao_automatica = config.get(
+        "publicacao_automatica",
+        False,
+    )
+
+    print("Blog:", nome_blog)
+    print("Nicho:", nicho)
+    print(
+        "Criar rascunho no Blogger:",
+        criar_rascunho_ativo,
+    )
+    print(
+        "Publicação automática:",
+        publicacao_automatica,
+    )
+
+    # Proteção adicional:
+    # publicação automática ainda não foi implementada.
+    if publicacao_automatica:
+        raise RuntimeError(
+            "Publicação automática está habilitada na configuração, "
+            "mas esta etapa ainda não foi liberada pelo sistema."
+        )
 
     pauta = escolher_pauta()
 
@@ -117,29 +157,49 @@ def executar():
         titulo=pauta["titulo"],
         palavra_chave=pauta["palavra_chave"],
         descricao=pauta["descricao"],
-        palavras_secundarias=pauta.get("palavras_secundarias", []),
-        titulo_max=seo_config.get("titulo_max", 60),
-        meta_max=seo_config.get("meta_description_max", 155),
+        palavras_secundarias=pauta.get(
+            "palavras_secundarias",
+            [],
+        ),
+        titulo_max=seo_config.get(
+            "titulo_max",
+            60,
+        ),
+        meta_max=seo_config.get(
+            "meta_description_max",
+            155,
+        ),
     )
 
     artigo = criar_estrutura_artigo(
         titulo=seo["titulo"],
         palavra_chave=pauta["palavra_chave"],
-        categoria=pauta.get("categoria", "Casa e Decoração"),
+        categoria=pauta.get(
+            "categoria",
+            "Casa e Decoração",
+        ),
     )
 
     validacao = validar_artigo(artigo)
 
     if not validacao["valido"]:
         print("\nArtigo reprovado:")
+
         for erro in validacao["erros"]:
             print("-", erro)
+
+        print(
+            "\nNada foi enviado ao Blogger."
+        )
         return
 
     imagem = preparar_imagem(
         titulo=seo["titulo"],
         palavra_chave=pauta["palavra_chave"],
-        categoria=pauta.get("categoria", "Casa e Decoração"),
+        categoria=pauta.get(
+            "categoria",
+            "Casa e Decoração",
+        ),
     )
 
     pacote = {
@@ -152,24 +212,135 @@ def executar():
     print("\n=== PACOTE GERADO COM SUCESSO ===")
     print("Título:", seo["titulo"])
     print("Slug:", seo["slug"])
-    print("Meta description:", seo["meta_description"])
-    print("Palavra-chave:", pauta["palavra_chave"])
-    print("Categoria:", pauta.get("categoria"))
-    print("Imagem:", imagem["nome_arquivo"])
-    print("ALT:", imagem["alt_text"])
-    print("Artigo validado:", validacao["valido"])
+    print(
+        "Meta description:",
+        seo["meta_description"],
+    )
+    print(
+        "Palavra-chave:",
+        pauta["palavra_chave"],
+    )
+    print(
+        "Categoria:",
+        pauta.get("categoria"),
+    )
+    print(
+        "Imagem:",
+        imagem["nome_arquivo"],
+    )
+    print(
+        "ALT:",
+        imagem["alt_text"],
+    )
+    print(
+        "Artigo validado:",
+        validacao["valido"],
+    )
+    print(
+        "Quantidade de palavras:",
+        validacao.get(
+            "quantidade_palavras",
+            "Não informado",
+        ),
+    )
+    print(
+        "Quantidade de H2:",
+        validacao.get(
+            "quantidade_h2",
+            "Não informado",
+        ),
+    )
 
-    # Exibe o artigo completo apenas para revisão durante os testes.
-    print("\n=== INÍCIO DO ARTIGO GERADO ===")
+    # Durante os testes, mantemos o artigo visível
+    # no log para revisão editorial.
+    print(
+        "\n=== INÍCIO DO ARTIGO GERADO ==="
+    )
     print(artigo["conteudo_html"])
-    print("=== FIM DO ARTIGO GERADO ===")
+    print(
+        "=== FIM DO ARTIGO GERADO ==="
+    )
 
-    if config.get("publicacao_automatica", False):
-        print("\nPublicação automática habilitada.")
-        print("A conexão final com o Blogger será executada nesta etapa.")
+    if criar_rascunho_ativo:
+        print(
+            "\nEnvio de rascunho autorizado "
+            "pela configuração."
+        )
+
+        try:
+            resultado_blogger = criar_rascunho(
+                titulo=seo["titulo"],
+                conteudo_html=artigo[
+                    "conteudo_html"
+                ],
+                categoria=pauta.get(
+                    "categoria",
+                    "Casa e Decoração",
+                ),
+            )
+
+            pacote["blogger"] = resultado_blogger
+
+            print(
+                "\n=== RASCUNHO CRIADO NO BLOGGER ==="
+            )
+            print(
+                "Título:",
+                resultado_blogger.get(
+                    "titulo"
+                ),
+            )
+            print(
+                "Post ID:",
+                resultado_blogger.get(
+                    "id"
+                ),
+            )
+            print(
+                "Status:",
+                resultado_blogger.get(
+                    "status"
+                ),
+            )
+            print(
+                "URL:",
+                resultado_blogger.get(
+                    "url"
+                ),
+            )
+
+            # IMPORTANTE:
+            # ainda não registramos o rascunho no
+            # historico.json.
+            #
+            # O histórico definitivo será atualizado
+            # somente quando houver uma publicação
+            # real confirmada.
+
+        except Exception as erro:
+            print(
+                "\nERRO AO CRIAR RASCUNHO NO BLOGGER:"
+            )
+            print(erro)
+
+            print(
+                "\nO artigo não foi registrado "
+                "no histórico."
+            )
+
+            return pacote
+
     else:
-        print("\nMODO SEGURO ATIVO.")
-        print("Nenhum artigo será publicado automaticamente.")
+        print(
+            "\nMODO SEGURO ATIVO."
+        )
+        print(
+            "A criação de rascunho no Blogger "
+            "está desativada."
+        )
+        print(
+            "Nenhum conteúdo foi enviado ao Blogger."
+        )
 
     return pacote
 
