@@ -6,6 +6,7 @@ import unicodedata
 from pathlib import Path
 
 from google import genai
+from google.genai import types
 
 
 # ============================================================
@@ -348,7 +349,8 @@ def gerar_com_modelo(
     prompt,
 ):
     """
-    Solicita uma imagem a um modelo.
+    Solicita uma imagem ao Gemini usando
+    a Generate Content API.
     """
 
     print(
@@ -356,14 +358,18 @@ def gerar_com_modelo(
         flush=True,
     )
 
-    interaction = client.interactions.create(
+    response = client.models.generate_content(
         model=modelo,
-        input=prompt,
-        response_format={
-            "type": "image",
-            "aspect_ratio": FORMATO_IMAGEM,
-            "image_size": RESOLUCAO_IMAGEM,
-        },
+        contents=[prompt],
+        config=types.GenerateContentConfig(
+            response_modalities=["IMAGE"],
+            response_format={
+                "image": {
+                    "aspect_ratio": FORMATO_IMAGEM,
+                    "image_size": RESOLUCAO_IMAGEM,
+                }
+            },
+        ),
     )
 
     print(
@@ -371,8 +377,22 @@ def gerar_com_modelo(
         flush=True,
     )
 
-    return extrair_bytes_imagem(
-        interaction
+    for part in response.parts:
+        imagem = part.as_image()
+
+        if imagem is not None:
+            dados = getattr(
+                imagem,
+                "image_bytes",
+                None,
+            )
+
+            if dados:
+                return dados
+
+    raise RuntimeError(
+        "A API respondeu, mas nenhuma "
+        "imagem foi encontrada."
     )
 
 
@@ -431,8 +451,14 @@ def gerar_imagem_destacada(
     )
 
     client = genai.Client(
-        api_key=api_key
-    )
+    api_key=api_key,
+    http_options=types.HttpOptions(
+        timeout=90000,
+        retry_options=types.HttpRetryOptions(
+            attempts=1,
+        ),
+    ),
+)
 
     ultimo_erro = None
 
