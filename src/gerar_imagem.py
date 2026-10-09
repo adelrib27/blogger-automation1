@@ -13,11 +13,7 @@ from google import genai
 # ============================================================
 
 MODELOS_IMAGEM = [
-    "gemini-nano-banana-2.1",
     "gemini-3.1-flash-image",
-    "gemini-3.1-flash-lite-image",
-    "gemini-3-pro-image",
-    "gemini-2.5-flash-image",
 ]
 
 PASTA_IMAGENS = Path("data/imagens")
@@ -355,15 +351,24 @@ def gerar_com_modelo(
     Solicita uma imagem a um modelo.
     """
 
+    print(
+        f"Enviando solicitação para {modelo}...",
+        flush=True,
+    )
+
     interaction = client.interactions.create(
         model=modelo,
         input=prompt,
         response_format={
             "type": "image",
-            "mime_type": MIME_TYPE,
             "aspect_ratio": FORMATO_IMAGEM,
             "image_size": RESOLUCAO_IMAGEM,
         },
+    )
+
+    print(
+        "Resposta recebida da API.",
+        flush=True,
     )
 
     return extrair_bytes_imagem(
