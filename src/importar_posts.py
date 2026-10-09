@@ -10,6 +10,7 @@ ESCOPO_BLOGGER = "https://www.googleapis.com/auth/blogger"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 HISTORICO_PATH = BASE_DIR / "data" / "historico.json"
+RASCUNHOS_PATH = BASE_DIR / "data" / "rascunhos.json"
 
 TITULOS_INSTITUCIONAIS = {
     "política de privacidade",
@@ -90,21 +91,21 @@ def carregar_historico():
     )
 
 
-def salvar_historico(historico):
+def salvar_json(caminho, dados):
     """
-    Salva o histórico formatado em JSON.
+    Salva uma lista JSON formatada.
     """
-    HISTORICO_PATH.parent.mkdir(
+    caminho.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    with HISTORICO_PATH.open(
+    with caminho.open(
         "w",
         encoding="utf-8",
     ) as arquivo:
         json.dump(
-            historico,
+            dados,
             arquivo,
             ensure_ascii=False,
             indent=2,
@@ -113,9 +114,32 @@ def salvar_historico(historico):
         arquivo.write("\n")
 
 
-def listar_posts_publicados():
+def salvar_historico(historico):
     """
-    Consulta somente posts publicados no Blogger.
+    Salva somente posts publicados no histórico.
+    """
+    salvar_json(
+        HISTORICO_PATH,
+        historico,
+    )
+
+
+def salvar_rascunhos(rascunhos):
+    """
+    Salva separadamente os rascunhos existentes no Blogger.
+
+    Estes registros servem para o motor anti-repetição,
+    mas nunca para links internos.
+    """
+    salvar_json(
+        RASCUNHOS_PATH,
+        rascunhos,
+    )
+
+
+def listar_posts_por_status(status):
+    """
+    Consulta posts no Blogger pelo status solicitado.
 
     Não cria, edita, publica ou exclui conteúdo.
     """
@@ -128,7 +152,7 @@ def listar_posts_publicados():
     while True:
         parametros = {
             "blogId": blog_id,
-            "status": ["LIVE"],
+            "status": [status],
             "fetchBodies": False,
             "maxResults": 50,
         }
@@ -177,6 +201,20 @@ def listar_posts_publicados():
     return posts_encontrados
 
 
+def listar_posts_publicados():
+    """
+    Consulta somente posts publicados.
+    """
+    return listar_posts_por_status("LIVE")
+
+
+def listar_rascunhos():
+    """
+    Consulta somente rascunhos existentes no Blogger.
+    """
+    return listar_posts_por_status("DRAFT")
+
+
 def post_institucional(post):
     """
     Identifica páginas institucionais que não devem participar
@@ -191,7 +229,7 @@ def post_institucional(post):
 
 def registro_do_blogger(post):
     """
-    Converte um post real do Blogger para o formato
+    Converte um post publicado para o formato
     usado pelo histórico da automação.
 
     Campos desconhecidos não são inventados.
@@ -217,6 +255,55 @@ def registro_do_blogger(post):
         "palavra_chave": "",
         "origem": "blogger",
     }
+
+
+def registro_rascunho(post):
+    """
+    Converte um rascunho para o arquivo auxiliar
+    usado exclusivamente pelo anti-repetição.
+    """
+    labels = post.get("labels") or []
+
+    categoria = ""
+
+    if labels:
+        categoria = str(labels[0]).strip()
+
+    return {
+        "id": post.get("id", ""),
+        "titulo": post.get("titulo", ""),
+        "categoria": categoria,
+        "palavra_chave": "",
+        "status": "rascunho",
+        "origem": "blogger",
+    }
+
+
+def preparar_rascunhos(posts):
+    """
+    Prepara a lista atual de rascunhos editoriais.
+
+    Diferentemente do histórico, este arquivo é reconstruído
+    a cada sincronização para refletir o estado atual do Blogger.
+    """
+    resultado = []
+
+    for post in posts:
+        if post_institucional(post):
+            continue
+
+        titulo = str(
+            post.get("titulo") or ""
+        ).strip()
+
+        if not titulo:
+            continue
+
+        resultado.append(
+            registro_rascunho(post)
+        )
+
+    return resultado
 
 
 def sincronizar_historico(
@@ -308,16 +395,16 @@ def main():
         len(historico_atual),
     )
 
-    posts = listar_posts_publicados()
+    posts_publicados = listar_posts_publicados()
 
     print(
         "Posts publicados encontrados no Blogger:",
-        len(posts),
+        len(posts_publicados),
     )
 
     sincronizacao = sincronizar_historico(
         historico=historico_atual,
-        posts_publicados=posts,
+        posts_publicados=posts_publicados,
     )
 
     adicionados = sincronizacao[
@@ -392,6 +479,45 @@ def main():
         len(
             sincronizacao["historico"]
         ),
+    )
+
+    print(
+        "\n=== SINCRONIZAÇÃO DE RASCUNHOS ==="
+    )
+
+    posts_rascunhos = listar_rascunhos()
+
+    rascunhos = preparar_rascunhos(
+        posts_rascunhos
+    )
+
+    salvar_rascunhos(
+        rascunhos
+    )
+
+    print(
+        "Rascunhos encontrados no Blogger:",
+        len(posts_rascunhos),
+    )
+
+    print(
+        "Rascunhos editoriais registrados:",
+        len(rascunhos),
+    )
+
+    if rascunhos:
+        print(
+            "\nRascunhos protegidos contra repetição:"
+        )
+
+        for rascunho in rascunhos:
+            print(
+                "-",
+                rascunho.get("titulo"),
+            )
+
+    print(
+        "\ndata/rascunhos.json sincronizado."
     )
 
     print(
