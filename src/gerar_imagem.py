@@ -362,14 +362,12 @@ def gerar_com_modelo(
         model=modelo,
         contents=[prompt],
         config=types.GenerateContentConfig(
-            response_modalities=["IMAGE"],
-            response_format={
-                "image": {
-                    "aspect_ratio": FORMATO_IMAGEM,
-                    "image_size": RESOLUCAO_IMAGEM,
-                }
-            },
-        ),
+    response_modalities=["IMAGE"],
+    image_config=types.ImageConfig(
+        aspect_ratio=FORMATO_IMAGEM,
+        image_size=RESOLUCAO_IMAGEM,
+    ),
+),
     )
 
     print(
