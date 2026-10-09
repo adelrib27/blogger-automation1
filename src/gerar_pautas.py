@@ -1,7 +1,9 @@
 import json
 import os
+import random
 import re
 import time
+from pathlib import Path
 
 from google import genai
 
@@ -9,14 +11,21 @@ from pautas import comparar_com_historico
 
 
 # ============================================================
+# CAMINHOS
+# ============================================================
+
+ARQUIVO_PRODUTOS = Path("data/produtos.json")
+
+
+# ============================================================
 # MODELOS PARA GERAÇÃO DE PAUTAS
 # ============================================================
-#
+
 # A ordem importa.
 # Os modelos com maior cota ficam primeiro.
 # Se um modelo esgotar a cota ou ficar indisponível,
 # o sistema tenta automaticamente o próximo.
-#
+
 MODELOS_GEMINI = [
     "gemini-3.5-flash-lite",
     "gemini-3.1-flash-lite",
@@ -26,10 +35,140 @@ MODELOS_GEMINI = [
 ]
 
 
+# ============================================================
+# PRODUTOS
+# ============================================================
+
+def carregar_produtos():
+    """
+    Carrega os produtos ativos do catálogo.
+
+    O catálogo é a fonte oficial para:
+    - nome do produto;
+    - link afiliado;
+    - status ativo.
+
+    O Gemini nunca cria nem modifica links afiliados.
+    """
+
+    if not ARQUIVO_PRODUTOS.exists():
+        raise RuntimeError(
+            f"Arquivo de produtos não encontrado: "
+            f"{ARQUIVO_PRODUTOS}"
+        )
+
+    try:
+        with ARQUIVO_PRODUTOS.open(
+            "r",
+            encoding="utf-8",
+        ) as arquivo:
+            dados = json.load(arquivo)
+
+    except json.JSONDecodeError as erro:
+        raise RuntimeError(
+            "data/produtos.json contém JSON inválido."
+        ) from erro
+
+    if not isinstance(dados, list):
+        raise RuntimeError(
+            "data/produtos.json deve conter uma lista."
+        )
+
+    produtos = []
+
+    for produto in dados:
+        if not isinstance(produto, dict):
+            continue
+
+        nome = str(
+            produto.get("nome", "")
+        ).strip()
+
+        link = str(
+            produto.get("link_afiliado", "")
+        ).strip()
+
+        ativo = produto.get(
+            "ativo",
+            True,
+        )
+
+        if not nome:
+            continue
+
+        if not link:
+            continue
+
+        if ativo is not True:
+            continue
+
+        produtos.append(
+            {
+                "nome": nome,
+                "link_afiliado": link,
+                "ativo": True,
+            }
+        )
+
+    if not produtos:
+        raise RuntimeError(
+            "Nenhum produto ativo com link afiliado "
+            "foi encontrado em data/produtos.json."
+        )
+
+    return produtos
+
+
+def deduplicar_produtos(produtos):
+    """
+    Evita escolher duas vezes o mesmo produto quando
+    existem registros duplicados no catálogo.
+
+    O primeiro registro encontrado é preservado.
+    """
+
+    unicos = []
+    nomes_vistos = set()
+
+    for produto in produtos:
+        chave = re.sub(
+            r"\s+",
+            " ",
+            produto["nome"].strip().lower(),
+        )
+
+        if chave in nomes_vistos:
+            continue
+
+        nomes_vistos.add(chave)
+        unicos.append(produto)
+
+    return unicos
+
+
+def ordenar_produtos_para_tentativa(produtos):
+    """
+    Embaralha os produtos para que o blog não fique preso
+    sempre aos primeiros itens do catálogo.
+
+    A seleção definitiva ainda depende de uma pauta inédita.
+    """
+
+    produtos = list(produtos)
+    random.shuffle(produtos)
+
+    return produtos
+
+
+# ============================================================
+# LIMPEZA E VALIDAÇÃO DA RESPOSTA DO GEMINI
+# ============================================================
+
 def limpar_json_resposta(texto):
     """
     Limpa a resposta do Gemini e extrai o bloco JSON.
     """
+
     if not texto:
         return ""
 
@@ -59,8 +198,13 @@ def limpar_json_resposta(texto):
 
 def validar_pauta(pauta):
     """
-    Verifica se a pauta possui os campos necessários.
+    Verifica se a pauta possui os campos editoriais
+    necessários.
+
+    produto_principal não é aceito do Gemini.
+    Esse campo será anexado posteriormente pelo Python.
     """
+
     if not isinstance(pauta, dict):
         return False
 
@@ -76,16 +220,24 @@ def validar_pauta(pauta):
         if campo not in pauta:
             return False
 
-    if not str(pauta["titulo"]).strip():
+    if not str(
+        pauta["titulo"]
+    ).strip():
         return False
 
-    if not str(pauta["palavra_chave"]).strip():
+    if not str(
+        pauta["palavra_chave"]
+    ).strip():
         return False
 
-    if not str(pauta["categoria"]).strip():
+    if not str(
+        pauta["categoria"]
+    ).strip():
         return False
 
-    if not str(pauta["descricao"]).strip():
+    if not str(
+        pauta["descricao"]
+    ).strip():
         return False
 
     if not isinstance(
@@ -94,8 +246,54 @@ def validar_pauta(pauta):
     ):
         return False
 
+    palavras_secundarias = [
+        str(item).strip()
+        for item in pauta["palavras_secundarias"]
+        if str(item).strip()
+    ]
+
+    if not palavras_secundarias:
+        return False
+
+    pauta["titulo"] = str(
+        pauta["titulo"]
+    ).strip()
+
+    pauta["palavra_chave"] = str(
+        pauta["palavra_chave"]
+    ).strip()
+
+    pauta["categoria"] = str(
+        pauta["categoria"]
+    ).strip()
+
+    pauta["descricao"] = str(
+        pauta["descricao"]
+    ).strip()
+
+    pauta["palavras_secundarias"] = (
+        palavras_secundarias
+    )
+
+    # Segurança:
+    # mesmo que o modelo tente devolver esse campo,
+    # ele é removido. O produto oficial vem do catálogo.
+    pauta.pop(
+        "produto_principal",
+        None,
+    )
+
+    pauta.pop(
+        "link_afiliado",
+        None,
+    )
+
     return True
 
+
+# ============================================================
+# TRATAMENTO DE ERROS GEMINI
+# ============================================================
 
 def erro_de_cota(erro):
     """
@@ -104,6 +302,7 @@ def erro_de_cota(erro):
     Nesse caso não adianta esperar alguns segundos:
     o sistema deve passar imediatamente ao próximo modelo.
     """
+
     mensagem = str(erro).upper()
 
     return (
@@ -120,6 +319,7 @@ def erro_temporario(erro):
     Para esses erros vale a pena tentar novamente
     no mesmo modelo antes de usar o próximo.
     """
+
     mensagem = str(erro).upper()
 
     return (
@@ -129,6 +329,10 @@ def erro_temporario(erro):
     )
 
 
+# ============================================================
+# GERAÇÃO COM UM MODELO
+# ============================================================
+
 def gerar_candidatas_com_modelo(
     client,
     modelo,
@@ -137,29 +341,31 @@ def gerar_candidatas_com_modelo(
     """
     Tenta gerar as pautas usando um modelo específico.
 
-    Retorna:
-        lista de pautas válidas, se funcionar.
-
-    Pode lançar exceção para que a camada superior
-    decida se deve tentar outro modelo.
+    Retorna uma lista de pautas válidas.
     """
 
     tentativas = 3
     esperas = [5, 15]
 
-    for tentativa in range(1, tentativas + 1):
+    for tentativa in range(
+        1,
+        tentativas + 1,
+    ):
         try:
             print(
                 f"\nModelo: {modelo}"
             )
+
             print(
                 f"Tentativa {tentativa}/{tentativas} "
                 "para gerar novas pautas..."
             )
 
-            resposta = client.models.generate_content(
-                model=modelo,
-                contents=prompt,
+            resposta = (
+                client.models.generate_content(
+                    model=modelo,
+                    contents=prompt,
+                )
             )
 
             texto = resposta.text
@@ -217,21 +423,19 @@ def gerar_candidatas_com_modelo(
                 f"{erro}"
             )
 
-            # Cota esgotada:
-            # não desperdiça novas tentativas.
             if erro_de_cota(erro):
                 print(
                     f"Cota do modelo {modelo} "
                     "indisponível ou esgotada."
                 )
+
                 print(
                     "Pulando imediatamente "
                     "para o próximo modelo..."
                 )
+
                 raise
 
-            # Erro temporário:
-            # vale a pena tentar novamente.
             if erro_temporario(erro):
                 if tentativa >= tentativas:
                     print(
@@ -271,8 +475,6 @@ def gerar_candidatas_com_modelo(
                 or "resposta vazia" in mensagem
             )
 
-            # Resposta malformada:
-            # damos nova chance ao mesmo modelo.
             if erro_estrutural:
                 if tentativa >= tentativas:
                     print(
@@ -298,10 +500,8 @@ def gerar_candidatas_com_modelo(
 
                 continue
 
-            # Erro desconhecido:
-            # não insistimos no modelo.
             print(
-                f"Erro não recuperável no modelo "
+                "Erro não recuperável no modelo "
                 f"{modelo}."
             )
 
@@ -313,70 +513,90 @@ def gerar_candidatas_com_modelo(
     )
 
 
-def gerar_candidatas_gemini(
-    quantidade=8,
-    nicho="Casa e Decoração",
+# ============================================================
+# PROMPT DE PAUTA BASEADA EM PRODUTO
+# ============================================================
+
+def criar_prompt_produto(
+    produto,
+    quantidade,
+    nicho,
 ):
     """
-    Pede ao Gemini uma lista de pautas candidatas.
+    Cria o prompt editorial a partir de um produto real.
 
-    A decisão final sobre repetição NÃO fica com o Gemini.
-    As pautas serão comparadas posteriormente com
-    publicados e rascunhos pelo nosso próprio motor.
-
-    Se um modelo não estiver disponível, o sistema
-    tenta automaticamente o próximo da fila.
+    O produto orienta o assunto, mas o artigo não deve
+    parecer um anúncio ou uma review comercial.
     """
 
-    api_key = os.getenv(
-        "GEMINI_API_KEY"
-    )
+    nome_produto = produto["nome"]
 
-    if not api_key:
-        raise RuntimeError(
-            "GEMINI_API_KEY não encontrada."
-        )
-
-    client = genai.Client(
-        api_key=api_key
-    )
-
-    prompt = f"""
+    return f"""
 Você é um estrategista editorial especializado em conteúdo útil,
 SEO e planejamento de pautas para blogs brasileiros.
 
-Crie {quantidade} pautas diferentes para um blog do nicho:
+O blog pertence ao nicho:
 
 {nicho}
 
-O blog publica conteúdos úteis sobre casa, decoração,
-organização, ambientes, móveis, iluminação, cozinha,
-quarto, banheiro, sala, lavanderia e assuntos relacionados.
+PRODUTO PRINCIPAL DISPONÍVEL NO CATÁLOGO:
+
+{nome_produto}
 
 OBJETIVO:
 
-Criar pautas com intenção de busca clara e potencial para
-responder dúvidas reais de pessoas pesquisando no Google.
+Crie {quantidade} pautas editoriais diferentes relacionadas de forma
+direta e natural ao produto acima.
+
+A pauta deve nascer de um problema, necessidade, dúvida, ambiente,
+rotina ou intenção de busca em que esse produto possa ser apresentado
+posteriormente como uma solução útil dentro do artigo.
+
+IMPORTANTE:
+
+O artigo final não será uma simples propaganda do produto.
+Ele deverá responder de verdade à intenção de busca do leitor.
+
+O produto principal será inserido posteriormente pelo nosso sistema.
+Você NÃO deve criar link, URL, preço, desconto ou oferta.
 
 REGRAS:
 
 - Escreva em português do Brasil.
+- Todas as pautas devem ter relação clara com o produto principal.
 - Crie assuntos específicos e úteis.
+- Priorize intenção de busca informacional com possibilidade comercial natural.
+- O título deve funcionar como título editorial para Google.
+- A palavra-chave principal deve representar uma busca natural.
+- A descrição deve explicar claramente o que o artigo entregará.
+- Gere de 3 a 5 palavras-chave secundárias por pauta.
 - Evite títulos genéricos.
 - Evite títulos sensacionalistas.
 - Evite clickbait.
 - Não use datas no título.
 - Não use preços.
 - Não invente pesquisas ou estatísticas.
-- Não use nomes de marcas.
-- Não crie títulos de review de produtos específicos.
-- Não repita o mesmo assunto dentro da lista.
-- Varie os ambientes e problemas abordados.
+- Não invente características que não estejam presentes no nome do produto.
+- Não invente marcas.
+- Não crie URLs.
+- Não crie links afiliados.
+- Não escreva o link do produto.
+- Não crie títulos no formato "review".
+- Não crie títulos no formato "vale a pena".
+- Não transforme o título do vendedor no título do artigo.
+- Não faça todas as pautas com o nome exato do produto.
+- Não repita o mesmo ângulo dentro da lista.
 - Priorize pautas evergreen.
-- A palavra-chave principal deve representar uma busca natural.
-- O título deve responder ou desenvolver essa intenção de busca.
-- A descrição deve explicar claramente o que o artigo entregará.
-- Gere de 3 a 5 palavras-chave secundárias por pauta.
+- O produto deve poder entrar naturalmente no assunto posteriormente.
+
+EXEMPLO DE RACIOCÍNIO:
+
+Se o produto fosse um mop giratório, uma pauta adequada poderia tratar
+de como facilitar a limpeza do piso ou como organizar uma rotina prática
+de limpeza da casa.
+
+Uma pauta inadequada seria sobre decoração de parede, pois o produto
+não teria relação natural com o assunto.
 
 CATEGORIAS PERMITIDAS:
 
@@ -397,9 +617,9 @@ Use exatamente esta estrutura:
 
 [
   {{
-    "titulo": "Título da pauta",
+    "titulo": "Título editorial da pauta",
     "palavra_chave": "palavra-chave principal",
-    "categoria": "Organização",
+    "categoria": "Categoria permitida",
     "descricao": "Descrição objetiva da pauta.",
     "palavras_secundarias": [
       "termo relacionado 1",
@@ -409,10 +629,49 @@ Use exatamente esta estrutura:
   }}
 ]
 
+Não inclua produto_principal no JSON.
+Não inclua link_afiliado no JSON.
 Não escreva Markdown.
 Não use ```json.
 Não escreva explicações antes ou depois do JSON.
 """
+
+
+# ============================================================
+# GERAÇÃO DE CANDIDATAS PARA UM PRODUTO
+# ============================================================
+
+def gerar_candidatas_gemini(
+    produto,
+    quantidade=6,
+    nicho="Casa e Decoração",
+):
+    """
+    Pede ao Gemini pautas relacionadas especificamente
+    ao produto principal escolhido pelo código.
+
+    A decisão final sobre repetição continua pertencendo
+    ao nosso próprio motor.
+    """
+
+    api_key = os.getenv(
+        "GEMINI_API_KEY"
+    )
+
+    if not api_key:
+        raise RuntimeError(
+            "GEMINI_API_KEY não encontrada."
+        )
+
+    client = genai.Client(
+        api_key=api_key
+    )
+
+    prompt = criar_prompt_produto(
+        produto=produto,
+        quantidade=quantidade,
+        nicho=nicho,
+    )
 
     print(
         "\n=== FILA DE MODELOS PARA PAUTAS ==="
@@ -467,11 +726,19 @@ Não escreva explicações antes ou depois do JSON.
     )
 
 
-def selecionar_pauta_inedita(pautas):
-    """
-    Compara cada candidata com o histórico real do blog.
+# ============================================================
+# ANTI-REPETIÇÃO
+# ============================================================
 
-    Retorna a primeira pauta considerada inédita.
+def selecionar_pauta_inedita(
+    pautas,
+    produto_principal,
+):
+    """
+    Compara cada candidata com publicados e rascunhos.
+
+    Quando encontra uma pauta inédita, anexa o produto
+    principal usando exclusivamente os dados do catálogo.
     """
 
     print(
@@ -483,6 +750,7 @@ def selecionar_pauta_inedita(pautas):
         start=1,
     ):
         titulo = pauta["titulo"]
+
         palavra_chave = pauta[
             "palavra_chave"
         ]
@@ -495,10 +763,12 @@ def selecionar_pauta_inedita(pautas):
         print(
             f"\nCandidata {numero}:"
         )
+
         print(
             "Título:",
             titulo,
         )
+
         print(
             "Palavra-chave:",
             palavra_chave,
@@ -508,6 +778,7 @@ def selecionar_pauta_inedita(pautas):
             print(
                 "Resultado: REJEITADA"
             )
+
             print(
                 "Motivo:",
                 resultado["motivo"],
@@ -542,93 +813,200 @@ def selecionar_pauta_inedita(pautas):
         print(
             "Resultado: APROVADA"
         )
+
         print(
             "Motivo: pauta inédita"
         )
 
-        return pauta
+        pauta_final = dict(
+            pauta
+        )
+
+        pauta_final[
+            "produto_principal"
+        ] = {
+            "nome": produto_principal[
+                "nome"
+            ],
+            "link_afiliado": (
+                produto_principal[
+                    "link_afiliado"
+                ]
+            ),
+        }
+
+        return pauta_final
 
     return None
 
+
+# ============================================================
+# FLUXO PRINCIPAL
+# ============================================================
 
 def gerar_pauta_automatica(
     nicho="Casa e Decoração",
 ):
     """
-    Executa o fluxo completo:
+    Novo fluxo:
 
-    modelos Gemini
+    catálogo de produtos
         ->
-    validação
+    produto principal
+        ->
+    pautas SEO relacionadas ao produto
         ->
     anti-repetição
         ->
     pauta inédita
+        ->
+    produto principal anexado pelo Python
+
+    Se todas as pautas de um produto forem repetidas,
+    o sistema tenta outro produto do catálogo.
     """
 
     print(
         "\n=== GERAÇÃO AUTOMÁTICA DE PAUTA ==="
     )
 
-    candidatas = gerar_candidatas_gemini(
-        quantidade=8,
-        nicho=nicho,
+    produtos = carregar_produtos()
+
+    produtos = deduplicar_produtos(
+        produtos
+    )
+
+    produtos = ordenar_produtos_para_tentativa(
+        produtos
     )
 
     print(
-        f"\nPautas válidas geradas: "
-        f"{len(candidatas)}"
+        "\nProdutos ativos disponíveis:",
+        len(produtos),
     )
 
-    escolhida = selecionar_pauta_inedita(
-        candidatas
-    )
+    if not produtos:
+        raise RuntimeError(
+            "Nenhum produto disponível para "
+            "originar uma pauta."
+        )
 
-    if escolhida is None:
+    for numero_produto, produto in enumerate(
+        produtos,
+        start=1,
+    ):
         print(
-            "\nNenhuma das pautas geradas "
-            "passou pelo anti-repetição."
+            "\n=================================================="
         )
 
         print(
-            "Gerando um segundo lote..."
+            f"PRODUTO {numero_produto}/"
+            f"{len(produtos)}"
         )
 
-        candidatas = gerar_candidatas_gemini(
-            quantidade=8,
-            nicho=nicho,
+        print(
+            "=================================================="
+        )
+
+        print(
+            "Produto principal:",
+            produto["nome"],
+        )
+
+        try:
+            candidatas = gerar_candidatas_gemini(
+                produto=produto,
+                quantidade=6,
+                nicho=nicho,
+            )
+
+        except Exception as erro:
+            print(
+                "\nNão foi possível gerar pautas "
+                "para este produto."
+            )
+
+            print(
+                "Erro:",
+                erro,
+            )
+
+            print(
+                "Tentando outro produto do catálogo..."
+            )
+
+            continue
+
+        print(
+            f"\nPautas válidas geradas: "
+            f"{len(candidatas)}"
         )
 
         escolhida = selecionar_pauta_inedita(
-            candidatas
+            pautas=candidatas,
+            produto_principal=produto,
         )
 
-    if escolhida is None:
-        raise RuntimeError(
-            "Não foi possível encontrar "
-            "uma pauta inédita."
+        if escolhida is None:
+            print(
+                "\nTodas as pautas deste produto "
+                "foram rejeitadas pelo "
+                "anti-repetição."
+            )
+
+            print(
+                "Tentando outro produto "
+                "do catálogo..."
+            )
+
+            continue
+
+        print(
+            "\n=== PAUTA AUTOMÁTICA ESCOLHIDA ==="
         )
 
-    print(
-        "\n=== PAUTA AUTOMÁTICA ESCOLHIDA ==="
-    )
-    print(
-        "Título:",
-        escolhida["titulo"],
-    )
-    print(
-        "Palavra-chave:",
-        escolhida[
-            "palavra_chave"
-        ],
-    )
-    print(
-        "Categoria:",
-        escolhida["categoria"],
+        print(
+            "Produto principal:",
+            escolhida[
+                "produto_principal"
+            ]["nome"],
+        )
+
+        print(
+            "Título:",
+            escolhida["titulo"],
+        )
+
+        print(
+            "Palavra-chave:",
+            escolhida[
+                "palavra_chave"
+            ],
+        )
+
+        print(
+            "Categoria:",
+            escolhida["categoria"],
+        )
+
+        print(
+            "Link afiliado preservado:",
+            escolhida[
+                "produto_principal"
+            ]["link_afiliado"],
+        )
+
+        return escolhida
+
+    raise RuntimeError(
+        "Nenhum produto do catálogo conseguiu "
+        "originar uma pauta inédita."
     )
 
-    return escolhida
 
+# ============================================================
+# TESTE MANUAL
+# ============================================================
 
 if __name__ == "__main__":
     pauta = gerar_pauta_automatica()
