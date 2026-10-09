@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from pautas import filtrar_pautas
+from gerar_pautas import gerar_pauta_automatica
 from seo import preparar_seo
 from gerar_artigo import criar_estrutura_artigo, validar_artigo
 from gerar_imagem import preparar_imagem
@@ -41,52 +41,15 @@ def carregar_historico():
     return []
 
 
-def escolher_pauta():
+def escolher_pauta(nicho):
     """
-    Pautas temporárias usadas durante a construção do sistema.
-
-    Depois esta etapa será substituída pelo motor automático
-    de geração e seleção de pautas.
+    Gera automaticamente pautas com Gemini e seleciona
+    uma pauta inédita usando o histórico real do blog.
     """
-    pautas = [
-        {
-            "titulo": "Como deixar a sala mais bonita gastando pouco",
-            "palavra_chave": "decoração de sala barata",
-            "categoria": "Decoração",
-            "descricao": (
-                "Dicas simples para transformar a decoração da sala "
-                "sem gastar muito."
-            ),
-            "palavras_secundarias": [
-                "decoração barata",
-                "sala pequena",
-                "decoração de sala",
-            ],
-        },
-        {
-            "titulo": "Ideias para organizar banheiro pequeno",
-            "palavra_chave": "organização de banheiro pequeno",
-            "categoria": "Organização",
-            "descricao": (
-                "Soluções práticas para organizar produtos e aproveitar "
-                "melhor o espaço de banheiros pequenos."
-            ),
-            "palavras_secundarias": [
-                "banheiro pequeno",
-                "organizador de banheiro",
-                "organização da casa",
-            ],
-        },
-    ]
 
-    disponiveis = filtrar_pautas(pautas)
-
-    if not disponiveis:
-        raise RuntimeError(
-            "Nenhuma pauta inédita disponível."
-        )
-
-    return disponiveis[0]
+    return gerar_pauta_automatica(
+        nicho=nicho,
+    )
 
 
 def executar():
@@ -101,7 +64,7 @@ def executar():
 
     nicho = config.get(
         "nicho",
-        "Não definido",
+        "Casa e Decoração",
     )
 
     criar_rascunho_ativo = config.get(
@@ -126,17 +89,34 @@ def executar():
     )
 
     # Proteção adicional:
-    # publicação automática ainda não foi implementada.
+    # publicação automática ainda não foi liberada.
     if publicacao_automatica:
         raise RuntimeError(
             "Publicação automática está habilitada na configuração, "
             "mas esta etapa ainda não foi liberada pelo sistema."
         )
 
-    pauta = escolher_pauta()
+    print(
+        "\nSelecionando uma pauta inédita automaticamente..."
+    )
+
+    pauta = escolher_pauta(
+        nicho=nicho,
+    )
 
     print("\nPauta escolhida:")
     print(pauta["titulo"])
+    print(
+        "Palavra-chave:",
+        pauta["palavra_chave"],
+    )
+    print(
+        "Categoria:",
+        pauta.get(
+            "categoria",
+            "Casa e Decoração",
+        ),
+    )
 
     seo_config = config.get("seo", {})
 
@@ -167,7 +147,6 @@ def executar():
         ),
     )
 
-    # Primeiro validamos o conteúdo produzido pela IA.
     validacao = validar_artigo(artigo)
 
     if not validacao["valido"]:
@@ -181,58 +160,40 @@ def executar():
         )
         return
 
-    print(
-        "\nArtigo aprovado antes dos links internos."
-    )
+    historico = carregar_historico()
 
-    # Os links internos são adicionados somente depois
-    # da geração e validação do artigo.
-    #
-    # As URLs vêm exclusivamente do historico.json.
     resultado_links = adicionar_links_internos(
         conteudo_html=artigo["conteudo_html"],
-        titulo=seo["titulo"],
+        historico=historico,
+        titulo_atual=seo["titulo"],
         palavra_chave=pauta["palavra_chave"],
         categoria=pauta.get(
             "categoria",
             "Casa e Decoração",
         ),
-        limite=3,
     )
 
     artigo["conteudo_html"] = resultado_links[
         "conteudo_html"
     ]
 
-    print("\n=== LINKS INTERNOS ===")
+    artigo["links_internos"] = resultado_links[
+        "links"
+    ]
+
     print(
-        "Quantidade inserida:",
-        resultado_links["quantidade"],
+        "\nLinks internos adicionados:",
+        len(artigo["links_internos"]),
     )
 
-    if resultado_links["links"]:
-        for numero, link in enumerate(
-            resultado_links["links"],
-            start=1,
-        ):
-            print()
-            print(f"Link {numero}:")
-            print(
-                "Título:",
-                link["titulo"],
-            )
-            print(
-                "URL:",
-                link["url"],
-            )
-            print(
-                "Pontuação:",
-                link["pontuacao"],
-            )
-    else:
+    for link in artigo["links_internos"]:
         print(
-            "Nenhum post suficientemente relacionado "
-            "foi encontrado."
+            "-",
+            link.get("titulo", ""),
+        )
+        print(
+            "  URL:",
+            link.get("url", ""),
         )
 
     imagem = preparar_imagem(
@@ -249,12 +210,17 @@ def executar():
         "seo": seo,
         "artigo": artigo,
         "imagem": imagem,
-        "links_internos": resultado_links,
     }
 
     print("\n=== PACOTE GERADO COM SUCESSO ===")
-    print("Título:", seo["titulo"])
-    print("Slug:", seo["slug"])
+    print(
+        "Título:",
+        seo["titulo"],
+    )
+    print(
+        "Slug:",
+        seo["slug"],
+    )
     print(
         "Meta description:",
         seo["meta_description"],
@@ -265,7 +231,9 @@ def executar():
     )
     print(
         "Categoria:",
-        pauta.get("categoria"),
+        pauta.get(
+            "categoria",
+        ),
     )
     print(
         "Imagem:",
@@ -295,15 +263,17 @@ def executar():
     )
     print(
         "Links internos:",
-        resultado_links["quantidade"],
+        len(artigo["links_internos"]),
     )
 
-    # Durante os testes, mantemos o artigo completo
-    # visível no log para revisão editorial.
+    # Durante os testes, mantemos o artigo visível
+    # no log para revisão editorial.
     print(
         "\n=== INÍCIO DO ARTIGO GERADO ==="
     )
-    print(artigo["conteudo_html"])
+    print(
+        artigo["conteudo_html"]
+    )
     print(
         "=== FIM DO ARTIGO GERADO ==="
     )
@@ -358,10 +328,7 @@ def executar():
 
             # O rascunho ainda não entra no histórico.
             # O histórico definitivo continua reservado
-            # para posts realmente publicados.
-            print(
-                "\nRascunho não registrado no histórico."
-            )
+            # para publicações reais confirmadas.
 
         except Exception as erro:
             print(
