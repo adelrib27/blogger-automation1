@@ -180,6 +180,61 @@ def palavras(texto, remover_fracas=False):
 
 def radical_simples(palavra):
     """
+    Faz uma normalização conservadora para comparação temática.
+
+    Mantém verbos no infinitivo intactos para que
+    'organizar' continue compatível com 'organizar'.
+    """
+    palavra = normalizar(palavra)
+
+    if len(palavra) <= 4:
+        return palavra
+    equivalencias = {
+        "pequena": "pequeno",
+        "pequenas": "pequeno",
+        "pequenos": "pequeno",
+    }
+
+    if palavra in equivalencias:
+        return equivalencias[palavra]
+    # Mantém infinitivos intactos.
+    if palavra.endswith(
+        ("ar", "er", "ir")
+    ):
+        return palavra
+
+    terminacoes = (
+        "ando",
+        "endo",
+        "indo",
+        "ados",
+        "adas",
+        "idos",
+        "idas",
+        "ado",
+        "ada",
+        "ido",
+        "ida",
+    )
+
+    for terminacao in terminacoes:
+        if (
+            palavra.endswith(terminacao)
+            and len(palavra) - len(terminacao) >= 4
+        ):
+            return palavra[
+                : -len(terminacao)
+            ]
+
+    # Singularização conservadora.
+    if (
+        palavra.endswith("s")
+        and len(palavra) > 5
+    ):
+        return palavra[:-1]
+
+    return palavra
+    """
     Faz uma redução conservadora de algumas terminações
     comuns para melhorar a comparação temática.
 
@@ -189,7 +244,14 @@ def radical_simples(palavra):
 
     if len(palavra) <= 4:
         return palavra
+    equivalencias = {
+        "pequena": "pequeno",
+        "pequenas": "pequeno",
+        "pequenos": "pequeno",
+    }
 
+    if palavra in equivalencias:
+        return equivalencias[palavra]
     terminacoes = (
         "ando",
         "endo",
