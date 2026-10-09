@@ -6,7 +6,11 @@ from pathlib import Path
 
 from gerar_pautas import gerar_pauta_automatica
 from seo import preparar_seo
-from gerar_artigo import criar_estrutura_artigo, validar_artigo
+from gerar_artigo import (
+    MARCADOR_PRODUTO_PRINCIPAL,
+    criar_estrutura_artigo,
+    validar_artigo,
+)
 from gerar_imagem import preparar_imagem
 from criar_rascunho import criar_rascunho
 from links_internos import adicionar_links_internos
@@ -78,9 +82,6 @@ def escolher_pauta(nicho):
 def normalizar_nome_produto(texto):
     """
     Normaliza nomes somente para comparação.
-
-    Isso impede que o produto principal seja
-    adicionado novamente como complementar.
     """
 
     texto = str(
@@ -119,11 +120,8 @@ def validar_produto_principal(
     produto,
 ):
     """
-    Confirma que a pauta realmente trouxe
+    Confirma que a pauta trouxe
     um produto principal utilizável.
-
-    O produto principal é obrigatório
-    na nova arquitetura.
     """
 
     if not isinstance(
@@ -162,7 +160,7 @@ def preparar_produto_principal(
     Cria uma cópia limpa do produto principal.
 
     O link permanece exatamente como veio
-    do catálogo através da pauta.
+    do catálogo.
     """
 
     return {
@@ -184,8 +182,7 @@ def selecionar_complementares(
     produto_principal,
 ):
     """
-    Procura produtos complementares usando
-    o seletor temático já aprovado.
+    Procura produtos complementares relevantes.
 
     O principal nunca pode aparecer novamente
     como complementar.
@@ -280,31 +277,23 @@ def selecionar_complementares(
     return complementares
 
 
-def criar_bloco_produtos(
+def criar_bloco_produto_principal(
     produto_principal,
-    complementares=None,
 ):
     """
-    Cria o bloco comercial do artigo.
+    Cria somente o bloco do produto principal.
 
-    O produto principal aparece sempre.
-
-    Produtos complementares aparecem somente
-    quando o seletor encontrar opções relevantes.
-
-    Todos os links já foram definidos pelo
-    catálogo. O Gemini não cria links.
+    Este bloco será colocado exatamente no ponto
+    contextual escolhido durante a geração
+    editorial do artigo.
     """
-
-    if complementares is None:
-        complementares = []
 
     if not validar_produto_principal(
         produto_principal
     ):
         return ""
 
-    nome_principal = html.escape(
+    nome = html.escape(
         str(
             produto_principal[
                 "nome"
@@ -312,7 +301,7 @@ def criar_bloco_produtos(
         )
     )
 
-    link_principal = html.escape(
+    link = html.escape(
         str(
             produto_principal[
                 "link_afiliado"
@@ -322,31 +311,110 @@ def criar_bloco_produtos(
     )
 
     partes = [
-        '<div class="produtos-recomendados">',
         (
-            "<h2>Produto relacionado "
-            "ao tema</h2>"
+            '<div class="produto-principal-contextual">'
         ),
         (
-            "<p>Se você quiser colocar "
-            "as dicas deste conteúdo em prática, "
-            "esta é uma opção diretamente "
-            "relacionada ao assunto:</p>"
+            "<p><strong>Uma opção relacionada "
+            "a esta parte do conteúdo:</strong></p>"
         ),
-        "<ul>",
         (
-            "<li>"
-            f'<a href="{link_principal}" '
+            "<p>"
+            f'<a href="{link}" '
             'target="_blank" '
             'rel="nofollow sponsored">'
-            f"<strong>{nome_principal}</strong>"
+            f"<strong>{nome}</strong>"
             "</a>"
-            "</li>"
+            "</p>"
         ),
-        "</ul>",
+        (
+            "<p><small>"
+            "<strong>Transparência:</strong> "
+            "este é um link de afiliado. "
+            "Se você comprar por meio dele, "
+            "podemos receber uma comissão, "
+            "sem custo adicional para você."
+            "</small></p>"
+        ),
+        "</div>",
     ]
 
-    complementares_validos = []
+    return "\n".join(
+        partes
+    )
+
+
+def inserir_produto_principal_contextual(
+    conteudo_html,
+    produto_principal,
+):
+    """
+    Substitui exatamente um marcador pelo bloco
+    do produto principal.
+
+    O link é inserido pelo Python e nunca
+    pelo Gemini.
+    """
+
+    if not conteudo_html:
+        raise RuntimeError(
+            "Conteúdo do artigo vazio antes "
+            "da inserção do produto principal."
+        )
+
+    quantidade = conteudo_html.count(
+        MARCADOR_PRODUTO_PRINCIPAL
+    )
+
+    if quantidade != 1:
+        raise RuntimeError(
+            "Era esperado exatamente 1 marcador "
+            "do produto principal, mas foram "
+            f"encontrados {quantidade}."
+        )
+
+    bloco = criar_bloco_produto_principal(
+        produto_principal
+    )
+
+    if not bloco:
+        raise RuntimeError(
+            "Não foi possível criar o bloco "
+            "contextual do produto principal."
+        )
+
+    conteudo_final = conteudo_html.replace(
+        MARCADOR_PRODUTO_PRINCIPAL,
+        bloco,
+        1,
+    )
+
+    if MARCADOR_PRODUTO_PRINCIPAL in (
+        conteudo_final
+    ):
+        raise RuntimeError(
+            "O marcador do produto principal "
+            "permaneceu no artigo após "
+            "a substituição."
+        )
+
+    return conteudo_final
+
+
+def criar_bloco_complementares(
+    complementares=None,
+):
+    """
+    Cria um bloco final somente para produtos
+    complementares realmente relevantes.
+
+    Se não houver complementares, não adiciona nada.
+    """
+
+    if not complementares:
+        return ""
+
+    produtos_validos = []
 
     for produto in complementares:
         if not isinstance(
@@ -372,67 +440,62 @@ def criar_bloco_produtos(
         if not nome or not link:
             continue
 
-        complementares_validos.append(
+        produtos_validos.append(
             {
                 "nome": nome,
                 "link_afiliado": link,
             }
         )
 
-    if complementares_validos:
-        partes.extend(
-            [
-                (
-                    "<h3>Outras opções "
-                    "relacionadas</h3>"
-                ),
-                (
-                    "<p>Dependendo da sua rotina, "
-                    "estes itens também podem "
-                    "ser úteis:</p>"
-                ),
-                "<ul>",
-            ]
+    if not produtos_validos:
+        return ""
+
+    partes = [
+        '<div class="produtos-complementares">',
+        (
+            "<h2>Outras opções relacionadas</h2>"
+        ),
+        (
+            "<p>Dependendo da sua rotina, "
+            "estes itens também podem ser úteis:</p>"
+        ),
+        "<ul>",
+    ]
+
+    for produto in produtos_validos:
+        nome = html.escape(
+            produto["nome"]
         )
 
-        for produto in (
-            complementares_validos
-        ):
-            nome = html.escape(
-                produto["nome"]
-            )
-
-            link = html.escape(
-                produto[
-                    "link_afiliado"
-                ],
-                quote=True,
-            )
-
-            partes.append(
-                "<li>"
-                f'<a href="{link}" '
-                'target="_blank" '
-                'rel="nofollow sponsored">'
-                f"<strong>{nome}</strong>"
-                "</a>"
-                "</li>"
-            )
+        link = html.escape(
+            produto[
+                "link_afiliado"
+            ],
+            quote=True,
+        )
 
         partes.append(
-            "</ul>"
+            "<li>"
+            f'<a href="{link}" '
+            'target="_blank" '
+            'rel="nofollow sponsored">'
+            f"<strong>{nome}</strong>"
+            "</a>"
+            "</li>"
         )
 
     partes.extend(
         [
+            "</ul>",
             (
                 "<p><small>"
                 "<strong>Transparência:</strong> "
-                "este conteúdo pode conter links "
+                "os links acima podem ser links "
                 "de afiliados. Se você comprar "
                 "por meio deles, podemos receber "
                 "uma comissão, sem custo adicional "
-                "para você.</small></p>"
+                "para você."
+                "</small></p>"
             ),
             "</div>",
         ]
@@ -443,23 +506,17 @@ def criar_bloco_produtos(
     )
 
 
-def adicionar_produtos_ao_artigo(
+def adicionar_complementares_ao_artigo(
     conteudo_html,
-    produto_principal,
     complementares=None,
 ):
     """
-    Acrescenta ao artigo o produto principal
-    e, quando existirem, os complementares.
+    Acrescenta complementares ao final somente
+    quando existirem opções relevantes.
     """
 
-    bloco = criar_bloco_produtos(
-        produto_principal=(
-            produto_principal
-        ),
-        complementares=(
-            complementares or []
-        ),
+    bloco = criar_bloco_complementares(
+        complementares or []
     )
 
     if not bloco:
@@ -469,6 +526,96 @@ def adicionar_produtos_ao_artigo(
         conteudo_html.rstrip()
         + "\n\n"
         + bloco
+    )
+
+
+# ============================================================
+# COMPATIBILIDADE COM TESTES ANTERIORES
+# ============================================================
+
+def criar_bloco_produtos(
+    produto_principal,
+    complementares=None,
+):
+    """
+    Mantido para compatibilidade com os testes.
+
+    Retorna o bloco contextual do principal e,
+    quando houver, o bloco de complementares.
+    """
+
+    principal = criar_bloco_produto_principal(
+        produto_principal
+    )
+
+    complementares_html = (
+        criar_bloco_complementares(
+            complementares or []
+        )
+    )
+
+    partes = [
+        parte
+        for parte in (
+            principal,
+            complementares_html,
+        )
+        if parte
+    ]
+
+    return "\n\n".join(
+        partes
+    )
+
+
+def adicionar_produtos_ao_artigo(
+    conteudo_html,
+    produto_principal,
+    complementares=None,
+):
+    """
+    Mantido para compatibilidade com testes
+    anteriores.
+
+    Se houver marcador, o principal entra
+    contextualmente.
+
+    Sem marcador, o principal é acrescentado
+    ao final apenas para preservar testes antigos.
+    """
+
+    if (
+        MARCADOR_PRODUTO_PRINCIPAL
+        in conteudo_html
+    ):
+        conteudo_html = (
+            inserir_produto_principal_contextual(
+                conteudo_html=conteudo_html,
+                produto_principal=(
+                    produto_principal
+                ),
+            )
+        )
+
+    else:
+        bloco_principal = (
+            criar_bloco_produto_principal(
+                produto_principal
+            )
+        )
+
+        if bloco_principal:
+            conteudo_html = (
+                conteudo_html.rstrip()
+                + "\n\n"
+                + bloco_principal
+            )
+
+    return adicionar_complementares_ao_artigo(
+        conteudo_html=conteudo_html,
+        complementares=(
+            complementares or []
+        ),
     )
 
 
@@ -519,9 +666,6 @@ def executar():
         publicacao_automatica,
     )
 
-    # Proteção adicional:
-    # publicação automática ainda não
-    # foi liberada.
     if publicacao_automatica:
         raise RuntimeError(
             "Publicação automática está "
@@ -626,16 +770,26 @@ def executar():
         ),
     )
 
+    # ========================================================
+    # ARTIGO
+    # ========================================================
+
     artigo = criar_estrutura_artigo(
         titulo=seo["titulo"],
         palavra_chave=pauta[
             "palavra_chave"
         ],
         categoria=categoria,
+        produto_principal=(
+            produto_principal[
+                "nome"
+            ]
+        ),
     )
 
-    # Primeiro validamos somente o conteúdo
-    # editorial produzido pelo Gemini.
+    # A validação acontece antes da substituição,
+    # pois ela também confirma que o Gemini colocou
+    # exatamente um marcador contextual.
     validacao = validar_artigo(
         artigo
     )
@@ -661,6 +815,56 @@ def executar():
 
     print(
         "\nArtigo editorial aprovado."
+    )
+
+    print(
+        "Marcadores contextuais validados:",
+        validacao.get(
+            "quantidade_marcadores_produto",
+            0,
+        ),
+    )
+
+    # ========================================================
+    # PRODUTO PRINCIPAL CONTEXTUAL
+    # ========================================================
+
+    print(
+        "\n=== PRODUTO PRINCIPAL CONTEXTUAL ==="
+    )
+
+    print(
+        "Produto:"
+    )
+
+    print(
+        "-",
+        produto_principal[
+            "nome"
+        ],
+    )
+
+    print(
+        "  Link:",
+        produto_principal[
+            "link_afiliado"
+        ],
+    )
+
+    artigo["conteudo_html"] = (
+        inserir_produto_principal_contextual(
+            conteudo_html=artigo[
+                "conteudo_html"
+            ],
+            produto_principal=(
+                produto_principal
+            ),
+        )
+    )
+
+    print(
+        "Marcador substituído pelo produto "
+        "principal com sucesso."
     )
 
     # ========================================================
@@ -722,33 +926,15 @@ def executar():
         )
 
     # ========================================================
-    # PRODUTO PRINCIPAL + COMPLEMENTARES
+    # COMPLEMENTARES
     # ========================================================
 
     print(
-        "\n=== PRODUTOS AFILIADOS ==="
+        "\n=== PRODUTOS COMPLEMENTARES ==="
     )
 
     print(
-        "Produto principal obrigatório:"
-    )
-
-    print(
-        "-",
-        produto_principal[
-            "nome"
-        ],
-    )
-
-    print(
-        "  Link:",
-        produto_principal[
-            "link_afiliado"
-        ],
-    )
-
-    print(
-        "\nProcurando produtos "
+        "Procurando produtos "
         "complementares relevantes..."
     )
 
@@ -804,6 +990,17 @@ def executar():
             "atingiu relevância suficiente."
         )
 
+    artigo["conteudo_html"] = (
+        adicionar_complementares_ao_artigo(
+            conteudo_html=artigo[
+                "conteudo_html"
+            ],
+            complementares=(
+                complementares
+            ),
+        )
+    )
+
     produtos_afiliados = [
         produto_principal,
         *complementares,
@@ -821,24 +1018,21 @@ def executar():
         "produtos_afiliados"
     ] = produtos_afiliados
 
-    artigo["conteudo_html"] = (
-        adicionar_produtos_ao_artigo(
-            conteudo_html=artigo[
-                "conteudo_html"
-            ],
-            produto_principal=(
-                produto_principal
-            ),
-            complementares=(
-                complementares
-            ),
-        )
+    print(
+        "Integração de produtos concluída."
     )
 
-    print(
-        "Bloco de produtos afiliados "
-        "adicionado ao artigo."
-    )
+    # Segurança final:
+    # o marcador nunca pode chegar ao Blogger.
+    if (
+        MARCADOR_PRODUTO_PRINCIPAL
+        in artigo["conteudo_html"]
+    ):
+        raise RuntimeError(
+            "Marcador interno do produto "
+            "permaneceu no artigo final. "
+            "Nada será enviado ao Blogger."
+        )
 
     # ========================================================
     # IMAGEM
@@ -921,6 +1115,14 @@ def executar():
     )
 
     print(
+        "Marcadores contextuais:",
+        validacao.get(
+            "quantidade_marcadores_produto",
+            "Não informado",
+        ),
+    )
+
+    print(
         "Links internos:",
         len(
             artigo[
@@ -930,7 +1132,7 @@ def executar():
     )
 
     print(
-        "Produto principal: 1"
+        "Produto principal contextual: 1"
     )
 
     print(
@@ -951,9 +1153,6 @@ def executar():
         ),
     )
 
-    # Durante os testes, mantemos o
-    # artigo visível no log para
-    # revisão editorial.
     print(
         "\n=== INÍCIO DO "
         "ARTIGO GERADO ==="
@@ -1025,12 +1224,6 @@ def executar():
                     "url"
                 ),
             )
-
-            # O rascunho ainda não entra
-            # no histórico.
-            # O histórico definitivo
-            # continua reservado para
-            # publicações reais confirmadas.
 
         except Exception as erro:
             print(
