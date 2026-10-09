@@ -1,5 +1,7 @@
 import html
 import json
+import re
+import unicodedata
 from pathlib import Path
 
 from gerar_pautas import gerar_pauta_automatica
@@ -61,9 +63,11 @@ def carregar_historico():
 
 def escolher_pauta(nicho):
     """
-    Gera automaticamente pautas com Gemini
-    e seleciona uma pauta inédita usando
-    o histórico real do blog.
+    Gera automaticamente uma pauta baseada
+    em um produto real do catálogo.
+
+    A pauta já retorna o produto principal
+    com o link afiliado preservado.
     """
 
     return gerar_pauta_automatica(
@@ -71,79 +75,365 @@ def escolher_pauta(nicho):
     )
 
 
-def criar_bloco_produtos(produtos):
+def normalizar_nome_produto(texto):
     """
-    Cria um bloco editorial com produtos
-    afiliados previamente selecionados.
+    Normaliza nomes somente para comparação.
 
-    Os nomes e links vêm exclusivamente
-    do catálogo data/produtos.json.
-
-    O Gemini não participa da criação
-    dos links de afiliado.
+    Isso impede que o produto principal seja
+    adicionado novamente como complementar.
     """
 
-    if not produtos:
-        return ""
+    texto = str(
+        texto or ""
+    ).strip().lower()
 
-    partes = [
-        '<div class="produtos-recomendados">',
-        (
-            "<h2>Produtos que podem ajudar "
-            "na prática</h2>"
-        ),
-        (
-            "<p>Algumas soluções relacionadas "
-            "ao tema podem facilitar a aplicação "
-            "das ideias apresentadas acima.</p>"
-        ),
-        (
-            "<p><small><strong>Transparência:</strong> "
-            "este conteúdo pode conter links de "
-            "afiliados. Se você comprar por meio "
-            "deles, podemos receber uma comissão, "
-            "sem custo adicional para você."
-            "</small></p>"
-        ),
-        "<ul>",
-    ]
+    texto = unicodedata.normalize(
+        "NFKD",
+        texto,
+    )
 
-    for produto in produtos:
-        nome = html.escape(
-            str(
-                produto.get(
-                    "nome",
-                    "",
-                )
+    texto = "".join(
+        caractere
+        for caractere in texto
+        if not unicodedata.combining(
+            caractere
+        )
+    )
+
+    texto = re.sub(
+        r"[^a-z0-9]+",
+        " ",
+        texto,
+    )
+
+    texto = re.sub(
+        r"\s+",
+        " ",
+        texto,
+    ).strip()
+
+    return texto
+
+
+def validar_produto_principal(
+    produto,
+):
+    """
+    Confirma que a pauta realmente trouxe
+    um produto principal utilizável.
+
+    O produto principal é obrigatório
+    na nova arquitetura.
+    """
+
+    if not isinstance(
+        produto,
+        dict,
+    ):
+        return False
+
+    nome = str(
+        produto.get(
+            "nome",
+            "",
+        )
+    ).strip()
+
+    link = str(
+        produto.get(
+            "link_afiliado",
+            "",
+        )
+    ).strip()
+
+    if not nome:
+        return False
+
+    if not link:
+        return False
+
+    return True
+
+
+def preparar_produto_principal(
+    produto,
+):
+    """
+    Cria uma cópia limpa do produto principal.
+
+    O link permanece exatamente como veio
+    do catálogo através da pauta.
+    """
+
+    return {
+        "nome": str(
+            produto["nome"]
+        ).strip(),
+        "link_afiliado": str(
+            produto["link_afiliado"]
+        ).strip(),
+        "tipo": "principal",
+    }
+
+
+def selecionar_complementares(
+    pauta,
+    seo,
+    categoria,
+    palavras_secundarias,
+    produto_principal,
+):
+    """
+    Procura produtos complementares usando
+    o seletor temático já aprovado.
+
+    O principal nunca pode aparecer novamente
+    como complementar.
+
+    No máximo dois complementares são aceitos.
+    """
+
+    candidatos = selecionar_produtos(
+        titulo=seo["titulo"],
+        palavra_chave=pauta[
+            "palavra_chave"
+        ],
+        categoria=categoria,
+        descricao=pauta.get(
+            "descricao",
+            "",
+        ),
+        palavras_secundarias=(
+            palavras_secundarias
+        ),
+        limite=3,
+    )
+
+    nome_principal = normalizar_nome_produto(
+        produto_principal[
+            "nome"
+        ]
+    )
+
+    complementares = []
+    nomes_vistos = {
+        nome_principal
+    }
+
+    for produto in candidatos:
+        if not isinstance(
+            produto,
+            dict,
+        ):
+            continue
+
+        nome = str(
+            produto.get(
+                "nome",
+                "",
             )
-        )
+        ).strip()
 
-        link = html.escape(
-            str(
-                produto.get(
-                    "link_afiliado",
-                    "",
-                )
-            ),
-            quote=True,
-        )
+        link = str(
+            produto.get(
+                "link_afiliado",
+                "",
+            )
+        ).strip()
 
         if not nome or not link:
             continue
 
-        partes.append(
+        nome_normalizado = (
+            normalizar_nome_produto(
+                nome
+            )
+        )
+
+        if not nome_normalizado:
+            continue
+
+        if nome_normalizado in nomes_vistos:
+            continue
+
+        nomes_vistos.add(
+            nome_normalizado
+        )
+
+        complementar = dict(
+            produto
+        )
+
+        complementar[
+            "tipo"
+        ] = "complementar"
+
+        complementares.append(
+            complementar
+        )
+
+        if len(
+            complementares
+        ) >= 2:
+            break
+
+    return complementares
+
+
+def criar_bloco_produtos(
+    produto_principal,
+    complementares=None,
+):
+    """
+    Cria o bloco comercial do artigo.
+
+    O produto principal aparece sempre.
+
+    Produtos complementares aparecem somente
+    quando o seletor encontrar opções relevantes.
+
+    Todos os links já foram definidos pelo
+    catálogo. O Gemini não cria links.
+    """
+
+    if complementares is None:
+        complementares = []
+
+    if not validar_produto_principal(
+        produto_principal
+    ):
+        return ""
+
+    nome_principal = html.escape(
+        str(
+            produto_principal[
+                "nome"
+            ]
+        )
+    )
+
+    link_principal = html.escape(
+        str(
+            produto_principal[
+                "link_afiliado"
+            ]
+        ),
+        quote=True,
+    )
+
+    partes = [
+        '<div class="produtos-recomendados">',
+        (
+            "<h2>Produto relacionado "
+            "ao tema</h2>"
+        ),
+        (
+            "<p>Se você quiser colocar "
+            "as dicas deste conteúdo em prática, "
+            "esta é uma opção diretamente "
+            "relacionada ao assunto:</p>"
+        ),
+        "<ul>",
+        (
             "<li>"
-            f'<a href="{link}" '
+            f'<a href="{link_principal}" '
             'target="_blank" '
             'rel="nofollow sponsored">'
-            f"<strong>{nome}</strong>"
+            f"<strong>{nome_principal}</strong>"
             "</a>"
             "</li>"
+        ),
+        "</ul>",
+    ]
+
+    complementares_validos = []
+
+    for produto in complementares:
+        if not isinstance(
+            produto,
+            dict,
+        ):
+            continue
+
+        nome = str(
+            produto.get(
+                "nome",
+                "",
+            )
+        ).strip()
+
+        link = str(
+            produto.get(
+                "link_afiliado",
+                "",
+            )
+        ).strip()
+
+        if not nome or not link:
+            continue
+
+        complementares_validos.append(
+            {
+                "nome": nome,
+                "link_afiliado": link,
+            }
+        )
+
+    if complementares_validos:
+        partes.extend(
+            [
+                (
+                    "<h3>Outras opções "
+                    "relacionadas</h3>"
+                ),
+                (
+                    "<p>Dependendo da sua rotina, "
+                    "estes itens também podem "
+                    "ser úteis:</p>"
+                ),
+                "<ul>",
+            ]
+        )
+
+        for produto in (
+            complementares_validos
+        ):
+            nome = html.escape(
+                produto["nome"]
+            )
+
+            link = html.escape(
+                produto[
+                    "link_afiliado"
+                ],
+                quote=True,
+            )
+
+            partes.append(
+                "<li>"
+                f'<a href="{link}" '
+                'target="_blank" '
+                'rel="nofollow sponsored">'
+                f"<strong>{nome}</strong>"
+                "</a>"
+                "</li>"
+            )
+
+        partes.append(
+            "</ul>"
         )
 
     partes.extend(
         [
-            "</ul>",
+            (
+                "<p><small>"
+                "<strong>Transparência:</strong> "
+                "este conteúdo pode conter links "
+                "de afiliados. Se você comprar "
+                "por meio deles, podemos receber "
+                "uma comissão, sem custo adicional "
+                "para você.</small></p>"
+            ),
             "</div>",
         ]
     )
@@ -155,19 +445,21 @@ def criar_bloco_produtos(produtos):
 
 def adicionar_produtos_ao_artigo(
     conteudo_html,
-    produtos,
+    produto_principal,
+    complementares=None,
 ):
     """
-    Acrescenta o bloco de produtos somente
-    quando o seletor encontrou opções
-    suficientemente relevantes.
+    Acrescenta ao artigo o produto principal
+    e, quando existirem, os complementares.
     """
 
-    if not produtos:
-        return conteudo_html
-
     bloco = criar_bloco_produtos(
-        produtos
+        produto_principal=(
+            produto_principal
+        ),
+        complementares=(
+            complementares or []
+        ),
     )
 
     if not bloco:
@@ -257,6 +549,25 @@ def executar():
         [],
     )
 
+    produto_pauta = pauta.get(
+        "produto_principal"
+    )
+
+    if not validar_produto_principal(
+        produto_pauta
+    ):
+        raise RuntimeError(
+            "A pauta foi gerada sem um "
+            "produto principal válido. "
+            "Nada será enviado ao Blogger."
+        )
+
+    produto_principal = (
+        preparar_produto_principal(
+            produto_pauta
+        )
+    )
+
     print(
         "\nPauta escolhida:"
     )
@@ -273,6 +584,20 @@ def executar():
     print(
         "Categoria:",
         categoria,
+    )
+
+    print(
+        "Produto principal:",
+        produto_principal[
+            "nome"
+        ],
+    )
+
+    print(
+        "Link afiliado principal:",
+        produto_principal[
+            "link_afiliado"
+        ],
     )
 
     seo_config = config.get(
@@ -309,7 +634,7 @@ def executar():
         categoria=categoria,
     )
 
-    # Primeiro validamos somente o artigo
+    # Primeiro validamos somente o conteúdo
     # editorial produzido pelo Gemini.
     validacao = validar_artigo(
         artigo
@@ -397,42 +722,58 @@ def executar():
         )
 
     # ========================================================
-    # PRODUTOS AFILIADOS
+    # PRODUTO PRINCIPAL + COMPLEMENTARES
     # ========================================================
 
     print(
-        "\nSelecionando produtos "
-        "relevantes para o artigo..."
+        "\n=== PRODUTOS AFILIADOS ==="
     )
 
-    produtos = selecionar_produtos(
-        titulo=seo["titulo"],
-        palavra_chave=pauta[
-            "palavra_chave"
+    print(
+        "Produto principal obrigatório:"
+    )
+
+    print(
+        "-",
+        produto_principal[
+            "nome"
         ],
-        categoria=categoria,
-        descricao=pauta.get(
-            "descricao",
-            "",
-        ),
-        palavras_secundarias=(
-            palavras_secundarias
-        ),
-        limite=3,
     )
 
-    artigo[
-        "produtos_afiliados"
-    ] = produtos
+    print(
+        "  Link:",
+        produto_principal[
+            "link_afiliado"
+        ],
+    )
 
-    if produtos:
+    print(
+        "\nProcurando produtos "
+        "complementares relevantes..."
+    )
+
+    complementares = (
+        selecionar_complementares(
+            pauta=pauta,
+            seo=seo,
+            categoria=categoria,
+            palavras_secundarias=(
+                palavras_secundarias
+            ),
+            produto_principal=(
+                produto_principal
+            ),
+        )
+    )
+
+    if complementares:
         print(
-            "Produtos relevantes "
+            "Produtos complementares "
             "selecionados:",
-            len(produtos),
+            len(complementares),
         )
 
-        for produto in produtos:
+        for produto in complementares:
             print(
                 "-",
                 produto.get(
@@ -457,30 +798,47 @@ def executar():
                 ),
             )
 
-        artigo["conteudo_html"] = (
-            adicionar_produtos_ao_artigo(
-                conteudo_html=artigo[
-                    "conteudo_html"
-                ],
-                produtos=produtos,
-            )
-        )
-
-        print(
-            "Bloco de produtos afiliados "
-            "adicionado ao artigo."
-        )
-
     else:
         print(
-            "Nenhum produto atingiu "
-            "relevância suficiente."
+            "Nenhum produto complementar "
+            "atingiu relevância suficiente."
         )
 
-        print(
-            "O artigo seguirá sem "
-            "links de afiliado."
+    produtos_afiliados = [
+        produto_principal,
+        *complementares,
+    ]
+
+    artigo[
+        "produto_principal"
+    ] = produto_principal
+
+    artigo[
+        "produtos_complementares"
+    ] = complementares
+
+    artigo[
+        "produtos_afiliados"
+    ] = produtos_afiliados
+
+    artigo["conteudo_html"] = (
+        adicionar_produtos_ao_artigo(
+            conteudo_html=artigo[
+                "conteudo_html"
+            ],
+            produto_principal=(
+                produto_principal
+            ),
+            complementares=(
+                complementares
+            ),
         )
+    )
+
+    print(
+        "Bloco de produtos afiliados "
+        "adicionado ao artigo."
+    )
 
     # ========================================================
     # IMAGEM
@@ -572,7 +930,20 @@ def executar():
     )
 
     print(
-        "Produtos afiliados:",
+        "Produto principal: 1"
+    )
+
+    print(
+        "Produtos complementares:",
+        len(
+            artigo[
+                "produtos_complementares"
+            ]
+        ),
+    )
+
+    print(
+        "Total de produtos afiliados:",
         len(
             artigo[
                 "produtos_afiliados"
