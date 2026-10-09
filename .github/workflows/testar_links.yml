@@ -1,0 +1,20 @@
+name: Testar Links Internos
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar-links:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Testar seleção de links internos
+        run: python src/links_internos.py
