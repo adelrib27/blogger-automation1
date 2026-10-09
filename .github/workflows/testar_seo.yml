@@ -1,0 +1,23 @@
+name: Testar SEO
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar-seo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verificar sintaxe
+        run: python -m py_compile src/seo.py src/testar_seo.py
+
+      - name: Testar meta description
+        run: python -u src/testar_seo.py
