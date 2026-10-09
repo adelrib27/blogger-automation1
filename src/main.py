@@ -163,15 +163,15 @@ def executar():
     historico = carregar_historico()
 
     resultado_links = adicionar_links_internos(
-        conteudo_html=artigo["conteudo_html"],
-        historico=historico,
-        titulo_atual=seo["titulo"],
-        palavra_chave=pauta["palavra_chave"],
-        categoria=pauta.get(
-            "categoria",
-            "Casa e Decoração",
-        ),
-    )
+    conteudo_html=artigo["conteudo_html"],
+    titulo=seo["titulo"],
+    palavra_chave=pauta["palavra_chave"],
+    categoria=pauta.get(
+        "categoria",
+        "Casa e Decoração",
+    ),
+    limite=3,
+)
 
     artigo["conteudo_html"] = resultado_links[
         "conteudo_html"
