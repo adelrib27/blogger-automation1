@@ -792,20 +792,20 @@ def validar_artigo(artigo):
             f"{quantidade_h2} encontrados."
         )
 
-    if palavra_chave:
-    texto_normalizado = normalizar_para_comparacao(
-        texto_puro
-    )
-
-    palavra_chave_normalizada = normalizar_para_comparacao(
-        palavra_chave
-    )
-
-    ocorrencias_palavra_chave = (
-        texto_normalizado.count(
-            palavra_chave_normalizada
+        if palavra_chave:
+        texto_normalizado = normalizar_para_comparacao(
+            texto_puro
         )
-    )
+
+        palavra_chave_normalizada = normalizar_para_comparacao(
+            palavra_chave
+        )
+
+        ocorrencias_palavra_chave = (
+            texto_normalizado.count(
+                palavra_chave_normalizada
+            )
+        )
 
         if ocorrencias_palavra_chave == 0:
             erros.append(
