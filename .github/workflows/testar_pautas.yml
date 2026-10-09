@@ -22,19 +22,42 @@ jobs:
           import sys
           sys.path.insert(0, "src")
 
-          from pautas import comparar_com_historico
+          from pautas import (
+              carregar_historico,
+              carregar_rascunhos,
+              comparar_com_historico,
+          )
+
+          publicados = carregar_historico()
+          rascunhos = carregar_rascunhos()
+
+          print("=== BASE DO ANTI-REPETIÇÃO ===")
+          print("Publicados:", len(publicados))
+          print("Rascunhos:", len(rascunhos))
+          print(
+              "Total protegido:",
+              len(publicados) + len(rascunhos),
+          )
 
           testes = [
               {
+                  "nome": "POST PUBLICADO",
                   "titulo": "Luminária de mesa cabeceira touch: vale a pena?",
                   "palavra_chave": "luminária de mesa cabeceira touch",
               },
               {
+                  "nome": "RASCUNHO",
                   "titulo": "Como organizar uma cozinha pequena de forma prática",
                   "palavra_chave": "organização de cozinha pequena",
               },
+              {
+                  "nome": "VARIAÇÃO DO RASCUNHO",
+                  "titulo": "Como organizar armário de cozinha pequeno para otimizar espaço",
+                  "palavra_chave": "como organizar armario de cozinha pequeno",
+              },
           ]
 
+          print()
           print("=== TESTE DO ANTI-REPETIÇÃO ===")
 
           for teste in testes:
@@ -44,6 +67,7 @@ jobs:
               )
 
               print()
+              print("Teste:", teste["nome"])
               print("Pauta:", teste["titulo"])
               print("Repetida:", resultado["repetida"])
               print("Motivo:", resultado["motivo"])
@@ -52,8 +76,16 @@ jobs:
 
               if existente:
                   print(
-                      "Encontrado no histórico:",
+                      "Conteúdo encontrado:",
                       existente.get("titulo"),
+                  )
+
+                  print(
+                      "Fonte:",
+                      existente.get(
+                          "_fonte_antirrepeticao",
+                          "não identificada",
+                      ),
                   )
 
           print()
