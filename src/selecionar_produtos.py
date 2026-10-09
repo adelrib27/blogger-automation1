@@ -8,181 +8,95 @@ ARQUIVO_PRODUTOS = Path("data/produtos.json")
 
 
 STOPWORDS = {
-    "a", "ao", "aos", "as", "com", "como", "da", "das",
-    "de", "do", "dos", "e", "em", "entre", "mais", "na",
-    "nas", "no", "nos", "o", "os", "ou", "para", "por",
-    "que", "sem", "um", "uma", "uns", "umas", "seu",
-    "sua", "seus", "suas", "usar", "usando",
+    "a", "o", "as", "os", "de", "da", "do", "das", "dos",
+    "e", "em", "para", "com", "como", "um", "uma", "no",
+    "na", "nos", "nas", "mais", "por", "que", "se", "ao",
+    "aos", "sua", "seu", "suas", "seus",
 }
 
 
-# ============================================================
-# TEMAS
-# ============================================================
-
 TEMAS = {
     "organizacao": {
-        "organizacao",
-        "organizar",
-        "organizador",
-        "organizada",
-        "organizado",
-        "armazenamento",
-        "armazenar",
-        "guardar",
-        "espaco",
-        "aproveitar",
-        "praticidade",
-        "pratico",
-        "ordem",
+        "organizar", "organizacao", "organizador",
+        "organizadores", "espaco", "pratico", "pratica",
     },
 
     "cozinha": {
-        "cozinha",
-        "louca",
-        "loucas",
-        "prato",
-        "pratos",
-        "talher",
-        "talheres",
-        "utensilio",
-        "utensilios",
-        "pia",
-        "bancada",
+        "cozinha", "pia", "bancada", "armario",
+        "utensilio", "utensilios",
     },
 
     "armazenamento_alimentos": {
-        "marmita",
-        "marmitas",
-        "pote",
-        "potes",
-        "alimento",
-        "alimentos",
-        "congelador",
-        "geladeira",
+        "pote", "potes", "marmita", "marmitas",
+        "alimento", "alimentos", "congelador",
         "armazenamento",
-        "armazenar",
     },
 
     "preparo_alimentos": {
-        "cortador",
-        "legume",
-        "legumes",
-        "cebola",
-        "tomate",
-        "cenoura",
-        "lamina",
-        "laminas",
-        "cortar",
+        "cortador", "legume", "legumes", "cebola",
+        "tomate", "cenoura", "lamina", "laminas",
         "preparo",
-        "preparar",
     },
 
     "loucas": {
-        "escorredor",
-        "louca",
-        "loucas",
-        "prato",
-        "pratos",
-        "talher",
-        "talheres",
-        "pia",
+        "louca", "loucas", "prato", "pratos",
+        "talher", "talheres", "escorredor",
     },
 
     "limpeza": {
-        "limpeza",
-        "limpar",
-        "escova",
-        "mop",
-        "esfregao",
-        "sujeira",
-        "mancha",
-        "manchas",
+        "limpeza", "limpar", "escova", "esfregao",
+        "mop", "mancha", "manchas",
     },
 
     "lavanderia": {
-        "lavanderia",
-        "roupa",
-        "roupas",
-        "varal",
+        "lavanderia", "roupa", "roupas", "lavar",
+        "lavagem", "secar", "secagem", "varal",
         "percarbonato",
-        "mancha",
-        "manchas",
-        "lavagem",
-        "lavar",
     },
 
     "banheiro": {
-        "banheiro",
-        "banho",
-        "toalha",
-        "toalhas",
+        "banheiro", "banho", "toalha", "toalhas",
         "rosto",
     },
 
     "quarto": {
-        "quarto",
-        "cama",
-        "colchao",
-        "lencol",
-        "travesseiro",
-        "cobertor",
-        "edredom",
-        "queen",
-        "solteiro",
-        "casal",
+        "quarto", "cama", "colchao", "lencol",
+        "lencois", "edredom", "cobertor",
+        "coberdrom",
     },
 
     "conforto_sono": {
-        "travesseiro",
-        "cervical",
-        "ortopedico",
+        "dormir", "sono", "travesseiro", "cervical",
+        "confortavel", "conforto", "macio",
         "colchao",
-        "conforto",
-        "dormir",
-        "sono",
-        "postura",
     },
 
     "cama_mesa_banho": {
-        "lencol",
-        "toalha",
-        "toalhas",
-        "cobertor",
-        "edredom",
-        "colchao",
-        "cama",
-        "queen",
-        "casal",
-        "solteiro",
+        "lencol", "lencois", "toalha", "toalhas",
+        "cobertor", "edredom", "coberdrom",
     },
 
     "seguranca": {
-        "seguranca",
-        "camera",
-        "monitoramento",
-        "vigilancia",
-        "wifi",
+        "seguranca", "camera", "monitoramento",
+        "wifi", "vigilancia",
     },
 
     "climatizacao": {
-        "climatizador",
-        "ventilador",
-        "umidificador",
-        "calor",
-        "refrescar",
-        "climatizacao",
-        "ar",
+        "climatizador", "ventilador", "umidificador",
+        "calor", "refrescar", "climatizacao",
+        "ventilacao",
     },
 }
 
 
-# Temas que combinam naturalmente entre si.
 TEMAS_RELACIONADOS = {
     "organizacao": {
+        "cozinha",
         "armazenamento_alimentos",
         "loucas",
-        "cozinha",
+        "lavanderia",
+        "banheiro",
+        "quarto",
     },
 
     "cozinha": {
@@ -190,6 +104,7 @@ TEMAS_RELACIONADOS = {
         "armazenamento_alimentos",
         "preparo_alimentos",
         "loucas",
+        "limpeza",
     },
 
     "armazenamento_alimentos": {
@@ -207,23 +122,26 @@ TEMAS_RELACIONADOS = {
     },
 
     "limpeza": {
-        "lavanderia",
-        "banheiro",
         "cozinha",
+        "banheiro",
+        "lavanderia",
     },
 
     "lavanderia": {
+        "organizacao",
         "limpeza",
     },
 
     "banheiro": {
+        "organizacao",
         "limpeza",
         "cama_mesa_banho",
     },
 
     "quarto": {
-        "cama_mesa_banho",
+        "organizacao",
         "conforto_sono",
+        "cama_mesa_banho",
     },
 
     "conforto_sono": {
@@ -243,8 +161,6 @@ TEMAS_RELACIONADOS = {
 }
 
 
-# Alguns temas não devem receber pontuação alta
-# apenas porque compartilham o mesmo cômodo.
 CONFLITOS_TEMATICOS = {
     ("organizacao", "limpeza"),
     ("organizacao", "preparo_alimentos"),
@@ -256,19 +172,56 @@ CONFLITOS_TEMATICOS = {
 }
 
 
-# ============================================================
-# NORMALIZAÇÃO
-# ============================================================
+# Temas que não devem ser cruzados apenas porque existe
+# alguma palavra genérica em comum.
+INCOMPATIBILIDADES_FORTES = {
+    "banheiro": {
+        "quarto",
+        "conforto_sono",
+    },
+
+    "quarto": {
+        "banheiro",
+        "cozinha",
+        "preparo_alimentos",
+        "loucas",
+    },
+
+    "cozinha": {
+        "quarto",
+        "conforto_sono",
+        "seguranca",
+        "climatizacao",
+    },
+
+    "lavanderia": {
+        "quarto",
+        "conforto_sono",
+        "preparo_alimentos",
+        "loucas",
+    },
+
+    "seguranca": {
+        "cozinha",
+        "banheiro",
+        "quarto",
+        "limpeza",
+        "lavanderia",
+        "climatizacao",
+    },
+
+    "climatizacao": {
+        "cozinha",
+        "banheiro",
+        "quarto",
+        "limpeza",
+        "lavanderia",
+        "seguranca",
+    },
+}
+
 
 def normalizar_texto(texto):
-    """
-    Normaliza texto para comparação:
-    - minúsculas
-    - sem acentos
-    - sem pontuação
-    - espaços normalizados
-    """
-
     texto = str(texto or "").lower()
 
     texto = unicodedata.normalize(
@@ -298,430 +251,260 @@ def normalizar_texto(texto):
 
 
 def tokenizar(texto):
-    """
-    Converte um texto em conjunto de palavras úteis.
-    """
-
-    texto = normalizar_texto(texto)
+    palavras = normalizar_texto(texto).split()
 
     return {
         palavra
-        for palavra in texto.split()
-        if len(palavra) >= 3
-        and palavra not in STOPWORDS
+        for palavra in palavras
+        if palavra not in STOPWORDS
+        and len(palavra) >= 3
     }
 
 
-# ============================================================
-# CATÁLOGO
-# ============================================================
-
 def carregar_produtos():
-    """
-    Carrega apenas produtos ativos do catálogo.
-    """
-
     if not ARQUIVO_PRODUTOS.exists():
-        print(
-            "Catálogo de produtos não encontrado:",
-            ARQUIVO_PRODUTOS,
-        )
         return []
 
-    try:
-        with open(
-            ARQUIVO_PRODUTOS,
-            "r",
-            encoding="utf-8",
-        ) as arquivo:
-            produtos = json.load(arquivo)
+    with ARQUIVO_PRODUTOS.open(
+        "r",
+        encoding="utf-8",
+    ) as arquivo:
+        dados = json.load(arquivo)
 
-    except Exception as erro:
-        print(
-            "Erro ao carregar produtos:",
-            erro,
+    if isinstance(dados, list):
+        produtos = dados
+    elif isinstance(dados, dict):
+        produtos = dados.get(
+            "produtos",
+            [],
         )
-        return []
+    else:
+        produtos = []
 
-    if not isinstance(produtos, list):
-        print(
-            "Formato inválido em produtos.json."
-        )
-        return []
+    return [
+        produto
+        for produto in produtos
+        if produto.get("ativo", True)
+        and produto.get("nome")
+        and produto.get("link_afiliado")
+    ]
 
-    produtos_validos = []
-
-    for produto in produtos:
-        if not isinstance(produto, dict):
-            continue
-
-        nome = str(
-            produto.get("nome", "")
-        ).strip()
-
-        link = str(
-            produto.get(
-                "link_afiliado",
-                "",
-            )
-        ).strip()
-
-        ativo = produto.get(
-            "ativo",
-            True,
-        )
-
-        if not ativo:
-            continue
-
-        if not nome or not link:
-            continue
-
-        produtos_validos.append(
-            {
-                "nome": nome,
-                "link_afiliado": link,
-                "ativo": True,
-            }
-        )
-
-    return produtos_validos
-
-
-# ============================================================
-# CONTEXTO DO ARTIGO
-# ============================================================
 
 def criar_contexto_artigo(
     titulo,
-    palavra_chave="",
+    palavra_chave,
     categoria="",
     descricao="",
     palavras_secundarias=None,
 ):
-    """
-    Reúne os principais sinais semânticos
-    disponíveis sobre a pauta.
-    """
-
-    if palavras_secundarias is None:
-        palavras_secundarias = []
-
-    if isinstance(
-        palavras_secundarias,
-        str,
-    ):
-        palavras_secundarias = [
-            palavras_secundarias
-        ]
-
     partes = [
         titulo,
         palavra_chave,
         categoria,
         descricao,
-        " ".join(
-            str(item)
-            for item in palavras_secundarias
-        ),
     ]
 
+    if palavras_secundarias:
+        partes.extend(
+            palavras_secundarias
+        )
+
     return " ".join(
-        str(parte or "")
+        str(parte)
         for parte in partes
+        if parte
     )
 
 
-# ============================================================
-# IDENTIFICAÇÃO TEMÁTICA
-# ============================================================
-
 def detectar_temas(texto):
-    """
-    Detecta quais temas estão presentes
-    em determinado texto.
-
-    Retorna:
-    {
-        "tema": quantidade_de_palavras_encontradas
-    }
-    """
-
     tokens = tokenizar(texto)
-
-    temas_encontrados = {}
+    encontrados = {}
 
     for tema, palavras in TEMAS.items():
-        correspondencias = (
-            tokens & palavras
+        quantidade = len(
+            tokens.intersection(palavras)
         )
 
-        if correspondencias:
-            temas_encontrados[tema] = len(
-                correspondencias
-            )
+        if quantidade > 0:
+            encontrados[tema] = quantidade
 
-    return temas_encontrados
+    return encontrados
 
 
 def temas_sao_relacionados(
     tema_artigo,
     tema_produto,
 ):
-    """
-    Verifica se dois temas possuem
-    relação comercial/editorial natural.
-    """
-
-    if tema_artigo == tema_produto:
-        return True
-
-    relacionados = TEMAS_RELACIONADOS.get(
+    if tema_produto in TEMAS_RELACIONADOS.get(
         tema_artigo,
         set(),
-    )
-
-    if tema_produto in relacionados:
+    ):
         return True
 
-    relacionados_inversos = (
-        TEMAS_RELACIONADOS.get(
-            tema_produto,
-            set(),
-        )
-    )
+    if tema_artigo in TEMAS_RELACIONADOS.get(
+        tema_produto,
+        set(),
+    ):
+        return True
 
-    return (
-        tema_artigo
-        in relacionados_inversos
-    )
+    return False
 
 
 def temas_entram_em_conflito(
     tema_artigo,
     tema_produto,
 ):
-    """
-    Evita que o simples compartilhamento
-    de um cômodo faça um produto pouco
-    relacionado receber pontuação alta.
-    """
-
     par = (
         tema_artigo,
         tema_produto,
     )
 
-    par_inverso = (
+    par_invertido = (
         tema_produto,
         tema_artigo,
     )
 
     return (
         par in CONFLITOS_TEMATICOS
-        or par_inverso
+        or par_invertido
         in CONFLITOS_TEMATICOS
     )
 
 
-# ============================================================
-# RELEVÂNCIA
-# ============================================================
+def possui_incompatibilidade_forte(
+    temas_artigo,
+    temas_produto,
+):
+    for tema_artigo in temas_artigo:
+        incompatíveis = (
+            INCOMPATIBILIDADES_FORTES.get(
+                tema_artigo,
+                set(),
+            )
+        )
+
+        for tema_produto in temas_produto:
+            if tema_produto in incompatíveis:
+                return True
+
+    return False
+
 
 def calcular_relevancia(
-    produto,
-    contexto,
+    contexto_artigo,
+    nome_produto,
 ):
-    """
-    Calcula a relevância entre produto
-    e pauta usando:
-
-    1. palavras exatas em comum;
-    2. temas principais;
-    3. temas relacionados;
-    4. penalização de temas conflitantes.
-
-    O objetivo é evitar recomendações
-    baseadas apenas no mesmo cômodo.
-    """
-
-    nome = produto.get(
-        "nome",
-        "",
+    palavras_artigo = tokenizar(
+        contexto_artigo
     )
 
-    if not nome:
-        return 0
-
-    tokens_produto = tokenizar(
-        nome
+    palavras_produto = tokenizar(
+        nome_produto
     )
-
-    tokens_contexto = tokenizar(
-        contexto
-    )
-
-    if not tokens_produto:
-        return 0
-
-    if not tokens_contexto:
-        return 0
-
-    pontuacao = 0
-
-    # --------------------------------------------------------
-    # 1. PALAVRAS EXATAS
-    # --------------------------------------------------------
 
     palavras_comuns = (
-        tokens_produto
-        & tokens_contexto
+        palavras_artigo
+        & palavras_produto
     )
 
-    # Coincidências diretas são um
-    # dos sinais mais fortes.
-    pontuacao += (
+    temas_artigo = detectar_temas(
+        contexto_artigo
+    )
+
+    temas_produto = detectar_temas(
+        nome_produto
+    )
+
+    # Se artigo e produto pertencem a universos
+    # claramente incompatíveis, o produto é
+    # descartado antes de receber pontos genéricos.
+    if possui_incompatibilidade_forte(
+        temas_artigo,
+        temas_produto,
+    ):
+        return 0
+
+    pontuacao = (
         len(palavras_comuns) * 4
     )
 
-    # --------------------------------------------------------
-    # 2. TEMAS
-    # --------------------------------------------------------
+    for (
+        tema_artigo,
+        forca_artigo,
+    ) in temas_artigo.items():
 
-    temas_produto = detectar_temas(
-        nome
-    )
-
-    temas_contexto = detectar_temas(
-        contexto
-    )
-
-    # Tema exatamente igual.
-    for tema, forca_artigo in (
-        temas_contexto.items()
-    ):
-        if tema in temas_produto:
-            forca_produto = (
-                temas_produto[tema]
-            )
-
-            pontuacao += (
-                7
-                + min(
-                    forca_artigo,
-                    3,
-                )
-                + min(
-                    forca_produto,
-                    3,
-                )
-            )
-
-    # --------------------------------------------------------
-    # 3. TEMAS RELACIONADOS
-    # --------------------------------------------------------
-
-    for tema_artigo in temas_contexto:
-        for tema_produto in temas_produto:
+        for (
+            tema_produto,
+            forca_produto,
+        ) in temas_produto.items():
 
             if tema_artigo == tema_produto:
-                continue
+                pontuacao += (
+                    7
+                    + min(forca_artigo, 3)
+                    + min(forca_produto, 3)
+                )
 
-            if temas_sao_relacionados(
+            elif temas_sao_relacionados(
                 tema_artigo,
                 tema_produto,
             ):
                 pontuacao += 3
 
-    # --------------------------------------------------------
-    # 4. CONFLITOS TEMÁTICOS
-    # --------------------------------------------------------
-
-    penalidade = 0
-
-    for tema_artigo in temas_contexto:
-        for tema_produto in temas_produto:
-
             if temas_entram_em_conflito(
                 tema_artigo,
                 tema_produto,
             ):
-                penalidade += 5
+                pontuacao -= 5
 
-    pontuacao -= penalidade
-
-    # --------------------------------------------------------
-    # 5. REFORÇO POR PALAVRAS COMERCIAIS IMPORTANTES
-    # --------------------------------------------------------
-
-    palavras_fortes = {
+    palavras_comerciais_fortes = {
         "organizador",
-        "armazenamento",
+        "organizadores",
         "escorredor",
+        "varal",
+        "travesseiro",
+        "colchao",
+        "camera",
+        "climatizador",
+        "ventilador",
+        "umidificador",
+        "toalha",
+        "toalhas",
         "marmita",
         "marmitas",
         "pote",
         "potes",
         "cortador",
-        "toalha",
-        "toalhas",
-        "mop",
-        "varal",
-        "travesseiro",
-        "colchao",
-        "lencol",
-        "cobertor",
-        "edredom",
-        "camera",
-        "climatizador",
-        "ventilador",
-        "umidificador",
+        "percarbonato",
     }
 
-    fortes_comuns = (
-        palavras_fortes
-        & tokens_produto
-        & tokens_contexto
+    correspondencias_fortes = (
+        palavras_comuns
+        & palavras_comerciais_fortes
     )
 
     pontuacao += (
-        len(fortes_comuns) * 5
+        len(correspondencias_fortes) * 5
     )
 
-    # Nunca retorna pontuação negativa.
     return max(
         0,
         pontuacao,
     )
 
 
-# ============================================================
-# SELEÇÃO
-# ============================================================
-
 def selecionar_produtos(
     titulo,
-    palavra_chave="",
+    palavra_chave,
     categoria="",
     descricao="",
     palavras_secundarias=None,
     limite=3,
     pontuacao_minima=6,
 ):
-    """
-    Seleciona somente produtos com
-    relevância suficiente para a pauta.
-
-    Se nenhum produto for realmente
-    relacionado, retorna lista vazia.
-    """
-
     produtos = carregar_produtos()
 
-    if not produtos:
-        return []
-
-    contexto = criar_contexto_artigo(
+    contexto_artigo = criar_contexto_artigo(
         titulo=titulo,
         palavra_chave=palavra_chave,
         categoria=categoria,
@@ -731,111 +514,55 @@ def selecionar_produtos(
         ),
     )
 
-    candidatos = []
+    avaliados = []
 
-    for produto in produtos:
-        pontuacao = calcular_relevancia(
-            produto,
-            contexto,
-        )
-
-        if pontuacao < pontuacao_minima:
-            continue
-
-        candidato = dict(
-            produto
-        )
-
-        candidato[
-            "pontuacao"
-        ] = pontuacao
-
-        candidatos.append(
-            candidato
-        )
-
-    candidatos.sort(
-        key=lambda item: (
-            -item["pontuacao"],
-            normalizar_texto(
-                item["nome"]
-            ),
-        )
-    )
-
-    # Evita recomendar duas vezes
-    # o mesmo produto quando existirem
-    # links diferentes para títulos iguais.
-    selecionados = []
     nomes_usados = set()
 
-    for produto in candidatos:
-        nome_normalizado = (
-            normalizar_texto(
-                produto["nome"]
-            )
+    for produto in produtos:
+        nome = produto["nome"]
+
+        nome_normalizado = normalizar_texto(
+            nome
         )
 
-        if (
-            nome_normalizado
-            in nomes_usados
-        ):
+        if nome_normalizado in nomes_usados:
             continue
 
         nomes_usados.add(
             nome_normalizado
         )
 
-        selecionados.append(
-            produto
+        pontuacao = calcular_relevancia(
+            contexto_artigo,
+            nome,
         )
 
-        if (
-            len(selecionados)
-            >= limite
-        ):
-            break
+        if pontuacao < pontuacao_minima:
+            continue
 
-    return selecionados
+        item = dict(produto)
 
+        item["pontuacao"] = pontuacao
 
-# ============================================================
-# TESTE MANUAL
-# ============================================================
+        avaliados.append(
+            item
+        )
+
+    avaliados.sort(
+        key=lambda item: item["pontuacao"],
+        reverse=True,
+    )
+
+    return avaliados[:limite]
+
 
 def exibir_resultado(
     titulo,
-    palavra_chave="",
+    palavra_chave,
     categoria="",
     descricao="",
     palavras_secundarias=None,
 ):
-    """
-    Utilitário de teste manual.
-    """
-
-    print()
-    print(
-        "=== SELEÇÃO DE PRODUTOS ==="
-    )
-
-    print(
-        "Título:",
-        titulo,
-    )
-
-    print(
-        "Palavra-chave:",
-        palavra_chave,
-    )
-
-    print(
-        "Categoria:",
-        categoria,
-    )
-
-    print()
-
     produtos = selecionar_produtos(
         titulo=titulo,
         palavra_chave=palavra_chave,
@@ -846,18 +573,27 @@ def exibir_resultado(
         ),
     )
 
+    print()
+    print("=== SELEÇÃO DE PRODUTOS ===")
+    print(f"Título: {titulo}")
+    print(
+        f"Palavra-chave: "
+        f"{palavra_chave}"
+    )
+    print(f"Categoria: {categoria}")
+    print()
+
     if not produtos:
         print(
             "Nenhum produto relevante "
-            "foi encontrado."
+            "encontrado."
         )
         return
 
     print(
         f"{len(produtos)} produto(s) "
-        "relevante(s) encontrado(s):"
+        f"relevante(s) encontrado(s):"
     )
-
     print()
 
     for indice, produto in enumerate(
@@ -868,19 +604,14 @@ def exibir_resultado(
             f"{indice}. "
             f"{produto['nome']}"
         )
-
         print(
-            "   Pontuação:",
-            produto["pontuacao"],
+            f"   Pontuação: "
+            f"{produto['pontuacao']}"
         )
-
         print(
-            "   Link:",
-            produto[
-                "link_afiliado"
-            ],
+            f"   Link: "
+            f"{produto['link_afiliado']}"
         )
-
         print()
 
 
