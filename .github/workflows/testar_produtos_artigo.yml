@@ -1,0 +1,29 @@
+name: Testar Produtos no Artigo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar-produtos-artigo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Verificar sintaxe
+        run: |
+          python -m py_compile src/main.py
+          python -m py_compile src/selecionar_produtos.py
+          python -m py_compile src/testar_produtos_artigo.py
+
+      - name: Testar integração dos produtos no artigo
+        run: python -u src/testar_produtos_artigo.py
