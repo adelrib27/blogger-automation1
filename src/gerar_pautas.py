@@ -5,7 +5,7 @@ import re
 import time
 from pathlib import Path
 
-from google import genai
+import requests
 
 from pautas import comparar_com_historico
 
@@ -18,21 +18,10 @@ ARQUIVO_PRODUTOS = Path("data/produtos.json")
 
 
 # ============================================================
-# MODELOS PARA GERAÇÃO DE PAUTAS
+# MODELO CLOUDFLARE PARA GERAÇÃO DE PAUTAS
 # ============================================================
 
-# A ordem importa.
-# Os modelos com maior cota ficam primeiro.
-# Se um modelo esgotar a cota ou ficar indisponível,
-# o sistema tenta automaticamente o próximo.
-
-MODELOS_GEMINI = [
-    "gemini-3.5-flash-lite",
-    "gemini-3.1-flash-lite",
-    "gemini-3.5-flash",
-    "gemini-3.6-flash",
-    "gemini-3.7-flash",
-]
+MODELO_CLOUDFLARE = "@cf/qwen/qwen3-30b-a3b-fp8"
 
 
 # ============================================================
@@ -48,7 +37,7 @@ def carregar_produtos():
     - link afiliado;
     - status ativo.
 
-    O Gemini nunca cria nem modifica links afiliados.
+    A IA nunca cria nem modifica links afiliados.
     """
 
     if not ARQUIVO_PRODUTOS.exists():
@@ -161,12 +150,12 @@ def ordenar_produtos_para_tentativa(produtos):
 
 
 # ============================================================
-# LIMPEZA E VALIDAÇÃO DA RESPOSTA DO GEMINI
+# LIMPEZA E VALIDAÇÃO DA RESPOSTA DA IA
 # ============================================================
 
 def limpar_json_resposta(texto):
     """
-    Limpa a resposta do Gemini e extrai o bloco JSON.
+    Limpa a resposta da IA e extrai o bloco JSON.
     """
 
     if not texto:
@@ -201,7 +190,7 @@ def validar_pauta(pauta):
     Verifica se a pauta possui os campos editoriais
     necessários.
 
-    produto_principal não é aceito do Gemini.
+    produto_principal não é aceito da IA.
     Esse campo será anexado posteriormente pelo Python.
     """
 
@@ -292,225 +281,132 @@ def validar_pauta(pauta):
 
 
 # ============================================================
-# TRATAMENTO DE ERROS GEMINI
+# CLOUDFLARE WORKERS AI
 # ============================================================
 
-def erro_de_cota(erro):
-    """
-    Detecta quando a cota do modelo foi esgotada.
+def obter_config_cloudflare():
+    """Obtém as credenciais do Workers AI pelas variáveis de ambiente."""
+    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+    api_token = os.getenv("CLOUDFLARE_API_TOKEN")
+    if not account_id:
+        raise RuntimeError("CLOUDFLARE_ACCOUNT_ID não encontrada.")
+    if not api_token:
+        raise RuntimeError("CLOUDFLARE_API_TOKEN não encontrada.")
+    return account_id, api_token
 
-    Nesse caso não adianta esperar alguns segundos:
-    o sistema deve passar imediatamente ao próximo modelo.
-    """
 
-    mensagem = str(erro).upper()
+def extrair_texto_cloudflare(dados):
+    """Extrai o texto retornado pelo Workers AI."""
+    if not isinstance(dados, dict):
+        return ""
+    resultado = dados.get("result")
+    if isinstance(resultado, dict):
+        for campo in ("response", "text", "output_text"):
+            valor = resultado.get(campo)
+            if isinstance(valor, str) and valor.strip():
+                return valor.strip()
+    if isinstance(resultado, str) and resultado.strip():
+        return resultado.strip()
+    for campo in ("response", "text", "output_text"):
+        valor = dados.get(campo)
+        if isinstance(valor, str) and valor.strip():
+            return valor.strip()
+    return ""
 
-    return (
-        "429" in mensagem
-        or "RESOURCE_EXHAUSTED" in mensagem
-        or "QUOTA EXCEEDED" in mensagem
+
+def gerar_candidatas_com_cloudflare(prompt):
+    """Gera pautas com Qwen no Cloudflare Workers AI."""
+    account_id, api_token = obter_config_cloudflare()
+    modelo = MODELO_CLOUDFLARE
+    url = (
+        "https://api.cloudflare.com/client/v4/accounts/"
+        f"{account_id}/ai/run/{modelo}"
     )
-
-
-def erro_temporario(erro):
-    """
-    Detecta indisponibilidade temporária do serviço.
-
-    Para esses erros vale a pena tentar novamente
-    no mesmo modelo antes de usar o próximo.
-    """
-
-    mensagem = str(erro).upper()
-
-    return (
-        "503" in mensagem
-        or "UNAVAILABLE" in mensagem
-        or "HIGH DEMAND" in mensagem
-    )
-
-
-# ============================================================
-# GERAÇÃO COM UM MODELO
-# ============================================================
-
-def gerar_candidatas_com_modelo(
-    client,
-    modelo,
-    prompt,
-):
-    """
-    Tenta gerar as pautas usando um modelo específico.
-
-    Retorna uma lista de pautas válidas.
-    """
-
+    headers = {
+        "Authorization": f"Bearer {api_token}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "Você é um estrategista editorial para blogs brasileiros. "
+                    "Siga rigorosamente as instruções do usuário e, quando "
+                    "solicitado, responda somente com JSON válido, sem Markdown."
+                ),
+            },
+            {"role": "user", "content": prompt},
+        ],
+        "temperature": 0.6,
+        "max_tokens": 4096,
+    }
     tentativas = 3
     esperas = [5, 15]
-
-    for tentativa in range(
-        1,
-        tentativas + 1,
-    ):
+    for tentativa in range(1, tentativas + 1):
         try:
-            print(
-                f"\nModelo: {modelo}"
+            print(f"\nModelo Cloudflare: {modelo}")
+            print(f"Tentativa {tentativa}/{tentativas} para gerar novas pautas...")
+            resposta = requests.post(
+                url, headers=headers, json=payload, timeout=120
             )
-
-            print(
-                f"Tentativa {tentativa}/{tentativas} "
-                "para gerar novas pautas..."
-            )
-
-            resposta = (
-                client.models.generate_content(
-                    model=modelo,
-                    contents=prompt,
+            print("HTTP Cloudflare:", resposta.status_code)
+            if resposta.status_code != 200:
+                detalhe = resposta.text[:1000]
+                if resposta.status_code in (429, 500, 502, 503, 504):
+                    raise RuntimeError(
+                        "ERRO_TEMPORARIO_CLOUDFLARE: "
+                        f"HTTP {resposta.status_code}: {detalhe}"
+                    )
+                raise RuntimeError(
+                    "Erro não recuperável no Cloudflare Workers AI. "
+                    f"HTTP {resposta.status_code}: {detalhe}"
                 )
-            )
-
-            texto = resposta.text
-
+            dados = resposta.json()
+            texto = extrair_texto_cloudflare(dados)
             if not texto:
                 raise RuntimeError(
-                    "Gemini retornou resposta vazia."
+                    "RESPOSTA_ESTRUTURAL: Cloudflare retornou resposta vazia."
                 )
-
-            texto_json = limpar_json_resposta(
-                texto
-            )
-
+            texto_json = limpar_json_resposta(texto)
             if not texto_json:
                 raise RuntimeError(
-                    "Não foi possível localizar JSON "
-                    "na resposta do Gemini."
+                    "RESPOSTA_ESTRUTURAL: não foi possível localizar JSON "
+                    "na resposta da Cloudflare."
                 )
-
-            pautas = json.loads(
-                texto_json
-            )
-
-            if not isinstance(
-                pautas,
-                list,
-            ):
+            pautas = json.loads(texto_json)
+            if not isinstance(pautas, list):
                 raise RuntimeError(
-                    "A resposta não contém "
-                    "uma lista de pautas."
+                    "RESPOSTA_ESTRUTURAL: a resposta não contém uma lista de pautas."
                 )
-
-            pautas_validas = [
-                pauta
-                for pauta in pautas
-                if validar_pauta(pauta)
-            ]
-
+            pautas_validas = [p for p in pautas if validar_pauta(p)]
             if not pautas_validas:
                 raise RuntimeError(
-                    "Nenhuma pauta válida foi gerada."
+                    "RESPOSTA_ESTRUTURAL: nenhuma pauta válida foi gerada."
                 )
-
-            print(
-                f"Modelo {modelo} respondeu "
-                "com sucesso."
-            )
-
+            print("Cloudflare/Qwen respondeu com sucesso.")
             return pautas_validas
-
         except Exception as erro:
             print(
-                f"Erro no modelo {modelo}, "
-                f"tentativa {tentativa}/{tentativas}: "
-                f"{erro}"
+                "Erro na geração Cloudflare/Qwen, "
+                f"tentativa {tentativa}/{tentativas}: {erro}"
             )
-
-            if erro_de_cota(erro):
-                print(
-                    f"Cota do modelo {modelo} "
-                    "indisponível ou esgotada."
-                )
-
-                print(
-                    "Pulando imediatamente "
-                    "para o próximo modelo..."
-                )
-
-                raise
-
-            if erro_temporario(erro):
-                if tentativa >= tentativas:
-                    print(
-                        f"O modelo {modelo} continua "
-                        "temporariamente indisponível."
-                    )
-                    raise
-
-                espera = esperas[
-                    tentativa - 1
-                ]
-
-                print(
-                    f"Aguardando {espera} segundos "
-                    "antes de tentar novamente "
-                    "o mesmo modelo..."
-                )
-
-                time.sleep(
-                    espera
-                )
-
-                continue
-
             mensagem = str(erro)
-
-            erro_json = isinstance(
-                erro,
-                json.JSONDecodeError,
+            recuperavel = (
+                "ERRO_TEMPORARIO_CLOUDFLARE" in mensagem
+                or "RESPOSTA_ESTRUTURAL" in mensagem
+                or isinstance(erro, json.JSONDecodeError)
+                or isinstance(erro, requests.Timeout)
+                or isinstance(erro, requests.ConnectionError)
             )
-
-            erro_estrutural = (
-                erro_json
-                or "JSON" in mensagem
-                or "pauta válida" in mensagem
-                or "lista de pautas" in mensagem
-                or "resposta vazia" in mensagem
-            )
-
-            if erro_estrutural:
-                if tentativa >= tentativas:
-                    print(
-                        f"O modelo {modelo} não "
-                        "conseguiu produzir uma "
-                        "resposta válida."
-                    )
-                    raise
-
-                espera = esperas[
-                    tentativa - 1
-                ]
-
-                print(
-                    f"Aguardando {espera} segundos "
-                    "antes de solicitar uma "
-                    "nova resposta..."
-                )
-
-                time.sleep(
-                    espera
-                )
-
-                continue
-
-            print(
-                "Erro não recuperável no modelo "
-                f"{modelo}."
-            )
-
-            raise
-
-    raise RuntimeError(
-        f"O modelo {modelo} não conseguiu "
-        "gerar pautas válidas."
-    )
+            if not recuperavel:
+                raise
+            if tentativa >= tentativas:
+                raise
+            espera = esperas[tentativa - 1]
+            print(f"Aguardando {espera} segundos antes de tentar novamente...")
+            time.sleep(espera)
+    raise RuntimeError("Cloudflare/Qwen não conseguiu gerar pautas válidas.")
 
 
 # ============================================================
@@ -641,89 +537,26 @@ Não escreva explicações antes ou depois do JSON.
 # GERAÇÃO DE CANDIDATAS PARA UM PRODUTO
 # ============================================================
 
-def gerar_candidatas_gemini(
+def gerar_candidatas_cloudflare(
     produto,
     quantidade=6,
     nicho="Casa e Decoração",
 ):
     """
-    Pede ao Gemini pautas relacionadas especificamente
+    Pede ao Cloudflare/Qwen pautas relacionadas especificamente
     ao produto principal escolhido pelo código.
 
     A decisão final sobre repetição continua pertencendo
     ao nosso próprio motor.
     """
-
-    api_key = os.getenv(
-        "GEMINI_API_KEY"
-    )
-
-    if not api_key:
-        raise RuntimeError(
-            "GEMINI_API_KEY não encontrada."
-        )
-
-    client = genai.Client(
-        api_key=api_key
-    )
-
     prompt = criar_prompt_produto(
         produto=produto,
         quantidade=quantidade,
         nicho=nicho,
     )
-
-    print(
-        "\n=== FILA DE MODELOS PARA PAUTAS ==="
-    )
-
-    for numero, modelo in enumerate(
-        MODELOS_GEMINI,
-        start=1,
-    ):
-        print(
-            f"{numero}. {modelo}"
-        )
-
-    ultimo_erro = None
-
-    for numero, modelo in enumerate(
-        MODELOS_GEMINI,
-        start=1,
-    ):
-        print(
-            f"\n=== MODELO {numero}/"
-            f"{len(MODELOS_GEMINI)} ==="
-        )
-
-        try:
-            return gerar_candidatas_com_modelo(
-                client=client,
-                modelo=modelo,
-                prompt=prompt,
-            )
-
-        except Exception as erro:
-            ultimo_erro = erro
-
-            print(
-                f"Modelo {modelo} não pôde "
-                "concluir a geração."
-            )
-
-            if numero < len(
-                MODELOS_GEMINI
-            ):
-                print(
-                    "Tentando o próximo modelo "
-                    "da fila..."
-                )
-
-    raise RuntimeError(
-        "Todos os modelos configurados para "
-        "geração de pautas falharam. "
-        f"Último erro: {ultimo_erro}"
-    )
+    print("\n=== MODELO PARA PAUTAS ===")
+    print(MODELO_CLOUDFLARE)
+    return gerar_candidatas_com_cloudflare(prompt=prompt)
 
 
 # ============================================================
@@ -914,7 +747,7 @@ def gerar_pauta_automatica(
         )
 
         try:
-            candidatas = gerar_candidatas_gemini(
+            candidatas = gerar_candidatas_cloudflare(
                 produto=produto,
                 quantidade=6,
                 nicho=nicho,
