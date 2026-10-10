@@ -420,6 +420,7 @@ def criar_prompt_artigo(
     palavra_chave,
     categoria,
     produto_principal="",
+    nivel_conservador=0,
 ):
     """
     Monta o prompt editorial.
@@ -431,6 +432,46 @@ def criar_prompt_artigo(
     preço ou qualquer dado comercial. O Python faz
     a integração do produto posteriormente.
     """
+
+    nivel_conservador = int(nivel_conservador or 0)
+
+    reforco_conservador = ""
+
+    if nivel_conservador >= 1:
+        reforco_conservador += """
+MODO CONSERVADOR:
+- Evite qualquer orientação sobre saúde, dor, tratamento,
+  prevenção, bactérias, fungos, mofo, contaminação ou higiene técnica.
+- Evite superlativos como "melhor", "mais eficiente", "superior"
+  e qualquer promessa de resultado.
+- Prefira organização, escolha, estética, conforto percebido,
+  praticidade e uso cotidiano.
+"""
+
+    if nivel_conservador >= 2:
+        reforco_conservador += """
+MODO MUITO CONSERVADOR:
+- Não dê instruções técnicas de conservação, lavagem, secagem,
+  manutenção, instalação ou segurança.
+- Não use números, prazos, medidas, frequências ou comparações
+  de desempenho sem dados fornecidos.
+- Não atribua propriedades técnicas a materiais.
+- Se o título sugerir saúde, dor ou benefício terapêutico,
+  trate apenas de escolha, rotina, posição, preferência e conforto,
+  sem prometer aliviar, prevenir, corrigir ou tratar qualquer condição.
+"""
+
+    if nivel_conservador >= 3:
+        reforco_conservador += """
+MODO EDITORIAL SEGURO:
+- Restrinja o artigo a conteúdo doméstico geral e verificável:
+  organização, decoração, praticidade, critérios de escolha,
+  adaptação ao espaço e preferências pessoais.
+- Não faça alegações de saúde, higiene técnica, conservação,
+  segurança, durabilidade ou desempenho.
+- Não use "evita", "impede", "garante", "elimina", "previne",
+  "protege", "resolve", "melhor", "mais eficiente" ou equivalentes.
+"""
 
     return f"""
 Você é um redator editorial especializado em SEO,
@@ -447,6 +488,8 @@ PALAVRA-CHAVE PRINCIPAL:
 
 CATEGORIA:
 {categoria}
+
+{reforco_conservador}
 
 OBJETIVO PRINCIPAL:
 
@@ -624,6 +667,7 @@ def gerar_conteudo_cloudflare(
     palavra_chave,
     categoria,
     produto_principal="",
+    nivel_conservador=0,
 ):
     """
     Gera o conteúdo editorial em dois blocos com
@@ -645,6 +689,7 @@ def gerar_conteudo_cloudflare(
         palavra_chave=palavra_chave,
         categoria=categoria,
         produto_principal="",
+        nivel_conservador=nivel_conservador,
     )
 
     prompt_bloco_1 = f"""
@@ -876,6 +921,7 @@ def criar_estrutura_artigo(
     secoes=None,
     conclusao="",
     produto_principal="",
+    nivel_conservador=0,
 ):
     """
     Cria o artigo e mantém o mesmo formato
@@ -916,6 +962,7 @@ def criar_estrutura_artigo(
         produto_principal=(
             produto_principal
         ),
+        nivel_conservador=nivel_conservador,
     )
 
     fonte = "cloudflare_qwen"
