@@ -606,12 +606,12 @@ def gerar_conteudo_cloudflare(
     produto_principal="",
 ):
     """
-    Gera somente o conteúdo editorial com
+    Gera o conteúdo editorial em dois blocos com
     Cloudflare/Qwen.
 
-    O nome do produto é deliberadamente ignorado
-    pelo prompt. Ele permanece no parâmetro apenas
-    para compatibilidade com chamadas existentes.
+    A divisão em dois blocos melhora a estabilidade
+    do tamanho final. O produto continua totalmente
+    fora dos prompts da IA.
 
     Retorna:
         (conteudo_html, modelo_utilizado)
@@ -620,16 +620,84 @@ def gerar_conteudo_cloudflare(
         (None, None)
     """
 
-    prompt = criar_prompt_artigo(
+    prompt_base = criar_prompt_artigo(
         titulo=titulo,
         palavra_chave=palavra_chave,
         categoria=categoria,
         produto_principal="",
     )
 
+    prompt_bloco_1 = f"""
+{prompt_base}
+
+INSTRUÇÃO DESTA ETAPA:
+
+Esta é a PRIMEIRA PARTE do artigo.
+
+Produza aproximadamente 500 a 650 palavras.
+
+Inclua:
+- a introdução;
+- de 3 a 4 seções H2;
+- orientações práticas;
+- exemplos úteis quando fizer sentido.
+
+REGRA OBRIGATÓRIA DE SEO:
+Use a expressão exata abaixo pelo menos UMA VEZ,
+de forma natural, preferencialmente na introdução:
+
+{palavra_chave}
+
+Não encerre o assunto como se o artigo tivesse
+terminado. A segunda parte continuará o conteúdo.
+"""
+
+    prompt_bloco_2 = f"""
+{prompt_base}
+
+INSTRUÇÃO DESTA ETAPA:
+
+Esta é a SEGUNDA PARTE do mesmo artigo.
+
+Produza aproximadamente 450 a 600 palavras.
+
+NÃO faça uma nova introdução.
+
+Continue o assunto de forma complementar, sem repetir
+as ideias, exemplos ou subtítulos da primeira parte.
+
+Inclua:
+- de 3 a 4 novas seções H2;
+- aspectos práticos ainda não abordados;
+- situações em que escolhas diferentes podem fazer
+  sentido;
+- um fechamento natural no final.
+
+Não use H2 chamado "Introdução".
+Não repita o título principal.
+"""
+
     try:
-        conteudo = gerar_com_cloudflare(
-            prompt=prompt
+        print(
+            "\n=== BLOCO EDITORIAL 1/2 ==="
+        )
+
+        bloco_1 = gerar_com_cloudflare(
+            prompt=prompt_bloco_1
+        )
+
+        print(
+            "\n=== BLOCO EDITORIAL 2/2 ==="
+        )
+
+        bloco_2 = gerar_com_cloudflare(
+            prompt=prompt_bloco_2
+        )
+
+        conteudo = (
+            bloco_1.rstrip()
+            + "\n\n"
+            + bloco_2.lstrip()
         )
 
         return conteudo, MODELO_ARTIGO
@@ -1382,4 +1450,23 @@ if __name__ == "__main__":
     print(
         "Validação:",
         verificacao,
+    )
+
+    if not verificacao["valido"]:
+        print()
+        print(
+            "TESTE DE ARTIGO: REPROVADO"
+        )
+
+        for erro in verificacao["erros"]:
+            print(
+                "-",
+                erro,
+            )
+
+        raise SystemExit(1)
+
+    print()
+    print(
+        "TESTE DE ARTIGO: APROVADO"
     )
