@@ -141,14 +141,24 @@ def validar_html_basico(html):
             )
 
     # H2 não pode estar dentro de um parágrafo.
+    # Analisa individualmente o conteúdo de cada <p>,
+    # evitando falso positivo entre </p> e o próximo <h2>.
+    paragrafos = re.findall(
+    r"<p\b[^>]*>(.*?)</p>",
+    html,
+    flags=re.IGNORECASE | re.DOTALL,
+)
+
+for paragrafo in paragrafos:
     if re.search(
-        r"<p[^>]*>.*?<h2\b",
-        html,
-        flags=re.IGNORECASE | re.DOTALL,
+        r"<h2\b",
+        paragrafo,
+        flags=re.IGNORECASE,
     ):
         erros.append(
             "Existe H2 dentro de um parágrafo."
         )
+        break
 
     # Verificação simples de abertura/fechamento.
     for tag in ["p", "h2", "ul", "li", "strong"]:
