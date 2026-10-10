@@ -324,8 +324,15 @@ def criar_bloco_produto_principal(
             '<div class="produto-principal-contextual">'
         ),
         (
-            "<p><strong>Uma opção relacionada "
-            "a esta parte do conteúdo:</strong></p>"
+            "<p><strong>Sugestão relacionada ao tema:</strong></p>"
+        ),
+        (
+            "<p><small>"
+            "Selecionamos este produto por ter relação com o tema "
+            "deste artigo. Características, funções e especificações "
+            "podem variar conforme o modelo e o anúncio do vendedor. "
+            "Confira os detalhes na página do produto antes da compra."
+            "</small></p>"
         ),
         (
             "<p>"
