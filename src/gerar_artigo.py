@@ -4,21 +4,14 @@ import re
 import time
 import unicodedata
 
-from google import genai
+import requests
 
 
 # ============================================================
-# MODELOS PARA GERAÇÃO DE ARTIGOS
+# MODELO CLOUDFLARE PARA GERAÇÃO DE ARTIGOS
 # ============================================================
 
-MODELOS_ARTIGO = [
-    "gemini-3.8-flash",
-    "gemini-3.7-flash",
-    "gemini-3.6-flash",
-    "gemini-3.5-flash",
-    "gemini-3.5-flash-lite",
-    "gemini-3.1-flash-lite",
-]
+MODELO_ARTIGO = "@cf/qwen/qwen3-30b-a3b-fp8"
 
 
 MARCADOR_PRODUTO_PRINCIPAL = (
@@ -71,11 +64,11 @@ def criar_introducao(
     )
 
 
-def limpar_html_gemini(
+def limpar_html_ia(
     conteudo,
 ):
     """
-    Faz uma limpeza básica na resposta do Gemini
+    Faz uma limpeza básica na resposta da IA
     sem alterar a estrutura útil do artigo.
 
     O marcador do produto principal é preservado.
@@ -119,51 +112,176 @@ def limpar_html_gemini(
     return conteudo.strip()
 
 
-def erro_de_cota(
-    erro,
-):
+def obter_config_cloudflare():
     """
-    Detecta cota esgotada ou indisponível.
+    Obtém as credenciais do Cloudflare Workers AI.
     """
 
-    mensagem = str(
-        erro
-    ).upper()
-
-    return (
-        "429" in mensagem
-        or "RESOURCE_EXHAUSTED" in mensagem
-        or "QUOTA EXCEEDED" in mensagem
+    account_id = os.getenv(
+        "CLOUDFLARE_ACCOUNT_ID"
     )
 
-
-def erro_temporario(
-    erro,
-):
-    """
-    Detecta indisponibilidade temporária.
-    """
-
-    mensagem = str(
-        erro
-    ).upper()
-
-    return (
-        "503" in mensagem
-        or "UNAVAILABLE" in mensagem
-        or "HIGH DEMAND" in mensagem
+    api_token = os.getenv(
+        "CLOUDFLARE_API_TOKEN"
     )
 
+    if not account_id:
+        raise RuntimeError(
+            "CLOUDFLARE_ACCOUNT_ID não encontrada."
+        )
 
-def gerar_com_modelo(
-    client,
-    modelo,
-    prompt,
-):
+    if not api_token:
+        raise RuntimeError(
+            "CLOUDFLARE_API_TOKEN não encontrada."
+        )
+
+    return account_id, api_token
+
+
+def extrair_texto_cloudflare(dados):
     """
-    Tenta produzir o artigo usando
-    um modelo específico.
+    Aceita os formatos de resposta já observados
+    no Workers AI, incluindo result.response e
+    respostas no formato choices.
     """
+
+    if not isinstance(dados, dict):
+        return ""
+
+    resultado = dados.get("result")
+
+    if isinstance(resultado, dict):
+        for campo in (
+            "response",
+            "text",
+            "output_text",
+        ):
+            valor = resultado.get(campo)
+
+            if (
+                isinstance(valor, str)
+                and valor.strip()
+            ):
+                return valor.strip()
+
+        choices = resultado.get("choices")
+
+        if isinstance(choices, list):
+            for escolha in choices:
+                if not isinstance(
+                    escolha,
+                    dict,
+                ):
+                    continue
+
+                mensagem = escolha.get(
+                    "message"
+                )
+
+                if isinstance(
+                    mensagem,
+                    dict,
+                ):
+                    conteudo = mensagem.get(
+                        "content"
+                    )
+
+                    if (
+                        isinstance(conteudo, str)
+                        and conteudo.strip()
+                    ):
+                        return conteudo.strip()
+
+                texto = escolha.get("text")
+
+                if (
+                    isinstance(texto, str)
+                    and texto.strip()
+                ):
+                    return texto.strip()
+
+    if (
+        isinstance(resultado, str)
+        and resultado.strip()
+    ):
+        return resultado.strip()
+
+    choices = dados.get("choices")
+
+    if isinstance(choices, list):
+        for escolha in choices:
+            if not isinstance(escolha, dict):
+                continue
+
+            mensagem = escolha.get("message")
+
+            if isinstance(mensagem, dict):
+                conteudo = mensagem.get(
+                    "content"
+                )
+
+                if (
+                    isinstance(conteudo, str)
+                    and conteudo.strip()
+                ):
+                    return conteudo.strip()
+
+            texto = escolha.get("text")
+
+            if (
+                isinstance(texto, str)
+                and texto.strip()
+            ):
+                return texto.strip()
+
+    return ""
+
+
+def gerar_com_cloudflare(prompt):
+    """
+    Produz o conteúdo editorial usando Qwen
+    no Cloudflare Workers AI.
+    """
+
+    account_id, api_token = (
+        obter_config_cloudflare()
+    )
+
+    modelo = MODELO_ARTIGO
+
+    url = (
+        "https://api.cloudflare.com/client/v4/accounts/"
+        f"{account_id}/ai/run/{modelo}"
+    )
+
+    headers = {
+        "Authorization": (
+            f"Bearer {api_token}"
+        ),
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "Você é um redator editorial "
+                    "brasileiro especializado em "
+                    "conteúdo útil para blogs de Casa "
+                    "e Decoração. Escreva somente o "
+                    "conteúdo editorial solicitado, "
+                    "em HTML permitido, sem Markdown."
+                ),
+            },
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+        "max_tokens": 5000,
+        "temperature": 0.50,
+    }
 
     tentativas = 3
     esperas = [5, 15]
@@ -174,142 +292,125 @@ def gerar_com_modelo(
     ):
         try:
             print(
-                f"\nModelo de artigo: "
-                f"{modelo}"
+                f"\nModelo de artigo: {modelo}"
             )
 
             print(
                 f"Tentativa {tentativa}/"
-                f"{tentativas} com "
-                f"{modelo}..."
+                f"{tentativas}..."
             )
 
-            resposta = (
-                client.models.generate_content(
-                    model=modelo,
-                    contents=prompt,
+            resposta = requests.post(
+                url,
+                headers=headers,
+                json=payload,
+                timeout=180,
+            )
+
+            print(
+                "HTTP Cloudflare:",
+                resposta.status_code,
+            )
+
+            if resposta.status_code != 200:
+                detalhe = resposta.text[:1000]
+
+                if resposta.status_code in (
+                    429,
+                    500,
+                    502,
+                    503,
+                    504,
+                ):
+                    raise RuntimeError(
+                        "ERRO_TEMPORARIO_CLOUDFLARE: "
+                        f"HTTP {resposta.status_code}: "
+                        f"{detalhe}"
+                    )
+
+                raise RuntimeError(
+                    "Erro não recuperável no "
+                    "Cloudflare Workers AI. "
+                    f"HTTP {resposta.status_code}: "
+                    f"{detalhe}"
+                )
+
+            dados = resposta.json()
+
+            conteudo = (
+                extrair_texto_cloudflare(
+                    dados
                 )
             )
 
-            conteudo = resposta.text
-
             if not conteudo:
                 raise RuntimeError(
-                    "Gemini retornou uma "
+                    "RESPOSTA_ESTRUTURAL: "
+                    "Cloudflare retornou uma "
                     "resposta sem conteúdo."
                 )
 
-            conteudo = (
-                limpar_html_gemini(
-                    conteudo
-                )
+            conteudo = limpar_html_ia(
+                conteudo
             )
 
             if not conteudo:
                 raise RuntimeError(
-                    "O conteúdo ficou vazio "
+                    "RESPOSTA_ESTRUTURAL: "
+                    "o conteúdo ficou vazio "
                     "após a limpeza."
                 )
 
             print(
-                "Artigo recebido com "
-                "sucesso do modelo "
-                f"{modelo}."
+                "Artigo editorial recebido "
+                "com sucesso da Cloudflare/Qwen."
             )
 
             return conteudo
 
         except Exception as erro:
             print(
-                f"Erro no modelo {modelo}, "
+                "Erro na geração Cloudflare/Qwen, "
                 f"tentativa {tentativa}/"
                 f"{tentativas}: {erro}"
             )
 
-            if erro_de_cota(
-                erro
-            ):
-                print(
-                    f"Cota do modelo {modelo} "
-                    "indisponível ou esgotada."
-                )
+            mensagem = str(erro)
 
-                print(
-                    "Pulando imediatamente "
-                    "para o próximo modelo..."
+            recuperavel = (
+                "ERRO_TEMPORARIO_CLOUDFLARE"
+                in mensagem
+                or "RESPOSTA_ESTRUTURAL"
+                in mensagem
+                or isinstance(
+                    erro,
+                    requests.Timeout,
                 )
+                or isinstance(
+                    erro,
+                    requests.ConnectionError,
+                )
+            )
 
+            if not recuperavel:
                 raise
 
-            if erro_temporario(
-                erro
-            ):
-                if tentativa >= tentativas:
-                    print(
-                        f"O modelo {modelo} "
-                        "continua temporariamente "
-                        "indisponível."
-                    )
+            if tentativa >= tentativas:
+                raise
 
-                    raise
-
-                espera = esperas[
-                    tentativa - 1
-                ]
-
-                print(
-                    f"Aguardando {espera} "
-                    "segundos antes de tentar "
-                    "novamente o mesmo modelo..."
-                )
-
-                time.sleep(
-                    espera
-                )
-
-                continue
-
-            mensagem = str(
-                erro
-            )
-
-            erro_resposta = (
-                "sem conteúdo" in mensagem
-                or (
-                    "vazio após a limpeza"
-                    in mensagem
-                )
-            )
-
-            if erro_resposta:
-                if tentativa >= tentativas:
-                    raise
-
-                espera = esperas[
-                    tentativa - 1
-                ]
-
-                print(
-                    f"Aguardando {espera} "
-                    "segundos antes de solicitar "
-                    "novamente o artigo..."
-                )
-
-                time.sleep(
-                    espera
-                )
-
-                continue
+            espera = esperas[
+                tentativa - 1
+            ]
 
             print(
-                "Erro não recuperável no "
-                f"modelo {modelo}."
+                f"Aguardando {espera} segundos "
+                "antes de tentar novamente..."
             )
 
-            raise
+            time.sleep(espera)
 
     raise RuntimeError(
-        f"O modelo {modelo} não conseguiu "
+        "Cloudflare/Qwen não conseguiu "
         "gerar o artigo."
     )
 
@@ -323,51 +424,13 @@ def criar_prompt_artigo(
     """
     Monta o prompt editorial.
 
-    Quando existe produto principal, o Gemini
-    recebe somente o nome do produto.
+    O parâmetro produto_principal é mantido apenas
+    por compatibilidade com o restante do sistema.
 
-    O link afiliado nunca é enviado ao modelo.
+    A IA NÃO recebe o nome do produto, link afiliado,
+    preço ou qualquer dado comercial. O Python faz
+    a integração do produto posteriormente.
     """
-
-    produto_principal = limpar_texto(
-        produto_principal
-    )
-
-    instrucao_produto = ""
-
-    if produto_principal:
-        instrucao_produto = f"""
-PRODUTO PRINCIPAL RELACIONADO À PAUTA:
-
-{produto_principal}
-
-INTEGRAÇÃO EDITORIAL DO PRODUTO:
-
-- O produto acima originou esta pauta e tem relação
-  direta com o assunto.
-- Desenvolva primeiro o conteúdo editorial normalmente.
-- Identifique a seção em que esse produto seja mais
-  útil e natural para o leitor.
-- Nesse ponto, insira EXATAMENTE este marcador:
-
-{MARCADOR_PRODUTO_PRINCIPAL}
-
-- O marcador deve aparecer sozinho entre blocos HTML.
-- Use o marcador EXATAMENTE UMA VEZ.
-- Não altere o marcador.
-- Não coloque o marcador dentro de <p>, <li>, <h2>
-  ou <h3>.
-- Não escreva URL.
-- Não crie link.
-- Não invente preço.
-- Não invente desconto.
-- Não invente características adicionais do produto.
-- Não transforme o artigo em propaganda.
-- Não faça review do produto.
-- Não repita o nome do produto diversas vezes.
-- O texto antes e depois do marcador deve continuar
-  naturalmente, como parte do mesmo artigo.
-"""
 
     return f"""
 Você é um redator editorial especializado em SEO,
@@ -385,8 +448,6 @@ PALAVRA-CHAVE PRINCIPAL:
 CATEGORIA:
 {categoria}
 
-{instrucao_produto}
-
 OBJETIVO PRINCIPAL:
 
 Produzir um artigo que resolva de verdade a dúvida
@@ -397,6 +458,18 @@ no cotidiano.
 O conteúdo deve ser útil primeiro para a pessoa e
 otimizado para mecanismos de busca de forma natural,
 sem parecer escrito para um algoritmo.
+
+SEPARAÇÃO EDITORIAL OBRIGATÓRIA:
+
+- Escreva SOMENTE conteúdo editorial geral.
+- Não mencione produto comercial específico.
+- Não mencione marca.
+- Não mencione preço, desconto, promoção ou compra.
+- Não crie URL ou link externo.
+- Não recomende um modelo específico.
+- Não invente características de produtos.
+- Não tente adivinhar qual produto originou a pauta.
+- O Python fará a integração comercial posteriormente.
 
 ESTILO EDITORIAL:
 
@@ -450,46 +523,12 @@ QUALIDADE E CONFIABILIDADE:
 - Não invente resistência.
 - Não invente certificações.
 - Não invente compatibilidades.
-- Não atribua ao produto características que não estejam
-  explicitamente presentes no nome fornecido.
-- Não deduza características apenas porque seriam comuns
-  em produtos semelhantes.
-- Não transforme uma característica genérica da categoria
-  em característica específica do produto principal.
-- Se determinada característica do produto não foi
-  informada, simplesmente não a mencione.
 - Não faça promessas exageradas.
 - Não dê garantias de resultado.
-- Não diga ou sugira que o produto resolve definitivamente
-  um problema.
 - Não use superlativos comerciais sem informação que os
   sustente, como "melhor", "mais eficiente", "superior",
   "premium" ou equivalentes.
 - Não copie textos de outros sites.
-- Não inclua preços.
-- Não inclua links externos.
-- Não invente marcas ou produtos.
-
-REGRA ESPECIAL PARA O PRODUTO PRINCIPAL:
-
-- Considere o nome do produto recebido neste prompt como
-  a ÚNICA fonte de características específicas desse
-  produto.
-- Você pode mencionar somente características que estejam
-  literalmente sustentadas por esse nome.
-- Não complete mentalmente informações ausentes.
-- Não suponha características com base no tipo de produto.
-- Não atribua vantagens específicas ao produto sem que
-  elas estejam sustentadas pelo nome fornecido.
-- O artigo pode explicar benefícios gerais da categoria,
-  desde que fique claro que são orientações gerais e não
-  características garantidas do produto principal.
-- A função do produto principal é servir como opção
-  relacionada ao contexto do artigo, e não como fonte de
-  alegações técnicas.
-- Não escreva o link do produto.
-- Não invente nem tente reconstruir URL.
-- O Python fará a inserção do link afiliado posteriormente.
 
 SEO NATURAL:
 
@@ -510,10 +549,10 @@ SEO NATURAL:
 
 ESTRUTURA:
 
-- Produza aproximadamente 900 a 1300 palavras.
+- Produza aproximadamente 900 a 1200 palavras.
 - Comece diretamente com uma introdução útil em <p>.
 - Depois da introdução, organize o conteúdo em
-  seções com <h2>.
+  pelo menos 5 seções com <h2>.
 - Use <h3> somente quando houver uma subdivisão
   realmente útil.
 - Use listas quando elas facilitarem a leitura.
@@ -552,10 +591,6 @@ Markdown
 blocos ```html
 links inventados
 
-O marcador {MARCADOR_PRODUTO_PRINCIPAL}, quando
-solicitado acima, é a única exceção de texto que
-pode aparecer fora de uma tag HTML.
-
 O primeiro caractere útil da resposta deve fazer
 parte de uma tag <p>.
 
@@ -564,109 +599,53 @@ depois do artigo.
 """
 
 
-def gerar_conteudo_gemini(
+def gerar_conteudo_cloudflare(
     titulo,
     palavra_chave,
     categoria,
     produto_principal="",
 ):
     """
-    Gera o conteúdo principal usando uma fila
-    automática de modelos Gemini.
+    Gera somente o conteúdo editorial com
+    Cloudflare/Qwen.
+
+    O nome do produto é deliberadamente ignorado
+    pelo prompt. Ele permanece no parâmetro apenas
+    para compatibilidade com chamadas existentes.
 
     Retorna:
         (conteudo_html, modelo_utilizado)
 
-    Se todos os modelos falharem:
+    Se a geração falhar:
         (None, None)
     """
-
-    api_key = os.getenv(
-        "GEMINI_API_KEY"
-    )
-
-    if not api_key:
-        print(
-            "GEMINI_API_KEY não encontrada. "
-            "Usando conteúdo de segurança."
-        )
-
-        return None, None
-
-    client = genai.Client(
-        api_key=api_key
-    )
 
     prompt = criar_prompt_artigo(
         titulo=titulo,
         palavra_chave=palavra_chave,
         categoria=categoria,
-        produto_principal=(
-            produto_principal
-        ),
+        produto_principal="",
     )
 
-    print(
-        "\n=== FILA DE MODELOS PARA ARTIGO ==="
-    )
-
-    for numero, modelo in enumerate(
-        MODELOS_ARTIGO,
-        start=1,
-    ):
-        print(
-            f"{numero}. {modelo}"
+    try:
+        conteudo = gerar_com_cloudflare(
+            prompt=prompt
         )
 
-    ultimo_erro = None
+        return conteudo, MODELO_ARTIGO
 
-    for numero, modelo in enumerate(
-        MODELOS_ARTIGO,
-        start=1,
-    ):
+    except Exception as erro:
         print(
-            f"\n=== MODELO DE ARTIGO "
-            f"{numero}/"
-            f"{len(MODELOS_ARTIGO)} ==="
+            "\nCloudflare/Qwen não conseguiu "
+            "concluir o artigo."
         )
 
-        try:
-            conteudo = gerar_com_modelo(
-                client=client,
-                modelo=modelo,
-                prompt=prompt,
-            )
-
-            return conteudo, modelo
-
-        except Exception as erro:
-            ultimo_erro = erro
-
-            print(
-                f"Modelo {modelo} não pôde "
-                "concluir o artigo."
-            )
-
-            if numero < len(
-                MODELOS_ARTIGO
-            ):
-                print(
-                    "Tentando o próximo modelo "
-                    "da fila..."
-                )
-
-    print(
-        "\nTodos os modelos configurados "
-        "para artigos falharam."
-    )
-
-    if ultimo_erro:
         print(
-            "Último erro:",
-            ultimo_erro,
+            "Erro:",
+            erro,
         )
 
-    return None, None
+        return None, None
 
 
 def criar_conteudo_fallback(
@@ -744,6 +723,63 @@ def contar_marcadores_produto(
     )
 
 
+def inserir_marcador_produto_python(
+    conteudo,
+):
+    """
+    Insere o marcador do produto por decisão
+    determinística do Python.
+
+    A IA não conhece o produto nem decide a posição.
+    O marcador é colocado aproximadamente no meio
+    do artigo, antes de um H2, preservando HTML válido.
+    """
+
+    if not conteudo:
+        return conteudo
+
+    conteudo = conteudo.replace(
+        MARCADOR_PRODUTO_PRINCIPAL,
+        "",
+    )
+
+    posicoes_h2 = [
+        correspondencia.start()
+        for correspondencia in re.finditer(
+            r"<h2\b",
+            conteudo,
+            flags=re.IGNORECASE,
+        )
+    ]
+
+    if posicoes_h2:
+        indice = max(
+            1,
+            len(posicoes_h2) // 2,
+        )
+
+        indice = min(
+            indice,
+            len(posicoes_h2) - 1,
+        )
+
+        posicao = posicoes_h2[indice]
+
+        return (
+            conteudo[:posicao].rstrip()
+            + "\n\n"
+            + MARCADOR_PRODUTO_PRINCIPAL
+            + "\n\n"
+            + conteudo[posicao:].lstrip()
+        )
+
+    return (
+        conteudo.rstrip()
+        + "\n\n"
+        + MARCADOR_PRODUTO_PRINCIPAL
+    )
+
+
 def criar_estrutura_artigo(
     titulo,
     palavra_chave,
@@ -779,13 +815,13 @@ def criar_estrutura_artigo(
     )
 
     print(
-        "\nGerando artigo com Gemini..."
+        "\nGerando artigo editorial com Cloudflare/Qwen..."
     )
 
     (
         conteudo_html,
         modelo_utilizado,
-    ) = gerar_conteudo_gemini(
+    ) = gerar_conteudo_cloudflare(
         titulo=titulo,
         palavra_chave=palavra_chave,
         categoria=categoria,
@@ -794,12 +830,12 @@ def criar_estrutura_artigo(
         ),
     )
 
-    fonte = "gemini"
+    fonte = "cloudflare_qwen"
 
     if conteudo_html:
         print(
-            "Artigo gerado pelo Gemini "
-            "com sucesso."
+            "Artigo editorial gerado pela "
+            "Cloudflare/Qwen com sucesso."
         )
 
         print(
@@ -808,6 +844,12 @@ def criar_estrutura_artigo(
         )
 
         if produto_principal:
+            conteudo_html = (
+                inserir_marcador_produto_python(
+                    conteudo_html
+                )
+            )
+
             quantidade_marcadores = (
                 contar_marcadores_produto(
                     conteudo_html
@@ -822,7 +864,7 @@ def criar_estrutura_artigo(
 
     else:
         print(
-            "Gemini indisponível. "
+            "Cloudflare/Qwen indisponível. "
             "Ativando conteúdo de segurança."
         )
 
@@ -842,6 +884,7 @@ def criar_estrutura_artigo(
         "categoria": categoria,
         "conteudo_html": conteudo_html,
         "fonte": fonte,
+        "modelo_ia": modelo_utilizado,
         "modelo_gemini": modelo_utilizado,
         "produto_principal": (
             produto_principal
@@ -1330,9 +1373,9 @@ if __name__ == "__main__":
     )
 
     print(
-        "Modelo Gemini:",
+        "Modelo IA:",
         teste.get(
-            "modelo_gemini"
+            "modelo_ia"
         ),
     )
 
