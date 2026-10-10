@@ -1104,22 +1104,33 @@ def validar_alegacoes_risco(artigo):
             vistos.add(chave)
             problemas.append({"tipo": tipo, "trecho": trecho[:320]})
 
-    termos_sensiveis = (
-        "geladeira", "refrigerador", "refrigeracao", "congelador",
-        "freezer", "armazenamento", "conservacao", "validade",
-        "seguranca", "seguro", "risco", "saude", "higiene",
+    # Termos de alto risco: usados para detectar promessas
+    # categóricas em contextos que realmente merecem revisão.
+    # Palavras amplas como "limpeza" e "segurança" não entram
+    # sozinhas aqui, pois geravam falsos positivos em orientações
+    # domésticas comuns.
+    termos_alto_risco = (
+        "conservacao", "validade", "saude", "higiene",
         "bacteria", "bacterias", "mofo", "fungo", "fungos",
-        "contaminacao", "alimento", "alimentos", "comida",
-        "limpeza", "desinfetar", "desinfeccao", "esterilizar",
-        "instalacao", "eletrico", "eletrica", "voltagem",
+        "contaminacao", "desinfetar", "desinfeccao",
+        "esterilizar", "seguranca alimentar",
+        "risco eletrico", "choque eletrico",
     )
 
-    termos_promessa = (
-        "garante", "garantem", "elimina", "eliminam", "impede",
-        "impedem", "evita", "evitam", "previne", "previnem",
+    # Verbos/promessas fortes. Só são bloqueados automaticamente
+    # quando aparecem junto de um contexto de alto risco.
+    termos_promessa_forte = (
+        "garante", "garantem", "elimina", "eliminam",
+        "impede", "impedem", "previne", "previnem",
         "protege", "protegem", "resolve", "resolvem", "cura",
         "remove completamente", "100%", "totalmente seguro",
-        "sem risco", "nunca", "sempre",
+        "sem risco",
+    )
+
+    # "evita/evitam" é comum em português cotidiano. Mantemos
+    # bloqueio apenas quando ligado a consequências sensíveis.
+    termos_evitar = (
+        "evita", "evitam",
     )
 
     padrao_numero = re.compile(
@@ -1133,29 +1144,85 @@ def validar_alegacoes_risco(artigo):
     for sentenca in _sentencas_texto(texto):
         normalizada = normalizar_para_comparacao(sentenca)
 
-        tem_sensivel = any(t in normalizada for t in termos_sensiveis)
-        tem_numero = bool(padrao_numero.search(normalizada))
-        tem_tempo = any(u in normalizada for u in unidades_tempo)
-        prudente = _contem_contexto_prudente(normalizada)
+        tem_alto_risco = any(
+            t in normalizada
+            for t in termos_alto_risco
+        )
 
-        if tem_sensivel and tem_numero and tem_tempo and not prudente:
+        tem_contexto_amplo = any(
+            t in normalizada
+            for t in (
+                "geladeira", "refrigerador", "refrigeracao",
+                "congelador", "freezer", "armazenamento",
+                "conservacao", "validade", "seguranca",
+                "saude", "higiene", "bacteria", "bacterias",
+                "mofo", "fungo", "fungos", "contaminacao",
+                "alimento", "alimentos", "comida", "limpeza",
+                "desinfetar", "desinfeccao", "esterilizar",
+                "instalacao", "eletrico", "eletrica", "voltagem",
+            )
+        )
+
+        tem_numero = bool(
+            padrao_numero.search(normalizada)
+        )
+
+        tem_tempo = any(
+            u in normalizada
+            for u in unidades_tempo
+        )
+
+        prudente = _contem_contexto_prudente(
+            normalizada
+        )
+
+        if (
+            tem_contexto_amplo
+            and tem_numero
+            and tem_tempo
+            and not prudente
+        ):
             registrar(
                 "Prazo ou número sensível sem fonte/condição explícita",
                 sentenca,
             )
 
-        if tem_sensivel and any(t in normalizada for t in termos_promessa):
+        tem_promessa_forte = any(
+            t in normalizada
+            for t in termos_promessa_forte
+        )
+
+        tem_evitar_sensivel = (
+            any(
+                t in normalizada
+                for t in termos_evitar
+            )
+            and tem_alto_risco
+        )
+
+        if (
+            tem_alto_risco
+            and tem_promessa_forte
+        ) or tem_evitar_sensivel:
             registrar(
                 "Alegação categórica de saúde, higiene, segurança ou conservação",
                 sentenca,
             )
 
+        # "superior" isolado pode significar posição física
+        # ("parte superior do armário"). Por isso, somente usos
+        # inequivocamente comparativos/comerciais são bloqueados.
         if re.search(
-            r"\b(?:o melhor|a melhor|mais eficiente|superior|premium|"
-            r"garantido|garantida|resultado garantido)\b",
+            r"\b(?:o melhor|a melhor|mais eficiente|"
+            r"qualidade superior|desempenho superior|"
+            r"resultado superior|premium|garantido|garantida|"
+            r"resultado garantido)\b",
             normalizada,
         ):
-            registrar("Superlativo ou garantia não sustentada", sentenca)
+            registrar(
+                "Superlativo ou garantia não sustentada",
+                sentenca,
+            )
 
     # Verificação conservadora de alegações específicas próximas ao produto.
     # O nome do catálogo é a única fonte permitida de características.
