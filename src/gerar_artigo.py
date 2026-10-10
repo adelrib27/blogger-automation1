@@ -920,6 +920,158 @@ def normalizar_para_comparacao(
     return texto.strip()
 
 
+# ============================================================
+# TRAVA EDITORIAL DE RISCO
+# ============================================================
+
+
+def _sentencas_texto(texto):
+    """Divide o texto em trechos curtos para análise conservadora."""
+    return [
+        trecho.strip()
+        for trecho in re.split(r"(?<=[.!?])\s+", texto or "")
+        if trecho.strip()
+    ]
+
+
+def _contem_contexto_prudente(texto_normalizado):
+    """Reconhece linguagem que deixa claro que a orientação pode variar."""
+    expressoes = (
+        "pode variar",
+        "podem variar",
+        "pode depender",
+        "podem depender",
+        "dependendo",
+        "conforme",
+        "de acordo com",
+        "consulte o fabricante",
+        "consulte as instrucoes",
+        "siga as instrucoes",
+        "orientacoes do fabricante",
+        "instrucoes do fabricante",
+        "quando aplicavel",
+        "em geral",
+        "como referencia",
+        "aproximadamente",
+        "cerca de",
+    )
+    return any(expressao in texto_normalizado for expressao in expressoes)
+
+
+def validar_alegacoes_risco(artigo):
+    """
+    Trava editorial determinística para publicação automática.
+
+    Ela não tenta provar que uma afirmação é verdadeira. Em vez disso,
+    bloqueia padrões que merecem revisão humana antes de publicar:
+    alegações numéricas/temporais sensíveis, saúde/segurança com promessa,
+    superlativos/garantias e características específicas do produto que
+    não estejam sustentadas pelo nome fornecido.
+    """
+    conteudo = artigo.get("conteudo_html", "") or ""
+    produto = limpar_texto(artigo.get("produto_principal", ""))
+    texto = extrair_texto_html(conteudo)
+
+    problemas = []
+    vistos = set()
+
+    def registrar(tipo, trecho):
+        trecho = limpar_texto(trecho)
+        chave = (tipo, normalizar_para_comparacao(trecho))
+        if trecho and chave not in vistos:
+            vistos.add(chave)
+            problemas.append({"tipo": tipo, "trecho": trecho[:320]})
+
+    termos_sensiveis = (
+        "geladeira", "refrigerador", "refrigeracao", "congelador",
+        "freezer", "armazenamento", "conservacao", "validade",
+        "seguranca", "seguro", "risco", "saude", "higiene",
+        "bacteria", "bacterias", "mofo", "fungo", "fungos",
+        "contaminacao", "alimento", "alimentos", "comida",
+        "limpeza", "desinfetar", "desinfeccao", "esterilizar",
+        "instalacao", "eletrico", "eletrica", "voltagem",
+    )
+
+    termos_promessa = (
+        "garante", "garantem", "elimina", "eliminam", "impede",
+        "impedem", "evita", "evitam", "previne", "previnem",
+        "protege", "protegem", "resolve", "resolvem", "cura",
+        "remove completamente", "100%", "totalmente seguro",
+        "sem risco", "nunca", "sempre",
+    )
+
+    padrao_numero = re.compile(
+        r"(?:\b\d+(?:[.,]\d+)?\b|\b\d+\s*(?:a|ate)\s*\d+\b)"
+    )
+    unidades_tempo = (
+        "minuto", "minutos", "hora", "horas", "dia", "dias",
+        "semana", "semanas", "mes", "meses", "ano", "anos",
+    )
+
+    for sentenca in _sentencas_texto(texto):
+        normalizada = normalizar_para_comparacao(sentenca)
+
+        tem_sensivel = any(t in normalizada for t in termos_sensiveis)
+        tem_numero = bool(padrao_numero.search(normalizada))
+        tem_tempo = any(u in normalizada for u in unidades_tempo)
+        prudente = _contem_contexto_prudente(normalizada)
+
+        if tem_sensivel and tem_numero and tem_tempo and not prudente:
+            registrar(
+                "Prazo ou número sensível sem fonte/condição explícita",
+                sentenca,
+            )
+
+        if tem_sensivel and any(t in normalizada for t in termos_promessa):
+            registrar(
+                "Alegação categórica de saúde, higiene, segurança ou conservação",
+                sentenca,
+            )
+
+        if re.search(
+            r"\b(?:o melhor|a melhor|mais eficiente|superior|premium|"
+            r"garantido|garantida|resultado garantido)\b",
+            normalizada,
+        ):
+            registrar("Superlativo ou garantia não sustentada", sentenca)
+
+    # Verificação conservadora de alegações específicas próximas ao produto.
+    # O nome do catálogo é a única fonte permitida de características.
+    if produto:
+        produto_norm = normalizar_para_comparacao(produto)
+        caracteristicas = (
+            "algodao", "poliester", "microfibra", "inox", "aco",
+            "aluminio", "plastico", "madeira", "impermeavel",
+            "antiderrapante", "lavavel", "dobravel", "ajustavel",
+            "recarregavel", "sem fio", "bivolt", "wifi", "led",
+            "silencioso", "ortopedico", "ergonomico", "termico",
+            "resistente", "felpudo", "macio", "confortavel",
+            "litro", "litros", "ml", "w", "kw", "cm", "mm",
+        )
+
+        for sentenca in _sentencas_texto(texto):
+            normalizada = normalizar_para_comparacao(sentenca)
+            if not any(
+                chave in normalizada
+                for chave in ("produto", "item", "modelo")
+            ):
+                continue
+
+            for termo in caracteristicas:
+                if termo in normalizada and termo not in produto_norm:
+                    registrar(
+                        "Característica específica do produto não sustentada pelo nome",
+                        sentenca,
+                    )
+                    break
+
+    return {
+        "aprovado": len(problemas) == 0,
+        "problemas": problemas,
+        "quantidade_problemas": len(problemas),
+    }
+
+
 def validar_artigo(
     artigo,
 ):
@@ -1109,6 +1261,19 @@ def validar_artigo(
                 "aparece em excesso."
             )
 
+    validacao_risco = validar_alegacoes_risco(artigo)
+
+    if not validacao_risco["aprovado"]:
+        erros.append(
+            "Trava editorial de risco reprovou o artigo."
+        )
+
+        for problema in validacao_risco["problemas"]:
+            erros.append(
+                f"Risco editorial: {problema['tipo']} | "
+                f"{problema['trecho']}"
+            )
+
     return {
         "valido": len(
             erros
@@ -1125,6 +1290,7 @@ def validar_artigo(
                 conteudo
             )
         ),
+        "validacao_risco": validacao_risco,
     }
 
 
