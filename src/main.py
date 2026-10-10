@@ -11,7 +11,7 @@ from gerar_artigo import (
     criar_estrutura_artigo,
     validar_artigo,
 )
-from gerar_imagem import gerar_imagem_destacada
+from gerar_imagem import preparar_imagem
 from criar_rascunho import criar_rascunho
 from links_internos import adicionar_links_internos
 from selecionar_produtos import selecionar_produtos
@@ -65,7 +65,7 @@ def carregar_historico():
     return []
 
 
-def escolher_pauta(nicho):
+def escolher_pauta(nicho, produtos_excluidos=None):
     """
     Gera automaticamente uma pauta baseada
     em um produto real do catálogo.
@@ -76,6 +76,7 @@ def escolher_pauta(nicho):
 
     return gerar_pauta_automatica(
         nicho=nicho,
+        produtos_excluidos=produtos_excluidos or [],
     )
 
 
@@ -672,155 +673,208 @@ def executar():
         )
 
     print(
-        "\nSelecionando uma pauta "
-        "inédita automaticamente..."
+        "\nSelecionando pauta e artigo "
+        "com recuperação automática..."
     )
 
-    pauta = escolher_pauta(
-        nicho=nicho,
-    )
+    MAX_TENTATIVAS_ARTIGO = 10
+    produtos_excluidos = set()
+    pauta = None
+    seo = None
+    artigo = None
+    validacao = None
+    categoria = None
+    palavras_secundarias = []
+    produto_principal = None
 
-    categoria = pauta.get(
-        "categoria",
-        "Casa e Decoração",
-    )
+    for tentativa_global in range(1, MAX_TENTATIVAS_ARTIGO + 1):
+        # 1-3: geração normal
+        # 4-6: conservadora
+        # 7-9: muito conservadora + troca de produto
+        # 10: modo editorial seguro
+        if tentativa_global <= 3:
+            nivel_conservador = 0
+        elif tentativa_global <= 6:
+            nivel_conservador = 1
+        elif tentativa_global <= 9:
+            nivel_conservador = 2
+        else:
+            nivel_conservador = 3
 
-    palavras_secundarias = pauta.get(
-        "palavras_secundarias",
-        [],
-    )
-
-    produto_pauta = pauta.get(
-        "produto_principal"
-    )
-
-    if not validar_produto_principal(
-        produto_pauta
-    ):
-        raise RuntimeError(
-            "A pauta foi gerada sem um "
-            "produto principal válido. "
-            "Nada será enviado ao Blogger."
+        # Troca de pauta/produto nas tentativas 4, 7 e 10.
+        precisa_nova_pauta = (
+            pauta is None
+            or tentativa_global in (4, 7, 10)
         )
 
-    produto_principal = (
-        preparar_produto_principal(
-            produto_pauta
-        )
-    )
+        if precisa_nova_pauta:
+            if pauta is not None and produto_principal:
+                produtos_excluidos.add(
+                    produto_principal["nome"]
+                )
 
-    print(
-        "\nPauta escolhida:"
-    )
-
-    print(
-        pauta["titulo"]
-    )
-
-    print(
-        "Palavra-chave:",
-        pauta["palavra_chave"],
-    )
-
-    print(
-        "Categoria:",
-        categoria,
-    )
-
-    print(
-        "Produto principal:",
-        produto_principal[
-            "nome"
-        ],
-    )
-
-    print(
-        "Link afiliado principal:",
-        produto_principal[
-            "link_afiliado"
-        ],
-    )
-
-    seo_config = config.get(
-        "seo",
-        {},
-    )
-
-    seo = preparar_seo(
-        titulo=pauta["titulo"],
-        palavra_chave=pauta[
-            "palavra_chave"
-        ],
-        descricao=pauta[
-            "descricao"
-        ],
-        palavras_secundarias=(
-            palavras_secundarias
-        ),
-        titulo_max=seo_config.get(
-            "titulo_max",
-            60,
-        ),
-        meta_max=seo_config.get(
-            "meta_description_max",
-            155,
-        ),
-    )
-
-    # ========================================================
-    # ARTIGO
-    # ========================================================
-
-    artigo = criar_estrutura_artigo(
-        titulo=seo["titulo"],
-        palavra_chave=pauta[
-            "palavra_chave"
-        ],
-        categoria=categoria,
-        produto_principal=(
-            produto_principal[
-                "nome"
-            ]
-        ),
-    )
-
-    # A validação acontece antes da substituição,
-    # pois ela também confirma que o Gemini colocou
-    # exatamente um marcador contextual.
-    validacao = validar_artigo(
-        artigo
-    )
-
-    if not validacao["valido"]:
-        print(
-            "\nArtigo reprovado:"
-        )
-
-        for erro in validacao[
-            "erros"
-        ]:
             print(
-                "-",
-                erro,
+                f"\n=== TENTATIVA GLOBAL "
+                f"{tentativa_global}/{MAX_TENTATIVAS_ARTIGO} ==="
+            )
+
+            print(
+                "Selecionando nova pauta/produto..."
+            )
+
+            try:
+                pauta = escolher_pauta(
+                    nicho=nicho,
+                    produtos_excluidos=produtos_excluidos,
+                )
+            except Exception as erro:
+                print(
+                    "Não foi possível obter nova pauta:",
+                    erro,
+                )
+                pauta = None
+                continue
+
+            categoria = pauta.get(
+                "categoria",
+                "Casa e Decoração",
+            )
+
+            palavras_secundarias = pauta.get(
+                "palavras_secundarias",
+                [],
+            )
+
+            produto_pauta = pauta.get(
+                "produto_principal"
+            )
+
+            if not validar_produto_principal(
+                produto_pauta
+            ):
+                print(
+                    "Pauta sem produto principal válido. "
+                    "Tentando novamente..."
+                )
+                pauta = None
+                continue
+
+            produto_principal = preparar_produto_principal(
+                produto_pauta
+            )
+
+            print("\nPauta escolhida:")
+            print(pauta["titulo"])
+            print("Palavra-chave:", pauta["palavra_chave"])
+            print("Categoria:", categoria)
+            print("Produto principal:", produto_principal["nome"])
+            print(
+                "Link afiliado principal:",
+                produto_principal["link_afiliado"],
+            )
+
+            seo_config = config.get(
+                "seo",
+                {},
+            )
+
+            seo = preparar_seo(
+                titulo=pauta["titulo"],
+                palavra_chave=pauta["palavra_chave"],
+                descricao=pauta["descricao"],
+                palavras_secundarias=palavras_secundarias,
+                titulo_max=seo_config.get("titulo_max", 60),
+                meta_max=seo_config.get(
+                    "meta_description_max",
+                    155,
+                ),
+            )
+        else:
+            print(
+                f"\n=== TENTATIVA GLOBAL "
+                f"{tentativa_global}/{MAX_TENTATIVAS_ARTIGO} ==="
+            )
+            print(
+                "Regenerando artigo para a mesma pauta..."
             )
 
         print(
-            "\nNada foi enviado ao Blogger."
+            "Nível conservador:",
+            nivel_conservador,
         )
 
+        try:
+            artigo = criar_estrutura_artigo(
+                titulo=seo["titulo"],
+                palavra_chave=pauta["palavra_chave"],
+                categoria=categoria,
+                produto_principal=produto_principal["nome"],
+                nivel_conservador=nivel_conservador,
+            )
+        except Exception as erro:
+            print(
+                "Falha durante a geração do artigo:",
+                erro,
+            )
+            artigo = None
+            continue
+
+        validacao = validar_artigo(
+            artigo
+        )
+
+        if validacao["valido"]:
+            print(
+                "\nArtigo editorial aprovado "
+                f"na tentativa {tentativa_global}."
+            )
+            print(
+                "Marcadores contextuais validados:",
+                validacao.get(
+                    "quantidade_marcadores_produto",
+                    0,
+                ),
+            )
+            break
+
+        print(
+            "\nArtigo reprovado na tentativa",
+            tentativa_global,
+        )
+
+        for erro in validacao["erros"]:
+            print("-", erro)
+
+        if tentativa_global < MAX_TENTATIVAS_ARTIGO:
+            print(
+                "O conteúdo foi descartado. "
+                "Nova tentativa será feita automaticamente."
+            )
+
+    else:
+        print(
+            "\nAs 10 tentativas editoriais foram esgotadas."
+        )
+        print(
+            "Nenhum conteúdo reprovado será enviado ao Blogger."
+        )
         return
 
-    print(
-        "\nArtigo editorial aprovado."
-    )
-
-    print(
-        "Marcadores contextuais validados:",
-        validacao.get(
-            "quantidade_marcadores_produto",
-            0,
-        ),
-    )
+    if not (
+        pauta
+        and seo
+        and artigo
+        and validacao
+        and validacao["valido"]
+        and produto_principal
+    ):
+        print(
+            "\nNão foi possível formar um pacote editorial aprovado."
+        )
+        print(
+            "Nada foi enviado ao Blogger."
+        )
+        return
 
     # ========================================================
     # PRODUTO PRINCIPAL CONTEXTUAL
@@ -1035,60 +1089,14 @@ def executar():
     # IMAGEM
     # ========================================================
 
-    imagem = gerar_imagem_destacada(
-    titulo=seo["titulo"],
-    palavra_chave=pauta[
-        "palavra_chave"
-    ],
-    categoria=categoria,
-)
-    # ========================================================
-    # INSERIR IMAGEM DESTACADA NO ARTIGO
-    # ========================================================
+    imagem = preparar_imagem(
+        titulo=seo["titulo"],
+        palavra_chave=pauta[
+            "palavra_chave"
+        ],
+        categoria=categoria,
+    )
 
-    if (
-        imagem.get("gerada")
-        and imagem.get("url_publica")
-    ):
-        url_imagem = html.escape(
-            imagem["url_publica"],
-            quote=True,
-        )
-
-        alt_imagem = html.escape(
-            imagem["alt_text"],
-            quote=True,
-        )
-
-        bloco_imagem = (
-            '<div style="text-align:center;'
-            'margin:0 0 24px 0;">'
-            f'<img src="{url_imagem}" '
-            f'alt="{alt_imagem}" '
-            'width="1280" '
-            'height="720" '
-            'loading="eager" '
-            'style="max-width:100%;'
-            'height:auto;'
-            'border-radius:8px;" />'
-            '</div>'
-        )
-
-        artigo["conteudo_html"] = (
-            bloco_imagem
-            + artigo["conteudo_html"]
-        )
-
-        print(
-            "Imagem destacada inserida "
-            "no HTML do artigo."
-        )
-
-    else:
-        print(
-            "Imagem destacada indisponível. "
-            "O artigo continuará sem imagem."
-        )
     pacote = {
         "pauta": pauta,
         "seo": seo,
