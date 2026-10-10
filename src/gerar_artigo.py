@@ -1240,10 +1240,19 @@ def validar_alegacoes_risco(artigo):
 
         for sentenca in _sentencas_texto(texto):
             normalizada = normalizar_para_comparacao(sentenca)
-            if not any(
-                chave in normalizada
-                for chave in ("produto", "item", "modelo")
-            ):
+
+            # Só considera referência ao produto quando as palavras
+            # "produto", "item" ou "modelo" aparecem como palavras
+            # completas. Isso evita falsos positivos como "permitem",
+            # que contém as letras "item" no meio da palavra.
+            menciona_produto = bool(
+                re.search(
+                    r"\\b(?:produto|item|modelo)\\b",
+                    normalizada,
+                )
+            )
+
+            if not menciona_produto:
                 continue
 
             for termo in caracteristicas:
