@@ -3,6 +3,13 @@ name: Automação Blogger
 on:
   workflow_dispatch:
 
+  schedule:
+    # 09:00 no horário de Brasília
+    - cron: "0 12 * * *"
+
+    # 18:00 no horário de Brasília
+    - cron: "0 21 * * *"
+
 permissions:
   contents: write
 
@@ -23,9 +30,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
+
       - name: Verificar sintaxe Python
         run: python -m compileall -q src
+
       - name: Sincronizar publicados e rascunhos
         env:
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
@@ -42,6 +50,7 @@ jobs:
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python src/main.py
+
       - name: Atualizar rascunhos após automação
         if: success()
         env:
@@ -50,6 +59,7 @@ jobs:
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
         run: python src/importar_posts.py
+
       - name: Verificar alterações nos dados
         if: always()
         id: dados
