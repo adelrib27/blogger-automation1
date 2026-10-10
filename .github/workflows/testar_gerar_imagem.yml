@@ -20,6 +20,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install requests cloudinary pillow
 
       - name: Verificar sintaxe
         run: python -m py_compile src/gerar_imagem.py
@@ -27,7 +28,9 @@ jobs:
       - name: Testar geração de imagem
         timeout-minutes: 5
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
           PYTHONUNBUFFERED: "1"
         run: python -u src/gerar_imagem.py
 
@@ -43,4 +46,4 @@ jobs:
         with:
           name: imagem-destacada-teste
           path: data/imagens/
-          if-no-files-found: warn
+          if-no-files-found: error
