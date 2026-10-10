@@ -347,10 +347,10 @@ mantimentos está o
 De acordo com as informações cadastradas para
 este item, os potes possuem capacidade informada
 de 800ml e travas laterais.</p>
-<p>Ao avaliar esse tipo de item, compare a
-capacidade informada com a quantidade que você
-costuma organizar e com o espaço disponível
-no armário ou na prateleira.</p>
+<p>Ao pesquisar <strong>{palavra_chave_comercial}</strong>,
+compare a capacidade informada de cada opção com a
+quantidade que você costuma organizar e com o espaço
+disponível no armário ou na prateleira.</p>
 <p><a href="{link_afiliado}"
 target="_blank"
 rel="nofollow sponsored">Ver o produto</a></p>
