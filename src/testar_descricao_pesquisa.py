@@ -4,7 +4,7 @@ import os
 from criar_rascunho import criar_servico_blogger
 
 
-POST_ID = "429407037007587616"
+TITULO_PROCURADO = "TESTE — Automação Blogger funcionando"
 
 METADADOS_TESTE = {
     "teste_automacao": (
@@ -12,6 +12,34 @@ METADADOS_TESTE = {
         "Este texto não deve publicar o post."
     )
 }
+
+
+def localizar_rascunho(
+    blogger,
+    blog_id,
+):
+    resposta = (
+        blogger.posts()
+        .list(
+            blogId=blog_id,
+            status=["DRAFT"],
+            fetchBodies=True,
+            maxResults=50,
+        )
+        .execute()
+    )
+
+    posts = resposta.get("items", [])
+
+    for post in posts:
+        titulo = str(
+            post.get("title") or ""
+        ).strip()
+
+        if titulo == TITULO_PROCURADO:
+            return post
+
+    return None
 
 
 def main():
@@ -24,23 +52,37 @@ def main():
 
     blogger = criar_servico_blogger()
 
-    print("=== TESTE CONTROLADO DE customMetaData ===")
-    print("O post continuará como RASCUNHO.")
-    print("Nenhuma publicação será solicitada.")
+    print(
+        "=== TESTE CONTROLADO DE customMetaData ==="
+    )
+    print(
+        "O post continuará como RASCUNHO."
+    )
+    print(
+        "Nenhuma publicação será solicitada."
+    )
     print()
 
-    print("1. Lendo o rascunho antes da alteração...")
-
-    antes = (
-        blogger.posts()
-        .get(
-            blogId=blog_id,
-            postId=POST_ID,
-            fetchBody=True,
-        )
-        .execute()
+    print(
+        "1. Localizando o rascunho diretamente "
+        "no Blogger..."
     )
 
+    antes = localizar_rascunho(
+        blogger,
+        blog_id,
+    )
+
+    if antes is None:
+        raise RuntimeError(
+            "Rascunho de teste não encontrado: "
+            + TITULO_PROCURADO
+        )
+
+    post_id = antes.get("id")
+
+    print("Rascunho encontrado.")
+    print("ID atual:", post_id)
     print("Título:", antes.get("title"))
     print("Status antes:", antes.get("status"))
     print(
@@ -55,19 +97,27 @@ def main():
             "Teste cancelado."
         )
 
+    if not post_id:
+        raise RuntimeError(
+            "O Blogger não retornou o ID "
+            "do rascunho."
+        )
+
     valor_json = json.dumps(
         METADADOS_TESTE,
         ensure_ascii=False,
     )
 
-    print("2. Enviando customMetaData de teste...")
+    print(
+        "2. Enviando customMetaData de teste..."
+    )
     print("Valor:", valor_json)
 
     resultado = (
         blogger.posts()
         .patch(
             blogId=blog_id,
-            postId=POST_ID,
+            postId=post_id,
             body={
                 "customMetaData": valor_json,
             },
@@ -78,7 +128,10 @@ def main():
 
     print()
     print("Resposta do PATCH:")
-    print("Status:", resultado.get("status"))
+    print(
+        "Status:",
+        resultado.get("status"),
+    )
     print(
         "customMetaData:",
         resultado.get("customMetaData"),
@@ -86,24 +139,32 @@ def main():
 
     if resultado.get("status") != "DRAFT":
         raise RuntimeError(
-            "SEGURANÇA: status inesperado após PATCH."
+            "SEGURANÇA: status inesperado "
+            "após PATCH."
         )
 
     print()
-    print("3. Lendo novamente diretamente do Blogger...")
-
-    depois = (
-        blogger.posts()
-        .get(
-            blogId=blog_id,
-            postId=POST_ID,
-            fetchBody=True,
-        )
-        .execute()
+    print(
+        "3. Localizando novamente o rascunho..."
     )
 
+    depois = localizar_rascunho(
+        blogger,
+        blog_id,
+    )
+
+    if depois is None:
+        raise RuntimeError(
+            "O rascunho não foi encontrado "
+            "após o PATCH."
+        )
+
+    print("ID depois:", depois.get("id"))
     print("Título:", depois.get("title"))
-    print("Status depois:", depois.get("status"))
+    print(
+        "Status depois:",
+        depois.get("status"),
+    )
     print(
         "customMetaData depois:",
         depois.get("customMetaData"),
@@ -112,7 +173,10 @@ def main():
     print()
     print("=== RESULTADO ===")
 
-    if depois.get("customMetaData") == valor_json:
+    if (
+        depois.get("customMetaData")
+        == valor_json
+    ):
         print(
             "SUCESSO: customMetaData foi "
             "persistido pelo Blogger."
@@ -125,7 +189,8 @@ def main():
 
     print()
     print(
-        "O teste NÃO solicitou publicação do post."
+        "O teste NÃO solicitou publicação "
+        "do post."
     )
 
 
