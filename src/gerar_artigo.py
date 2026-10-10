@@ -1311,13 +1311,21 @@ def validar_alegacoes_risco(artigo):
         # "superior" isolado pode significar posição física
         # ("parte superior do armário"). Por isso, somente usos
         # inequivocamente comparativos/comerciais são bloqueados.
-        # Instruções de cuidado/manutenção podem variar conforme
-        # material e fabricante. Quando a frase prescreve uma ação
-        # específica e afirma um efeito funcional, exige contexto prudente.
+        # Instruções técnicas de cuidado/manutenção podem variar
+        # conforme material e fabricante. A regra só atua quando
+        # coexistem: uma ação de cuidado, um contexto de material/produto
+        # e um efeito funcional alegado. Assim, hábitos domésticos comuns
+        # como "lavar os pratos" ou "limpar a pia" não são bloqueados.
         termos_cuidado = (
             "lavar", "lave", "lavagem", "secar", "secagem",
             "amaciante", "cloro", "sabao", "detergente",
             "temperatura", "agua quente", "agua morna",
+        )
+        contextos_cuidado_produto = (
+            "tecido", "tecidos", "toalha", "toalhas",
+            "roupa", "roupas", "algodao", "microfibra",
+            "material", "materiais", "produto", "produtos",
+            "peca", "pecas", "fibra", "fibras",
         )
         efeitos_cuidado = (
             "preserva", "preservar", "mantem", "manter",
@@ -1328,6 +1336,7 @@ def validar_alegacoes_risco(artigo):
 
         if (
             any(t in normalizada for t in termos_cuidado)
+            and any(t in normalizada for t in contextos_cuidado_produto)
             and any(t in normalizada for t in efeitos_cuidado)
             and not prudente
         ):
