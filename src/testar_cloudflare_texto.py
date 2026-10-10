@@ -6,10 +6,10 @@ import requests
 ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
 API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN")
 
-MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+MODEL = "@cf/qwen/qwen3-30b-a3b-fp8"
 
 
-def gerar_texto(prompt):
+def gerar_texto(prompt, max_tokens=2200):
     if not ACCOUNT_ID:
         raise RuntimeError(
             "CLOUDFLARE_ACCOUNT_ID não configurado."
@@ -37,12 +37,11 @@ def gerar_texto(prompt):
                 "content": (
                     "Você é um redator editorial brasileiro "
                     "especializado em SEO para blogs de Casa e "
-                    "Decoração. Escreva em português do Brasil. "
-                    "Sua prioridade é precisão factual. "
-                    "Nunca transforme uma suposição sobre um produto "
-                    "em característica, benefício ou capacidade dele. "
-                    "Quando uma informação do produto não tiver sido "
-                    "fornecida, simplesmente não fale sobre ela."
+                    "Decoração. Escreva conteúdo útil, natural, "
+                    "original e em português do Brasil. "
+                    "Nesta tarefa você NÃO descreve produtos "
+                    "comerciais. Concentre-se somente no conteúdo "
+                    "editorial solicitado."
                 ),
             },
             {
@@ -50,12 +49,12 @@ def gerar_texto(prompt):
                 "content": prompt,
             },
         ],
-        "max_tokens": 5000,
-        "temperature": 0.45,
+        "max_tokens": max_tokens,
+        "temperature": 0.55,
     }
 
     print("Modelo:", MODEL)
-    print("Enviando solicitação à Cloudflare...")
+    print("Enviando bloco à Cloudflare...")
 
     response = requests.post(
         url,
@@ -68,8 +67,7 @@ def gerar_texto(prompt):
 
     if response.status_code != 200:
         raise RuntimeError(
-            "Erro Cloudflare:\n"
-            + response.text
+            "Erro Cloudflare:\n" + response.text
         )
 
     dados = response.json()
@@ -80,13 +78,11 @@ def gerar_texto(prompt):
             + response.text
         )
 
-    resultado = dados.get("result", {})
-    texto = resultado.get("response")
+    texto = dados.get("result", {}).get("response")
 
     if not texto:
         raise RuntimeError(
-            "A Cloudflare respondeu, mas nenhum texto "
-            "foi encontrado em result.response."
+            "Nenhum texto encontrado em result.response."
         )
 
     return texto.strip()
@@ -108,10 +104,31 @@ def contar_palavras_html(texto):
     return len(palavras)
 
 
+def limpar_saida(texto):
+    texto = texto.strip()
+
+    texto = re.sub(
+        r"^```(?:html)?\s*",
+        "",
+        texto,
+        flags=re.IGNORECASE,
+    )
+
+    texto = re.sub(
+        r"\s*```$",
+        "",
+        texto,
+    )
+
+    return texto.strip()
+
+
 def executar_teste():
     print()
     print("==========================================")
-    print("TESTE 2 — ARTIGO BLINDADO COM CLOUDFLARE")
+    print("TESTE 3 — ARQUITETURA HÍBRIDA")
+    print("QWEN = EDITORIAL")
+    print("PYTHON = PRODUTO")
     print("NENHUM CONTEÚDO SERÁ ENVIADO AO BLOGGER")
     print("==========================================")
     print()
@@ -125,195 +142,148 @@ def executar_teste():
         "potes para alimentos com travas laterais"
     )
 
-    categoria = "Organização de Cozinha"
-
-    produto = (
+    produto_nome = (
         "Kit de Potes para Alimentos 800ml "
         "com Travas Laterais"
     )
 
-    prompt = f"""
-Escreva um artigo editorial completo para o blog
+    link_afiliado = (
+        "https://vt.tiktok.com/ZS9DVmNxuKAVr-oyWt7/"
+    )
+
+    prompt_bloco_1 = f"""
+Escreva a PRIMEIRA PARTE de um artigo para o blog
 Achados para Casa.
 
-TÍTULO:
+TÍTULO DO ARTIGO:
 {titulo}
 
-PALAVRA-CHAVE PRINCIPAL:
+PALAVRA-CHAVE:
 {palavra_chave}
 
-CATEGORIA:
-{categoria}
+Escreva aproximadamente 450 a 550 palavras.
 
-PRODUTO:
-{produto}
+Esta parte deve conter:
 
-==============================
-FATOS CONFIRMADOS DO PRODUTO
-==============================
+- uma introdução objetiva;
+- um H2 sobre planejamento da organização;
+- um H2 sobre separação dos alimentos por categorias;
+- um H2 sobre organização por frequência de uso;
+- exemplos práticos;
+- linguagem natural e útil.
 
-Você conhece SOMENTE estes fatos:
+REGRA IMPORTANTE:
 
-1. É um kit de potes para alimentos.
-2. Os potes possuem capacidade informada de 800ml.
-3. O nome do produto informa travas laterais.
+NÃO mencione marcas, produtos comerciais, kits,
+capacidade de recipientes, travas, características
+de potes específicos ou links de compra.
 
-Esses são os únicos fatos específicos do produto
-que podem ser tratados como verdade.
+Você está escrevendo SOMENTE conteúdo editorial
+sobre organização da cozinha.
 
-REGRA ABSOLUTA:
-
-Se uma característica não estiver nos três fatos
-acima, NÃO atribua essa característica ao produto.
-
-Não tente completar informações usando conhecimento
-comum sobre potes semelhantes.
-
-==============================
-NÃO INFERIR SOBRE O PRODUTO
-==============================
-
-Não diga nem sugira que o produto:
-
-- é hermético;
-- veda alimentos;
-- conserva alimentos por mais tempo;
-- evita vazamentos;
-- mantém frescor;
-- possui vedação especial;
-- é transparente;
-- é empilhável;
-- facilita empilhamento;
-- possui determinado formato;
-- possui diferentes tamanhos;
-- possui diferentes capacidades;
-- possui quantidade específica de peças;
-- é livre de BPA;
-- possui material específico;
-- pode ir ao freezer;
-- pode ir ao micro-ondas;
-- pode ir à lava-louças;
-- suporta determinadas temperaturas;
-- é resistente;
-- possui certificação;
-- possui garantia.
-
-Também NÃO deduza que as travas:
-
-- facilitam a abertura;
-- facilitam o fechamento;
-- deixam a tampa mais firme;
-- impedem que a tampa caia;
-- criam vedação;
-- evitam abertura acidental.
-
-Você pode mencionar apenas que o nome do produto
-informa a presença de travas laterais.
-
-==============================
-CONTEÚDO EDITORIAL
-==============================
-
-O tema principal do artigo é ORGANIZAÇÃO DA COZINHA.
-
-O produto deve aparecer como exemplo contextual,
-e não como assunto exclusivo do artigo.
-
-Desenvolva dicas gerais e úteis sobre:
-
-- planejamento da organização;
-- separação dos alimentos por categorias;
-- definição de espaços nos armários;
-- identificação com etiquetas;
-- organização por frequência de uso;
-- aproveitamento de prateleiras;
-- criação de uma rotina de organização;
-- revisão periódica dos mantimentos;
-- como escolher capacidades adequadas para
-  diferentes necessidades.
-
-Ao apresentar dicas gerais, deixe claro que são
-práticas de organização e NÃO características
-específicas do produto.
-
-==============================
-ESTRUTURA
-==============================
-
-Escreva entre 850 e 1000 palavras.
-
-IMPORTANTE:
-Não encerre o texto antes de atingir pelo menos
-850 palavras.
-
-Use:
-
-- introdução com aproximadamente 100 palavras;
-- pelo menos 5 subtítulos H2;
-- aproximadamente 130 a 170 palavras de
-  desenvolvimento em cada seção principal;
-- parágrafos curtos e naturais;
-- uma lista útil quando fizer sentido.
-
-O artigo deve responder à intenção de busca
-antes de apresentar o produto.
-
-Integre o produto naturalmente em apenas uma
-ou duas partes do artigo.
-
-Não transforme o conteúdo em página de vendas.
-
-Não inclua CTA de compra.
-
-Não invente preço, desconto ou promoção.
-
-Não invente links.
-
-Não faça alegações médicas ou de saúde.
-
-Não use um H2 chamado "Conclusão".
-
-Use a palavra-chave principal naturalmente.
-
-==============================
-FORMATO DE SAÍDA
-==============================
-
-Retorne SOMENTE o HTML do corpo do artigo.
-
-Tags permitidas:
-
+Use somente:
 <p>
 <h2>
 <strong>
 <ul>
 <li>
 
-Não use:
+Não use H1, Markdown ou bloco de código.
 
-<html>
-<head>
-<body>
-<h1>
-Markdown
-blocos de código
-
-O primeiro elemento deve ser <p>.
-
-Antes de responder, faça silenciosamente uma
-checagem factual:
-
-"Estou atribuindo ao produto alguma característica
-que não aparece nos FATOS CONFIRMADOS?"
-
-Se a resposta for sim, remova essa afirmação.
+Retorne somente HTML.
 """
 
-    artigo = gerar_texto(prompt)
+    prompt_bloco_2 = f"""
+Escreva a SEGUNDA PARTE do artigo:
+
+"{titulo}"
+
+PALAVRA-CHAVE:
+{palavra_chave}
+
+Escreva aproximadamente 400 a 500 palavras.
+
+Não escreva nova introdução.
+
+Desenvolva:
+
+- um H2 sobre aproveitamento dos espaços
+  dos armários e prateleiras;
+- um H2 sobre identificação e etiquetas;
+- um H2 sobre criação de uma rotina de organização;
+- revisão periódica dos mantimentos;
+- escolha da capacidade dos recipientes de acordo
+  com a necessidade de cada pessoa ou família;
+- fechamento editorial natural.
+
+REGRA IMPORTANTE:
+
+Fale somente de práticas gerais de organização.
+
+NÃO mencione marcas, produtos comerciais, kits,
+capacidade de produtos específicos, travas,
+características de potes específicos ou links.
+
+Não use um H2 chamado "Conclusão".
+
+Use somente:
+<p>
+<h2>
+<strong>
+<ul>
+<li>
+
+Não use H1, Markdown ou bloco de código.
+
+Retorne somente HTML.
+"""
+
+    print("ETAPA 1 — GERANDO PRIMEIRO BLOCO")
+    bloco_1 = limpar_saida(
+        gerar_texto(prompt_bloco_1)
+    )
+
+    print()
+    print("ETAPA 2 — GERANDO SEGUNDO BLOCO")
+    bloco_2 = limpar_saida(
+        gerar_texto(prompt_bloco_2)
+    )
+
+    print()
+    print("ETAPA 3 — BLOCO DO PRODUTO VIA PYTHON")
+
+    # IMPORTANTE:
+    # Este bloco NÃO é escrito pela IA.
+    # Ele usa somente informações confirmadas.
+    bloco_produto = f"""
+<h2>Uma opção para integrar à organização</h2>
+<p>Na hora de colocar a organização em prática,
+uma opção disponível é o
+<strong>{produto_nome}</strong>.
+As informações confirmadas do item são a capacidade
+informada de 800ml e a presença de travas laterais.</p>
+<p>Antes de escolher qualquer recipiente, vale
+comparar a capacidade informada com a quantidade
+de alimento que você pretende organizar e com o
+espaço disponível na sua cozinha.</p>
+<p><a href="{link_afiliado}"
+target="_blank"
+rel="nofollow sponsored">Ver o produto</a></p>
+""".strip()
+
+    artigo = (
+        bloco_1
+        + "\n\n"
+        + bloco_produto
+        + "\n\n"
+        + bloco_2
+    )
+
+    print("Bloco de produto criado pelo Python: OK")
 
     print()
     print("==========================================")
-    print("ARTIGO GERADO")
+    print("ARTIGO FINAL")
     print("==========================================")
     print()
     print(artigo)
@@ -334,10 +304,35 @@ Se a resposta for sim, remova essa afirmação.
         in artigo.lower()
     )
 
-    produto_integrado = (
-        "800ml" in artigo.lower()
-        and "travas laterais" in artigo.lower()
+    link_presente = (
+        link_afiliado in artigo
     )
+
+    produto_presente = (
+        produto_nome in artigo
+    )
+
+    # A IA não deve mencionar fatos comerciais.
+    conteudo_ia = (
+        bloco_1.lower()
+        + "\n"
+        + bloco_2.lower()
+    )
+
+    termos_comerciais_proibidos_na_ia = [
+        "800ml",
+        "travas laterais",
+        "kit de potes",
+        "tiktok.com",
+        "link de compra",
+        "compre agora",
+    ]
+
+    comerciais_encontrados = [
+        termo
+        for termo in termos_comerciais_proibidos_na_ia
+        if termo in conteudo_ia
+    ]
 
     tags_proibidas = [
         "<html",
@@ -347,50 +342,9 @@ Se a resposta for sim, remova essa afirmação.
         "```",
     ]
 
-    proibidas_encontradas = [
+    tags_encontradas = [
         termo
         for termo in tags_proibidas
-        if termo in artigo.lower()
-    ]
-
-    alegacoes_proibidas = [
-        "hermético",
-        "hermetico",
-        "livre de bpa",
-        "sem bpa",
-        "micro-ondas",
-        "microondas",
-        "lava-louças",
-        "lava louças",
-        "freezer",
-        "transparente",
-        "empilhável",
-        "empilhavel",
-        "facilidade de empilhamento",
-        "variedade de tamanhos",
-        "diferentes tamanhos",
-        "variedade de formatos",
-        "diferentes formatos",
-        "evita vazamentos",
-        "evitar vazamentos",
-        "mantém o frescor",
-        "mantem o frescor",
-        "conserva por mais tempo",
-        "vedação especial",
-        "vedacao especial",
-        "tampa mais firme",
-        "tampas mais firmes",
-        "impede que a tampa",
-        "impedem que as tampas",
-        "facilita a abertura",
-        "facilitam a abertura",
-        "facilita o fechamento",
-        "facilitam o fechamento",
-    ]
-
-    alegacoes_encontradas = [
-        termo
-        for termo in alegacoes_proibidas
         if termo in artigo.lower()
     ]
 
@@ -402,25 +356,25 @@ Se a resposta for sim, remova essa afirmação.
 
     print("Palavras:", total_palavras)
     print("H2:", total_h2)
-
     print(
         "Palavra-chave presente:",
         palavra_chave_presente,
     )
-
     print(
-        "Produto integrado:",
-        produto_integrado,
+        "Produto inserido pelo Python:",
+        produto_presente,
     )
-
+    print(
+        "Link afiliado exato presente:",
+        link_presente,
+    )
+    print(
+        "Termos comerciais escritos pela IA:",
+        comerciais_encontrados,
+    )
     print(
         "Tags proibidas:",
-        proibidas_encontradas,
-    )
-
-    print(
-        "Alegações proibidas:",
-        alegacoes_encontradas,
+        tags_encontradas,
     )
 
     erros = []
@@ -430,12 +384,12 @@ Se a resposta for sim, remova essa afirmação.
             f"Artigo curto: {total_palavras} palavras."
         )
 
-    if total_palavras > 1100:
+    if total_palavras > 1250:
         erros.append(
             f"Artigo longo demais: {total_palavras} palavras."
         )
 
-    if total_h2 < 5:
+    if total_h2 < 6:
         erros.append(
             f"Poucos H2: {total_h2}."
         )
@@ -445,49 +399,52 @@ Se a resposta for sim, remova essa afirmação.
             "Palavra-chave principal ausente."
         )
 
-    if not produto_integrado:
+    if not produto_presente:
         erros.append(
-            "Produto não foi integrado corretamente."
+            "Produto não foi inserido."
         )
 
-    if proibidas_encontradas:
+    if not link_presente:
         erros.append(
-            "Foram encontradas tags ou "
-            "formatações proibidas."
+            "Link afiliado exato ausente."
         )
 
-    if alegacoes_encontradas:
+    if comerciais_encontrados:
         erros.append(
-            "Foram encontradas características "
-            "não confirmadas do produto."
+            "A IA entrou no bloco comercial: "
+            + str(comerciais_encontrados)
+        )
+
+    if tags_encontradas:
+        erros.append(
+            "Foram encontradas tags proibidas."
         )
 
     if erros:
         print()
         print("==========================================")
-        print("TESTE 2: REPROVADO")
+        print("TESTE 3: REPROVADO")
         print("==========================================")
 
         for erro in erros:
             print("-", erro)
 
         raise RuntimeError(
-            "O artigo não passou na validação."
+            "A arquitetura híbrida não passou "
+            "na validação."
         )
 
     print()
     print("==========================================")
-    print("TESTE 2 CLOUDFLARE: OK")
+    print("TESTE 3 CLOUDFLARE: OK")
     print("==========================================")
     print()
-
     print(
-        "O artigo atingiu o tamanho mínimo, "
-        "manteve a estrutura e passou pela "
-        "blindagem automática de produto."
+        "Qwen produziu somente o conteúdo editorial."
     )
-
-    print()
+    print(
+        "Python controlou o produto e o link afiliado."
+    )
     print(
         "Nenhum conteúdo foi enviado ao Blogger."
     )
