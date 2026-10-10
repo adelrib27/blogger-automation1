@@ -1042,7 +1042,53 @@ def executar():
     ],
     categoria=categoria,
 )
+    # ========================================================
+    # INSERIR IMAGEM DESTACADA NO ARTIGO
+    # ========================================================
 
+    if (
+        imagem.get("gerada")
+        and imagem.get("url_publica")
+    ):
+        url_imagem = html.escape(
+            imagem["url_publica"],
+            quote=True,
+        )
+
+        alt_imagem = html.escape(
+            imagem["alt_text"],
+            quote=True,
+        )
+
+        bloco_imagem = (
+            '<div style="text-align:center;'
+            'margin:0 0 24px 0;">'
+            f'<img src="{url_imagem}" '
+            f'alt="{alt_imagem}" '
+            'width="1280" '
+            'height="720" '
+            'loading="eager" '
+            'style="max-width:100%;'
+            'height:auto;'
+            'border-radius:8px;" />'
+            '</div>'
+        )
+
+        artigo["conteudo_html"] = (
+            bloco_imagem
+            + artigo["conteudo_html"]
+        )
+
+        print(
+            "Imagem destacada inserida "
+            "no HTML do artigo."
+        )
+
+    else:
+        print(
+            "Imagem destacada indisponível. "
+            "O artigo continuará sem imagem."
+        )
     pacote = {
         "pauta": pauta,
         "seo": seo,
