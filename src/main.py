@@ -11,7 +11,7 @@ from gerar_artigo import (
     criar_estrutura_artigo,
     validar_artigo,
 )
-from gerar_imagem import preparar_imagem
+from gerar_imagem import gerar_imagem_destacada
 from criar_rascunho import criar_rascunho
 from links_internos import adicionar_links_internos
 from selecionar_produtos import selecionar_produtos
@@ -679,19 +679,19 @@ def executar():
 
     MAX_TENTATIVAS_ARTIGO = 10
     produtos_excluidos = set()
+
     pauta = None
-    seo = None
-    artigo = None
-    validacao = None
     categoria = None
     palavras_secundarias = []
     produto_principal = None
+    seo = None
+    artigo = None
+    validacao = None
 
-    for tentativa_global in range(1, MAX_TENTATIVAS_ARTIGO + 1):
-        # 1-3: geração normal
-        # 4-6: conservadora
-        # 7-9: muito conservadora + troca de produto
-        # 10: modo editorial seguro
+    for tentativa_global in range(
+        1,
+        MAX_TENTATIVAS_ARTIGO + 1,
+    ):
         if tentativa_global <= 3:
             nivel_conservador = 0
         elif tentativa_global <= 6:
@@ -701,22 +701,25 @@ def executar():
         else:
             nivel_conservador = 3
 
-        # Troca de pauta/produto nas tentativas 4, 7 e 10.
         precisa_nova_pauta = (
             pauta is None
             or tentativa_global in (4, 7, 10)
         )
 
+        print(
+            f"\n=== TENTATIVA GLOBAL "
+            f"{tentativa_global}/"
+            f"{MAX_TENTATIVAS_ARTIGO} ==="
+        )
+
         if precisa_nova_pauta:
-            if pauta is not None and produto_principal:
+            if (
+                pauta is not None
+                and produto_principal
+            ):
                 produtos_excluidos.add(
                     produto_principal["nome"]
                 )
-
-            print(
-                f"\n=== TENTATIVA GLOBAL "
-                f"{tentativa_global}/{MAX_TENTATIVAS_ARTIGO} ==="
-            )
 
             print(
                 "Selecionando nova pauta/produto..."
@@ -725,11 +728,14 @@ def executar():
             try:
                 pauta = escolher_pauta(
                     nicho=nicho,
-                    produtos_excluidos=produtos_excluidos,
+                    produtos_excluidos=(
+                        produtos_excluidos
+                    ),
                 )
             except Exception as erro:
                 print(
-                    "Não foi possível obter nova pauta:",
+                    "Não foi possível obter "
+                    "nova pauta:",
                     erro,
                 )
                 pauta = None
@@ -753,24 +759,37 @@ def executar():
                 produto_pauta
             ):
                 print(
-                    "Pauta sem produto principal válido. "
-                    "Tentando novamente..."
+                    "Pauta sem produto principal "
+                    "válido. Tentando novamente..."
                 )
                 pauta = None
                 continue
 
-            produto_principal = preparar_produto_principal(
-                produto_pauta
+            produto_principal = (
+                preparar_produto_principal(
+                    produto_pauta
+                )
             )
 
             print("\nPauta escolhida:")
             print(pauta["titulo"])
-            print("Palavra-chave:", pauta["palavra_chave"])
-            print("Categoria:", categoria)
-            print("Produto principal:", produto_principal["nome"])
+            print(
+                "Palavra-chave:",
+                pauta["palavra_chave"],
+            )
+            print(
+                "Categoria:",
+                categoria,
+            )
+            print(
+                "Produto principal:",
+                produto_principal["nome"],
+            )
             print(
                 "Link afiliado principal:",
-                produto_principal["link_afiliado"],
+                produto_principal[
+                    "link_afiliado"
+                ],
             )
 
             seo_config = config.get(
@@ -780,22 +799,27 @@ def executar():
 
             seo = preparar_seo(
                 titulo=pauta["titulo"],
-                palavra_chave=pauta["palavra_chave"],
+                palavra_chave=pauta[
+                    "palavra_chave"
+                ],
                 descricao=pauta["descricao"],
-                palavras_secundarias=palavras_secundarias,
-                titulo_max=seo_config.get("titulo_max", 60),
+                palavras_secundarias=(
+                    palavras_secundarias
+                ),
+                titulo_max=seo_config.get(
+                    "titulo_max",
+                    60,
+                ),
                 meta_max=seo_config.get(
                     "meta_description_max",
                     155,
                 ),
             )
+
         else:
             print(
-                f"\n=== TENTATIVA GLOBAL "
-                f"{tentativa_global}/{MAX_TENTATIVAS_ARTIGO} ==="
-            )
-            print(
-                "Regenerando artigo para a mesma pauta..."
+                "Regenerando artigo para "
+                "a mesma pauta..."
             )
 
         print(
@@ -806,14 +830,21 @@ def executar():
         try:
             artigo = criar_estrutura_artigo(
                 titulo=seo["titulo"],
-                palavra_chave=pauta["palavra_chave"],
+                palavra_chave=pauta[
+                    "palavra_chave"
+                ],
                 categoria=categoria,
-                produto_principal=produto_principal["nome"],
-                nivel_conservador=nivel_conservador,
+                produto_principal=(
+                    produto_principal["nome"]
+                ),
+                nivel_conservador=(
+                    nivel_conservador
+                ),
             )
         except Exception as erro:
             print(
-                "Falha durante a geração do artigo:",
+                "Falha durante a geração "
+                "do artigo:",
                 erro,
             )
             artigo = None
@@ -826,10 +857,12 @@ def executar():
         if validacao["valido"]:
             print(
                 "\nArtigo editorial aprovado "
-                f"na tentativa {tentativa_global}."
+                f"na tentativa "
+                f"{tentativa_global}."
             )
             print(
-                "Marcadores contextuais validados:",
+                "Marcadores contextuais "
+                "validados:",
                 validacao.get(
                     "quantidade_marcadores_produto",
                     0,
@@ -843,20 +876,29 @@ def executar():
         )
 
         for erro in validacao["erros"]:
-            print("-", erro)
+            print(
+                "-",
+                erro,
+            )
 
-        if tentativa_global < MAX_TENTATIVAS_ARTIGO:
+        if (
+            tentativa_global
+            < MAX_TENTATIVAS_ARTIGO
+        ):
             print(
                 "O conteúdo foi descartado. "
-                "Nova tentativa será feita automaticamente."
+                "Nova tentativa será feita "
+                "automaticamente."
             )
 
     else:
         print(
-            "\nAs 10 tentativas editoriais foram esgotadas."
+            "\nAs 10 tentativas editoriais "
+            "foram esgotadas."
         )
         print(
-            "Nenhum conteúdo reprovado será enviado ao Blogger."
+            "Nenhum conteúdo reprovado "
+            "será enviado ao Blogger."
         )
         return
 
@@ -869,7 +911,8 @@ def executar():
         and produto_principal
     ):
         print(
-            "\nNão foi possível formar um pacote editorial aprovado."
+            "\nNão foi possível formar "
+            "um pacote editorial aprovado."
         )
         print(
             "Nada foi enviado ao Blogger."
@@ -1089,14 +1132,60 @@ def executar():
     # IMAGEM
     # ========================================================
 
-    imagem = preparar_imagem(
-        titulo=seo["titulo"],
-        palavra_chave=pauta[
-            "palavra_chave"
-        ],
-        categoria=categoria,
-    )
+    imagem = gerar_imagem_destacada(
+    titulo=seo["titulo"],
+    palavra_chave=pauta[
+        "palavra_chave"
+    ],
+    categoria=categoria,
+)
+    # ========================================================
+    # INSERIR IMAGEM DESTACADA NO ARTIGO
+    # ========================================================
 
+    if (
+        imagem.get("gerada")
+        and imagem.get("url_publica")
+    ):
+        url_imagem = html.escape(
+            imagem["url_publica"],
+            quote=True,
+        )
+
+        alt_imagem = html.escape(
+            imagem["alt_text"],
+            quote=True,
+        )
+
+        bloco_imagem = (
+            '<div style="text-align:center;'
+            'margin:0 0 24px 0;">'
+            f'<img src="{url_imagem}" '
+            f'alt="{alt_imagem}" '
+            'width="1280" '
+            'height="720" '
+            'loading="eager" '
+            'style="max-width:100%;'
+            'height:auto;'
+            'border-radius:8px;" />'
+            '</div>'
+        )
+
+        artigo["conteudo_html"] = (
+            bloco_imagem
+            + artigo["conteudo_html"]
+        )
+
+        print(
+            "Imagem destacada inserida "
+            "no HTML do artigo."
+        )
+
+    else:
+        print(
+            "Imagem destacada indisponível. "
+            "O artigo continuará sem imagem."
+        )
     pacote = {
         "pauta": pauta,
         "seo": seo,
