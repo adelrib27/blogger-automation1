@@ -290,74 +290,72 @@ def criar_bloco_produto_principal(
     produto_principal,
 ):
     """
-    Cria somente o bloco do produto principal.
-
-    Este bloco será colocado exatamente no ponto
-    contextual escolhido durante a geração
-    editorial do artigo.
+    Cria o card visual do produto principal no ponto contextual
+    escolhido pelo artigo. Mantém transparência e evita promessas
+    sobre preço, estoque, desconto ou especificações não confirmadas.
     """
 
-    if not validar_produto_principal(
-        produto_principal
-    ):
+    if not validar_produto_principal(produto_principal):
         return ""
 
-    nome = html.escape(
-        str(
-            produto_principal[
-                "nome"
-            ]
-        )
-    )
-
+    nome = html.escape(str(produto_principal["nome"]))
     link = html.escape(
-        str(
-            produto_principal[
-                "link_afiliado"
-            ]
-        ),
+        str(produto_principal["link_afiliado"]),
         quote=True,
     )
 
     partes = [
         (
-            '<div class="produto-principal-contextual">'
+            '<div class="produto-principal-contextual" '
+            'style="margin:28px 0;padding:22px;'
+            'border:1px solid #e5e7eb;border-radius:14px;'
+            'background:#f8fafc;text-align:center;'
+            'box-shadow:0 4px 14px rgba(0,0,0,.08);">'
         ),
         (
-            "<p><strong>Sugestão relacionada ao tema:</strong></p>"
+            '<p style="margin:0 0 10px 0;font-size:14px;'
+            'font-weight:700;letter-spacing:.4px;">'
+            '🛒 PRODUTO RELACIONADO AO TEMA</p>'
         ),
         (
-            "<p><small>"
-            "Selecionamos este produto por ter relação com o tema "
-            "deste artigo. Características, funções e especificações "
-            "podem variar conforme o modelo e o anúncio do vendedor. "
-            "Confira os detalhes na página do produto antes da compra."
-            "</small></p>"
+            '<p style="margin:0 0 12px 0;font-size:21px;'
+            'line-height:1.35;"><strong>'
+            f'{nome}</strong></p>'
         ),
         (
-            "<p>"
-            f'<a href="{link}" '
-            'target="_blank" '
-            'rel="nofollow sponsored">'
-            f"<strong>{nome}</strong>"
-            "</a>"
-            "</p>"
+            '<p style="margin:0 0 18px 0;line-height:1.6;">'
+            'Uma opção relacionada ao conteúdo que você acabou de ler. '
+            'Veja os detalhes do produto diretamente no anúncio.'
+            '</p>'
         ),
         (
-            "<p><small>"
-            "<strong>Transparência:</strong> "
-            "este é um link de afiliado. "
-            "Se você comprar por meio dele, "
-            "podemos receber uma comissão, "
-            "sem custo adicional para você."
-            "</small></p>"
+            f'<p style="margin:0 0 16px 0;"><a href="{link}" '
+            'target="_blank" rel="nofollow sponsored" '
+            'style="display:inline-block;padding:14px 22px;'
+            'background:#111827;color:#ffffff;text-decoration:none;'
+            'font-weight:700;border-radius:10px;font-size:16px;'
+            'line-height:1.3;">'
+            '👉 VER PRODUTO E CONFERIR A OFERTA</a></p>'
+        ),
+        (
+            '<p style="margin:0 0 10px 0;font-size:13px;'
+            'line-height:1.5;"><small>'
+            'Preço, disponibilidade, características e condições '
+            'podem variar conforme o modelo e o anúncio do vendedor. '
+            'Confira os detalhes na página do produto antes da compra.'
+            '</small></p>'
+        ),
+        (
+            '<p style="margin:0;font-size:12px;line-height:1.5;">'
+            '<small><strong>Transparência:</strong> este é um link '
+            'de afiliado. Se você comprar por meio dele, podemos '
+            'receber uma comissão, sem custo adicional para você.'
+            '</small></p>'
         ),
         "</div>",
     ]
 
-    return "\n".join(
-        partes
-    )
+    return "\n".join(partes)
 
 
 def inserir_produto_principal_contextual(
@@ -421,114 +419,85 @@ def criar_bloco_complementares(
     complementares=None,
 ):
     """
-    Cria um bloco final somente para produtos
-    complementares realmente relevantes.
-
-    Se não houver complementares, não adiciona nada.
+    Cria cards visuais menores para produtos complementares
+    realmente relevantes. Se não houver opções relevantes,
+    não adiciona nada.
     """
 
     if not complementares:
         return ""
 
     produtos_validos = []
-
     for produto in complementares:
-        if not isinstance(
-            produto,
-            dict,
-        ):
+        if not isinstance(produto, dict):
             continue
-
-        nome = str(
-            produto.get(
-                "nome",
-                "",
+        nome = str(produto.get("nome", "")).strip()
+        link = str(produto.get("link_afiliado", "")).strip()
+        if nome and link:
+            produtos_validos.append(
+                {"nome": nome, "link_afiliado": link}
             )
-        ).strip()
-
-        link = str(
-            produto.get(
-                "link_afiliado",
-                "",
-            )
-        ).strip()
-
-        if not nome or not link:
-            continue
-
-        produtos_validos.append(
-            {
-                "nome": nome,
-                "link_afiliado": link,
-            }
-        )
 
     if not produtos_validos:
         return ""
 
     partes = [
-        '<div class="produtos-complementares">',
         (
-            "<h2>Outras opções relacionadas</h2>"
+            '<div class="produtos-complementares" '
+            'style="margin:30px 0;">'
+        ),
+        "<h2>Outras opções relacionadas</h2>",
+        (
+            '<p>Estas sugestões também têm relação com o tema '
+            'e podem ser úteis conforme a sua rotina.</p>'
         ),
         (
-            "<p>Dependendo da sua rotina, "
-            "estes itens também podem ser úteis:</p>"
+            '<p><small>Características, funções, preços, '
+            'disponibilidade e especificações podem variar conforme '
+            'o modelo e o anúncio do vendedor. Confira os detalhes '
+            'de cada produto antes da compra.</small></p>'
         ),
-        (
-            "<p><small>"
-            "Estas sugestões foram selecionadas por terem relação "
-            "com o tema do artigo. Características, funções e "
-            "especificações podem variar conforme o modelo e o "
-            "anúncio do vendedor. Confira os detalhes de cada "
-            "produto antes da compra."
-            "</small></p>"
-        ),
-        "<ul>",
     ]
 
     for produto in produtos_validos:
-        nome = html.escape(
-            produto["nome"]
-        )
-
-        link = html.escape(
-            produto[
-                "link_afiliado"
-            ],
-            quote=True,
-        )
-
-        partes.append(
-            "<li>"
-            f'<a href="{link}" '
-            'target="_blank" '
-            'rel="nofollow sponsored">'
-            f"<strong>{nome}</strong>"
-            "</a>"
-            "</li>"
-        )
-
-    partes.extend(
-        [
-            "</ul>",
+        nome = html.escape(produto["nome"])
+        link = html.escape(produto["link_afiliado"], quote=True)
+        partes.extend([
             (
-                "<p><small>"
-                "<strong>Transparência:</strong> "
-                "os links acima podem ser links "
-                "de afiliados. Se você comprar "
-                "por meio deles, podemos receber "
-                "uma comissão, sem custo adicional "
-                "para você."
-                "</small></p>"
+                '<div style="margin:16px 0;padding:18px;'
+                'border:1px solid #e5e7eb;border-radius:12px;'
+                'background:#ffffff;box-shadow:0 2px 8px '
+                'rgba(0,0,0,.06);">'
+            ),
+            (
+                '<p style="margin:0 0 12px 0;font-size:17px;'
+                'line-height:1.4;"><strong>'
+                f'{nome}</strong></p>'
+            ),
+            (
+                f'<p style="margin:0;"><a href="{link}" '
+                'target="_blank" rel="nofollow sponsored" '
+                'style="display:inline-block;padding:11px 17px;'
+                'background:#111827;color:#ffffff;'
+                'text-decoration:none;font-weight:700;'
+                'border-radius:9px;">'
+                '👉 VER PRODUTO</a></p>'
             ),
             "</div>",
-        ]
-    )
+        ])
 
-    return "\n".join(
-        partes
-    )
+    partes.extend([
+        (
+            '<p style="font-size:12px;line-height:1.5;"><small>'
+            '<strong>Transparência:</strong> os links acima podem '
+            'ser links de afiliados. Se você comprar por meio deles, '
+            'podemos receber uma comissão, sem custo adicional para você.'
+            '</small></p>'
+        ),
+        "</div>",
+    ])
+
+    return "\n".join(partes)
 
 
 def adicionar_complementares_ao_artigo(
