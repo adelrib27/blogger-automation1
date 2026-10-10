@@ -515,6 +515,15 @@ QUALIDADE E CONFIABILIDADE:
 - Não invente benefícios funcionais.
 - Não invente desempenho.
 - Não invente durabilidade.
+- Não dê instruções universais de lavagem, secagem, conservação
+  ou manutenção quando elas puderem variar conforme material,
+  etiqueta ou fabricante.
+- Em cuidados com tecidos e produtos, prefira orientar o leitor
+  a verificar a etiqueta e as instruções específicas do fabricante.
+- Não atribua a materiais específicos propriedades de absorção,
+  secagem, maciez, resistência, durabilidade, conforto ou desempenho
+  como regra geral sem base fornecida.
+- Não invente medidas, quantidades ou frequências recomendadas.
 - Não invente capacidade.
 - Não invente dimensões.
 - Não invente materiais.
@@ -1202,6 +1211,9 @@ def validar_alegacoes_risco(artigo):
         "contaminacao", "desinfetar", "desinfeccao",
         "esterilizar", "seguranca alimentar",
         "risco eletrico", "choque eletrico",
+        "lavar", "lave", "lavagem", "secar", "secagem",
+        "amaciante", "cloro", "sabao", "detergente",
+        "manutencao", "etiqueta",
     )
 
     # Verbos/promessas fortes. Só são bloqueados automaticamente
@@ -1299,6 +1311,31 @@ def validar_alegacoes_risco(artigo):
         # "superior" isolado pode significar posição física
         # ("parte superior do armário"). Por isso, somente usos
         # inequivocamente comparativos/comerciais são bloqueados.
+        # Instruções de cuidado/manutenção podem variar conforme
+        # material e fabricante. Quando a frase prescreve uma ação
+        # específica e afirma um efeito funcional, exige contexto prudente.
+        termos_cuidado = (
+            "lavar", "lave", "lavagem", "secar", "secagem",
+            "amaciante", "cloro", "sabao", "detergente",
+            "temperatura", "agua quente", "agua morna",
+        )
+        efeitos_cuidado = (
+            "preserva", "preservar", "mantem", "manter",
+            "reduz", "reduzir", "aumenta", "aumentar",
+            "melhora", "melhorar", "durabilidade", "vida util",
+            "maciez", "absorcao", "textura", "cor",
+        )
+
+        if (
+            any(t in normalizada for t in termos_cuidado)
+            and any(t in normalizada for t in efeitos_cuidado)
+            and not prudente
+        ):
+            registrar(
+                "Instrução de cuidado/manutenção sem condição do fabricante",
+                sentenca,
+            )
+
         if re.search(
             r"\b(?:o melhor|a melhor|mais eficiente|"
             r"qualidade superior|desempenho superior|"
