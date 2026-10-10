@@ -78,7 +78,7 @@ rígida, mas encontrar uma disposição que seja compreensível para
 quem utiliza o espaço diariamente.</p>
 """
 
-    corpo_extra = preenchimento * 7
+    corpo_extra = preenchimento * 8
 
     return (
         introducao
