@@ -1083,7 +1083,7 @@ def _contem_contexto_prudente(texto_normalizado):
 
 def suavizar_comparativos_editoriais(conteudo):
     """
-    Corrige apenas comparativos/superlativos editoriais simples
+    Corrige comparativos/superlativos editoriais simples
     que o modelo pode produzir apesar do prompt.
 
     A função NÃO aprova o artigo: depois dela, a trava editorial
@@ -1094,6 +1094,7 @@ def suavizar_comparativos_editoriais(conteudo):
         return conteudo
 
     substituicoes = (
+        # Formas específicas primeiro.
         (
             r"\bpode ser mais eficiente\b",
             "pode ser mais adequada nessa situação",
@@ -1125,6 +1126,19 @@ def suavizar_comparativos_editoriais(conteudo):
         (
             r"\bo melhor método\b",
             "um método adequado",
+        ),
+
+        # Rede de segurança editorial:
+        # captura "mais eficiente" em outras construções,
+        # como "de forma mais eficiente" ou
+        # "manter a organização mais eficiente".
+        (
+            r"\bmais eficiente\b",
+            "de maneira adequada",
+        ),
+        (
+            r"\bmais eficientes\b",
+            "mais adequadas",
         ),
     )
 
