@@ -140,27 +140,28 @@ def validar_html_basico(html):
                 f"Tag/formatação proibida: {tag}"
             )
 
-    # H2 não pode estar dentro de um parágrafo.
-    # Analisa individualmente o conteúdo de cada <p>,
-    # evitando falso positivo entre </p> e o próximo <h2>.
+    # Analisa cada <p>...</p> individualmente.
+    # Assim um <h2> que venha depois de </p>
+    # não gera falso positivo.
     paragrafos = re.findall(
-    r"<p\b[^>]*>(.*?)</p>",
-    html,
-    flags=re.IGNORECASE | re.DOTALL,
-)
+        r"<p\b[^>]*>(.*?)</p>",
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
 
-for paragrafo in paragrafos:
-    if re.search(
-        r"<h2\b",
-        paragrafo,
-        flags=re.IGNORECASE,
-    ):
-        erros.append(
-            "Existe H2 dentro de um parágrafo."
-        )
-        break
+    for paragrafo in paragrafos:
+        if re.search(
+            r"<h2\b",
+            paragrafo,
+            flags=re.IGNORECASE,
+        ):
+            erros.append(
+                "Existe H2 dentro de um parágrafo."
+            )
+            break
 
-    # Verificação simples de abertura/fechamento.
+    # Verifica abertura e fechamento das tags
+    # utilizadas no conteúdo.
     for tag in ["p", "h2", "ul", "li", "strong"]:
         aberturas = len(
             re.findall(
@@ -381,8 +382,7 @@ rel="nofollow sponsored">Ver o produto</a></p>
 
     # A IA editorial não precisa conhecer a
     # palavra-chave comercial.
-    # O Python garante uma ocorrência exata e
-    # controlada no artigo.
+    # O Python garante uma ocorrência exata.
     if (
         palavra_chave_comercial.lower()
         not in artigo.lower()
@@ -418,7 +418,7 @@ rel="nofollow sponsored">Ver o produto</a></p>
         + bloco_2.lower()
     )
 
-    # Nenhum destes dados foi fornecido à IA.
+    # Estes dados não são fornecidos ao Qwen.
     dados_comerciais = [
         "800ml",
         "travas laterais",
@@ -434,8 +434,8 @@ rel="nofollow sponsored">Ver o produto</a></p>
         if termo in conteudo_ia
     ]
 
-    # Expressões editoriais que preferimos bloquear
-    # neste tipo de conteúdo.
+    # Alegações que preferimos impedir no
+    # conteúdo editorial deste teste.
     alegacoes_sensiveis = [
         "evitar contaminação",
         "evita contaminação",
