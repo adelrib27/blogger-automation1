@@ -31,5 +31,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: imagem-teste-cloudflare
-          path: data/imagens/teste-cloudflare-flux.*
+          path: data/imagens/teste-cloudflare-flux-16x9.*
           if-no-files-found: error
