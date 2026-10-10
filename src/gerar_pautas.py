@@ -730,7 +730,7 @@ def gerar_pauta_automatica(
     )
 
     produtos_excluidos = {
-        normalizar_para_comparacao(nome)
+        str(nome or "").strip().casefold()
         for nome in (produtos_excluidos or [])
         if str(nome or "").strip()
     }
@@ -745,9 +745,9 @@ def gerar_pauta_automatica(
         produtos = [
             produto
             for produto in produtos
-            if normalizar_para_comparacao(
+            if str(
                 produto.get("nome", "")
-            ) not in produtos_excluidos
+            ).strip().casefold() not in produtos_excluidos
         ]
 
     produtos = ordenar_produtos_para_tentativa(
