@@ -6,7 +6,7 @@ import requests
 ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
 API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN")
 
-MODEL = "@cf/qwen/qwen3-30b-a3b-fp8"
+MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 
 
 def gerar_texto(prompt):
