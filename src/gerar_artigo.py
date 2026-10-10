@@ -512,6 +512,14 @@ SEPARAÇÃO EDITORIAL OBRIGATÓRIA:
 - Não recomende um modelo específico.
 - Não invente características de produtos.
 - Não tente adivinhar qual produto originou a pauta.
+- Não atribua a um produto, câmera, aparelho, material ou dispositivo
+  uma função, recurso, compatibilidade, tecnologia, certificação,
+  desempenho ou benefício técnico que não tenha sido fornecido.
+- Quando citar tecnologias ou recursos possíveis no mercado, deixe
+  explícito que são exemplos gerais, usando construções como
+  "alguns dispositivos podem oferecer" ou "dependendo do modelo".
+- Nunca escreva de forma que um exemplo técnico geral pareça ser uma
+  característica confirmada do produto que será sugerido no artigo.
 - O Python fará a integração comercial posteriormente.
 
 ESTILO EDITORIAL:
