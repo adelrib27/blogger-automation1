@@ -1,4 +1,5 @@
 import os
+import base64
 from pathlib import Path
 
 import requests
@@ -29,10 +30,14 @@ def testar_cloudflare():
     api_token = os.getenv("CLOUDFLARE_API_TOKEN")
 
     if not account_id:
-        raise RuntimeError("CLOUDFLARE_ACCOUNT_ID não encontrado nos Secrets.")
+        raise RuntimeError(
+            "CLOUDFLARE_ACCOUNT_ID não encontrado nos Secrets."
+        )
 
     if not api_token:
-        raise RuntimeError("CLOUDFLARE_API_TOKEN não encontrado nos Secrets.")
+        raise RuntimeError(
+            "CLOUDFLARE_API_TOKEN não encontrado nos Secrets."
+        )
 
     url = (
         f"https://api.cloudflare.com/client/v4/accounts/"
@@ -43,7 +48,6 @@ def testar_cloudflare():
         "Authorization": f"Bearer {api_token}",
     }
 
-    # O FLUX.2 Klein recebe os dados como multipart/form-data.
     arquivos = {
         "prompt": (None, PROMPT.strip()),
     }
@@ -64,7 +68,10 @@ def testar_cloudflare():
     )
 
     print(f"HTTP STATUS: {resposta.status_code}")
-    print(f"CONTENT-TYPE: {resposta.headers.get('content-type', '')}")
+    print(
+        f"CONTENT-TYPE: "
+        f"{resposta.headers.get('content-type', '')}"
+    )
 
     if resposta.status_code != 200:
         print("")
@@ -74,31 +81,91 @@ def testar_cloudflare():
             f"Cloudflare retornou HTTP {resposta.status_code}."
         )
 
-    content_type = resposta.headers.get("content-type", "").lower()
+    content_type = resposta.headers.get(
+        "content-type", ""
+    ).lower()
 
-    if not content_type.startswith("image/"):
-        print("")
-        print("A resposta não veio diretamente como imagem.")
-        print("Primeiros bytes/texto da resposta:")
-        print(resposta.text[:4000])
+    dados_imagem = None
+    extensao = ".jpg"
+
+    # Caso a API retorne a imagem diretamente.
+    if content_type.startswith("image/"):
+        dados_imagem = resposta.content
+
+        if "png" in content_type:
+            extensao = ".png"
+        elif "webp" in content_type:
+            extensao = ".webp"
+        else:
+            extensao = ".jpg"
+
+    # FLUX.2 Klein atualmente pode retornar JSON
+    # com a imagem codificada em Base64.
+    elif "application/json" in content_type:
+        dados = resposta.json()
+
+        if not dados.get("success", False):
+            raise RuntimeError(
+                f"Cloudflare informou falha: {dados}"
+            )
+
+        resultado = dados.get("result") or {}
+        imagem_base64 = resultado.get("image")
+
+        if not imagem_base64:
+            raise RuntimeError(
+                "Cloudflare retornou JSON, mas não encontrou "
+                "result.image."
+            )
+
+        try:
+            dados_imagem = base64.b64decode(
+                imagem_base64,
+                validate=True,
+            )
+        except Exception as erro:
+            raise RuntimeError(
+                "Não foi possível decodificar a imagem Base64."
+            ) from erro
+
+        # Detecta o formato pelos primeiros bytes.
+        if dados_imagem.startswith(b"\x89PNG\r\n\x1a\n"):
+            extensao = ".png"
+        elif dados_imagem.startswith(b"\xff\xd8\xff"):
+            extensao = ".jpg"
+        elif dados_imagem.startswith(b"RIFF") and (
+            b"WEBP" in dados_imagem[:16]
+        ):
+            extensao = ".webp"
+        else:
+            extensao = ".jpg"
+
+    else:
         raise RuntimeError(
-            f"Formato inesperado retornado pela Cloudflare: {content_type}"
+            "Formato inesperado retornado pela Cloudflare: "
+            f"{content_type}"
         )
 
-    extensao = ".png"
-
-    if "jpeg" in content_type or "jpg" in content_type:
-        extensao = ".jpg"
-    elif "webp" in content_type:
-        extensao = ".webp"
+    if not dados_imagem:
+        raise RuntimeError(
+            "A Cloudflare não retornou dados de imagem."
+        )
 
     pasta = Path("data/imagens")
     pasta.mkdir(parents=True, exist_ok=True)
 
-    caminho = pasta / f"teste-cloudflare-flux{extensao}"
-    caminho.write_bytes(resposta.content)
+    caminho = pasta / (
+        f"teste-cloudflare-flux{extensao}"
+    )
+
+    caminho.write_bytes(dados_imagem)
 
     tamanho = caminho.stat().st_size
+
+    if tamanho < 1000:
+        raise RuntimeError(
+            f"Arquivo gerado parece inválido: {tamanho} bytes."
+        )
 
     print("")
     print("==========================================")
