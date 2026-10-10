@@ -498,6 +498,12 @@ REGRAS:
 - Não use preços.
 - Não invente pesquisas ou estatísticas.
 - Não invente características que não estejam presentes no nome do produto.
+- Não atribua ao produto funções, tecnologias, compatibilidades,
+  certificações ou benefícios que não estejam explícitos no nome fornecido.
+- Evite promessas absolutas no título e na descrição, como "garantir",
+  "eliminar", "impedir", "resolver", "100%" ou equivalentes.
+- Prefira verbos prudentes como "ajudar", "facilitar", "acompanhar",
+  "organizar", "escolher" e "usar", conforme o contexto.
 - Não invente marcas.
 - Não crie URLs.
 - Não crie links afiliados.
