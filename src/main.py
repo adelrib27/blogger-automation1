@@ -475,6 +475,15 @@ def criar_bloco_complementares(
             "<p>Dependendo da sua rotina, "
             "estes itens também podem ser úteis:</p>"
         ),
+        (
+            "<p><small>"
+            "Estas sugestões foram selecionadas por terem relação "
+            "com o tema do artigo. Características, funções e "
+            "especificações podem variar conforme o modelo e o "
+            "anúncio do vendedor. Confira os detalhes de cada "
+            "produto antes da compra."
+            "</small></p>"
+        ),
         "<ul>",
     ]
 
