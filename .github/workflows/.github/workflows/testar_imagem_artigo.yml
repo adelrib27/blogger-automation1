@@ -1,0 +1,51 @@
+name: Testar Imagem no Artigo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install requests cloudinary pillow
+
+      - name: Verificar sintaxe
+        run: |
+          python -m py_compile src/gerar_imagem.py
+          python -m py_compile src/testar_imagem_artigo.py
+
+      - name: Testar imagem integrada ao artigo
+        timeout-minutes: 5
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u src/testar_imagem_artigo.py
+
+      - name: Mostrar imagem gerada
+        if: always()
+        run: |
+          echo "=== ARQUIVOS GERADOS ==="
+          find data/imagens -maxdepth 1 -type f -print 2>/dev/null || true
+
+      - name: Salvar imagem do teste
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: teste-imagem-integrada-artigo
+          path: data/imagens/
+          if-no-files-found: error
