@@ -704,6 +704,7 @@ def selecionar_pauta_inedita(
 
 def gerar_pauta_automatica(
     nicho="Casa e Decoração",
+    produtos_excluidos=None,
 ):
     """
     Novo fluxo:
@@ -728,11 +729,26 @@ def gerar_pauta_automatica(
         "\n=== GERAÇÃO AUTOMÁTICA DE PAUTA ==="
     )
 
+    produtos_excluidos = {
+        normalizar_para_comparacao(nome)
+        for nome in (produtos_excluidos or [])
+        if str(nome or "").strip()
+    }
+
     produtos = carregar_produtos()
 
     produtos = deduplicar_produtos(
         produtos
     )
+
+    if produtos_excluidos:
+        produtos = [
+            produto
+            for produto in produtos
+            if normalizar_para_comparacao(
+                produto.get("nome", "")
+            ) not in produtos_excluidos
+        ]
 
     produtos = ordenar_produtos_para_tentativa(
         produtos
