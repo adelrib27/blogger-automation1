@@ -1,14 +1,19 @@
 import os
 import base64
-import tempfile
 from pathlib import Path
+from io import BytesIO
 
 import requests
 import cloudinary
 import cloudinary.uploader
+from PIL import Image
 
 
 MODELO = "@cf/black-forest-labs/flux-2-klein-4b"
+
+# Formato final desejado para a imagem de destaque do Blogger.
+LARGURA_FINAL = 1280
+ALTURA_FINAL = 720
 
 PROMPT = """
 Fotografia editorial ultra-realista de uma sala de estar brasileira
@@ -16,9 +21,14 @@ moderna, aconchegante e elegante. Sofá confortável em tons neutros,
 almofadas decorativas, manta com textura natural, mesa lateral,
 iluminação indireta quente e decoração contemporânea.
 
+IMPORTANTE: criar a cena pensando em composição horizontal ampla,
+com o assunto principal concentrado na região central da imagem.
+Manter espaço visual suficiente nas laterais e evitar elementos
+importantes muito próximos das bordas.
+
 Ambiente realista e habitável, luz natural entrando pela janela,
-composição horizontal apropriada para imagem de destaque de um artigo
-de blog sobre casa e decoração.
+composição apropriada para imagem de destaque de um artigo de blog
+sobre casa e decoração.
 
 Fotografia profissional de interiores, materiais e tecidos realistas,
 sombras naturais, excelente iluminação, alto nível de detalhes.
@@ -88,20 +98,10 @@ def gerar_imagem_cloudflare():
     ).lower()
 
     dados_imagem = None
-    extensao = ".jpg"
 
-    # Caso a API retorne a imagem diretamente.
     if content_type.startswith("image/"):
         dados_imagem = resposta.content
 
-        if "png" in content_type:
-            extensao = ".png"
-        elif "webp" in content_type:
-            extensao = ".webp"
-        else:
-            extensao = ".jpg"
-
-    # FLUX.2 Klein pode retornar JSON com Base64.
     elif "application/json" in content_type:
         dados = resposta.json()
 
@@ -129,19 +129,6 @@ def gerar_imagem_cloudflare():
                 "Não foi possível decodificar a imagem Base64."
             ) from erro
 
-        # Detecta o formato real pelos primeiros bytes.
-        if dados_imagem.startswith(b"\x89PNG\r\n\x1a\n"):
-            extensao = ".png"
-
-        elif dados_imagem.startswith(b"\xff\xd8\xff"):
-            extensao = ".jpg"
-
-        elif (
-            dados_imagem.startswith(b"RIFF")
-            and b"WEBP" in dados_imagem[:16]
-        ):
-            extensao = ".webp"
-
     else:
         raise RuntimeError(
             "Formato inesperado retornado pela Cloudflare: "
@@ -156,25 +143,106 @@ def gerar_imagem_cloudflare():
     pasta = Path("data/imagens")
     pasta.mkdir(parents=True, exist_ok=True)
 
-    caminho = pasta / (
-        f"teste-cloudflare-flux{extensao}"
+    caminho_original = pasta / "teste-cloudflare-original.jpg"
+
+    with Image.open(BytesIO(dados_imagem)) as imagem:
+        imagem = imagem.convert("RGB")
+
+        print("")
+        print("GERAÇÃO CLOUDFLARE: OK")
+        print(
+            f"TAMANHO ORIGINAL: "
+            f"{imagem.width}x{imagem.height}"
+        )
+
+        imagem.save(
+            caminho_original,
+            format="JPEG",
+            quality=92,
+            optimize=True,
+        )
+
+    return caminho_original
+
+
+def converter_para_16_9(caminho_original):
+    print("")
+    print("==========================================")
+    print("ETAPA 2 — CONVERTER PARA 16:9")
+    print("==========================================")
+
+    caminho_final = Path(
+        "data/imagens/teste-cloudflare-flux-16x9.jpg"
     )
 
-    caminho.write_bytes(dados_imagem)
+    with Image.open(caminho_original) as imagem:
+        imagem = imagem.convert("RGB")
 
-    tamanho = caminho.stat().st_size
+        largura = imagem.width
+        altura = imagem.height
+
+        proporcao_atual = largura / altura
+        proporcao_desejada = LARGURA_FINAL / ALTURA_FINAL
+
+        if proporcao_atual > proporcao_desejada:
+            nova_largura = int(
+                altura * proporcao_desejada
+            )
+
+            esquerda = (largura - nova_largura) // 2
+
+            caixa = (
+                esquerda,
+                0,
+                esquerda + nova_largura,
+                altura,
+            )
+
+        else:
+            nova_altura = int(
+                largura / proporcao_desejada
+            )
+
+            topo = (altura - nova_altura) // 2
+
+            caixa = (
+                0,
+                topo,
+                largura,
+                topo + nova_altura,
+            )
+
+        imagem = imagem.crop(caixa)
+
+        imagem = imagem.resize(
+            (LARGURA_FINAL, ALTURA_FINAL),
+            Image.Resampling.LANCZOS,
+        )
+
+        imagem.save(
+            caminho_final,
+            format="JPEG",
+            quality=92,
+            optimize=True,
+        )
+
+    tamanho = caminho_final.stat().st_size
 
     if tamanho < 1000:
         raise RuntimeError(
-            f"Arquivo gerado parece inválido: {tamanho} bytes."
+            f"Arquivo final parece inválido: {tamanho} bytes."
         )
 
     print("")
-    print("GERAÇÃO CLOUDFLARE: OK")
-    print(f"ARQUIVO: {caminho}")
+    print("CONVERSÃO 16:9: OK")
+    print(
+        f"DIMENSÕES FINAIS: "
+        f"{LARGURA_FINAL}x{ALTURA_FINAL}"
+    )
+    print(f"ARQUIVO FINAL: {caminho_final}")
     print(f"TAMANHO: {tamanho} bytes")
 
-    return caminho
+    return caminho_final
 
 
 def enviar_para_cloudinary(caminho):
@@ -189,14 +257,14 @@ def enviar_para_cloudinary(caminho):
 
     print("")
     print("==========================================")
-    print("ETAPA 2 — ENVIAR IMAGEM AO CLOUDINARY")
+    print("ETAPA 3 — ENVIAR IMAGEM AO CLOUDINARY")
     print("==========================================")
 
     resultado = cloudinary.uploader.upload(
         str(caminho),
         public_id=(
             "blogger-automation/"
-            "teste-cloudflare-flux"
+            "teste-cloudflare-flux-16x9"
         ),
         overwrite=True,
         resource_type="image",
@@ -219,20 +287,31 @@ def enviar_para_cloudinary(caminho):
 def executar_teste():
     print("")
     print("==========================================")
-    print("TESTE ISOLADO — IMAGEM AUTOMÁTICA")
-    print("Cloudflare FLUX -> Cloudinary")
+    print("TESTE ISOLADO — IMAGEM 16:9")
+    print("Cloudflare FLUX -> 16:9 -> Cloudinary")
     print("Nenhum conteúdo será enviado ao Blogger.")
     print("==========================================")
 
-    caminho = gerar_imagem_cloudflare()
+    caminho_original = gerar_imagem_cloudflare()
 
-    url_publica = enviar_para_cloudinary(caminho)
+    caminho_final = converter_para_16_9(
+        caminho_original
+    )
+
+    url_publica = enviar_para_cloudinary(
+        caminho_final
+    )
 
     print("")
     print("==========================================")
     print("TESTE COMPLETO: OK")
     print("FLUX GEROU A IMAGEM: OK")
+    print("CONVERSÃO PARA 16:9: OK")
     print("CLOUDINARY RECEBEU A IMAGEM: OK")
+    print(
+        f"DIMENSÕES FINAIS: "
+        f"{LARGURA_FINAL}x{ALTURA_FINAL}"
+    )
     print(f"URL FINAL: {url_publica}")
     print("==========================================")
     print("")
