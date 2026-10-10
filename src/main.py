@@ -11,7 +11,7 @@ from gerar_artigo import (
     criar_estrutura_artigo,
     validar_artigo,
 )
-from gerar_imagem import preparar_imagem
+from gerar_imagem import gerar_imagem_destacada
 from criar_rascunho import criar_rascunho
 from links_internos import adicionar_links_internos
 from selecionar_produtos import selecionar_produtos
@@ -1035,13 +1035,13 @@ def executar():
     # IMAGEM
     # ========================================================
 
-    imagem = preparar_imagem(
-        titulo=seo["titulo"],
-        palavra_chave=pauta[
-            "palavra_chave"
-        ],
-        categoria=categoria,
-    )
+    imagem = gerar_imagem_destacada(
+    titulo=seo["titulo"],
+    palavra_chave=pauta[
+        "palavra_chave"
+    ],
+    categoria=categoria,
+)
 
     pacote = {
         "pauta": pauta,
