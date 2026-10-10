@@ -1379,20 +1379,27 @@ def validar_alegacoes_risco(artigo):
         # como "lavar os pratos" ou "limpar a pia" não são bloqueados.
         termos_cuidado = (
             "lavar", "lave", "lavagem", "secar", "secagem",
-            "amaciante", "cloro", "sabao", "detergente",
-            "temperatura", "agua quente", "agua morna",
+            "limpar", "limpeza", "pano umido", "sabao neutro",
+            "vinagre", "bicarbonato", "amaciante", "cloro",
+            "sabao", "detergente", "temperatura", "agua quente",
+            "agua morna", "secador", "calor excessivo",
+            "raios solares",
         )
         contextos_cuidado_produto = (
             "tecido", "tecidos", "toalha", "toalhas",
             "roupa", "roupas", "algodao", "microfibra",
             "material", "materiais", "produto", "produtos",
             "peca", "pecas", "fibra", "fibras",
+            "colchao", "colchoes", "protetor", "protetores",
+            "capa", "capas",
         )
         efeitos_cuidado = (
             "preserva", "preservar", "mantem", "manter",
             "reduz", "reduzir", "aumenta", "aumentar",
             "melhora", "melhorar", "durabilidade", "vida util",
             "maciez", "absorcao", "textura", "cor",
+            "impermeavel", "impermeaveis", "protecao",
+            "eficacia", "mofo", "odores", "bacteria", "bacterias",
         )
 
         if (
@@ -1403,6 +1410,31 @@ def validar_alegacoes_risco(artigo):
         ):
             registrar(
                 "Instrução de cuidado/manutenção sem condição do fabricante",
+                sentenca,
+            )
+
+        # Soluções improvisadas ou instruções físicas específicas
+        # para alterar/fixar um produto devem ser revisadas, pois podem
+        # não ser compatíveis com o modelo real do catálogo.
+        if (
+            any(
+                t in normalizada
+                for t in (
+                    "bolsa de areia", "bolsas de areia",
+                    "adicionar peso", "adicionar pesos",
+                    "peso para fixar", "pesos para fixar",
+                )
+            )
+            and any(
+                t in normalizada
+                for t in (
+                    "produto", "protetor", "capa",
+                    "colchao", "item", "modelo",
+                )
+            )
+        ):
+            registrar(
+                "Solução técnica improvisada não sustentada pelo produto",
                 sentenca,
             )
 
@@ -1429,6 +1461,10 @@ def validar_alegacoes_risco(artigo):
             "recarregavel", "sem fio", "bivolt", "wifi", "led",
             "silencioso", "ortopedico", "ergonomico", "termico",
             "resistente", "felpudo", "macio", "confortavel",
+            "respiravel", "pvc", "visao noturna", "microfone",
+            "gravacao", "criptografia", "zigbee", "bluetooth",
+            "autenticacao", "sensor de movimento",
+            "armazenamento local", "nuvem",
             "litro", "litros", "ml", "w", "kw", "cm", "mm",
         )
 
@@ -1441,12 +1477,24 @@ def validar_alegacoes_risco(artigo):
             # que contém as letras "item" no meio da palavra.
             menciona_produto = bool(
                 re.search(
-                    r"\\b(?:produto|item|modelo)\\b",
+                    r"\\b(?:produto|item|modelo|protetor|capa|camera|"
+                    r"sensor|travesseiro|toalha|lencol|coberdrom|mop|"
+                    r"escova|varal|cortador|climatizador|pote|potes)\\b",
                     normalizada,
                 )
             )
 
-            if not menciona_produto:
+            linguagem_geral = any(
+                t in normalizada
+                for t in (
+                    "alguns modelos", "alguns produtos",
+                    "alguns dispositivos", "dependendo do modelo",
+                    "dependendo do produto", "podem oferecer",
+                    "pode oferecer", "em geral", "no mercado",
+                )
+            )
+
+            if not menciona_produto or linguagem_geral:
                 continue
 
             for termo in caracteristicas:
