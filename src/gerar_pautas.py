@@ -296,22 +296,38 @@ def obter_config_cloudflare():
 
 
 def extrair_texto_cloudflare(dados):
-    """Extrai o texto retornado pelo Workers AI."""
+    """Extrai texto de formatos atuais e legados do Workers AI."""
     if not isinstance(dados, dict):
         return ""
-    resultado = dados.get("result")
-    if isinstance(resultado, dict):
+
+    def extrair(objeto):
+        if not isinstance(objeto, dict):
+            return ""
+
         for campo in ("response", "text", "output_text"):
-            valor = resultado.get(campo)
+            valor = objeto.get(campo)
             if isinstance(valor, str) and valor.strip():
                 return valor.strip()
+
+        choices = objeto.get("choices")
+        if isinstance(choices, list) and choices:
+            primeira = choices[0]
+            if isinstance(primeira, dict):
+                mensagem = primeira.get("message")
+                if isinstance(mensagem, dict):
+                    conteudo = mensagem.get("content")
+                    if isinstance(conteudo, str) and conteudo.strip():
+                        return conteudo.strip()
+                texto = primeira.get("text")
+                if isinstance(texto, str) and texto.strip():
+                    return texto.strip()
+        return ""
+
+    resultado = dados.get("result")
     if isinstance(resultado, str) and resultado.strip():
         return resultado.strip()
-    for campo in ("response", "text", "output_text"):
-        valor = dados.get(campo)
-        if isinstance(valor, str) and valor.strip():
-            return valor.strip()
-    return ""
+
+    return extrair(resultado) or extrair(dados)
 
 
 def gerar_candidatas_com_cloudflare(prompt):
@@ -365,8 +381,17 @@ def gerar_candidatas_com_cloudflare(prompt):
             dados = resposta.json()
             texto = extrair_texto_cloudflare(dados)
             if not texto:
+                chaves_topo = list(dados.keys()) if isinstance(dados, dict) else []
+                resultado_debug = dados.get("result") if isinstance(dados, dict) else None
+                chaves_resultado = (
+                    list(resultado_debug.keys())
+                    if isinstance(resultado_debug, dict)
+                    else []
+                )
                 raise RuntimeError(
-                    "RESPOSTA_ESTRUTURAL: Cloudflare retornou resposta vazia."
+                    "RESPOSTA_ESTRUTURAL: HTTP 200, mas o texto não foi "
+                    f"localizado. Chaves topo={chaves_topo}; "
+                    f"chaves result={chaves_resultado}."
                 )
             texto_json = limpar_json_resposta(texto)
             if not texto_json:
