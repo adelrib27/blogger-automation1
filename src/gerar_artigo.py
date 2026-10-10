@@ -1240,8 +1240,17 @@ def validar_alegacoes_risco(artigo):
     for sentenca in _sentencas_texto(texto):
         normalizada = normalizar_para_comparacao(sentenca)
 
+        # "produto(s) de higiene" descreve uma categoria de objeto,
+        # não uma alegação sanitária por si só. Criamos uma cópia
+        # apenas para a detecção de alto risco; o artigo não é alterado.
+        normalizada_alto_risco = re.sub(
+            r"\\bprodutos?\\s+de\\s+higiene\\b",
+            "produto_de_uso_pessoal",
+            normalizada,
+        )
+
         tem_alto_risco = any(
-            t in normalizada
+            t in normalizada_alto_risco
             for t in termos_alto_risco
         )
 
