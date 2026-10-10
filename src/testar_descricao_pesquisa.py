@@ -1,9 +1,17 @@
+import json
 import os
 
 from criar_rascunho import criar_servico_blogger
 
 
-TITULO_PROCURADO = "TESTE — Automação Blogger funcionando"
+POST_ID = "429407037007587616"
+
+METADADOS_TESTE = {
+    "teste_automacao": (
+        "Teste controlado de customMetaData. "
+        "Este texto não deve publicar o post."
+    )
+}
 
 
 def main():
@@ -16,64 +24,108 @@ def main():
 
     blogger = criar_servico_blogger()
 
-    print("=== TESTE DE LEITURA DE METADADOS ===")
-    print("Nenhum post será criado, alterado ou publicado.")
+    print("=== TESTE CONTROLADO DE customMetaData ===")
+    print("O post continuará como RASCUNHO.")
+    print("Nenhuma publicação será solicitada.")
     print()
 
-    resposta = (
+    print("1. Lendo o rascunho antes da alteração...")
+
+    antes = (
         blogger.posts()
-        .list(
+        .get(
             blogId=blog_id,
-            status=["DRAFT"],
-            fetchBodies=True,
-            maxResults=50,
+            postId=POST_ID,
+            fetchBody=True,
         )
         .execute()
     )
 
-    posts = resposta.get("items", [])
-
-    encontrado = None
-
-    for post in posts:
-        titulo = str(
-            post.get("title") or ""
-        ).strip()
-
-        if titulo == TITULO_PROCURADO:
-            encontrado = post
-            break
-
-    if encontrado is None:
-        print(
-            "Rascunho de teste não encontrado:"
-        )
-        print(TITULO_PROCURADO)
-        return
-
-    print("Rascunho encontrado.")
-    print("ID:", encontrado.get("id"))
-    print("Título:", encontrado.get("title"))
-    print("Status:", encontrado.get("status"))
+    print("Título:", antes.get("title"))
+    print("Status antes:", antes.get("status"))
+    print(
+        "customMetaData antes:",
+        antes.get("customMetaData"),
+    )
     print()
 
-    custom_meta = encontrado.get(
-        "customMetaData"
+    if antes.get("status") != "DRAFT":
+        raise RuntimeError(
+            "SEGURANÇA: o post não está como DRAFT. "
+            "Teste cancelado."
+        )
+
+    valor_json = json.dumps(
+        METADADOS_TESTE,
+        ensure_ascii=False,
     )
 
-    print("=== customMetaData ===")
+    print("2. Enviando customMetaData de teste...")
+    print("Valor:", valor_json)
 
-    if custom_meta is None:
-        print("None")
-    elif custom_meta == "":
-        print("(vazio)")
-    else:
-        print(custom_meta)
+    resultado = (
+        blogger.posts()
+        .patch(
+            blogId=blog_id,
+            postId=POST_ID,
+            body={
+                "customMetaData": valor_json,
+            },
+            publish=False,
+        )
+        .execute()
+    )
 
     print()
-    print("=== FIM DO TESTE ===")
+    print("Resposta do PATCH:")
+    print("Status:", resultado.get("status"))
     print(
-        "Nenhuma alteração foi enviada ao Blogger."
+        "customMetaData:",
+        resultado.get("customMetaData"),
+    )
+
+    if resultado.get("status") != "DRAFT":
+        raise RuntimeError(
+            "SEGURANÇA: status inesperado após PATCH."
+        )
+
+    print()
+    print("3. Lendo novamente diretamente do Blogger...")
+
+    depois = (
+        blogger.posts()
+        .get(
+            blogId=blog_id,
+            postId=POST_ID,
+            fetchBody=True,
+        )
+        .execute()
+    )
+
+    print("Título:", depois.get("title"))
+    print("Status depois:", depois.get("status"))
+    print(
+        "customMetaData depois:",
+        depois.get("customMetaData"),
+    )
+
+    print()
+    print("=== RESULTADO ===")
+
+    if depois.get("customMetaData") == valor_json:
+        print(
+            "SUCESSO: customMetaData foi "
+            "persistido pelo Blogger."
+        )
+    else:
+        print(
+            "O Blogger não devolveu exatamente "
+            "o customMetaData enviado."
+        )
+
+    print()
+    print(
+        "O teste NÃO solicitou publicação do post."
     )
 
 
