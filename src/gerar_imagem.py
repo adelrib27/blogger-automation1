@@ -3,32 +3,32 @@ import os
 import re
 import time
 import unicodedata
+from io import BytesIO
 from pathlib import Path
 
-from google import genai
-from google.genai import types
+import cloudinary
+import cloudinary.uploader
+import requests
+from PIL import Image
 
 
 # ============================================================
 # CONFIGURAÇÃO
 # ============================================================
 
-MODELOS_IMAGEM = [
-    {
-        "modelo": "gemini-3.1-flash-image",
-        "resolucao": "2K",
-    },
-    {
-        "modelo": "gemini-3.1-flash-lite-image",
-        "resolucao": "1K",
-    },
-]
+MODELO_IMAGEM = "@cf/black-forest-labs/flux-2-klein-4b"
 
 PASTA_IMAGENS = Path("data/imagens")
 
 FORMATO_IMAGEM = "16:9"
-RESOLUCAO_IMAGEM = "2K"
+RESOLUCAO_IMAGEM = "1280x720"
 MIME_TYPE = "image/jpeg"
+
+LARGURA_FINAL = 1280
+ALTURA_FINAL = 720
+
+TIMEOUT_CLOUDFLARE = 180
+TENTATIVAS_CLOUDFLARE = 3
 
 
 # ============================================================
@@ -46,49 +46,52 @@ def limpar_texto(texto):
     ).strip()
 
 
-def criar_nome_arquivo(titulo):
+def criar_slug(texto):
     """
-    Cria um nome de arquivo amigável para SEO.
-
-    Exemplo:
-    Como Organizar a Cozinha
-    ->
-    como-organizar-a-cozinha.jpg
+    Cria um slug simples e seguro.
     """
 
-    titulo = limpar_texto(titulo).lower()
+    texto = limpar_texto(texto).lower()
 
-    titulo = unicodedata.normalize(
+    texto = unicodedata.normalize(
         "NFKD",
-        titulo,
+        texto,
     )
 
-    titulo = "".join(
+    texto = "".join(
         caractere
-        for caractere in titulo
+        for caractere in texto
         if not unicodedata.combining(
             caractere
         )
     )
 
-    titulo = re.sub(
+    texto = re.sub(
         r"[^a-z0-9\s-]",
         "",
-        titulo,
+        texto,
     )
 
-    titulo = re.sub(
+    texto = re.sub(
         r"[\s_-]+",
         "-",
-        titulo,
+        texto,
     )
 
-    titulo = titulo.strip("-")
+    return texto.strip("-")
 
-    if not titulo:
-        titulo = "imagem-destacada"
 
-    return f"{titulo[:80]}.jpg"
+def criar_nome_arquivo(titulo):
+    """
+    Cria um nome de arquivo amigável para SEO.
+    """
+
+    slug = criar_slug(titulo)
+
+    if not slug:
+        slug = "imagem-destacada"
+
+    return f"{slug[:80]}.jpg"
 
 
 def criar_alt_text(
@@ -101,6 +104,7 @@ def criar_alt_text(
     """
 
     titulo = limpar_texto(titulo)
+
     palavra_chave = limpar_texto(
         palavra_chave
     )
@@ -123,20 +127,21 @@ def criar_prompt_imagem(
     categoria="Casa e Decoração",
 ):
     """
-    Cria um prompt editorial específico
-    para a imagem destacada do artigo.
+    Cria o prompt editorial para
+    a imagem destacada do artigo.
     """
 
     titulo = limpar_texto(titulo)
+
     palavra_chave = limpar_texto(
         palavra_chave
     )
+
     categoria = limpar_texto(categoria)
 
     prompt = f"""
-Crie uma fotografia editorial fotorrealista
-para ser a imagem destacada de um artigo
-brasileiro sobre Casa e Decoração.
+Fotografia editorial ultra-realista para ser a imagem destacada
+de um artigo brasileiro sobre Casa e Decoração.
 
 TÍTULO DO ARTIGO:
 {titulo}
@@ -147,50 +152,49 @@ ASSUNTO PRINCIPAL:
 CATEGORIA:
 {categoria}
 
-A fotografia deve representar diretamente
-o assunto descrito no título, e não apenas
-mostrar uma decoração genérica.
+A fotografia deve representar diretamente o assunto descrito
+no título. Não produzir uma decoração genérica que não tenha
+relação clara com o tema.
 
-Crie uma cena residencial brasileira moderna,
-realista, elegante, acolhedora e possível de
-existir em uma casa real.
+Criar uma cena residencial brasileira moderna, realista,
+elegante, acolhedora e perfeitamente possível de existir
+em uma casa real.
 
-O elemento relacionado ao assunto principal
-deve ser claramente perceptível na imagem.
+O elemento relacionado ao assunto principal deve estar
+claramente perceptível.
 
-A composição deve ajudar o leitor a entender
-visualmente o tema do artigo antes mesmo
-de ler o texto.
+COMPOSIÇÃO:
+
+Criar a cena pensando em um enquadramento horizontal amplo
+para capa de artigo de blog.
+
+O assunto principal deve permanecer preferencialmente na
+região central da composição.
+
+Preservar espaço visual suficiente nas laterais e evitar
+colocar elementos essenciais muito próximos das bordas,
+pois a imagem será posteriormente adaptada para 16:9.
 
 ESTILO VISUAL:
 
 - fotografia editorial profissional;
 - aparência totalmente fotorrealista;
 - ambiente residencial brasileiro;
-- decoração bonita, contemporânea e acessível;
+- decoração contemporânea e acessível;
 - materiais e texturas naturais;
-- móveis em escala e proporções realistas;
+- móveis em escala realista;
 - arquitetura plausível;
-- iluminação coerente com o tema;
-- profundidade fotográfica natural;
-- composição limpa e elegante;
-- aparência de fotografia de revista de
-  decoração;
-- detalhes realistas;
-- alta qualidade visual.
-
-COMPOSIÇÃO:
-
-- enquadramento horizontal;
-- formato adequado para capa de artigo;
-- assunto principal claramente visível;
-- evitar excesso de objetos;
-- evitar composição artificial;
-- preservar espaço visual e equilíbrio;
-- nenhuma moldura ou borda.
+- iluminação natural ou coerente com o ambiente;
+- sombras naturais;
+- profundidade fotográfica realista;
+- composição limpa;
+- alto nível de detalhes;
+- aparência de fotografia profissional de interiores;
+- nenhuma aparência de ilustração ou render artificial.
 
 NÃO INCLUIR:
 
+- pessoas;
 - textos;
 - títulos;
 - letras;
@@ -198,23 +202,23 @@ NÃO INCLUIR:
 - números;
 - logotipos;
 - marcas comerciais;
-- marcas-d'água visíveis;
+- marcas-d'água;
 - preços;
 - etiquetas;
 - interfaces;
 - banners;
-- montagens;
+- molduras;
 - colagens;
-- ilustrações;
+- montagens;
 - desenhos;
+- ilustrações;
 - aparência CGI;
 - aparência 3D artificial;
 - objetos deformados;
 - arquitetura impossível.
 
-A imagem final deve parecer uma fotografia
-real feita profissionalmente para um blog
-de Casa e Decoração.
+A imagem deve parecer uma fotografia real produzida
+profissionalmente para um blog brasileiro de Casa e Decoração.
 """
 
     return limpar_texto(prompt)
@@ -231,7 +235,10 @@ def preparar_imagem(
 ):
     """
     Monta as informações necessárias
-    para gerar a imagem destacada.
+    para a imagem destacada.
+
+    Esta função permanece compatível
+    com o main.py existente.
     """
 
     return {
@@ -259,17 +266,19 @@ def preparar_imagem(
 
 def erro_de_cota(erro):
     """
-    Detecta erros de cota ou limite.
+    Detecta erros relacionados a cota,
+    limite ou excesso de requisições.
     """
 
     texto = str(erro).lower()
 
     termos = (
         "429",
-        "resource_exhausted",
         "quota",
         "rate limit",
         "rate_limit",
+        "too many requests",
+        "limit exceeded",
     )
 
     return any(
@@ -280,18 +289,23 @@ def erro_de_cota(erro):
 
 def erro_temporario(erro):
     """
-    Detecta erros temporários que
-    podem justificar nova tentativa.
+    Detecta erros temporários que podem
+    justificar nova tentativa.
     """
 
     texto = str(erro).lower()
 
     termos = (
+        "500",
+        "502",
         "503",
-        "unavailable",
+        "504",
+        "timeout",
+        "timed out",
         "temporarily unavailable",
         "internal error",
-        "500",
+        "connection error",
+        "connection reset",
     )
 
     return any(
@@ -301,110 +315,313 @@ def erro_temporario(erro):
 
 
 # ============================================================
-# EXTRAÇÃO DA IMAGEM
+# CLOUDFLARE WORKERS AI
 # ============================================================
 
-def extrair_bytes_imagem(interaction):
-    """
-    Extrai os bytes da imagem retornada
-    pela API Gemini.
-    """
-
-    output_image = getattr(
-        interaction,
-        "output_image",
-        None,
-    )
-
-    if output_image is None:
-        raise RuntimeError(
-            "A resposta do modelo não "
-            "contém uma imagem."
-        )
-
-    dados = getattr(
-        output_image,
-        "data",
-        None,
-    )
-
-    if not dados:
-        raise RuntimeError(
-            "A imagem retornada não "
-            "possui dados."
-        )
-
-    if isinstance(dados, bytes):
-        return dados
-
-    if isinstance(dados, str):
-        return base64.b64decode(dados)
-
-    raise RuntimeError(
-        "Formato de imagem retornado "
-        "pela API não reconhecido."
-    )
-
-
-# ============================================================
-# GERAÇÃO COM UM MODELO
-# ============================================================
-
-def gerar_com_modelo(
-    client,
-    modelo,
+def gerar_bytes_cloudflare(
     prompt,
-    resolucao,
 ):
     """
-    Solicita uma imagem ao Gemini usando
-    a Generate Content API.
+    Solicita uma imagem ao Cloudflare
+    Workers AI usando FLUX.
     """
 
-    print(
-        f"Enviando solicitação para {modelo} "
-        f"em {resolucao}...",
-        flush=True,
+    account_id = os.getenv(
+        "CLOUDFLARE_ACCOUNT_ID"
     )
 
-    response = client.models.generate_content(
-        model=modelo,
-        contents=[prompt],
-        config=types.GenerateContentConfig(
-            response_modalities=["IMAGE"],
-            image_config=types.ImageConfig(
-                aspect_ratio=FORMATO_IMAGEM,
-                image_size=resolucao,
-            ),
+    api_token = os.getenv(
+        "CLOUDFLARE_API_TOKEN"
+    )
+
+    if not account_id:
+        raise RuntimeError(
+            "CLOUDFLARE_ACCOUNT_ID "
+            "não encontrado nos Secrets."
+        )
+
+    if not api_token:
+        raise RuntimeError(
+            "CLOUDFLARE_API_TOKEN "
+            "não encontrado nos Secrets."
+        )
+
+    url = (
+        "https://api.cloudflare.com/client/v4/"
+        f"accounts/{account_id}/ai/run/"
+        f"{MODELO_IMAGEM}"
+    )
+
+    headers = {
+        "Authorization": (
+            f"Bearer {api_token}"
         ),
+    }
+
+    arquivos = {
+        "prompt": (
+            None,
+            prompt,
+        ),
+    }
+
+    resposta = requests.post(
+        url,
+        headers=headers,
+        files=arquivos,
+        timeout=TIMEOUT_CLOUDFLARE,
     )
 
     print(
-        "Resposta recebida da API.",
-        flush=True,
+        "HTTP Cloudflare:",
+        resposta.status_code,
     )
 
-    for part in response.parts:
-        imagem = part.as_image()
+    if resposta.status_code != 200:
+        corpo = resposta.text[:2000]
 
-        if imagem is not None:
-            dados = getattr(
-                imagem,
-                "image_bytes",
-                None,
+        raise RuntimeError(
+            "Cloudflare retornou "
+            f"HTTP {resposta.status_code}: "
+            f"{corpo}"
+        )
+
+    content_type = resposta.headers.get(
+        "content-type",
+        "",
+    ).lower()
+
+    if content_type.startswith(
+        "image/"
+    ):
+        return resposta.content
+
+    if "application/json" in content_type:
+        dados = resposta.json()
+
+        if not dados.get(
+            "success",
+            False,
+        ):
+            raise RuntimeError(
+                "Cloudflare informou falha: "
+                f"{dados}"
             )
 
-            if dados:
-                return dados
+        resultado = (
+            dados.get("result")
+            or {}
+        )
+
+        imagem_base64 = resultado.get(
+            "image"
+        )
+
+        if not imagem_base64:
+            raise RuntimeError(
+                "Cloudflare retornou JSON, "
+                "mas result.image não foi "
+                "encontrado."
+            )
+
+        try:
+            return base64.b64decode(
+                imagem_base64,
+                validate=True,
+            )
+
+        except Exception as erro:
+            raise RuntimeError(
+                "Não foi possível decodificar "
+                "a imagem Base64 retornada "
+                "pela Cloudflare."
+            ) from erro
 
     raise RuntimeError(
-        "A API respondeu, mas nenhuma "
-        "imagem foi encontrada."
+        "Formato inesperado retornado "
+        "pela Cloudflare: "
+        f"{content_type}"
     )
 
 
 # ============================================================
-# GERAÇÃO COM FALLBACK
+# CONVERSÃO PARA 16:9
+# ============================================================
+
+def salvar_imagem_16_9(
+    bytes_imagem,
+    caminho,
+):
+    """
+    Centraliza o corte da imagem e cria
+    um JPEG final 1280x720.
+    """
+
+    with Image.open(
+        BytesIO(bytes_imagem)
+    ) as imagem:
+
+        imagem = imagem.convert("RGB")
+
+        largura_original = imagem.width
+        altura_original = imagem.height
+
+        print(
+            "Dimensões recebidas:",
+            f"{largura_original}x"
+            f"{altura_original}",
+        )
+
+        proporcao_atual = (
+            largura_original
+            / altura_original
+        )
+
+        proporcao_desejada = (
+            LARGURA_FINAL
+            / ALTURA_FINAL
+        )
+
+        if (
+            proporcao_atual
+            > proporcao_desejada
+        ):
+            nova_largura = int(
+                altura_original
+                * proporcao_desejada
+            )
+
+            esquerda = (
+                largura_original
+                - nova_largura
+            ) // 2
+
+            caixa = (
+                esquerda,
+                0,
+                esquerda + nova_largura,
+                altura_original,
+            )
+
+        else:
+            nova_altura = int(
+                largura_original
+                / proporcao_desejada
+            )
+
+            topo = (
+                altura_original
+                - nova_altura
+            ) // 2
+
+            caixa = (
+                0,
+                topo,
+                largura_original,
+                topo + nova_altura,
+            )
+
+        imagem = imagem.crop(
+            caixa
+        )
+
+        imagem = imagem.resize(
+            (
+                LARGURA_FINAL,
+                ALTURA_FINAL,
+            ),
+            Image.Resampling.LANCZOS,
+        )
+
+        imagem.save(
+            caminho,
+            format="JPEG",
+            quality=92,
+            optimize=True,
+        )
+
+    if not caminho.exists():
+        raise RuntimeError(
+            "A imagem final não foi criada."
+        )
+
+    tamanho = caminho.stat().st_size
+
+    if tamanho < 1000:
+        raise RuntimeError(
+            "A imagem final parece "
+            f"inválida: {tamanho} bytes."
+        )
+
+    print(
+        "Conversão 16:9 concluída:",
+        f"{LARGURA_FINAL}x"
+        f"{ALTURA_FINAL}",
+    )
+
+    return tamanho
+
+
+# ============================================================
+# CLOUDINARY
+# ============================================================
+
+def enviar_para_cloudinary(
+    caminho,
+    nome_arquivo,
+):
+    """
+    Envia a imagem final ao Cloudinary
+    e devolve a URL HTTPS pública.
+    """
+
+    cloudinary_url = os.getenv(
+        "CLOUDINARY_URL"
+    )
+
+    if not cloudinary_url:
+        raise RuntimeError(
+            "CLOUDINARY_URL não encontrado "
+            "nos Secrets."
+        )
+
+    cloudinary.config(
+        secure=True
+    )
+
+    nome_sem_extensao = Path(
+        nome_arquivo
+    ).stem
+
+    public_id = (
+        "blogger-automation/"
+        f"{nome_sem_extensao}"
+    )
+
+    resultado = (
+        cloudinary.uploader.upload(
+            str(caminho),
+            public_id=public_id,
+            overwrite=True,
+            resource_type="image",
+        )
+    )
+
+    url_publica = resultado.get(
+        "secure_url"
+    )
+
+    if not url_publica:
+        raise RuntimeError(
+            "Cloudinary não retornou "
+            "secure_url."
+        )
+
+    return url_publica
+
+
+# ============================================================
+# GERAÇÃO DA IMAGEM DESTACADA
 # ============================================================
 
 def gerar_imagem_destacada(
@@ -414,16 +631,17 @@ def gerar_imagem_destacada(
     pasta_saida=None,
 ):
     """
-    Gera a imagem destacada utilizando
-    uma fila de modelos.
+    Fluxo completo:
 
-    Se um modelo falhar, tenta o próximo.
+    Cloudflare FLUX
+    -> conversão 16:9
+    -> arquivo JPEG 1280x720
+    -> Cloudinary
+    -> URL pública
 
-    Se todos falharem, retorna um resultado
+    Se ocorrer uma falha, devolve resultado
     seguro em vez de derrubar a automação.
     """
-
-    api_key = os.getenv("GEMINI_API_KEY")
 
     dados = preparar_imagem(
         titulo=titulo,
@@ -431,21 +649,12 @@ def gerar_imagem_destacada(
         categoria=categoria,
     )
 
-    if not api_key:
-        return {
-            **dados,
-            "gerada": False,
-            "modelo": None,
-            "caminho": None,
-            "erro": (
-                "GEMINI_API_KEY não encontrada."
-            ),
-        }
-
     if pasta_saida is None:
         pasta_saida = PASTA_IMAGENS
     else:
-        pasta_saida = Path(pasta_saida)
+        pasta_saida = Path(
+            pasta_saida
+        )
 
     pasta_saida.mkdir(
         parents=True,
@@ -457,168 +666,182 @@ def gerar_imagem_destacada(
         / dados["nome_arquivo"]
     )
 
-    client = genai.Client(
-        api_key=api_key,
-        http_options=types.HttpOptions(
-            timeout=90000,
-            retry_options=types.HttpRetryOptions(
-                attempts=1,
-            ),
-        ),
-    )
-
     ultimo_erro = None
 
     print()
     print(
         "=== GERAÇÃO DE IMAGEM DESTACADA ==="
     )
-    print("Arquivo:", dados["nome_arquivo"])
-    print("Formato:", dados["formato"])
+
     print(
-        "Resolução preferencial:",
-        dados["resolucao"],
+        "Modelo:",
+        MODELO_IMAGEM,
     )
+
+    print(
+        "Arquivo:",
+        dados["nome_arquivo"],
+    )
+
+    print(
+        "Formato final:",
+        FORMATO_IMAGEM,
+    )
+
+    print(
+        "Dimensões finais:",
+        RESOLUCAO_IMAGEM,
+    )
+
     print()
 
-    for configuracao in MODELOS_IMAGEM:
+    for tentativa in range(
+        1,
+        TENTATIVAS_CLOUDFLARE + 1,
+    ):
 
-        modelo = configuracao["modelo"]
-        resolucao = configuracao["resolucao"]
+        try:
+            print(
+                "Tentativa Cloudflare:",
+                f"{tentativa}/"
+                f"{TENTATIVAS_CLOUDFLARE}",
+            )
 
-        print(
-            f"Tentando modelo de imagem: "
-            f"{modelo} ({resolucao})"
-        )
-
-        tentativas = 3
-
-        for tentativa in range(
-            1,
-            tentativas + 1,
-        ):
-
-            try:
-                bytes_imagem = gerar_com_modelo(
-                    client=client,
-                    modelo=modelo,
-                    prompt=dados["prompt"],
-                    resolucao=resolucao,
+            bytes_imagem = (
+                gerar_bytes_cloudflare(
+                    dados["prompt"]
                 )
+            )
 
-                with open(
-                    caminho,
-                    "wb",
-                ) as arquivo:
-                    arquivo.write(
-                        bytes_imagem
-                    )
+            tamanho = salvar_imagem_16_9(
+                bytes_imagem=bytes_imagem,
+                caminho=caminho,
+            )
 
-                tamanho = caminho.stat().st_size
+            print(
+                "Imagem local criada:",
+                caminho,
+            )
 
-                if tamanho <= 0:
-                    raise RuntimeError(
-                        "O arquivo de imagem "
-                        "foi criado vazio."
-                    )
+            print(
+                "Tamanho:",
+                f"{tamanho} bytes",
+            )
 
-                print()
+            print()
+            print(
+                "Enviando imagem "
+                "ao Cloudinary..."
+            )
+
+            url_publica = (
+                enviar_para_cloudinary(
+                    caminho=caminho,
+                    nome_arquivo=(
+                        dados[
+                            "nome_arquivo"
+                        ]
+                    ),
+                )
+            )
+
+            print(
+                "Upload Cloudinary: OK"
+            )
+
+            print(
+                "URL pública:",
+                url_publica,
+            )
+
+            print()
+            print(
+                "Imagem destacada "
+                "gerada com sucesso."
+            )
+
+            return {
+                **dados,
+                "gerada": True,
+                "modelo": MODELO_IMAGEM,
+                "resolucao": (
+                    RESOLUCAO_IMAGEM
+                ),
+                "caminho": str(
+                    caminho
+                ),
+                "tamanho_bytes": tamanho,
+                "url_publica": url_publica,
+                "erro": None,
+            }
+
+        except Exception as erro:
+            ultimo_erro = erro
+
+            print()
+            print(
+                "Falha na geração "
+                f"(tentativa {tentativa}/"
+                f"{TENTATIVAS_CLOUDFLARE}):"
+            )
+
+            print(
+                str(erro)
+            )
+
+            if erro_de_cota(erro):
                 print(
-                    "Imagem gerada com sucesso."
-                )
-                print("Modelo:", modelo)
-                print("Resolução:", resolucao)
-                print("Caminho:", caminho)
-                print(
-                    "Tamanho:",
-                    f"{tamanho} bytes",
+                    "Cota ou limite detectado."
                 )
 
-                return {
-                    **dados,
-                    "gerada": True,
-                    "modelo": modelo,
-                    "resolucao": resolucao,
-                    "caminho": str(caminho),
-                    "tamanho_bytes": tamanho,
-                    "erro": None,
-                }
-
-            except Exception as erro:
-                ultimo_erro = erro
-
-                print(
-                    f"Falha no modelo "
-                    f"{modelo} "
-                    f"(tentativa "
-                    f"{tentativa}/"
-                    f"{tentativas}):"
-                )
-                print(str(erro))
-
-                if erro_de_cota(erro):
-                    print(
-                        "Cota ou limite "
-                        "detectado."
-                    )
-                    print(
-                        "Pulando imediatamente "
-                        "para o próximo modelo."
-                    )
-                    break
-
-                if erro_temporario(erro):
-                    if tentativa < tentativas:
-                        espera = (
-                            5
-                            if tentativa == 1
-                            else 15
-                        )
-
-                        print(
-                            "Erro temporário."
-                        )
-                        print(
-                            f"Nova tentativa em "
-                            f"{espera} segundos..."
-                        )
-
-                        time.sleep(espera)
-                        continue
-
-                    print(
-                        "Modelo permaneceu "
-                        "indisponível."
-                    )
-                    print(
-                        "Tentando o próximo."
-                    )
-                    break
-
-                print(
-                    "Erro não temporário."
-                )
-                print(
-                    "Tentando o próximo modelo."
-                )
                 break
 
+            if (
+                erro_temporario(erro)
+                and tentativa
+                < TENTATIVAS_CLOUDFLARE
+            ):
+                espera = (
+                    5
+                    if tentativa == 1
+                    else 15
+                )
+
+                print(
+                    "Erro temporário."
+                )
+
+                print(
+                    "Nova tentativa em "
+                    f"{espera} segundos..."
+                )
+
+                time.sleep(
+                    espera
+                )
+
+                continue
+
+            break
+
     print()
     print(
-        "Nenhum modelo conseguiu "
-        "gerar a imagem."
+        "Não foi possível gerar "
+        "a imagem destacada."
     )
+
     print(
         "A automação poderá continuar "
-        "sem imagem destacada."
+        "sem imagem."
     )
 
     return {
         **dados,
         "gerada": False,
-        "modelo": None,
+        "modelo": MODELO_IMAGEM,
         "caminho": None,
         "tamanho_bytes": 0,
+        "url_publica": None,
         "erro": (
             str(ultimo_erro)
             if ultimo_erro
@@ -633,6 +856,16 @@ def gerar_imagem_destacada(
 
 if __name__ == "__main__":
 
+    print()
+    print(
+        "TESTE ISOLADO — GERAR_IMAGEM.PY"
+    )
+
+    print(
+        "Nenhum conteúdo será "
+        "enviado ao Blogger."
+    )
+
     resultado = gerar_imagem_destacada(
         titulo=(
             "Iluminação para sala de estar "
@@ -645,26 +878,43 @@ if __name__ == "__main__":
     )
 
     print()
-    print("=== RESULTADO DO TESTE ===")
+    print(
+        "=== RESULTADO DO TESTE ==="
+    )
+
     print(
         "Gerada:",
         resultado["gerada"],
     )
+
     print(
         "Arquivo:",
         resultado["nome_arquivo"],
     )
+
     print(
         "ALT:",
         resultado["alt_text"],
     )
+
     print(
         "Modelo:",
         resultado["modelo"],
     )
+
+    print(
+        "Resolução:",
+        resultado["resolucao"],
+    )
+
     print(
         "Caminho:",
         resultado["caminho"],
+    )
+
+    print(
+        "URL pública:",
+        resultado["url_publica"],
     )
 
     if resultado["erro"]:
@@ -672,3 +922,9 @@ if __name__ == "__main__":
             "Erro:",
             resultado["erro"],
         )
+
+    print()
+    print(
+        "Nenhum conteúdo foi "
+        "enviado ao Blogger."
+    )
