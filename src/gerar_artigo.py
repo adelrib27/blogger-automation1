@@ -1080,6 +1080,66 @@ def _contem_contexto_prudente(texto_normalizado):
     return any(expressao in texto_normalizado for expressao in expressoes)
 
 
+
+def suavizar_comparativos_editoriais(conteudo):
+    """
+    Corrige apenas comparativos/superlativos editoriais simples
+    que o modelo pode produzir apesar do prompt.
+
+    A função NÃO aprova o artigo: depois dela, a trava editorial
+    completa continua sendo executada normalmente.
+    """
+
+    if not conteudo:
+        return conteudo
+
+    substituicoes = (
+        (
+            r"\bpode ser mais eficiente\b",
+            "pode ser mais adequada nessa situação",
+        ),
+        (
+            r"\bpodem ser mais eficientes\b",
+            "podem ser mais adequadas nessa situação",
+        ),
+        (
+            r"\bé mais eficiente\b",
+            "pode ser adequada nessa situação",
+        ),
+        (
+            r"\bsão mais eficientes\b",
+            "podem ser adequadas nessa situação",
+        ),
+        (
+            r"\ba melhor estratégia\b",
+            "uma estratégia útil",
+        ),
+        (
+            r"\bo melhor caminho\b",
+            "um caminho útil",
+        ),
+        (
+            r"\ba melhor opção\b",
+            "uma opção adequada",
+        ),
+        (
+            r"\bo melhor método\b",
+            "um método adequado",
+        ),
+    )
+
+    resultado = conteudo
+
+    for padrao, substituto in substituicoes:
+        resultado = re.sub(
+            padrao,
+            substituto,
+            resultado,
+            flags=re.IGNORECASE,
+        )
+
+    return resultado
+
 def validar_alegacoes_risco(artigo):
     """
     Trava editorial determinística para publicação automática.
@@ -1091,6 +1151,19 @@ def validar_alegacoes_risco(artigo):
     não estejam sustentadas pelo nome fornecido.
     """
     conteudo = artigo.get("conteudo_html", "") or ""
+
+    conteudo_suavizado = suavizar_comparativos_editoriais(
+        conteudo
+    )
+
+    if conteudo_suavizado != conteudo:
+        artigo["conteudo_html"] = conteudo_suavizado
+        conteudo = conteudo_suavizado
+        print(
+            "Ajuste editorial automático aplicado antes "
+            "da trava de risco."
+        )
+
     produto = limpar_texto(artigo.get("produto_principal", ""))
     texto = extrair_texto_html(conteudo)
 
