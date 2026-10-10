@@ -1211,9 +1211,6 @@ def validar_alegacoes_risco(artigo):
         "contaminacao", "desinfetar", "desinfeccao",
         "esterilizar", "seguranca alimentar",
         "risco eletrico", "choque eletrico",
-        "lavar", "lave", "lavagem", "secar", "secagem",
-        "amaciante", "cloro", "sabao", "detergente",
-        "manutencao", "etiqueta",
     )
 
     # Verbos/promessas fortes. Só são bloqueados automaticamente
