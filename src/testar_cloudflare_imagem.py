@@ -1,8 +1,11 @@
 import os
 import base64
+import tempfile
 from pathlib import Path
 
 import requests
+import cloudinary
+import cloudinary.uploader
 
 
 MODELO = "@cf/black-forest-labs/flux-2-klein-4b"
@@ -25,7 +28,7 @@ sem marca-d'água, sem interface, sem molduras.
 """
 
 
-def testar_cloudflare():
+def gerar_imagem_cloudflare():
     account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
     api_token = os.getenv("CLOUDFLARE_API_TOKEN")
 
@@ -54,11 +57,9 @@ def testar_cloudflare():
 
     print("")
     print("==========================================")
-    print("TESTE ISOLADO — CLOUDFLARE WORKERS AI")
+    print("ETAPA 1 — GERAR IMAGEM NO CLOUDFLARE")
     print(f"MODELO: {MODELO}")
-    print("Nenhum conteúdo será enviado ao Blogger.")
     print("==========================================")
-    print("")
 
     resposta = requests.post(
         url,
@@ -69,7 +70,7 @@ def testar_cloudflare():
 
     print(f"HTTP STATUS: {resposta.status_code}")
     print(
-        f"CONTENT-TYPE: "
+        "CONTENT-TYPE: "
         f"{resposta.headers.get('content-type', '')}"
     )
 
@@ -77,6 +78,7 @@ def testar_cloudflare():
         print("")
         print("RESPOSTA DA CLOUDFLARE:")
         print(resposta.text[:4000])
+
         raise RuntimeError(
             f"Cloudflare retornou HTTP {resposta.status_code}."
         )
@@ -99,8 +101,7 @@ def testar_cloudflare():
         else:
             extensao = ".jpg"
 
-    # FLUX.2 Klein atualmente pode retornar JSON
-    # com a imagem codificada em Base64.
+    # FLUX.2 Klein pode retornar JSON com Base64.
     elif "application/json" in content_type:
         dados = resposta.json()
 
@@ -128,17 +129,18 @@ def testar_cloudflare():
                 "Não foi possível decodificar a imagem Base64."
             ) from erro
 
-        # Detecta o formato pelos primeiros bytes.
+        # Detecta o formato real pelos primeiros bytes.
         if dados_imagem.startswith(b"\x89PNG\r\n\x1a\n"):
             extensao = ".png"
+
         elif dados_imagem.startswith(b"\xff\xd8\xff"):
             extensao = ".jpg"
-        elif dados_imagem.startswith(b"RIFF") and (
-            b"WEBP" in dados_imagem[:16]
+
+        elif (
+            dados_imagem.startswith(b"RIFF")
+            and b"WEBP" in dados_imagem[:16]
         ):
             extensao = ".webp"
-        else:
-            extensao = ".jpg"
 
     else:
         raise RuntimeError(
@@ -168,14 +170,74 @@ def testar_cloudflare():
         )
 
     print("")
-    print("==========================================")
     print("GERAÇÃO CLOUDFLARE: OK")
     print(f"ARQUIVO: {caminho}")
     print(f"TAMANHO: {tamanho} bytes")
+
+    return caminho
+
+
+def enviar_para_cloudinary(caminho):
+    cloudinary_url = os.getenv("CLOUDINARY_URL")
+
+    if not cloudinary_url:
+        raise RuntimeError(
+            "CLOUDINARY_URL não encontrado nos Secrets."
+        )
+
+    cloudinary.config(secure=True)
+
+    print("")
+    print("==========================================")
+    print("ETAPA 2 — ENVIAR IMAGEM AO CLOUDINARY")
+    print("==========================================")
+
+    resultado = cloudinary.uploader.upload(
+        str(caminho),
+        public_id=(
+            "blogger-automation/"
+            "teste-cloudflare-flux"
+        ),
+        overwrite=True,
+        resource_type="image",
+    )
+
+    url_publica = resultado.get("secure_url")
+
+    if not url_publica:
+        raise RuntimeError(
+            "Cloudinary não retornou secure_url."
+        )
+
+    print("")
+    print("UPLOAD CLOUDINARY: OK")
+    print(f"URL PÚBLICA: {url_publica}")
+
+    return url_publica
+
+
+def executar_teste():
+    print("")
+    print("==========================================")
+    print("TESTE ISOLADO — IMAGEM AUTOMÁTICA")
+    print("Cloudflare FLUX -> Cloudinary")
+    print("Nenhum conteúdo será enviado ao Blogger.")
+    print("==========================================")
+
+    caminho = gerar_imagem_cloudflare()
+
+    url_publica = enviar_para_cloudinary(caminho)
+
+    print("")
+    print("==========================================")
+    print("TESTE COMPLETO: OK")
+    print("FLUX GEROU A IMAGEM: OK")
+    print("CLOUDINARY RECEBEU A IMAGEM: OK")
+    print(f"URL FINAL: {url_publica}")
     print("==========================================")
     print("")
     print("Nenhum conteúdo foi enviado ao Blogger.")
 
 
 if __name__ == "__main__":
-    testar_cloudflare()
+    executar_teste()
