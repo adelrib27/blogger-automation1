@@ -528,6 +528,17 @@ QUALIDADE E CONFIABILIDADE:
 - Não use superlativos comerciais sem informação que os
   sustente, como "melhor", "mais eficiente", "superior",
   "premium" ou equivalentes.
+- Evite construções categóricas com palavras como
+  "evita", "impede", "garante", "elimina", "previne",
+  "protege", "resolve", "nunca" e "sempre", especialmente
+  ao falar de limpeza, higiene, conservação, segurança,
+  saúde, alimentos, instalação ou armazenamento.
+- Prefira formulações prudentes e descritivas, como
+  "pode ajudar a organizar", "pode facilitar a rotina",
+  "pode contribuir para manter os itens acessíveis" ou
+  "pode ser útil conforme a necessidade do ambiente".
+- Não diga que uma solução torna algo "mais eficiente"
+  sem uma base objetiva fornecida.
 - Não copie textos de outros sites.
 
 SEO NATURAL:
@@ -634,7 +645,7 @@ INSTRUÇÃO DESTA ETAPA:
 
 Esta é a PRIMEIRA PARTE do artigo.
 
-Produza aproximadamente 500 a 650 palavras.
+Produza aproximadamente 600 a 700 palavras.
 
 Inclua:
 - a introdução;
@@ -659,7 +670,7 @@ INSTRUÇÃO DESTA ETAPA:
 
 Esta é a SEGUNDA PARTE do mesmo artigo.
 
-Produza aproximadamente 450 a 600 palavras.
+Produza aproximadamente 550 a 650 palavras.
 
 NÃO faça uma nova introdução.
 
