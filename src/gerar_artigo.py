@@ -315,6 +315,20 @@ def gerar_com_cloudflare(prompt):
             if resposta.status_code != 200:
                 detalhe = resposta.text[:1000]
 
+                # Cota diária gratuita esgotada: falha fatal e imediata.
+                detalhe_normalizado = detalhe.lower()
+                if (
+                    resposta.status_code == 429
+                    and (
+                        "used up your daily free allocation" in detalhe_normalizado
+                        or '"code":4006' in detalhe_normalizado.replace(" ", "")
+                    )
+                ):
+                    raise RuntimeError(
+                        "COTA_DIARIA_CLOUDFLARE_ESGOTADA: "
+                        "a cota diária gratuita do Workers AI foi esgotada."
+                    )
+
                 if resposta.status_code in (
                     429,
                     500,
