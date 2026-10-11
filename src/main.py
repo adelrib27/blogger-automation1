@@ -15,6 +15,7 @@ from gerar_imagem import gerar_imagem_destacada
 from criar_rascunho import criar_rascunho
 from links_internos import adicionar_links_internos
 from selecionar_produtos import selecionar_produtos
+from imagens_produtos import enriquecer_produto_com_imagem
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -318,6 +319,23 @@ def criar_bloco_produto_principal(
             '🛒 PRODUTO RELACIONADO AO TEMA</p>'
         ),
         (
+            (
+                '<div style="width:100%;max-width:300px;height:300px;'
+                'margin:0 auto 18px;padding:10px;display:flex;'
+                'align-items:center;justify-content:center;background:#ffffff;'
+                'border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">'
+                f'<img src="{html.escape(str(produto_principal.get("imagem_produto", "")), quote=True)}" '
+                f'alt="{nome}" loading="lazy" '
+                'style="display:block;width:100%;height:100%;object-fit:contain;" />'
+                '</div>'
+            )
+            if (
+                produto_principal.get("imagem_verificada")
+                and str(produto_principal.get("imagem_produto", "")).startswith("https://")
+            )
+            else ""
+        ),
+        (
             '<p style="margin:0 0 12px 0;font-size:21px;'
             'line-height:1.35;"><strong>'
             f'{nome}</strong></p>'
@@ -355,7 +373,7 @@ def criar_bloco_produto_principal(
         "</div>",
     ]
 
-    return "\n".join(partes)
+    return "\n".join(parte for parte in partes if parte)
 
 
 def inserir_produto_principal_contextual(
@@ -936,6 +954,12 @@ def executar():
         produto_principal[
             "link_afiliado"
         ],
+    )
+
+    produto_principal = (
+        enriquecer_produto_com_imagem(
+            produto_principal
+        )
     )
 
     artigo["conteudo_html"] = (
