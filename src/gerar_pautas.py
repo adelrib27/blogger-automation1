@@ -369,6 +369,21 @@ def gerar_candidatas_com_cloudflare(prompt):
             print("HTTP Cloudflare:", resposta.status_code)
             if resposta.status_code != 200:
                 detalhe = resposta.text[:1000]
+
+                # Cota diária gratuita esgotada: não adianta repetir.
+                detalhe_normalizado = detalhe.lower()
+                if (
+                    resposta.status_code == 429
+                    and (
+                        "used up your daily free allocation" in detalhe_normalizado
+                        or '"code":4006' in detalhe_normalizado.replace(" ", "")
+                    )
+                ):
+                    raise RuntimeError(
+                        "COTA_DIARIA_CLOUDFLARE_ESGOTADA: "
+                        "a cota diária gratuita do Workers AI foi esgotada."
+                    )
+
                 if resposta.status_code in (429, 500, 502, 503, 504):
                     raise RuntimeError(
                         "ERRO_TEMPORARIO_CLOUDFLARE: "
@@ -498,12 +513,6 @@ REGRAS:
 - Não use preços.
 - Não invente pesquisas ou estatísticas.
 - Não invente características que não estejam presentes no nome do produto.
-- Não atribua ao produto funções, tecnologias, compatibilidades,
-  certificações ou benefícios que não estejam explícitos no nome fornecido.
-- Evite promessas absolutas no título e na descrição, como "garantir",
-  "eliminar", "impedir", "resolver", "100%" ou equivalentes.
-- Prefira verbos prudentes como "ajudar", "facilitar", "acompanhar",
-  "organizar", "escolher" e "usar", conforme o contexto.
 - Não invente marcas.
 - Não crie URLs.
 - Não crie links afiliados.
@@ -710,7 +719,6 @@ def selecionar_pauta_inedita(
 
 def gerar_pauta_automatica(
     nicho="Casa e Decoração",
-    produtos_excluidos=None,
 ):
     """
     Novo fluxo:
@@ -735,26 +743,11 @@ def gerar_pauta_automatica(
         "\n=== GERAÇÃO AUTOMÁTICA DE PAUTA ==="
     )
 
-    produtos_excluidos = {
-        str(nome or "").strip().casefold()
-        for nome in (produtos_excluidos or [])
-        if str(nome or "").strip()
-    }
-
     produtos = carregar_produtos()
 
     produtos = deduplicar_produtos(
         produtos
     )
-
-    if produtos_excluidos:
-        produtos = [
-            produto
-            for produto in produtos
-            if str(
-                produto.get("nome", "")
-            ).strip().casefold() not in produtos_excluidos
-        ]
 
     produtos = ordenar_produtos_para_tentativa(
         produtos
@@ -801,6 +794,13 @@ def gerar_pauta_automatica(
             )
 
         except Exception as erro:
+            if "COTA_DIARIA_CLOUDFLARE_ESGOTADA" in str(erro):
+                print(
+                    "\nCOTA_DIARIA_CLOUDFLARE_ESGOTADA — "
+                    "interrompendo a seleção de pautas imediatamente."
+                )
+                raise
+
             print(
                 "\nNão foi possível gerar pautas "
                 "para este produto."
