@@ -1,0 +1,41 @@
+name: Laboratório - Preview Visual dos Cards
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gerar-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Baixar catálogo enriquecido da execução anterior
+        uses: dawidd6/action-download-artifact@v11
+        with:
+          workflow: enriquecer_catalogo_laboratorio.yml
+          workflow_conclusion: success
+          name: laboratorio-catalogo-enriquecido
+          path: data
+
+      - name: Conferir catálogo enriquecido
+        run: test -f data/produtos_enriquecidos_laboratorio.json
+
+      - name: Gerar preview HTML
+        run: python -u src/gerar_preview_cards_laboratorio.py
+
+      - name: Salvar preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-visual-cards
+          path: data/preview_cards_produtos.html
+          if-no-files-found: error
