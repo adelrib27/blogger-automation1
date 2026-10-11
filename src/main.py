@@ -688,7 +688,7 @@ def executar():
         "com recuperação automática..."
     )
 
-    MAX_TENTATIVAS_ARTIGO = 10
+    MAX_TENTATIVAS_ARTIGO = 20
     produtos_excluidos = set()
 
     pauta = None
@@ -714,7 +714,7 @@ def executar():
 
         precisa_nova_pauta = (
             pauta is None
-            or tentativa_global in (4, 7, 10)
+            or tentativa_global in (4, 7, 10, 13, 16, 19)
         )
 
         print(
@@ -904,7 +904,7 @@ def executar():
 
     else:
         print(
-            "\nAs 10 tentativas editoriais "
+            f"\nAs {MAX_TENTATIVAS_ARTIGO} tentativas editoriais "
             "foram esgotadas."
         )
         print(
