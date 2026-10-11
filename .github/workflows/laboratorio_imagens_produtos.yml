@@ -1,0 +1,28 @@
+name: Laboratório - Imagens Reais de Produtos
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  testar-imagens:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar requests
+        run: pip install requests
+      - name: Validar script
+        run: python -m py_compile src/laboratorio_imagens_produtos.py
+      - name: Executar laboratório
+        run: python -u src/laboratorio_imagens_produtos.py
+      - name: Salvar relatório
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-imagens-produtos
+          path: data/laboratorio_imagens_produtos.json
+          if-no-files-found: warn
