@@ -744,6 +744,16 @@ def executar():
                     ),
                 )
             except Exception as erro:
+                if "COTA_DIARIA_CLOUDFLARE_ESGOTADA" in str(erro):
+                    print(
+                        "\nCOTA_DIARIA_CLOUDFLARE_ESGOTADA — "
+                        "execução encerrada imediatamente sem publicação."
+                    )
+                    print(
+                        "Nenhum conteúdo será enviado ao Blogger."
+                    )
+                    return
+
                 print(
                     "Não foi possível obter "
                     "nova pauta:",
@@ -853,6 +863,16 @@ def executar():
                 ),
             )
         except Exception as erro:
+            if "COTA_DIARIA_CLOUDFLARE_ESGOTADA" in str(erro):
+                print(
+                    "\nCOTA_DIARIA_CLOUDFLARE_ESGOTADA — "
+                    "execução encerrada imediatamente sem publicação."
+                )
+                print(
+                    "Nenhum conteúdo será enviado ao Blogger."
+                )
+                return
+
             print(
                 "Falha durante a geração "
                 "do artigo:",
