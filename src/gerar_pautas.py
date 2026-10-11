@@ -513,6 +513,12 @@ REGRAS:
 - Não use preços.
 - Não invente pesquisas ou estatísticas.
 - Não invente características que não estejam presentes no nome do produto.
+- Não atribua ao produto funções, tecnologias, compatibilidades,
+  certificações ou benefícios que não estejam explícitos no nome fornecido.
+- Evite promessas absolutas no título e na descrição, como "garantir",
+  "eliminar", "impedir", "resolver", "100%" ou equivalentes.
+- Prefira verbos prudentes como "ajudar", "facilitar", "acompanhar",
+  "organizar", "escolher" e "usar", conforme o contexto.
 - Não invente marcas.
 - Não crie URLs.
 - Não crie links afiliados.
@@ -719,6 +725,7 @@ def selecionar_pauta_inedita(
 
 def gerar_pauta_automatica(
     nicho="Casa e Decoração",
+    produtos_excluidos=None,
 ):
     """
     Novo fluxo:
@@ -743,11 +750,26 @@ def gerar_pauta_automatica(
         "\n=== GERAÇÃO AUTOMÁTICA DE PAUTA ==="
     )
 
+    produtos_excluidos = {
+        str(nome or "").strip().casefold()
+        for nome in (produtos_excluidos or [])
+        if str(nome or "").strip()
+    }
+
     produtos = carregar_produtos()
 
     produtos = deduplicar_produtos(
         produtos
     )
+
+    if produtos_excluidos:
+        produtos = [
+            produto
+            for produto in produtos
+            if str(
+                produto.get("nome", "")
+            ).strip().casefold() not in produtos_excluidos
+        ]
 
     produtos = ordenar_produtos_para_tentativa(
         produtos
