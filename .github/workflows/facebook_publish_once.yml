@@ -1,0 +1,81 @@
+name: Facebook — Primeiro Teste Real
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmar:
+        description: "Digite PUBLICAR para confirmar o primeiro post real"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: facebook-first-real-post
+  cancel-in-progress: false
+
+jobs:
+  publicar-facebook:
+    if: ${{ inputs.confirmar == 'PUBLICAR' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validar conexão com a Página
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+        run: python src/testar_facebook_lab.py
+
+      - name: Preparar o conteúdo social aprovado
+        env:
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: python src/preparar_social_lab.py
+
+      - name: Publicar o primeiro post real no Facebook
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          FACEBOOK_GRAPH_VERSION: "v26.0"
+          FACEBOOK_PUBLISH_APPROVED: "SIM_PUBLICAR"
+          FACEBOOK_EXPECTED_BLOGGER_POST_ID: "6749441764424606564"
+        run: python src/publicar_facebook_once.py
+
+      - name: Registrar publicação no histórico do repositório
+        run: |
+          if git diff --quiet -- data/social_publicados.json; then
+            echo "Nenhuma alteração de histórico para registrar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/social_publicados.json
+          git commit -m "Registrar primeira publicação real no Facebook"
+          git push
+
+      - name: Salvar resultado da publicação
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: facebook-first-real-post
+          path: |
+            artifacts/facebook_publish_result.json
+            artifacts/social_payload.json
+            artifacts/facebook_connection_test.json
+          if-no-files-found: warn
