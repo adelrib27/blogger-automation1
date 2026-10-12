@@ -1,0 +1,49 @@
+{
+  "mode": "lab",
+  "publish_external": false,
+  "require_explicit_confirmation": true,
+  "networks": {
+    "facebook": {
+      "enabled": false,
+      "priority": 1
+    },
+    "instagram": {
+      "enabled": false,
+      "priority": 1
+    },
+    "pinterest": {
+      "enabled": false,
+      "priority": 1
+    },
+    "threads": {
+      "enabled": false,
+      "priority": 1
+    },
+    "telegram": {
+      "enabled": false,
+      "priority": 2
+    },
+    "bluesky": {
+      "enabled": false,
+      "priority": 2
+    },
+    "linkedin": {
+      "enabled": false,
+      "priority": 3
+    },
+    "x": {
+      "enabled": false,
+      "priority": 3
+    }
+  },
+  "future_video_channels": {
+    "tiktok": {
+      "enabled": false,
+      "status": "planned"
+    },
+    "youtube_shorts": {
+      "enabled": false,
+      "status": "planned"
+    }
+  }
+}
