@@ -1,0 +1,34 @@
+name: Testar Instagram Lab
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testar-instagram:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar vínculo do Instagram com a Página
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+        run: python src/testar_instagram_lab.py
+
+      - name: Salvar resultado para inspeção
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instagram-connection-test
+          path: artifacts/instagram_connection_test.json
+          if-no-files-found: warn
