@@ -32,9 +32,14 @@ jobs:
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
         run: python src/preparar_social_lab.py
 
-      - name: Salvar payload para inspeção
+      - name: Validar plano social sem chamadas externas
+        run: python src/planejar_social.py
+
+      - name: Salvar artefatos para inspeção
         uses: actions/upload-artifact@v4
         with:
-          name: social-payload
-          path: artifacts/social_payload.json
+          name: social-lab
+          path: |
+            artifacts/social_payload.json
+            artifacts/social_plan.json
           if-no-files-found: error
