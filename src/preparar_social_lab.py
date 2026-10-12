@@ -3,7 +3,6 @@ import json
 import os
 import re
 from pathlib import Path
-from urllib.parse import urlparse
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -84,15 +83,23 @@ def primeira_imagem(conteudo):
     return match.group(1).strip() if match else ""
 
 
-def resumo_do_post(conteudo, limite=220):
-    texto = limpar_html(conteudo or "")
+def limitar_texto(texto, limite):
+    texto = re.sub(r"[ \t]+", " ", str(texto or "")).strip()
     if len(texto) <= limite:
         return texto
 
-    trecho = texto[: limite + 1]
+    if limite <= 1:
+        return texto[:limite]
+
+    trecho = texto[: limite - 1]
     if " " in trecho:
         trecho = trecho.rsplit(" ", 1)[0]
     return trecho.rstrip(".,;:!?") + "…"
+
+
+def resumo_do_post(conteudo, limite=220):
+    texto = limpar_html(conteudo or "")
+    return limitar_texto(texto, limite)
 
 
 def hashtags_padrao(labels):
@@ -140,6 +147,31 @@ def montar_payload(post):
         f"{tags_texto}"
     ).strip()
 
+    threads = limitar_texto(
+        f"{titulo}\n\n{resumo}\n\n{url}",
+        480,
+    )
+
+    linkedin = limitar_texto(
+        f"{titulo}\n\n{resumo}\n\nLeia o conteúdo completo: {url}\n\n{tags_texto}",
+        2500,
+    )
+
+    x_texto = limitar_texto(
+        f"{titulo}\n\n{url}\n#AchadosParaCasa",
+        280,
+    )
+
+    telegram = limitar_texto(
+        f"🏠 {titulo}\n\n{resumo}\n\nLeia no Achados para Casa:\n{url}\n\n{tags_texto}",
+        950,
+    )
+
+    bluesky = limitar_texto(
+        f"{titulo}\n\n{url}\n#AchadosParaCasa",
+        300,
+    )
+
     return {
         "post": {
             "id": str(post.get("id") or ""),
@@ -170,9 +202,73 @@ def montar_payload(post):
             "caption": instagram[:2000],
             "image_url": imagem,
         },
+        "threads": {
+            "enabled": False,
+            "text": threads,
+            "link": url,
+            "image_url": imagem,
+            "preferred_media_type": "TEXT",
+        },
+        "linkedin": {
+            "enabled": False,
+            "commentary": linkedin,
+            "article": {
+                "source": url,
+                "title": titulo,
+                "description": resumo,
+                "thumbnail_url": imagem,
+            },
+        },
+        "x": {
+            "enabled": False,
+            "text": x_texto,
+            "link": url,
+            "image_url": imagem,
+        },
+        "telegram": {
+            "enabled": False,
+            "caption": telegram,
+            "link": url,
+            "image_url": imagem,
+            "target_chat": None,
+        },
+        "bluesky": {
+            "enabled": False,
+            "text": bluesky,
+            "link": url,
+            "image_url": imagem,
+            "external_embed": {
+                "uri": url,
+                "title": titulo,
+                "description": resumo,
+                "thumb_url": imagem,
+            },
+        },
+        "media_phase_2": {
+            "tiktok": {
+                "enabled": False,
+                "requires_media": True,
+                "status": "planejado",
+            },
+            "youtube_shorts": {
+                "enabled": False,
+                "requires_media": True,
+                "status": "planejado",
+            },
+        },
         "safety": {
             "publish_external": False,
             "mode": "lab_only",
+            "prepared_networks": [
+                "facebook",
+                "pinterest",
+                "instagram",
+                "threads",
+                "linkedin",
+                "x",
+                "telegram",
+                "bluesky",
+            ],
             "note": "Este arquivo apenas prepara conteúdo. Nenhuma rede social é chamada.",
         },
     }
@@ -252,6 +348,7 @@ def main():
     print("Post preparado:", payload["post"]["title"])
     print("URL:", payload["post"]["url"])
     print("Imagem:", payload["post"]["featured_image_url"] or "não encontrada")
+    print("Redes preparadas:", ", ".join(payload["safety"]["prepared_networks"]))
     print("Saída:", SAIDA_PATH)
     print("\nSOCIAL LAB: OK — nenhuma rede social chamada.")
 
