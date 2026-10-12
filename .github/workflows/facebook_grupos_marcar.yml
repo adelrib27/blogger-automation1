@@ -1,0 +1,80 @@
+name: Facebook Grupos — Marcar Resultado
+
+on:
+  workflow_dispatch:
+    inputs:
+      queue_id:
+        description: "Queue ID copiado do painel"
+        required: true
+        type: string
+      status:
+        description: "Resultado"
+        required: true
+        type: choice
+        options:
+          - published
+          - skipped
+        default: published
+      facebook_post_url:
+        description: "URL do post no grupo (opcional)"
+        required: false
+        type: string
+      note:
+        description: "Observação opcional"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: facebook-groups-assisted-register
+  cancel-in-progress: false
+
+jobs:
+  marcar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Registrar resultado da publicação manual
+        env:
+          QUEUE_ID: ${{ inputs.queue_id }}
+          MARK_STATUS: ${{ inputs.status }}
+          FACEBOOK_GROUP_POST_URL: ${{ inputs.facebook_post_url }}
+          MARK_NOTE: ${{ inputs.note }}
+        run: python src/marcar_grupo_publicado.py
+
+      - name: Regenerar painel
+        run: python src/gerar_painel_grupos.py
+
+      - name: Persistir fila e histórico
+        run: |
+          if git diff --quiet -- data/facebook_fila_grupos.json data/facebook_grupos_publicados.json; then
+            echo "Nenhuma alteração para registrar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/facebook_fila_grupos.json data/facebook_grupos_publicados.json
+          git commit -m "Registrar resultado de publicação em grupo do Facebook"
+          git push
+
+      - name: Salvar painel atualizado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: facebook-grupos-registro
+          path: |
+            artifacts/facebook_grupos_painel.html
+            artifacts/facebook_grupos_mark_result.json
+            data/facebook_fila_grupos.json
+            data/facebook_grupos_publicados.json
+          if-no-files-found: warn
