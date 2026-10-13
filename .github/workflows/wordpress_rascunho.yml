@@ -2,9 +2,22 @@ name: Radar Tech BR — WordPress Rascunho Seguro
 
 on:
   workflow_dispatch:
+    inputs:
+      produto_teste:
+        description: "Opcional: trecho do nome do produto para priorizar neste teste"
+        required: false
+        default: ""
+        type: string
+  push:
+    paths:
+      - ".github/wordpress-smoke-test-trigger-3"
 
 permissions:
   contents: write
+
+concurrency:
+  group: radar-tech-br-wordpress-rascunho
+  cancel-in-progress: false
 
 jobs:
   gerar-rascunho-wordpress:
@@ -27,6 +40,21 @@ jobs:
 
       - name: Verificar sintaxe Python
         run: python -m compileall -q src
+
+      - name: Configurar produto de teste opcional
+        env:
+          DISPATCH_PRODUCT: ${{ github.event.inputs.produto_teste || '' }}
+        run: |
+          PRODUTO="$DISPATCH_PRODUCT"
+          if [ -z "$PRODUTO" ] && [ -f .github/wordpress-smoke-test-trigger-3 ]; then
+            PRODUTO="$(tr -d '\r\n' < .github/wordpress-smoke-test-trigger-3)"
+          fi
+          if [ -n "$PRODUTO" ]; then
+            echo "RADARTECH_TEST_PRODUCT_KEYWORD=$PRODUTO" >> "$GITHUB_ENV"
+            echo "Teste direcionado configurado para: $PRODUTO"
+          else
+            echo "Teste sem filtro de produto."
+          fi
 
       - name: Testar conexão autenticada com WordPress
         env:
@@ -75,4 +103,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/wordpress_historico.json data/wordpress_rascunhos.json
           git commit -m "Atualizar controle de rascunhos do Radar Tech BR"
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
