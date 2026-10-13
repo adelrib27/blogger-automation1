@@ -13,12 +13,34 @@ HISTORICO_WORDPRESS = BASE_DIR / "data" / "wordpress_historico.json"
 RASCUNHOS_WORDPRESS = BASE_DIR / "data" / "wordpress_rascunhos.json"
 
 
-# Isola o Radar Tech BR do histórico e das URLs do Blogger.
+def carregar_config_wordpress():
+    try:
+        with CONFIG_WORDPRESS.open("r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+    return dados if isinstance(dados, dict) else {}
+
+
+CONFIG = carregar_config_wordpress()
+URL_WORDPRESS = str(CONFIG.get("url_blog") or "").strip().rstrip("/") + "/"
+
+
+# Isola o Radar Tech BR do histórico, rascunhos e URLs do Blogger.
 motor.CONFIG_PATH = CONFIG_WORDPRESS
 motor.HISTORICO_PATH = HISTORICO_WORDPRESS
 pautas.ARQUIVO_HISTORICO = HISTORICO_WORDPRESS
 pautas.ARQUIVO_RASCUNHOS = RASCUNHOS_WORDPRESS
 links_internos.HISTORICO_PATH = HISTORICO_WORDPRESS
+
+
+def url_interna_wordpress_valida(url):
+    url = str(url or "").strip()
+    return bool(URL_WORDPRESS) and url.startswith(URL_WORDPRESS)
+
+
+links_internos.url_interna_valida = url_interna_wordpress_valida
 
 
 def carregar_lista(caminho):
