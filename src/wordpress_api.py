@@ -100,6 +100,44 @@ def verificar_conexao():
     }
 
 
+def listar_posts(status):
+    status = str(status or "").strip().lower()
+    if status not in {"publish", "draft"}:
+        raise ValueError("Status WordPress suportado: publish ou draft.")
+
+    dados = _request(
+        "GET",
+        f"/wp/v2/posts?status={status}&per_page=100&orderby=date&order=desc",
+    )
+
+    if not isinstance(dados, list):
+        return []
+
+    posts = []
+
+    for item in dados:
+        if not isinstance(item, dict):
+            continue
+
+        titulo_bruto = item.get("title") or {}
+        if isinstance(titulo_bruto, dict):
+            titulo = str(titulo_bruto.get("rendered") or "").strip()
+        else:
+            titulo = str(titulo_bruto or "").strip()
+
+        posts.append(
+            {
+                "post_id": item.get("id"),
+                "titulo": titulo,
+                "url": item.get("link"),
+                "status": item.get("status") or status,
+                "categorias_ids": item.get("categories") or [],
+            }
+        )
+
+    return posts
+
+
 def mapear_categoria_slug(categoria="", titulo="", produto=""):
     texto = _normalizar(
         f"{categoria} {titulo} {produto}"
