@@ -26,9 +26,27 @@ REGRAS EXTRAS DE CONFIABILIDADE — RADAR TECH BR:
 - Em tecnologia, não invente alcance, autonomia, potência, latência,
   compatibilidade, proteção contra água, certificação, velocidade, resolução,
   capacidade, frequência ou qualquer especificação técnica.
+- Em tecnologia, trate recursos como critérios a conferir no anúncio/manual;
+  não diga que um recurso genérico reduz fadiga, melhora imersão, aumenta
+  desempenho, facilita precisão ou produz outro resultado sem base fornecida.
+- Em Moda & Beleza, quando o tema envolver máquina de cortar cabelo, barbeador,
+  shaver, chapinha ou prancha, escreva como GUIA DE COMPRA, não como tutorial
+  técnico de corte, barbear ou tratamento dos fios.
+- Em aparelhos de beleza, não ensine técnica de corte em camadas, fade, posição
+  de lâmina, ângulo de corte, uso em cabelo molhado/seco ou procedimento de
+  barbear. Oriente a seguir o manual e, quando necessário, um profissional.
+- Não atribua a potência do motor, material/revestimento da lâmina, peso,
+  ergonomia, ruído, autonomia ou carregamento qualquer vantagem de corte,
+  durabilidade, precisão, conforto, irritação ou desempenho sem fonte.
+- Não recomende lubrificação, frequência de limpeza, armazenamento, exposição
+  à umidade/temperatura ou cuidado de bateria como regra geral. Diga para
+  seguir o manual específico do aparelho.
 - Em beleza e cuidados pessoais, não prometa reduzir frizz, evitar danos,
   fortalecer, hidratar, estimular crescimento, proteger fios/pele ou produzir
   resultado fisiológico sem base explícita.
+- Não recomende óleos, máscaras caseiras, shampoo, condicionador ou outros
+  tratamentos como forma de preservar corte, hidratar ou melhorar a saúde dos
+  fios sem uma fonte adequada.
 - Em temas de alimentos e bebidas, prefira organização, apresentação,
   planejamento e critérios gerais de escolha. Evite instruções técnicas de
   temperatura, conservação e segurança alimentar.
@@ -55,6 +73,13 @@ LEGADA QUANDO HOUVER CONFLITO:
 - Evite pautas baseadas em benefício técnico não comprovado pelo nome do
   produto. Prefira critérios de escolha, situações de uso, organização,
   comparação de formatos e dúvidas de compra que não exijam inventar dados.
+- Em títulos de Moda & Beleza, não acrescente promessa de resultado a um
+  recurso. Evite construções como "visor LCD para cortes precisos", "motor
+  potente para cortar sem esforço", "chapinha para não danificar os fios"
+  ou equivalentes quando esse benefício não estiver comprovado.
+- Para máquinas de cortar cabelo, barbeadores, shavers, chapinhas e pranchas,
+  prefira pautas de escolha e comparação de critérios; não gere tutoriais de
+  técnica de corte, barbear ou tratamento capilar.
 """
 
 
@@ -160,7 +185,36 @@ def _remover_texto_comercial(conteudo_html, produto_principal=""):
     return re.sub(r"\s+", " ", texto).strip()
 
 
-def validar_conteudo_wordpress(conteudo_html, produto_principal=""):
+def _produto_eh_aparelho_beleza(produto_principal, categoria="", titulo=""):
+    base = _normalizar(
+        " ".join(
+            [
+                str(produto_principal or ""),
+                str(categoria or ""),
+                str(titulo or ""),
+            ]
+        )
+    )
+    termos = (
+        "maquina de cortar cabelo",
+        "maquina de acabamento",
+        "barbeador",
+        "shaver",
+        "chapinha",
+        "prancha de cabelo",
+        "aparador de pelos",
+        "moda & beleza",
+        "moda e beleza",
+    )
+    return any(termo in base for termo in termos)
+
+
+def validar_conteudo_wordpress(
+    conteudo_html,
+    produto_principal="",
+    titulo="",
+    categoria="",
+):
     """Segunda trava, específica do Radar Tech BR, antes do REST WordPress."""
     texto = _remover_texto_comercial(
         conteudo_html,
@@ -168,6 +222,11 @@ def validar_conteudo_wordpress(conteudo_html, produto_principal=""):
     )
     problemas = []
     vistos = set()
+    aparelho_beleza = _produto_eh_aparelho_beleza(
+        produto_principal,
+        categoria=categoria,
+        titulo=titulo,
+    )
 
     def registrar(tipo, trecho):
         trecho = str(trecho or "").strip()
@@ -204,7 +263,7 @@ def validar_conteudo_wordpress(conteudo_html, produto_principal=""):
     fontes_especificas = (
         "fabricante", "manual", "rotulo", "embalagem", "etiqueta",
         "instrucoes do produto", "orientacoes do produto", "ficha tecnica",
-        "especificacoes oficiais", "pagina oficial",
+        "especificacoes oficiais", "pagina oficial", "anuncio do vendedor",
     )
 
     contextos_materiais = (
@@ -251,7 +310,8 @@ def validar_conteudo_wordpress(conteudo_html, produto_principal=""):
         "fortalece", "fortalecer", "estimula o crescimento", "estimular o crescimento",
         "hidrata", "hidratar", "nutre", "nutrir", "sela cuticulas",
         "selar cuticulas", "nao danifica", "menos agressivo", "mais saudavel",
-        "evita irritacao", "reduz irritacao", "sem irritar",
+        "visual mais saudavel", "evita irritacao", "reduz irritacao", "sem irritar",
+        "preservar a forma", "preservar o corte", "prolongar a vida do corte",
     )
 
     modificacoes_improvisadas = (
@@ -259,6 +319,44 @@ def validar_conteudo_wordpress(conteudo_html, produto_principal=""):
         "colar na", "colar o", "usar adesivo", "adicionar peso",
         "adicionar pesos", "usar pesos", "peso nas bordas", "pesos nas bordas",
         "amarrar", "usar amarras", "usar cordoes", "cordoes nos cantos",
+    )
+
+    termos_tecnica_corte = (
+        "lâmina paralela", "lamina paralela", "corte em camadas", "tecnica de fade",
+        "fade", "angulo de corte", "cortar pequenas porcoes", "corte uma secao",
+        "corte os fios", "corte um pouco", "penteado de referencia",
+        "cabelo molhado", "cabelo umido", "cabelo seco", "couro cabeludo",
+        "tesoura de ponta", "tesoura com", "linha reta ou curva",
+    )
+    manutencao_aparelho = (
+        "limpe as laminas", "limpar as laminas", "limpeza apos cada uso",
+        "apos cada uso", "lubrificacao", "lubrificar", "oleo lubrificante",
+        "armazene o equipamento", "armazenamento adequado", "local seco",
+        "umidade excessiva", "temperaturas extremas", "bateria descarregada",
+        "deixa-la descarregada", "substitua as laminas", "substituir as laminas",
+        "prolongar a vida util", "preservar o desempenho", "manter a eficiencia",
+    )
+    desempenho_laminas = (
+        "qualidade das laminas", "laminas de boa qualidade", "laminas finas",
+        "laminas largas", "laminas robustas", "laminas mais robustas",
+        "laminas mais leves", "laminas de aco inoxidavel", "revestimento especial",
+        "afiacao", "mais duraveis", "durabilidade", "resistentes a corrosao",
+        "reduzir o atrito", "menos atrito", "irritacao", "cortes mais precisos",
+        "corte mais preciso", "cortes uniformes", "forca de corte",
+    )
+    desempenho_motor_bateria = (
+        "potencia do motor", "motor potente", "maior potencia", "capacidade de cortar",
+        "cabelos densos", "cabelos grossos", "fios grossos", "sem esforco",
+        "bateria de longa duracao", "autonomia prolongada", "autonomia superior",
+        "carregamento rapido", "recarga rapida", "baterias removiveis",
+        "carregamento via usb", "multiplios ciclos", "multiplos ciclos",
+    )
+    ergonomia_beneficio = (
+        "reduzir a fadiga", "reduz a fadiga", "evitar fadiga", "mais confortavel",
+        "maior controle", "reduzir a tensao", "reduz a tensao", "menos cansaco",
+        "mais manejavel", "maior estabilidade", "peso equilibrado",
+        "alcas antiderrapantes", "superficies antiderrapantes", "mais silencioso",
+        "mais silenciosos", "vantajoso", "vantajosa",
     )
 
     for sentenca in _sentencas(texto):
@@ -332,6 +430,49 @@ def validar_conteudo_wordpress(conteudo_html, produto_principal=""):
                 sentenca,
             )
 
+        if aparelho_beleza and not tem_fonte:
+            if any(t in normalizada for t in termos_tecnica_corte):
+                registrar(
+                    "Tutorial técnico de corte/barbear inadequado para guia de compra",
+                    sentenca,
+                )
+
+            if any(t in normalizada for t in manutencao_aparelho):
+                registrar(
+                    "Manutenção de aparelho sem orientação do fabricante",
+                    sentenca,
+                )
+
+            if (
+                "lamina" in normalizada
+                and any(t in normalizada for t in desempenho_laminas)
+            ):
+                registrar(
+                    "Desempenho de lâmina não sustentado por fonte",
+                    sentenca,
+                )
+
+            if any(t in normalizada for t in desempenho_motor_bateria):
+                registrar(
+                    "Desempenho de motor/bateria não sustentado por fonte",
+                    sentenca,
+                )
+
+            if any(t in normalizada for t in ergonomia_beneficio):
+                registrar(
+                    "Benefício ergonômico ou de conforto não sustentado",
+                    sentenca,
+                )
+
+            if (
+                any(t in normalizada for t in ("tipo de cabelo", "cabelos finos", "cabelos grossos", "fios finos", "fios grossos", "cabelos crespos", "cabelos ondulados"))
+                and any(t in normalizada for t in ("exige", "exigem", "demanda", "demandam", "precisa", "precisam", "indicado", "indicada", "ideal", "adequado", "adequada", "lamina", "potencia"))
+            ):
+                registrar(
+                    "Recomendação técnica por tipo de cabelo sem base fornecida",
+                    sentenca,
+                )
+
         agua_gelo = any(
             t in normalizada
             for t in (
@@ -368,12 +509,75 @@ def validar_conteudo_wordpress(conteudo_html, produto_principal=""):
     }
 
 
+def validar_titulo_meta_wordpress(
+    titulo,
+    meta_description,
+    produto_principal="",
+    categoria="",
+):
+    """Evita promessa de resultado já no título ou na meta description."""
+    problemas = []
+    texto = _normalizar(f"{titulo} {meta_description}")
+
+    if _produto_eh_aparelho_beleza(
+        produto_principal,
+        categoria=categoria,
+        titulo=titulo,
+    ):
+        promessas = (
+            "para cortes precisos", "corte preciso", "cortes precisos",
+            "sem esforco", "sem danificar", "evitar danos", "reduz frizz",
+            "mais conforto", "sem irritacao", "resultado perfeito",
+            "resultado profissional", "mais eficiente",
+        )
+        for promessa in promessas:
+            if promessa in texto:
+                problemas.append(
+                    {
+                        "tipo": "Promessa de resultado no título/meta sem base fornecida",
+                        "trecho": str(titulo or meta_description)[:360],
+                    }
+                )
+                break
+
+    return {
+        "aprovado": len(problemas) == 0,
+        "problemas": problemas,
+        "quantidade_problemas": len(problemas),
+    }
+
+
 def validar_pacote_wordpress(pacote):
-    artigo = (pacote or {}).get("artigo") or {}
+    pacote = pacote or {}
+    artigo = pacote.get("artigo") or {}
+    pauta = pacote.get("pauta") or {}
+    seo = pacote.get("seo") or {}
     produto = artigo.get("produto_principal") or {}
     nome_produto = produto.get("nome", "") if isinstance(produto, dict) else ""
+    titulo = seo.get("titulo") or pauta.get("titulo") or artigo.get("titulo") or ""
+    meta_description = seo.get("meta_description") or seo.get("descricao") or ""
+    categoria = pauta.get("categoria") or artigo.get("categoria") or ""
 
-    return validar_conteudo_wordpress(
+    validacao_conteudo = validar_conteudo_wordpress(
         artigo.get("conteudo_html", ""),
         produto_principal=nome_produto,
+        titulo=titulo,
+        categoria=categoria,
     )
+    validacao_titulo = validar_titulo_meta_wordpress(
+        titulo=titulo,
+        meta_description=meta_description,
+        produto_principal=nome_produto,
+        categoria=categoria,
+    )
+
+    problemas = (
+        validacao_conteudo.get("problemas", [])
+        + validacao_titulo.get("problemas", [])
+    )
+
+    return {
+        "aprovado": len(problemas) == 0,
+        "problemas": problemas,
+        "quantidade_problemas": len(problemas),
+    }
