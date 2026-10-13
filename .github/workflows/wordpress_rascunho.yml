@@ -36,6 +36,13 @@ jobs:
         run: |
           python -c "import sys; sys.path.insert(0, 'src'); from wordpress_api import verificar_conexao; print(verificar_conexao())"
 
+      - name: Sincronizar publicados e rascunhos do Radar Tech BR
+        env:
+          WORDPRESS_URL: https://mediumblue-chinchilla-250320.hostingersite.com
+          WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+          WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+        run: python src/sincronizar_wordpress.py
+
       - name: Gerar artigo e criar rascunho no Radar Tech BR
         env:
           WORDPRESS_URL: https://mediumblue-chinchilla-250320.hostingersite.com
