@@ -1,4 +1,4 @@
-name: Radar Tech BR — WordPress Rascunho Seguro
+name: Radar Tech BR — WordPress Publicação Segura
 
 on:
   workflow_dispatch:
@@ -13,11 +13,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: radar-tech-br-wordpress-rascunho
+  group: radar-tech-br-wordpress-publicacao
   cancel-in-progress: false
 
 jobs:
-  gerar-rascunho-wordpress:
+  gerar-conteudo-wordpress:
     runs-on: ubuntu-latest
 
     steps:
@@ -47,7 +47,7 @@ jobs:
             echo "RADARTECH_TEST_PRODUCT_KEYWORD=$PRODUTO" >> "$GITHUB_ENV"
             echo "Teste direcionado configurado para: $PRODUTO"
           else
-            echo "Teste sem filtro de produto."
+            echo "Execução geral sem filtro de produto."
           fi
 
       - name: Testar conexão autenticada com WordPress
@@ -65,7 +65,7 @@ jobs:
           WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
         run: python src/sincronizar_wordpress.py
 
-      - name: Gerar artigo e criar rascunho no Radar Tech BR
+      - name: Gerar conteúdo no Radar Tech BR
         env:
           WORDPRESS_URL: https://radartechbr.com.br
           WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
@@ -78,11 +78,11 @@ jobs:
 
         run: |
           if [ -n "${RADARTECH_TEST_PRODUCT_KEYWORD:-}" ]; then
-            echo "Executando modo de teste direcionado/fact-safe."
+            echo "Executando modo de teste direcionado/fact-safe em RASCUNHO."
             python src/main_wordpress_teste_seguro.py
           else
-            echo "Executando fluxo geral WordPress em modo rascunho."
-            python src/main_wordpress.py
+            echo "Executando fluxo geral com publicação automática conforme config/wordpress.json."
+            python src/main_wordpress_auto.py
           fi
 
       - name: Verificar alterações no controle do WordPress
@@ -103,6 +103,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/wordpress_historico.json data/wordpress_rascunhos.json
-          git commit -m "Atualizar controle de rascunhos do Radar Tech BR"
+          git commit -m "Atualizar controle do WordPress"
           git pull --rebase origin main
           git push origin HEAD:main
