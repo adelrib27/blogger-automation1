@@ -276,6 +276,38 @@ def enviar_imagem_destacada(url, alt_text="", nome_arquivo=""):
     return media_id
 
 
+def _remover_hero_imagem_destacada(conteudo_html, url_imagem):
+    """
+    No motor legado a imagem destacada também é prependida ao HTML.
+    No WordPress ela já será enviada como featured_media, então removemos
+    somente o primeiro bloco de imagem quando ele usa exatamente a mesma URL.
+    """
+    conteudo = str(conteudo_html or "")
+    url = str(url_imagem or "").strip()
+
+    if not conteudo or not url:
+        return conteudo
+
+    primeiro_bloco = re.match(
+        r'^\s*(<div\b[^>]*>\s*<img\b[^>]*>\s*</div>)\s*',
+        conteudo,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
+    if not primeiro_bloco:
+        return conteudo
+
+    bloco = primeiro_bloco.group(1)
+    if url not in bloco:
+        return conteudo
+
+    print(
+        "Hero duplicado removido do HTML: "
+        "a imagem permanecerá apenas como imagem destacada do WordPress."
+    )
+    return conteudo[primeiro_bloco.end():].lstrip()
+
+
 def criar_post_rascunho(pacote):
     seo = pacote.get("seo") or {}
     pauta = pacote.get("pauta") or {}
@@ -303,6 +335,11 @@ def criar_post_rascunho(pacote):
 
     media_id = 0
     url_imagem = str(imagem.get("url_publica") or "").strip()
+
+    conteudo = _remover_hero_imagem_destacada(
+        conteudo_html=conteudo,
+        url_imagem=url_imagem,
+    )
 
     if url_imagem:
         try:
