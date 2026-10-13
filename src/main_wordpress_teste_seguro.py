@@ -109,14 +109,29 @@ def instalar_bloqueio_produto_teste():
             tokens_filtro.intersection(_tokens(produto.get("nome", "")))
         ),
     )
+    nome_escolhido = str(escolhido.get("nome", "")).strip()
 
     def carregar_produtos_bloqueado():
         return [dict(escolhido)]
 
+    def ordenar_produtos_bloqueado(produtos_recebidos):
+        permitidos = [
+            produto
+            for produto in produtos_recebidos
+            if str(produto.get("nome", "")).strip() == nome_escolhido
+        ]
+        if not permitidos:
+            raise RuntimeError(
+                "Produto bloqueado esgotou as tentativas desta rodada. "
+                "O teste foi encerrado sem alternar para outro produto."
+            )
+        return [dict(permitidos[0])]
+
     gerar_pautas.carregar_produtos = carregar_produtos_bloqueado
+    gerar_pautas.ordenar_produtos_para_tentativa = ordenar_produtos_bloqueado
 
     print("\nBLOQUEIO ESTRITO DE PRODUTO ATIVO")
-    print("Produto permitido neste teste:", escolhido.get("nome", ""))
+    print("Produto permitido neste teste:", nome_escolhido)
     print("Nenhum outro produto poderá ser selecionado nesta execução.")
 
 
