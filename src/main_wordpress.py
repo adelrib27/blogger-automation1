@@ -1,9 +1,14 @@
 import json
 from pathlib import Path
 
+import gerar_artigo
 import links_internos
 import main as motor
 import pautas
+from validacao_wordpress import (
+    instalar_regras_prompt_wordpress,
+    validar_pacote_wordpress,
+)
 from wordpress_api import criar_post_rascunho
 
 
@@ -33,6 +38,10 @@ motor.HISTORICO_PATH = HISTORICO_WORDPRESS
 pautas.ARQUIVO_HISTORICO = HISTORICO_WORDPRESS
 pautas.ARQUIVO_RASCUNHOS = RASCUNHOS_WORDPRESS
 links_internos.HISTORICO_PATH = HISTORICO_WORDPRESS
+
+# O WordPress recebe uma camada editorial mais conservadora,
+# sem alterar as regras usadas pelo Blogger.
+instalar_regras_prompt_wordpress(gerar_artigo)
 
 
 def url_interna_wordpress_valida(url):
@@ -105,27 +114,69 @@ def registrar_rascunho(resultado, pacote):
     )
 
 
+def gerar_pacote_aprovado_wordpress():
+    """Gera até três pacotes; só retorna um que passe a segunda trava."""
+    max_tentativas_pacote = 3
+
+    for tentativa in range(1, max_tentativas_pacote + 1):
+        print(
+            f"\n=== VALIDAÇÃO WORDPRESS — PACOTE {tentativa}/"
+            f"{max_tentativas_pacote} ==="
+        )
+
+        pacote = motor.executar()
+
+        if not isinstance(pacote, dict):
+            print("Motor editorial não retornou pacote válido.")
+            continue
+
+        artigo = pacote.get("artigo") or {}
+        seo = pacote.get("seo") or {}
+
+        if not artigo.get("conteudo_html") or not seo.get("titulo"):
+            print("Pacote sem artigo aprovado para o WordPress.")
+            continue
+
+        validacao_extra = validar_pacote_wordpress(pacote)
+
+        if validacao_extra["aprovado"]:
+            print(
+                "Segunda trava editorial do Radar Tech BR: APROVADA."
+            )
+            pacote["validacao_wordpress"] = validacao_extra
+            return pacote
+
+        print(
+            "Segunda trava editorial do Radar Tech BR: REPROVADA."
+        )
+
+        for problema in validacao_extra["problemas"]:
+            print(
+                "-",
+                problema.get("tipo", "Risco editorial"),
+                "|",
+                problema.get("trecho", ""),
+            )
+
+        print(
+            "O pacote foi descartado antes de qualquer envio ao WordPress."
+        )
+
+    raise RuntimeError(
+        "Nenhum dos pacotes gerados passou pela segunda trava editorial "
+        "do Radar Tech BR. Nada foi enviado ao WordPress."
+    )
+
+
 def executar():
     print("=== RADAR TECH BR — WORDPRESS / MODO SEGURO ===")
     print("Destino: WordPress")
     print("Status de saída: RASCUNHO")
     print("Publicação automática no WordPress: DESATIVADA")
+    print("Segunda trava editorial WordPress: ATIVA")
     print()
 
-    pacote = motor.executar()
-
-    if not isinstance(pacote, dict):
-        raise RuntimeError(
-            "O motor editorial não retornou um pacote válido."
-        )
-
-    artigo = pacote.get("artigo") or {}
-    seo = pacote.get("seo") or {}
-
-    if not artigo.get("conteudo_html") or not seo.get("titulo"):
-        raise RuntimeError(
-            "O pacote editorial não contém artigo aprovado para envio."
-        )
+    pacote = gerar_pacote_aprovado_wordpress()
 
     print("\n=== ENVIO SEGURO AO WORDPRESS ===")
     resultado = criar_post_rascunho(pacote)
