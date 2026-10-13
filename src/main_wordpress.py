@@ -50,6 +50,17 @@ instalar_regras_prompt_wordpress(gerar_artigo)
 instalar_regras_pauta_wordpress(gerar_pautas)
 
 
+# O seletor legado de complementares usa similaridade textual e, com um
+# catálogo multitemático, pode cruzar categorias (ex.: lâmina de cabelo x
+# lâmina de cozinha). No WordPress, mantemos só o produto principal até haver
+# classificação por categoria/família de produto. O Blogger não é alterado.
+def selecionar_complementares_wordpress_seguro(*args, **kwargs):
+    return []
+
+
+motor.selecionar_complementares = selecionar_complementares_wordpress_seguro
+
+
 def _tokens_busca(texto):
     texto = str(texto or "").casefold()
     texto = unicodedata.normalize("NFD", texto)
@@ -263,6 +274,7 @@ def executar():
     print("Status de saída: RASCUNHO")
     print("Publicação automática no WordPress: DESATIVADA")
     print("Segunda trava editorial WordPress: ATIVA")
+    print("Produtos complementares WordPress: DESATIVADOS ATÉ FILTRO POR CATEGORIA")
 
     filtro_teste = os.getenv("RADARTECH_TEST_PRODUCT_KEYWORD", "").strip()
     if filtro_teste:
