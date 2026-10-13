@@ -171,7 +171,7 @@ def _conteudo_fact_safe(nome_produto, bloco_produto):
 <li>Garantia, devolução, envio, disponibilidade e condições da oferta estão claros no momento da compra?</li>
 </ul>
 
-<p>Para o <strong>{nome}</strong>, a estratégia mais segura é simples: considerar como fato apenas o que está explicitamente informado e transformar o restante em itens de verificação. Assim, o artigo continua útil para a decisão de compra sem atribuir ao produto características que ainda não foram confirmadas.</p>
+<p>No caso de <strong>{nome}</strong>, a estratégia mais segura é simples: considerar como fato apenas o que está explicitamente informado e transformar o restante em itens de verificação. Assim, o artigo continua útil para a decisão de compra sem atribuir ao produto características que ainda não foram confirmadas.</p>
 """.strip()
 
 
