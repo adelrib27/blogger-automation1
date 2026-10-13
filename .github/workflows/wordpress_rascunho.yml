@@ -2,11 +2,6 @@ name: Radar Tech BR — WordPress Rascunho Seguro
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/wordpress-smoke-test-trigger"
 
 permissions:
   contents: write
