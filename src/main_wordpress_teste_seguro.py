@@ -4,6 +4,7 @@ import unicodedata
 
 import gerar_pautas
 import validacao_wordpress
+import fact_safe_wordpress
 import main_wordpress
 
 
@@ -72,7 +73,7 @@ def _tokens(texto):
 def instalar_bloqueio_produto_teste():
     filtro = os.getenv("RADARTECH_TEST_PRODUCT_KEYWORD", "").strip()
     if not filtro:
-        return
+        return None
 
     carregar_original = gerar_pautas.carregar_produtos
     produtos = carregar_original()
@@ -134,6 +135,8 @@ def instalar_bloqueio_produto_teste():
     print("Produto permitido neste teste:", nome_escolhido)
     print("Nenhum outro produto poderá ser selecionado nesta execução.")
 
+    return dict(escolhido)
+
 
 def reforcar_prompts():
     if REGRAS_TESTE_APARELHOS_BELEZA not in validacao_wordpress.REGRAS_EXTRAS_PROMPT:
@@ -145,9 +148,33 @@ def reforcar_prompts():
     print("Regras reforçadas de Moda & Beleza: ATIVAS")
 
 
+def instalar_modo_fact_safe(produto):
+    if not fact_safe_wordpress.produto_requer_modo_fact_safe(produto):
+        return False
+
+    def gerar_pacote_fact_safe():
+        print("\n=== MODO FACT-SAFE WORDPRESS ===")
+        print("Geração editorial por IA: IGNORADA para este produto.")
+        print("Fonte factual permitida: nome do catálogo + página/manual para conferência.")
+        pacote = fact_safe_wordpress.criar_pacote_fact_safe(
+            produto=produto,
+            motor=main_wordpress.motor,
+            validar_pacote_wordpress=validacao_wordpress.validar_pacote_wordpress,
+        )
+        print("Template fact-safe validado pela segunda trava editorial.")
+        print("Imagem de capa: imagem real verificada do produto, quando disponível.")
+        return pacote
+
+    main_wordpress.gerar_pacote_aprovado_wordpress = gerar_pacote_fact_safe
+    print("Modo fact-safe estrutural: ATIVO para este produto.")
+    return True
+
+
 def executar():
     reforcar_prompts()
-    instalar_bloqueio_produto_teste()
+    produto = instalar_bloqueio_produto_teste()
+    if produto:
+        instalar_modo_fact_safe(produto)
     main_wordpress.executar()
 
 
