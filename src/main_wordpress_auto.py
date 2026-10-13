@@ -70,6 +70,68 @@ def publicar_post(post_id):
     }
 
 
+def garantir_ancora_oferta(post_id):
+    """Garante que o CTA do template consiga saltar até o bloco afiliado."""
+    url = os.getenv("WORDPRESS_URL", "").strip().rstrip("/")
+    usuario = os.getenv("WORDPRESS_USERNAME", "").strip()
+    senha_app = os.getenv("WORDPRESS_APP_PASSWORD", "").strip()
+
+    if not url or not usuario or not senha_app:
+        return False
+
+    resposta = requests.get(
+        f"{url}/wp-json/wp/v2/posts/{int(post_id)}",
+        params={"context": "edit", "_fields": "content"},
+        auth=(usuario, senha_app),
+        headers={"User-Agent": "RadarTechBR-Automation/1.0"},
+        timeout=TIMEOUT,
+    )
+
+    if resposta.status_code >= 400:
+        detalhe = resposta.text[:700]
+        if senha_app:
+            detalhe = detalhe.replace(senha_app, "***")
+        raise RuntimeError(
+            f"Falha ao preparar CTA do post {post_id}: "
+            f"HTTP {resposta.status_code}: {detalhe}"
+        )
+
+    dados = resposta.json()
+    conteudo = dados.get("content", {})
+    if isinstance(conteudo, dict):
+        html = str(conteudo.get("raw") or "")
+    else:
+        html = str(conteudo or "")
+
+    marcador = '<div class="produto-principal-contextual"'
+    marcador_com_id = '<div id="oferta" class="produto-principal-contextual"'
+
+    if marcador_com_id in html or marcador not in html:
+        return False
+
+    atualizado = html.replace(marcador, marcador_com_id, 1)
+
+    resposta = requests.post(
+        f"{url}/wp-json/wp/v2/posts/{int(post_id)}",
+        auth=(usuario, senha_app),
+        headers={"User-Agent": "RadarTechBR-Automation/1.0"},
+        json={"content": atualizado},
+        timeout=TIMEOUT,
+    )
+
+    if resposta.status_code >= 400:
+        detalhe = resposta.text[:700]
+        if senha_app:
+            detalhe = detalhe.replace(senha_app, "***")
+        raise RuntimeError(
+            f"Falha ao salvar âncora de oferta no post {post_id}: "
+            f"HTTP {resposta.status_code}: {detalhe}"
+        )
+
+    print("Âncora #oferta adicionada ao bloco afiliado do post.")
+    return True
+
+
 def executar():
     config = carregar_config()
     publicacao_automatica = bool(config.get("publicacao_automatica", False))
@@ -102,6 +164,8 @@ def executar():
         raise RuntimeError(
             "O fluxo WordPress não retornou ID do rascunho aprovado."
         )
+
+    garantir_ancora_oferta(post_id)
 
     if wordpress.get("status") == "publish":
         publicado = wordpress
