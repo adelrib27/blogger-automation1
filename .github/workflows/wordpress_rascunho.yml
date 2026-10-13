@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       produto_teste:
-        description: "Opcional: trecho do nome do produto para priorizar neste teste"
+        description: "Opcional: trecho do nome do produto para bloquear neste teste"
         required: false
         default: ""
         type: string
@@ -76,7 +76,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
 
-        run: python src/main_wordpress.py
+        run: python src/main_wordpress_teste_seguro.py
 
       - name: Verificar alterações no controle do WordPress
         if: success()
