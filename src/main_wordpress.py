@@ -1,5 +1,7 @@
 import json
 import os
+import re
+import unicodedata
 from pathlib import Path
 
 import gerar_artigo
@@ -48,6 +50,21 @@ instalar_regras_prompt_wordpress(gerar_artigo)
 instalar_regras_pauta_wordpress(gerar_pautas)
 
 
+def _tokens_busca(texto):
+    texto = str(texto or "").casefold()
+    texto = unicodedata.normalize("NFD", texto)
+    texto = "".join(
+        caractere
+        for caractere in texto
+        if unicodedata.category(caractere) != "Mn"
+    )
+    return {
+        token
+        for token in re.findall(r"[a-z0-9]+", texto)
+        if len(token) >= 3
+    }
+
+
 def instalar_priorizacao_produto_teste():
     """
     Permite direcionar um teste manual para um produto/categoria sem alterar
@@ -60,14 +77,30 @@ def instalar_priorizacao_produto_teste():
 
     original = gerar_pautas.ordenar_produtos_para_tentativa
     filtro_cf = filtro.casefold()
+    tokens_filtro = _tokens_busca(filtro)
 
     def ordenar_produtos_priorizando_teste(produtos):
         ordenados = original(produtos)
+
         encontrados = [
             produto
             for produto in ordenados
             if filtro_cf in str(produto.get("nome", "")).casefold()
         ]
+
+        if not encontrados and tokens_filtro:
+            pontuados = []
+            for produto in ordenados:
+                tokens_nome = _tokens_busca(produto.get("nome", ""))
+                comuns = tokens_filtro.intersection(tokens_nome)
+                proporcao = len(comuns) / len(tokens_filtro)
+                pontuados.append((proporcao, len(comuns), produto))
+
+            pontuados.sort(key=lambda item: (item[0], item[1]), reverse=True)
+            melhor_proporcao, melhor_comuns, melhor_produto = pontuados[0]
+
+            if melhor_comuns >= 1 and melhor_proporcao >= 0.50:
+                encontrados = [melhor_produto]
 
         if not encontrados:
             raise RuntimeError(
@@ -75,11 +108,14 @@ def instalar_priorizacao_produto_teste():
                 f"{filtro}"
             )
 
-        ids_encontrados = {id(produto) for produto in encontrados}
+        nomes_encontrados = {
+            str(produto.get("nome", ""))
+            for produto in encontrados
+        }
         restantes = [
             produto
             for produto in ordenados
-            if id(produto) not in ids_encontrados
+            if str(produto.get("nome", "")) not in nomes_encontrados
         ]
 
         print(
