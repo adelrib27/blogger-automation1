@@ -1,11 +1,14 @@
 import json
+import os
 from pathlib import Path
 
 import gerar_artigo
+import gerar_pautas
 import links_internos
 import main as motor
 import pautas
 from validacao_wordpress import (
+    instalar_regras_pauta_wordpress,
     instalar_regras_prompt_wordpress,
     validar_pacote_wordpress,
 )
@@ -39,9 +42,59 @@ pautas.ARQUIVO_HISTORICO = HISTORICO_WORDPRESS
 pautas.ARQUIVO_RASCUNHOS = RASCUNHOS_WORDPRESS
 links_internos.HISTORICO_PATH = HISTORICO_WORDPRESS
 
-# O WordPress recebe uma camada editorial mais conservadora,
-# sem alterar as regras usadas pelo Blogger.
+# O WordPress recebe regras editoriais e de pauta próprias,
+# sem alterar o comportamento normal do Blogger.
 instalar_regras_prompt_wordpress(gerar_artigo)
+instalar_regras_pauta_wordpress(gerar_pautas)
+
+
+def instalar_priorizacao_produto_teste():
+    """
+    Permite direcionar um teste manual para um produto/categoria sem alterar
+    o catálogo. Sem a variável, a seleção continua aleatória como antes.
+    """
+    filtro = os.getenv("RADARTECH_TEST_PRODUCT_KEYWORD", "").strip()
+
+    if not filtro:
+        return
+
+    original = gerar_pautas.ordenar_produtos_para_tentativa
+    filtro_cf = filtro.casefold()
+
+    def ordenar_produtos_priorizando_teste(produtos):
+        ordenados = original(produtos)
+        encontrados = [
+            produto
+            for produto in ordenados
+            if filtro_cf in str(produto.get("nome", "")).casefold()
+        ]
+
+        if not encontrados:
+            raise RuntimeError(
+                "Produto de teste não encontrado no catálogo para o filtro: "
+                f"{filtro}"
+            )
+
+        ids_encontrados = {id(produto) for produto in encontrados}
+        restantes = [
+            produto
+            for produto in ordenados
+            if id(produto) not in ids_encontrados
+        ]
+
+        print(
+            "\nProduto de teste priorizado:",
+            encontrados[0].get("nome", ""),
+        )
+
+        return encontrados + restantes
+
+    gerar_pautas.ordenar_produtos_para_tentativa = (
+        ordenar_produtos_priorizando_teste
+    )
+
+
+instalar_priorizacao_produto_teste()
 
 
 def url_interna_wordpress_valida(url):
@@ -174,6 +227,11 @@ def executar():
     print("Status de saída: RASCUNHO")
     print("Publicação automática no WordPress: DESATIVADA")
     print("Segunda trava editorial WordPress: ATIVA")
+
+    filtro_teste = os.getenv("RADARTECH_TEST_PRODUCT_KEYWORD", "").strip()
+    if filtro_teste:
+        print("Filtro de produto para este teste:", filtro_teste)
+
     print()
 
     pacote = gerar_pacote_aprovado_wordpress()
