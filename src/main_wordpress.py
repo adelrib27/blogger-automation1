@@ -61,7 +61,7 @@ def selecionar_complementares_wordpress_seguro(*args, **kwargs):
 motor.selecionar_complementares = selecionar_complementares_wordpress_seguro
 
 
-def _tokens_busca(texto):
+def _normalizar_chave(texto):
     texto = str(texto or "").casefold()
     texto = unicodedata.normalize("NFD", texto)
     texto = "".join(
@@ -69,9 +69,165 @@ def _tokens_busca(texto):
         for caractere in texto
         if unicodedata.category(caractere) != "Mn"
     )
+    texto = re.sub(r"[^a-z0-9]+", " ", texto)
+    return re.sub(r"\s+", " ", texto).strip()
+
+
+def classificar_categoria_produto_wordpress(nome_produto, categoria_atual=""):
+    """Classifica o produto nas categorias oficiais do Radar Tech BR."""
+    nome = _normalizar_chave(nome_produto)
+    atual = str(categoria_atual or "").strip()
+
+    termos_beleza = (
+        "cabelo", "barbeador", "shaver", "chapinha", "prancha",
+        "aparador de pelos", "escova secadora", "secador de cabelo",
+        "saia", "vestido", "bermuda", "pijama", "oculos",
+        "maquiagem", "moda feminina", "moda masculina",
+    )
+    termos_auto_ferramentas = (
+        "obd", "automotivo", "scanner automotivo", "carro scaner",
+        "carro scanner", "lanterna tatica", "parafusadeira", "furadeira",
+        "ferramenta", "carregador ev", "veiculo eletrico",
+    )
+    termos_tecnologia = (
+        "headset", "fone gamer", "bluetooth", "caixa de som",
+        "radio comunicador", "baofeng", "camera", "celular", "rgb",
+        "painel de preenchimento", "hoverboard", "overboard", "projetor",
+        "smartwatch", "monitor", "tv ", "televisao",
+    )
+    termos_cozinha = (
+        "maquina de gelo", "mixer", "batedor", "liquidificador",
+        "panela", "afiador", "faca", "cozinha", "cafeteira",
+        "air fryer", "frigideira", "pote hermetico",
+    )
+
+    if any(termo in nome for termo in termos_beleza):
+        return "Moda & Beleza"
+
+    if any(termo in nome for termo in termos_auto_ferramentas):
+        return "Ferramentas & Automotivo"
+
+    if any(termo in nome for termo in termos_tecnologia):
+        return "Tecnologia"
+
+    if any(termo in nome for termo in termos_cozinha):
+        return "Cozinha & Utilidades"
+
+    categorias_oficiais = {
+        "Tecnologia",
+        "Casa & Decoração",
+        "Cozinha & Utilidades",
+        "Moda & Beleza",
+        "Ferramentas & Automotivo",
+        "Guias de Compra",
+    }
+
+    if atual in categorias_oficiais:
+        return atual
+
+    legado = _normalizar_chave(atual)
+
+    if legado in {"cozinha", "mesa", "utilidades"}:
+        return "Cozinha & Utilidades"
+
+    if legado in {"moda", "beleza", "moda beleza"}:
+        return "Moda & Beleza"
+
+    if legado in {"tecnologia", "eletronicos", "eletronico"}:
+        return "Tecnologia"
+
+    if legado in {"automotivo", "ferramentas", "ferramentas automotivo"}:
+        return "Ferramentas & Automotivo"
+
+    return "Casa & Decoração"
+
+
+def ajustar_semantica_pauta_wordpress(pauta):
+    """
+    Corrige categoria e evita pautas que atribuem função não informada a
+    recursos do título do produto. Atua antes de gerar o artigo.
+    """
+    if not isinstance(pauta, dict):
+        return pauta
+
+    resultado = dict(pauta)
+    produto = resultado.get("produto_principal") or {}
+    nome_produto = (
+        str(produto.get("nome", "")).strip()
+        if isinstance(produto, dict)
+        else ""
+    )
+
+    categoria_antiga = str(resultado.get("categoria", "")).strip()
+    categoria_correta = classificar_categoria_produto_wordpress(
+        nome_produto,
+        categoria_antiga,
+    )
+
+    if categoria_correta != categoria_antiga:
+        print(
+            "Categoria WordPress normalizada:",
+            f"{categoria_antiga or '(vazia)'} -> {categoria_correta}",
+        )
+        resultado["categoria"] = categoria_correta
+
+    nome_norm = _normalizar_chave(nome_produto)
+    titulo_norm = _normalizar_chave(resultado.get("titulo", ""))
+
+    # "Visor LCD" no título do anúncio confirma apenas a existência do visor,
+    # não que ele mostre imagem do corte, zoom, gravação ou monitoramento visual.
+    if "visor lcd" in nome_norm:
+        inferencias_visuais = (
+            "acompanhar o corte",
+            "monitorar o corte",
+            "visualizar o corte",
+            "ver o corte",
+            "imagem do corte",
+            "usar o visor lcd para",
+            "zoom",
+            "gravacao",
+        )
+
+        if any(termo in titulo_norm for termo in inferencias_visuais):
+            print(
+                "Pauta reformulada: função do visor LCD não está comprovada "
+                "pelo título do produto."
+            )
+            resultado["titulo"] = (
+                "Visor LCD em máquina de cortar cabelo: "
+                "o que conferir antes da compra"
+            )
+            resultado["palavra_chave"] = (
+                "visor LCD em máquina de cortar cabelo"
+            )
+            resultado["descricao"] = (
+                "Guia de compra para avaliar um modelo com visor LCD, "
+                "orientando o leitor a conferir no anúncio e no manual "
+                "qual informação o visor apresenta, sem presumir funções."
+            )
+            resultado["categoria"] = "Moda & Beleza"
+
+    return resultado
+
+
+def instalar_normalizacao_pauta_wordpress():
+    """Aplica a normalização final de pauta somente no pipeline WordPress."""
+    original = motor.gerar_pauta_automatica
+
+    def gerar_pauta_automatica_wordpress(*args, **kwargs):
+        pauta = original(*args, **kwargs)
+        return ajustar_semantica_pauta_wordpress(pauta)
+
+    motor.gerar_pauta_automatica = gerar_pauta_automatica_wordpress
+
+
+instalar_normalizacao_pauta_wordpress()
+
+
+def _tokens_busca(texto):
     return {
         token
-        for token in re.findall(r"[a-z0-9]+", texto)
+        for token in _normalizar_chave(texto).split()
         if len(token) >= 3
     }
 
@@ -232,9 +388,31 @@ def gerar_pacote_aprovado_wordpress():
 
         artigo = pacote.get("artigo") or {}
         seo = pacote.get("seo") or {}
+        pauta = pacote.get("pauta") or {}
+        produto = artigo.get("produto_principal") or {}
+        nome_produto = (
+            produto.get("nome", "")
+            if isinstance(produto, dict)
+            else ""
+        )
 
         if not artigo.get("conteudo_html") or not seo.get("titulo"):
             print("Pacote sem artigo aprovado para o WordPress.")
+            continue
+
+        categoria_esperada = classificar_categoria_produto_wordpress(
+            nome_produto,
+            pauta.get("categoria", ""),
+        )
+
+        if pauta.get("categoria") != categoria_esperada:
+            print(
+                "Pacote descartado: categoria final divergente da "
+                "classificação WordPress.",
+                pauta.get("categoria"),
+                "!=",
+                categoria_esperada,
+            )
             continue
 
         validacao_extra = validar_pacote_wordpress(pacote)
@@ -274,6 +452,7 @@ def executar():
     print("Status de saída: RASCUNHO")
     print("Publicação automática no WordPress: DESATIVADA")
     print("Segunda trava editorial WordPress: ATIVA")
+    print("Classificação de categoria WordPress: DETERMINÍSTICA")
     print("Produtos complementares WordPress: DESATIVADOS ATÉ FILTRO POR CATEGORIA")
 
     filtro_teste = os.getenv("RADARTECH_TEST_PRODUCT_KEYWORD", "").strip()
