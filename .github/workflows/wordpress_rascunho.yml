@@ -8,9 +8,6 @@ on:
         required: false
         default: ""
         type: string
-  push:
-    paths:
-      - ".github/wordpress-smoke-test-trigger-3"
 
 permissions:
   contents: write
@@ -46,9 +43,6 @@ jobs:
           DISPATCH_PRODUCT: ${{ github.event.inputs.produto_teste || '' }}
         run: |
           PRODUTO="$DISPATCH_PRODUCT"
-          if [ -z "$PRODUTO" ] && [ -f .github/wordpress-smoke-test-trigger-3 ]; then
-            PRODUTO="$(tr -d '\r\n' < .github/wordpress-smoke-test-trigger-3)"
-          fi
           if [ -n "$PRODUTO" ]; then
             echo "RADARTECH_TEST_PRODUCT_KEYWORD=$PRODUTO" >> "$GITHUB_ENV"
             echo "Teste direcionado configurado para: $PRODUTO"
