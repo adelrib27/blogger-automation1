@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from pathlib import Path
 
 import requests
@@ -11,6 +12,7 @@ import sincronizar_wordpress
 BASE_DIR = Path(__file__).resolve().parent.parent
 CONFIG_PATH = BASE_DIR / "config" / "wordpress.json"
 TIMEOUT = 45
+SHOPEE_AFFILIATE_URL = "https://s.shopee.com.br/40hIZe6zgm"
 
 
 def carregar_config():
@@ -132,6 +134,126 @@ def garantir_ancora_oferta(post_id):
     return True
 
 
+def linkar_shopee_no_html(conteudo_html):
+    """
+    Transforma cada ocorrência textual de "Shopee" em link afiliado.
+
+    Segurança:
+    - não altera ocorrências que já estejam dentro de um <a>;</n    - não altera atributos ou nomes de tags HTML;
+    - preserva a grafia original encontrada no texto;
+    - usa rel="nofollow sponsored" por ser link de afiliado.
+    """
+    conteudo_html = str(conteudo_html or "")
+    if not conteudo_html:
+        return conteudo_html, 0
+
+    partes = re.split(
+        r"(<a\b[^>]*>.*?</a>)",
+        conteudo_html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
+    total = 0
+    saida = []
+    padrao = re.compile(
+        r"(?<![\wÀ-ÿ])Shopee(?![\wÀ-ÿ])",
+        flags=re.IGNORECASE,
+    )
+
+    for indice, parte in enumerate(partes):
+        # Partes ímpares são anchors completos capturados pelo split.
+        if indice % 2 == 1:
+            saida.append(parte)
+            continue
+
+        segmentos = re.split(r"(<[^>]+>)", parte)
+        for posicao, segmento in enumerate(segmentos):
+            # Segmentos ímpares são tags HTML; não tocar em atributos.
+            if posicao % 2 == 1:
+                continue
+
+            def substituir(match):
+                return (
+                    f'<a href="{SHOPEE_AFFILIATE_URL}" '
+                    'target="_blank" rel="nofollow sponsored">'
+                    f'{match.group(0)}</a>'
+                )
+
+            segmentos[posicao], quantidade = padrao.subn(
+                substituir,
+                segmento,
+            )
+            total += quantidade
+
+        saida.append("".join(segmentos))
+
+    return "".join(saida), total
+
+
+def garantir_link_shopee(post_id):
+    """Aplica o link fixo da Shopee ao conteúdo aprovado antes de publicar."""
+    url = os.getenv("WORDPRESS_URL", "").strip().rstrip("/")
+    usuario = os.getenv("WORDPRESS_USERNAME", "").strip()
+    senha_app = os.getenv("WORDPRESS_APP_PASSWORD", "").strip()
+
+    if not url or not usuario or not senha_app:
+        return 0
+
+    resposta = requests.get(
+        f"{url}/wp-json/wp/v2/posts/{int(post_id)}",
+        params={"context": "edit", "_fields": "content"},
+        auth=(usuario, senha_app),
+        headers={"User-Agent": "RadarTechBR-Automation/1.0"},
+        timeout=TIMEOUT,
+    )
+
+    if resposta.status_code >= 400:
+        detalhe = resposta.text[:700]
+        if senha_app:
+            detalhe = detalhe.replace(senha_app, "***")
+        raise RuntimeError(
+            f"Falha ao preparar link Shopee no post {post_id}: "
+            f"HTTP {resposta.status_code}: {detalhe}"
+        )
+
+    dados = resposta.json()
+    conteudo = dados.get("content", {})
+    if isinstance(conteudo, dict):
+        html = str(conteudo.get("raw") or "")
+    else:
+        html = str(conteudo or "")
+
+    atualizado, quantidade = linkar_shopee_no_html(html)
+
+    if quantidade <= 0 or atualizado == html:
+        print("Nenhuma menção textual à Shopee precisou ser linkada.")
+        return 0
+
+    resposta = requests.post(
+        f"{url}/wp-json/wp/v2/posts/{int(post_id)}",
+        auth=(usuario, senha_app),
+        headers={"User-Agent": "RadarTechBR-Automation/1.0"},
+        json={"content": atualizado},
+        timeout=TIMEOUT,
+    )
+
+    if resposta.status_code >= 400:
+        detalhe = resposta.text[:700]
+        if senha_app:
+            detalhe = detalhe.replace(senha_app, "***")
+        raise RuntimeError(
+            f"Falha ao salvar link Shopee no post {post_id}: "
+            f"HTTP {resposta.status_code}: {detalhe}"
+        )
+
+    print(
+        "Link afiliado da Shopee aplicado a",
+        quantidade,
+        "menção(ões) textual(is).",
+    )
+    return quantidade
+
+
 def executar():
     config = carregar_config()
     publicacao_automatica = bool(config.get("publicacao_automatica", False))
@@ -166,6 +288,7 @@ def executar():
         )
 
     garantir_ancora_oferta(post_id)
+    garantir_link_shopee(post_id)
 
     if wordpress.get("status") == "publish":
         publicado = wordpress
