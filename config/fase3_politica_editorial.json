@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "project": "Radar Tech BR",
   "timezone": "America/Sao_Paulo",
   "daily_publication_policy": {
@@ -70,6 +70,19 @@
     "affiliate_rel": "nofollow sponsored",
     "factual_mode_when_data_is_sparse": true,
     "never_invent_missing_product_data": true,
+    "title_quality": {
+      "avoid_truncated_or_dangling_endings": true,
+      "prefer_shorter_complete_title_over_hard_cut": true
+    },
+    "general_editorial_guidance": {
+      "enabled": true,
+      "allow_general_common_sense_guidance": true,
+      "must_be_framed_as_general_when_not_product_sourced": true,
+      "must_not_be_presented_as_verified_product_feature": true,
+      "product_specific_cleaning_maintenance_requires_source": true,
+      "product_specific_safety_compatibility_performance_requires_source": true,
+      "when_unverified_refer_to_listing_spec_sheet_or_manual": true
+    },
     "contextual_internal_links": {
       "enabled": true,
       "max_per_article": 3,
@@ -103,6 +116,8 @@
     "certificações",
     "número de vendas não confirmado",
     "desempenho técnico não sustentado pelos dados de origem",
+    "instrução específica de limpeza ou manutenção do produto sem fonte",
+    "instrução específica de segurança ou instalação sem fonte",
     "testamos ou comprovamos sem teste físico real",
     "é o melhor ou 100% garantido sem base verificável"
   ],
