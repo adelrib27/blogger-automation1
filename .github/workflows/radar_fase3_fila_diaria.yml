@@ -1,0 +1,90 @@
+name: Radar Tech BR — Fase 3 Fila Diária
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 07:15 no horário de Brasília (UTC-3)
+    - cron: "15 10 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-tech-br-fase3-fila-diaria
+  cancel-in-progress: false
+
+jobs:
+  montar-fila:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_CATEGORY: all
+      SHOPEE_TOP_N: "50"
+      SHOPEE_OUTPUT_DIR: /tmp/shopee_oportunidades_fase3
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe da fila e ranking
+        run: |
+          python -m py_compile src/shopee_oportunidades.py
+          python -m py_compile src/shopee_oportunidades_v22.py
+          python -m py_compile src/shopee_oportunidades_v23.py
+          python -m py_compile src/fase3_fila_radar.py
+
+      - name: Montar fila diária qualificada
+        run: python -u src/fase3_fila_radar.py build
+
+      - name: Validar fila completa de cinco categorias
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('data/fase3/fila_dia.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          slots = data.get('slots') or []
+          categories = {slot.get('category') for slot in slots}
+          shops = {
+              str((slot.get('product') or {}).get('shopId') or (slot.get('product') or {}).get('shopName'))
+              for slot in slots
+          }
+          keywords = {str(slot.get('keyword') or '').strip().casefold() for slot in slots}
+          item_ids = {str((slot.get('product') or {}).get('itemId') or '') for slot in slots}
+
+          if data.get('complete') is not True or len(slots) != 5:
+              raise SystemExit('Fila incompleta: esperado exatamente 5 slots.')
+          if len(categories) != 5:
+              raise SystemExit('Diversidade inválida: as 5 categorias não estão representadas.')
+          if len(shops) != 5:
+              raise SystemExit('Diversidade inválida: há loja repetida na fila do dia.')
+          if len(keywords) != 5:
+              raise SystemExit('Diversidade inválida: há keyword repetida na fila do dia.')
+          if len(item_ids) != 5 or '' in item_ids:
+              raise SystemExit('Diversidade inválida: itemId ausente ou repetido.')
+
+          print('Fila diária validada: 5 categorias, 5 lojas, 5 keywords e 5 itemIds únicos.')
+          PY
+
+      - name: Salvar fila diária no repositório
+        run: |
+          if [ -z "$(git status --porcelain -- data/fase3/fila_dia.json)" ]; then
+            echo "Fila diária sem alteração para salvar."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/fase3/fila_dia.json
+          git commit -m "Atualizar fila diária da Fase 3"
+          git pull --rebase origin main
+          git push origin HEAD:main
