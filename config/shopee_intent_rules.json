@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Regras deterministicas para impedir falso positivo semantico na busca de produtos Shopee. A regra valida o produto real procurado, nao apenas a presenca solta da palavra-chave no titulo.",
   "rules": {
     "projetor portatil": {
@@ -46,8 +46,11 @@
       "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer"]
     },
     "escorredor de loucas": {
-      "require_groups": [["escorredor de louca", "escorredor de loucas", "escorredor louca", "escorredor loucas"]],
-      "block_phrases": ["tapete escorredor", "peca para escorredor"]
+      "require_groups": [
+        ["escorredor"],
+        ["louca", "loucas", "prato", "pratos", "talher", "talheres", "copo", "copos"]
+      ],
+      "block_phrases": ["tapete escorredor", "peca para escorredor", "escorredor massa", "escorredor macarrao", "escorredor arroz", "escorredor legumes"]
     },
     "organizador cozinha": {
       "require_groups": [
@@ -62,7 +65,7 @@
     },
     "furadeira": {
       "require_groups": [["furadeira"]],
-      "block_phrases": ["broca avulsa", "bateria para furadeira", "mandril para furadeira"]
+      "block_phrases": ["broca avulsa", "bateria para furadeira", "mandril para furadeira", "compativel com furadeira", "acessorio para furadeira", "adaptador para furadeira", "escova para furadeira", "serra copo para furadeira", "rosqueador", "abridor interno"]
     },
     "compressor portatil": {
       "require_groups": [["compressor"]],
