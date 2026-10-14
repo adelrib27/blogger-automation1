@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "project": "Radar Tech BR",
+  "timezone": "America/Sao_Paulo",
+  "articles_per_day": 2,
+  "publication_slots": [
+    "09:00",
+    "18:00"
+  ],
+  "allowed_categories": [
+    "Tecnologia",
+    "Casa & Decoração",
+    "Cozinha & Utilidades",
+    "Ferramentas & Automotivo",
+    "Moda & Beleza"
+  ],
+  "category_map": {
+    "Tecnologia": "Tecnologia",
+    "Casa & Decoracao": "Casa & Decoração",
+    "Cozinha & Utilidades": "Cozinha & Utilidades",
+    "Ferramentas & Auto": "Ferramentas & Automotivo",
+    "Moda & Beleza": "Moda & Beleza"
+  },
+  "product_rules": {
+    "min_rating_when_available": 4.0,
+    "min_extra_commission_rate": 0.001,
+    "extra_commission_first": true,
+    "standard_commission_only_as_reserve": true,
+    "require_semantic_intent": true,
+    "require_affiliate_offer_link": true
+  },
+  "daily_rotation": {
+    "prefer_different_categories_between_slots": true,
+    "prefer_different_shops_between_slots": true,
+    "reserve_pool_size": 4,
+    "max_same_shop_in_production_queue": 2
+  },
+  "diversity": {
+    "max_per_shop": 3,
+    "max_per_keyword": 4,
+    "max_per_category": 8,
+    "relaxed_caps": {
+      "max_per_shop": 5,
+      "max_per_keyword": 6,
+      "max_per_category": 10
+    }
+  },
+  "duplicate_control": {
+    "block_exact_product_already_used": true,
+    "block_exact_affiliate_link_already_used": true,
+    "similar_product_cooldown_days": 30
+  },
+  "editorial": {
+    "language": "pt-BR",
+    "title_max_chars": 60,
+    "meta_description_max_chars": 155,
+    "internal_links": true,
+    "affiliate_rel": "nofollow sponsored",
+    "factual_mode_when_data_is_sparse": true,
+    "never_invent_missing_product_data": true
+  },
+  "prohibited_unverified_claims": [
+    "preço atual ou desconto não confirmado",
+    "potência",
+    "voltagem",
+    "autonomia",
+    "capacidade",
+    "material",
+    "dimensões",
+    "peso",
+    "garantia",
+    "compatibilidade",
+    "certificações",
+    "prazo de entrega",
+    "estoque",
+    "nome do vendedor como recomendação editorial",
+    "desempenho técnico não sustentado pelos dados de origem"
+  ],
+  "failure_policy": {
+    "max_generation_attempts": 3,
+    "on_repeated_failure": "QUARENTENA",
+    "continue_with_next_product": true,
+    "never_stop_whole_pipeline_for_one_product": true
+  },
+  "status_flow": [
+    "DESCOBERTO",
+    "QUALIFICADO",
+    "NA_FILA",
+    "GERANDO",
+    "VALIDANDO",
+    "PRONTO",
+    "AGENDADO",
+    "PUBLICADO",
+    "QUARENTENA"
+  ],
+  "phase3_mode": {
+    "queue_selection_automatic": true,
+    "content_generation_automatic": false,
+    "wordpress_auto_publish": false,
+    "note": "Fase 3.1 cria a fila automaticamente. Geração e publicação serão conectadas após validação técnica da fila, sem aprovação manual produto a produto."
+  }
+}
