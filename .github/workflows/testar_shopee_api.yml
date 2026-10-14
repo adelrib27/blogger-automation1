@@ -1,0 +1,42 @@
+name: Testar Shopee Affiliate API
+
+on:
+  workflow_dispatch:
+    inputs:
+      keyword:
+        description: "Palavra-chave para productOfferV2"
+        required: false
+        default: "casa"
+      limit:
+        description: "Quantidade de produtos (1 a 10)"
+        required: false
+        default: "3"
+
+permissions:
+  contents: read
+
+jobs:
+  testar-shopee-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_TEST_KEYWORD: ${{ inputs.keyword }}
+      SHOPEE_TEST_LIMIT: ${{ inputs.limit }}
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe
+        run: python -m py_compile src/shopee_api_lab.py
+
+      - name: Testar autenticação e consulta da Shopee
+        run: python -u src/shopee_api_lab.py
