@@ -62,7 +62,7 @@ def post_graphql(app_id: str, secret: str, query: str, retries: int = 3) -> dict
                 "Authorization": authorization_header(app_id, secret, payload, timestamp),
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "RadarTechBR-ShopeeOpportunities/1.0",
+                "User-Agent": "RadarTechBR-ShopeeOpportunities/2.1",
             },
         )
         try:
@@ -94,15 +94,16 @@ def post_graphql(app_id: str, secret: str, query: str, retries: int = 3) -> dict
     raise RuntimeError("Falha inesperada ao consultar Shopee")
 
 
-def product_query(keyword: str, list_type: int, sort_type: int, limit: int) -> str:
+def product_query(keyword: str, list_type: int, sort_type: int, limit: int, ams_only: bool) -> str:
     keyword_json = json.dumps(keyword, ensure_ascii=False)
+    ams_value = "true" if ams_only else "false"
     return f"""
 query ShopeeOpportunityScan {{
   productOfferV2(
     keyword: {keyword_json},
     listType: {list_type},
     sortType: {sort_type},
-    isAMSOffer: true,
+    isAMSOffer: {ams_value},
     page: 1,
     limit: {limit}
   ) {{
@@ -226,23 +227,32 @@ def select_categories(config: dict) -> dict[str, list[str]]:
     return selected
 
 
-def scan() -> list[dict]:
-    config = load_config()
-    app_id = required_env("SHOPEE_APP_ID")
-    secret = required_env("SHOPEE_SECRET")
-    selected_categories = select_categories(config)
-    query_limit = int(config.get("query_limit", 15))
-    min_seller_rate = to_float(config.get("min_seller_commission_rate", 0.001))
-    min_rating = to_float(config.get("min_rating_when_available", 4.0))
+def merge_item(merged: dict[str, dict], item: dict, category: str, keyword: str, source_mode: str, suggestions: list[str], priority_tier: str) -> None:
+    item_id = str(item.get("itemId") or "").strip()
+    if not item_id:
+        return
 
+    current = merged.setdefault(item_id, dict(item))
+    current.setdefault("categories", [])
+    current.setdefault("keywords", [])
+    current.setdefault("sourceModes", [])
+    current["priorityTier"] = priority_tier
+
+    if category not in current["categories"]:
+        current["categories"].append(category)
+    if keyword not in current["keywords"]:
+        current["keywords"].append(keyword)
+    if source_mode not in current["sourceModes"]:
+        current["sourceModes"].append(source_mode)
+
+    proxy = search_proxy_for_product(item.get("productName") or "", keyword, suggestions)
+    current["searchDemandProxy"] = max(to_float(current.get("searchDemandProxy")), proxy)
+
+
+def scan_primary_extra(app_id: str, secret: str, selected_categories: dict[str, list[str]], query_limit: int, min_seller_rate: float, min_rating: float, suggestions_by_keyword: dict[str, list[str]]) -> dict[str, dict]:
     merged: dict[str, dict] = {}
-    suggestions_by_keyword: dict[str, list[str]] = {}
 
-    print("=== Radar Tech BR — Shopee Oportunidades Fase 2 ===")
-    print("Prioridade: comissão extra do seller + intenção de busca + performance.")
-    print("Filtro Shopee: isAMSOffer=true (ofertas com comissão do seller).")
-    print("Sinal de busca: Google Autocomplete como proxy; não é volume mensal exato.")
-
+    print("\n=== CAMADA 1 — COMISSÃO EXTRA ===")
     for category, keywords in selected_categories.items():
         print(f"\nCategoria: {category}")
         for keyword in keywords:
@@ -258,15 +268,12 @@ def scan() -> list[dict]:
                 response = post_graphql(
                     app_id,
                     secret,
-                    product_query(keyword, list_type, sort_type, query_limit),
+                    product_query(keyword, list_type, sort_type, query_limit, ams_only=True),
                 )
                 errors = response.get("errors") or []
                 if errors:
                     safe_errors = [
-                        {
-                            "code": (e.get("extensions") or {}).get("code"),
-                            "message": e.get("message"),
-                        }
+                        {"code": (e.get("extensions") or {}).get("code"), "message": e.get("message")}
                         for e in errors[:3]
                     ]
                     print(f"  aviso {source_mode}: {json.dumps(safe_errors, ensure_ascii=False)}")
@@ -280,30 +287,71 @@ def scan() -> list[dict]:
                         continue
                     if rating > 0 and rating < min_rating:
                         continue
-
-                    item_id = str(item.get("itemId") or "").strip()
-                    if not item_id:
-                        continue
-
-                    current = merged.setdefault(item_id, dict(item))
-                    current.setdefault("categories", [])
-                    current.setdefault("keywords", [])
-                    current.setdefault("sourceModes", [])
-                    if category not in current["categories"]:
-                        current["categories"].append(category)
-                    if keyword not in current["keywords"]:
-                        current["keywords"].append(keyword)
-                    if source_mode not in current["sourceModes"]:
-                        current["sourceModes"].append(source_mode)
-
-                    proxy = search_proxy_for_product(item.get("productName") or "", keyword, suggestions)
-                    current["searchDemandProxy"] = max(
-                        to_float(current.get("searchDemandProxy")), proxy
-                    )
+                    merge_item(merged, item, category, keyword, source_mode, suggestions, "COMISSAO_EXTRA")
 
                 time.sleep(0.15)
 
-    products = list(merged.values())
+    return merged
+
+
+def scan_reserve_standard(app_id: str, secret: str, selected_categories: dict[str, list[str]], query_limit: int, min_rating: float, suggestions_by_keyword: dict[str, list[str]], exclude_ids: set[str]) -> dict[str, dict]:
+    merged: dict[str, dict] = {}
+
+    print("\n=== CAMADA 2 — RESERVA, COMISSÃO PADRÃO ===")
+    print("Esta camada só é consultada porque faltaram produtos com comissão extra.")
+
+    for category, keywords in selected_categories.items():
+        for keyword in keywords:
+            suggestions = suggestions_by_keyword.get(keyword)
+            if suggestions is None:
+                suggestions = google_suggestions(keyword)
+                suggestions_by_keyword[keyword] = suggestions
+
+            scans = [
+                ("reserve_top_performance", 2, 2),
+                ("reserve_search", 1, 1),
+            ]
+            for source_mode, list_type, sort_type in scans:
+                response = post_graphql(
+                    app_id,
+                    secret,
+                    product_query(keyword, list_type, sort_type, query_limit, ams_only=False),
+                )
+                errors = response.get("errors") or []
+                if errors:
+                    safe_errors = [
+                        {"code": (e.get("extensions") or {}).get("code"), "message": e.get("message")}
+                        for e in errors[:3]
+                    ]
+                    print(f"  aviso {source_mode}/{keyword}: {json.dumps(safe_errors, ensure_ascii=False)}")
+                    continue
+
+                nodes = (((response.get("data") or {}).get("productOfferV2") or {}).get("nodes") or [])
+                for item in nodes:
+                    item_id = str(item.get("itemId") or "").strip()
+                    if not item_id or item_id in exclude_ids:
+                        continue
+
+                    seller_rate = to_float(item.get("sellerCommissionRate"))
+                    rating = to_float(item.get("ratingStar"))
+                    shopee_rate = to_float(item.get("shopeeCommissionRate"))
+                    total_rate = to_float(item.get("commissionRate"))
+
+                    if seller_rate > 0:
+                        continue
+                    if shopee_rate <= 0 and total_rate <= 0:
+                        continue
+                    if rating > 0 and rating < min_rating:
+                        continue
+
+                    merge_item(merged, item, category, keyword, source_mode, suggestions, "RESERVA_COMISSAO_PADRAO")
+
+                time.sleep(0.15)
+
+    return merged
+
+
+def score_products(products: list[dict], config: dict) -> list[dict]:
     if not products:
         return []
 
@@ -317,7 +365,10 @@ def scan() -> list[dict]:
         rating = to_float(p.get("ratingStar"))
         discount = to_float(p.get("priceDiscountRate"))
         search_proxy = to_float(p.get("searchDemandProxy"))
-        top_perf = 1.0 if "top_performance" in p.get("sourceModes", []) else 0.0
+        top_perf = 1.0 if any(
+            mode in {"top_performance", "reserve_top_performance"}
+            for mode in p.get("sourceModes", [])
+        ) else 0.0
 
         components = {
             "seller_extra_commission": minmax(seller_rate, max_seller),
@@ -333,6 +384,7 @@ def scan() -> list[dict]:
         p["sellerExtraCommissionPct"] = round(seller_rate * 100, 2)
         p["shopeeCommissionPct"] = round(to_float(p.get("shopeeCommissionRate")) * 100, 2)
         p["totalCommissionPct"] = round(to_float(p.get("commissionRate")) * 100, 2)
+        p["priorityRank"] = 1 if p.get("priorityTier") == "COMISSAO_EXTRA" else 2
 
     products.sort(
         key=lambda p: (
@@ -342,9 +394,68 @@ def scan() -> list[dict]:
         ),
         reverse=True,
     )
+    return products
 
-    top_n = int(TOP_N_OVERRIDE or config.get("top_n", 30))
-    ranking = products[:max(1, top_n)]
+
+def scan() -> list[dict]:
+    config = load_config()
+    app_id = required_env("SHOPEE_APP_ID")
+    secret = required_env("SHOPEE_SECRET")
+    selected_categories = select_categories(config)
+
+    query_limit = int(config.get("query_limit", 15))
+    reserve_query_limit = int(config.get("reserve_query_limit", query_limit))
+    min_seller_rate = to_float(config.get("min_seller_commission_rate", 0.001))
+    min_rating = to_float(config.get("min_rating_when_available", 4.0))
+    reserve_min_rating = to_float(config.get("reserve_min_rating_when_available", min_rating))
+    reserve_enabled = bool(config.get("reserve_enabled", True))
+    top_n = max(1, int(TOP_N_OVERRIDE or config.get("top_n", 30)))
+
+    suggestions_by_keyword: dict[str, list[str]] = {}
+
+    print("=== Radar Tech BR — Shopee Oportunidades Fase 2.1 ===")
+    print("Regra: comissão extra primeiro; comissão padrão somente para completar vagas.")
+    print("Sinal de busca: Google Autocomplete como proxy; não é volume mensal exato.")
+    print(f"Meta do ranking: {top_n} produtos.")
+
+    primary_merged = scan_primary_extra(
+        app_id, secret, selected_categories, query_limit, min_seller_rate, min_rating, suggestions_by_keyword
+    )
+    primary = score_products(list(primary_merged.values()), config)
+
+    print(f"\nProdutos qualificados com comissão extra: {len(primary)}")
+
+    if len(primary) >= top_n or not reserve_enabled:
+        ranking = primary[:top_n]
+        print("Reserva não utilizada.")
+    else:
+        missing = top_n - len(primary)
+        print(f"Faltam {missing} vagas; buscando produtos de reserva.")
+
+        reserve_merged = scan_reserve_standard(
+            app_id,
+            secret,
+            selected_categories,
+            reserve_query_limit,
+            reserve_min_rating,
+            suggestions_by_keyword,
+            set(primary_merged.keys()),
+        )
+        reserve = score_products(list(reserve_merged.values()), config)
+        ranking = primary[:top_n] + reserve[:missing]
+
+        print(f"Produtos de reserva encontrados: {len(reserve)}")
+        print(f"Produtos de reserva usados: {min(missing, len(reserve))}")
+
+    ranking.sort(
+        key=lambda p: (
+            -to_int(p.get("priorityRank"), 2),
+            to_float(p.get("opportunityScore")),
+            to_int(p.get("sales")),
+        ),
+        reverse=True,
+    )
+
     save_outputs(ranking, suggestions_by_keyword, config)
     return ranking
 
@@ -356,12 +467,21 @@ def save_outputs(ranking: list[dict], suggestions: dict[str, list[str]], config:
     csv_path = OUTPUT_DIR / "ranking.csv"
     search_path = OUTPUT_DIR / "search_signals.json"
 
+    extra_count = sum(1 for p in ranking if p.get("priorityTier") == "COMISSAO_EXTRA")
+    reserve_count = sum(1 for p in ranking if p.get("priorityTier") == "RESERVA_COMISSAO_PADRAO")
+
     json_path.write_text(
         json.dumps(
             {
                 "generatedAt": int(time.time()),
-                "method": "seller-extra-first + Google Autocomplete proxy + Shopee performance",
+                "method": "seller-extra-first; standard commission only as reserve; Google Autocomplete proxy; Shopee performance",
                 "searchSignalWarning": "Google Autocomplete é proxy de intenção/popularidade, não volume mensal exato.",
+                "priorityPolicy": {
+                    "commissionExtraFirst": True,
+                    "standardCommissionOnlyToFillMissingSlots": True,
+                    "extraCount": extra_count,
+                    "reserveCount": reserve_count,
+                },
                 "config": config,
                 "ranking": ranking,
             },
@@ -373,9 +493,10 @@ def save_outputs(ranking: list[dict], suggestions: dict[str, list[str]], config:
     search_path.write_text(json.dumps(suggestions, ensure_ascii=False, indent=2), encoding="utf-8")
 
     fields = [
-        "rank", "opportunityScore", "itemId", "productName", "shopName",
-        "priceMin", "priceMax", "sellerExtraCommissionPct", "shopeeCommissionPct",
-        "totalCommissionPct", "commission", "sales", "ratingStar", "priceDiscountRate",
+        "rank", "priorityTier", "priorityRank", "opportunityScore", "itemId",
+        "productName", "shopName", "priceMin", "priceMax",
+        "sellerExtraCommissionPct", "shopeeCommissionPct", "totalCommissionPct",
+        "commission", "sales", "ratingStar", "priceDiscountRate",
         "searchDemandProxy", "categories", "keywords", "sourceModes", "imageUrl", "offerLink",
     ]
     with csv_path.open("w", encoding="utf-8-sig", newline="") as fh:
@@ -394,10 +515,15 @@ def print_ranking(ranking: list[dict]) -> None:
         print("Nenhuma oportunidade passou pelos filtros.")
         return
 
+    extra_count = sum(1 for p in ranking if p.get("priorityTier") == "COMISSAO_EXTRA")
+    reserve_count = len(ranking) - extra_count
+    print(f"\nRANKING FINAL: {len(ranking)} produtos | extra={extra_count} | reserva={reserve_count}")
+
     print(f"\nTOP {min(len(ranking), 15)} OPORTUNIDADES")
     for index, p in enumerate(ranking[:15], start=1):
+        tier = "EXTRA" if p.get("priorityTier") == "COMISSAO_EXTRA" else "RESERVA"
         print(
-            f"{index:02d}. score={p.get('opportunityScore')} | "
+            f"{index:02d}. [{tier}] score={p.get('opportunityScore')} | "
             f"seller extra={p.get('sellerExtraCommissionPct')}% | "
             f"Shopee={p.get('shopeeCommissionPct')}% | "
             f"total={p.get('totalCommissionPct')}% | "
@@ -405,14 +531,16 @@ def print_ranking(ranking: list[dict]) -> None:
         )
         print(f"    {p.get('productName')}")
         print(f"    loja={p.get('shopName')} | comissão estimada={p.get('commission')}")
-        print(f"    busca-proxy={round(to_float(p.get('searchDemandProxy')) * 100, 1)} | {p.get('offerLink')}")
-
-    print(f"\nArquivos gerados em: {OUTPUT_DIR}")
+        print(
+            f"    busca-proxy={round(to_float(p.get('searchDemandProxy')) * 100, 1)} | "
+            f"{p.get('offerLink')}"
+        )
 
 
 def main() -> None:
     ranking = scan()
     print_ranking(ranking)
+    print(f"\nArquivos gerados em: {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":
