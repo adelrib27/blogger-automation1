@@ -1,4 +1,4 @@
-name: Shopee Oportunidades — Fase 2.2 Diversidade
+name: Shopee Oportunidades — Fase 2.3 Intenção
 
 on:
   workflow_dispatch:
@@ -39,14 +39,15 @@ jobs:
         run: |
           python -m py_compile src/shopee_oportunidades.py
           python -m py_compile src/shopee_oportunidades_v22.py
+          python -m py_compile src/shopee_oportunidades_v23.py
 
-      - name: Gerar ranking de oportunidades com diversidade
-        run: python -u src/shopee_oportunidades_v22.py
+      - name: Gerar ranking com filtro de intenção
+        run: python -u src/shopee_oportunidades_v23.py
 
       - name: Publicar relatório como artefato
         uses: actions/upload-artifact@v4
         with:
-          name: shopee-oportunidades-diversidade-${{ github.run_number }}
+          name: shopee-oportunidades-intencao-${{ github.run_number }}
           path: data/shopee_oportunidades/
           if-no-files-found: error
           retention-days: 14
