@@ -1,4 +1,4 @@
-name: Shopee Oportunidades — Fase 2 Lab
+name: Shopee Oportunidades — Fase 2.2 Diversidade
 
 on:
   workflow_dispatch:
@@ -36,15 +36,17 @@ jobs:
           python-version: "3.12"
 
       - name: Verificar sintaxe
-        run: python -m py_compile src/shopee_oportunidades.py
+        run: |
+          python -m py_compile src/shopee_oportunidades.py
+          python -m py_compile src/shopee_oportunidades_v22.py
 
-      - name: Gerar ranking de oportunidades
-        run: python -u src/shopee_oportunidades.py
+      - name: Gerar ranking de oportunidades com diversidade
+        run: python -u src/shopee_oportunidades_v22.py
 
       - name: Publicar relatório como artefato
         uses: actions/upload-artifact@v4
         with:
-          name: shopee-oportunidades-${{ github.run_number }}
+          name: shopee-oportunidades-diversidade-${{ github.run_number }}
           path: data/shopee_oportunidades/
           if-no-files-found: error
           retention-days: 14
