@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -15,8 +16,17 @@ def required_env(name: str) -> str:
     return value
 
 
+def validar_account_id(account_id: str) -> str:
+    if not re.fullmatch(r"[a-fA-F0-9]{32}", account_id):
+        raise RuntimeError(
+            "RADAR_CLOUDFLARE_ACCOUNT_ID inválido: esperado exatamente "
+            "32 caracteres hexadecimais, sem espaços, rótulos ou quebras de linha."
+        )
+    return account_id
+
+
 def main() -> None:
-    account_id = required_env("RADAR_CLOUDFLARE_ACCOUNT_ID")
+    account_id = validar_account_id(required_env("RADAR_CLOUDFLARE_ACCOUNT_ID"))
     api_token = required_env("RADAR_CLOUDFLARE_API_TOKEN")
 
     url = (
