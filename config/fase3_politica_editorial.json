@@ -1,12 +1,22 @@
 {
-  "version": 1,
+  "version": 2,
   "project": "Radar Tech BR",
   "timezone": "America/Sao_Paulo",
-  "articles_per_day": 2,
+  "daily_publication_policy": {
+    "minimum_posts_per_active_category": 1,
+    "minimum_total_posts": 5,
+    "publish_only_qualified_products": true,
+    "never_force_low_quality_content": true,
+    "cover_all_categories_before_extra_posts": true
+  },
   "publication_slots": [
-    "09:00",
-    "18:00"
+    "08:00",
+    "10:30",
+    "13:00",
+    "16:00",
+    "19:00"
   ],
+  "rotate_categories_across_slots_daily": true,
   "allowed_categories": [
     "Tecnologia",
     "Casa & Decoração",
@@ -23,44 +33,55 @@
   },
   "product_rules": {
     "min_rating_when_available": 4.0,
-    "min_extra_commission_rate": 0.001,
+    "allow_products_without_rating": true,
+    "min_extra_commission_rate": 0.03,
     "extra_commission_first": true,
     "standard_commission_only_as_reserve": true,
     "require_semantic_intent": true,
     "require_affiliate_offer_link": true
   },
-  "daily_rotation": {
-    "prefer_different_categories_between_slots": true,
-    "prefer_different_shops_between_slots": true,
-    "reserve_pool_size": 4,
-    "max_same_shop_in_production_queue": 2
-  },
-  "diversity": {
-    "max_per_shop": 3,
-    "max_per_keyword": 4,
-    "max_per_category": 8,
-    "relaxed_caps": {
-      "max_per_shop": 5,
-      "max_per_keyword": 6,
-      "max_per_category": 10
-    }
+  "daily_diversity": {
+    "max_products_per_shop": 1,
+    "max_products_per_keyword": 1,
+    "block_duplicate_item_id": true,
+    "cover_all_categories_before_extra_posts": true,
+    "do_not_relax_shop_or_keyword_caps": true
   },
   "duplicate_control": {
     "block_exact_product_already_used": true,
     "block_exact_affiliate_link_already_used": true,
-    "similar_product_cooldown_days": 30
+    "avoid_recent_similar_product_or_theme": true,
+    "recent_history_window_posts": 50
   },
   "editorial": {
     "language": "pt-BR",
+    "word_count_min": 900,
+    "word_count_max": 1400,
     "title_max_chars": 60,
     "meta_description_max_chars": 155,
-    "internal_links": true,
+    "natural_seo": true,
+    "quick_summary_near_start": true,
+    "include_real_advantages_and_limitations": true,
+    "include_use_context": true,
+    "include_who_it_is_for": true,
+    "include_what_to_check_before_buying": true,
+    "no_fake_physical_testing": true,
+    "affiliate_transparency": true,
     "affiliate_rel": "nofollow sponsored",
     "factual_mode_when_data_is_sparse": true,
-    "never_invent_missing_product_data": true
+    "never_invent_missing_product_data": true,
+    "contextual_internal_links": {
+      "enabled": true,
+      "max_per_article": 3,
+      "use_natural_anchor_text": true,
+      "only_when_relevant_term_exists_in_article": true,
+      "never_force_unrelated_link": true
+    }
   },
   "prohibited_unverified_claims": [
     "preço atual ou desconto não confirmado",
+    "estoque ou disponibilidade não confirmados",
+    "prazo de entrega não confirmado",
     "potência",
     "voltagem",
     "autonomia",
@@ -71,16 +92,21 @@
     "garantia",
     "compatibilidade",
     "certificações",
-    "prazo de entrega",
-    "estoque",
-    "nome do vendedor como recomendação editorial",
-    "desempenho técnico não sustentado pelos dados de origem"
+    "número de vendas não confirmado",
+    "desempenho técnico não sustentado pelos dados de origem",
+    "testamos ou comprovamos sem teste físico real",
+    "é o melhor ou 100% garantido sem base verificável"
   ],
+  "missing_data_policy": {
+    "never_fill_gaps_by_guessing": true,
+    "preferred_safe_phrase": "vale conferir no anúncio",
+    "refer_to_manual_or_official_listing_when_applicable": true
+  },
   "failure_policy": {
-    "max_generation_attempts": 3,
+    "max_generation_attempts_per_product": 3,
     "on_repeated_failure": "QUARENTENA",
     "continue_with_next_product": true,
-    "never_stop_whole_pipeline_for_one_product": true
+    "never_stop_whole_daily_pipeline_for_one_product": true
   },
   "status_flow": [
     "DESCOBERTO",
@@ -95,8 +121,10 @@
   ],
   "phase3_mode": {
     "queue_selection_automatic": true,
-    "content_generation_automatic": false,
-    "wordpress_auto_publish": false,
-    "note": "Fase 3.1 cria a fila automaticamente. Geração e publicação serão conectadas após validação técnica da fila, sem aprovação manual produto a produto."
+    "content_generation_automatic": true,
+    "wordpress_auto_publish": true,
+    "require_complete_daily_queue_before_publish": true,
+    "human_approval_per_product": false,
+    "note": "Política global aprovada. A ativação dos cinco horários depende apenas da validação técnica da fila diária da Fase 3."
   }
 }
