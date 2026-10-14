@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "description": "Regras deterministicas para impedir falso positivo semantico na busca de produtos Shopee. A regra valida o produto real procurado, nao apenas a presenca solta da palavra-chave no titulo.",
+  "rules": {
+    "projetor portatil": {
+      "require_groups": [["projetor", "projector"]],
+      "block_phrases": ["suporte para projetor", "tela para projetor", "lampada para projetor", "cabo para projetor", "controle para projetor"]
+    },
+    "caixa de som bluetooth": {
+      "require_groups": [["caixa de som", "speaker bluetooth", "karaoke bluetooth"]],
+      "block_phrases": ["capa para caixa de som", "suporte para caixa de som", "bolsa para caixa de som"]
+    },
+    "smartwatch": {
+      "require_groups": [["smartwatch", "relogio inteligente"]],
+      "block_phrases": ["pulseira para smartwatch", "capa para smartwatch", "pelicula para smartwatch", "carregador para smartwatch"]
+    },
+    "carregador rapido": {
+      "require_groups": [["carregador", "carregamento rapido", "carregamento turbo"]],
+      "block_phrases": ["capa para carregador", "organizador de cabo"]
+    },
+    "aspirador de po": {
+      "require_groups": [["aspirador"]],
+      "block_phrases": ["filtro para aspirador", "saco para aspirador", "mangueira para aspirador", "bico para aspirador", "escova para aspirador", "peca para aspirador"]
+    },
+    "organizador banheiro": {
+      "require_groups": [
+        ["organizador", "prateleira", "suporte", "porta ", "carrinho", "cesto", "dispenser", "dispensador"],
+        ["banheiro", "lavabo", "shampoo", "sabonete", "barbeador", "escova de dente"]
+      ],
+      "block_phrases": ["brinquedo", "fantasia", "decoracao de festa"]
+    },
+    "ventilador": {
+      "require_groups": [["ventilador"]],
+      "block_phrases": ["carimbo", "impressao 3d", "confeitaria", "molde ventilador", "chaveiro ventilador", "adesivo ventilador", "topper ventilador"]
+    },
+    "luminaria": {
+      "require_groups": [["luminaria", "abajur", "plafon", "lampada led", "luz led"]],
+      "block_phrases": ["fita led", "adesivo", "miniatura"]
+    },
+    "air fryer": {
+      "require_groups": [["air fryer", "airfryer", "fritadeira sem oleo", "fritadeira eletrica"]],
+      "block_phrases": ["adaptador de tomada", "forma de silicone", "formas de silicone", "papel para air fryer", "papel air fryer", "tapete de silicone", "cesto para air fryer", "acessorio para air fryer", "capa para air fryer"]
+    },
+    "mixer eletrico": {
+      "require_groups": [["mixer"]],
+      "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer"]
+    },
+    "escorredor de loucas": {
+      "require_groups": [["escorredor de louca", "escorredor de loucas", "escorredor louca", "escorredor loucas"]],
+      "block_phrases": ["tapete escorredor", "peca para escorredor"]
+    },
+    "organizador cozinha": {
+      "require_groups": [
+        ["organizador", "prateleira", "suporte", "porta ", "carrinho", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"],
+        ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "cafe", "talher", "geladeira", "pia"]
+      ],
+      "block_phrases": ["cesto de roupa", "cesto de roupas", "brinquedos", "organizador de maquiagem"]
+    },
+    "parafusadeira": {
+      "require_groups": [["parafusadeira"]],
+      "block_phrases": ["broca avulsa", "bateria para parafusadeira", "carregador para parafusadeira"]
+    },
+    "furadeira": {
+      "require_groups": [["furadeira"]],
+      "block_phrases": ["broca avulsa", "bateria para furadeira", "mandril para furadeira"]
+    },
+    "compressor portatil": {
+      "require_groups": [["compressor"]],
+      "block_phrases": ["mangueira para compressor", "bico para compressor", "manometro para compressor", "peca para compressor"]
+    },
+    "scanner automotivo obd2": {
+      "require_groups": [["scanner obd2", "scanner automotivo", "leitor obd2", "obd2 scanner", "diagnostico obd2"]],
+      "block_phrases": ["cabo obd2", "adaptador obd2", "extensao obd2"]
+    },
+    "escova secadora": {
+      "require_groups": [["escova secadora", "escova rotativa secadora", "escova secador"]],
+      "block_phrases": ["capa para escova", "suporte para escova"]
+    },
+    "aparador de pelos": {
+      "require_groups": [["aparador de pelos", "aparador pelos", "maquina de barbear", "barbeador eletrico"]],
+      "block_phrases": ["papa bolinhas", "tira pelos de roupas", "removedor de pelos de roupas", "removedor de pelo de roupa"]
+    },
+    "oculos uv400": {
+      "require_groups": [["oculos"], ["uv400", "protecao uv"]],
+      "block_phrases": ["estojo para oculos", "cordao para oculos", "lente avulsa", "armacao sem lente"]
+    },
+    "saia midi": {
+      "require_groups": [["saia"], ["midi"]],
+      "block_phrases": ["molde de saia", "tecido para saia", "cinto para saia"]
+    }
+  }
+}
