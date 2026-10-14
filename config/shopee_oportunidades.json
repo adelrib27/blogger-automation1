@@ -1,10 +1,13 @@
 {
-  "version": 1,
+  "version": 2,
   "market": "BR",
   "currency": "BRL",
   "min_seller_commission_rate": 0.001,
   "min_rating_when_available": 4.0,
+  "reserve_enabled": true,
+  "reserve_min_rating_when_available": 4.0,
   "query_limit": 15,
+  "reserve_query_limit": 15,
   "top_n": 30,
   "weights": {
     "seller_extra_commission": 0.45,
