@@ -54,11 +54,17 @@ jobs:
               *) exit 1 ;;
             esac
           fi
+
           HOJE=$(TZ=America/Sao_Paulo date +%F)
-          if [[ "$HOJE" < "2026-10-15" ]]; then
+
+          # Antes de 15/10/2026, somente execuções agendadas ficam bloqueadas.
+          # Execuções manuais podem usar os slots validados da fila do próprio dia.
+          if [ "$EVENT_NAME" = "schedule" ] && [[ "$HOJE" < "2026-10-15" ]]; then
             echo "RADAR_PHASE3_SKIP=1" >> "$GITHUB_ENV"
+            echo "Execução agendada ignorada antes da data oficial de ativação."
           else
             echo "RADAR_PHASE3_SLOT=$SLOT" >> "$GITHUB_ENV"
+            echo "Slot liberado para execução: $SLOT"
           fi
 
       - name: Instalar dependências
