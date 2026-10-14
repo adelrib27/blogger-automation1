@@ -1,0 +1,31 @@
+name: Testar Cloudflare — Radar Tech BR
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testar-radar-cloudflare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      RADAR_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.RADAR_CLOUDFLARE_ACCOUNT_ID }}
+      RADAR_CLOUDFLARE_API_TOKEN: ${{ secrets.RADAR_CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe
+        run: python -m py_compile src/testar_cloudflare_radar.py
+
+      - name: Testar Workers AI do Radar Tech BR
+        run: python -u src/testar_cloudflare_radar.py
