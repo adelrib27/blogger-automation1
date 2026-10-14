@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "project": "Radar Tech BR",
   "timezone": "America/Sao_Paulo",
   "daily_publication_policy": {
@@ -76,6 +76,15 @@
       "use_natural_anchor_text": true,
       "only_when_relevant_term_exists_in_article": true,
       "never_force_unrelated_link": true
+    },
+    "shopee_keyword_affiliate_link": {
+      "enabled": true,
+      "keyword": "Shopee",
+      "url": "https://s.shopee.com.br/40hIZe6zgm",
+      "link_every_plain_text_occurrence": true,
+      "skip_existing_links": true,
+      "target": "_blank",
+      "rel": "nofollow sponsored"
     }
   },
   "prohibited_unverified_claims": [
