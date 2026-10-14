@@ -134,12 +134,132 @@ def garantir_ancora_oferta(post_id):
     return True
 
 
+def garantir_cta_produto_apos_segundo_paragrafo(post_id):
+    """
+    Adiciona um CTA compacto logo após o segundo parágrafo do artigo.
+
+    O card completo do produto continua no ponto contextual escolhido pelo
+    conteúdo. Este CTA antecipado usa o mesmo link afiliado do produto e
+    evita duplicar o card grande, a imagem e os avisos editoriais.
+    """
+    url = os.getenv("WORDPRESS_URL", "").strip().rstrip("/")
+    usuario = os.getenv("WORDPRESS_USERNAME", "").strip()
+    senha_app = os.getenv("WORDPRESS_APP_PASSWORD", "").strip()
+
+    if not url or not usuario or not senha_app:
+        return False
+
+    resposta = requests.get(
+        f"{url}/wp-json/wp/v2/posts/{int(post_id)}",
+        params={"context": "edit", "_fields": "content"},
+        auth=(usuario, senha_app),
+        headers={"User-Agent": "RadarTechBR-Automation/1.0"},
+        timeout=TIMEOUT,
+    )
+
+    if resposta.status_code >= 400:
+        detalhe = resposta.text[:700]
+        if senha_app:
+            detalhe = detalhe.replace(senha_app, "***")
+        raise RuntimeError(
+            f"Falha ao preparar CTA inicial do post {post_id}: "
+            f"HTTP {resposta.status_code}: {detalhe}"
+        )
+
+    dados = resposta.json()
+    conteudo = dados.get("content", {})
+    if isinstance(conteudo, dict):
+        html = str(conteudo.get("raw") or "")
+    else:
+        html = str(conteudo or "")
+
+    if 'class="rt-produto-cta-inicial"' in html:
+        return False
+
+    marcadores_bloco = (
+        '<div id="oferta" class="produto-principal-contextual"',
+        '<div class="produto-principal-contextual"',
+    )
+    inicio_bloco = -1
+    for marcador in marcadores_bloco:
+        inicio_bloco = html.find(marcador)
+        if inicio_bloco >= 0:
+            break
+
+    if inicio_bloco < 0:
+        print("CTA inicial não inserido: bloco principal do produto não encontrado.")
+        return False
+
+    trecho_produto = html[inicio_bloco:]
+    link_match = re.search(
+        r'<a\b[^>]*href="([^"]+)"[^>]*rel="nofollow sponsored"[^>]*>',
+        trecho_produto,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if not link_match:
+        print("CTA inicial não inserido: link afiliado do produto não encontrado.")
+        return False
+
+    link_produto = link_match.group(1)
+
+    antes_do_produto = html[:inicio_bloco]
+    paragrafos = list(
+        re.finditer(
+            r"</p\s*>",
+            antes_do_produto,
+            flags=re.IGNORECASE,
+        )
+    )
+    if len(paragrafos) < 2:
+        print("CTA inicial não inserido: artigo com menos de dois parágrafos antes da oferta.")
+        return False
+
+    posicao = paragrafos[1].end()
+    cta = (
+        '\n<div class="rt-produto-cta-inicial" '
+        'style="margin:18px 0 24px;padding:16px 18px;'
+        'border-left:4px solid #7c3aed;border-radius:10px;'
+        'background:#f5f3ff;">'
+        '<p style="margin:0 0 12px 0;font-size:15px;line-height:1.45;">'
+        '<strong>Veja também: produto relacionado ao tema</strong></p>'
+        f'<a href="{link_produto}" target="_blank" rel="nofollow sponsored" '
+        'style="display:inline-block;padding:11px 17px;background:#16A34A;'
+        'color:#ffffff;text-decoration:none;font-weight:700;border-radius:9px;'
+        'font-size:15px;line-height:1.3;">'
+        '👉 VER PRODUTO RELACIONADO</a>'
+        '</div>\n'
+    )
+
+    atualizado = html[:posicao] + cta + html[posicao:]
+
+    resposta = requests.post(
+        f"{url}/wp-json/wp/v2/posts/{int(post_id)}",
+        auth=(usuario, senha_app),
+        headers={"User-Agent": "RadarTechBR-Automation/1.0"},
+        json={"content": atualizado},
+        timeout=TIMEOUT,
+    )
+
+    if resposta.status_code >= 400:
+        detalhe = resposta.text[:700]
+        if senha_app:
+            detalhe = detalhe.replace(senha_app, "***")
+        raise RuntimeError(
+            f"Falha ao salvar CTA inicial do post {post_id}: "
+            f"HTTP {resposta.status_code}: {detalhe}"
+        )
+
+    print("CTA de produto relacionado inserido após o segundo parágrafo.")
+    return True
+
+
 def linkar_shopee_no_html(conteudo_html):
     """
     Transforma cada ocorrência textual de "Shopee" em link afiliado.
 
     Segurança:
-    - não altera ocorrências que já estejam dentro de um <a>;</n    - não altera atributos ou nomes de tags HTML;
+    - não altera ocorrências que já estejam dentro de um <a>;
+    - não altera atributos ou nomes de tags HTML;
     - preserva a grafia original encontrada no texto;
     - usa rel="nofollow sponsored" por ser link de afiliado.
     """
@@ -288,6 +408,7 @@ def executar():
         )
 
     garantir_ancora_oferta(post_id)
+    garantir_cta_produto_apos_segundo_paragrafo(post_id)
     garantir_link_shopee(post_id)
 
     if wordpress.get("status") == "publish":
