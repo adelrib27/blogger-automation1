@@ -37,14 +37,14 @@ def _build_payload(keyword: str, limit: int) -> str:
 query ShopeeAffiliateLab {{
   productOfferV2(keyword: {graphql_keyword}, sortType: 1, page: 1, limit: {limit}) {{
     nodes {{
-      productId
+      itemId
       productName
       commissionRate
       price
       imageUrl
       offerLink
       shopName
-      soldCount
+      sales
       ratingStar
     }}
     pageInfo {{
@@ -127,10 +127,10 @@ def _print_api_errors(status: int, errors: list[dict]) -> None:
             print(f"- {message}")
 
     print("\nDiagnóstico rápido:")
+    print("- 10010 / GraphQL schema: credencial pode estar válida; ajuste campos/argumentos da query.")
     print("- 10020 / Invalid Credential ou Signature: confira App ID, Secret e horário do runner.")
     print("- 10030 / Rate Limit: aguarde e tente novamente com menor frequência.")
     print("- 10035 / No API Access: confirme que a Open API está habilitada para sua conta de afiliado.")
-    print("- Parse/Params Error: a credencial pode estar válida, mas o schema/query precisa ser ajustado.")
 
 
 def main() -> None:
@@ -167,11 +167,11 @@ def main() -> None:
     for index, item in enumerate(nodes[:limit], start=1):
         print(f"\nProduto {index}")
         print(f"- nome: {item.get('productName')}")
-        print(f"- productId: {item.get('productId')}")
+        print(f"- itemId: {item.get('itemId')}")
         print(f"- loja: {item.get('shopName')}")
         print(f"- preço bruto da API: {item.get('price')}")
         print(f"- comissão: {item.get('commissionRate')}")
-        print(f"- vendidos: {item.get('soldCount')}")
+        print(f"- vendas: {item.get('sales')}")
         print(f"- avaliação: {item.get('ratingStar')}")
         print(f"- imagem: {item.get('imageUrl')}")
         print(f"- link de afiliado: {item.get('offerLink')}")
