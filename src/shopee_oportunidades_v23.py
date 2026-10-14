@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import unicodedata
 from pathlib import Path
@@ -8,7 +9,7 @@ import shopee_oportunidades_v22 as v22
 
 
 INTENT_RULES_PATH = Path(
-    base.os.getenv("SHOPEE_INTENT_RULES", "config/shopee_intent_rules.json")
+    os.getenv("SHOPEE_INTENT_RULES", "config/shopee_intent_rules.json")
 )
 
 
@@ -17,6 +18,14 @@ def normalize(text: str) -> str:
     value = "".join(ch for ch in value if not unicodedata.combining(ch))
     value = re.sub(r"[^a-z0-9 ]+", " ", value)
     return re.sub(r"\s+", " ", value).strip()
+
+
+def contains_phrase(normalized_text: str, phrase: str) -> bool:
+    phrase_norm = normalize(phrase)
+    if not phrase_norm:
+        return False
+    pattern = r"(?<![a-z0-9])" + re.escape(phrase_norm).replace(r"\ ", r"\s+") + r"(?![a-z0-9])"
+    return re.search(pattern, normalized_text) is not None
 
 
 def load_intent_rules() -> dict:
@@ -44,8 +53,7 @@ def evaluate_keyword(product_name: str, keyword: str, rules_doc: dict) -> dict:
 
     blocked = []
     for phrase in rule.get("block_phrases") or []:
-        phrase_norm = normalize(phrase)
-        if phrase_norm and phrase_norm in name:
+        if contains_phrase(name, phrase):
             blocked.append(phrase)
 
     if blocked:
@@ -62,23 +70,16 @@ def evaluate_keyword(product_name: str, keyword: str, rules_doc: dict) -> dict:
     missing_groups = []
 
     for group in groups:
-        matches = []
-        for phrase in group:
-            phrase_norm = normalize(phrase)
-            if phrase_norm and phrase_norm in name:
-                matches.append(phrase)
+        matches = [phrase for phrase in group if contains_phrase(name, phrase)]
         if matches:
             matched_groups.append(matches)
         else:
             missing_groups.append(group)
 
     accepted = not missing_groups
-    if not groups:
-        score = 1.0 if accepted else 0.0
-    else:
-        score = len(matched_groups) / len(groups)
+    score = 1.0 if not groups and accepted else (len(matched_groups) / max(1, len(groups)))
 
-    if accepted and key and key in name:
+    if accepted and key and contains_phrase(name, key):
         score = min(1.0, score + 0.10)
 
     return {
