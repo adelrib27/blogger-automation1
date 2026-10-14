@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "project": "Radar Tech BR",
   "timezone": "America/Sao_Paulo",
   "daily_publication_policy": {
@@ -134,6 +134,7 @@
     "wordpress_auto_publish": true,
     "require_complete_daily_queue_before_publish": true,
     "human_approval_per_product": false,
-    "note": "Política global aprovada. A ativação dos cinco horários depende apenas da validação técnica da fila diária da Fase 3."
+    "activation_date": "2026-10-15",
+    "note": "Política global aprovada. Publicação automática da Fase 3 inicia em 2026-10-15 após a validação técnica bem-sucedida da fila diária."
   }
 }
