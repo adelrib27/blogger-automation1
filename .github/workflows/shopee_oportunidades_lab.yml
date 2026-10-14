@@ -1,0 +1,50 @@
+name: Shopee Oportunidades — Fase 2 Lab
+
+on:
+  workflow_dispatch:
+    inputs:
+      category:
+        description: "Categoria (all, Tecnologia, Casa & Decoracao, Cozinha & Utilidades, Ferramentas & Auto, Moda & Beleza)"
+        required: false
+        default: "all"
+      top_n:
+        description: "Quantidade final de oportunidades"
+        required: false
+        default: "30"
+
+permissions:
+  contents: read
+
+jobs:
+  ranking-oportunidades:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_CATEGORY: ${{ inputs.category }}
+      SHOPEE_TOP_N: ${{ inputs.top_n }}
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe
+        run: python -m py_compile src/shopee_oportunidades.py
+
+      - name: Gerar ranking de oportunidades
+        run: python -u src/shopee_oportunidades.py
+
+      - name: Publicar relatório como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: shopee-oportunidades-${{ github.run_number }}
+          path: data/shopee_oportunidades/
+          if-no-files-found: error
+          retention-days: 14
