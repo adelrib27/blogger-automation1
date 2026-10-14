@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "market": "BR",
   "currency": "BRL",
   "min_seller_commission_rate": 0.001,
@@ -10,12 +10,24 @@
   "reserve_query_limit": 15,
   "top_n": 30,
   "weights": {
-    "seller_extra_commission": 0.45,
-    "search_demand_proxy": 0.20,
+    "seller_extra_commission": 0.40,
+    "search_demand_proxy": 0.25,
     "sales": 0.15,
     "rating": 0.10,
     "discount": 0.05,
     "top_performance": 0.05
+  },
+  "diversity": {
+    "enabled": true,
+    "max_per_shop": 3,
+    "max_per_keyword": 4,
+    "max_per_category": 8,
+    "relaxed_caps": {
+      "max_per_shop": 5,
+      "max_per_keyword": 6,
+      "max_per_category": 10
+    },
+    "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
   },
   "categories": {
     "Tecnologia": [
