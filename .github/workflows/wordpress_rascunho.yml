@@ -8,10 +8,6 @@ on:
         required: false
         default: ""
         type: string
-  schedule:
-    # 09:00 e 18:00 no horário de Brasília (UTC-3)
-    - cron: "0 12 * * *"
-    - cron: "0 21 * * *"
 
 permissions:
   contents: write
@@ -76,8 +72,8 @@ jobs:
           WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
 
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.RADAR_CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.RADAR_CLOUDFLARE_API_TOKEN }}
           CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
 
         run: |
