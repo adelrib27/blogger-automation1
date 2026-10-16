@@ -2,6 +2,9 @@ name: Casa e Decoração — Gerar Fila Editorial
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "casa_decoracao/kickoff.txt"
   schedule:
     - cron: "23 * * * *"
 
