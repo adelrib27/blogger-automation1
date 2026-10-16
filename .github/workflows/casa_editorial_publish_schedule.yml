@@ -1,0 +1,71 @@
+name: Casa e Decoração — Publicação Editorial
+
+on:
+  workflow_dispatch:
+    inputs:
+      wordpress_status:
+        description: "Status WordPress (draft ou publish)"
+        required: false
+        default: "draft"
+      publish_limit:
+        description: "Quantidade máxima por execução (1-20)"
+        required: false
+        default: "5"
+  schedule:
+    - cron: "48 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: casa-decoracao-publicacao-editorial
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+      CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+      CASA_WORDPRESS_STATUS: ${{ github.event_name == 'workflow_dispatch' && inputs.wordpress_status || 'draft' }}
+      CASA_PUBLISH_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_limit || '5' }}
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe
+        run: python -m py_compile casa_decoracao/src/publish_generated.py
+
+      - name: Verificar credenciais exclusivas do novo blog
+        id: auth
+        run: |
+          if [ -z "$CASA_WORDPRESS_USERNAME" ] || [ -z "$CASA_WORDPRESS_APP_PASSWORD" ]; then
+            echo "ready=0" >> "$GITHUB_OUTPUT"
+            echo "Publicação ignorada: secrets CASA_WORDPRESS_USERNAME/CASA_WORDPRESS_APP_PASSWORD ainda não configurados."
+          else
+            echo "ready=1" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Enviar lote ao Casa e Decoração
+        if: steps.auth.outputs.ready == '1'
+        run: python -u casa_decoracao/src/publish_generated.py
+
+      - name: Salvar somente estado do Casa e Decoração
+        if: always() && steps.auth.outputs.ready == '1'
+        run: |
+          if [ -z "$(git status --porcelain -- casa_decoracao/data)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add casa_decoracao/data
+          git commit -m "Atualizar publicação editorial Casa e Decoração"
+          git pull --rebase origin main
+          git push origin HEAD:main
