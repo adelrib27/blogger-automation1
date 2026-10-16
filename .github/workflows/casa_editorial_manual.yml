@@ -1,0 +1,92 @@
+name: Casa e Decoração — Editorial Manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      generation_batch_size:
+        description: "Quantidade de artigos para gerar nesta execução (1-20)"
+        required: false
+        default: "5"
+      publish_after_generation:
+        description: "Enviar artigos gerados ao WordPress nesta execução"
+        required: true
+        type: boolean
+        default: false
+      wordpress_status:
+        description: "Status no WordPress (draft ou publish)"
+        required: false
+        default: "draft"
+      publish_limit:
+        description: "Quantidade máxima enviada ao WordPress (1-20)"
+        required: false
+        default: "5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: casa-decoracao-editorial
+  cancel-in-progress: false
+
+jobs:
+  editorial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.RADAR_CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.RADAR_CLOUDFLARE_API_TOKEN }}
+      CASA_GENERATION_BATCH_SIZE: ${{ inputs.generation_batch_size }}
+      CASA_WORDPRESS_STATUS: ${{ inputs.wordpress_status }}
+      CASA_PUBLISH_LIMIT: ${{ inputs.publish_limit }}
+      CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+      CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe isolada
+        run: |
+          python -m py_compile casa_decoracao/src/build_editorial_queue.py
+          python -m py_compile casa_decoracao/src/generate_articles.py
+          python -m py_compile casa_decoracao/src/publish_generated.py
+
+      - name: Criar fila editorial se necessário
+        run: |
+          if [ ! -f casa_decoracao/data/editorial_queue_100.json ]; then
+            python -u casa_decoracao/src/build_editorial_queue.py
+          fi
+
+      - name: Gerar artigos
+        run: python -u casa_decoracao/src/generate_articles.py
+
+      - name: Enviar ao WordPress
+        if: ${{ inputs.publish_after_generation }}
+        run: python -u casa_decoracao/src/publish_generated.py
+
+      - name: Salvar estado editorial
+        if: always()
+        run: |
+          if [ -z "$(git status --porcelain -- casa_decoracao/data)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add casa_decoracao/data
+          git commit -m "Atualizar estado editorial Casa e Decoração"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Publicar artefatos gerados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-decoracao-editorial-${{ github.run_number }}
+          path: casa_decoracao/data/
+          if-no-files-found: warn
+          retention-days: 14
