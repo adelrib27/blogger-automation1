@@ -14,6 +14,26 @@ MODEL = os.getenv("CASA_AI_MODEL", "@cf/qwen/qwen3-30b-a3b-fp8").strip()
 BATCH_SIZE = max(1, min(int(os.getenv("CASA_GENERATION_BATCH_SIZE", "5")), 20))
 MAX_ITEM_ATTEMPTS = 3
 
+HEALTH_SENSITIVE_TERMS = (
+    "cervical",
+    "ortopedico",
+    "ortopédico",
+    "terapeutico",
+    "terapêutico",
+)
+
+UNSAFE_HEALTH_PATTERNS = (
+    r"\balivia(?:r|m)?\s+(?:a\s+)?dor(?:es)?\b",
+    r"\breduz(?:ir|em)?\s+(?:a\s+)?(?:dor|dores|press[aã]o)\b",
+    r"\btrata(?:r|mento)?\b",
+    r"\bprevine(?:m|r)?\b",
+    r"\bcorrige(?:m|r)?\s+(?:a\s+)?postura\b",
+    r"\bcontribui(?:r)?\s+para\s+(?:a\s+)?recupera[cç][aã]o\b",
+    r"\bh[ée]rnia(?:s)?\s+de\s+disco\b",
+    r"\bles[aã]o(?:ões|oes|s)?\b",
+    r"\bpress[aã]o\s+sobre\s+(?:os\s+)?m[uú]sculos\s+e\s+nervos\b",
+)
+
 
 def load_json(path, default):
     try:
@@ -65,7 +85,7 @@ def call_ai(prompt, retries=3):
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "CasaEDecoracao-Editorial/1.1",
+            "User-Agent": "CasaEDecoracao-Editorial/1.2",
         })
         try:
             with urllib.request.urlopen(req, timeout=120) as response:
@@ -95,6 +115,38 @@ def word_count(content_html):
     return len(re.findall(r"\b[\wÀ-ÿ'-]+\b", text, flags=re.UNICODE))
 
 
+def normalized_text(value):
+    return str(value or "").casefold()
+
+
+def is_health_sensitive(item):
+    haystack = " ".join([
+        normalized_text(item.get("topic")),
+        normalized_text(item.get("product")),
+    ])
+    return any(term in haystack for term in HEALTH_SENSITIVE_TERMS)
+
+
+def unsafe_health_claims(content_html):
+    plain = re.sub(r"<[^>]+>", " ", str(content_html or ""))
+    plain = re.sub(r"\s+", " ", plain).casefold()
+    found = []
+    for pattern in UNSAFE_HEALTH_PATTERNS:
+        if re.search(pattern, plain, flags=re.I):
+            found.append(pattern)
+    return found
+
+
+def validate_health_safety(item, content_html):
+    if not is_health_sensitive(item):
+        return
+    found = unsafe_health_claims(content_html)
+    if found:
+        raise RuntimeError(
+            "alegação de saúde não verificada detectada; regenerar em modo conforto/ergonomia sem promessa médica"
+        )
+
+
 def title_from_topic(topic):
     title = str(topic or "").strip()
     if title:
@@ -113,6 +165,18 @@ def meta_from_item(item):
         return base
     base = f"{topic[:1].upper() + topic[1:]}: veja critérios práticos, pontos de atenção e o que conferir antes da compra."
     return base[:155].rstrip(" ,;:-")
+
+
+def health_guidance(item):
+    if not is_health_sensitive(item):
+        return ""
+    return """
+- TEMA SENSÍVEL DE SAÚDE/ERGONOMIA: trate o produto somente como item de conforto e preferência de uso.
+- Não diga que alivia ou trata dor, reduz pressão em músculos/nervos, corrige postura, previne problemas, ajuda recuperação, trata lesões ou hérnia, nem prometa benefício clínico.
+- Não recomende o produto para diagnóstico, tratamento ou condição médica específica.
+- Se mencionar desconforto persistente, limite-se a dizer que orientação de profissional de saúde pode ser apropriada.
+- Não transforme o nome comercial “ortopédico” em evidência de benefício médico.
+"""
 
 
 def prompt_for(item):
@@ -137,7 +201,7 @@ REGRAS OBRIGATÓRIAS:
 - Use apenas <p>, <h2>, <h3>, <ul>, <li>, <strong> e <em> quando necessário.
 - NÃO inclua preço, botão, link ou CTA comercial. O sistema acrescentará o bloco afiliado depois.
 - Não inclua comentários sobre estas instruções.
-
+{health_guidance(item)}
 Responda SOMENTE com o fragmento HTML do artigo. Não use markdown nem cercas de código.
 """
 
@@ -150,7 +214,7 @@ PRODUTO RELACIONADO: {item['product']}
 CATEGORIA: {item['category']}
 
 Mantenha linguagem natural, útil e prudente. Acrescente critérios de comparação, contexto de uso, limitações, erros comuns e um checklist final. Não inclua H1, links, preço nem CTA. Não afirme teste físico. Se uma especificação não estiver confirmada, diga para conferir o anúncio, ficha técnica ou manual.
-
+{health_guidance(item)}
 RASCUNHO ATUAL:
 {draft_html}
 
@@ -168,6 +232,7 @@ def build_article(item, raw_html):
         raise RuntimeError(f"artigo ainda curto após expansão: {count} palavras")
     if "<h2" not in content.lower() or "<p" not in content.lower():
         raise RuntimeError("HTML sem estrutura editorial mínima")
+    validate_health_safety(item, content)
 
     product = html.escape(str(item["product"]))
     link = html.escape(str(item["affiliate_link"]), quote=True)
@@ -205,20 +270,52 @@ def build_article(item, raw_html):
     }
 
 
+def quarantine_existing_unsafe_health_articles(items_by_id):
+    if not OUT_DIR.exists():
+        return 0
+    quarantined = 0
+    for article_path in sorted(OUT_DIR.glob("*.json")):
+        article = load_json(article_path, {})
+        if not article or not is_health_sensitive(article):
+            continue
+        if not unsafe_health_claims(article.get("content_html")):
+            continue
+        item_id = int(article.get("id") or 0)
+        current = items_by_id.get(item_id)
+        if not current:
+            continue
+        current["status"] = "QUARANTINE"
+        current["last_error"] = "revisão automática: alegação de saúde não verificada em artigo já gerado"
+        try:
+            article_path.unlink()
+        except OSError:
+            pass
+        quarantined += 1
+        print(f"QUARANTINE revisão saúde {item_id}: artigo removido para regeneração segura")
+    return quarantined
+
+
 def main():
     queue = load_json(QUEUE_PATH, {})
     items = queue.get("items") or []
+    by_id = {int(x["id"]): x for x in items}
+
+    reviewed = quarantine_existing_unsafe_health_articles(by_id)
+    if reviewed:
+        print(f"Revisão preventiva: {reviewed} artigo(s) de saúde/ergonomia retornaram à quarentena.")
+
     candidates = [
         x for x in items
         if x.get("status") in {"PENDING", "QUARANTINE"}
         and int(x.get("generation_attempts") or 0) < MAX_ITEM_ATTEMPTS
     ][:BATCH_SIZE]
     if not candidates:
+        queue["items"] = [by_id[int(x["id"])] for x in items]
+        save_json(QUEUE_PATH, queue)
         print("Nenhuma pauta elegível para geração.")
         return
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    by_id = {int(x["id"]): x for x in items}
     generated_count = 0
 
     for item in candidates:
