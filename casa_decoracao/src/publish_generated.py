@@ -60,7 +60,7 @@ def request(method, path, payload=None):
             "Authorization": f"Basic {token}",
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "CasaEDecoracao-Publisher/1.0",
+            "User-Agent": "CasaEDecoracao-Publisher/1.1",
         },
     )
     try:
@@ -90,21 +90,39 @@ def slugify(text):
     return value[:78].rstrip("-")
 
 
+def find_existing(slug):
+    statuses = "publish,draft,pending,private,future"
+    path = "/wp/v2/posts?context=edit&per_page=5&slug=" + urllib.parse.quote(slug) + "&status=" + statuses
+    rows = request("GET", path)
+    if isinstance(rows, list) and rows:
+        return rows[0]
+    return None
+
+
 def publish_article(article):
     cat_id = category_id(article["category"])
+    stable_slug = slugify(article.get("topic") or article["seo_title"])
     payload = {
         "title": article["seo_title"],
-        "slug": slugify(article["seo_title"]),
+        "slug": stable_slug,
         "status": STATUS,
         "categories": [cat_id],
         "excerpt": article.get("excerpt") or article.get("meta_description") or "",
         "content": article["content_html"],
     }
-    result = request("POST", "/wp/v2/posts", payload)
+    existing = find_existing(stable_slug)
+    if existing and existing.get("id"):
+        result = request("POST", f"/wp/v2/posts/{int(existing['id'])}", payload)
+        action = "updated"
+    else:
+        result = request("POST", "/wp/v2/posts", payload)
+        action = "created"
     return {
         "id": result.get("id"),
         "status": result.get("status"),
         "url": result.get("link"),
+        "slug": stable_slug,
+        "action": action,
     }
 
 
