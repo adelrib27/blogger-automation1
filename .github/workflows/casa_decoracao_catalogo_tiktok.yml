@@ -1,0 +1,41 @@
+name: Casa e Decoração — Catálogo TikTok
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: casa-decoracao-catalogo-tiktok
+  cancel-in-progress: false
+
+jobs:
+  selecionar-produtos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verificar sintaxe
+        run: python -m py_compile casa_decoracao/src/catalogo_tiktok_casa.py
+
+      - name: Gerar catálogo Casa e Decoração
+        run: python -u casa_decoracao/src/catalogo_tiktok_casa.py
+
+      - name: Publicar catálogo como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-decoracao-tiktok-${{ github.run_number }}
+          path: |
+            casa_decoracao/data/tiktok_produtos_casa.json
+            casa_decoracao/data/tiktok_catalog_report.json
+          if-no-files-found: error
+          retention-days: 14
