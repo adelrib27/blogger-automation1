@@ -1,4 +1,4 @@
-name: Casa e Decoração — Gerar Fila Editorial
+name: Casa e Decoração — Fluxo Editorial Autônomo
 
 on:
   workflow_dispatch:
@@ -12,17 +12,21 @@ permissions:
   contents: write
 
 concurrency:
-  group: casa-decoracao-geracao-editorial
+  group: casa-decoracao-fluxo-editorial
   cancel-in-progress: false
 
 jobs:
-  gerar:
+  avancar-fluxo:
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.RADAR_CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.RADAR_CLOUDFLARE_API_TOKEN }}
+      CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+      CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+      CASA_WORDPRESS_STATUS: publish
       CASA_GENERATION_BATCH_SIZE: "10"
+      CASA_PUBLISH_LIMIT: "5"
 
     steps:
       - name: Baixar repositório
@@ -37,6 +41,7 @@ jobs:
         run: |
           python -m py_compile casa_decoracao/src/build_editorial_queue.py
           python -m py_compile casa_decoracao/src/generate_articles.py
+          python -m py_compile casa_decoracao/src/publish_generated.py
 
       - name: Preparar fila de 100 pautas
         run: |
@@ -44,8 +49,22 @@ jobs:
             python -u casa_decoracao/src/build_editorial_queue.py
           fi
 
-      - name: Gerar próximo lote editorial
+      - name: Gerar e recuperar próximo lote editorial
         run: python -u casa_decoracao/src/generate_articles.py
+
+      - name: Publicar artigos aprovados no novo blog
+        if: env.CASA_WORDPRESS_USERNAME != '' && env.CASA_WORDPRESS_APP_PASSWORD != ''
+        run: python -u casa_decoracao/src/publish_generated.py
+
+      - name: Verificar saúde pública do novo blog
+        if: always()
+        run: |
+          mkdir -p casa_decoracao/data
+          if curl -fsS --max-time 30 https://casaedecoracao.radartechbr.com.br/ >/dev/null; then
+            echo "ok $(date -u +%Y-%m-%dT%H:%M:%SZ)" > casa_decoracao/data/site_health.txt
+          else
+            echo "falha $(date -u +%Y-%m-%dT%H:%M:%SZ)" > casa_decoracao/data/site_health.txt
+          fi
 
       - name: Salvar somente estado do Casa e Decoração
         if: always()
@@ -57,15 +76,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add casa_decoracao/data
-          git commit -m "Gerar lote editorial Casa e Decoração"
+          git commit -m "Atualizar fluxo autônomo Casa e Decoração"
           git pull --rebase origin main
           git push origin HEAD:main
 
-      - name: Guardar lote como artefato
+      - name: Guardar diagnóstico como artefato
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: casa-editorial-${{ github.run_number }}
+          name: casa-fluxo-${{ github.run_number }}
           path: casa_decoracao/data/
           if-no-files-found: warn
           retention-days: 14
