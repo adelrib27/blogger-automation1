@@ -1,0 +1,32 @@
+{
+  "project": "Casa e Decoração",
+  "url_blog": "https://casaedecoracao.radartechbr.com.br/",
+  "timezone": "America/Recife",
+  "content_mode": "editorial_affiliate",
+  "auto_publish": false,
+  "isolation": {
+    "history_path": "casa_decoracao/data/wordpress_historico.json",
+    "drafts_path": "casa_decoracao/data/wordpress_rascunhos.json",
+    "queue_path": "casa_decoracao/data/fila_dia.json",
+    "never_use_radar_state": true
+  },
+  "categories": [
+    "Decoração",
+    "Organização",
+    "Sala",
+    "Quarto",
+    "Cozinha",
+    "Banheiro",
+    "Área Externa",
+    "Cama, Mesa e Banho",
+    "Iluminação",
+    "Limpeza e Utilidades"
+  ],
+  "seo": {
+    "permalink": "/%postname%/",
+    "meta_description_target": "120-160",
+    "affiliate_links_rel": "nofollow sponsored",
+    "require_featured_image_alt": true,
+    "require_internal_links_when_available": true
+  }
+}
