@@ -1,0 +1,14 @@
+{
+  "source": "data/produtos.json",
+  "output": "casa_decoracao/data/tiktok_produtos_casa.json",
+  "include_any": [
+    "climatizador", "escorredor", "limpeza", "toalha", "pote", "mop", "varal",
+    "travesseiro", "colchao", "lencol", "coberdrom", "capa de colchao", "caminho de mesa",
+    "fronha", "colcha", "cobre leito", "petisqueira", "manta", "mixer", "maquina de gelo",
+    "cortador de legumes", "fatiador de legumes", "ferro de passar", "camera de seguranca"
+  ],
+  "exclude_any": [
+    "headset gamer", "radio comunicador", "scanner automotivo", "barbeador", "maquina de cortar cabelo",
+    "prancha de cabelo", "hoverboard", "lanterna tatica", "luz rgb portatil"
+  ]
+}
