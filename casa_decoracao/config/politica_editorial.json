@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "project": "Casa e Decoração",
+  "timezone": "America/Recife",
+  "status": "VALIDACAO_SEGURA",
+  "daily_publication_policy": {
+    "publish_only_qualified_products": true,
+    "never_force_low_quality_content": true,
+    "cover_categories_with_natural_diversity": true
+  },
+  "allowed_categories": [
+    "Decoração",
+    "Organização",
+    "Sala",
+    "Quarto",
+    "Cozinha",
+    "Banheiro",
+    "Área Externa",
+    "Cama, Mesa e Banho",
+    "Iluminação",
+    "Limpeza e Utilidades"
+  ],
+  "product_rules": {
+    "min_rating_when_available": 4.0,
+    "allow_products_without_rating": true,
+    "min_extra_commission_rate": 0.03,
+    "extra_commission_first": true,
+    "standard_commission_only_as_reserve": true,
+    "require_semantic_intent": true,
+    "require_affiliate_offer_link": true
+  },
+  "duplicate_control": {
+    "block_exact_product_already_used": true,
+    "block_exact_affiliate_link_already_used": true,
+    "block_duplicate_item_id": true,
+    "avoid_recent_similar_product_or_theme": true,
+    "recent_history_window_posts": 50
+  },
+  "editorial": {
+    "language": "pt-BR",
+    "word_count_min": 900,
+    "word_count_max": 1400,
+    "title_max_chars": 60,
+    "meta_description_min_chars": 120,
+    "meta_description_max_chars": 155,
+    "natural_seo": true,
+    "quick_summary_near_start": true,
+    "include_real_advantages_and_limitations": true,
+    "include_use_context": true,
+    "include_who_it_is_for": true,
+    "include_what_to_check_before_buying": true,
+    "no_fake_physical_testing": true,
+    "affiliate_transparency": true,
+    "affiliate_rel": "nofollow sponsored",
+    "factual_mode_when_data_is_sparse": true,
+    "never_invent_missing_product_data": true,
+    "featured_image_alt_required": true,
+    "contextual_internal_links": {
+      "enabled": true,
+      "max_per_article": 3,
+      "use_natural_anchor_text": true,
+      "only_when_relevant_term_exists_in_article": true,
+      "never_force_unrelated_link": true
+    }
+  },
+  "prohibited_unverified_claims": [
+    "preço atual ou desconto não confirmado",
+    "estoque ou disponibilidade não confirmados",
+    "prazo de entrega não confirmado",
+    "potência não confirmada",
+    "voltagem não confirmada",
+    "autonomia não confirmada",
+    "capacidade não confirmada",
+    "material não confirmado",
+    "dimensões não confirmadas",
+    "peso não confirmado",
+    "garantia não confirmada",
+    "compatibilidade não confirmada",
+    "certificações não confirmadas",
+    "desempenho técnico não sustentado pelos dados de origem",
+    "instrução específica de limpeza ou manutenção sem fonte",
+    "instrução específica de segurança ou instalação sem fonte",
+    "testamos ou comprovamos sem teste físico real",
+    "é o melhor ou 100% garantido sem base verificável"
+  ],
+  "missing_data_policy": {
+    "never_fill_gaps_by_guessing": true,
+    "preferred_safe_phrase": "vale conferir no anúncio",
+    "refer_to_manual_or_official_listing_when_applicable": true
+  },
+  "failure_policy": {
+    "max_generation_attempts_per_product": 3,
+    "on_repeated_failure": "QUARENTENA",
+    "continue_with_next_product": true,
+    "never_stop_whole_pipeline_for_one_product": true
+  },
+  "automation_mode": {
+    "shopee_discovery": true,
+    "queue_selection": true,
+    "content_generation": false,
+    "wordpress_auto_publish": false,
+    "note": "Descoberta e ranking podem rodar isoladamente. Geração/publicação automática só deve ser ativada após validação específica do Casa e Decoração."
+  }
+}
