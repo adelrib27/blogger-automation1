@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "description": "Regras semanticas isoladas do projeto Casa e Decoracao para reduzir falsos positivos na Shopee.",
+  "rules": {
+    "organizador banheiro": {
+      "require_groups": [["organizador", "prateleira", "suporte", "cesto", "dispenser", "dispensador"], ["banheiro", "lavabo", "shampoo", "sabonete", "escova de dente"]],
+      "block_phrases": ["brinquedo", "fantasia", "decoracao de festa"]
+    },
+    "organizador cozinha": {
+      "require_groups": [["organizador", "prateleira", "suporte", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"], ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "talher", "geladeira", "pia"]],
+      "block_phrases": ["organizador de maquiagem", "cesto de roupa"]
+    },
+    "varal de chao": {
+      "require_groups": [["varal"], ["chao", "dobravel", "roupa", "roupas"]],
+      "block_phrases": ["miniatura", "brinquedo"]
+    },
+    "kit potes hermeticos": {
+      "require_groups": [["pote", "potes"], ["hermetico", "hermeticos", "trava", "travas", "alimentos"]],
+      "block_phrases": ["pote para tinta", "pote cosmetico"]
+    },
+    "escorredor de loucas": {
+      "require_groups": [["escorredor"], ["louca", "loucas", "prato", "pratos", "talher", "talheres", "copo", "copos"]],
+      "block_phrases": ["escorredor macarrao", "escorredor arroz", "escorredor legumes", "tapete escorredor"]
+    },
+    "fatiador de legumes": {
+      "require_groups": [["fatiador", "cortador"], ["legume", "legumes", "verdura", "verduras"]],
+      "block_phrases": ["peca para fatiador", "lamina avulsa"]
+    },
+    "petisqueira": {
+      "require_groups": [["petisqueira", "barquinha", "canoa"], ["petisco", "petiscos", "frios", "servir"]],
+      "block_phrases": ["brinquedo", "miniatura"]
+    },
+    "mixer eletrico": {
+      "require_groups": [["mixer"]],
+      "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer"]
+    },
+    "protetor de colchao": {
+      "require_groups": [["protetor", "capa"], ["colchao"]],
+      "block_phrases": ["capa para sofa", "protetor para travesseiro"]
+    },
+    "jogo de toalhas": {
+      "require_groups": [["toalha", "toalhas"], ["banho", "rosto", "algodao"]],
+      "block_phrases": ["toalha de mesa", "toalha para carro"]
+    },
+    "lencol casal": {
+      "require_groups": [["lencol", "lencois"], ["casal", "queen", "king"]],
+      "block_phrases": ["tecido para lencol"]
+    },
+    "colcha cobre leito": {
+      "require_groups": [["colcha", "cobre leito", "cobreleito"]],
+      "block_phrases": ["tecido para colcha", "capa de almofada"]
+    },
+    "mop giratorio": {
+      "require_groups": [["mop"], ["giratorio", "balde", "centrifuga"]],
+      "block_phrases": ["refil para mop", "cabo para mop"]
+    },
+    "escova eletrica limpeza": {
+      "require_groups": [["escova"], ["eletrica", "recarregavel"], ["limpeza", "limpar"]],
+      "block_phrases": ["escova de dente", "escova cabelo"]
+    },
+    "aspirador de po": {
+      "require_groups": [["aspirador"]],
+      "block_phrases": ["filtro para aspirador", "saco para aspirador", "mangueira para aspirador", "bico para aspirador", "peca para aspirador"]
+    },
+    "luminaria": {
+      "require_groups": [["luminaria", "abajur", "plafon", "lampada led", "luz led"]],
+      "block_phrases": ["fita led", "adesivo", "miniatura"]
+    },
+    "travesseiro cervical": {
+      "require_groups": [["travesseiro"], ["cervical", "ortopedico"]],
+      "block_phrases": ["fronha avulsa"]
+    },
+    "caminho de mesa": {
+      "require_groups": [["caminho de mesa", "trilho de mesa"]],
+      "block_phrases": ["tecido por metro"]
+    },
+    "manta microfibra": {
+      "require_groups": [["manta", "cobertor"], ["microfibra", "soft"]],
+      "block_phrases": ["tecido por metro"]
+    }
+  }
+}
