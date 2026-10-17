@@ -32,6 +32,7 @@ def regression_checks(rules_doc):
         ("Kit Valvula Bypass Lavadora de alta pressão Wap", "lavadora alta pressao", False),
         ("Conexão Saída Água Lavadora Alta Pressão Karcher Original Engate Reposição", "lavadora alta pressao", False),
         ("Kit Pistola E Lança Para Lavadora Alta Pressão Multimarcas Reposição Universal", "lavadora alta pressao", False),
+        ("Interruptor Lavadora Alta Pressão Original Capa Chave Liga Desliga", "lavadora alta pressao", False),
         ("Caixa Ferramentas Sanfonada 7 Gavetas", "caixa ferramentas", True),
         ("Kit Caixa de ferramentas Tema Dinossauro Lembrancinha", "caixa ferramentas", False),
         ("Caixa de Cílios Extensões Ferramentas de Maquiagem", "caixa ferramentas", False),
