@@ -1,7 +1,7 @@
 /*
 Theme Name: Oficina & Garagem Editorial
 Template: twentytwentyfive
-Version: 1.0.0
+Version: 1.0.1
 Requires at least: 6.7
 Text Domain: oficina-garagem-editorial
 WPVibe: yes
@@ -484,3 +484,24 @@ a{text-decoration:none}
 
 :root{--cd-ink:#20252b;--cd-muted:#626971;--cd-line:#dce0e4;--cd-paper:#fafaf8;--cd-soft:#f1f2f2;--cd-sage:#eceeea;--cd-sage-dark:#6c7370;--cd-green:#242b32;--cd-coral:#bd4b13;--cd-coral-dark:#963907;}
 .cd-mag-brand,.cd-source-hero-title,.cd-source-story-title,.cd-source-list-title,.cd-source-section-heading h2,.cd-article-title{font-family:Impact,"Arial Narrow",sans-serif!important;letter-spacing:-.02em!important}.cd-footer{background:#20262d!important}.cd-mag-header{border-bottom:3px solid var(--cd-coral)}
+/* Identidade industrial com delineado luminoso âmbar */
+:root{--cd-coral:#a74708;--cd-coral-dark:#853605;--og-neon:#ffd34e;--og-amber:#ff9408;--cd-green:#20262d;}
+.cd-mag-header{background:#20262d;border-bottom:1px solid var(--og-neon);box-shadow:0 2px 12px #ffb30035;}
+.cd-mag-brand a{color:#ffe19a!important;text-shadow:0 0 16px #ffad2033;}
+.cd-mag-header .cd-menu-chip,.cd-mag-header .cd-mag-nav a,.cd-mag-header .cd-mag-search input,.cd-mag-header .cd-mag-search button{color:#f5f5f0!important;}
+.cd-mag-header .cd-mag-nav{border-top-color:#ffffff20;}
+.cd-mag-search{border-bottom-color:#e3b94f;}
+.cd-menu-chip,.cd-source-readmore,.cd-carousel-controls>button{
+ border:1px solid transparent!important;border-radius:999px;
+ background:linear-gradient(#20262d,#20262d) padding-box,linear-gradient(110deg,#ff8508,#ffe65a) border-box!important;
+ box-shadow:0 0 9px #ffb30020;color:#ffe399!important;
+}
+.cd-menu-chip{padding:9px 16px;}
+.cd-source-readmore{display:inline-flex;align-self:flex-start;padding:10px 18px!important;letter-spacing:.04em;}
+.cd-source-hero{border:1px solid transparent;border-radius:14px;overflow:hidden;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(115deg,#ff9508,#ffe45c) border-box;box-shadow:0 0 14px #ffc52618;}
+.cd-carousel-controls>button:hover,.cd-menu-chip:hover,.cd-source-readmore:hover{box-shadow:0 0 14px #ffc52660;}
+.cd-carousel-dots button[aria-current="true"]{background:#b45a00;box-shadow:0 0 5px #ffb30055;}
+.cd-source-story-image,.cd-source-list-image{border-radius:10px;}
+.cd-source-story-card:hover .cd-source-story-image,.cd-source-list-item:hover .cd-source-list-image{outline:1px solid #f0ad23;box-shadow:0 0 12px #ffb30028;}
+.cd-footer{border-top:1px solid #f7bb35;box-shadow:0 -2px 12px #ffb30018;}
+
