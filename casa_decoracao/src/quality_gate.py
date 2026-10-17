@@ -170,8 +170,8 @@ def draft_quality(article):
         reasons.append("html_nao_permitido")
     if "```" in content or re.search(r"^\s*#{1,6}\s", plain_text(content), flags=re.M):
         reasons.append("artefato_markdown")
-    content_norm = normalized(content)
-    if any(normalized(marker) in content_norm for marker in PROMPT_LEAKAGE):
+    editorial_norm = normalized(editorial)
+    if any(normalized(marker) in editorial_norm for marker in PROMPT_LEAKAGE):
         reasons.append("vazamento_de_prompt")
     if duplicate_paragraphs(editorial):
         reasons.append("paragrafos_quase_duplicados")
