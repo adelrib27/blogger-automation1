@@ -25,8 +25,10 @@ HIGH_RISK_CLAIM_PATTERNS = (
     ("alegacao_postura", r"\b(?:corrige|melhora)\s+(?:a\s+)?postura\b"),
 )
 
+# Não tratamos "A" (ampere) neste regex case-insensitive para evitar confundir
+# a preposição/artigo "a" em faixas numéricas, ex.: "300 a 500".
 SPEC_PATTERN = re.compile(
-    r"\b\d+(?:[.,]\d+)?\s*(?:kg|g|cm|mm|m|l|ml|w|v|a|mah|gsm|%|hz|mp|gb|tb|pe[cç]as?)\b",
+    r"\b\d+(?:[.,]\d+)?\s*(?:kg|g|cm|mm|m|l|ml|w|v|mah|gsm|%|hz|mp|gb|tb|pe[cç]as?)\b",
     flags=re.I,
 )
 
