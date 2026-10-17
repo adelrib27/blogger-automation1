@@ -64,26 +64,40 @@ def normalized_simple(value):
     return " ".join(str(value or "").casefold().split())
 
 
+def wordpress_id_for_item(item):
+    direct = int((item.get("wordpress") or {}).get("id") or 0)
+    if direct:
+        return direct
+    item_id = int(item.get("id") or 0)
+    if not item_id:
+        return 0
+    article = load_json(GENERATED_DIR / f"{item_id:03d}.json", {})
+    return int((article.get("wordpress") or {}).get("id") or 0)
+
+
 def audit_item(item, existing_posts):
     item_id = int(item.get("id") or 0)
     reasons = []
     article_path = GENERATED_DIR / f"{item_id:03d}.json"
     article = load_json(article_path, {})
+    post_id = wordpress_id_for_item(item)
+
     if not article:
         return {
             "id": item_id,
             "topic": item.get("topic"),
-            "wordpress_id": (item.get("wordpress") or {}).get("id"),
+            "wordpress_id": post_id or None,
+            "queue_status": item.get("status"),
             "eligible_for_live": False,
             "reasons": ["arquivo_gerado_ausente"],
         }
 
-    post_id = int((item.get("wordpress") or article.get("wordpress") or {}).get("id") or 0)
     if not post_id:
         return {
             "id": item_id,
             "topic": item.get("topic"),
             "wordpress_id": None,
+            "queue_status": item.get("status"),
             "eligible_for_live": False,
             "reasons": ["wordpress_id_ausente"],
         }
@@ -95,6 +109,7 @@ def audit_item(item, existing_posts):
             "id": item_id,
             "topic": item.get("topic"),
             "wordpress_id": post_id,
+            "queue_status": item.get("status"),
             "eligible_for_live": False,
             "reasons": [f"falha_leitura_wordpress:{str(exc)[:180]}"],
         }
@@ -159,6 +174,7 @@ def audit_item(item, existing_posts):
         "category": item.get("category"),
         "wordpress_id": post_id,
         "wordpress_status": post.get("status"),
+        "queue_status": item.get("status"),
         "slug": post.get("slug"),
         "quality_gate_version": QUALITY_GATE_VERSION,
         "generation_policy_version": int(article.get("generation_policy_version") or 0),
@@ -171,7 +187,15 @@ def audit_item(item, existing_posts):
 def main():
     queue = load_json(QUEUE_PATH, {})
     items = queue.get("items") or []
-    candidates = [x for x in items if x.get("status") == "WORDPRESS_DRAFT"]
+
+    # A migração para o gate v2 move rascunhos antigos da fila para QUARANTINE.
+    # Eles continuam existindo como drafts no WordPress e precisam aparecer na
+    # auditoria. Por isso auditamos todo item da fila que já tenha um post WP
+    # vinculado, exceto um item explicitamente marcado como PUBLISHED.
+    candidates = [
+        item for item in items
+        if item.get("status") != "PUBLISHED" and wordpress_id_for_item(item) > 0
+    ]
     existing_posts = public_posts_for_quality()
 
     results = [audit_item(item, existing_posts) for item in candidates]
@@ -186,7 +210,7 @@ def main():
         "quality_gate_version": QUALITY_GATE_VERSION,
         "live_publication_changed": False,
         "summary": {
-            "wordpress_drafts_in_queue": len(candidates),
+            "wordpress_linked_candidates": len(candidates),
             "eligible_for_live": len(eligible),
             "blocked_or_review": len(blocked),
         },
