@@ -1,15 +1,1747 @@
 {
-  "generated_at_utc": "2026-10-17T19:15:10.369403+00:00",
+  "generated_at_utc": "2026-10-17T19:19:07.013129+00:00",
   "project": "Casa e Decoração",
   "mode": "READ_ONLY_RELEASE_AUDIT",
   "quality_gate_version": 2,
   "live_publication_changed": false,
   "summary": {
-    "wordpress_drafts_in_queue": 0,
+    "wordpress_linked_candidates": 57,
     "eligible_for_live": 0,
-    "blocked_or_review": 0
+    "blocked_or_review": 57
   },
-  "top_block_reasons": {},
+  "top_block_reasons": {
+    "geracao_anterior_ao_gate_v2": 57,
+    "historico_erro_nao_resolvido": 57,
+    "aioseo_description_ausente": 55,
+    "aioseo_focus_keyword_ausente": 55,
+    "aioseo_title_ausente": 55,
+    "focus_keyword_ausente_ou_invalida": 55,
+    "imagem_destacada_ausente": 55,
+    "publicacao_word_count_baixo": 21,
+    "publicacao_poucos_h2": 20,
+    "poucos_h2": 7,
+    "mesmo_produto_mesma_intencao_post": 6,
+    "especificacao_numerica_nao_confirmada": 4,
+    "produto_pouco_relacionado_ao_texto": 2,
+    "alegacao_antialergica": 1,
+    "alegacao_antisseptica": 1,
+    "link_interno_ausente": 1,
+    "word_count_baixo": 1,
+    "alegacao_acaros": 1,
+    "alegacao_saude_respiratoria": 1,
+    "alegacao_sono_saudavel": 1
+  },
   "eligible": [],
-  "blocked": []
+  "blocked": [
+    {
+      "id": 1,
+      "topic": "como escolher para cozinha pequena",
+      "product": "Escorredor de Louças 2 Andares",
+      "category": "Cozinha",
+      "wordpress_id": 18,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-para-cozinha-pequena",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "mesmo_produto_mesma_intencao_post:5",
+        "publicacao_word_count_baixo:786"
+      ],
+      "metrics": {
+        "word_count": 786,
+        "h2_count": 4,
+        "seo_title_length": 34,
+        "meta_description_length": 145,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 2,
+      "topic": "como organizar pratos e talheres na bancada",
+      "product": "Escorredor de Louças 2 Andares",
+      "category": "Cozinha",
+      "wordpress_id": 19,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-organizar-pratos-e-talheres-na-bancada",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 853,
+        "h2_count": 4,
+        "seo_title_length": 43,
+        "meta_description_length": 154,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 3,
+      "topic": "o que medir antes de comprar",
+      "product": "Escorredor de Louças 2 Andares",
+      "category": "Cozinha",
+      "wordpress_id": 20,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-medir-antes-de-comprar",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "mesmo_produto_mesma_intencao_post:5",
+        "publicacao_poucos_h2:3"
+      ],
+      "metrics": {
+        "word_count": 876,
+        "h2_count": 3,
+        "seo_title_length": 28,
+        "meta_description_length": 139,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 4,
+      "topic": "como comparar modelos de 1 e 2 andares",
+      "product": "Escorredor de Louças 2 Andares",
+      "category": "Cozinha",
+      "wordpress_id": 21,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-comparar-modelos-de-1-e-2-andares",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "mesmo_produto_mesma_intencao_post:5",
+        "publicacao_poucos_h2:3",
+        "publicacao_word_count_baixo:756"
+      ],
+      "metrics": {
+        "word_count": 756,
+        "h2_count": 3,
+        "seo_title_length": 38,
+        "meta_description_length": 149,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 5,
+      "topic": "como escolher um jogo de toalhas para o dia a dia",
+      "product": "Jogo de Toalhas de Banho 4 Peças",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 22,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-um-jogo-de-toalhas-para-o-dia-a-dia",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "alegacao_antialergica",
+        "alegacao_antisseptica",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 973,
+        "h2_count": 5,
+        "seo_title_length": 49,
+        "meta_description_length": 127,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 6,
+      "topic": "o que observar em gramatura, tamanho e acabamento",
+      "product": "Jogo de Toalhas de Banho 4 Peças",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 24,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-observar-em-gramatura-tamanho-e-acabamento",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "especificacao_numerica_nao_confirmada:400 g",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3"
+      ],
+      "metrics": {
+        "word_count": 878,
+        "h2_count": 3,
+        "seo_title_length": 49,
+        "meta_description_length": 127,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 7,
+      "topic": "como montar um enxoval de banho funcional",
+      "product": "Jogo de Toalhas de Banho 4 Peças",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 25,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-montar-um-enxoval-de-banho-funcional",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_word_count_baixo:831"
+      ],
+      "metrics": {
+        "word_count": 831,
+        "h2_count": 6,
+        "seo_title_length": 41,
+        "meta_description_length": 154,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 8,
+      "topic": "como organizar toalhas em banheiro pequeno",
+      "product": "Jogo de Toalhas de Banho 4 Peças",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 26,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-organizar-toalhas-em-banheiro-pequeno",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "link_interno_ausente",
+        "poucos_h2:1",
+        "publicacao_poucos_h2:1",
+        "publicacao_word_count_baixo:667",
+        "word_count_baixo:667"
+      ],
+      "metrics": {
+        "word_count": 667,
+        "h2_count": 1,
+        "seo_title_length": 42,
+        "meta_description_length": 133,
+        "internal_links": 0
+      }
+    },
+    {
+      "id": 9,
+      "topic": "como escolher potes para organizar a despensa",
+      "product": "Kit de Potes para Alimentos com Travas",
+      "category": "Cozinha",
+      "wordpress_id": 27,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-potes-para-organizar-a-despensa",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 905,
+        "h2_count": 4,
+        "seo_title_length": 45,
+        "meta_description_length": 123,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 10,
+      "topic": "potes com trava: o que observar antes da compra",
+      "product": "Kit de Potes para Alimentos com Travas",
+      "category": "Cozinha",
+      "wordpress_id": 28,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "potes-com-trava-o-que-observar-antes-da-compra",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 875,
+        "h2_count": 5,
+        "seo_title_length": 47,
+        "meta_description_length": 125,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 11,
+      "topic": "como organizar mantimentos em cozinha pequena",
+      "product": "Kit de Potes para Alimentos com Travas",
+      "category": "Cozinha",
+      "wordpress_id": 36,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-organizar-mantimentos-em-cozinha-pequena",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3"
+      ],
+      "metrics": {
+        "word_count": 862,
+        "h2_count": 3,
+        "seo_title_length": 45,
+        "meta_description_length": 123,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 12,
+      "topic": "como reduzir bagunça usando potes empilháveis",
+      "product": "Kit de Potes para Alimentos com Travas",
+      "category": "Cozinha",
+      "wordpress_id": 37,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-reduzir-bagunca-usando-potes-empilhaveis",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "poucos_h2:2",
+        "publicacao_poucos_h2:2",
+        "publicacao_word_count_baixo:766"
+      ],
+      "metrics": {
+        "word_count": 766,
+        "h2_count": 2,
+        "seo_title_length": 45,
+        "meta_description_length": 123,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 13,
+      "topic": "como escolher varal de chão para apartamento",
+      "product": "Varal de Chão 3 Andares Dobrável",
+      "category": "Organização",
+      "wordpress_id": 38,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-varal-de-chao-para-apartamento",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_word_count_baixo:800"
+      ],
+      "metrics": {
+        "word_count": 800,
+        "h2_count": 4,
+        "seo_title_length": 44,
+        "meta_description_length": 122,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 14,
+      "topic": "o que medir antes de comprar um varal dobrável",
+      "product": "Varal de Chão 3 Andares Dobrável",
+      "category": "Organização",
+      "wordpress_id": 39,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-medir-antes-de-comprar-um-varal-dobravel",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 909,
+        "h2_count": 4,
+        "seo_title_length": 46,
+        "meta_description_length": 124,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 15,
+      "topic": "como otimizar a secagem de roupas em espaço pequeno",
+      "product": "Varal de Chão 3 Andares Dobrável",
+      "category": "Organização",
+      "wordpress_id": 40,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-otimizar-a-secagem-de-roupas-em-espaco-pequeno",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3",
+        "publicacao_word_count_baixo:708"
+      ],
+      "metrics": {
+        "word_count": 708,
+        "h2_count": 3,
+        "seo_title_length": 51,
+        "meta_description_length": 129,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 16,
+      "topic": "varal vertical ou tradicional: qual faz mais sentido",
+      "product": "Varal de Chão 3 Andares Dobrável",
+      "category": "Organização",
+      "wordpress_id": 65,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "varal-vertical-ou-tradicional-qual-faz-mais-sentido",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3"
+      ],
+      "metrics": {
+        "word_count": 866,
+        "h2_count": 3,
+        "seo_title_length": 52,
+        "meta_description_length": 130,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 17,
+      "topic": "o que observar antes de escolher um travesseiro cervical",
+      "product": "Travesseiro Cervical Ortopédico",
+      "category": "Quarto",
+      "wordpress_id": 66,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-observar-antes-de-escolher-um-travesseiro-cervical",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 913,
+        "h2_count": 4,
+        "seo_title_length": 56,
+        "meta_description_length": 134,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 18,
+      "topic": "altura e posição de dormir: como avaliar um travesseiro",
+      "product": "Travesseiro Cervical Ortopédico",
+      "category": "Quarto",
+      "wordpress_id": 67,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "altura-e-posicao-de-dormir-como-avaliar-um-travesseiro",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_word_count_baixo:822"
+      ],
+      "metrics": {
+        "word_count": 822,
+        "h2_count": 5,
+        "seo_title_length": 55,
+        "meta_description_length": 133,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 19,
+      "topic": "como montar uma cama mais confortável sem exageros",
+      "product": "Travesseiro Cervical Ortopédico",
+      "category": "Quarto",
+      "wordpress_id": 68,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-montar-uma-cama-mais-confortavel-sem-exageros",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 869,
+        "h2_count": 4,
+        "seo_title_length": 50,
+        "meta_description_length": 128,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 21,
+      "topic": "como escolher um cortador de legumes multifuncional",
+      "product": "Cortador de Legumes 16 em 1",
+      "category": "Cozinha",
+      "wordpress_id": 69,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-um-cortador-de-legumes-multifuncional",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 917,
+        "h2_count": 4,
+        "seo_title_length": 51,
+        "meta_description_length": 129,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 22,
+      "topic": "segurança e limpeza: o que conferir em cortadores com lâminas",
+      "product": "Cortador de Legumes 16 em 1",
+      "category": "Cozinha",
+      "wordpress_id": 78,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "seguranca-e-limpeza-o-que-conferir-em-cortadores-com-laminas",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_word_count_baixo:752"
+      ],
+      "metrics": {
+        "word_count": 752,
+        "h2_count": 4,
+        "seo_title_length": 53,
+        "meta_description_length": 139,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 23,
+      "topic": "como ganhar praticidade no pré-preparo de legumes",
+      "product": "Cortador de Legumes 16 em 1",
+      "category": "Cozinha",
+      "wordpress_id": 79,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-ganhar-praticidade-no-pre-preparo-de-legumes",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 867,
+        "h2_count": 5,
+        "seo_title_length": 49,
+        "meta_description_length": 127,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 24,
+      "topic": "cortador manual ou faca: quando cada opção faz sentido",
+      "product": "Cortador de Legumes 16 em 1",
+      "category": "Cozinha",
+      "wordpress_id": 80,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "cortador-manual-ou-faca-quando-cada-opcao-faz-sentido",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3",
+        "publicacao_word_count_baixo:831"
+      ],
+      "metrics": {
+        "word_count": 831,
+        "h2_count": 3,
+        "seo_title_length": 54,
+        "meta_description_length": 132,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 25,
+      "topic": "percarbonato de sódio: o que é e o que conferir antes de usar",
+      "product": "Percarbonato de Sódio",
+      "category": "Limpeza e Utilidades",
+      "wordpress_id": 81,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "percarbonato-de-sodio-o-que-e-e-o-que-conferir-antes-de-usar",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3"
+      ],
+      "metrics": {
+        "word_count": 1254,
+        "h2_count": 3,
+        "seo_title_length": 56,
+        "meta_description_length": 139,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 26,
+      "topic": "como organizar produtos de lavanderia com segurança",
+      "product": "Percarbonato de Sódio",
+      "category": "Limpeza e Utilidades",
+      "wordpress_id": 82,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-organizar-produtos-de-lavanderia-com-seguranca",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_word_count_baixo:725"
+      ],
+      "metrics": {
+        "word_count": 725,
+        "h2_count": 5,
+        "seo_title_length": 51,
+        "meta_description_length": 153,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 27,
+      "topic": "como evitar misturas inadequadas na limpeza doméstica",
+      "product": "Percarbonato de Sódio",
+      "category": "Limpeza e Utilidades",
+      "wordpress_id": 83,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-evitar-misturas-inadequadas-na-limpeza-domestica",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 930,
+        "h2_count": 5,
+        "seo_title_length": 53,
+        "meta_description_length": 155,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 28,
+      "topic": "cuidados gerais ao testar tira-manchas em tecidos",
+      "product": "Percarbonato de Sódio",
+      "category": "Limpeza e Utilidades",
+      "wordpress_id": 84,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "cuidados-gerais-ao-testar-tira-manchas-em-tecidos",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "poucos_h2:2",
+        "publicacao_poucos_h2:2",
+        "publicacao_word_count_baixo:767"
+      ],
+      "metrics": {
+        "word_count": 767,
+        "h2_count": 2,
+        "seo_title_length": 49,
+        "meta_description_length": 151,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 29,
+      "topic": "como escolher lençol queen sem errar nas medidas",
+      "product": "Kit com 5 Lençóis Queen",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 85,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-lencol-queen-sem-errar-nas-medidas",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "especificacao_numerica_nao_confirmada:158 cm",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_word_count_baixo:740"
+      ],
+      "metrics": {
+        "word_count": 740,
+        "h2_count": 4,
+        "seo_title_length": 48,
+        "meta_description_length": 152,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 30,
+      "topic": "como montar um enxoval de cama prático",
+      "product": "Kit com 5 Lençóis Queen",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 86,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-montar-um-enxoval-de-cama-pratico",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 854,
+        "h2_count": 4,
+        "seo_title_length": 38,
+        "meta_description_length": 142,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 31,
+      "topic": "o que observar em lençóis com elástico",
+      "product": "Kit com 5 Lençóis Queen",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 87,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-observar-em-lencois-com-elastico",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 925,
+        "h2_count": 4,
+        "seo_title_length": 38,
+        "meta_description_length": 142,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 32,
+      "topic": "como organizar jogos de cama no armário",
+      "product": "Kit com 5 Lençóis Queen",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 88,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-organizar-jogos-de-cama-no-armario",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_word_count_baixo:705"
+      ],
+      "metrics": {
+        "word_count": 705,
+        "h2_count": 4,
+        "seo_title_length": 39,
+        "meta_description_length": 143,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 33,
+      "topic": "como escolher cobertor para noites frias",
+      "product": "Coberdrom Sherpa",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 89,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-cobertor-para-noites-frias",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "poucos_h2:2",
+        "publicacao_poucos_h2:2"
+      ],
+      "metrics": {
+        "word_count": 916,
+        "h2_count": 2,
+        "seo_title_length": 40,
+        "meta_description_length": 137,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 34,
+      "topic": "o que observar em coberdrom e mantas volumosas",
+      "product": "Coberdrom Sherpa",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 90,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-observar-em-coberdrom-e-mantas-volumosas",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "produto_pouco_relacionado_ao_texto",
+        "publicacao_word_count_baixo:842"
+      ],
+      "metrics": {
+        "word_count": 842,
+        "h2_count": 5,
+        "seo_title_length": 46,
+        "meta_description_length": 143,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 35,
+      "topic": "como guardar cobertores sem ocupar tanto espaço",
+      "product": "Coberdrom Sherpa",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 91,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-guardar-cobertores-sem-ocupar-tanto-espaco",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 955,
+        "h2_count": 4,
+        "seo_title_length": 47,
+        "meta_description_length": 144,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 36,
+      "topic": "como combinar conforto e decoração na cama",
+      "product": "Coberdrom Sherpa",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 92,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-combinar-conforto-e-decoracao-na-cama",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "produto_pouco_relacionado_ao_texto"
+      ],
+      "metrics": {
+        "word_count": 940,
+        "h2_count": 5,
+        "seo_title_length": 42,
+        "meta_description_length": 139,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 37,
+      "topic": "como escolher capa de colchão com elástico",
+      "product": "Capa de Colchão Impermeável",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 93,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-capa-de-colchao-com-elastico",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "mesmo_produto_mesma_intencao_post:7",
+        "publicacao_poucos_h2:3",
+        "publicacao_word_count_baixo:812"
+      ],
+      "metrics": {
+        "word_count": 812,
+        "h2_count": 3,
+        "seo_title_length": 42,
+        "meta_description_length": 150,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 38,
+      "topic": "o que medir antes de comprar proteção para colchão",
+      "product": "Capa de Colchão Impermeável",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 94,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-medir-antes-de-comprar-protecao-para-colchao",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "mesmo_produto_mesma_intencao_post:7"
+      ],
+      "metrics": {
+        "word_count": 872,
+        "h2_count": 4,
+        "seo_title_length": 50,
+        "meta_description_length": 128,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 39,
+      "topic": "como proteger o colchão no uso diário",
+      "product": "Capa de Colchão Impermeável",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 95,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-proteger-o-colchao-no-uso-diario",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "poucos_h2:2",
+        "publicacao_poucos_h2:2",
+        "publicacao_word_count_baixo:792"
+      ],
+      "metrics": {
+        "word_count": 792,
+        "h2_count": 2,
+        "seo_title_length": 37,
+        "meta_description_length": 145,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 40,
+      "topic": "capa ou protetor de colchão: diferenças práticas",
+      "product": "Capa de Colchão Impermeável",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 96,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "capa-ou-protetor-de-colchao-diferencas-praticas",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "mesmo_produto_mesma_intencao_post:7"
+      ],
+      "metrics": {
+        "word_count": 923,
+        "h2_count": 6,
+        "seo_title_length": 48,
+        "meta_description_length": 126,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 41,
+      "topic": "como escolher uma tábua de corte para a cozinha",
+      "product": "Tábua de Corte em Aço Inoxidável",
+      "category": "Cozinha",
+      "wordpress_id": 97,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-uma-tabua-de-corte-para-a-cozinha",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 936,
+        "h2_count": 5,
+        "seo_title_length": 47,
+        "meta_description_length": 125,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 42,
+      "topic": "aço, madeira ou plástico: o que considerar",
+      "product": "Tábua de Corte em Aço Inoxidável",
+      "category": "Cozinha",
+      "wordpress_id": 98,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "aco-madeira-ou-plastico-o-que-considerar",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3",
+        "publicacao_word_count_baixo:827"
+      ],
+      "metrics": {
+        "word_count": 827,
+        "h2_count": 3,
+        "seo_title_length": 42,
+        "meta_description_length": 155,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 43,
+      "topic": "como organizar a bancada para preparo de alimentos",
+      "product": "Tábua de Corte em Aço Inoxidável",
+      "category": "Cozinha",
+      "wordpress_id": 99,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-organizar-a-bancada-para-preparo-de-alimentos",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 870,
+        "h2_count": 5,
+        "seo_title_length": 50,
+        "meta_description_length": 128,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 44,
+      "topic": "o que conferir em tamanho e acabamento de uma tábua",
+      "product": "Tábua de Corte em Aço Inoxidável",
+      "category": "Cozinha",
+      "wordpress_id": 100,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-conferir-em-tamanho-e-acabamento-de-uma-tabua",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "especificacao_numerica_nao_confirmada:40 cm",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 917,
+        "h2_count": 5,
+        "seo_title_length": 51,
+        "meta_description_length": 129,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 45,
+      "topic": "como usar caminho de mesa na decoração",
+      "product": "Caminho de Mesa Bordado",
+      "category": "Decoração",
+      "wordpress_id": 101,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-usar-caminho-de-mesa-na-decoracao",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 948,
+        "h2_count": 4,
+        "seo_title_length": 38,
+        "meta_description_length": 142,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 46,
+      "topic": "como escolher medida de caminho de mesa",
+      "product": "Caminho de Mesa Bordado",
+      "category": "Decoração",
+      "wordpress_id": 102,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-medida-de-caminho-de-mesa",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "poucos_h2:2",
+        "publicacao_poucos_h2:2"
+      ],
+      "metrics": {
+        "word_count": 870,
+        "h2_count": 2,
+        "seo_title_length": 39,
+        "meta_description_length": 143,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 47,
+      "topic": "ideias simples para valorizar a mesa posta",
+      "product": "Caminho de Mesa Bordado",
+      "category": "Decoração",
+      "wordpress_id": 103,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "ideias-simples-para-valorizar-a-mesa-posta",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 932,
+        "h2_count": 4,
+        "seo_title_length": 42,
+        "meta_description_length": 146,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 48,
+      "topic": "como combinar caminho de mesa com louças neutras",
+      "product": "Caminho de Mesa Bordado",
+      "category": "Decoração",
+      "wordpress_id": 104,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-combinar-caminho-de-mesa-com-loucas-neutras",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 984,
+        "h2_count": 4,
+        "seo_title_length": 48,
+        "meta_description_length": 152,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 49,
+      "topic": "como escolher fronhas para o uso diário",
+      "product": "Kit de Fronhas Percal",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 105,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-fronhas-para-o-uso-diario",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3"
+      ],
+      "metrics": {
+        "word_count": 903,
+        "h2_count": 3,
+        "seo_title_length": 39,
+        "meta_description_length": 141,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 50,
+      "topic": "o que conferir em medidas de fronhas",
+      "product": "Kit de Fronhas Percal",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 106,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-conferir-em-medidas-de-fronhas",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "especificacao_numerica_nao_confirmada:40 cm",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3"
+      ],
+      "metrics": {
+        "word_count": 889,
+        "h2_count": 3,
+        "seo_title_length": 36,
+        "meta_description_length": 138,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 51,
+      "topic": "como renovar a cama trocando apenas fronhas",
+      "product": "Kit de Fronhas Percal",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 107,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-renovar-a-cama-trocando-apenas-fronhas",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 946,
+        "h2_count": 4,
+        "seo_title_length": 43,
+        "meta_description_length": 145,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 52,
+      "topic": "como organizar fronhas e jogos de cama",
+      "product": "Kit de Fronhas Percal",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 108,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-organizar-fronhas-e-jogos-de-cama",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 891,
+        "h2_count": 4,
+        "seo_title_length": 38,
+        "meta_description_length": 140,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 53,
+      "topic": "como escolher colcha cobre-leito para o quarto",
+      "product": "Kit Colcha Cobre Leito Luxo",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 109,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-escolher-colcha-cobre-leito-para-o-quarto",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "poucos_h2:2",
+        "publicacao_poucos_h2:2",
+        "publicacao_word_count_baixo:737"
+      ],
+      "metrics": {
+        "word_count": 737,
+        "h2_count": 2,
+        "seo_title_length": 46,
+        "meta_description_length": 154,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 54,
+      "topic": "como combinar colcha com cabeceira e cortina",
+      "product": "Kit Colcha Cobre Leito Luxo",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 110,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-combinar-colcha-com-cabeceira-e-cortina",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 901,
+        "h2_count": 5,
+        "seo_title_length": 44,
+        "meta_description_length": 152,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 55,
+      "topic": "o que medir antes de comprar uma colcha",
+      "product": "Kit Colcha Cobre Leito Luxo",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 111,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "o-que-medir-antes-de-comprar-uma-colcha",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente"
+      ],
+      "metrics": {
+        "word_count": 859,
+        "h2_count": 6,
+        "seo_title_length": 39,
+        "meta_description_length": 147,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 56,
+      "topic": "como criar uma cama visualmente organizada",
+      "product": "Kit Colcha Cobre Leito Luxo",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 112,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-criar-uma-cama-visualmente-organizada",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "aioseo_description_ausente",
+        "aioseo_focus_keyword_ausente",
+        "aioseo_title_ausente",
+        "focus_keyword_ausente_ou_invalida",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "imagem_destacada_ausente",
+        "publicacao_poucos_h2:3",
+        "publicacao_word_count_baixo:843"
+      ],
+      "metrics": {
+        "word_count": 843,
+        "h2_count": 3,
+        "seo_title_length": 42,
+        "meta_description_length": 150,
+        "internal_links": 1
+      }
+    },
+    {
+      "id": 57,
+      "topic": "cobre-leito piquet: o que observar antes de comprar",
+      "product": "Cobre Leito Piquet Premium",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 113,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "cobre-leito-piquet-o-que-observar-antes-de-comprar",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido",
+        "publicacao_word_count_baixo:816"
+      ],
+      "metrics": {
+        "word_count": 816,
+        "h2_count": 5,
+        "seo_title_length": 51,
+        "meta_description_length": 157,
+        "internal_links": 2
+      }
+    },
+    {
+      "id": 80,
+      "topic": "como criar uma rotina simples de proteção do colchão",
+      "product": "Protetor Impermeável de Colchão Matelado",
+      "category": "Cama, Mesa e Banho",
+      "wordpress_id": 114,
+      "wordpress_status": "draft",
+      "queue_status": "QUARANTINE",
+      "slug": "como-criar-uma-rotina-simples-de-protecao-do-colchao",
+      "quality_gate_version": 2,
+      "generation_policy_version": 0,
+      "eligible_for_live": false,
+      "reasons": [
+        "alegacao_acaros",
+        "alegacao_saude_respiratoria",
+        "alegacao_sono_saudavel",
+        "geracao_anterior_ao_gate_v2",
+        "historico_erro_nao_resolvido"
+      ],
+      "metrics": {
+        "word_count": 922,
+        "h2_count": 5,
+        "seo_title_length": 52,
+        "meta_description_length": 155,
+        "internal_links": 2
+      }
+    }
+  ]
 }
