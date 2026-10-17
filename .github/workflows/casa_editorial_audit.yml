@@ -1,0 +1,65 @@
+name: Casa e Decoração — Auditoria de Liberação
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "casa_decoracao/audit_kickoff.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: casa-decoracao-auditoria-liberacao
+  cancel-in-progress: false
+
+jobs:
+  auditar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+      CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+      CASA_WORDPRESS_STATUS: draft
+      CASA_LIVE_PUBLISH_ENABLED: "false"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código da auditoria
+        run: |
+          python -m py_compile casa_decoracao/src/quality_gate.py
+          python -m py_compile casa_decoracao/src/publication_gate_v2.py
+          python -m py_compile casa_decoracao/src/audit_release_candidates.py
+          python -m py_compile casa_decoracao/src/publish_generated.py
+
+      - name: Auditar candidatos sem gerar e sem publicar
+        run: python -u casa_decoracao/src/audit_release_candidates.py
+
+      - name: Salvar relatório da auditoria
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add casa_decoracao/data/publication_gate_report.json
+          if git diff --cached --quiet; then
+            echo "Relatório sem alteração."
+            exit 0
+          fi
+          git commit -m "Atualizar auditoria de liberação Casa e Decoração"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar relatório como artefato
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-auditoria-${{ github.run_number }}
+          path: casa_decoracao/data/publication_gate_report.json
+          if-no-files-found: warn
+          retention-days: 14
