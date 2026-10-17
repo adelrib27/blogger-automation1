@@ -16,10 +16,8 @@ DANGEROUS_INSTRUCTION_PATTERNS = (
     r"\b(?:corte|solde|esmerilhe)\b.{0,60}\b(?:metal|chassi|carroceria|pe[cç]a)\b",
     r"\b(?:ligue|conecte|ponte)\b.{0,60}\b(?:bateria|rede el[eé]trica|tomada)\b",
 )
-# Não usa "A" isolado para amperes porque a checagem case-insensitive confundiria
-# o artigo/preposição "a" em frases comuns. Preferimos amp/ampere quando escrito.
 NUMERIC_SPEC = re.compile(r"\b\d+(?:[.,]\d+)?\s*(?:kg|g|cm|mm|m|l|ml|w|v|ah|mah|nm|psi|bar|%|hz|rpm|amp|ampere|amperes)\b", re.I)
-PROMPT_LEAKAGE = ("regras obrigatorias", "responda somente", "fragmento html", "pauta:", "rascunho atual:")
+PROMPT_LEAKAGE = ("regras obrigatorias", "responda somente", "fragmento html", "rascunho atual")
 
 
 def normalized(value):
@@ -28,6 +26,10 @@ def normalized(value):
     value = re.sub(r"<[^>]+>", " ", value)
     value = re.sub(r"[^a-z0-9]+", " ", value)
     return re.sub(r"\s+", " ", value).strip()
+
+
+def compact(value):
+    return re.sub(r"\s+", "", normalized(value))
 
 
 def plain_text(value):
@@ -93,11 +95,11 @@ def quality(article):
         if re.search(pattern, folded, re.I):
             reasons.append("instrucao_procedimental_de_alto_risco"); break
 
-    allowed_specs = normalized(" ".join([str(article.get("product") or ""), str(article.get("topic") or "")]))
+    allowed_specs = compact(" ".join([str(article.get("product") or ""), str(article.get("topic") or "")]))
     for match in NUMERIC_SPEC.finditer(text):
-        spec = normalized(match.group(0))
+        spec = compact(match.group(0))
         if spec and spec not in allowed_specs:
-            reasons.append(f"especificacao_numerica_nao_confirmada:{spec}"); break
+            reasons.append(f"especificacao_numerica_nao_confirmada:{normalized(match.group(0))}"); break
 
     if re.search(r"\b(?:compat[ií]vel com todos|compatibilidade universal|serve em qualquer)\b", folded, re.I):
         reasons.append("compatibilidade_universal_nao_confirmada")
