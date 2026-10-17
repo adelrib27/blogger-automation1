@@ -1,0 +1,30 @@
+import json
+from pathlib import Path
+from quality_gate import quality
+
+ROOT = Path(__file__).resolve().parents[2]
+QUEUE = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
+GENERATED = ROOT / "oficina_garagem" / "data" / "generated"
+OUT = ROOT / "oficina_garagem" / "data" / "release_audit.json"
+
+
+def load(path, default):
+    try: return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError): return default
+
+
+def main():
+    doc = load(QUEUE,{})
+    rows=[]
+    for item in doc.get("items") or []:
+        path = GENERATED / f"{int(item.get('id') or 0):03d}.json"
+        article = load(path,{}) if path.exists() else {}
+        gate = quality(article) if article else {"status":"NOT_GENERATED","reasons":["arquivo_gerado_ausente"],"warnings":[],"metrics":{}}
+        rows.append({"id":item.get("id"),"product":item.get("product"),"queue_status":item.get("status"),"wordpress_post_id":item.get("wordpress_post_id"),"gate":gate})
+    summary={"total":len(rows),"draft_ready":sum(r["gate"]["status"]=="DRAFT_READY" for r in rows),"human_review":sum(r["gate"]["status"]=="HUMAN_REVIEW_REQUIRED" for r in rows),"rejected":sum(r["gate"]["status"]=="REJECTED" for r in rows),"not_generated":sum(r["gate"]["status"]=="NOT_GENERATED" for r in rows)}
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(json.dumps({"project":"Oficina & Garagem","live_publish_enabled":False,"summary":summary,"items":rows},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    print(json.dumps(summary, ensure_ascii=False))
+
+
+if __name__ == "__main__": main()
