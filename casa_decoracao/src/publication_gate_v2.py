@@ -3,6 +3,7 @@ import re
 from quality_gate import cannibalization_reasons, draft_quality, normalized, plain_text
 
 QUALITY_GATE_VERSION = 2
+GENERATION_POLICY_VERSION = 2
 
 EXPERIENCE_CLAIM_PATTERNS = (
     r"\b(?:n[oó]s\s+)?testamos\b",
@@ -16,6 +17,9 @@ HIGH_RISK_CLAIM_PATTERNS = (
     ("alegacao_antialergica", r"\bantial[eé]rgic[oa]s?\b"),
     ("alegacao_antisseptica", r"\bantiss[eé]ptic[oa]s?\b"),
     ("alegacao_antibacteriana", r"\bantibacterian[oa]s?\b"),
+    ("alegacao_acaros", r"\b[aá]caros?\b"),
+    ("alegacao_saude_respiratoria", r"\bsa[uú]de\s+respirat[oó]ria\b"),
+    ("alegacao_sono_saudavel", r"\bsono\s+mais\s+saud[aá]vel\b"),
     ("alegacao_microorganismos", r"\b(?:mata|elimina|remove)\s+(?:bact[eé]rias|germes|v[ií]rus|fungos)\b"),
     ("alegacao_saude", r"\b(?:cura|trata|previne|alivia|reduz)\s+(?:a\s+)?(?:dor|dores|alergia|alergias|inflama[cç][aã]o)\b"),
     ("alegacao_postura", r"\b(?:corrige|melhora)\s+(?:a\s+)?postura\b"),
@@ -61,6 +65,9 @@ def publication_quality_v2(article, existing_posts=None, current_slug=""):
     reasons.extend(cannibalization_reasons(article, existing_posts or [], current_slug=current_slug))
     reasons.extend(publication_risk_reasons(article))
 
+    if int(article.get("generation_policy_version") or 0) != GENERATION_POLICY_VERSION:
+        reasons.append("geracao_anterior_ao_gate_v2")
+
     wc = int(base["metrics"]["word_count"])
     h2_count = int(base["metrics"]["h2_count"])
     if wc < 850:
@@ -83,6 +90,7 @@ def publication_quality_v2(article, existing_posts=None, current_slug=""):
     return {
         "status": "QUALITY_APPROVED" if not reasons else "REVIEW_REQUIRED",
         "quality_gate_version": QUALITY_GATE_VERSION,
+        "generation_policy_version": GENERATION_POLICY_VERSION,
         "reasons": reasons,
         "metrics": base["metrics"],
     }
