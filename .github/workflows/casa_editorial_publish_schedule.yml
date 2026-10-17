@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       wordpress_status:
-        description: "Status WordPress (draft ou publish)"
+        description: "Status WordPress (draft ou publish; publish só passa com QUALITY_APPROVED)"
         required: false
         default: "draft"
       publish_limit:
@@ -40,8 +40,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Verificar sintaxe
-        run: python -m py_compile casa_decoracao/src/publish_generated.py
+      - name: Verificar sintaxe e quality gate
+        run: |
+          python -m py_compile casa_decoracao/src/quality_gate.py
+          python -m py_compile casa_decoracao/src/publish_generated.py
 
       - name: Verificar credenciais exclusivas do novo blog
         id: auth
@@ -53,7 +55,7 @@ jobs:
             echo "ready=1" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Enviar lote ao Casa e Decoração
+      - name: Enviar lote validado ao Casa e Decoração
         if: steps.auth.outputs.ready == '1'
         run: python -u casa_decoracao/src/publish_generated.py
 
