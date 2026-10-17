@@ -1,0 +1,44 @@
+<!-- wp:template-part {"slug":"header"} /-->
+
+<!-- wp:group {"tagName":"main","align":"full","className":"cd-source-home","layout":{"type":"default"}} -->
+<main class="wp-block-group alignfull cd-source-home">
+
+<!-- wp:group {"align":"wide","className":"cd-source-hero-wrap","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignwide cd-source-hero-wrap">
+<!-- wp:query {"query":{"perPage":6,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false,"taxQuery":null,"parents":[]},"className":"cd-source-hero-query"} -->
+<div class="wp-block-query cd-source-hero-query"><!-- wp:post-template -->
+<!-- wp:columns {"className":"cd-source-hero","verticalAlignment":"stretch"} -->
+<div class="wp-block-columns are-vertically-aligned-stretch cd-source-hero"><!-- wp:column {"verticalAlignment":"stretch","width":"64%","className":"cd-source-hero-media"} -->
+<div class="wp-block-column is-vertically-aligned-stretch cd-source-hero-media" style="flex-basis:64%"><!-- wp:post-featured-image {"isLink":true,"aspectRatio":"4/3","className":"cd-source-hero-image"} /--></div><!-- /wp:column -->
+<!-- wp:column {"verticalAlignment":"stretch","width":"36%","className":"cd-source-hero-copy"} -->
+<div class="wp-block-column is-vertically-aligned-stretch cd-source-hero-copy" style="flex-basis:36%"><!-- wp:post-terms {"term":"category","className":"cd-source-kicker"} /--><!-- wp:post-title {"level":1,"isLink":true,"className":"cd-source-hero-title"} /--><!-- wp:post-excerpt {"moreText":"","showMoreOnNewLine":false,"excerptLength":24,"className":"cd-source-hero-excerpt"} /--><!-- wp:read-more {"content":"Ler matéria →","className":"cd-source-readmore"} /--></div><!-- /wp:column --></div><!-- /wp:columns -->
+<!-- /wp:post-template --></div><!-- /wp:query -->
+
+</div><!-- /wp:group -->
+
+<!-- wp:group {"align":"wide","className":"cd-source-stories","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignwide cd-source-stories"><!-- wp:html --><div class="cd-source-section-heading"><span>Inspirações</span><h2>Soluções para sua oficina e garagem</h2></div><!-- /wp:html -->
+<!-- wp:query {"query":{"perPage":3,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false,"taxQuery":null,"parents":[]},"className":"cd-source-stories-query"} -->
+<div class="wp-block-query cd-source-stories-query"><!-- wp:post-template {"layout":{"type":"grid","columnCount":3}} -->
+<!-- wp:group {"className":"cd-source-story-card","layout":{"type":"constrained"}} -->
+<div class="wp-block-group cd-source-story-card"><!-- wp:post-featured-image {"isLink":true,"aspectRatio":"9/12","className":"cd-source-story-image"} /--><!-- wp:post-terms {"term":"category","className":"cd-source-story-cat"} /--><!-- wp:post-title {"level":3,"isLink":true,"className":"cd-source-story-title"} /--></div><!-- /wp:group -->
+<!-- /wp:post-template --></div><!-- /wp:query -->
+</div><!-- /wp:group -->
+
+
+
+<!-- wp:group {"align":"wide","className":"cd-source-latest","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignwide cd-source-latest"><!-- wp:html --><div class="cd-source-section-heading cd-source-section-heading-left"><span>Conteúdo novo</span><h2>Últimas matérias</h2></div><!-- /wp:html -->
+<!-- wp:query {"query":{"perPage":6,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false,"taxQuery":null,"parents":[]},"className":"cd-source-latest-query"} -->
+<div class="wp-block-query cd-source-latest-query"><!-- wp:post-template -->
+<!-- wp:columns {"className":"cd-source-list-item","verticalAlignment":"center"} -->
+<div class="wp-block-columns are-vertically-aligned-center cd-source-list-item"><!-- wp:column {"verticalAlignment":"center","width":"34%"} --><div class="wp-block-column is-vertically-aligned-center" style="flex-basis:34%"><!-- wp:post-featured-image {"isLink":true,"aspectRatio":"4/3","className":"cd-source-list-image"} /--></div><!-- /wp:column --><!-- wp:column {"verticalAlignment":"center"} --><div class="wp-block-column is-vertically-aligned-center"><!-- wp:post-terms {"term":"category","className":"cd-source-list-cat"} /--><!-- wp:post-title {"level":2,"isLink":true,"className":"cd-source-list-title"} /--><!-- wp:post-excerpt {"moreText":"","showMoreOnNewLine":false,"excerptLength":26,"className":"cd-source-list-excerpt"} /--></div><!-- /wp:column --></div><!-- /wp:columns -->
+<!-- /wp:post-template --></div><!-- /wp:query -->
+</div><!-- /wp:group -->
+
+<!-- wp:group {"align":"full","className":"cd-source-category-band","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignfull cd-source-category-band"><!-- wp:html --><div class="cd-source-category-inner"><a href="/category/ferramentas/"><strong>Ferramentas</strong><span>Escolha e uso</span></a><a href="/category/organizacao-de-garagem/"><strong>Organização de Garagem</strong><span>Cada ferramenta no lugar</span></a><a href="/category/limpeza-e-conservacao/"><strong>Limpeza e Conservação</strong><span>Cuidado e conservação</span></a><a href="/category/acessorios-automotivos/"><strong>Acessórios Automotivos</strong><span>Compatibilidade primeiro</span></a><a href="/category/seguranca-e-protecao/"><strong>Segurança e Proteção</strong><span>Trabalho bem feito</span></a></div><!-- /wp:html --></div><!-- /wp:group -->
+
+</main><!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer"} /-->
