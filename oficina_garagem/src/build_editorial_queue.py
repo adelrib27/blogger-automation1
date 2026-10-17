@@ -10,6 +10,30 @@ CONFIG = ROOT / "oficina_garagem" / "config" / "shopee_oportunidades.json"
 OUT = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
 MAX_PER_KEYWORD = 1
 
+KEYWORD_LABELS = {
+    "parafusadeira": "Parafusadeira",
+    "furadeira": "Furadeira",
+    "jogo de chaves": "Jogo de chaves",
+    "jogo de soquetes": "Jogo de soquetes",
+    "alicate universal": "Alicate universal",
+    "multimetro digital": "Multímetro digital",
+    "compressor de ar portatil": "Compressor de ar portátil",
+    "torquimetro": "Torquímetro",
+    "suporte celular carro": "Suporte de celular para carro",
+    "aspirador automotivo": "Aspirador automotivo",
+    "organizador porta malas": "Organizador de porta-malas",
+    "painel ferramentas": "Painel para ferramentas",
+    "caixa ferramentas": "Caixa de ferramentas",
+    "estante metalica garagem": "Estante metálica para garagem",
+    "maleta ferramentas": "Maleta de ferramentas",
+    "pano microfibra automotivo": "Pano de microfibra automotivo",
+    "escova limpeza automotiva": "Escova de limpeza automotiva",
+    "lavadora alta pressao": "Lavadora de alta pressão",
+    "oculos de protecao": "Óculos de proteção",
+    "luva de protecao": "Luva de proteção",
+    "protetor auricular": "Protetor auricular",
+}
+
 
 def load(path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -45,14 +69,19 @@ def display_category(raw):
     }.get(raw, raw)
 
 
-def topic_for(product, keyword, category):
+def keyword_label(keyword):
+    return KEYWORD_LABELS.get(norm(keyword), str(keyword).strip().capitalize())
+
+
+def topic_for(keyword, category):
+    label = keyword_label(keyword)
     if category == "Segurança e Proteção":
-        return f"{product}: o que verificar em especificações, certificações e adequação antes de comprar"
+        return f"{label}: o que verificar em especificações, certificações e adequação antes de comprar"
     if any(term in norm(keyword) for term in ("torquimetro", "multimetro", "compressor", "lavadora")):
-        return f"{product}: critérios para comparar modelos sem assumir especificações não confirmadas"
+        return f"{label}: critérios para comparar modelos sem assumir especificações não confirmadas"
     if category in {"Organização de Garagem", "Acessórios Automotivos"}:
-        return f"{product}: o que medir e conferir para escolher um modelo adequado"
-    return f"{product}: o que conferir antes de comprar e quais limitações considerar"
+        return f"{label}: o que medir e conferir para escolher um modelo adequado"
+    return f"{label}: o que conferir antes de comprar e quais limitações considerar"
 
 
 def main():
@@ -98,8 +127,9 @@ def main():
             "affiliate_link": link,
             "shop_name": row.get("shopName"),
             "source_keyword": keyword,
+            "editorial_label": keyword_label(keyword),
             "category": category,
-            "topic": topic_for(product, keyword, category),
+            "topic": topic_for(keyword, category),
             "opportunity_score": row.get("opportunityScore"),
             "priority_tier": row.get("priorityTier"),
             "status": "PENDING",
@@ -112,7 +142,7 @@ def main():
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
-        "version": 3,
+        "version": 4,
         "project": "Oficina & Garagem",
         "source": "Shopee intent_report v2.3",
         "max_per_keyword": MAX_PER_KEYWORD,
