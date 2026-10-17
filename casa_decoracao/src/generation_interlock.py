@@ -1,3 +1,4 @@
+from html.parser import HTMLParser
 from pathlib import Path
 
 import generate_articles as generator
@@ -8,10 +9,81 @@ QUEUE_PATH = ROOT / "casa_decoracao" / "data" / "editorial_queue_100.json"
 GENERATED_DIR = ROOT / "casa_decoracao" / "data" / "generated"
 
 _original_build_article = generator.build_article
+_original_prompt_for = generator.prompt_for
+_original_expansion_prompt = generator.expansion_prompt
+
+GLOBAL_V2_RULES = """
+
+BLINDAGEM EDITORIAL V2 — REGRAS QUE TÊM PRIORIDADE:
+- Não atribua ao produto propriedades antialérgicas, antibacterianas, antissépticas, antimicrobianas, antiácaros ou benefícios para saúde respiratória, sono, dor ou postura.
+- Não use frases que insinuem prevenção, tratamento, cura, alívio, proteção clínica ou eliminação de germes, bactérias, vírus ou fungos.
+- Não diga nem sugira que nós testamos, usamos, comprovamos ou tivemos experiência prática com o produto.
+- Não invente números, faixas ou frequências: medidas, gramatura, capacidade, peso, porcentagem, potência, voltagem, duração, quantidade de lavagens ou periodicidade de cuidados. Se a pauta pede esse tipo de dado, ensine COMO conferir no anúncio, etiqueta, ficha técnica ou manual, sem fornecer um valor não confirmado.
+- Não transforme características genéricas da categoria em características confirmadas do produto citado.
+- Não faça prescrição de frequência de lavagem, higienização ou troca; remeta às instruções do fabricante quando isso depender de material, uso ou conservação.
+- Use somente HTML bem formado. Feche todas as tags e limite o corpo editorial a <p>, <h2>, <h3>, <ul>, <li>, <strong> e <em>, sem atributos, links, tabelas ou estilos.
+- Mantenha entre 900 e 1300 palavras e pelo menos 4 H2 distintos e úteis.
+"""
+
+ALLOWED_EDITORIAL_TAGS = {"p", "h2", "h3", "ul", "li", "strong", "em"}
+
+
+class StrictEditorialHTMLParser(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack = []
+        self.errors = []
+
+    def handle_starttag(self, tag, attrs):
+        tag = tag.casefold()
+        if tag not in ALLOWED_EDITORIAL_TAGS:
+            self.errors.append(f"tag_nao_permitida:{tag}")
+            return
+        if attrs:
+            self.errors.append(f"atributos_nao_permitidos:{tag}")
+        self.stack.append(tag)
+
+    def handle_startendtag(self, tag, attrs):
+        self.errors.append(f"tag_autofechada_nao_permitida:{tag.casefold()}")
+
+    def handle_endtag(self, tag):
+        tag = tag.casefold()
+        if tag not in ALLOWED_EDITORIAL_TAGS:
+            self.errors.append(f"fechamento_nao_permitido:{tag}")
+            return
+        if not self.stack:
+            self.errors.append(f"fechamento_sem_abertura:{tag}")
+            return
+        if self.stack[-1] != tag:
+            self.errors.append(f"aninhamento_invalido:{self.stack[-1]}->{tag}")
+            return
+        self.stack.pop()
+
+
+def validate_editorial_html(fragment):
+    parser = StrictEditorialHTMLParser()
+    try:
+        parser.feed(str(fragment or ""))
+        parser.close()
+    except Exception as exc:
+        raise RuntimeError(f"HTML editorial inválido: {exc}") from exc
+    if parser.stack:
+        parser.errors.append("tags_sem_fechamento:" + ",".join(parser.stack[-5:]))
+    if parser.errors:
+        raise RuntimeError("HTML editorial inválido: " + ", ".join(sorted(set(parser.errors))[:8]))
+
+
+def hardened_prompt_for(item):
+    return GLOBAL_V2_RULES + "\n" + _original_prompt_for(item)
+
+
+def hardened_expansion_prompt(item, draft_html):
+    return GLOBAL_V2_RULES + "\n" + _original_expansion_prompt(item, draft_html)
 
 
 def hardened_build_article(item, raw_html):
     article = _original_build_article(item, raw_html)
+    validate_editorial_html(article.get("editorial_html"))
     risks = publication_risk_reasons(article)
     if risks:
         raise RuntimeError("publication risk gate: " + ", ".join(risks))
@@ -74,6 +146,8 @@ def recover_transient_rate_limits():
 
 
 if __name__ == "__main__":
+    generator.prompt_for = hardened_prompt_for
+    generator.expansion_prompt = hardened_expansion_prompt
     generator.build_article = hardened_build_article
     migrate_old_automated_drafts()
     generator.main()
