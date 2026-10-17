@@ -32,11 +32,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Validar código da auditoria
+      - name: Validar código e interlocks
         run: |
           python -m py_compile casa_decoracao/src/quality_gate.py
           python -m py_compile casa_decoracao/src/publication_gate_v2.py
+          python -m py_compile casa_decoracao/src/generation_interlock.py
+          python -m py_compile casa_decoracao/src/publication_interlock.py
           python -m py_compile casa_decoracao/src/audit_release_candidates.py
+          python -m py_compile casa_decoracao/src/generate_articles.py
           python -m py_compile casa_decoracao/src/publish_generated.py
 
       - name: Auditar candidatos sem gerar e sem publicar
