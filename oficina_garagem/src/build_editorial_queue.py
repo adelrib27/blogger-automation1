@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "oficina_garagem" / "data" / "shopee_oportunidades" / "intent_report.json"
 CONFIG = ROOT / "oficina_garagem" / "config" / "shopee_oportunidades.json"
 OUT = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
-MAX_PER_KEYWORD = 2
+MAX_PER_KEYWORD = 1
 
 
 def load(path):
@@ -23,8 +23,6 @@ def norm(value):
 
 def product_fingerprint(value):
     value = norm(value)
-    # Quantidades e medidas variam entre anúncios do mesmo produto; removê-las
-    # ajuda a não criar pautas quase idênticas a partir de ofertas duplicadas.
     value = re.sub(r"\b\d+(?:[.,]\d+)?(?:v|w|mah|ah|mm|cm|m|kg|g|l|ml|psi|bar|nm|pecas|peças)?\b", " ", value)
     noise = {"oferta", "premium", "profissional", "original", "novo", "super", "mega", "kit"}
     tokens = [t for t in value.split() if t not in noise]
@@ -114,7 +112,7 @@ def main():
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
-        "version": 2,
+        "version": 3,
         "project": "Oficina & Garagem",
         "source": "Shopee intent_report v2.3",
         "max_per_keyword": MAX_PER_KEYWORD,
