@@ -1347,7 +1347,7 @@
       "product": "Cobre Leito Piquet Premium",
       "affiliate_link": "https://vt.tiktok.com/ZS9Do9Ym1btGC-yNuAf/",
       "category": "Cama, Mesa e Banho",
-      "status": "WORDPRESS_DRAFT",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -1381,7 +1381,8 @@
         "quality_reasons": [
           "imagem_destacada_ausente"
         ]
-      }
+      },
+      "last_error": "Workers AI imagem HTTP 400: {\"errors\":[{\"message\":\"AiError: Bad input: Error: Additional or unevaluated properties '/seed' at '/' not allowed (e11de323-cc54-406f-9c42-3d50e7ac6fa6)\",\"code\":5006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 58,
@@ -1758,19 +1759,19 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
         "metrics": {
-          "word_count": 821,
+          "word_count": 919,
           "h2_count": 4,
           "seo_title_length": 58,
           "meta_description_length": 153,
           "internal_links": 1
         }
       },
-      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:113, mesmo_produto_mesma_intencao_post:7, mesmo_produto_mesma_intencao_post:96"
+      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:113, mesmo_produto_mesma_intencao_post:114, mesmo_produto_mesma_intencao_post:7, mesmo_produto_mesma_intencao_post:96"
     },
     {
       "id": 79,
@@ -1787,19 +1788,19 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
         "metrics": {
-          "word_count": 793,
+          "word_count": 760,
           "h2_count": 4,
           "seo_title_length": 52,
           "meta_description_length": 155,
           "internal_links": 1
         }
       },
-      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:113, mesmo_produto_mesma_intencao_post:7, mesmo_produto_mesma_intencao_post:96"
+      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:113, mesmo_produto_mesma_intencao_post:114, mesmo_produto_mesma_intencao_post:7, mesmo_produto_mesma_intencao_post:96"
     },
     {
       "id": 80,
@@ -1807,7 +1808,7 @@
       "product": "Protetor Impermeável de Colchão Matelado",
       "affiliate_link": "https://vt.tiktok.com/ZS9Do9mSCxrBa-2o155/",
       "category": "Cama, Mesa e Banho",
-      "status": "WORDPRESS_DRAFT",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -1841,7 +1842,8 @@
         "quality_reasons": [
           "imagem_destacada_ausente"
         ]
-      }
+      },
+      "last_error": "Workers AI imagem HTTP 400: {\"errors\":[{\"message\":\"AiError: Bad input: Error: Additional or unevaluated properties '/seed' at '/' not allowed (7da6c4e2-695f-4f4b-8b9a-ff42e6a8ff61)\",\"code\":5006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 81,
@@ -1858,12 +1860,12 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
         "metrics": {
-          "word_count": 788,
+          "word_count": 837,
           "h2_count": 4,
           "seo_title_length": 56,
           "meta_description_length": 145,
@@ -2018,7 +2020,35 @@
       "product": "Mini Climatizador de Ar Portátil",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
       "category": "Sala",
-      "status": "QUARANTINE",
+      "status": "GENERATED",
+      "intent": "informational_commercial",
+      "rules": {
+        "unique_search_intent": true,
+        "avoid_keyword_cannibalization": true,
+        "affiliate_rel": "nofollow sponsored",
+        "no_invented_product_specs": true,
+        "no_fake_physical_testing": true
+      },
+      "generation_attempts": 2,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 787,
+          "h2_count": 4,
+          "seo_title_length": 53,
+          "meta_description_length": 153,
+          "internal_links": 1
+        }
+      }
+    },
+    {
+      "id": 88,
+      "topic": "onde posicionar um climatizador compacto",
+      "product": "Mini Climatizador de Ar Portátil",
+      "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
+      "category": "Sala",
+      "status": "GENERATED",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2028,22 +2058,16 @@
         "no_fake_physical_testing": true
       },
       "generation_attempts": 1,
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 401: Unauthorized"
-    },
-    {
-      "id": 88,
-      "topic": "onde posicionar um climatizador compacto",
-      "product": "Mini Climatizador de Ar Portátil",
-      "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
-      "category": "Sala",
-      "status": "PENDING",
-      "intent": "informational_commercial",
-      "rules": {
-        "unique_search_intent": true,
-        "avoid_keyword_cannibalization": true,
-        "affiliate_rel": "nofollow sponsored",
-        "no_invented_product_specs": true,
-        "no_fake_physical_testing": true
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 1260,
+          "h2_count": 5,
+          "seo_title_length": 59,
+          "meta_description_length": 152,
+          "internal_links": 1
+        }
       }
     },
     {
@@ -2052,7 +2076,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "PENDING",
+      "status": "GENERATED",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2060,6 +2084,18 @@
         "affiliate_rel": "nofollow sponsored",
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
+      },
+      "generation_attempts": 1,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 753,
+          "h2_count": 4,
+          "seo_title_length": 53,
+          "meta_description_length": 156,
+          "internal_links": 1
+        }
       }
     },
     {
@@ -2068,7 +2104,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "PENDING",
+      "status": "GENERATED",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2076,6 +2112,18 @@
         "affiliate_rel": "nofollow sponsored",
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
+      },
+      "generation_attempts": 1,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 818,
+          "h2_count": 4,
+          "seo_title_length": 57,
+          "meta_description_length": 155,
+          "internal_links": 1
+        }
       }
     },
     {
@@ -2084,7 +2132,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "PENDING",
+      "status": "GENERATED",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2092,6 +2140,18 @@
         "affiliate_rel": "nofollow sponsored",
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
+      },
+      "generation_attempts": 1,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 762,
+          "h2_count": 4,
+          "seo_title_length": 60,
+          "meta_description_length": 158,
+          "internal_links": 1
+        }
       }
     },
     {
@@ -2100,7 +2160,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "PENDING",
+      "status": "GENERATED",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2108,6 +2168,18 @@
         "affiliate_rel": "nofollow sponsored",
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
+      },
+      "generation_attempts": 1,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 1206,
+          "h2_count": 6,
+          "seo_title_length": 57,
+          "meta_description_length": 151,
+          "internal_links": 1
+        }
       }
     },
     {
@@ -2116,7 +2188,7 @@
       "product": "Escova Elétrica de Limpeza 9 em 1",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmJW3UMxg-1X2J5/",
       "category": "Limpeza e Utilidades",
-      "status": "PENDING",
+      "status": "GENERATED",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2124,6 +2196,18 @@
         "affiliate_rel": "nofollow sponsored",
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
+      },
+      "generation_attempts": 1,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 1054,
+          "h2_count": 6,
+          "seo_title_length": 42,
+          "meta_description_length": 155,
+          "internal_links": 1
+        }
       }
     },
     {
