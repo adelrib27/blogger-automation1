@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "description": "Regras semânticas do Oficina & Garagem. Evitam peças avulsas, brinquedos, acessórios incompatíveis e falsos positivos.",
+  "rules": {
+    "parafusadeira": {"require_groups": [["parafusadeira"]], "block_phrases": ["bit avulso", "bateria para parafusadeira", "carregador para parafusadeira", "maleta vazia", "brinquedo"]},
+    "furadeira": {"require_groups": [["furadeira"]], "block_phrases": ["broca avulsa", "mandril avulso", "adaptador para furadeira", "suporte para furadeira", "brinquedo"]},
+    "jogo de chaves": {"require_groups": [["jogo", "kit"], ["chave", "chaves"]], "block_phrases": ["chaveiro", "chave de porta", "brinquedo"]},
+    "jogo de soquetes": {"require_groups": [["soquete", "soquetes"], ["jogo", "kit", "catraca"]], "block_phrases": ["soquete lampada", "soquete lâmpada", "soquete avulso"]},
+    "alicate universal": {"require_groups": [["alicate"], ["universal"]], "block_phrases": ["mini alicate", "chaveiro", "brinquedo"]},
+    "multimetro digital": {"require_groups": [["multimetro", "multímetro"], ["digital"]], "block_phrases": ["ponta de prova avulsa", "cabo para multimetro", "estojo para multimetro"]},
+    "compressor de ar portatil": {"require_groups": [["compressor", "inflador"], ["portatil", "portátil", "pneu", "pneus"]], "block_phrases": ["mangueira avulsa", "bico avulso", "filtro para compressor"]},
+    "torquimetro": {"require_groups": [["torquimetro", "torquímetro"]], "block_phrases": ["adaptador avulso", "soquete avulso", "estojo vazio"]},
+    "suporte celular carro": {"require_groups": [["suporte"], ["celular", "smartphone"], ["carro", "automotivo", "veicular"]], "block_phrases": ["suporte bicicleta", "suporte moto", "capa celular"]},
+    "aspirador automotivo": {"require_groups": [["aspirador"], ["automotivo", "carro", "veicular"]], "block_phrases": ["filtro avulso", "bico avulso", "mangueira avulsa"]},
+    "organizador porta malas": {"require_groups": [["organizador"], ["porta malas", "porta-malas", "carro", "automotivo"]], "block_phrases": ["organizador maquiagem", "organizador cozinha"]},
+    "painel ferramentas": {"require_groups": [["painel", "pegboard"], ["ferramenta", "ferramentas", "oficina"]], "block_phrases": ["painel decorativo", "painel festa"]},
+    "caixa ferramentas": {"require_groups": [["caixa", "maleta"], ["ferramenta", "ferramentas"]], "block_phrases": ["caixa de som", "caixa organizadora maquiagem"]},
+    "estante metalica garagem": {"require_groups": [["estante", "prateleira"], ["metal", "metalica", "metálica", "aço"], ["garagem", "oficina", "ferramentas", "estoque"]], "block_phrases": ["miniatura", "estante brinquedo"]},
+    "maleta ferramentas": {"require_groups": [["maleta"], ["ferramenta", "ferramentas"]], "block_phrases": ["maleta maquiagem", "maleta escolar", "maleta vazia"]},
+    "pano microfibra automotivo": {"require_groups": [["pano", "toalha"], ["microfibra"], ["automotivo", "carro", "detalhamento"]], "block_phrases": ["toalha banho", "pano cozinha"]},
+    "escova limpeza automotiva": {"require_groups": [["escova", "pincel"], ["automotivo", "carro", "detalhamento", "rodas"]], "block_phrases": ["escova de dente", "escova cabelo"]},
+    "lavadora alta pressao": {"require_groups": [["lavadora"], ["alta pressao", "alta pressão"]], "block_phrases": ["bico avulso", "mangueira avulsa", "adaptador avulso"]},
+    "oculos de protecao": {"require_groups": [["oculos", "óculos"], ["protecao", "proteção", "seguranca", "segurança"]], "block_phrases": ["oculos de sol", "óculos de sol", "fantasia"]},
+    "luva de protecao": {"require_groups": [["luva", "luvas"], ["protecao", "proteção", "trabalho", "mecanica", "mecânica"]], "block_phrases": ["luva inverno", "luva ciclismo", "luva academia"]},
+    "protetor auricular": {"require_groups": [["protetor", "abafador"], ["auricular", "ouvido", "ruido", "ruído"]], "block_phrases": ["fone de ouvido", "headphone", "brinquedo"]}
+  }
+}
