@@ -11,14 +11,12 @@ on:
         description: "Quantidade máxima por execução (1-20)"
         required: false
         default: "5"
-  schedule:
-    - cron: "48 * * * *"
 
 permissions:
   contents: write
 
 concurrency:
-  group: casa-decoracao-publicacao-editorial
+  group: casa-decoracao-fluxo-editorial
   cancel-in-progress: false
 
 jobs:
