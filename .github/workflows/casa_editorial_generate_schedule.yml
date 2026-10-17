@@ -25,6 +25,7 @@ jobs:
       CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
       CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
       CASA_WORDPRESS_STATUS: draft
+      CASA_LIVE_PUBLISH_ENABLED: "false"
       CASA_GENERATION_BATCH_SIZE: "10"
       CASA_PUBLISH_LIMIT: "5"
       CASA_IMAGE_MODEL: "@cf/leonardo/lucid-origin"
@@ -42,6 +43,9 @@ jobs:
         run: |
           python -m py_compile casa_decoracao/src/build_editorial_queue.py
           python -m py_compile casa_decoracao/src/quality_gate.py
+          python -m py_compile casa_decoracao/src/publication_gate_v2.py
+          python -m py_compile casa_decoracao/src/publication_interlock.py
+          python -m py_compile casa_decoracao/src/audit_release_candidates.py
           python -m py_compile casa_decoracao/src/generate_articles.py
           python -m py_compile casa_decoracao/src/publish_generated.py
 
@@ -56,7 +60,11 @@ jobs:
 
       - name: Sincronizar somente rascunhos validados no WordPress
         if: env.CASA_WORDPRESS_USERNAME != '' && env.CASA_WORDPRESS_APP_PASSWORD != ''
-        run: python -u casa_decoracao/src/publish_generated.py
+        run: python -u casa_decoracao/src/publication_interlock.py
+
+      - name: Auditar candidatos para publicação real sem publicar
+        if: always()
+        run: python -u casa_decoracao/src/audit_release_candidates.py
 
       - name: Verificar saúde pública do novo blog
         if: always()
