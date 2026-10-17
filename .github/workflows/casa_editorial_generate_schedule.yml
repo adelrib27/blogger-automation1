@@ -27,6 +27,7 @@ jobs:
       CASA_WORDPRESS_STATUS: draft
       CASA_GENERATION_BATCH_SIZE: "10"
       CASA_PUBLISH_LIMIT: "5"
+      CASA_IMAGE_MODEL: "@cf/leonardo/lucid-origin"
 
     steps:
       - name: Baixar repositório
