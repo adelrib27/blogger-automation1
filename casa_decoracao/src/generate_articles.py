@@ -299,10 +299,28 @@ def quarantine_existing_unsafe_health_articles(items_by_id):
     return quarantined
 
 
+def recover_prompt_leakage_false_positives(items_by_id):
+    recovered = 0
+    for current in items_by_id.values():
+        if current.get("status") != "BLOCKED":
+            continue
+        if str(current.get("last_error") or "").strip() != "quality gate: vazamento_de_prompt":
+            continue
+        current["status"] = "QUARANTINE"
+        current["generation_attempts"] = 0
+        current["last_error"] = "reprocessamento automático após correção do detector de vazamento de prompt"
+        recovered += 1
+    return recovered
+
+
 def main():
     queue = load_json(QUEUE_PATH, {})
     items = queue.get("items") or []
     by_id = {int(x["id"]): x for x in items}
+
+    recovered = recover_prompt_leakage_false_positives(by_id)
+    if recovered:
+        print(f"Recuperação do quality gate: {recovered} pauta(s) retornaram à quarentena para nova validação.")
 
     reviewed = quarantine_existing_unsafe_health_articles(by_id)
     if reviewed:
