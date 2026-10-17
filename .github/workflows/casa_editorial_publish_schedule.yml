@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       wordpress_status:
-        description: "Status WordPress (draft ou publish; publish só passa com QUALITY_APPROVED)"
+        description: "Status WordPress (draft ou publish; publish permanece bloqueado até liberação explícita)"
         required: false
         default: "draft"
       publish_limit:
@@ -29,6 +29,7 @@ jobs:
       CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
       CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
       CASA_WORDPRESS_STATUS: ${{ github.event_name == 'workflow_dispatch' && inputs.wordpress_status || 'draft' }}
+      CASA_LIVE_PUBLISH_ENABLED: "false"
       CASA_PUBLISH_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_limit || '5' }}
 
     steps:
@@ -43,6 +44,9 @@ jobs:
       - name: Verificar sintaxe e quality gate
         run: |
           python -m py_compile casa_decoracao/src/quality_gate.py
+          python -m py_compile casa_decoracao/src/publication_gate_v2.py
+          python -m py_compile casa_decoracao/src/publication_interlock.py
+          python -m py_compile casa_decoracao/src/audit_release_candidates.py
           python -m py_compile casa_decoracao/src/publish_generated.py
 
       - name: Verificar credenciais exclusivas do novo blog
@@ -55,9 +59,13 @@ jobs:
             echo "ready=1" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Enviar lote validado ao Casa e Decoração
+      - name: Sincronizar lote somente sob a trava de publicação
         if: steps.auth.outputs.ready == '1'
-        run: python -u casa_decoracao/src/publish_generated.py
+        run: python -u casa_decoracao/src/publication_interlock.py
+
+      - name: Auditar candidatos para publicação real sem publicar
+        if: always() && steps.auth.outputs.ready == '1'
+        run: python -u casa_decoracao/src/audit_release_candidates.py
 
       - name: Salvar somente estado do Casa e Decoração
         if: always() && steps.auth.outputs.ready == '1'
