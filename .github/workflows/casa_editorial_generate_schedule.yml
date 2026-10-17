@@ -44,6 +44,7 @@ jobs:
           python -m py_compile casa_decoracao/src/build_editorial_queue.py
           python -m py_compile casa_decoracao/src/quality_gate.py
           python -m py_compile casa_decoracao/src/publication_gate_v2.py
+          python -m py_compile casa_decoracao/src/generation_interlock.py
           python -m py_compile casa_decoracao/src/publication_interlock.py
           python -m py_compile casa_decoracao/src/audit_release_candidates.py
           python -m py_compile casa_decoracao/src/generate_articles.py
@@ -55,8 +56,8 @@ jobs:
             python -u casa_decoracao/src/build_editorial_queue.py
           fi
 
-      - name: Gerar e validar próximo lote editorial
-        run: python -u casa_decoracao/src/generate_articles.py
+      - name: Regenerar e validar próximo lote sob política v2
+        run: python -u casa_decoracao/src/generation_interlock.py
 
       - name: Sincronizar somente rascunhos validados no WordPress
         if: env.CASA_WORDPRESS_USERNAME != '' && env.CASA_WORDPRESS_APP_PASSWORD != ''
