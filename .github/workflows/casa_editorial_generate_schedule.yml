@@ -28,7 +28,7 @@ jobs:
       CASA_LIVE_PUBLISH_ENABLED: "false"
       CASA_GENERATION_BATCH_SIZE: "2"
       CASA_PUBLISH_LIMIT: "2"
-      CASA_IMAGE_MODEL: "@cf/leonardo/lucid-origin"
+      CASA_IMAGE_MODEL: "@cf/black-forest-labs/flux-1-schnell"
 
     steps:
       - name: Baixar repositório
