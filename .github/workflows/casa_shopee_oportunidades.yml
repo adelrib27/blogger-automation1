@@ -11,6 +11,10 @@ on:
         description: "Quantidade final de oportunidades"
         required: false
         default: "30"
+  schedule:
+    # GitHub Actions usa UTC. Estes horários correspondem a 06:15 e 15:15 no horário de Brasília/Recife.
+    - cron: "15 9 * * *"
+    - cron: "15 18 * * *"
 
 permissions:
   contents: read
@@ -27,8 +31,8 @@ jobs:
     env:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
-      SHOPEE_CATEGORY: ${{ inputs.category }}
-      SHOPEE_TOP_N: ${{ inputs.top_n }}
+      SHOPEE_CATEGORY: ${{ github.event_name == 'workflow_dispatch' && inputs.category || 'all' }}
+      SHOPEE_TOP_N: ${{ github.event_name == 'workflow_dispatch' && inputs.top_n || '30' }}
       SHOPEE_OPPORTUNITIES_CONFIG: casa_decoracao/config/shopee_oportunidades.json
       SHOPEE_INTENT_RULES: casa_decoracao/config/shopee_intent_rules.json
       SHOPEE_OUTPUT_DIR: casa_decoracao/data/shopee_oportunidades
