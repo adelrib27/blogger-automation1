@@ -1,4 +1,5 @@
 import json
+import urllib.parse
 from collections import Counter
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -9,7 +10,6 @@ from publish_generated import (
     GENERATED_DIR,
     QUEUE_PATH,
     category_id,
-    existing_posts_for_quality,
     load_json,
     request,
     slugify,
@@ -28,6 +28,26 @@ def content_value(value):
     if isinstance(value, dict):
         return str(value.get("raw") or value.get("rendered") or "")
     return str(value or "")
+
+
+def editorial_portion(content):
+    content = str(content or "")
+    markers = (
+        '<div class="cd-produto-relacionado"',
+        "<div class='cd-produto-relacionado'",
+    )
+    for marker in markers:
+        if marker in content:
+            return content.split(marker, 1)[0].strip()
+    return content.strip()
+
+
+def public_posts_for_quality():
+    statuses = urllib.parse.quote("publish,future", safe=",")
+    fields = urllib.parse.quote("id,slug,title,excerpt,content,status,link", safe=",")
+    path = f"/wp/v2/posts?context=edit&per_page=100&status={statuses}&_fields={fields}"
+    rows = request("GET", path)
+    return rows if isinstance(rows, list) else []
 
 
 def wp_post(post_id):
@@ -94,8 +114,9 @@ def audit_item(item, existing_posts):
         reasons.append("categoria_wordpress_nao_validada")
 
     article_eval = deepcopy(article)
-    article_eval["content_html"] = content_value(post.get("content"))
-    article_eval["editorial_html"] = article_eval["content_html"]
+    actual_content = content_value(post.get("content"))
+    article_eval["content_html"] = actual_content
+    article_eval["editorial_html"] = editorial_portion(actual_content)
     article_eval.pop("word_count", None)
     article_eval["last_error"] = str(article.get("last_error") or item.get("last_error") or "").strip()
 
@@ -140,6 +161,7 @@ def audit_item(item, existing_posts):
         "wordpress_status": post.get("status"),
         "slug": post.get("slug"),
         "quality_gate_version": QUALITY_GATE_VERSION,
+        "generation_policy_version": int(article.get("generation_policy_version") or 0),
         "eligible_for_live": not reasons,
         "reasons": reasons,
         "metrics": gate.get("metrics") or {},
@@ -150,7 +172,7 @@ def main():
     queue = load_json(QUEUE_PATH, {})
     items = queue.get("items") or []
     candidates = [x for x in items if x.get("status") == "WORDPRESS_DRAFT"]
-    existing_posts = existing_posts_for_quality()
+    existing_posts = public_posts_for_quality()
 
     results = [audit_item(item, existing_posts) for item in candidates]
     eligible = [row for row in results if row.get("eligible_for_live")]
