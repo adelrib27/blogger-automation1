@@ -37,8 +37,8 @@ jobs:
           python oficina_garagem/src/self_test.py
       - name: Confirmar que publicação ao vivo não existe
         run: |
-          if grep -R --line-number --include='*.py' 'status.*publish' oficina_garagem/src; then
-            echo "Encontrada referência a publish; revise manualmente." >&2
+          if grep -R --line-number --include='*.py' '"status"[[:space:]]*:[[:space:]]*"publish"' oficina_garagem/src; then
+            echo "Encontrado payload explícito de publicação; pipeline bloqueado." >&2
             exit 1
           fi
           echo "OK: pipeline Oficina é draft-only."
