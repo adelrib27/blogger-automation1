@@ -6,7 +6,7 @@ on:
     paths:
       - "casa_decoracao/kickoff.txt"
   schedule:
-    - cron: "23 * * * *"
+    - cron: "23 */3 * * *"
 
 permissions:
   contents: write
