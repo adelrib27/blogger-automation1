@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "project": "Oficina & Garagem",
+  "site_url": "https://oficina.radartechbr.com.br",
+  "timezone": "America/Sao_Paulo",
+  "status": "VALIDACAO_SEGURA",
+  "editorial": {
+    "language": "pt-BR",
+    "word_count_min": 900,
+    "word_count_max": 1400,
+    "title_max_chars": 60,
+    "meta_description_min_chars": 120,
+    "meta_description_max_chars": 155,
+    "natural_seo": true,
+    "no_fake_physical_testing": true,
+    "never_invent_missing_product_data": true,
+    "affiliate_transparency": true,
+    "affiliate_rel": "nofollow sponsored",
+    "draft_only_until_manual_release": true
+  },
+  "safety": {
+    "default": "CONSERVATIVE",
+    "human_review_categories": ["Segurança e Proteção"],
+    "human_review_terms": [
+      "freio", "pastilha de freio", "disco de freio", "direção", "suspensão", "airbag",
+      "macaco hidráulico", "cavalete", "elevador automotivo", "solda", "soldador", "esmerilhadeira",
+      "serra", "disco de corte", "bateria automotiva", "carregador de bateria", "instalação elétrica",
+      "torquímetro", "torque", "combustível", "linha de combustível", "extintor", "capacete",
+      "óculos de proteção", "luva de proteção", "protetor auricular"
+    ],
+    "prohibited_claims": [
+      "garantia de segurança", "substitui profissional qualificado", "compatibilidade universal",
+      "certificação não confirmada", "capacidade de carga não confirmada", "torque não confirmado",
+      "proteção garantida", "teste próprio não documentado"
+    ]
+  },
+  "automation_mode": {
+    "shopee_discovery": true,
+    "queue_building": true,
+    "content_generation": false,
+    "wordpress_draft_sync": false,
+    "wordpress_live_publish": false,
+    "note": "Descoberta e preparação podem rodar. Geração exige credenciais próprias. Sincronização é somente rascunho; publicação ao vivo não está implementada neste estágio."
+  }
+}

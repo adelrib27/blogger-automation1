@@ -1,0 +1,59 @@
+name: Oficina & Garagem — Editorial Seguro (draft only)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "oficina_garagem/editorial_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oficina-garagem-editorial-safe
+  cancel-in-progress: false
+
+jobs:
+  validate-and-draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      OFICINA_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.OFICINA_CLOUDFLARE_ACCOUNT_ID }}
+      OFICINA_CLOUDFLARE_API_TOKEN: ${{ secrets.OFICINA_CLOUDFLARE_API_TOKEN }}
+      OFICINA_WORDPRESS_USERNAME: ${{ secrets.OFICINA_WORDPRESS_USERNAME }}
+      OFICINA_WORDPRESS_APP_PASSWORD: ${{ secrets.OFICINA_WORDPRESS_APP_PASSWORD }}
+      OFICINA_GENERATION_ENABLED: "false"
+      OFICINA_DRAFT_SYNC_ENABLED: "false"
+      OFICINA_GENERATION_BATCH_SIZE: "2"
+      OFICINA_DRAFT_SYNC_LIMIT: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compilar e testar gates
+        run: |
+          python -m py_compile oficina_garagem/src/quality_gate.py oficina_garagem/src/generate_articles.py oficina_garagem/src/sync_drafts.py oficina_garagem/src/audit_release_candidates.py oficina_garagem/src/self_test.py
+          python oficina_garagem/src/self_test.py
+      - name: Confirmar que publicação ao vivo não existe
+        run: |
+          if grep -R --line-number --include='*.py' '"status"[[:space:]]*:[[:space:]]*"publish"' oficina_garagem/src; then
+            echo "Encontrado payload explícito de publicação; pipeline bloqueado." >&2
+            exit 1
+          fi
+          echo "OK: pipeline Oficina é draft-only."
+      - name: Geração (bloqueada por padrão)
+        run: python -u oficina_garagem/src/generate_articles.py
+      - name: Sincronização WordPress (bloqueada por padrão)
+        run: python -u oficina_garagem/src/sync_drafts.py
+      - name: Auditoria de candidatos
+        if: always()
+        run: python -u oficina_garagem/src/audit_release_candidates.py || true
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oficina-editorial-safe-${{ github.run_number }}
+          path: oficina_garagem/data/
+          if-no-files-found: warn
+          retention-days: 14

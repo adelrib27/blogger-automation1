@@ -1,0 +1,59 @@
+name: Oficina & Garagem — Shopee Oportunidades (validação)
+
+on:
+  workflow_dispatch:
+    inputs:
+      category:
+        description: "Categoria ou all"
+        required: false
+        default: "all"
+      top_n:
+        description: "Quantidade final"
+        required: false
+        default: "30"
+  push:
+    paths:
+      - "oficina_garagem/discovery_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oficina-garagem-shopee
+  cancel-in-progress: false
+
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_CATEGORY: ${{ inputs.category || 'all' }}
+      SHOPEE_TOP_N: ${{ inputs.top_n || '30' }}
+      SHOPEE_OPPORTUNITIES_CONFIG: oficina_garagem/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: oficina_garagem/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: oficina_garagem/data/shopee_oportunidades
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validar código e gates
+        run: |
+          python -m py_compile src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py
+          python -m py_compile oficina_garagem/src/shopee_oportunidades_oficina.py oficina_garagem/src/build_editorial_queue.py oficina_garagem/src/quality_gate.py oficina_garagem/src/self_test.py
+          python oficina_garagem/src/self_test.py
+      - name: Gerar ranking
+        run: python -u oficina_garagem/src/shopee_oportunidades_oficina.py
+      - name: Montar fila editorial sem gerar artigo
+        run: python -u oficina_garagem/src/build_editorial_queue.py
+      - name: Guardar diagnóstico
+        uses: actions/upload-artifact@v4
+        with:
+          name: oficina-shopee-${{ github.run_number }}
+          path: |
+            oficina_garagem/data/shopee_oportunidades/
+            oficina_garagem/data/editorial_queue.json
+          if-no-files-found: error
+          retention-days: 14
