@@ -63,30 +63,44 @@ def slug_category(name):
     return {"Ferramentas":"ferramentas","Manutenção":"manutencao","Acessórios Automotivos":"acessorios-automotivos","Organização de Garagem":"organizacao-de-garagem","Limpeza e Conservação":"limpeza-e-conservacao","Segurança e Proteção":"seguranca-e-protecao"}.get(name, "")
 
 
+def cut_words(value, limit):
+    value = re.sub(r"\s+", " ", str(value or "")).strip()
+    if len(value) <= limit:
+        return value
+    short = value[:limit + 1].rsplit(" ", 1)[0].rstrip(" -:;,. ")
+    return short or value[:limit].rstrip(" -:;,. ")
+
+
 def seo_title(item):
-    base = f"{item['product']}: o que conferir antes de comprar"
-    return base[:60].rstrip(" -:;,. ")
+    # O título editorial vem da pauta/keyword, nunca do título comercial completo,
+    # evitando transformar números/promessas do anúncio em afirmações editoriais.
+    topic = str(item.get("topic") or "").strip()
+    return cut_words(topic, 60)
 
 
 def meta_description(item):
-    text = f"Veja critérios para avaliar {item['product']} com foco em uso, compatibilidade, limitações e informações que devem ser confirmadas no anúncio ou manual."
-    return text[:155].rstrip(" -:;,. ")
+    label = str(item.get("editorial_label") or item.get("source_keyword") or "produto").strip().lower()
+    text = f"Veja critérios para comparar {label}, conferir compatibilidade, limitações e especificações no anúncio ou manual antes de decidir pela compra."
+    return cut_words(text, 155)
 
 
 def prompt(item):
     extra = "\n- TEMA SENSÍVEL: trate como guia de compra. Não ensine procedimentos de segurança, reparo, elevação, corte, solda, frenagem, direção, suspensão ou eletricidade. Exija revisão humana." if item.get("rules",{}).get("safety_review") else ""
     return f"""Você é editor de um blog brasileiro chamado Oficina & Garagem. Escreva um guia de compra informativo e conservador em português do Brasil.
-PAUTA: {item['topic']}
-PRODUTO RELACIONADO: {item['product']}
+PAUTA EDITORIAL: {item['topic']}
+INTENÇÃO PRINCIPAL: {item['source_keyword']}
+OFERTA RELACIONADA DA SHOPEE: {item['product']}
 CATEGORIA: {item['category']}
 REGRAS:
 - 900 a 1300 palavras, pelo menos 4 H2 distintos; sem H1.
+- O título da oferta é apenas referência comercial; não trate números, potência, tensão, torque, capacidade, medidas ou alegações presentes nele como fatos verificados.
 - Não invente preço, desconto, estoque, entrega, potência, tensão, corrente, torque, capacidade de carga, medidas, compatibilidade, certificação, garantia ou desempenho.
 - Se um dado não estiver confirmado, ensine o leitor a verificar no anúncio, ficha técnica ou manual.
 - Não diga que testamos, usamos ou comprovamos o produto.
 - Não dê instruções passo a passo de reparos automotivos, sistemas críticos, elevação de veículo, corte, solda ou intervenções elétricas.
-- Não forneça valores de torque, pressão, tensão, corrente ou carga se não estiverem literalmente na pauta/produto.
+- Não forneça valores de torque, pressão, tensão, corrente ou carga só porque aparecem no título comercial da oferta.
 - Explique contexto de uso, para quem pode fazer sentido, limitações, compatibilidade a conferir, erros de compra e checklist final.
+- Use naturalmente a intenção principal no texto.
 - HTML somente com <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Sem links, estilos, markdown ou CTA.
 {extra}
 Responda SOMENTE com o fragmento HTML.
@@ -99,7 +113,7 @@ def build(item, raw):
     link = html.escape(item["affiliate_link"], quote=True)
     product = html.escape(item["product"])
     cat_slug = slug_category(item["category"])
-    cta = f'<div class="og-produto-relacionado"><p><strong>Produto relacionado:</strong> {product}</p><p><a href="{link}" target="_blank" rel="nofollow sponsored">Ver oferta na Shopee →</a></p><p><small>Link de afiliado. Podemos receber comissão em compras qualificadas, sem custo adicional. Confirme preço, estoque, compatibilidade, especificações, entrega e garantia na página do vendedor.</small></p></div>'
+    cta = f'<div class="og-produto-relacionado"><p><strong>Oferta relacionada:</strong> {product}</p><p><a href="{link}" target="_blank" rel="nofollow sponsored">Ver oferta na Shopee →</a></p><p><small>Link de afiliado. Podemos receber comissão em compras qualificadas, sem custo adicional. O título acima reproduz a identificação da oferta; confirme preço, estoque, compatibilidade, especificações, entrega e garantia na página do vendedor.</small></p></div>'
     internal = f'<p><a href="/category/{cat_slug}/">Veja outros guias de {html.escape(item["category"])}</a>.</p>' if cat_slug else ""
     article = {**item, "seo_title":seo_title(item), "meta_description":meta_description(item), "focus_keyword":item["source_keyword"], "excerpt":meta_description(item), "editorial_html":editorial, "content_html":editorial+cta+internal, "word_count":word_count(editorial), "generation_model":MODEL, "status":"GENERATED"}
     article["quality"] = quality(article)
