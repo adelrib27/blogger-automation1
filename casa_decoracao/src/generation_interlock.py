@@ -48,7 +48,33 @@ def migrate_old_automated_drafts():
         print(f"Migração gate v2: {migrated} rascunho(s) antigo(s) enviados para regeneração segura.")
 
 
+def recover_transient_rate_limits():
+    queue = generator.load_json(QUEUE_PATH, {})
+    items = queue.get("items") or []
+    recovered = 0
+
+    for item in items:
+        error = str(item.get("last_error") or "").casefold()
+        if "429" not in error and "too many requests" not in error:
+            continue
+        if item.get("status") not in {"QUARANTINE", "BLOCKED"}:
+            continue
+
+        # Erro 429 é limitação transitória do provedor, não falha editorial.
+        # Não deve consumir as três tentativas editoriais nem bloquear a pauta.
+        item["status"] = "QUARANTINE"
+        item["generation_attempts"] = 0
+        item["last_error"] = "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
+        recovered += 1
+
+    if recovered:
+        queue["items"] = items
+        generator.save_json(QUEUE_PATH, queue)
+        print(f"Rate limit transitório: {recovered} pauta(s) preservadas para nova tentativa futura.")
+
+
 if __name__ == "__main__":
     generator.build_article = hardened_build_article
     migrate_old_automated_drafts()
     generator.main()
+    recover_transient_rate_limits()
