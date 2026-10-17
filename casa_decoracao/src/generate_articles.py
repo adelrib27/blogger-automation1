@@ -7,6 +7,13 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+from quality_gate import (
+    draft_quality,
+    focus_keyword_from_item,
+    meta_description_from_item,
+    seo_title_from_item,
+)
+
 ROOT = Path(__file__).resolve().parents[2]
 QUEUE_PATH = ROOT / "casa_decoracao" / "data" / "editorial_queue_100.json"
 OUT_DIR = ROOT / "casa_decoracao" / "data" / "generated"
@@ -25,13 +32,17 @@ HEALTH_SENSITIVE_TERMS = (
 UNSAFE_HEALTH_PATTERNS = (
     r"\balivia(?:r|m)?\s+(?:a\s+)?dor(?:es)?\b",
     r"\breduz(?:ir|em)?\s+(?:a\s+)?(?:dor|dores|press[aã]o)\b",
-    r"\btrata(?:r|mento)?\b",
-    r"\bprevine(?:m|r)?\b",
+    r"\b(?:tratar|tratamento\s+(?:de|para))\s+(?:dor|dores|les[aã]o|h[ée]rnia)\b",
+    r"\bprevine(?:m|r)?\s+(?:dor|dores|les[aã]o|problema)\b",
     r"\bcorrige(?:m|r)?\s+(?:a\s+)?postura\b",
     r"\bcontribui(?:r)?\s+para\s+(?:a\s+)?recupera[cç][aã]o\b",
-    r"\bh[ée]rnia(?:s)?\s+de\s+disco\b",
-    r"\bles[aã]o(?:ões|oes|s)?\b",
     r"\bpress[aã]o\s+sobre\s+(?:os\s+)?m[uú]sculos\s+e\s+nervos\b",
+)
+
+CHEMICAL_SENSITIVE_TERMS = (
+    "percarbonato",
+    "tira-manchas",
+    "tira manchas",
 )
 
 
@@ -77,7 +88,7 @@ def call_ai(prompt, retries=3):
     body = json.dumps({
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": 8192,
-        "temperature": 0.55,
+        "temperature": 0.48,
     }, ensure_ascii=False).encode("utf-8")
     last_error = ""
     for attempt in range(1, retries + 1):
@@ -85,7 +96,7 @@ def call_ai(prompt, retries=3):
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "CasaEDecoracao-Editorial/1.2",
+            "User-Agent": "CasaEDecoracao-Editorial/2.0",
         })
         try:
             with urllib.request.urlopen(req, timeout=120) as response:
@@ -120,63 +131,42 @@ def normalized_text(value):
 
 
 def is_health_sensitive(item):
-    haystack = " ".join([
-        normalized_text(item.get("topic")),
-        normalized_text(item.get("product")),
-    ])
+    haystack = " ".join((normalized_text(item.get("topic")), normalized_text(item.get("product"))))
     return any(term in haystack for term in HEALTH_SENSITIVE_TERMS)
+
+
+def is_chemical_sensitive(item):
+    haystack = " ".join((normalized_text(item.get("topic")), normalized_text(item.get("product"))))
+    return any(term in haystack for term in CHEMICAL_SENSITIVE_TERMS)
 
 
 def unsafe_health_claims(content_html):
     plain = re.sub(r"<[^>]+>", " ", str(content_html or ""))
     plain = re.sub(r"\s+", " ", plain).casefold()
-    found = []
-    for pattern in UNSAFE_HEALTH_PATTERNS:
-        if re.search(pattern, plain, flags=re.I):
-            found.append(pattern)
-    return found
+    return [pattern for pattern in UNSAFE_HEALTH_PATTERNS if re.search(pattern, plain, flags=re.I)]
 
 
 def validate_health_safety(item, content_html):
-    if not is_health_sensitive(item):
-        return
-    found = unsafe_health_claims(content_html)
-    if found:
-        raise RuntimeError(
-            "alegação de saúde não verificada detectada; regenerar em modo conforto/ergonomia sem promessa médica"
-        )
+    if is_health_sensitive(item) and unsafe_health_claims(content_html):
+        raise RuntimeError("alegação de saúde não verificada detectada; regenerar em modo conforto/ergonomia")
 
 
-def title_from_topic(topic):
-    title = str(topic or "").strip()
-    if title:
-        title = title[0].upper() + title[1:]
-    if len(title) <= 60:
-        return title
-    short = title[:60].rsplit(" ", 1)[0]
-    return short.rstrip(" -:;,")
-
-
-def meta_from_item(item):
-    topic = str(item.get("topic") or "").strip()
-    product = str(item.get("product") or "").strip()
-    base = f"{topic[:1].upper() + topic[1:]}: veja critérios práticos, pontos de atenção e o que conferir antes de escolher {product.lower()}."
-    if len(base) <= 155:
-        return base
-    base = f"{topic[:1].upper() + topic[1:]}: veja critérios práticos, pontos de atenção e o que conferir antes da compra."
-    return base[:155].rstrip(" ,;:-")
-
-
-def health_guidance(item):
-    if not is_health_sensitive(item):
-        return ""
-    return """
-- TEMA SENSÍVEL DE SAÚDE/ERGONOMIA: trate o produto somente como item de conforto e preferência de uso.
-- Não diga que alivia ou trata dor, reduz pressão em músculos/nervos, corrige postura, previne problemas, ajuda recuperação, trata lesões ou hérnia, nem prometa benefício clínico.
-- Não recomende o produto para diagnóstico, tratamento ou condição médica específica.
-- Se mencionar desconforto persistente, limite-se a dizer que orientação de profissional de saúde pode ser apropriada.
-- Não transforme o nome comercial “ortopédico” em evidência de benefício médico.
-"""
+def safety_guidance(item):
+    blocks = []
+    if is_health_sensitive(item):
+        blocks.append("""
+- TEMA SENSÍVEL DE SAÚDE/ERGONOMIA: trate o produto como item de conforto e preferência de uso.
+- Não prometa alívio/tratamento de dor, correção de postura, prevenção, recuperação ou qualquer benefício clínico.
+- Não recomende o produto para diagnóstico ou tratamento de condição médica.
+- Não transforme o nome comercial “ortopédico” em evidência médica.
+""")
+    if is_chemical_sensitive(item):
+        blocks.append("""
+- TEMA DE LIMPEZA QUÍMICA: priorize segurança e instruções do rótulo/fabricante.
+- Não ensine misturas com outros produtos químicos, não recomende ingestão/contato com pele e não invente concentração ou dosagem.
+- Oriente teste em área discreta quando apropriado e cuidado com ventilação, armazenamento e incompatibilidades indicadas no rótulo.
+""")
+    return "\n".join(blocks)
 
 
 def prompt_for(item):
@@ -186,35 +176,38 @@ Escreva um artigo original, aprofundado e natural em português do Brasil.
 PAUTA: {item['topic']}
 PRODUTO RELACIONADO: {item['product']}
 CATEGORIA: {item['category']}
+PALAVRA-CHAVE PRINCIPAL: {focus_keyword_from_item(item)}
 
 REGRAS OBRIGATÓRIAS:
 - Produza aproximadamente 900 a 1300 palavras de conteúdo editorial útil.
+- O assunto do texto deve permanecer diretamente relacionado à PAUTA e ao PRODUTO RELACIONADO; não troque o tipo de produto nem generalize para outro item.
 - Não invente preço, desconto, estoque, entrega, potência, voltagem, autonomia, capacidade, material, dimensões, peso, garantia, compatibilidade, certificação, vendas ou desempenho do produto.
 - Não diga que o produto foi testado fisicamente.
 - Quando um dado específico não estiver confirmado, use linguagem prudente como “vale conferir no anúncio”.
 - Separe orientação geral de características específicas do produto.
-- Explique contexto de uso, para quem pode fazer sentido, limitações e o que conferir antes da compra.
+- Explique contexto de uso, para quem pode fazer sentido, limitações, erros comuns e o que conferir antes da compra.
 - Evite exageros como “o melhor”, “imperdível”, “100% garantido”.
-- SEO natural, sem repetição artificial da palavra-chave.
+- Use a palavra-chave de forma natural; não faça repetição artificial.
 - Foque exatamente na intenção da pauta para evitar canibalização.
 - Não inclua H1.
 - Use apenas <p>, <h2>, <h3>, <ul>, <li>, <strong> e <em> quando necessário.
+- Crie pelo menos 4 seções H2 realmente diferentes entre si.
 - NÃO inclua preço, botão, link ou CTA comercial. O sistema acrescentará o bloco afiliado depois.
-- Não inclua comentários sobre estas instruções.
-{health_guidance(item)}
-Responda SOMENTE com o fragmento HTML do artigo. Não use markdown nem cercas de código.
+- Não inclua comentários sobre estas instruções, markdown ou cercas de código.
+{safety_guidance(item)}
+Responda SOMENTE com o fragmento HTML do artigo.
 """
 
 
 def expansion_prompt(item, draft_html):
-    return f"""Expanda e aprofunde o artigo abaixo para aproximadamente 900 a 1300 palavras, mantendo a mesma pauta e sem inventar fatos sobre o produto.
+    return f"""Reescreva e aprofunde o artigo abaixo para aproximadamente 900 a 1300 palavras, mantendo exatamente a mesma pauta e o mesmo produto.
 
 PAUTA: {item['topic']}
 PRODUTO RELACIONADO: {item['product']}
-CATEGORIA: {item['category']}
+PALAVRA-CHAVE PRINCIPAL: {focus_keyword_from_item(item)}
 
-Mantenha linguagem natural, útil e prudente. Acrescente critérios de comparação, contexto de uso, limitações, erros comuns e um checklist final. Não inclua H1, links, preço nem CTA. Não afirme teste físico. Se uma especificação não estiver confirmada, diga para conferir o anúncio, ficha técnica ou manual.
-{health_guidance(item)}
+Elimine repetições, acrescente critérios de comparação, contexto de uso, limitações, erros comuns e checklist final. Não inclua H1, links, preço ou CTA. Não afirme teste físico. Não invente especificações. Se um dado não estiver confirmado, diga para conferir o anúncio, ficha técnica ou manual.
+{safety_guidance(item)}
 RASCUNHO ATUAL:
 {draft_html}
 
@@ -222,21 +215,8 @@ Responda SOMENTE com o fragmento HTML final, sem markdown.
 """
 
 
-def build_article(item, raw_html):
-    content = clean_html(raw_html)
-    count = word_count(content)
-    if count < 700:
-        content = clean_html(call_ai(expansion_prompt(item, content)))
-        count = word_count(content)
-    if count < 650:
-        raise RuntimeError(f"artigo ainda curto após expansão: {count} palavras")
-    if "<h2" not in content.lower() or "<p" not in content.lower():
-        raise RuntimeError("HTML sem estrutura editorial mínima")
-    validate_health_safety(item, content)
-
-    product = html.escape(str(item["product"]))
-    link = html.escape(str(item["affiliate_link"]), quote=True)
-    category_slug = {
+def category_slug(name):
+    return {
         "Decoração": "decoracao",
         "Organização": "organizacao",
         "Sala": "sala",
@@ -247,27 +227,50 @@ def build_article(item, raw_html):
         "Cama, Mesa e Banho": "cama-mesa-banho",
         "Iluminação": "iluminacao",
         "Limpeza e Utilidades": "limpeza-utilidades",
-    }.get(item.get("category"), "")
+    }.get(name, "")
+
+
+def build_article(item, raw_html):
+    editorial = clean_html(raw_html)
+    count = word_count(editorial)
+    if count < 750:
+        editorial = clean_html(call_ai(expansion_prompt(item, editorial)))
+        count = word_count(editorial)
+    if count < 700:
+        raise RuntimeError(f"artigo ainda curto após expansão: {count} palavras")
+    if "<h2" not in editorial.lower() or "<p" not in editorial.lower():
+        raise RuntimeError("HTML sem estrutura editorial mínima")
+    validate_health_safety(item, editorial)
+
+    product = html.escape(str(item["product"]))
+    link = html.escape(str(item["affiliate_link"]), quote=True)
+    slug = category_slug(item.get("category"))
     category_link = (
-        f'<p><a href="/category/{category_slug}/">Veja também outros guias de {html.escape(str(item["category"]))}</a>.</p>'
-        if category_slug else ""
+        f'<p><a href="/category/{slug}/">Veja também outros guias de {html.escape(str(item["category"]))}</a>.</p>'
+        if slug else ""
     )
     cta = f'''\n<div class="cd-produto-relacionado" style="margin:28px 0;padding:20px;border:1px solid #72eadb;border-radius:14px;background:#effffb;box-shadow:0 0 18px rgba(75,230,210,.20);">
 <p><strong>Produto relacionado ao tema:</strong> {product}</p>
 <p><a href="{link}" target="_blank" rel="nofollow sponsored" style="display:inline-block;padding:12px 18px;background:#19c6b3;color:#052f2c;text-decoration:none;font-weight:700;border-radius:10px;">Ver produto no TikTok Shop →</a></p>
 <p><small>Link de afiliado. O site pode receber comissão em compras qualificadas, sem custo adicional para você. Preço, estoque, entrega e especificações devem ser confirmados na página do vendedor.</small></p>
 </div>'''
-    meta = meta_from_item(item)
-    return {
+
+    article = {
         **item,
-        "seo_title": title_from_topic(item.get("topic")),
-        "meta_description": meta,
-        "excerpt": meta,
-        "content_html": content + cta + category_link,
+        "seo_title": seo_title_from_item(item),
+        "meta_description": meta_description_from_item(item),
+        "focus_keyword": focus_keyword_from_item(item),
+        "excerpt": meta_description_from_item(item),
+        "editorial_html": editorial,
+        "content_html": editorial + cta + category_link,
         "word_count": count,
         "generation_model": MODEL,
         "status": "GENERATED",
     }
+    article["quality"] = draft_quality(article)
+    if article["quality"]["status"] != "DRAFT_READY":
+        raise RuntimeError("quality gate: " + ", ".join(article["quality"]["reasons"]))
+    return article
 
 
 def quarantine_existing_unsafe_health_articles(items_by_id):
@@ -285,13 +288,14 @@ def quarantine_existing_unsafe_health_articles(items_by_id):
         if not current:
             continue
         current["status"] = "QUARANTINE"
-        current["last_error"] = "revisão automática: alegação de saúde não verificada em artigo já gerado"
+        current["generation_attempts"] = 0
+        current["last_error"] = "revisão automática: alegação de saúde não verificada; tentativas reiniciadas"
         try:
             article_path.unlink()
         except OSError:
             pass
         quarantined += 1
-        print(f"QUARANTINE revisão saúde {item_id}: artigo removido para regeneração segura")
+        print(f"QUARANTINE revisão saúde {item_id}: removido para regeneração segura")
     return quarantined
 
 
@@ -302,7 +306,7 @@ def main():
 
     reviewed = quarantine_existing_unsafe_health_articles(by_id)
     if reviewed:
-        print(f"Revisão preventiva: {reviewed} artigo(s) de saúde/ergonomia retornaram à quarentena.")
+        print(f"Revisão preventiva: {reviewed} artigo(s) retornaram à quarentena.")
 
     candidates = [
         x for x in items
@@ -327,12 +331,16 @@ def main():
             article = build_article(current, call_ai(prompt_for(current)))
             save_json(OUT_DIR / f"{item_id:03d}.json", article)
             current["status"] = "GENERATED"
+            current["quality"] = article["quality"]
             current.pop("last_error", None)
             generated_count += 1
         except Exception as exc:
-            current["status"] = "QUARANTINE"
+            if current["generation_attempts"] >= MAX_ITEM_ATTEMPTS:
+                current["status"] = "BLOCKED"
+            else:
+                current["status"] = "QUARANTINE"
             current["last_error"] = str(exc)[:500]
-            print(f"QUARANTINE {item_id}: {exc}")
+            print(f"{current['status']} {item_id}: {exc}")
 
     queue["items"] = [by_id[int(x["id"])] for x in items]
     save_json(QUEUE_PATH, queue)
