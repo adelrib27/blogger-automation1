@@ -20,6 +20,7 @@ GENERATED_DIR = ROOT / "casa_decoracao" / "data" / "generated"
 WP_URL = "https://casaedecoracao.radartechbr.com.br"
 STATUS = os.getenv("CASA_WORDPRESS_STATUS", "draft").strip().lower()
 PUBLISH_LIMIT = max(1, min(int(os.getenv("CASA_PUBLISH_LIMIT", "5")), 20))
+IMAGE_MODEL = os.getenv("CASA_IMAGE_MODEL", "@cf/black-forest-labs/flux-1-schnell").strip()
 
 CATEGORY_SLUGS = {
     "Decoração": "decoracao",
@@ -55,19 +56,31 @@ def credentials():
     return user, password
 
 
-def request(method, path, payload=None):
+def cloudflare_credentials():
+    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID", "").strip()
+    token = os.getenv("CLOUDFLARE_API_TOKEN", "").strip()
+    if not account_id or not token:
+        raise RuntimeError("CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN ausentes para imagem")
+    return account_id, token
+
+
+def auth_header():
     user, password = credentials()
     token = base64.b64encode(f"{user}:{password}".encode()).decode()
+    return f"Basic {token}"
+
+
+def request(method, path, payload=None):
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(
         WP_URL + "/wp-json" + path,
         data=data,
         method=method,
         headers={
-            "Authorization": f"Basic {token}",
+            "Authorization": auth_header(),
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "CasaEDecoracao-Publisher/2.0",
+            "User-Agent": "CasaEDecoracao-Publisher/2.1",
         },
     )
     try:
@@ -165,6 +178,101 @@ def set_aioseo(post_id, article):
     })
 
 
+def image_prompt(article):
+    topic = str(article.get("topic") or article.get("seo_title") or "Casa e decoração").strip()
+    product = str(article.get("product") or "item para casa").strip()
+    category = str(article.get("category") or "Casa e Decoração").strip()
+    return (
+        f"Fotografia editorial horizontal, ultra-realista e elegante para um artigo brasileiro de casa e decoração. "
+        f"Tema: {topic}. Categoria: {category}. Contexto visual relacionado a {product}, mostrado apenas de forma genérica "
+        "e não como reprodução de um produto comercial específico. Ambiente doméstico realista, organizado e acolhedor, "
+        "luz natural suave, materiais e proporções plausíveis, composição de revista de decoração, alta qualidade. "
+        "Sem texto, sem letras, sem logotipos, sem marcas, sem etiquetas, sem preço, sem embalagem identificável, sem watermark. "
+        "Não inventar especificações técnicas nem características exclusivas de um produto real."
+    )
+
+
+def generate_featured_image(article):
+    account_id, token = cloudflare_credentials()
+    endpoint = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{IMAGE_MODEL}"
+    seed = int(article.get("id") or 1) * 1009 % 2147483647
+    body = json.dumps({
+        "prompt": image_prompt(article),
+        "steps": 6,
+        "seed": seed,
+    }, ensure_ascii=False).encode("utf-8")
+    req = urllib.request.Request(endpoint, data=body, method="POST", headers={
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": "CasaEDecoracao-FeaturedImage/1.0",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=180) as response:
+            raw = response.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:1200]
+        raise RuntimeError(f"Workers AI imagem HTTP {exc.code}: {detail}") from exc
+    payload = json.loads(raw)
+    result = payload.get("result") if isinstance(payload, dict) else None
+    image_b64 = result.get("image") if isinstance(result, dict) else None
+    if not isinstance(image_b64, str) or not image_b64.strip():
+        raise RuntimeError("Workers AI não retornou imagem base64")
+    try:
+        return base64.b64decode(image_b64)
+    except Exception as exc:
+        raise RuntimeError("imagem base64 inválida") from exc
+
+
+def upload_featured_media(article, image_bytes):
+    if not image_bytes:
+        raise RuntimeError("imagem destacada vazia")
+    filename = (slugify(article.get("topic") or article.get("seo_title")) or f"casa-{article.get('id', 'post')}")[:60] + ".jpg"
+    req = urllib.request.Request(
+        WP_URL + "/wp-json/wp/v2/media",
+        data=image_bytes,
+        method="POST",
+        headers={
+            "Authorization": auth_header(),
+            "Content-Type": "image/jpeg",
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Accept": "application/json",
+            "User-Agent": "CasaEDecoracao-Publisher/2.1",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=120) as response:
+            raw = response.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:1200]
+        raise RuntimeError(f"WordPress upload imagem HTTP {exc.code}: {detail}") from exc
+    media = json.loads(raw) if raw else {}
+    media_id = int(media.get("id") or 0)
+    if not media_id:
+        raise RuntimeError("WordPress não retornou ID da imagem")
+    alt = f"Imagem editorial sobre {str(article.get('topic') or article.get('seo_title') or 'casa e decoração').strip()}"
+    alt = re.sub(r"\s+", " ", alt).strip()[:180]
+    request("POST", f"/wp/v2/media/{media_id}", {"alt_text": alt})
+    return {
+        "id": media_id,
+        "url": str(media.get("source_url") or ""),
+        "alt": alt,
+    }
+
+
+def ensure_featured_image(article):
+    media_id = int(article.get("featured_media_id") or 0)
+    featured_url = str(article.get("featured_image_url") or "").strip()
+    if media_id or featured_url:
+        return
+    image_bytes = generate_featured_image(article)
+    media = upload_featured_media(article, image_bytes)
+    article["featured_media_id"] = media["id"]
+    article["featured_image_url"] = media["url"]
+    article["featured_image_alt"] = media["alt"]
+    article["featured_image_source"] = IMAGE_MODEL
+
+
 def set_featured_alt(article):
     media_id = int(article.get("featured_media_id") or 0)
     alt = str(article.get("featured_image_alt") or "").strip()
@@ -185,6 +293,7 @@ def publish_article(article, existing_posts):
     if duplicate_reasons:
         raise RuntimeError("canibalização/duplicidade: " + ", ".join(duplicate_reasons))
 
+    ensure_featured_image(article)
     publication_gate = publication_quality(article, existing_posts, current_slug=stable_slug)
     article["quality"] = publication_gate
     if STATUS == "publish" and publication_gate["status"] != "QUALITY_APPROVED":
@@ -223,9 +332,18 @@ def publish_article(article, existing_posts):
         "slug": stable_slug,
         "action": action,
         "seo_synced": True,
+        "featured_media_id": media_id,
         "quality_status": publication_gate["status"],
         "quality_reasons": publication_gate["reasons"],
     }
+
+
+def needs_image_repair(item):
+    if item.get("status") != "WORDPRESS_DRAFT":
+        return False
+    quality = item.get("quality") or {}
+    reasons = quality.get("reasons") or []
+    return "imagem_destacada_ausente" in reasons
 
 
 def main():
@@ -234,9 +352,9 @@ def main():
 
     queue = load_json(QUEUE_PATH, {})
     items = queue.get("items") or []
-    candidates = [x for x in items if x.get("status") == "GENERATED"][:PUBLISH_LIMIT]
+    candidates = [x for x in items if x.get("status") == "GENERATED" or needs_image_repair(x)][:PUBLISH_LIMIT]
     if not candidates:
-        print("Nenhum artigo GENERATED para sincronizar.")
+        print("Nenhum artigo GENERATED ou rascunho pendente de imagem para sincronizar.")
         return
 
     index = {int(x["id"]): x for x in items}
