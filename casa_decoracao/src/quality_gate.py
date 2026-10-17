@@ -20,11 +20,12 @@ CARE_TERMS = {"limpar", "limpeza", "cuidar", "cuidados", "manutenção", "manute
 DECOR_TERMS = {"decoração", "decoracao", "decorar", "combinar", "visual", "mesa", "estilo", "ambiente"}
 SAFETY_TERMS = {"segurança", "seguranca", "risco", "lâmina", "lamina", "mistura", "misturas", "químico", "quimico"}
 
+# Marcadores que só devem existir nas instruções internas de geração. Evitar
+# expressões editoriais legítimas usadas no CTA, como "produto relacionado".
 PROMPT_LEAKAGE = (
     "regras obrigatórias:",
     "regras obrigatorias:",
     "pauta:",
-    "produto relacionado:",
     "responda somente",
     "fragmento html",
     "rascunho atual:",
