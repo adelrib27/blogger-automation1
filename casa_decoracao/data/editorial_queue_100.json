@@ -1881,7 +1881,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -1893,7 +1893,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:90"
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
     },
     {
       "id": 83,
@@ -1910,7 +1910,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -1922,7 +1922,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN ausentes para imagem"
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
     },
     {
       "id": 84,
@@ -1939,7 +1939,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -1951,69 +1951,11 @@
           "internal_links": 1
         }
       },
-      "last_error": "CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN ausentes para imagem"
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
     },
     {
       "id": 85,
       "topic": "mini climatizador: o que conferir antes de comprar",
-      "product": "Mini Climatizador de Ar Portátil",
-      "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
-      "category": "Sala",
-      "status": "QUARANTINE",
-      "intent": "informational_commercial",
-      "rules": {
-        "unique_search_intent": true,
-        "avoid_keyword_cannibalization": true,
-        "affiliate_rel": "nofollow sponsored",
-        "no_invented_product_specs": true,
-        "no_fake_physical_testing": true
-      },
-      "generation_attempts": 1,
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "metrics": {
-          "word_count": 905,
-          "h2_count": 4,
-          "seo_title_length": 50,
-          "meta_description_length": 150,
-          "internal_links": 1
-        }
-      },
-      "last_error": "CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN ausentes para imagem"
-    },
-    {
-      "id": 86,
-      "topic": "como melhorar o conforto térmico em ambientes pequenos",
-      "product": "Mini Climatizador de Ar Portátil",
-      "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
-      "category": "Sala",
-      "status": "QUARANTINE",
-      "intent": "informational_commercial",
-      "rules": {
-        "unique_search_intent": true,
-        "avoid_keyword_cannibalization": true,
-        "affiliate_rel": "nofollow sponsored",
-        "no_invented_product_specs": true,
-        "no_fake_physical_testing": true
-      },
-      "generation_attempts": 1,
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "metrics": {
-          "word_count": 796,
-          "h2_count": 4,
-          "seo_title_length": 60,
-          "meta_description_length": 154,
-          "internal_links": 1
-        }
-      },
-      "last_error": "CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN ausentes para imagem"
-    },
-    {
-      "id": 87,
-      "topic": "climatizador portátil ou ventilador: o que considerar",
       "product": "Mini Climatizador de Ar Portátil",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
       "category": "Sala",
@@ -2031,6 +1973,64 @@
         "status": "DRAFT_READY",
         "reasons": [],
         "metrics": {
+          "word_count": 905,
+          "h2_count": 4,
+          "seo_title_length": 50,
+          "meta_description_length": 150,
+          "internal_links": 1
+        }
+      },
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+    },
+    {
+      "id": 86,
+      "topic": "como melhorar o conforto térmico em ambientes pequenos",
+      "product": "Mini Climatizador de Ar Portátil",
+      "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
+      "category": "Sala",
+      "status": "QUARANTINE",
+      "intent": "informational_commercial",
+      "rules": {
+        "unique_search_intent": true,
+        "avoid_keyword_cannibalization": true,
+        "affiliate_rel": "nofollow sponsored",
+        "no_invented_product_specs": true,
+        "no_fake_physical_testing": true
+      },
+      "generation_attempts": 2,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 796,
+          "h2_count": 4,
+          "seo_title_length": 60,
+          "meta_description_length": 154,
+          "internal_links": 1
+        }
+      },
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+    },
+    {
+      "id": 87,
+      "topic": "climatizador portátil ou ventilador: o que considerar",
+      "product": "Mini Climatizador de Ar Portátil",
+      "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
+      "category": "Sala",
+      "status": "BLOCKED",
+      "intent": "informational_commercial",
+      "rules": {
+        "unique_search_intent": true,
+        "avoid_keyword_cannibalization": true,
+        "affiliate_rel": "nofollow sponsored",
+        "no_invented_product_specs": true,
+        "no_fake_physical_testing": true
+      },
+      "generation_attempts": 3,
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
           "word_count": 787,
           "h2_count": 4,
           "seo_title_length": 53,
@@ -2038,7 +2038,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN ausentes para imagem"
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
     },
     {
       "id": 88,
@@ -2046,7 +2046,7 @@
       "product": "Mini Climatizador de Ar Portátil",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
       "category": "Sala",
-      "status": "GENERATED",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2066,7 +2066,8 @@
           "meta_description_length": 152,
           "internal_links": 1
         }
-      }
+      },
+      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (9cb818cc-f5f1-41c4-8106-2f14359772b1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 89,
@@ -2074,7 +2075,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "GENERATED",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2094,7 +2095,8 @@
           "meta_description_length": 156,
           "internal_links": 1
         }
-      }
+      },
+      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2d3a25b8-c6e5-48ae-9f91-a5bf14261c4e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 90,
@@ -2102,7 +2104,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "GENERATED",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2122,7 +2124,8 @@
           "meta_description_length": 155,
           "internal_links": 1
         }
-      }
+      },
+      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (34616d7f-36f6-4390-a6a8-be1936d64d60)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 91,
@@ -2130,7 +2133,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "GENERATED",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2150,7 +2153,8 @@
           "meta_description_length": 158,
           "internal_links": 1
         }
-      }
+      },
+      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2090a97e-a139-441f-b868-3115348a3e99)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 92,
@@ -2158,7 +2162,7 @@
       "product": "Câmera Lâmpada Wi-Fi 1080p",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmeakMLJH-8DAf9/",
       "category": "Área Externa",
-      "status": "GENERATED",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2178,7 +2182,8 @@
           "meta_description_length": 151,
           "internal_links": 1
         }
-      }
+      },
+      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3cccf7a9-685d-43d0-b294-7c59f973aa3a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 93,
@@ -2354,7 +2359,7 @@
       "product": "Mop Giratório 360",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmFYNCQMH-LghoN/",
       "category": "Limpeza e Utilidades",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2362,7 +2367,9 @@
         "affiliate_rel": "nofollow sponsored",
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
     },
     {
       "id": 100,
@@ -2370,7 +2377,7 @@
       "product": "Mop Giratório 360",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmFYNCQMH-LghoN/",
       "category": "Limpeza e Utilidades",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2378,7 +2385,9 @@
         "affiliate_rel": "nofollow sponsored",
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
     }
   ]
 }
