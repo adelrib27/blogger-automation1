@@ -4,6 +4,7 @@ import unicodedata
 
 SITE_URL = "https://oficina.radartechbr.com.br"
 CTA_CLASS = "og-produto-relacionado"
+CTA_CONSULT_TEXT = "consultar o modelo na Shopee"
 MIN_WORDS = 500
 MAX_WORDS = 1300
 
@@ -217,7 +218,7 @@ def quality(article):
 
     if affiliate_link:
         link_count = content.count(affiliate_link)
-        if link_count != 2:
+        if link_count != 4:
             reasons.append(f"link_afiliado_quantidade_invalida:{link_count}")
 
     disclosure_count = plain_text(content).casefold().count("este é um link de afiliado")
@@ -225,8 +226,20 @@ def quality(article):
         reasons.append(f"disclosure_afiliado_quantidade_invalida:{disclosure_count}")
 
     rel_count = len(re.findall(r'rel=["\'][^"\']*nofollow[^"\']*sponsored[^"\']*["\']', content, re.I))
-    if rel_count != 2:
+    if rel_count != 4:
         reasons.append(f"rel_afiliado_quantidade_invalida:{rel_count}")
+
+    consult_anchor_count = len(re.findall(
+        r'<a\b[^>]*>\s*consultar\s+o\s+modelo\s+na\s+Shopee\s*</a>',
+        content,
+        re.I,
+    ))
+    if consult_anchor_count != 2:
+        reasons.append(f"link_consulta_contextual_quantidade_invalida:{consult_anchor_count}")
+
+    consult_text_count = plain_text(content).casefold().count(CTA_CONSULT_TEXT.casefold())
+    if consult_text_count != 2:
+        reasons.append(f"chamada_consulta_contextual_quantidade_invalida:{consult_text_count}")
 
     image_url = str(article.get("image_url") or "").strip()
     if image_url.startswith("https://"):
