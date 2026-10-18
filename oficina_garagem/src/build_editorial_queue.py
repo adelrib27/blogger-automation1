@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "oficina_garagem" / "data" / "shopee_oportunidades" / "intent_report.json"
+RANKING = ROOT / "oficina_garagem" / "data" / "shopee_oportunidades" / "ranking.json"
 CONFIG = ROOT / "oficina_garagem" / "config" / "shopee_oportunidades.json"
 OUT = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
 MAX_PER_KEYWORD = 1
@@ -63,9 +64,11 @@ def category_map(config):
 
 def display_category(raw):
     return {
-        "Manutencao": "Manutenção", "Acessorios Automotivos": "Acessórios Automotivos",
-        "Organizacao de Garagem": "Organização de Garagem", "Limpeza e Conservacao": "Limpeza e Conservação",
-        "Seguranca e Protecao": "Segurança e Proteção"
+        "Manutencao": "Manutenção",
+        "Acessorios Automotivos": "Acessórios Automotivos",
+        "Organizacao de Garagem": "Organização de Garagem",
+        "Limpeza e Conservacao": "Limpeza e Conservação",
+        "Seguranca e Protecao": "Segurança e Proteção",
     }.get(raw, raw)
 
 
@@ -73,21 +76,24 @@ def keyword_label(keyword):
     return KEYWORD_LABELS.get(norm(keyword), str(keyword).strip().capitalize())
 
 
-def topic_for(keyword, category):
-    label = keyword_label(keyword)
-    if category == "Segurança e Proteção":
-        return f"{label}: o que verificar em especificações, certificações e adequação antes de comprar"
-    if any(term in norm(keyword) for term in ("torquimetro", "multimetro", "compressor", "lavadora")):
-        return f"{label}: critérios para comparar modelos sem assumir especificações não confirmadas"
-    if category in {"Organização de Garagem", "Acessórios Automotivos"}:
-        return f"{label}: o que medir e conferir para escolher um modelo adequado"
-    return f"{label}: o que conferir antes de comprar e quais limitações considerar"
+def ranking_details():
+    if not RANKING.exists():
+        return {}
+    doc = load(RANKING)
+    rows = doc.get("ranking") if isinstance(doc, dict) else []
+    out = {}
+    for row in rows or []:
+        item_id = str(row.get("itemId") or "").strip()
+        if item_id:
+            out[item_id] = row
+    return out
 
 
 def main():
     if not REPORT.exists():
         raise SystemExit(f"Relatório Shopee ausente: {REPORT}")
     report, config = load(REPORT), load(CONFIG)
+    details = ranking_details()
     mapping = category_map(config)
     items = []
     seen_ids = set()
@@ -110,6 +116,7 @@ def main():
         if fingerprint and fingerprint in seen_products:
             skipped["produto_quase_duplicado"] += 1
             continue
+
         keyword = keywords[0]
         keyword_key = norm(keyword)
         if keyword_counts[keyword_key] >= MAX_PER_KEYWORD:
@@ -119,21 +126,33 @@ def main():
         if not raw_category:
             skipped["categoria_nao_mapeada"] += 1
             continue
+
+        detail = details.get(item_id) or {}
+        image_url = str(detail.get("imageUrl") or "").strip()
+        if image_url and not image_url.startswith("https://"):
+            image_url = ""
+
         category = display_category(raw_category)
         items.append({
             "id": len(items) + 1,
             "shopee_item_id": item_id,
             "product": product,
             "affiliate_link": link,
+            "image_url": image_url,
             "shop_name": row.get("shopName"),
             "source_keyword": keyword,
             "editorial_label": keyword_label(keyword),
             "category": category,
-            "topic": topic_for(keyword, category),
             "opportunity_score": row.get("opportunityScore"),
             "priority_tier": row.get("priorityTier"),
             "status": "PENDING",
-            "rules": {"no_fake_testing": True, "no_invented_specs": True, "draft_only": True, "safety_review": category == "Segurança e Proteção"}
+            "rules": {
+                "no_fake_testing": True,
+                "no_invented_specs": True,
+                "draft_only": True,
+                "safety_review": category == "Segurança e Proteção",
+                "single_editorial_title": True,
+            },
         })
         seen_ids.add(item_id)
         if fingerprint:
@@ -142,13 +161,14 @@ def main():
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
-        "version": 4,
+        "version": 5,
         "project": "Oficina & Garagem",
-        "source": "Shopee intent_report v2.3",
+        "source": "Shopee intent_report v2.3 + ranking details",
+        "editorial_policy": "produto real -> um único título editorial -> conteúdo útil -> CTA contextual",
         "max_per_keyword": MAX_PER_KEYWORD,
         "total": len(items),
         "skipped": dict(skipped),
-        "items": items
+        "items": items,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Fila criada: {OUT} | itens={len(items)} | descartes={dict(skipped)}")
     if not items:
