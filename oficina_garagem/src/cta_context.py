@@ -5,6 +5,7 @@ import time
 
 CTA_CLASS = "og-produto-relacionado"
 CTA_BUTTON_TEXT = "CONFERIR ESPECIFICAÇÕES DO MODELO NA SHOPEE"
+CTA_CONSULT_TEXT = "consultar o modelo na Shopee"
 CTA_FORBIDDEN = re.compile(
     r"\b(?:imperd[ií]vel|maravilhos[oa]|incr[ií]vel|perfeit[oa]|melhor|excelente|ideal|promo[cç][aã]o|oferta|corra|aproveite|n[aã]o\s+perca|[uú]ltimas?\s+unidades?)\b",
     re.I,
@@ -42,9 +43,10 @@ CONEXÃO EDITORIAL: {plan['product_connection']}
 PRODUTO REAL DA SHOPEE: {item['product']}
 
 REGRAS OBRIGATÓRIAS:
-- Escreva EXATAMENTE 2 frases, entre 35 e 65 palavras no total.
+- Escreva EXATAMENTE 2 frases, entre 35 e 70 palavras no total.
 - A primeira frase deve começar com "Para quem" e conectar o conteúdo do artigo ao produto como uma opção de consulta, sem tom publicitário.
-- A segunda frase deve orientar o leitor a conferir as especificações do modelo no anúncio para avaliar se ele atende à necessidade dele.
+- A segunda frase deve orientar o leitor a conferir as especificações do modelo no anúncio e terminar com a expressão exata "você também pode consultar o modelo na Shopee.".
+- A expressão "consultar o modelo na Shopee" será transformada pelo código em um link de afiliado; não escreva HTML nem URL.
 - Pode abreviar o nome comercial apenas de forma fiel, preservando tipo, marca e números realmente presentes no título do produto.
 - Não invente material, robustez, desempenho, finalidade específica, experiência de uso, teste, popularidade, certificação ou característica que não esteja explicitamente disponível.
 - Evite adjetivos exagerados e expressões como "imperdível", "maravilhoso", "incrível", "perfeito", "melhor", "excelente", "ideal", "promoção", "oferta", "corra", "aproveite" e equivalentes.
@@ -64,7 +66,7 @@ def validate_cta_lead(item, value):
     if "<" in lead or ">" in lead or "http" in lead.casefold():
         raise RuntimeError("CTA contextual contém HTML ou link")
     words = _word_count(lead)
-    if not 25 <= words <= 80:
+    if not 25 <= words <= 85:
         raise RuntimeError(f"CTA contextual fora da faixa: {words}")
     sentences = [x for x in re.split(r"(?<=[.!?])\s+", lead) if x.strip()]
     if len(sentences) != 2:
@@ -83,6 +85,8 @@ def validate_cta_lead(item, value):
         raise RuntimeError("CTA contextual sem referência suficiente ao produto")
     if "especifica" not in lead.casefold() or "anúncio" not in lead.casefold():
         raise RuntimeError("CTA contextual não orienta consulta às especificações no anúncio")
+    if CTA_CONSULT_TEXT.casefold() not in lead.casefold():
+        raise RuntimeError("CTA contextual sem a chamada de consulta clicável")
     return lead
 
 
@@ -96,7 +100,8 @@ def default_cta_lead(item):
     return (
         "Para quem deseja colocar essas orientações em prática e quer consultar uma opção relacionada, "
         f"o modelo {product} é uma referência disponível na Shopee. "
-        "Confira as especificações do modelo no anúncio para avaliar se ele atende à sua necessidade."
+        "Confira as especificações do modelo no anúncio para avaliar se ele atende à sua necessidade; "
+        "você também pode consultar o modelo na Shopee."
     )
 
 
@@ -113,10 +118,24 @@ def generate_cta_lead(item, plan, ai_call, attempts=2):
     return fallback, "safe-fallback:" + last[:180]
 
 
+def _linked_lead(item, cta_lead, link):
+    lead = html.escape(validate_cta_lead(item, cta_lead or default_cta_lead(item)))
+    anchor = (
+        f'<a href="{link}" target="_blank" rel="nofollow sponsored" '
+        'style="color:#B45309;text-decoration:underline;text-decoration-thickness:1.5px;'
+        'text-underline-offset:3px;font-weight:800;">'
+        f"{CTA_CONSULT_TEXT}</a>"
+    )
+    linked, count = re.subn(re.escape(CTA_CONSULT_TEXT), anchor, lead, count=1, flags=re.I)
+    if count != 1:
+        raise RuntimeError("CTA contextual não pôde criar o link de consulta")
+    return linked
+
+
 def cta_block(item, cta_lead):
     product = html.escape(str(item.get("product") or "Produto relacionado"))
-    lead = html.escape(validate_cta_lead(item, cta_lead or default_cta_lead(item)))
     link = html.escape(str(item.get("affiliate_link") or ""), quote=True)
+    lead = _linked_lead(item, cta_lead, link)
     image_url = str(item.get("image_url") or "").strip()
     image = ""
     if image_url.startswith("https://"):
@@ -137,7 +156,10 @@ def cta_block(item, cta_lead):
             '<p style="margin:0 0 10px;font-size:14px;font-weight:700;letter-spacing:.4px;">'
             "🛒 REFERÊNCIA RELACIONADA AO TEMA</p>",
             image,
-            f'<p style="margin:0 0 18px;line-height:1.7;">{lead}</p>',
+            '<p style="margin:0 0 18px;line-height:1.65;font-family:\'Trebuchet MS\',\'Segoe UI\',Arial,sans-serif;'
+            'font-size:21px;font-weight:700;color:#7C2D12;background:linear-gradient(135deg,#FFF7ED 0%,#FFFBEB 100%);'
+            'border:1px solid #F6C66D;border-left:5px solid #F59E0B;border-radius:12px;padding:16px 18px;'
+            f'box-shadow:0 6px 18px rgba(245,158,11,.12);letter-spacing:.1px;">{lead}</p>',
             f'<p style="margin:0 0 16px;"><a href="{link}" target="_blank" rel="nofollow sponsored" '
             'style="display:inline-block;padding:14px 22px;background:#16A34A;color:#ffffff;'
             'text-decoration:none;font-weight:700;border-radius:10px;font-size:16px;line-height:1.3;">'
