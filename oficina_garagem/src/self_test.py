@@ -7,6 +7,7 @@ if str(HERE) not in sys.path:
 
 from editorial_normalizer import normalize_editorial  # noqa: E402
 from quality_gate import quality  # noqa: E402
+from cta_context import CTA_BUTTON_TEXT, cta_copy_prompt, make_cta_lead  # noqa: E402
 from generate_articles import build, make_plan, meta_description, repair_prompt  # noqa: E402
 
 
@@ -56,6 +57,8 @@ def main():
     assert good["metrics"]["cta_count"] == 2
     assert built["content_html"].count(item["image_url"]) == 2
     assert built["content_html"].count(item["affiliate_link"]) == 2
+    assert built["content_html"].count(CTA_BUTTON_TEXT) == 2
+    assert built["content_html"].count(built["cta_lead"]) == 2
 
     tested = build(
         item,
@@ -176,7 +179,33 @@ def main():
     assert 110 <= len(meta) <= 160, len(meta)
     assert not meta.rstrip(".").casefold().endswith((" de", " da", " do", " em", " para", " com", " sem")), meta
 
-    print("Self-test Oficina & Garagem editorial contextual v2: 17/17 OK")
+    qwen_item = sample_item(
+        category="Organização de Garagem",
+        product="Caixa Ferramentas Sanfonada 7 Gavetas C/Alça Fixa Marcon",
+        focus="organizar garagem",
+    )
+    qwen_plan = plan("Organize Sua Garagem com uma Caixa de Ferramentas", "organizar garagem")
+    qwen_raw = '{"lead":"Para quem deseja aplicar as dicas de organização, a Caixa Sanfonada de 7 Gavetas da Marcon é uma opção relacionada disponível para consulta. Confira as especificações do modelo no anúncio para avaliar se ele atende à sua necessidade."}'
+    lead = make_cta_lead(qwen_item, qwen_plan, qwen_raw)
+    contextual = build(qwen_item, qwen_plan, long_editorial("organizar garagem"), cta_lead=lead, cta_generation_mode="qwen3-contextual")
+    assert contextual["quality"]["status"] == "DRAFT_READY", contextual["quality"]
+    assert "Caixa Sanfonada de 7 Gavetas da Marcon" in contextual["cta_lead"]
+    assert contextual["content_html"].count(CTA_BUTTON_TEXT) == 2
+
+    hype_lead = "Para quem deseja aplicar as dicas, esta incrível Parafusadeira sem fio é uma opção imperdível para organizar a bancada. Confira as especificações do modelo no anúncio para avaliar se ele atende à sua necessidade."
+    try:
+        build(item, plan(), long_editorial(), enforce=False, cta_lead=hype_lead)
+        raise AssertionError("CTA promocional deveria ser bloqueado")
+    except RuntimeError as exc:
+        assert "tom promocional exagerado" in str(exc).casefold(), exc
+
+    prompt = cta_copy_prompt(qwen_item, qwen_plan).casefold()
+    assert "jornalista" in prompt
+    assert "tom neutro" in prompt
+    assert "prestação de serviço" in prompt
+    assert "não use linguagem de venda agressiva" in prompt
+
+    print("Self-test Oficina & Garagem editorial contextual v2: 20/20 OK")
 
 
 if __name__ == "__main__":
