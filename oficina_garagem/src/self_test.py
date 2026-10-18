@@ -111,6 +111,12 @@ def main():
     assert "mais regularidade" not in fluency.casefold()
     assert "menos frequência" not in fluency.casefold()
 
+    storage = normalize_editorial(
+        "<p>Materiais como tintas e solventes devem ser armazenados em locais ventilados e longe de fontes de calor. Outro critério é separar categorias.</p>"
+    )
+    assert "solventes" not in storage.casefold()
+    assert "outro critério" in storage.casefold()
+
     misclassified = build(
         item,
         plan(),
@@ -163,7 +169,7 @@ def main():
     assert 110 <= len(meta) <= 160, len(meta)
     assert not meta.rstrip(".").casefold().endswith((" de", " da", " do", " em", " para", " com", " sem")), meta
 
-    print("Self-test Oficina & Garagem editorial contextual v2: 15/15 OK")
+    print("Self-test Oficina & Garagem editorial contextual v2: 16/16 OK")
 
 
 if __name__ == "__main__":
