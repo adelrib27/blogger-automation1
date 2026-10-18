@@ -100,6 +100,24 @@ def main():
     assert misclassified["quality"]["status"] == "REJECTED"
     assert "classificacao_tecnica_incorreta_fixadores_como_ferramentas" in misclassified["quality"]["reasons"], misclassified["quality"]
 
+    frequency = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Ferramentas que são utilizadas diariamente devem ficar na frente, enquanto itens menos usados podem ficar atrás."),
+        enforce=False,
+    )
+    assert frequency["quality"]["status"] == "REJECTED"
+    assert "frequencia_de_uso_assumida_sem_contexto" in frequency["quality"]["reasons"], frequency["quality"]
+
+    copied_title = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Parafusadeira sem fio com maleta é uma opção relacionada para organizar o trabalho."),
+        enforce=False,
+    )
+    assert copied_title["quality"]["status"] == "REJECTED"
+    assert "titulo_comercial_copiado_no_corpo" in copied_title["quality"]["reasons"], copied_title["quality"]
+
     no_image_item = dict(item)
     no_image_item["image_url"] = ""
     no_image = build(no_image_item, plan(), long_editorial())
@@ -114,7 +132,7 @@ def main():
     parsed = make_plan(item, fake_plan_json)
     assert parsed["title"] == "Como organizar ferramentas sem desperdiçar espaço"
 
-    print("Self-test Oficina & Garagem editorial contextual v2: 8/8 OK")
+    print("Self-test Oficina & Garagem editorial contextual v2: 10/10 OK")
 
 
 if __name__ == "__main__":
