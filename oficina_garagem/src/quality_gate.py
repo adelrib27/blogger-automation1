@@ -37,6 +37,12 @@ FASTENER_AS_TOOL = re.compile(
     r"\bferramentas?\s+(?:pequenas?|menores?|mi[uú]das?)\b.{0,100}\b(?:parafusos?|pregos?|porcas?|arruelas?|buchas?)\b",
     re.I | re.S,
 )
+FIXED_FREQUENCY_PATTERNS = (
+    r"\bferramentas?\s+que\s+(?:s[aã]o\s+)?(?:utilizadas?|usadas?)\s+(?:diariamente|todos os dias)\b",
+    r"\bferramentas?\s+de\s+uso\s+di[aá]rio\b",
+    r"\bitens?\s+(?:menos\s+usados?|raramente\s+usados?|usados?\s+com\s+menos\s+frequ[eê]ncia)\b",
+    r"\bferramentas?\s+(?:menos\s+usadas?|raramente\s+usadas?|usadas?\s+com\s+menos\s+frequ[eê]ncia)\b",
+)
 
 
 def normalized(value):
@@ -166,6 +172,16 @@ def quality(article):
         reasons.append("condicao_comercial_nao_confirmada")
     if FASTENER_AS_TOOL.search(editorial):
         reasons.append("classificacao_tecnica_incorreta_fixadores_como_ferramentas")
+
+    for pattern in FIXED_FREQUENCY_PATTERNS:
+        if re.search(pattern, folded, re.I):
+            reasons.append("frequencia_de_uso_assumida_sem_contexto")
+            break
+
+    commercial_title = normalized(article.get("product") or "")
+    editorial_normalized = normalized(editorial)
+    if commercial_title and len(commercial_title) >= 18 and commercial_title in editorial_normalized:
+        reasons.append("titulo_comercial_copiado_no_corpo")
 
     affiliate_link = str(article.get("affiliate_link") or "")
     if not affiliate_link.startswith("https://"):
