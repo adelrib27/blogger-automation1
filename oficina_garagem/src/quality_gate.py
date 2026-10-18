@@ -28,6 +28,11 @@ DANGEROUS_INSTRUCTION_PATTERNS = (
     r"\b(?:corte|solde|esmerilhe)\b.{0,60}\b(?:metal|chassi|carroceria|pe[cç]a)\b",
     r"\b(?:ligue|conecte|ponte)\b.{0,60}\b(?:bateria|rede el[eé]trica|tomada)\b",
 )
+ABSOLUTE_CLAIM_PATTERNS = (
+    r"\bgarant(?:e|ir|indo|ido)\b.{0,90}\b(?:sempre|seguran[cç]a|prote[cç][aã]o|condi[cç][oõ]es? de uso)\b",
+    r"\b(?:100\s*%|totalmente)\s+(?:seguro|protegido|garantido)\b",
+    r"\bprote[cç][aã]o\s+garantida\b",
+)
 NUMERIC_SPEC = re.compile(
     r"\b\d+(?:[.,]\d+)?\s*(?:kg|g|cm|mm|m|l|ml|w|v|ah|mah|nm|psi|bar|%|hz|rpm|amp|ampere|amperes)\b",
     re.I,
@@ -166,8 +171,12 @@ def quality(article):
 
     if re.search(r"\b(?:compat[ií]vel com todos|compatibilidade universal|serve em qualquer)\b", folded, re.I):
         reasons.append("compatibilidade_universal_nao_confirmada")
-    if re.search(r"\b(?:garante|100% seguro|prote[cç][aã]o garantida)\b", folded, re.I):
-        reasons.append("alegacao_absoluta_de_seguranca")
+
+    for pattern in ABSOLUTE_CLAIM_PATTERNS:
+        if re.search(pattern, folded, re.I):
+            reasons.append("alegacao_absoluta_de_seguranca_ou_conservacao")
+            break
+
     if re.search(r"\b(?:pre[cç]o|desconto|estoque)\s+(?:de|por|atual|agora)\b", folded, re.I):
         reasons.append("condicao_comercial_nao_confirmada")
     if FASTENER_AS_TOOL.search(editorial):
