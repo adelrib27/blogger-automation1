@@ -60,7 +60,8 @@ DROP_SENTENCE_PATTERNS = (
     re.compile(r"\bprote[cç][aã]o\s+garantida\b", re.I),
     re.compile(r"\b100\s*%\s+(?:seguro|protegido|garantido)\b", re.I),
     re.compile(r"\bpreservar\s+a\s+qualidade\b", re.I),
-    re.compile(r"\bevitar?\s+acidentes?\b", re.I),
+    re.compile(r"\b(?:evita|evitar|evitando|reduz|reduzir|reduzindo)\b.{0,100}\bacidentes?\b", re.I),
+    re.compile(r"\bcontribui\s+para\s+(?:a\s+)?(?:seguran[cç]a|prote[cç][aã]o)\b", re.I),
     re.compile(
         r"\b(?:tintas?|solventes?|combust[ií]veis?|produtos?\s+qu[ií]micos?)\b.*\b(?:armazenad[oa]s?|armazenar)\b.*\b(?:ventilad[oa]s?|fontes?\s+de\s+calor)\b",
         re.I,
