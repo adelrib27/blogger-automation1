@@ -9,6 +9,7 @@ REPORT = ROOT / "oficina_garagem" / "data" / "shopee_oportunidades" / "intent_re
 RANKING = ROOT / "oficina_garagem" / "data" / "shopee_oportunidades" / "ranking.json"
 CONFIG = ROOT / "oficina_garagem" / "config" / "shopee_oportunidades.json"
 OUT = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
+HISTORY = ROOT / "oficina_garagem" / "data" / "publication_history.json"
 MAX_PER_KEYWORD = 1
 
 KEYWORD_LABELS = {
@@ -36,8 +37,13 @@ KEYWORD_LABELS = {
 }
 
 
-def load(path):
-    return json.loads(path.read_text(encoding="utf-8"))
+def load(path, default=None):
+    if default is None:
+        default = {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return default
 
 
 def norm(value):
@@ -79,7 +85,7 @@ def keyword_label(keyword):
 def ranking_details():
     if not RANKING.exists():
         return {}
-    doc = load(RANKING)
+    doc = load(RANKING, {})
     rows = doc.get("ranking") if isinstance(doc, dict) else []
     out = {}
     for row in rows or []:
@@ -89,12 +95,28 @@ def ranking_details():
     return out
 
 
+def publication_memory():
+    doc = load(HISTORY, {"items": []})
+    rows = doc.get("items") if isinstance(doc, dict) else []
+    ids = set()
+    fingerprints = set()
+    for row in rows or []:
+        item_id = str(row.get("shopee_item_id") or "").strip()
+        if item_id:
+            ids.add(item_id)
+        fingerprint = product_fingerprint(row.get("product"))
+        if fingerprint:
+            fingerprints.add(fingerprint)
+    return ids, fingerprints
+
+
 def main():
     if not REPORT.exists():
         raise SystemExit(f"Relatório Shopee ausente: {REPORT}")
-    report, config = load(REPORT), load(CONFIG)
+    report, config = load(REPORT, {}), load(CONFIG, {})
     details = ranking_details()
     mapping = category_map(config)
+    published_ids, published_fingerprints = publication_memory()
     items = []
     seen_ids = set()
     seen_products = set()
@@ -109,10 +131,16 @@ def main():
         if not item_id or not product or not link.startswith("https://") or not keywords:
             skipped["incompleto"] += 1
             continue
+        if item_id in published_ids:
+            skipped["produto_ja_publicado"] += 1
+            continue
         if item_id in seen_ids:
             skipped["item_id_duplicado"] += 1
             continue
         fingerprint = product_fingerprint(product)
+        if fingerprint and fingerprint in published_fingerprints:
+            skipped["produto_semelhante_ja_publicado"] += 1
+            continue
         if fingerprint and fingerprint in seen_products:
             skipped["produto_quase_duplicado"] += 1
             continue
@@ -149,7 +177,7 @@ def main():
             "rules": {
                 "no_fake_testing": True,
                 "no_invented_specs": True,
-                "draft_only": True,
+                "publication_requires_gate": True,
                 "safety_review": category == "Segurança e Proteção",
                 "single_editorial_title": True,
             },
@@ -161,10 +189,10 @@ def main():
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
-        "version": 5,
+        "version": 6,
         "project": "Oficina & Garagem",
-        "source": "Shopee intent_report v2.3 + ranking details",
-        "editorial_policy": "produto real -> um único título editorial -> conteúdo útil -> CTA contextual",
+        "source": "Shopee intent_report v2.3 + ranking details + publication history",
+        "editorial_policy": "produto real -> um único título editorial -> conteúdo útil -> CTA contextual -> gate -> publicação",
         "max_per_keyword": MAX_PER_KEYWORD,
         "total": len(items),
         "skipped": dict(skipped),
