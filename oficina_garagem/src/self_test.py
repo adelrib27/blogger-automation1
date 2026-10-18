@@ -117,6 +117,13 @@ def main():
     assert "solventes" not in storage.casefold()
     assert "outro critério" in storage.casefold()
 
+    safety_claims = normalize_editorial(
+        "<p>Um espaço bem arrumado contribui para a segurança, evitando que objetos causem acidentes. Outro critério é manter cada categoria no lugar definido.</p>"
+    )
+    assert "segurança" not in safety_claims.casefold()
+    assert "acidentes" not in safety_claims.casefold()
+    assert "outro critério" in safety_claims.casefold()
+
     misclassified = build(
         item,
         plan(),
@@ -169,7 +176,7 @@ def main():
     assert 110 <= len(meta) <= 160, len(meta)
     assert not meta.rstrip(".").casefold().endswith((" de", " da", " do", " em", " para", " com", " sem")), meta
 
-    print("Self-test Oficina & Garagem editorial contextual v2: 16/16 OK")
+    print("Self-test Oficina & Garagem editorial contextual v2: 17/17 OK")
 
 
 if __name__ == "__main__":
