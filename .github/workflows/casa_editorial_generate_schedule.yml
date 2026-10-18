@@ -24,8 +24,8 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CASA_CLOUDFLARE_API_TOKEN }}
       CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
       CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
-      CASA_WORDPRESS_STATUS: draft
-      CASA_LIVE_PUBLISH_ENABLED: "false"
+      CASA_WORDPRESS_STATUS: publish
+      CASA_LIVE_PUBLISH_ENABLED: "true"
       CASA_GENERATION_BATCH_SIZE: "2"
       CASA_PUBLISH_LIMIT: "2"
       CASA_IMAGE_MODEL: "@cf/black-forest-labs/flux-1-schnell"
@@ -65,7 +65,7 @@ jobs:
         if: steps.workers_ai_quota.outputs.available == 'true'
         run: python -u casa_decoracao/src/generation_interlock.py
 
-      - name: Sincronizar somente rascunhos validados no WordPress
+      - name: Publicar somente artigos aprovados pelo gate v2 no WordPress
         if: steps.workers_ai_quota.outputs.available == 'true' && env.CASA_WORDPRESS_USERNAME != '' && env.CASA_WORDPRESS_APP_PASSWORD != ''
         run: python -u casa_decoracao/src/publication_interlock.py
 

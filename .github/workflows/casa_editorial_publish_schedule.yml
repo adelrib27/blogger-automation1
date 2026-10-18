@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       wordpress_status:
-        description: "Status WordPress (draft ou publish; publish permanece bloqueado até liberação explícita)"
+        description: "Status WordPress (draft ou publish; publish autorizado, sujeito ao gate v2)"
         required: false
         default: "draft"
       publish_limit:
@@ -27,7 +27,7 @@ jobs:
       CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
       CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
       CASA_WORDPRESS_STATUS: ${{ github.event_name == 'workflow_dispatch' && inputs.wordpress_status || 'draft' }}
-      CASA_LIVE_PUBLISH_ENABLED: "false"
+      CASA_LIVE_PUBLISH_ENABLED: "true"
       CASA_PUBLISH_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_limit || '5' }}
 
     steps:

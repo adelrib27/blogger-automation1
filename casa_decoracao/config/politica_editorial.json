@@ -2,7 +2,7 @@
   "version": 1,
   "project": "Casa e Decoração",
   "timezone": "America/Recife",
-  "status": "VALIDACAO_SEGURA",
+  "status": "PUBLICACAO_CONDICIONADA_AO_GATE_V2",
   "daily_publication_policy": {
     "publish_only_qualified_products": true,
     "never_force_low_quality_content": true,
@@ -21,7 +21,7 @@
     "Limpeza e Utilidades"
   ],
   "product_rules": {
-    "min_rating_when_available": 4.0,
+    "min_rating_when_available": 4,
     "allow_products_without_rating": true,
     "min_extra_commission_rate": 0.03,
     "extra_commission_first": true,
@@ -97,8 +97,8 @@
   "automation_mode": {
     "shopee_discovery": true,
     "queue_selection": true,
-    "content_generation": false,
-    "wordpress_auto_publish": false,
-    "note": "Descoberta e ranking podem rodar isoladamente. Geração/publicação automática só deve ser ativada após validação específica do Casa e Decoração."
+    "content_generation": true,
+    "wordpress_auto_publish": true,
+    "note": "Publicação ao vivo autorizada pelo usuário em 2026-10-18, exclusiva do Casa e Decoração. Fluxo autônomo a cada 3 horas, até 2 artigos por execução, condicionado ao gate v2. Rascunhos reprovados permanecem bloqueados."
   }
 }
