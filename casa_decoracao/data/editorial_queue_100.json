@@ -19,7 +19,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "wordpress": {
         "id": 18,
         "status": "draft",
@@ -27,7 +27,18 @@
         "slug": "como-escolher-para-cozinha-pequena",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 911,
+          "h2_count": 4,
+          "seo_title_length": 58,
+          "meta_description_length": 144,
+          "internal_links": 1
+        }
+      },
+      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:5"
     },
     {
       "id": 2,
@@ -44,7 +55,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 2,
       "wordpress": {
         "id": 19,
         "status": "draft",
@@ -52,7 +63,18 @@
         "slug": "como-organizar-pratos-e-talheres-na-bancada",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "metrics": {
+          "word_count": 804,
+          "h2_count": 4,
+          "seo_title_length": 58,
+          "meta_description_length": 153,
+          "internal_links": 1
+        }
+      },
+      "last_error": "Workers AI imagem HTTP 400: {\"errors\":[{\"message\":\"AiError: Bad input: Error: Additional or unevaluated properties '/seed' at '/' not allowed (7400e94b-99cb-4548-b24f-17ac2b2f3a4d)\",\"code\":5006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 3,
@@ -69,7 +91,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "wordpress": {
         "id": 20,
         "status": "draft",
@@ -77,7 +99,7 @@
         "slug": "o-que-medir-antes-de-comprar",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 4,
@@ -94,7 +116,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "wordpress": {
         "id": 21,
         "status": "draft",
@@ -102,7 +124,7 @@
         "slug": "como-comparar-modelos-de-1-e-2-andares",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 5,
@@ -119,7 +141,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "wordpress": {
         "id": 22,
         "status": "draft",
@@ -127,7 +149,7 @@
         "slug": "como-escolher-um-jogo-de-toalhas-para-o-dia-a-dia",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 6,
@@ -144,7 +166,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "wordpress": {
         "id": 24,
         "status": "draft",
@@ -152,7 +174,7 @@
         "slug": "o-que-observar-em-gramatura-tamanho-e-acabamento",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 7,
@@ -169,7 +191,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "wordpress": {
         "id": 25,
         "status": "draft",
@@ -177,7 +199,7 @@
         "slug": "como-montar-um-enxoval-de-banho-funcional",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 8,
@@ -201,8 +223,8 @@
         "slug": "como-organizar-toalhas-em-banheiro-pequeno",
         "action": "created"
       },
-      "generation_attempts": 1,
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "generation_attempts": 0,
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 9,
@@ -219,7 +241,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "wordpress": {
         "id": 27,
         "status": "draft",
@@ -227,7 +249,7 @@
         "slug": "como-escolher-potes-para-organizar-a-despensa",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 10,
@@ -244,7 +266,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "wordpress": {
         "id": 28,
         "status": "draft",
@@ -252,7 +274,7 @@
         "slug": "potes-com-trava-o-que-observar-antes-da-compra",
         "action": "created"
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 11,
@@ -1939,7 +1961,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 2,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -1951,7 +1973,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 83,
@@ -1968,7 +1990,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 2,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -1980,7 +2002,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 84,
@@ -1997,7 +2019,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 2,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2009,7 +2031,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 85,
@@ -2026,7 +2048,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 2,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2038,7 +2060,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 86,
@@ -2055,7 +2077,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 2,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2067,7 +2089,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 87,
@@ -2075,7 +2097,7 @@
       "product": "Mini Climatizador de Ar Portátil",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVaKJ1umxE-UHx9W/",
       "category": "Sala",
-      "status": "BLOCKED",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2084,7 +2106,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 3,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2096,7 +2118,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 88,
@@ -2113,7 +2135,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2125,7 +2147,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (9cb818cc-f5f1-41c4-8106-2f14359772b1)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 89,
@@ -2142,7 +2164,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2154,7 +2176,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2d3a25b8-c6e5-48ae-9f91-a5bf14261c4e)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 90,
@@ -2171,7 +2193,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2183,7 +2205,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (34616d7f-36f6-4390-a6a8-be1936d64d60)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 91,
@@ -2200,7 +2222,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2212,7 +2234,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (2090a97e-a139-441f-b868-3115348a3e99)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 92,
@@ -2229,7 +2251,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2241,7 +2263,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (3cccf7a9-685d-43d0-b294-7c59f973aa3a)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 93,
@@ -2258,7 +2280,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2270,7 +2292,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (91ddbd69-5cf8-49e5-b874-5a30026d5789)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 94,
@@ -2287,7 +2309,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2299,7 +2321,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (1b2a3a2d-495b-44cf-85d5-7fd6a13ba736)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 95,
@@ -2316,7 +2338,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2328,7 +2350,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (a203e665-4e7a-4cc0-ab69-097ff5b1ffef)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 96,
@@ -2345,7 +2367,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
+      "generation_attempts": 0,
       "quality": {
         "status": "DRAFT_READY",
         "reasons": [],
@@ -2357,7 +2379,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 429: {\"errors\":[{\"message\":\"AiError: AiError: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan if you would like to continue usage. (ea7b3b88-dfac-42c2-afdd-37b7d1da6089)\",\"code\":4006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 97,
@@ -2431,8 +2453,8 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "generation_attempts": 0,
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     },
     {
       "id": 100,
@@ -2449,8 +2471,8 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 1,
-      "last_error": "falha na geração após 3 tentativas: HTTP Error 429: Too Many Requests"
+      "generation_attempts": 0,
+      "last_error": "limite temporário 429 do provedor de IA; nova tentativa automática em execução posterior"
     }
   ]
 }
