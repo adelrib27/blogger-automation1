@@ -77,6 +77,8 @@ def validate_cta_lead(item, value):
         raise RuntimeError("CTA contextual com tom promocional exagerado")
     if re.search(r"\b(?:pre[cç]o|desconto|estoque|frete|urg[eê]ncia|escassez)\b", lead, re.I):
         raise RuntimeError("CTA contextual com condição comercial")
+    if CTA_CONSULT_TEXT.casefold() not in lead.casefold():
+        raise RuntimeError("CTA contextual sem a chamada de consulta clicável")
     product_tokens = {
         x for x in re.findall(r"[\wÀ-ÿ]+", str(item.get("product") or "").casefold()) if len(x) >= 4
     }
@@ -85,8 +87,6 @@ def validate_cta_lead(item, value):
         raise RuntimeError("CTA contextual sem referência suficiente ao produto")
     if "especifica" not in lead.casefold() or "anúncio" not in lead.casefold():
         raise RuntimeError("CTA contextual não orienta consulta às especificações no anúncio")
-    if CTA_CONSULT_TEXT.casefold() not in lead.casefold():
-        raise RuntimeError("CTA contextual sem a chamada de consulta clicável")
     return lead
 
 
