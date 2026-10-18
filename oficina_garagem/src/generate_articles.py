@@ -14,6 +14,7 @@ OUT_DIR = ROOT / "oficina_garagem" / "data" / "generated"
 MODEL = os.getenv("OFICINA_AI_MODEL", "@cf/qwen/qwen3-30b-a3b-fp8").strip()
 BATCH_SIZE = max(1, min(int(os.getenv("OFICINA_GENERATION_BATCH_SIZE", "2")), 10))
 ENABLED = os.getenv("OFICINA_GENERATION_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+BODY_ATTEMPTS = max(1, min(int(os.getenv("OFICINA_GENERATION_BODY_ATTEMPTS", "3")), 3))
 
 CTA_CLASS = "og-produto-relacionado"
 
@@ -59,7 +60,7 @@ def ai(prompt, retries=3):
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "OficinaGaragem-Editorial/2.0",
+                "User-Agent": "OficinaGaragem-Editorial/2.1",
             },
         )
         try:
@@ -179,13 +180,38 @@ def meta_description(plan):
     return cut_text(text, 155)
 
 
-def article_prompt(item, plan):
-    extra = (
+def universal_article_rules(item):
+    sensitive = (
         "\n- TEMA SENSÍVEL: mantenha caráter informativo, não ensine procedimentos de segurança, "
         "reparo, elevação, corte, solda, frenagem, direção, suspensão ou eletricidade. Exija revisão humana."
         if item.get("rules", {}).get("safety_review")
         else ""
     )
+    return f"""
+- 900 a 1300 palavras, pelo menos 5 H2 distintos; sem H1.
+- O artigo deve entregar valor por si só, mesmo sem clique no produto.
+- O produto é apenas uma opção relacionada; não escreva o artigo como página de venda, review obrigatório ou ficha técnica.
+- O nome comercial do produto serve somente como contexto interno. NÃO mencione no corpo a oferta específica, marca, modelo, título comercial, número de peças/gavetas ou características particulares do anúncio.
+- Quando for útil, fale apenas da classe genérica do produto, sem transformar detalhes do anúncio em fatos editoriais.
+- Não copie nem repita o título comercial como título editorial ou dentro do corpo.
+- Não invente preço, desconto, estoque, entrega, potência, tensão, corrente, torque, capacidade de carga, medidas, compatibilidade, certificação, garantia ou desempenho.
+- Se um dado técnico for relevante e não estiver confirmado, ensine o leitor a conferir no anúncio, ficha técnica ou manual.
+- Não diga que testamos, usamos ou comprovamos o produto.
+- Não imponha frequência fixa de uso. Não escreva "ferramentas de uso diário", "utilizadas diariamente", "itens menos usados", "menos utilizados", "raramente usados" ou equivalentes.
+- Para falar de prioridade de acesso, use formulações condicionais baseadas na rotina real do leitor, como "itens que você identifica como mais acessados na sua rotina".
+- Diferencie corretamente ferramentas, acessórios, consumíveis, fixadores e materiais. Parafusos, pregos, porcas, arruelas e buchas não devem ser chamados de ferramentas.
+- Evite exemplos arbitrários ou tecnicamente frágeis. Prefira critérios gerais aplicáveis a diferentes oficinas e garagens.
+- Evite frases genéricas repetitivas e conclusões vazias.
+- Não dê instruções passo a passo de reparos automotivos, sistemas críticos, elevação de veículo, corte, solda ou intervenções elétricas.
+- Não faça alegações absolutas de segurança, proteção, durabilidade ou conservação.
+- Use naturalmente a palavra-chave principal.
+- Não escreva CTA, links, imagem do produto, preço ou bloco de afiliado; o código insere isso depois.
+- HTML somente com <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Sem estilos, markdown, H1, links ou scripts.
+{sensitive}
+"""
+
+
+def article_prompt(item, plan):
     return f"""Você é editor de um blog brasileiro chamado Oficina & Garagem.
 
 TÍTULO EDITORIAL ÚNICO: {plan['title']}
@@ -198,26 +224,32 @@ CATEGORIA: {item['category']}
 Escreva um artigo informativo em português do Brasil.
 
 REGRAS:
-- 900 a 1300 palavras, pelo menos 5 H2 distintos; sem H1.
-- O artigo deve entregar valor por si só, mesmo sem clique no produto.
-- O produto é apenas uma opção relacionada; não escreva o artigo como página de venda, review obrigatório ou ficha técnica.
-- O nome comercial do produto serve somente como contexto interno. NÃO mencione no corpo a oferta específica, marca, modelo, título comercial, número de peças/gavetas ou características particulares do anúncio.
-- Quando for útil, fale apenas da classe genérica do produto (por exemplo, "caixa de ferramentas"), sem transformar detalhes do anúncio em fatos editoriais.
-- Não copie nem repita o título comercial como título editorial ou dentro do corpo.
-- Não invente preço, desconto, estoque, entrega, potência, tensão, corrente, torque, capacidade de carga, medidas, compatibilidade, certificação, garantia ou desempenho.
-- Se um dado técnico for relevante e não estiver confirmado, ensine o leitor a conferir no anúncio, ficha técnica ou manual.
-- Não diga que testamos, usamos ou comprovamos o produto.
-- Não assuma que ferramentas ou itens específicos são usados "todos os dias", "diariamente", "raramente", "menos usados" ou "com menos frequência". Use formulações condicionais: "se você usa com frequência...", "itens mais usados na sua rotina...".
-- Diferencie corretamente ferramentas, acessórios, consumíveis, fixadores e materiais. Parafusos, pregos, porcas, arruelas e buchas não devem ser chamados de ferramentas.
-- Evite exemplos arbitrários ou tecnicamente frágeis. Prefira critérios gerais aplicáveis a diferentes oficinas e garagens.
-- Evite frases genéricas repetitivas e conclusões vazias.
-- Não dê instruções passo a passo de reparos automotivos, sistemas críticos, elevação de veículo, corte, solda ou intervenções elétricas.
-- Use naturalmente a palavra-chave principal.
-- Não escreva CTA, links, imagem do produto, preço ou bloco de afiliado; o código insere isso depois.
-- HTML somente com <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>. Sem estilos, markdown, H1, links ou scripts.
-{extra}
+{universal_article_rules(item)}
 
 Responda SOMENTE com o fragmento HTML.
+"""
+
+
+def repair_prompt(item, plan, raw, failure):
+    return f"""Você é revisor editorial do blog Oficina & Garagem.
+
+O rascunho abaixo foi BLOQUEADO pelos gates automáticos. Reescreva o artigo inteiro corrigindo as falhas, sem discutir o diagnóstico e sem adicionar explicações fora do HTML.
+
+TÍTULO EDITORIAL ÚNICO: {plan['title']}
+PALAVRA-CHAVE PRINCIPAL: {plan['keyword']}
+CATEGORIA: {item['category']}
+PRODUTO REAL: {item['product']}
+
+FALHAS DETECTADAS:
+{failure}
+
+REGRAS UNIVERSAIS QUE DEVEM SER CUMPRIDAS:
+{universal_article_rules(item)}
+
+RASCUNHO BLOQUEADO:
+{clean(raw)}
+
+Responda SOMENTE com um novo fragmento HTML completo.
 """
 
 
@@ -316,6 +348,20 @@ def build(item, plan, raw, enforce=True):
     return article
 
 
+def generate_article(item, plan):
+    raw = ai(article_prompt(item, plan))
+    last_error = ""
+    for attempt in range(BODY_ATTEMPTS):
+        try:
+            return build(item, plan, raw, enforce=True)
+        except RuntimeError as exc:
+            last_error = str(exc)
+            if attempt + 1 >= BODY_ATTEMPTS:
+                break
+            raw = ai(repair_prompt(item, plan, raw, last_error))
+    raise RuntimeError("geração editorial bloqueada após revisões: " + last_error)
+
+
 def main():
     if not ENABLED:
         print("Geração desativada por OFICINA_GENERATION_ENABLED=false; nenhuma chamada de IA realizada.")
@@ -332,8 +378,7 @@ def main():
             continue
         try:
             plan = make_plan(item)
-            body = ai(article_prompt(item, plan))
-            article = build(item, plan, body)
+            article = generate_article(item, plan)
             OUT_DIR.mkdir(parents=True, exist_ok=True)
             save(OUT_DIR / f"{int(item['id']):03d}.json", article)
             item["topic"] = plan["title"]
