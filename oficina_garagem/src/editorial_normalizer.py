@@ -2,54 +2,76 @@ import re
 
 
 FIXER_WORDS = r"(?:parafusos?|pregos?|porcas?|arruelas?|buchas?)"
+SUBJECT = r"(?P<subject>ferramentas?|itens?|objetos?|fixadores?)"
+
+
+def _priority_subject(match):
+    subject = match.group("subject")
+    return f"{subject} com maior necessidade de acesso na sua rotina"
+
+
+def _other_subject(match):
+    subject = match.group("subject").casefold()
+    if subject.startswith("ferramenta"):
+        return "outras ferramentas"
+    if subject.startswith("objeto"):
+        return "outros objetos"
+    if subject.startswith("fixador"):
+        return "outros fixadores"
+    return "outros itens"
+
+
+def _other_pronoun(match):
+    return "as demais" if match.group("pronoun").casefold() == "as" else "os demais"
+
 
 FREQUENCY_REPLACEMENTS = (
     (
-        re.compile(
-            r"\b(?:ferramentas?|itens?|objetos?|fixadores?)\s+(?:de\s+)?uso\s+(?:mais\s+)?frequente\b",
-            re.I,
-        ),
-        "itens que você identifica como mais acessados na sua rotina",
+        re.compile(rf"\b{SUBJECT}\s+(?:de\s+)?uso\s+(?:mais\s+)?frequente\b", re.I),
+        _priority_subject,
     ),
     (
         re.compile(
-            r"\b(?:ferramentas?|itens?|objetos?|fixadores?)\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+mais\s+(?:frequência|regularidade)\b",
+            rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+mais\s+(?:frequência|regularidade)\b",
             re.I,
         ),
-        "itens que você identifica como mais acessados na sua rotina",
+        _priority_subject,
     ),
     (
         re.compile(
-            r"\b(?:ferramentas?|itens?|objetos?|fixadores?)\s+que\s+(?:você\s+)?(?:usa|utiliza)\s+com\s+(?:mais\s+)?(?:frequência|regularidade)\b",
+            rf"\b{SUBJECT}\s+que\s+(?:você\s+)?(?:usa|utiliza)\s+com\s+(?:mais\s+)?(?:frequência|regularidade)\b",
             re.I,
         ),
-        "itens que você identifica como mais acessados na sua rotina",
+        _priority_subject,
     ),
     (
         re.compile(
-            r"\b(?:ferramentas?|itens?|objetos?|fixadores?)\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+(?:diariamente|todos\s+os\s+dias)\b",
+            rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+(?:diariamente|todos\s+os\s+dias)\b",
             re.I,
         ),
-        "itens que você identifica como mais acessados na sua rotina",
+        _priority_subject,
     ),
     (
         re.compile(
-            r"\b(?:ferramentas?|itens?|objetos?|fixadores?)\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+menos\s+frequência\b",
+            rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+menos\s+frequência\b",
             re.I,
         ),
-        "outros itens",
+        _other_subject,
     ),
     (
-        re.compile(r"\b(?:as|os)\s+que\s+(?:são\s+)?(?:usadas?|usados?|utilizadas?|utilizados?)\s+com\s+menos\s+frequência\b", re.I),
-        "outros itens",
+        re.compile(
+            r"\b(?P<pronoun>as|os)\s+que\s+(?:são\s+)?(?:usadas?|usados?|utilizadas?|utilizados?)\s+com\s+menos\s+frequência\b",
+            re.I,
+        ),
+        _other_pronoun,
     ),
     (
-        re.compile(r"\b(?:itens?|ferramentas?|objetos?)\s+menos\s+(?:usados?|utilizados?)\b", re.I),
-        "outros itens",
+        re.compile(rf"\b{SUBJECT}\s+menos\s+(?:usados?|utilizados?)\b", re.I),
+        _other_subject,
     ),
     (
         re.compile(r"\b(?:mais\s+)?frequentemente\s+(?:usados?|utilizados?)\b", re.I),
-        "mais acessados na sua rotina",
+        "com maior necessidade de acesso na sua rotina",
     ),
     (re.compile(r"\buso\s+di[aá]rio\b", re.I), "uso"),
     (re.compile(r"\b(?:pequenas\s+)?a[cç][oõ]es\s+di[aá]rias\b", re.I), "ações simples"),
@@ -116,6 +138,19 @@ def _drop_absolute_sentences(paragraph_html):
     return f"{opening}{body}</p>" if body else ""
 
 
+def _restore_sentence_capitalization(value):
+    def cap_after_p(match):
+        return match.group(1) + match.group(2).upper()
+
+    value = re.sub(r"(<p\b[^>]*>\s*)([a-záàâãéêíóôõúç])", cap_after_p, value, flags=re.I)
+    value = re.sub(
+        r"([.!?]\s+)([a-záàâãéêíóôõúç])",
+        lambda match: match.group(1) + match.group(2).upper(),
+        value,
+    )
+    return value
+
+
 def normalize_editorial(value):
     value = str(value or "").strip()
     value = _normalize_headings(value)
@@ -130,5 +165,6 @@ def normalize_editorial(value):
         value,
         flags=re.I | re.S,
     )
+    value = _restore_sentence_capitalization(value)
     value = re.sub(r"\n{3,}", "\n\n", value)
     return value.strip()
