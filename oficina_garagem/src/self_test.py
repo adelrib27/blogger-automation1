@@ -6,7 +6,7 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 from quality_gate import quality  # noqa: E402
-from generate_articles import build, make_plan  # noqa: E402
+from generate_articles import build, make_plan, repair_prompt  # noqa: E402
 
 
 def sample_item(category="Ferramentas", product="Parafusadeira sem fio com maleta", focus="parafusadeira"):
@@ -91,6 +91,15 @@ def main():
     assert dangerous["quality"]["status"] == "REJECTED"
     assert "instrucao_procedimental_de_alto_risco" in dangerous["quality"]["reasons"], dangerous["quality"]
 
+    absolute = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Uma caixa adequada pode garantir que os objetos estejam sempre em condições de uso."),
+        enforce=False,
+    )
+    assert absolute["quality"]["status"] == "REJECTED"
+    assert "alegacao_absoluta_de_seguranca_ou_conservacao" in absolute["quality"]["reasons"], absolute["quality"]
+
     misclassified = build(
         item,
         plan(),
@@ -132,7 +141,11 @@ def main():
     parsed = make_plan(item, fake_plan_json)
     assert parsed["title"] == "Como organizar ferramentas sem desperdiçar espaço"
 
-    print("Self-test Oficina & Garagem editorial contextual v2: 10/10 OK")
+    repair = repair_prompt(item, plan(), long_editorial(), "quality gate: frequencia_de_uso_assumida_sem_contexto")
+    assert "frequencia_de_uso_assumida_sem_contexto" in repair
+    assert "RASCUNHO BLOQUEADO" in repair
+
+    print("Self-test Oficina & Garagem editorial contextual v2: 12/12 OK")
 
 
 if __name__ == "__main__":
