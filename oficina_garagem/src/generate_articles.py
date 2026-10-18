@@ -201,11 +201,13 @@ REGRAS:
 - 900 a 1300 palavras, pelo menos 5 H2 distintos; sem H1.
 - O artigo deve entregar valor por si só, mesmo sem clique no produto.
 - O produto é apenas uma opção relacionada; não escreva o artigo como página de venda, review obrigatório ou ficha técnica.
-- Não copie nem repita o título comercial como título editorial.
+- O nome comercial do produto serve somente como contexto interno. NÃO mencione no corpo a oferta específica, marca, modelo, título comercial, número de peças/gavetas ou características particulares do anúncio.
+- Quando for útil, fale apenas da classe genérica do produto (por exemplo, "caixa de ferramentas"), sem transformar detalhes do anúncio em fatos editoriais.
+- Não copie nem repita o título comercial como título editorial ou dentro do corpo.
 - Não invente preço, desconto, estoque, entrega, potência, tensão, corrente, torque, capacidade de carga, medidas, compatibilidade, certificação, garantia ou desempenho.
 - Se um dado técnico for relevante e não estiver confirmado, ensine o leitor a conferir no anúncio, ficha técnica ou manual.
 - Não diga que testamos, usamos ou comprovamos o produto.
-- Não assuma que uma categoria específica é usada "todos os dias", "raramente" ou "com menos frequência"; condicione exemplos à rotina real do leitor.
+- Não assuma que ferramentas ou itens específicos são usados "todos os dias", "diariamente", "raramente", "menos usados" ou "com menos frequência". Use formulações condicionais: "se você usa com frequência...", "itens mais usados na sua rotina...".
 - Diferencie corretamente ferramentas, acessórios, consumíveis, fixadores e materiais. Parafusos, pregos, porcas, arruelas e buchas não devem ser chamados de ferramentas.
 - Evite exemplos arbitrários ou tecnicamente frágeis. Prefira critérios gerais aplicáveis a diferentes oficinas e garagens.
 - Evite frases genéricas repetitivas e conclusões vazias.
