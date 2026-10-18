@@ -1,4 +1,4 @@
-name: Oficina & Garagem — Editorial Seguro (draft only)
+name: Oficina & Garagem — Validação Editorial Segura
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  validate-and-draft:
+  validate-only:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -24,31 +24,32 @@ jobs:
       OFICINA_WORDPRESS_APP_PASSWORD: ${{ secrets.OFICINA_WORDPRESS_APP_PASSWORD }}
       OFICINA_GENERATION_ENABLED: "false"
       OFICINA_DRAFT_SYNC_ENABLED: "false"
+      OFICINA_LIVE_PUBLISH_ENABLED: "false"
       OFICINA_GENERATION_BATCH_SIZE: "2"
       OFICINA_DRAFT_SYNC_LIMIT: "2"
+      OFICINA_PUBLISH_LIMIT: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Compilar e testar gates
+
+      - name: Compilar e testar gates universais
         run: |
-          python -m py_compile oficina_garagem/src/quality_gate.py oficina_garagem/src/generate_articles.py oficina_garagem/src/sync_drafts.py oficina_garagem/src/audit_release_candidates.py oficina_garagem/src/self_test.py
+          python -m py_compile oficina_garagem/src/quality_gate.py oficina_garagem/src/cta_context.py oficina_garagem/src/editorial_normalizer.py oficina_garagem/src/build_editorial_queue.py oficina_garagem/src/generate_articles.py oficina_garagem/src/sync_drafts.py oficina_garagem/src/publish_generated.py oficina_garagem/src/audit_release_candidates.py oficina_garagem/src/self_test.py oficina_garagem/src/cta_card_self_test.py
           python oficina_garagem/src/self_test.py
-      - name: Confirmar que publicação ao vivo não existe
+          python oficina_garagem/src/cta_card_self_test.py
+
+      - name: Confirmar interlocks desligados nesta validação
         run: |
-          if grep -R --line-number --include='*.py' '"status"[[:space:]]*:[[:space:]]*"publish"' oficina_garagem/src; then
-            echo "Encontrado payload explícito de publicação; pipeline bloqueado." >&2
-            exit 1
-          fi
-          echo "OK: pipeline Oficina é draft-only."
-      - name: Geração (bloqueada por padrão)
-        run: python -u oficina_garagem/src/generate_articles.py
-      - name: Sincronização WordPress (bloqueada por padrão)
-        run: python -u oficina_garagem/src/sync_drafts.py
+          python -u oficina_garagem/src/generate_articles.py
+          python -u oficina_garagem/src/sync_drafts.py
+          python -u oficina_garagem/src/publish_generated.py
+
       - name: Auditoria de candidatos
         if: always()
         run: python -u oficina_garagem/src/audit_release_candidates.py || true
+
       - name: Guardar diagnóstico
         if: always()
         uses: actions/upload-artifact@v4
