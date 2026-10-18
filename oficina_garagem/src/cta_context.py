@@ -4,6 +4,7 @@ import re
 import time
 
 CTA_CLASS = "og-produto-relacionado"
+CTA_PRODUCT_TITLE_CLASS = "og-produto-titulo-original"
 CTA_BUTTON_TEXT = "CONFERIR ESPECIFICAÇÕES DO MODELO NA SHOPEE"
 CTA_CONSULT_TEXT = "consultar o modelo na Shopee"
 CTA_FORBIDDEN = re.compile(
@@ -42,7 +43,7 @@ NECESSIDADE DO LEITOR: {plan['reader_need']}
 CONEXÃO EDITORIAL: {plan['product_connection']}
 PRODUTO REAL DA SHOPEE: {item['product']}
 
-REGRAS OBRIGATÓRIAS:
+REGRAS OBRRIGATÓRIAS:
 - Escreva EXATAMENTE 2 frases, entre 35 e 70 palavras no total.
 - A primeira frase deve começar com "Para quem" e conectar o conteúdo do artigo ao produto como uma opção de consulta, sem tom publicitário.
 - A segunda frase deve orientar o leitor a conferir as especificações do modelo no anúncio e terminar com a expressão exata "você também pode consultar o modelo na Shopee.".
@@ -149,6 +150,12 @@ def cta_block(item, cta_lead):
             "</div>"
         )
 
+    product_title = (
+        f'<p class="{CTA_PRODUCT_TITLE_CLASS}" style="margin:0 0 14px;line-height:1.4;'
+        'font-size:18px;font-weight:700;color:#111827;">'
+        f'{product}</p>'
+    )
+
     return "".join(
         [
             f'<div class="{CTA_CLASS}" style="margin:28px 0;padding:22px;border:1px solid #e5e7eb;'
@@ -156,6 +163,7 @@ def cta_block(item, cta_lead):
             '<p style="margin:0 0 10px;font-size:14px;font-weight:700;letter-spacing:.4px;">'
             "🛒 REFERÊNCIA RELACIONADA AO TEMA</p>",
             image,
+            product_title,
             '<p style="margin:0 0 18px;line-height:1.65;font-family:\'Trebuchet MS\',\'Segoe UI\',Arial,sans-serif;'
             'font-size:21px;font-weight:700;color:#7C2D12;background:linear-gradient(135deg,#FFF7ED 0%,#FFFBEB 100%);'
             'border:1px solid #F6C66D;border-left:5px solid #F59E0B;border-radius:12px;padding:16px 18px;'
