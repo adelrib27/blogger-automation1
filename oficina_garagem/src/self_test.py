@@ -5,8 +5,9 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
+from editorial_normalizer import normalize_editorial  # noqa: E402
 from quality_gate import quality  # noqa: E402
-from generate_articles import build, make_plan, repair_prompt  # noqa: E402
+from generate_articles import build, make_plan, meta_description, repair_prompt  # noqa: E402
 
 
 def sample_item(category="Ferramentas", product="Parafusadeira sem fio com maleta", focus="parafusadeira"):
@@ -27,7 +28,7 @@ def long_editorial(focus="organizar ferramentas", bad_text=""):
         body = (
             f"{focus} exige critérios coerentes com a rotina e o espaço disponível. "
             "A organização deve considerar acesso, separação por função, armazenamento e manutenção da ordem. "
-            "Exemplos devem ser adaptados ao contexto de cada pessoa, sem presumir frequência fixa de uso. "
+            "Exemplos devem ser adaptados ao contexto de cada pessoa, sem presumir padrões fixos de acesso. "
             "Antes de escolher qualquer solução, vale observar dimensões do ambiente, tipos de itens guardados "
             "e facilidade de devolução ao lugar correto. "
         ) * 3
@@ -62,7 +63,8 @@ def main():
         long_editorial(bad_text="Nós testamos este produto e comprovamos o resultado."),
         enforce=False,
     )
-    assert tested["quality"]["status"] == "REJECTED" and "alegacao_de_teste_nao_comprovada" in tested["quality"]["reasons"], tested["quality"]
+    assert tested["quality"]["status"] == "REJECTED"
+    assert "alegacao_de_teste_nao_comprovada" in tested["quality"]["reasons"], tested["quality"]
 
     risk_item = sample_item(
         category="Segurança e Proteção",
@@ -91,32 +93,32 @@ def main():
     assert dangerous["quality"]["status"] == "REJECTED"
     assert "instrucao_procedimental_de_alto_risco" in dangerous["quality"]["reasons"], dangerous["quality"]
 
-    absolute = build(
+    frequency = build(
         item,
         plan(),
-        long_editorial(bad_text="Uma caixa adequada pode garantir que os objetos estejam sempre em condições de uso."),
-        enforce=False,
+        long_editorial(bad_text="Ferramentas de uso mais frequente devem ficar na frente, enquanto itens menos usados podem ficar atrás."),
     )
-    assert absolute["quality"]["status"] == "REJECTED"
-    assert "alegacao_absoluta_de_seguranca_ou_conservacao" in absolute["quality"]["reasons"], absolute["quality"]
+    assert frequency["quality"]["status"] == "DRAFT_READY", frequency["quality"]
+    assert "uso mais frequente" not in frequency["editorial_html"].casefold()
+    assert "menos usados" not in frequency["editorial_html"].casefold()
+    assert "mais acessados na sua rotina" in frequency["editorial_html"].casefold()
 
     misclassified = build(
         item,
         plan(),
-        long_editorial(bad_text="Ferramentas pequenas, como parafusos, pregos e porcas, devem ficar juntas."),
-        enforce=False,
+        long_editorial(bad_text="Ferramentas pequenas, como parafusos, pregos e porcas, devem ficar separadas."),
     )
-    assert misclassified["quality"]["status"] == "REJECTED"
-    assert "classificacao_tecnica_incorreta_fixadores_como_ferramentas" in misclassified["quality"]["reasons"], misclassified["quality"]
+    assert misclassified["quality"]["status"] == "DRAFT_READY", misclassified["quality"]
+    assert "fixadores, como parafusos" in misclassified["editorial_html"].casefold()
 
-    frequency = build(
+    absolute = build(
         item,
         plan(),
-        long_editorial(bad_text="Ferramentas que são utilizadas diariamente devem ficar na frente, enquanto itens menos usados podem ficar atrás."),
-        enforce=False,
+        long_editorial(bad_text="Uma caixa adequada pode preservar a qualidade dos objetos. Outro critério útil é manter categorias separadas."),
     )
-    assert frequency["quality"]["status"] == "REJECTED"
-    assert "frequencia_de_uso_assumida_sem_contexto" in frequency["quality"]["reasons"], frequency["quality"]
+    assert absolute["quality"]["status"] == "DRAFT_READY", absolute["quality"]
+    assert "preservar a qualidade" not in absolute["editorial_html"].casefold()
+    assert "outro critério útil" in absolute["editorial_html"].casefold()
 
     copied_title = build(
         item,
@@ -141,11 +143,19 @@ def main():
     parsed = make_plan(item, fake_plan_json)
     assert parsed["title"] == "Como organizar ferramentas sem desperdiçar espaço"
 
-    repair = repair_prompt(item, plan(), long_editorial(), "quality gate: frequencia_de_uso_assumida_sem_contexto")
-    assert "frequencia_de_uso_assumida_sem_contexto" in repair
+    repair = repair_prompt(item, plan(), long_editorial(), "quality gate: titulo_comercial_copiado_no_corpo")
+    assert "titulo_comercial_copiado_no_corpo" in repair
     assert "RASCUNHO BLOQUEADO" in repair
 
-    print("Self-test Oficina & Garagem editorial contextual v2: 12/12 OK")
+    heading = normalize_editorial("<h2>Organize por frequência de uso e tipo</h2><p>Texto neutro.</p>")
+    assert "necessidade de acesso" in heading.casefold()
+    assert "frequência de uso" not in heading.casefold()
+
+    meta = meta_description(plan())
+    assert 110 <= len(meta) <= 160, len(meta)
+    assert not meta.rstrip(".").casefold().endswith((" de", " da", " do", " em", " para", " com", " sem")), meta
+
+    print("Self-test Oficina & Garagem editorial contextual v2: 14/14 OK")
 
 
 if __name__ == "__main__":
