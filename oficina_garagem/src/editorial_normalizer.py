@@ -26,65 +26,45 @@ def _other_pronoun(match):
 
 
 FREQUENCY_REPLACEMENTS = (
+    (re.compile(rf"\b{SUBJECT}\s+(?:de\s+)?uso\s+(?:mais\s+)?frequente\b", re.I), _priority_subject),
     (
-        re.compile(rf"\b{SUBJECT}\s+(?:de\s+)?uso\s+(?:mais\s+)?frequente\b", re.I),
+        re.compile(rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+mais\s+(?:frequência|regularidade)\b", re.I),
         _priority_subject,
     ),
     (
-        re.compile(
-            rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+mais\s+(?:frequência|regularidade)\b",
-            re.I,
-        ),
+        re.compile(rf"\b{SUBJECT}\s+que\s+(?:você\s+)?(?:usa|utiliza)\s+com\s+(?:mais\s+)?(?:frequência|regularidade)\b", re.I),
         _priority_subject,
     ),
     (
-        re.compile(
-            rf"\b{SUBJECT}\s+que\s+(?:você\s+)?(?:usa|utiliza)\s+com\s+(?:mais\s+)?(?:frequência|regularidade)\b",
-            re.I,
-        ),
+        re.compile(rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+(?:diariamente|todos\s+os\s+dias)\b", re.I),
         _priority_subject,
     ),
     (
-        re.compile(
-            rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+(?:diariamente|todos\s+os\s+dias)\b",
-            re.I,
-        ),
-        _priority_subject,
-    ),
-    (
-        re.compile(
-            rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+menos\s+frequência\b",
-            re.I,
-        ),
+        re.compile(rf"\b{SUBJECT}\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+com\s+menos\s+frequência\b", re.I),
         _other_subject,
     ),
     (
-        re.compile(
-            r"\b(?P<pronoun>as|os)\s+que\s+(?:são\s+)?(?:usadas?|usados?|utilizadas?|utilizados?)\s+com\s+menos\s+frequência\b",
-            re.I,
-        ),
+        re.compile(r"\b(?P<pronoun>as|os)\s+que\s+(?:são\s+)?(?:usadas?|usados?|utilizadas?|utilizados?)\s+com\s+menos\s+frequência\b", re.I),
         _other_pronoun,
     ),
-    (
-        re.compile(rf"\b{SUBJECT}\s+menos\s+(?:usados?|utilizados?)\b", re.I),
-        _other_subject,
-    ),
-    (
-        re.compile(r"\b(?:mais\s+)?frequentemente\s+(?:usados?|utilizados?)\b", re.I),
-        "com maior necessidade de acesso na sua rotina",
-    ),
+    (re.compile(rf"\b{SUBJECT}\s+menos\s+(?:usados?|utilizados?)\b", re.I), _other_subject),
+    (re.compile(r"\b(?:mais\s+)?frequentemente\s+(?:usados?|utilizados?)\b", re.I), "com maior necessidade de acesso na sua rotina"),
     (re.compile(r"\buso\s+di[aá]rio\b", re.I), "uso"),
     (re.compile(r"\b(?:pequenas\s+)?a[cç][oõ]es\s+di[aá]rias\b", re.I), "ações simples"),
     (re.compile(r"\bcom\s+certa\s+frequ[eê]ncia\b", re.I), "periodicamente"),
     (re.compile(r"\bfrequ[eê]ncia\s+de\s+uso\b", re.I), "necessidade de acesso"),
 )
 
-ABSOLUTE_SENTENCE_PATTERNS = (
+DROP_SENTENCE_PATTERNS = (
     re.compile(r"\bgarant(?:e|ir|indo|ido)\b.*\bsempre\b", re.I),
     re.compile(r"\bprote[cç][aã]o\s+garantida\b", re.I),
     re.compile(r"\b100\s*%\s+(?:seguro|protegido|garantido)\b", re.I),
     re.compile(r"\bpreservar\s+a\s+qualidade\b", re.I),
     re.compile(r"\bevitar?\s+acidentes?\b", re.I),
+    re.compile(
+        r"\b(?:tintas?|solventes?|combust[ií]veis?|produtos?\s+qu[ií]micos?)\b.*\b(?:armazenad[oa]s?|armazenar)\b.*\b(?:ventilad[oa]s?|fontes?\s+de\s+calor)\b",
+        re.I,
+    ),
 )
 
 
@@ -120,7 +100,7 @@ def _normalize_classification(value):
     return value
 
 
-def _drop_absolute_sentences(paragraph_html):
+def _drop_risky_sentences(paragraph_html):
     open_match = re.match(r"(<p\b[^>]*>)", paragraph_html, flags=re.I)
     close_match = re.search(r"(</p>)\s*$", paragraph_html, flags=re.I)
     if not open_match or not close_match:
@@ -131,7 +111,7 @@ def _drop_absolute_sentences(paragraph_html):
     sentences = re.split(r"(?<=[.!?])\s+", body)
     kept = []
     for sentence in sentences:
-        if any(pattern.search(sentence) for pattern in ABSOLUTE_SENTENCE_PATTERNS):
+        if any(pattern.search(sentence) for pattern in DROP_SENTENCE_PATTERNS):
             continue
         kept.append(sentence.strip())
     body = " ".join(x for x in kept if x).strip()
@@ -139,10 +119,12 @@ def _drop_absolute_sentences(paragraph_html):
 
 
 def _restore_sentence_capitalization(value):
-    def cap_after_p(match):
-        return match.group(1) + match.group(2).upper()
-
-    value = re.sub(r"(<p\b[^>]*>\s*)([a-záàâãéêíóôõúç])", cap_after_p, value, flags=re.I)
+    value = re.sub(
+        r"(<p\b[^>]*>\s*)([a-záàâãéêíóôõúç])",
+        lambda match: match.group(1) + match.group(2).upper(),
+        value,
+        flags=re.I,
+    )
     value = re.sub(
         r"([.!?]\s+)([a-záàâãéêíóôõúç])",
         lambda match: match.group(1) + match.group(2).upper(),
@@ -161,7 +143,7 @@ def normalize_editorial(value):
 
     value = re.sub(
         r"<p\b[^>]*>.*?</p>",
-        lambda match: _drop_absolute_sentences(match.group(0)),
+        lambda match: _drop_risky_sentences(match.group(0)),
         value,
         flags=re.I | re.S,
     )
