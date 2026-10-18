@@ -6,6 +6,7 @@ import time
 import urllib.request
 from pathlib import Path
 
+from editorial_normalizer import normalize_editorial
 from quality_gate import quality, word_count
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,11 +42,14 @@ def creds():
 
 def ai(prompt, retries=3):
     account, token = creds()
+    prompt = str(prompt or "").strip()
+    if MODEL.startswith("@cf/qwen/qwen3") and not prompt.startswith("/no_think"):
+        prompt = "/no_think\n" + prompt
     req_body = json.dumps(
         {
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": 8192,
-            "temperature": 0.38,
+            "temperature": 0.2,
         },
         ensure_ascii=False,
     ).encode()
@@ -60,7 +64,7 @@ def ai(prompt, retries=3):
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "OficinaGaragem-Editorial/2.1",
+                "User-Agent": "OficinaGaragem-Editorial/2.4",
             },
         )
         try:
@@ -118,7 +122,9 @@ def cut_text(value, limit):
     if len(value) <= limit:
         return value
     short = value[: limit + 1].rsplit(" ", 1)[0].rstrip(" -:;,. ")
-    return short or value[:limit].rstrip(" -:;,. ")
+    while short and short.casefold().split()[-1] in {"a", "ao", "aos", "as", "com", "da", "das", "de", "do", "dos", "e", "em", "na", "nas", "no", "nos", "para", "por", "sem"}:
+        short = short.rsplit(" ", 1)[0].rstrip(" -:;,. ")
+    return (short or value[:limit].rstrip(" -:;,. ")).rstrip(".") + "."
 
 
 def editorial_plan_prompt(item):
@@ -173,10 +179,9 @@ def make_plan(item, raw=None):
 
 
 def meta_description(plan):
-    text = (
-        f"{plan['reader_need']} Veja orientações práticas relacionadas a "
-        f"{plan['keyword']} sem depender de especificações não confirmadas."
-    )
+    reader_need = str(plan.get("reader_need") or "").strip().rstrip(".")
+    keyword = str(plan.get("keyword") or "").strip()
+    text = f"{reader_need}. Veja orientações práticas sobre {keyword} e escolha uma organização coerente com o seu espaço."
     return cut_text(text, 155)
 
 
@@ -188,7 +193,7 @@ def universal_article_rules(item):
         else ""
     )
     return f"""
-- 900 a 1300 palavras, pelo menos 5 H2 distintos; sem H1.
+- 600 a 900 palavras, pelo menos 5 H2 distintos; sem H1.
 - O artigo deve entregar valor por si só, mesmo sem clique no produto.
 - O produto é apenas uma opção relacionada; não escreva o artigo como página de venda, review obrigatório ou ficha técnica.
 - O nome comercial do produto serve somente como contexto interno. NÃO mencione no corpo a oferta específica, marca, modelo, título comercial, número de peças/gavetas ou características particulares do anúncio.
@@ -197,9 +202,8 @@ def universal_article_rules(item):
 - Não invente preço, desconto, estoque, entrega, potência, tensão, corrente, torque, capacidade de carga, medidas, compatibilidade, certificação, garantia ou desempenho.
 - Se um dado técnico for relevante e não estiver confirmado, ensine o leitor a conferir no anúncio, ficha técnica ou manual.
 - Não diga que testamos, usamos ou comprovamos o produto.
-- Não imponha frequência fixa de uso. Não escreva "ferramentas de uso diário", "utilizadas diariamente", "itens menos usados", "menos utilizados", "raramente usados" ou equivalentes.
-- Para falar de prioridade de acesso, use formulações condicionais baseadas na rotina real do leitor, como "itens que você identifica como mais acessados na sua rotina".
-- Diferencie corretamente ferramentas, acessórios, consumíveis, fixadores e materiais. Parafusos, pregos, porcas, arruelas e buchas não devem ser chamados de ferramentas.
+- Não imponha frequência fixa de uso. Para falar de prioridade de acesso, use formulações condicionais baseadas na rotina real do leitor.
+- Diferencie corretamente ferramentas, acessórios, consumíveis, fixadores e materiais. Parafusos, pregos, porcas, arruelas e buchas são fixadores.
 - Evite exemplos arbitrários ou tecnicamente frágeis. Prefira critérios gerais aplicáveis a diferentes oficinas e garagens.
 - Evite frases genéricas repetitivas e conclusões vazias.
 - Não dê instruções passo a passo de reparos automotivos, sistemas críticos, elevação de veículo, corte, solda ou intervenções elétricas.
@@ -320,9 +324,9 @@ def insert_contextual_blocks(editorial, item):
 
 
 def build(item, plan, raw, enforce=True):
-    editorial = clean(raw)
+    editorial = normalize_editorial(clean(raw))
     wc = word_count(editorial)
-    if wc < 850:
+    if wc < 500:
         raise RuntimeError(f"artigo curto: {wc}")
 
     title = plan["title"]
@@ -340,6 +344,7 @@ def build(item, plan, raw, enforce=True):
         "content_html": content,
         "word_count": wc,
         "generation_model": MODEL,
+        "generation_mode": "qwen3-no-think+universal-normalizer" if MODEL.startswith("@cf/qwen/qwen3") else "standard+universal-normalizer",
         "status": "GENERATED",
     }
     article["quality"] = quality(article)
