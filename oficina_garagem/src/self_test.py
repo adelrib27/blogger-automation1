@@ -101,7 +101,15 @@ def main():
     assert frequency["quality"]["status"] == "DRAFT_READY", frequency["quality"]
     assert "uso mais frequente" not in frequency["editorial_html"].casefold()
     assert "menos usados" not in frequency["editorial_html"].casefold()
-    assert "mais acessados na sua rotina" in frequency["editorial_html"].casefold()
+    assert "maior necessidade de acesso na sua rotina" in frequency["editorial_html"].casefold()
+
+    fluency = normalize_editorial(
+        "<p>Ferramentas que você usa com mais regularidade ficam perto. As que são usadas com menos frequência ficam em outro ponto.</p>"
+    )
+    assert "Ferramentas com maior necessidade de acesso na sua rotina" in fluency
+    assert "as demais" in fluency.casefold()
+    assert "mais regularidade" not in fluency.casefold()
+    assert "menos frequência" not in fluency.casefold()
 
     misclassified = build(
         item,
@@ -155,7 +163,7 @@ def main():
     assert 110 <= len(meta) <= 160, len(meta)
     assert not meta.rstrip(".").casefold().endswith((" de", " da", " do", " em", " para", " com", " sem")), meta
 
-    print("Self-test Oficina & Garagem editorial contextual v2: 14/14 OK")
+    print("Self-test Oficina & Garagem editorial contextual v2: 15/15 OK")
 
 
 if __name__ == "__main__":
