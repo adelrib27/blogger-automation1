@@ -20,6 +20,13 @@ FREQUENCY_REPLACEMENTS = (
     ),
     (
         re.compile(
+            r"\b(?:ferramentas?|itens?|objetos?|fixadores?)\s+que\s+(?:você\s+)?(?:usa|utiliza)\s+com\s+(?:mais\s+)?(?:frequência|regularidade)\b",
+            re.I,
+        ),
+        "itens que você identifica como mais acessados na sua rotina",
+    ),
+    (
+        re.compile(
             r"\b(?:ferramentas?|itens?|objetos?|fixadores?)\s+(?:que\s+)?(?:são\s+)?(?:usados?|utilizados?)\s+(?:diariamente|todos\s+os\s+dias)\b",
             re.I,
         ),
@@ -33,6 +40,10 @@ FREQUENCY_REPLACEMENTS = (
         "outros itens",
     ),
     (
+        re.compile(r"\b(?:as|os)\s+que\s+(?:são\s+)?(?:usadas?|usados?|utilizadas?|utilizados?)\s+com\s+menos\s+frequência\b", re.I),
+        "outros itens",
+    ),
+    (
         re.compile(r"\b(?:itens?|ferramentas?|objetos?)\s+menos\s+(?:usados?|utilizados?)\b", re.I),
         "outros itens",
     ),
@@ -41,7 +52,7 @@ FREQUENCY_REPLACEMENTS = (
         "mais acessados na sua rotina",
     ),
     (re.compile(r"\buso\s+di[aá]rio\b", re.I), "uso"),
-    (re.compile(r"\ba[cç][oõ]es\s+di[aá]rias\b", re.I), "ações simples"),
+    (re.compile(r"\b(?:pequenas\s+)?a[cç][oõ]es\s+di[aá]rias\b", re.I), "ações simples"),
     (re.compile(r"\bcom\s+certa\s+frequ[eê]ncia\b", re.I), "periodicamente"),
     (re.compile(r"\bfrequ[eê]ncia\s+de\s+uso\b", re.I), "necessidade de acesso"),
 )
