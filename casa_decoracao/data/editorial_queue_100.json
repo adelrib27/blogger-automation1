@@ -10,7 +10,7 @@
       "product": "Escorredor de Louças 2 Andares",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVaKwB15qr-TEaTI/",
       "category": "Cozinha",
-      "status": "QUARANTINE",
+      "status": "BLOCKED",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -19,7 +19,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 2,
+      "generation_attempts": 3,
       "wordpress": {
         "id": 18,
         "status": "draft",
@@ -38,7 +38,7 @@
           "internal_links": 1
         }
       },
-      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:5"
+      "last_error": "HTML editorial inválido: tags_sem_fechamento:p"
     },
     {
       "id": 2,
@@ -55,7 +55,7 @@
         "no_invented_product_specs": true,
         "no_fake_physical_testing": true
       },
-      "generation_attempts": 2,
+      "generation_attempts": 3,
       "wordpress": {
         "id": 19,
         "status": "draft",
@@ -67,14 +67,14 @@
         "status": "DRAFT_READY",
         "reasons": [],
         "metrics": {
-          "word_count": 804,
+          "word_count": 786,
           "h2_count": 4,
           "seo_title_length": 58,
           "meta_description_length": 153,
           "internal_links": 1
         }
       },
-      "last_error": "Workers AI imagem HTTP 400: {\"errors\":[{\"message\":\"AiError: Bad input: Error: Additional or unevaluated properties '/seed' at '/' not allowed (7400e94b-99cb-4548-b24f-17ac2b2f3a4d)\",\"code\":5006}],\"success\":false,\"result\":{},\"messages\":[]}"
+      "last_error": "Workers AI imagem HTTP 400: {\"errors\":[{\"message\":\"AiError: Bad input: Error: Additional or unevaluated properties '/seed' at '/' not allowed (15310e60-72d2-40a1-b528-cb8d7e659233)\",\"code\":5006}],\"success\":false,\"result\":{},\"messages\":[]}"
     },
     {
       "id": 3,
@@ -2416,7 +2416,7 @@
       "product": "Mop Giratório 360",
       "affiliate_link": "https://vt.tiktok.com/ZS9DVmFYNCQMH-LghoN/",
       "category": "Limpeza e Utilidades",
-      "status": "GENERATED",
+      "status": "QUARANTINE",
       "intent": "informational_commercial",
       "rules": {
         "unique_search_intent": true,
@@ -2436,7 +2436,8 @@
           "meta_description_length": 150,
           "internal_links": 1
         }
-      }
+      },
+      "last_error": "canibalização/duplicidade: mesmo_produto_mesma_intencao_post:9"
     },
     {
       "id": 99,
