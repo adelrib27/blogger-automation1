@@ -4,6 +4,8 @@ import unicodedata
 
 SITE_URL = "https://oficina.radartechbr.com.br"
 CTA_CLASS = "og-produto-relacionado"
+MIN_WORDS = 500
+MAX_WORDS = 1300
 
 STOPWORDS = {
     "a","as","o","os","um","uma","de","da","das","do","dos","e","em","no","na","nos","nas",
@@ -32,6 +34,8 @@ ABSOLUTE_CLAIM_PATTERNS = (
     r"\bgarant(?:e|ir|indo|ido)\b.{0,90}\b(?:sempre|seguran[cç]a|prote[cç][aã]o|condi[cç][oõ]es? de uso)\b",
     r"\b(?:100\s*%|totalmente)\s+(?:seguro|protegido|garantido)\b",
     r"\bprote[cç][aã]o\s+garantida\b",
+    r"\bpreservar\s+a\s+qualidade\b",
+    r"\bevitar?\s+acidentes?\b",
 )
 NUMERIC_SPEC = re.compile(
     r"\b\d+(?:[.,]\d+)?\s*(?:kg|g|cm|mm|m|l|ml|w|v|ah|mah|nm|psi|bar|%|hz|rpm|amp|ampere|amperes)\b",
@@ -42,11 +46,20 @@ FASTENER_AS_TOOL = re.compile(
     r"\bferramentas?\s+(?:pequenas?|menores?|mi[uú]das?)\b.{0,100}\b(?:parafusos?|pregos?|porcas?|arruelas?|buchas?)\b",
     re.I | re.S,
 )
+FASTENER_AS_MATERIAL = re.compile(
+    r"\bmateriais?\s*,?\s*como\s+(?:parafusos?|pregos?|porcas?|arruelas?|buchas?)\b",
+    re.I,
+)
 FIXED_FREQUENCY_PATTERNS = (
     r"\bferramentas?\s+que\s+(?:s[aã]o\s+)?(?:utilizadas?|usadas?)\s+(?:diariamente|todos os dias)\b",
     r"\bferramentas?\s+de\s+uso\s+di[aá]rio\b",
+    r"\b(?:itens?|ferramentas?|objetos?|fixadores?)\s+(?:de\s+)?uso\s+(?:mais\s+)?frequente\b",
+    r"\b(?:itens?|ferramentas?|objetos?|fixadores?)\s+(?:que\s+)?(?:s[aã]o\s+)?(?:usados?|utilizados?)\s+com\s+(?:mais\s+)?frequ[eê]ncia\b",
+    r"\b(?:itens?|ferramentas?|objetos?|fixadores?)\s+que\s+(?:voc[eê]\s+)?(?:usa|utiliza)\s+com\s+(?:mais\s+)?frequ[eê]ncia\b",
+    r"\b(?:itens?|ferramentas?|objetos?|fixadores?)\s+(?:que\s+)?(?:s[aã]o\s+)?(?:usados?|utilizados?)\s+com\s+mais\s+regularidade\b",
     r"\bitens?\s+(?:menos\s+usados?|raramente\s+usados?|usados?\s+com\s+menos\s+frequ[eê]ncia)\b",
     r"\bferramentas?\s+(?:menos\s+usadas?|raramente\s+usadas?|usadas?\s+com\s+menos\s+frequ[eê]ncia)\b",
+    r"\b(?:mais\s+)?frequentemente\s+(?:usados?|utilizados?)\b",
 )
 
 
@@ -111,9 +124,9 @@ def quality(article):
     h2_titles = [normalized(m.group(1)) for m in h2_matches_editorial]
     h2_count = len(h2_titles)
 
-    if wc < 850:
+    if wc < MIN_WORDS:
         reasons.append(f"word_count_baixo:{wc}")
-    if wc > 1600:
+    if wc > MAX_WORDS:
         reasons.append(f"word_count_alto:{wc}")
     if h2_count < 4:
         reasons.append(f"poucos_h2:{h2_count}")
@@ -181,6 +194,8 @@ def quality(article):
         reasons.append("condicao_comercial_nao_confirmada")
     if FASTENER_AS_TOOL.search(editorial):
         reasons.append("classificacao_tecnica_incorreta_fixadores_como_ferramentas")
+    if FASTENER_AS_MATERIAL.search(editorial):
+        reasons.append("classificacao_tecnica_incorreta_fixadores_como_materiais")
 
     for pattern in FIXED_FREQUENCY_PATTERNS:
         if re.search(pattern, folded, re.I):
