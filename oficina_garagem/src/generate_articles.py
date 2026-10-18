@@ -6,6 +6,7 @@ import time
 import urllib.request
 from pathlib import Path
 
+from cta_context import cta_block, default_cta_lead, generate_cta_lead, validate_cta_lead
 from editorial_normalizer import normalize_editorial
 from quality_gate import quality, word_count
 
@@ -16,8 +17,7 @@ MODEL = os.getenv("OFICINA_AI_MODEL", "@cf/qwen/qwen3-30b-a3b-fp8").strip()
 BATCH_SIZE = max(1, min(int(os.getenv("OFICINA_GENERATION_BATCH_SIZE", "2")), 10))
 ENABLED = os.getenv("OFICINA_GENERATION_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
 BODY_ATTEMPTS = max(1, min(int(os.getenv("OFICINA_GENERATION_BODY_ATTEMPTS", "3")), 3))
-
-CTA_CLASS = "og-produto-relacionado"
+CTA_ATTEMPTS = max(1, min(int(os.getenv("OFICINA_CTA_ATTEMPTS", "2")), 2))
 
 
 def load(path, default):
@@ -64,7 +64,7 @@ def ai(prompt, retries=3):
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "OficinaGaragem-Editorial/2.4",
+                "User-Agent": "OficinaGaragem-Editorial/2.5",
             },
         )
         try:
@@ -122,7 +122,9 @@ def cut_text(value, limit):
     if len(value) <= limit:
         return value
     short = value[: limit + 1].rsplit(" ", 1)[0].rstrip(" -:;,. ")
-    while short and short.casefold().split()[-1] in {"a", "ao", "aos", "as", "com", "da", "das", "de", "do", "dos", "e", "em", "na", "nas", "no", "nos", "para", "por", "sem"}:
+    while short and short.casefold().split()[-1] in {
+        "a", "ao", "aos", "as", "com", "da", "das", "de", "do", "dos", "e", "em", "na", "nas", "no", "nos", "para", "por", "sem"
+    }:
         short = short.rsplit(" ", 1)[0].rstrip(" -:;,. ")
     return (short or value[:limit].rstrip(" -:;,. ")).rstrip(".") + "."
 
@@ -162,14 +164,12 @@ def make_plan(item, raw=None):
     keyword = re.sub(r"\s+", " ", str(data.get("keyword") or "")).strip()
     reader_need = re.sub(r"\s+", " ", str(data.get("reader_need") or "")).strip()
     product_connection = re.sub(r"\s+", " ", str(data.get("product_connection") or "")).strip()
-
     if not 35 <= len(title) <= 65:
         raise RuntimeError(f"título editorial fora da faixa: {len(title)}")
     if not keyword:
         raise RuntimeError("palavra-chave editorial ausente")
     if not reader_need or not product_connection:
         raise RuntimeError("contexto editorial incompleto")
-
     return {
         "title": title,
         "keyword": keyword,
@@ -257,65 +257,20 @@ Responda SOMENTE com um novo fragmento HTML completo.
 """
 
 
-def cta_block(item):
-    product = html.escape(str(item.get("product") or "Produto relacionado"))
-    link = html.escape(str(item.get("affiliate_link") or ""), quote=True)
-    image_url = str(item.get("image_url") or "").strip()
-    image = ""
-    if image_url.startswith("https://"):
-        src = html.escape(image_url, quote=True)
-        image = (
-            '<div style="width:100%;max-width:340px;height:300px;margin:0 auto 18px;'
-            'padding:10px;display:flex;align-items:center;justify-content:center;'
-            'background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">'
-            f'<img src="{src}" alt="{product}" loading="lazy" '
-            'style="display:block;width:100%;height:100%;object-fit:contain;" />'
-            "</div>"
-        )
-
-    return "".join(
-        [
-            f'<div class="{CTA_CLASS}" style="margin:28px 0;padding:22px;border:1px solid #e5e7eb;'
-            'border-radius:14px;background:#f8fafc;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.08);">',
-            '<p style="margin:0 0 10px;font-size:14px;font-weight:700;letter-spacing:.4px;">'
-            "🛒 PRODUTO RELACIONADO AO TEMA</p>",
-            image,
-            f'<p style="margin:0 0 12px;font-size:21px;line-height:1.35;"><strong>{product}</strong></p>',
-            '<p style="margin:0 0 18px;line-height:1.6;">'
-            "Uma opção relacionada ao conteúdo que você acabou de ler. "
-            "Veja os detalhes do produto diretamente no anúncio.</p>",
-            f'<p style="margin:0 0 16px;"><a href="{link}" target="_blank" rel="nofollow sponsored" '
-            'style="display:inline-block;padding:14px 22px;background:#16A34A;color:#ffffff;'
-            'text-decoration:none;font-weight:700;border-radius:10px;font-size:16px;line-height:1.3;">'
-            "👉 VER PRODUTO E CONFERIR A OFERTA</a></p>",
-            '<p style="margin:0 0 10px;font-size:13px;line-height:1.5;"><small>'
-            "Preço, disponibilidade, características e condições podem variar conforme o modelo e o anúncio do vendedor. "
-            "Confira os detalhes na página do produto antes da compra.</small></p>",
-            '<p style="margin:0;font-size:12px;line-height:1.5;"><small><strong>Transparência:</strong> '
-            "este é um link de afiliado. Se você comprar por meio dele, podemos receber uma comissão, "
-            "sem custo adicional para você.</small></p>",
-            "</div>",
-        ]
-    )
-
-
-def insert_contextual_blocks(editorial, item):
+def insert_contextual_blocks(editorial, item, cta_lead):
     h2_matches = list(re.finditer(r"<h2\b[^>]*>.*?</h2>", editorial, flags=re.I | re.S))
     if len(h2_matches) < 4:
         raise RuntimeError("estrutura insuficiente para posicionar CTAs")
-
     third_h2_start = h2_matches[2].start()
     first_part = editorial[:third_h2_start].rstrip()
     second_part = editorial[third_h2_start:].rstrip()
-    cta = cta_block(item)
-
+    cta = cta_block(item, cta_lead)
     cat_slug = slug_category(item.get("category"))
     internal = (
         f'<p><a href="/category/{cat_slug}/">Veja outros guias de {html.escape(str(item.get("category") or ""))}</a>.</p>'
         if cat_slug
         else ""
     )
-
     pieces = [first_part, cta, second_part]
     if internal:
         pieces.append(internal)
@@ -323,15 +278,15 @@ def insert_contextual_blocks(editorial, item):
     return "\n\n".join(x for x in pieces if x)
 
 
-def build(item, plan, raw, enforce=True):
+def build(item, plan, raw, enforce=True, cta_lead=None, cta_generation_mode="test-or-fallback"):
     editorial = normalize_editorial(clean(raw))
     wc = word_count(editorial)
     if wc < 500:
         raise RuntimeError(f"artigo curto: {wc}")
-
     title = plan["title"]
     article_item = {**item, "topic": title, "editorial_title": title}
-    content = insert_contextual_blocks(editorial, article_item)
+    lead = validate_cta_lead(article_item, cta_lead or default_cta_lead(article_item))
+    content = insert_contextual_blocks(editorial, article_item, lead)
     article = {
         **article_item,
         "seo_title": title,
@@ -342,6 +297,8 @@ def build(item, plan, raw, enforce=True):
         "excerpt": meta_description(plan),
         "editorial_html": editorial,
         "content_html": content,
+        "cta_lead": lead,
+        "cta_generation_mode": cta_generation_mode,
         "word_count": wc,
         "generation_model": MODEL,
         "generation_mode": "qwen3-no-think+universal-normalizer" if MODEL.startswith("@cf/qwen/qwen3") else "standard+universal-normalizer",
@@ -355,27 +312,29 @@ def build(item, plan, raw, enforce=True):
 
 def generate_article(item, plan):
     raw = ai(article_prompt(item, plan))
+    editorial = ""
     last_error = ""
     for attempt in range(BODY_ATTEMPTS):
         try:
-            return build(item, plan, raw, enforce=True)
+            candidate = build(item, plan, raw, enforce=True)
+            editorial = candidate["editorial_html"]
+            break
         except RuntimeError as exc:
             last_error = str(exc)
             if attempt + 1 >= BODY_ATTEMPTS:
-                break
+                raise RuntimeError("geração editorial bloqueada após revisões: " + last_error)
             raw = ai(repair_prompt(item, plan, raw, last_error))
-    raise RuntimeError("geração editorial bloqueada após revisões: " + last_error)
+    cta_lead, cta_mode = generate_cta_lead(item, plan, ai, attempts=CTA_ATTEMPTS)
+    return build(item, plan, editorial, enforce=True, cta_lead=cta_lead, cta_generation_mode=cta_mode)
 
 
 def main():
     if not ENABLED:
         print("Geração desativada por OFICINA_GENERATION_ENABLED=false; nenhuma chamada de IA realizada.")
         return
-
     doc = load(QUEUE, {})
     items = doc.get("items") or []
     processed = 0
-
     for item in items:
         if processed >= BATCH_SIZE:
             break
@@ -396,7 +355,6 @@ def main():
             item["last_error"] = str(exc)[:800]
             item["status"] = "BLOCKED" if item["generation_attempts"] >= 3 else "QUARANTINE"
         processed += 1
-
     doc["items"] = items
     save(QUEUE, doc)
     print(f"Itens processados: {processed}")
