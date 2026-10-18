@@ -4,61 +4,220 @@ import sys
 HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
+
+from editorial_normalizer import normalize_editorial  # noqa: E402
 from quality_gate import quality  # noqa: E402
-from generate_articles import build  # noqa: E402
+from cta_context import CTA_BUTTON_TEXT, CTA_CONSULT_TEXT, cta_copy_prompt, make_cta_lead  # noqa: E402
+from generate_articles import build, make_plan, meta_description, repair_prompt  # noqa: E402
 
 
-def article(text, category="Ferramentas", product="Parafusadeira", topic="Parafusadeira: o que conferir antes de comprar", focus="parafusadeira"):
-    editorial = "".join([f"<h2>Seção {i}</h2><p>{text} " + (f"{focus} critério de compra e compatibilidade a conferir no anúncio. " * 25) + "</p>" for i in range(1, 5)])
-    link = "https://shopee.com.br/exemplo"
+def sample_item(category="Ferramentas", product="Parafusadeira sem fio com maleta", focus="parafusadeira"):
     return {
+        "id": 1,
         "product": product,
-        "topic": topic,
         "category": category,
-        "affiliate_link": link,
-        "seo_title": "Parafusadeira: o que conferir antes de comprar",
-        "meta_description": "Veja critérios práticos para comparar o produto, conferir compatibilidade, limitações, especificações e informações do anúncio antes de decidir pela compra.",
-        "focus_keyword": focus,
-        "editorial_html": editorial,
-        "content_html": editorial + f'<p><a href="/category/ferramentas/">Mais guias</a></p><p><a href="{link}" rel="nofollow sponsored">Oferta</a></p><p>Link de afiliado.</p>'
+        "source_keyword": focus,
+        "affiliate_link": "https://shopee.com.br/exemplo",
+        "image_url": "https://cf.shopee.com.br/file/exemplo",
+        "rules": {"safety_review": category == "Segurança e Proteção"},
+    }
+
+
+def long_editorial(focus="organizar ferramentas", bad_text=""):
+    sections = []
+    for i in range(1, 6):
+        body = (
+            f"{focus} exige critérios coerentes com a rotina e o espaço disponível. "
+            "A organização deve considerar acesso, separação por função, armazenamento e manutenção da ordem. "
+            "Exemplos devem ser adaptados ao contexto de cada pessoa, sem presumir padrões fixos de acesso. "
+            "Antes de escolher qualquer solução, vale observar dimensões do ambiente, tipos de itens guardados "
+            "e facilidade de devolução ao lugar correto. "
+        ) * 3
+        if i == 3 and bad_text:
+            body += " " + bad_text
+        sections.append(f"<h2>Critério editorial {i}</h2><p>{body}</p>")
+    return "".join(sections)
+
+
+def plan(title="Como organizar ferramentas de forma prática e eficiente", keyword="organizar ferramentas"):
+    return {
+        "title": title,
+        "keyword": keyword,
+        "reader_need": "Aprender maneiras práticas de organizar ferramentas em garagens e oficinas.",
+        "product_connection": "Uma caixa de ferramentas pode ser uma opção relacionada de armazenamento.",
     }
 
 
 def main():
-    good = quality(article("Guia informativo sem especificações inventadas."))
+    item = sample_item()
+    built = build(item, plan(), long_editorial())
+    good = built["quality"]
     assert good["status"] == "DRAFT_READY", good
+    assert built["topic"] == built["editorial_title"] == built["seo_title"]
+    assert good["metrics"]["cta_count"] == 2
+    assert built["content_html"].count(item["image_url"]) == 2
+    assert built["content_html"].count(item["affiliate_link"]) == 4
+    assert built["content_html"].count(CTA_BUTTON_TEXT) == 2
+    assert built["content_html"].count(CTA_CONSULT_TEXT) == 2
+    assert built["content_html"].count(built["cta_lead"]) == 0
+    assert built["content_html"].count('rel="nofollow sponsored"') == 4
 
-    tested = quality(article("Nós testamos este produto e comprovamos o resultado."))
-    assert tested["status"] == "REJECTED" and "alegacao_de_teste_nao_comprovada" in tested["reasons"], tested
+    tested = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Nós testamos este produto e comprovamos o resultado."),
+        enforce=False,
+    )
+    assert tested["quality"]["status"] == "REJECTED"
+    assert "alegacao_de_teste_nao_comprovada" in tested["quality"]["reasons"], tested["quality"]
 
-    risk = quality(article("Compare materiais e confirme certificações.", category="Segurança e Proteção", product="Óculos de Proteção", topic="Óculos de proteção: como escolher", focus="oculos de protecao"))
-    assert risk["status"] == "HUMAN_REVIEW_REQUIRED", risk
+    risk_item = sample_item(
+        category="Segurança e Proteção",
+        product="Óculos de Proteção Transparente EPI para Trabalho",
+        focus="oculos de protecao",
+    )
+    risk_plan = plan("Como escolher proteção ocular para diferentes tarefas", "proteção ocular")
+    risk = build(risk_item, risk_plan, long_editorial("proteção ocular"), enforce=False)
+    assert risk["quality"]["status"] == "HUMAN_REVIEW_REQUIRED", risk["quality"]
 
-    numeric = quality(article("O equipamento entrega 900 Nm de torque."))
-    assert numeric["status"] == "REJECTED" and any(x.startswith("especificacao_numerica_nao_confirmada") for x in numeric["reasons"]), numeric
+    numeric = build(
+        item,
+        plan(),
+        long_editorial(bad_text="O equipamento entrega 900 Nm de torque."),
+        enforce=False,
+    )
+    assert numeric["quality"]["status"] == "REJECTED"
+    assert any(x.startswith("especificacao_numerica_nao_confirmada") for x in numeric["quality"]["reasons"]), numeric["quality"]
 
-    dangerous = quality(article("Levante o veículo e depois faça a inspeção."))
-    assert dangerous["status"] == "REJECTED" and "instrucao_procedimental_de_alto_risco" in dangerous["reasons"], dangerous
+    dangerous = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Levante o veículo e depois faça a inspeção."),
+        enforce=False,
+    )
+    assert dangerous["quality"]["status"] == "REJECTED"
+    assert "instrucao_procedimental_de_alto_risco" in dangerous["quality"]["reasons"], dangerous["quality"]
 
-    item = {
-        "id": 1,
-        "product": "Parafusadeira sem fio com maleta",
-        "topic": "Parafusadeira sem fio: o que conferir antes de comprar",
-        "category": "Ferramentas",
-        "source_keyword": "parafusadeira",
-        "affiliate_link": "https://shopee.com.br/exemplo",
-        "rules": {"safety_review": False}
-    }
-    raw = "".join([
-        f"<h2>Critério {i}</h2><p>Parafusadeira deve ser comparada conforme a necessidade. " +
-        ("Confira no anúncio compatibilidade, acessórios inclusos, ergonomia e limitações antes da compra. " * 24) +
-        "</p>" for i in range(1, 5)
-    ])
-    built = build(item, raw)
-    assert built["quality"]["status"] == "DRAFT_READY", built["quality"]
-    assert "nofollow sponsored" in built["content_html"] and "/category/ferramentas/" in built["content_html"]
+    frequency = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Ferramentas de uso mais frequente devem ficar na frente, enquanto itens menos usados podem ficar atrás."),
+    )
+    assert frequency["quality"]["status"] == "DRAFT_READY", frequency["quality"]
+    assert "uso mais frequente" not in frequency["editorial_html"].casefold()
+    assert "menos usados" not in frequency["editorial_html"].casefold()
+    assert "maior necessidade de acesso na sua rotina" in frequency["editorial_html"].casefold()
 
-    print("Self-test Oficina & Garagem: 6/6 OK")
+    fluency = normalize_editorial(
+        "<p>Ferramentas que você usa com mais regularidade ficam perto. As que são usadas com menos frequência ficam em outro ponto.</p>"
+    )
+    assert "Ferramentas com maior necessidade de acesso na sua rotina" in fluency
+    assert "as demais" in fluency.casefold()
+    assert "mais regularidade" not in fluency.casefold()
+    assert "menos frequência" not in fluency.casefold()
+
+    storage = normalize_editorial(
+        "<p>Materiais como tintas e solventes devem ser armazenados em locais ventilados e longe de fontes de calor. Outro critério é separar categorias.</p>"
+    )
+    assert "solventes" not in storage.casefold()
+    assert "outro critério" in storage.casefold()
+
+    safety_claims = normalize_editorial(
+        "<p>Um espaço bem arrumado contribui para a segurança, evitando que objetos causem acidentes. Outro critério é manter cada categoria no lugar definido.</p>"
+    )
+    assert "segurança" not in safety_claims.casefold()
+    assert "acidentes" not in safety_claims.casefold()
+    assert "outro critério" in safety_claims.casefold()
+
+    misclassified = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Ferramentas pequenas, como parafusos, pregos e porcas, devem ficar separadas."),
+    )
+    assert misclassified["quality"]["status"] == "DRAFT_READY", misclassified["quality"]
+    assert "fixadores, como parafusos" in misclassified["editorial_html"].casefold()
+
+    absolute = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Uma caixa adequada pode preservar a qualidade dos objetos. Outro critério útil é manter categorias separadas."),
+    )
+    assert absolute["quality"]["status"] == "DRAFT_READY", absolute["quality"]
+    assert "preservar a qualidade" not in absolute["editorial_html"].casefold()
+    assert "outro critério útil" in absolute["editorial_html"].casefold()
+
+    copied_title = build(
+        item,
+        plan(),
+        long_editorial(bad_text="Parafusadeira sem fio com maleta é uma opção relacionada para organizar o trabalho."),
+        enforce=False,
+    )
+    assert copied_title["quality"]["status"] == "REJECTED"
+    assert "titulo_comercial_copiado_no_corpo" in copied_title["quality"]["reasons"], copied_title["quality"]
+
+    no_image_item = dict(item)
+    no_image_item["image_url"] = ""
+    no_image = build(no_image_item, plan(), long_editorial())
+    assert no_image["quality"]["status"] == "DRAFT_READY", no_image["quality"]
+
+    fake_plan_json = """{
+      "title": "Como organizar ferramentas sem desperdiçar espaço",
+      "keyword": "organizar ferramentas",
+      "reader_need": "Aproveitar melhor o espaço disponível para guardar ferramentas.",
+      "product_connection": "Uma caixa de ferramentas pode ser uma opção de armazenamento relacionada."
+    }"""
+    parsed = make_plan(item, fake_plan_json)
+    assert parsed["title"] == "Como organizar ferramentas sem desperdiçar espaço"
+
+    repair = repair_prompt(item, plan(), long_editorial(), "quality gate: titulo_comercial_copiado_no_corpo")
+    assert "titulo_comercial_copiado_no_corpo" in repair
+    assert "RASCUNHO BLOQUEADO" in repair
+
+    heading = normalize_editorial("<h2>Organize por frequência de uso e tipo</h2><p>Texto neutro.</p>")
+    assert "necessidade de acesso" in heading.casefold()
+    assert "frequência de uso" not in heading.casefold()
+
+    meta = meta_description(plan())
+    assert 110 <= len(meta) <= 160, len(meta)
+    assert not meta.rstrip(".").casefold().endswith((" de", " da", " do", " em", " para", " com", " sem")), meta
+
+    qwen_item = sample_item(
+        category="Organização de Garagem",
+        product="Caixa Ferramentas Sanfonada 7 Gavetas C/Alça Fixa Marcon",
+        focus="organizar garagem",
+    )
+    qwen_plan = plan("Organize Sua Garagem com uma Caixa de Ferramentas", "organizar garagem")
+    qwen_raw = '{"lead":"Para quem deseja aplicar as dicas de organização, a Caixa Sanfonada de 7 Gavetas da Marcon é uma opção relacionada disponível para consulta. Confira as especificações do modelo no anúncio para avaliar se ele atende à sua necessidade; você também pode consultar o modelo na Shopee."}'
+    lead = make_cta_lead(qwen_item, qwen_plan, qwen_raw)
+    contextual = build(qwen_item, qwen_plan, long_editorial("organizar garagem"), cta_lead=lead, cta_generation_mode="qwen3-contextual")
+    assert contextual["quality"]["status"] == "DRAFT_READY", contextual["quality"]
+    assert "Caixa Sanfonada de 7 Gavetas da Marcon" in contextual["cta_lead"]
+    assert contextual["content_html"].count(CTA_BUTTON_TEXT) == 2
+    assert contextual["content_html"].count(CTA_CONSULT_TEXT) == 2
+    assert contextual["content_html"].count(qwen_item["affiliate_link"]) == 4
+
+    hype_lead = "Para quem deseja aplicar as dicas, esta incrível Parafusadeira sem fio é uma opção imperdível para organizar a bancada. Confira as especificações do modelo no anúncio para avaliar se ele atende à sua necessidade; você também pode consultar o modelo na Shopee."
+    try:
+        build(item, plan(), long_editorial(), enforce=False, cta_lead=hype_lead)
+        raise AssertionError("CTA promocional deveria ser bloqueado")
+    except RuntimeError as exc:
+        assert "tom promocional exagerado" in str(exc).casefold(), exc
+
+    missing_consult = "Para quem deseja aplicar as dicas, a Parafusadeira sem fio é uma opção relacionada disponível para consulta. Confira as especificações do modelo no anúncio para avaliar se ele atende à sua necessidade."
+    try:
+        build(item, plan(), long_editorial(), enforce=False, cta_lead=missing_consult)
+        raise AssertionError("CTA sem link contextual deveria ser bloqueado")
+    except RuntimeError as exc:
+        assert "consulta clicável" in str(exc).casefold(), exc
+
+    prompt = cta_copy_prompt(qwen_item, qwen_plan).casefold()
+    assert "jornalista" in prompt
+    assert "tom neutro" in prompt
+    assert "prestação de serviço" in prompt
+    assert "não use linguagem de venda agressiva" in prompt
+    assert "consultar o modelo na shopee" in prompt
+
+    print("Self-test Oficina & Garagem editorial contextual v2: 21/21 OK")
 
 
 if __name__ == "__main__":

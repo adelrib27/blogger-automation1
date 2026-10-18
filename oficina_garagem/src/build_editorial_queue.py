@@ -6,8 +6,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "oficina_garagem" / "data" / "shopee_oportunidades" / "intent_report.json"
+RANKING = ROOT / "oficina_garagem" / "data" / "shopee_oportunidades" / "ranking.json"
 CONFIG = ROOT / "oficina_garagem" / "config" / "shopee_oportunidades.json"
 OUT = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
+HISTORY = ROOT / "oficina_garagem" / "data" / "publication_history.json"
 MAX_PER_KEYWORD = 1
 
 KEYWORD_LABELS = {
@@ -35,8 +37,13 @@ KEYWORD_LABELS = {
 }
 
 
-def load(path):
-    return json.loads(path.read_text(encoding="utf-8"))
+def load(path, default=None):
+    if default is None:
+        default = {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return default
 
 
 def norm(value):
@@ -63,9 +70,11 @@ def category_map(config):
 
 def display_category(raw):
     return {
-        "Manutencao": "Manutenção", "Acessorios Automotivos": "Acessórios Automotivos",
-        "Organizacao de Garagem": "Organização de Garagem", "Limpeza e Conservacao": "Limpeza e Conservação",
-        "Seguranca e Protecao": "Segurança e Proteção"
+        "Manutencao": "Manutenção",
+        "Acessorios Automotivos": "Acessórios Automotivos",
+        "Organizacao de Garagem": "Organização de Garagem",
+        "Limpeza e Conservacao": "Limpeza e Conservação",
+        "Seguranca e Protecao": "Segurança e Proteção",
     }.get(raw, raw)
 
 
@@ -73,22 +82,41 @@ def keyword_label(keyword):
     return KEYWORD_LABELS.get(norm(keyword), str(keyword).strip().capitalize())
 
 
-def topic_for(keyword, category):
-    label = keyword_label(keyword)
-    if category == "Segurança e Proteção":
-        return f"{label}: o que verificar em especificações, certificações e adequação antes de comprar"
-    if any(term in norm(keyword) for term in ("torquimetro", "multimetro", "compressor", "lavadora")):
-        return f"{label}: critérios para comparar modelos sem assumir especificações não confirmadas"
-    if category in {"Organização de Garagem", "Acessórios Automotivos"}:
-        return f"{label}: o que medir e conferir para escolher um modelo adequado"
-    return f"{label}: o que conferir antes de comprar e quais limitações considerar"
+def ranking_details():
+    if not RANKING.exists():
+        return {}
+    doc = load(RANKING, {})
+    rows = doc.get("ranking") if isinstance(doc, dict) else []
+    out = {}
+    for row in rows or []:
+        item_id = str(row.get("itemId") or "").strip()
+        if item_id:
+            out[item_id] = row
+    return out
+
+
+def publication_memory():
+    doc = load(HISTORY, {"items": []})
+    rows = doc.get("items") if isinstance(doc, dict) else []
+    ids = set()
+    fingerprints = set()
+    for row in rows or []:
+        item_id = str(row.get("shopee_item_id") or "").strip()
+        if item_id:
+            ids.add(item_id)
+        fingerprint = product_fingerprint(row.get("product"))
+        if fingerprint:
+            fingerprints.add(fingerprint)
+    return ids, fingerprints
 
 
 def main():
     if not REPORT.exists():
         raise SystemExit(f"Relatório Shopee ausente: {REPORT}")
-    report, config = load(REPORT), load(CONFIG)
+    report, config = load(REPORT, {}), load(CONFIG, {})
+    details = ranking_details()
     mapping = category_map(config)
+    published_ids, published_fingerprints = publication_memory()
     items = []
     seen_ids = set()
     seen_products = set()
@@ -103,13 +131,20 @@ def main():
         if not item_id or not product or not link.startswith("https://") or not keywords:
             skipped["incompleto"] += 1
             continue
+        if item_id in published_ids:
+            skipped["produto_ja_publicado"] += 1
+            continue
         if item_id in seen_ids:
             skipped["item_id_duplicado"] += 1
             continue
         fingerprint = product_fingerprint(product)
+        if fingerprint and fingerprint in published_fingerprints:
+            skipped["produto_semelhante_ja_publicado"] += 1
+            continue
         if fingerprint and fingerprint in seen_products:
             skipped["produto_quase_duplicado"] += 1
             continue
+
         keyword = keywords[0]
         keyword_key = norm(keyword)
         if keyword_counts[keyword_key] >= MAX_PER_KEYWORD:
@@ -119,21 +154,33 @@ def main():
         if not raw_category:
             skipped["categoria_nao_mapeada"] += 1
             continue
+
+        detail = details.get(item_id) or {}
+        image_url = str(detail.get("imageUrl") or "").strip()
+        if image_url and not image_url.startswith("https://"):
+            image_url = ""
+
         category = display_category(raw_category)
         items.append({
             "id": len(items) + 1,
             "shopee_item_id": item_id,
             "product": product,
             "affiliate_link": link,
+            "image_url": image_url,
             "shop_name": row.get("shopName"),
             "source_keyword": keyword,
             "editorial_label": keyword_label(keyword),
             "category": category,
-            "topic": topic_for(keyword, category),
             "opportunity_score": row.get("opportunityScore"),
             "priority_tier": row.get("priorityTier"),
             "status": "PENDING",
-            "rules": {"no_fake_testing": True, "no_invented_specs": True, "draft_only": True, "safety_review": category == "Segurança e Proteção"}
+            "rules": {
+                "no_fake_testing": True,
+                "no_invented_specs": True,
+                "publication_requires_gate": True,
+                "safety_review": category == "Segurança e Proteção",
+                "single_editorial_title": True,
+            },
         })
         seen_ids.add(item_id)
         if fingerprint:
@@ -142,13 +189,14 @@ def main():
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
-        "version": 4,
+        "version": 6,
         "project": "Oficina & Garagem",
-        "source": "Shopee intent_report v2.3",
+        "source": "Shopee intent_report v2.3 + ranking details + publication history",
+        "editorial_policy": "produto real -> um único título editorial -> conteúdo útil -> CTA contextual -> gate -> publicação",
         "max_per_keyword": MAX_PER_KEYWORD,
         "total": len(items),
         "skipped": dict(skipped),
-        "items": items
+        "items": items,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Fila criada: {OUT} | itens={len(items)} | descartes={dict(skipped)}")
     if not items:
