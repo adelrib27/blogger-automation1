@@ -8,6 +8,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from cta_context import CTA_PRODUCT_TITLE_CLASS
 from quality_gate import quality
@@ -19,7 +20,9 @@ HISTORY = ROOT / "oficina_garagem" / "data" / "publication_history.json"
 WP_URL = "https://oficina.radartechbr.com.br"
 ENABLED = os.getenv("OFICINA_LIVE_PUBLISH_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
 LIMIT = max(1, min(int(os.getenv("OFICINA_PUBLISH_LIMIT", "1")), 2))
+DAILY_CAP = max(1, min(int(os.getenv("OFICINA_DAILY_PUBLISH_CAP", "2")), 2))
 STATUS = os.getenv("OFICINA_WORDPRESS_STATUS", "draft").strip().lower()
+LOCAL_TZ = ZoneInfo("America/Sao_Paulo")
 CATEGORY_SLUGS = {
     "Ferramentas": "ferramentas",
     "Manutenção": "manutencao",
@@ -62,7 +65,7 @@ def request(method, path, payload=None):
             "Authorization": f"Basic {auth}",
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "OficinaGaragem-AutonomousPublisher/1.0",
+            "User-Agent": "OficinaGaragem-AutonomousPublisher/1.1",
         },
     )
     try:
@@ -138,6 +141,29 @@ def history_ids(history):
     }
 
 
+def count_publications_for_local_date(history, local_date):
+    count = 0
+    for row in history.get("items") or []:
+        if str(row.get("source") or "") == "automatic_existing":
+            continue
+        raw = str(row.get("published_at") or "").strip()
+        if not raw:
+            continue
+        try:
+            stamp = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+            if stamp.tzinfo is None:
+                stamp = stamp.replace(tzinfo=timezone.utc)
+        except ValueError:
+            continue
+        if stamp.astimezone(LOCAL_TZ).date() == local_date:
+            count += 1
+    return count
+
+
+def publications_today(history):
+    return count_publications_for_local_date(history, datetime.now(LOCAL_TZ).date())
+
+
 def append_history(history, item, article, post_id, url, source="automatic_gate"):
     if str(item.get("shopee_item_id") or "") in history_ids(history):
         return
@@ -165,11 +191,18 @@ def main():
     credentials()
     doc = load(QUEUE, {})
     history = load(HISTORY, {"version": 1, "project": "Oficina & Garagem", "items": []})
+    used_today = publications_today(history)
+    remaining_today = max(0, DAILY_CAP - used_today)
+    effective_limit = min(LIMIT, remaining_today)
+    if effective_limit <= 0:
+        print(f"Limite diário atingido: {used_today}/{DAILY_CAP} publicações em America/Sao_Paulo; nenhuma nova publicação.")
+        return
+
     published = history_ids(history)
     done = 0
 
     for item in doc.get("items") or []:
-        if done >= LIMIT:
+        if done >= effective_limit:
             break
         if item.get("status") != "GENERATED":
             continue
