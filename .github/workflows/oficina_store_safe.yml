@@ -1,0 +1,88 @@
+name: Oficina & Garagem — Loja Shopee SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "oficina_garagem/store_safe_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oficina-garagem-store-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      OFICINA_WORDPRESS_USERNAME: "admin"
+      OFICINA_WORDPRESS_APP_PASSWORD: ${{ secrets.OFICINA_WORDPRESS_APP_PASSWORD }}
+      OFICINA_STORE_DRY_RUN: "true"
+      OFICINA_STORE_ITEMS_PER_CATEGORY: "4"
+      OFICINA_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "60"
+      SHOPEE_OPPORTUNITIES_CONFIG: oficina_garagem/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: oficina_garagem/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: oficina_garagem/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código e testes locais
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            oficina_garagem/src/shopee_oportunidades_oficina.py \
+            oficina_garagem/src/store_auto.py \
+            oficina_garagem/src/store_auto_self_test.py \
+            oficina_garagem/src/store_hero_sync.py
+          PYTHONPATH=src:oficina_garagem/src python oficina_garagem/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$OFICINA_WORDPRESS_APP_PASSWORD"
+
+      - name: Validar Shopee e página sem publicar
+        run: |
+          PYTHONPATH=src:oficina_garagem/src python -u oficina_garagem/src/store_auto.py
+
+      - name: Validar carrossel sem publicar
+        run: |
+          PYTHONPATH=src:oficina_garagem/src python -u oficina_garagem/src/store_hero_sync.py
+
+      - name: Confirmar que SAFE não alterou WordPress
+        run: |
+          set -euo pipefail
+          grep -q '"status": "DRY_RUN_OK"' oficina_garagem/data/store_last_selection.json
+          grep -q '"dryRun": true' oficina_garagem/data/store_last_selection.json
+          test "$(grep -o '"itemId"' oficina_garagem/data/store_last_selection.json | wc -l | tr -d ' ')" -eq 24
+          echo "SAFE confirmado: 24 produtos + 12 mini-cards validados; WordPress permaneceu somente leitura."
+
+      - name: Guardar diagnóstico SAFE
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oficina-store-safe-${{ github.run_number }}
+          path: |
+            oficina_garagem/data/store_last_selection.json
+            oficina_garagem/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
