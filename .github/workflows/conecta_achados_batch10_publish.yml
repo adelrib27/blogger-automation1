@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "conecta_achados/src/publish_batch10.py"
       - ".github/workflows/conecta_achados_batch10_publish.yml"
   workflow_dispatch:
 
