@@ -92,6 +92,11 @@ def slugify(value):
     return re.sub(r"[^a-z0-9]+", "-", value).strip("-")[:78].rstrip("-")
 
 
+def media_alt_text(article):
+    value = re.sub(r"\s+", " ", str(article.get("product") or article.get("seo_title") or "Produto relacionado")).strip()
+    return value[:180].rstrip()
+
+
 def category_id(name):
     slug = CATEGORY_SLUGS[name]
     rows = request("GET", "/wp/v2/categories?slug=" + urllib.parse.quote(slug))
@@ -159,6 +164,10 @@ def upload_featured_image(post_id, article):
     media_id = int(media.get("id") or 0)
     if not media_id:
         raise RuntimeError("WordPress não confirmou o upload da imagem destacada")
+    alt_text = media_alt_text(article)
+    media_meta = request("POST", f"/wp/v2/media/{media_id}", {"alt_text": alt_text})
+    if alt_text and str(media_meta.get("alt_text") or "").strip() != alt_text:
+        raise RuntimeError("WordPress não confirmou o texto alternativo da imagem destacada")
     updated = request("POST", f"/wp/v2/posts/{int(post_id)}", {"featured_media": media_id})
     if int(updated.get("featured_media") or 0) != media_id:
         raise RuntimeError("WordPress não confirmou a imagem destacada no post")

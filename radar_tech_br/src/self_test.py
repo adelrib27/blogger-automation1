@@ -6,6 +6,7 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 from generate_articles import build, make_plan, meta_description, slug_category  # noqa: E402
+from publish_generated import media_alt_text  # noqa: E402
 
 
 def item(category="Tecnologia", product="Smartwatch com monitoramento e tela digital", keyword="smartwatch"):
@@ -58,6 +59,9 @@ def main():
     assert slug_category("Ferramentas & Automotivo") == "ferramentas-automotivo"
     assert slug_category("Moda & Beleza") == "moda-beleza"
 
+    alt = media_alt_text(item(product="Produto demonstrativo para imagem destacada"))
+    assert alt == "Produto demonstrativo para imagem destacada" and len(alt) <= 180
+
     no_image = item()
     no_image["image_url"] = ""
     rejected = build(no_image, plan(), editorial(), enforce=False)
@@ -97,7 +101,7 @@ def main():
     meta = meta_description(plan())
     assert 110 <= len(meta) <= 160, len(meta)
 
-    print("Self-test Radar Tech BR vNext: 14/14 OK")
+    print("Self-test Radar Tech BR vNext: 15/15 OK")
 
 
 if __name__ == "__main__":
