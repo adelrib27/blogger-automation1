@@ -1,0 +1,1 @@
+Implementar: (1) descoberta Shopee por 5 categorias, (2) seleção com deduplicação/rotação, (3) atualização apenas do bloco entre marcadores da página /loja/, (4) dry-run/validação, (5) schedule diário após validação.
