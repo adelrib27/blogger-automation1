@@ -1,4 +1,5 @@
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -14,6 +15,38 @@ READY_PATH = BASE_DIR / "data" / "batch_10_ready.json"
 RESULT_PATH = BASE_DIR / "data" / "batch_10_publish_result.json"
 STATE_PATH = BASE_DIR / "data" / "state.json"
 EXPECTED_BLOG_ID = "1719259388907013414"
+BLOGGER_SPACING_SECONDS = 20
+
+
+def publish_with_retry(title, content, category):
+    waits = [35, 50, 70]
+
+    for attempt in range(4):
+        try:
+            return automation.create_blogger_post(
+                title,
+                content,
+                category,
+                "publish",
+            )
+        except Exception as exc:
+            text = str(exc)
+            is_rate_limit = (
+                "429" in text
+                or "rateLimitExceeded" in text
+                or "Resource has been exhausted" in text
+            )
+            if not is_rate_limit or attempt >= len(waits):
+                raise
+
+            wait = waits[attempt]
+            print(
+                f"Blogger API limitou a requisição; retry {attempt + 1}/3 "
+                f"em {wait}s: {title}"
+            )
+            time.sleep(wait)
+
+    raise RuntimeError("Retry Blogger esgotado.")
 
 
 def main():
@@ -38,6 +71,7 @@ def main():
     history = list(state.get("history", []))
     results = []
     failures = []
+    published_in_this_run = 0
 
     for index, prepared in enumerate(ready_payload.get("posts") or [], start=1):
         item_id = str(prepared.get("itemId") or "").strip()
@@ -80,12 +114,18 @@ def main():
                 category,
             )
 
+            if published_in_this_run > 0:
+                print(
+                    f"Aguardando {BLOGGER_SPACING_SECONDS}s para respeitar "
+                    "o limite da Blogger API."
+                )
+                time.sleep(BLOGGER_SPACING_SECONDS)
+
             print(f"{index}/10 publicando no Blogger: {title}")
-            blogger_result = automation.create_blogger_post(
+            blogger_result = publish_with_retry(
                 title,
                 content,
                 category,
-                "publish",
             )
 
             result = {
@@ -102,6 +142,7 @@ def main():
             }
             results.append(result)
             used.add(item_id)
+            published_in_this_run += 1
             history.append({
                 "timestamp_utc": result["published_at_utc"],
                 "item_id": item_id,
