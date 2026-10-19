@@ -1,0 +1,78 @@
+name: Radar Tech BR — Validação Editorial vNext Segura
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "radar_tech_br/validation_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: radar-tech-br-editorial-vnext-safe
+  cancel-in-progress: false
+
+jobs:
+  validate-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      RADAR_TARGET_SLOT: "10:30"
+      RADAR_GENERATION_ENABLED: "false"
+      RADAR_LIVE_PUBLISH_ENABLED: "false"
+      RADAR_WORDPRESS_STATUS: "draft"
+      RADAR_GENERATION_BATCH_SIZE: "1"
+      RADAR_PUBLISH_LIMIT: "1"
+      RADAR_DAILY_PUBLISH_CAP: "5"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compilar e testar base vNext
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            src/fase3_fila_radar.py \
+            radar_tech_br/src/*.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/self_test.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/cta_card_self_test.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/semantic_self_test.py
+
+      - name: Validar integração com a fila diária sem publicar
+        run: |
+          set -euo pipefail
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/prepare_slot.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/generate_articles.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/publish_generated.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/audit_release_candidates.py
+
+      - name: Confirmar interlocks
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          q = json.loads(Path("radar_tech_br/data/editorial_queue.json").read_text(encoding="utf-8"))
+          items = q.get("items") or []
+          if len(items) != 1:
+              raise SystemExit("Fila vNext segura deveria conter exatamente 1 item")
+          if items[0].get("status") != "PENDING":
+              raise SystemExit("Validação segura não deveria gerar nem publicar conteúdo")
+          print("Interlocks seguros confirmados: geração=false, publicação=false.")
+          PY
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-editorial-vnext-safe-${{ github.run_number }}
+          path: radar_tech_br/data/
+          if-no-files-found: warn
+          retention-days: 14
