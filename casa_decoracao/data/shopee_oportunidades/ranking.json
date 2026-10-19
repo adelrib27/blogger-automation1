@@ -1,0 +1,2492 @@
+{
+  "generatedAt": 1792376923,
+  "method": "seller-extra-first; standard commission only as reserve; Google Autocomplete proxy; Shopee performance",
+  "searchSignalWarning": "Google Autocomplete é proxy de intenção/popularidade, não volume mensal exato.",
+  "priorityPolicy": {
+    "commissionExtraFirst": true,
+    "standardCommissionOnlyToFillMissingSlots": true,
+    "extraCount": 32,
+    "reserveCount": 0
+  },
+  "config": {
+    "version": 3,
+    "project": "Casa e Decoração",
+    "market": "BR",
+    "currency": "BRL",
+    "min_seller_commission_rate": 0.03,
+    "min_rating_when_available": 4.0,
+    "reserve_enabled": true,
+    "reserve_min_rating_when_available": 4.0,
+    "query_limit": 12,
+    "reserve_query_limit": 12,
+    "top_n": 32,
+    "weights": {
+      "seller_extra_commission": 0.4,
+      "search_demand_proxy": 0.25,
+      "sales": 0.15,
+      "rating": 0.1,
+      "discount": 0.05,
+      "top_performance": 0.05
+    },
+    "diversity": {
+      "enabled": true,
+      "max_per_shop": 3,
+      "max_per_keyword": 2,
+      "max_per_category": 5,
+      "relaxed_caps": {
+        "max_per_shop": 5,
+        "max_per_keyword": 3,
+        "max_per_category": 7
+      },
+      "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
+    },
+    "categories": {
+      "Decoracao": [
+        "caminho de mesa",
+        "vaso decorativo",
+        "almofada decorativa"
+      ],
+      "Organizacao": [
+        "caixa organizadora",
+        "organizador armario",
+        "varal de chao"
+      ],
+      "Sala": [
+        "manta sofa",
+        "mesa lateral",
+        "tapete sala"
+      ],
+      "Quarto": [
+        "travesseiro",
+        "organizador guarda roupa",
+        "abajur quarto"
+      ],
+      "Cozinha": [
+        "escorredor de loucas",
+        "potes hermeticos",
+        "fatiador de legumes"
+      ],
+      "Banheiro": [
+        "toalheiro banheiro",
+        "tapete banheiro",
+        "prateleira banheiro"
+      ],
+      "Area Externa": [
+        "luminaria solar jardim",
+        "vaso jardim",
+        "cadeira varanda"
+      ],
+      "Cama Mesa Banho": [
+        "protetor de colchao",
+        "jogo de toalhas",
+        "lencol casal"
+      ]
+    }
+  },
+  "ranking": [
+    {
+      "itemId": 58210221228,
+      "productName": "Kit 5 Saco Organizador zíper Cobertor Casaco Guarda Roupa Anti-Poeira Anti-Umidade Multiuso 44 x 20 x 38",
+      "productLink": "https://shopee.com.br/product/718649619/58210221228",
+      "offerLink": "https://s.shopee.com.br/2LZBX1uQcA",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ll-mnx2m0em0zy821",
+      "priceMin": "27.99",
+      "priceMax": "27.99",
+      "priceDiscountRate": 36,
+      "sales": 794,
+      "ratingStar": "4.8",
+      "commissionRate": "0.52",
+      "sellerCommissionRate": "0.49",
+      "shopeeCommissionRate": "0.03",
+      "commission": "14.5548",
+      "shopId": 718649619,
+      "shopName": "Innova Embalagens",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Quarto"
+      ],
+      "keywords": [
+        "organizador guarda roupa"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "organizador guarda roupa"
+      ],
+      "intentMatchedKeywords": [
+        "organizador guarda roupa"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "organizador guarda roupa": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "organizador"
+            ],
+            [
+              "guarda roupa",
+              "roupa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 77.66,
+      "scoreComponents": {
+        "seller_extra_commission": 0.8033,
+        "search_demand_proxy": 1.0,
+        "sales": 0.6087,
+        "rating": 0.96,
+        "discount": 0.36,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 49.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 52.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58210215150,
+      "productName": "Kit 5 Saco Organizador Pvc para Edredom e Cobertor com Zíper Preto Guarda-Roupa",
+      "productLink": "https://shopee.com.br/product/718649619/58210215150",
+      "offerLink": "https://s.shopee.com.br/2VsbjKtnHD",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ma-mnx2m0edy8ec1f",
+      "priceMin": "28.99",
+      "priceMax": "28.99",
+      "priceDiscountRate": 34,
+      "sales": 17,
+      "ratingStar": "4.8",
+      "commissionRate": "0.52",
+      "sellerCommissionRate": "0.49",
+      "shopeeCommissionRate": "0.03",
+      "commission": "15.0748",
+      "shopId": 718649619,
+      "shopName": "Innova Embalagens",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Quarto"
+      ],
+      "keywords": [
+        "organizador guarda roupa"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "organizador guarda roupa"
+      ],
+      "intentMatchedKeywords": [
+        "organizador guarda roupa"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "organizador guarda roupa": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "organizador"
+            ],
+            [
+              "guarda roupa",
+              "roupa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 72.38,
+      "scoreComponents": {
+        "seller_extra_commission": 0.8033,
+        "search_demand_proxy": 1.0,
+        "sales": 0.2634,
+        "rating": 0.96,
+        "discount": 0.34,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 49.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 52.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58208566937,
+      "productName": "Tapete Sala Quarto Aveludado Premium Geométrico Antiderrapante 1x 1,40 2x 1,40 2x 2,40 Várias Cores",
+      "productLink": "https://shopee.com.br/product/305865563/58208566937",
+      "offerLink": "https://s.shopee.com.br/2BFlKihrbF",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m1-mmv2wi1nnksg7a",
+      "priceMin": "69.9",
+      "priceMax": "199.9",
+      "priceDiscountRate": 42,
+      "sales": 8,
+      "ratingStar": "4.9",
+      "commissionRate": "0.43",
+      "sellerCommissionRate": "0.4",
+      "shopeeCommissionRate": "0.03",
+      "commission": "30.057",
+      "shopId": 305865563,
+      "shopName": "A CASA DO LAR",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Sala"
+      ],
+      "keywords": [
+        "tapete sala"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "tapete sala"
+      ],
+      "intentMatchedKeywords": [
+        "tapete sala"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "tapete sala": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "tapete"
+            ],
+            [
+              "sala"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 66.13,
+      "scoreComponents": {
+        "seller_extra_commission": 0.6557,
+        "search_demand_proxy": 1.0,
+        "sales": 0.2003,
+        "rating": 0.98,
+        "discount": 0.42,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 40.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 43.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23892379352,
+      "productName": "1/2/4 PCS Luminária Parede Solar  100 Leds Com Sensor de Movimento Jardim Externa Prova D'água Casa",
+      "productLink": "https://shopee.com.br/product/1007379684/23892379352",
+      "offerLink": "https://s.shopee.com.br/70L15cY46t",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-825b9-msuv9j38rl6t71",
+      "priceMin": "20.88",
+      "priceMax": "61.99",
+      "priceDiscountRate": 53,
+      "sales": 2048,
+      "ratingStar": "4.8",
+      "commissionRate": "0.23",
+      "sellerCommissionRate": "0.2",
+      "shopeeCommissionRate": "0.03",
+      "commission": "4.8024",
+      "shopId": 1007379684,
+      "shopName": "NEW WORD MAGAZINE",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Area Externa"
+      ],
+      "keywords": [
+        "luminaria solar jardim"
+      ],
+      "sourceModes": [
+        "extra_commission",
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "luminaria solar jardim"
+      ],
+      "intentMatchedKeywords": [
+        "luminaria solar jardim"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "luminaria solar jardim": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "luminaria"
+            ],
+            [
+              "solar"
+            ],
+            [
+              "jardim",
+              "externa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 65.79,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3279,
+        "search_demand_proxy": 1.0,
+        "sales": 0.695,
+        "rating": 0.96,
+        "discount": 0.53,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 20.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 23.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58200253216,
+      "productName": "Jogo C/ 4 ou 2 Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
+      "productLink": "https://shopee.com.br/product/1662989296/58200253216",
+      "offerLink": "https://s.shopee.com.br/7KxrUDXCTc",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81z1k-mgjve1j1ueww5a",
+      "priceMin": "30.9",
+      "priceMax": "50.9",
+      "priceDiscountRate": 66,
+      "sales": 12307,
+      "ratingStar": "4.7",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.15",
+      "shopeeCommissionRate": "0.03",
+      "commission": "5.562",
+      "shopId": 1662989296,
+      "shopName": "Debela Home",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Quarto"
+      ],
+      "keywords": [
+        "travesseiro"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "travesseiro"
+      ],
+      "intentMatchedKeywords": [
+        "travesseiro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "travesseiro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "travesseiro"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 65.41,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2459,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8584,
+        "rating": 0.94,
+        "discount": 0.66,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23798236080,
+      "productName": "Caixa Organizadora Estampada Flexível Closet Roupa Cobertor Casacos Armário",
+      "productLink": "https://shopee.com.br/product/432628853/23798236080",
+      "offerLink": "https://s.shopee.com.br/AKbT3idZm1",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-mctmb6ypk7jmaa",
+      "priceMin": "23.99",
+      "priceMax": "57.99",
+      "priceDiscountRate": 20,
+      "sales": 2488,
+      "ratingStar": "4.9",
+      "commissionRate": "0.24",
+      "sellerCommissionRate": "0.21",
+      "shopeeCommissionRate": "0.03",
+      "commission": "5.7576",
+      "shopId": 432628853,
+      "shopName": "SHOP JI",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao",
+        "Quarto"
+      ],
+      "keywords": [
+        "caixa organizadora",
+        "organizador guarda roupa"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "caixa organizadora",
+        "organizador armario",
+        "organizador guarda roupa"
+      ],
+      "intentMatchedKeywords": [
+        "caixa organizadora",
+        "organizador guarda roupa"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "caixa organizadora": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "caixa"
+            ],
+            [
+              "organizadora"
+            ]
+          ],
+          "missing": []
+        },
+        "organizador armario": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "armario",
+              "roupa"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "colmeia",
+              "divisoria",
+              "prateleira"
+            ]
+          ]
+        },
+        "organizador guarda roupa": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "caixa"
+            ],
+            [
+              "armario",
+              "roupa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 65.26,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3443,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7127,
+        "rating": 0.98,
+        "discount": 0.2,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 21.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 24.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 20452224775,
+      "productName": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "productLink": "https://shopee.com.br/product/699143044/20452224775",
+      "offerLink": "https://s.shopee.com.br/30osKG5E8E",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8260p-mkcfopp4p5hc85",
+      "priceMin": "56.8",
+      "priceMax": "57.9",
+      "priceDiscountRate": 53,
+      "sales": 1330,
+      "ratingStar": "4.9",
+      "commissionRate": "0.22",
+      "sellerCommissionRate": "0.19",
+      "shopeeCommissionRate": "0.03",
+      "commission": "12.496",
+      "shopId": 699143044,
+      "shopName": "Haute Decor",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Quarto"
+      ],
+      "keywords": [
+        "abajur quarto"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "abajur quarto"
+      ],
+      "intentMatchedKeywords": [
+        "abajur quarto"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "abajur quarto": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "abajur",
+              "luminaria"
+            ],
+            [
+              "quarto"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 64.74,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3115,
+        "search_demand_proxy": 1.0,
+        "sales": 0.6557,
+        "rating": 0.98,
+        "discount": 0.53,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 19.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 22.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58205899287,
+      "productName": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
+      "productLink": "https://shopee.com.br/product/523872942/58205899287",
+      "offerLink": "https://s.shopee.com.br/W7XLeAojY",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lj-ml6nlbjv4sg4ac",
+      "priceMin": "30",
+      "priceMax": "30",
+      "priceDiscountRate": 63,
+      "sales": 0,
+      "ratingStar": "0",
+      "commissionRate": "0.58",
+      "sellerCommissionRate": "0.55",
+      "shopeeCommissionRate": "0.03",
+      "commission": "17.4",
+      "shopId": 523872942,
+      "shopName": "Gloss Box",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao"
+      ],
+      "keywords": [
+        "caixa organizadora"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "caixa organizadora"
+      ],
+      "intentMatchedKeywords": [
+        "caixa organizadora"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "caixa organizadora": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "caixa"
+            ],
+            [
+              "organizadora"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 64.22,
+      "scoreComponents": {
+        "seller_extra_commission": 0.9016,
+        "search_demand_proxy": 1.0,
+        "sales": 0.0,
+        "rating": 0.0,
+        "discount": 0.63,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 55.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 58.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22893873080,
+      "productName": "Jogo de Lençol 400 fios Toque Suave e Acetinado Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "productLink": "https://shopee.com.br/product/313660590/22893873080",
+      "offerLink": "https://s.shopee.com.br/6q1atIZ6UT",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m82atd2bm5f53a",
+      "priceMin": "12.9",
+      "priceMax": "39.89",
+      "priceDiscountRate": 92,
+      "sales": 28734,
+      "ratingStar": "4.8",
+      "commissionRate": "0.15",
+      "sellerCommissionRate": "0.09",
+      "shopeeCommissionRate": "0.06",
+      "commission": "1.935",
+      "shopId": 313660590,
+      "shopName": "Nosso Lar Enxovais",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1793501999,
+      "categories": [
+        "Cama Mesa Banho"
+      ],
+      "keywords": [
+        "lencol casal"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "travesseiro",
+        "lencol casal"
+      ],
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        },
+        "lencol casal": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "lencol"
+            ],
+            [
+              "casal",
+              "queen",
+              "king"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 64.14,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1475,
+        "search_demand_proxy": 1.0,
+        "sales": 0.9357,
+        "rating": 0.96,
+        "discount": 0.92,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 9.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 15.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 21034795993,
+      "productName": "Tapete de Banheiro Antiderrapante Bolinha Macarrão Várias Cores",
+      "productLink": "https://shopee.com.br/product/322387387/21034795993",
+      "offerLink": "https://s.shopee.com.br/7VHHgXNIGH",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-22100-yg4ftmeqs8iv0a",
+      "priceMin": "14.89",
+      "priceMax": "17.9",
+      "priceDiscountRate": 50,
+      "sales": 6346,
+      "ratingStar": "4.9",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.15",
+      "shopeeCommissionRate": "0.03",
+      "commission": "2.6802",
+      "shopId": 322387387,
+      "shopName": "MG Enxovais",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Banheiro"
+      ],
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "tapete banheiro"
+      ],
+      "intentMatchedKeywords": [
+        "tapete banheiro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "tapete banheiro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "tapete"
+            ],
+            [
+              "banheiro",
+              "antiderrapante"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 64.11,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2459,
+        "search_demand_proxy": 1.0,
+        "sales": 0.798,
+        "rating": 0.98,
+        "discount": 0.5,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58267485793,
+      "productName": "Kit Potes Mantimentos Vidro Herméticos Com Tampa Bambu Alta Resistência Epsilon Transparente",
+      "productLink": "https://shopee.com.br/product/1661007426/58267485793",
+      "offerLink": "https://s.shopee.com.br/8KqOg3y3Og",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ld-mso4uf7pu0p11c",
+      "priceMin": "38.36",
+      "priceMax": "43.52",
+      "priceDiscountRate": 56,
+      "sales": 5722,
+      "ratingStar": "4.7",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.15",
+      "shopeeCommissionRate": "0.03",
+      "commission": "6.9048",
+      "shopId": 1661007426,
+      "shopName": "Invention Hunters",
+      "shopType": [],
+      "periodStartTime": 1790698920,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Cozinha"
+      ],
+      "keywords": [
+        "potes hermeticos"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "potes hermeticos"
+      ],
+      "intentMatchedKeywords": [
+        "potes hermeticos"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "potes hermeticos": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "potes"
+            ],
+            [
+              "hermeticos"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.87,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2459,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7886,
+        "rating": 0.94,
+        "discount": 0.56,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22294942726,
+      "productName": "Kit 100 Saco Organizador Lençol Toalha 28 x 34 x 5 Pvc Guarda Roupa Armário",
+      "productLink": "https://shopee.com.br/product/344438002/22294942726",
+      "offerLink": "https://s.shopee.com.br/1qcuw65k1w",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ld-mlxdq7z2ae4gc7",
+      "priceMin": "342",
+      "priceMax": "342",
+      "priceDiscountRate": 10,
+      "sales": 0,
+      "ratingStar": "5",
+      "commissionRate": "0.46",
+      "sellerCommissionRate": "0.43",
+      "shopeeCommissionRate": "0.03",
+      "commission": "157.32",
+      "shopId": 344438002,
+      "shopName": "Isaplastic",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao",
+        "Quarto"
+      ],
+      "keywords": [
+        "organizador armario",
+        "organizador guarda roupa"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "caixa organizadora",
+        "organizador armario",
+        "organizador guarda roupa"
+      ],
+      "intentMatchedKeywords": [
+        "organizador armario",
+        "organizador guarda roupa"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "caixa organizadora": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "caixa",
+              "cesto",
+              "cesta"
+            ]
+          ]
+        },
+        "organizador armario": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "organizador"
+            ],
+            [
+              "armario",
+              "guarda roupa",
+              "roupa"
+            ]
+          ],
+          "missing": []
+        },
+        "organizador guarda roupa": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "organizador"
+            ],
+            [
+              "guarda roupa",
+              "armario",
+              "roupa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.7,
+      "scoreComponents": {
+        "seller_extra_commission": 0.7049,
+        "search_demand_proxy": 1.0,
+        "sales": 0.0,
+        "rating": 1.0,
+        "discount": 0.1,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 43.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 46.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22893738408,
+      "productName": "Jogo de Lençol 400 Fios Extra Macio c/ Fronhas Ponto Palito Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "productLink": "https://shopee.com.br/product/313660590/22893738408",
+      "offerLink": "https://s.shopee.com.br/3qNzJmkWZr",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m6peqntiscvk4c",
+      "priceMin": "12.5",
+      "priceMax": "40.9",
+      "priceDiscountRate": 60,
+      "sales": 58200,
+      "ratingStar": "4.8",
+      "commissionRate": "0.15",
+      "sellerCommissionRate": "0.09",
+      "shopeeCommissionRate": "0.06",
+      "commission": "1.875",
+      "shopId": 313660590,
+      "shopName": "Nosso Lar Enxovais",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1793501999,
+      "categories": [
+        "Cama Mesa Banho"
+      ],
+      "keywords": [
+        "lencol casal"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "travesseiro",
+        "lencol casal"
+      ],
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        },
+        "lencol casal": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "lencol"
+            ],
+            [
+              "casal",
+              "queen",
+              "king"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.5,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1475,
+        "search_demand_proxy": 1.0,
+        "sales": 1.0,
+        "rating": 0.96,
+        "discount": 0.6,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 9.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 15.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23695000959,
+      "productName": "Pedra Dolomita Natural Branca Seixo Para Decoração Vaso Fonte Canteiro Pedra Jardim",
+      "productLink": "https://shopee.com.br/product/1412658275/23695000959",
+      "offerLink": "https://s.shopee.com.br/5fpdVAqCdz",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-824i9-mpjkk5tddzwuc7",
+      "priceMin": "12.82",
+      "priceMax": "18.52",
+      "priceDiscountRate": 75,
+      "sales": 1245,
+      "ratingStar": "4.9",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.15",
+      "shopeeCommissionRate": "0.03",
+      "commission": "2.3076",
+      "shopId": 1412658275,
+      "shopName": "WR Shopping da Jardinagem",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Area Externa"
+      ],
+      "keywords": [
+        "vaso jardim"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "vaso jardim"
+      ],
+      "intentMatchedKeywords": [
+        "vaso jardim"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "vaso jardim": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "vaso"
+            ],
+            [
+              "jardim"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.13,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2459,
+        "search_demand_proxy": 1.0,
+        "sales": 0.6496,
+        "rating": 0.98,
+        "discount": 0.75,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58202630911,
+      "productName": "Jogo C/4 ou 2 Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
+      "productLink": "https://shopee.com.br/product/1662953250/58202630911",
+      "offerLink": "https://s.shopee.com.br/5LCn6XeoXI",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81ztc-mj05e1612s5d0d",
+      "priceMin": "30.99",
+      "priceMax": "50.99",
+      "priceDiscountRate": 66,
+      "sales": 7527,
+      "ratingStar": "4.7",
+      "commissionRate": "0.15",
+      "sellerCommissionRate": "0.12",
+      "shopeeCommissionRate": "0.03",
+      "commission": "4.6485",
+      "shopId": 1662953250,
+      "shopName": "Bennetex",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1790812632,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Quarto"
+      ],
+      "keywords": [
+        "travesseiro"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "travesseiro"
+      ],
+      "intentMatchedKeywords": [
+        "travesseiro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "travesseiro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "travesseiro"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 62.77,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1967,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8136,
+        "rating": 0.94,
+        "discount": 0.66,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 12.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 15.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58257036596,
+      "productName": "Kit 2 Paletes Madeira Pinus 50x50cm Laminado Estrado Pronto Jardim Vaso Decoração",
+      "productLink": "https://shopee.com.br/product/1499871551/58257036596",
+      "offerLink": "https://s.shopee.com.br/AAI2rRUbSy",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8261i-mlwolmdp1uytdb",
+      "priceMin": "69.9",
+      "priceMax": "199.9",
+      "priceDiscountRate": 0,
+      "sales": 7,
+      "ratingStar": "4.3",
+      "commissionRate": "0.43",
+      "sellerCommissionRate": "0.4",
+      "shopeeCommissionRate": "0.03",
+      "commission": "30.057",
+      "shopId": 1499871551,
+      "shopName": "FGVITALFARMA",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Area Externa"
+      ],
+      "keywords": [
+        "vaso jardim"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "vaso jardim"
+      ],
+      "intentMatchedKeywords": [
+        "vaso jardim"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "vaso jardim": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "vaso"
+            ],
+            [
+              "jardim"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 62.67,
+      "scoreComponents": {
+        "seller_extra_commission": 0.6557,
+        "search_demand_proxy": 1.0,
+        "sales": 0.1895,
+        "rating": 0.86,
+        "discount": 0.0,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 40.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 43.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 21299673093,
+      "productName": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
+      "productLink": "https://shopee.com.br/product/605571142/21299673093",
+      "offerLink": "https://s.shopee.com.br/3B8IWZZSXf",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m82ov28y0wepdb",
+      "priceMin": "28.8",
+      "priceMax": "28.8",
+      "priceDiscountRate": 0,
+      "sales": 1,
+      "ratingStar": "5",
+      "commissionRate": "0.5354",
+      "sellerCommissionRate": "0.5054",
+      "shopeeCommissionRate": "0.03",
+      "commission": "15.41952",
+      "shopId": 605571142,
+      "shopName": "Smart Ultra Cat Bio",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Banheiro"
+      ],
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 0.7416666666666667,
+      "sourceKeywords": [
+        "tapete banheiro"
+      ],
+      "intentMatchedKeywords": [
+        "tapete banheiro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "tapete banheiro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "tapete"
+            ],
+            [
+              "antiderrapante"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 62.63,
+      "scoreComponents": {
+        "seller_extra_commission": 0.8285,
+        "search_demand_proxy": 0.7417,
+        "sales": 0.0632,
+        "rating": 1.0,
+        "discount": 0.0,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 50.54,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 53.54,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23392973710,
+      "productName": "Protetor Impermeável para Colchão SUPER SILENCIOSO 100% Impermeável Tecido Jacquard Premium Tamanhos",
+      "productLink": "https://shopee.com.br/product/740111576/23392973710",
+      "offerLink": "https://s.shopee.com.br/7KxrUF1SNN",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-luid8vxkfyqca0",
+      "priceMin": "59.97",
+      "priceMax": "154.97",
+      "priceDiscountRate": 59,
+      "sales": 12752,
+      "ratingStar": "4.9",
+      "commissionRate": "0.16",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.06",
+      "commission": "9.5952",
+      "shopId": 740111576,
+      "shopName": "Loja do Koala",
+      "shopType": [],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1793501999,
+      "categories": [
+        "Cama Mesa Banho"
+      ],
+      "keywords": [
+        "protetor de colchao"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "protetor de colchao"
+      ],
+      "intentMatchedKeywords": [
+        "protetor de colchao"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "protetor de colchao": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "protetor"
+            ],
+            [
+              "colchao"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 62.23,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8616,
+        "rating": 0.98,
+        "discount": 0.59,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 16.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 21071530577,
+      "productName": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
+      "productLink": "https://shopee.com.br/product/325008325/21071530577",
+      "offerLink": "https://s.shopee.com.br/2gC1vdK1xi",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7augbm6ixf693",
+      "priceMin": "79.99",
+      "priceMax": "79.99",
+      "priceDiscountRate": 53,
+      "sales": 3507,
+      "ratingStar": "4.9",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.12",
+      "shopeeCommissionRate": "0.06",
+      "commission": "14.3982",
+      "shopId": 325008325,
+      "shopName": "Na Web Group De Marcas",
+      "shopType": [
+        1
+      ],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1793501999,
+      "categories": [
+        "Organizacao"
+      ],
+      "keywords": [
+        "varal de chao"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "varal de chao"
+      ],
+      "intentMatchedKeywords": [
+        "varal de chao"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "varal de chao": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "varal"
+            ],
+            [
+              "chao",
+              "dobravel",
+              "roupa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 61.48,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1967,
+        "search_demand_proxy": 1.0,
+        "sales": 0.744,
+        "rating": 0.98,
+        "discount": 0.53,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 12.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23499666463,
+      "productName": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
+      "productLink": "https://shopee.com.br/product/1365868456/23499666463",
+      "offerLink": "https://s.shopee.com.br/2VsbjKgavL",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8258v-msvmss9ziyvadf",
+      "priceMin": "65.27",
+      "priceMax": "172.76",
+      "priceDiscountRate": 33,
+      "sales": 57,
+      "ratingStar": "4.7",
+      "commissionRate": "0.33",
+      "sellerCommissionRate": "0.3",
+      "shopeeCommissionRate": "0.03",
+      "commission": "21.5391",
+      "shopId": 1365868456,
+      "shopName": "fenixpijamas1",
+      "shopType": [],
+      "periodStartTime": 1788891921,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Sala"
+      ],
+      "keywords": [
+        "tapete sala"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "tapete sala"
+      ],
+      "intentMatchedKeywords": [
+        "tapete sala"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "tapete sala": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "tapete"
+            ],
+            [
+              "sala"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 61.27,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4918,
+        "search_demand_proxy": 1.0,
+        "sales": 0.3701,
+        "rating": 0.94,
+        "discount": 0.33,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 30.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 33.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58257638413,
+      "productName": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "productLink": "https://shopee.com.br/product/1028459403/58257638413",
+      "offerLink": "https://s.shopee.com.br/9Kivru7aEi",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m6-mrg17tz0uy2v01",
+      "priceMin": "99.99",
+      "priceMax": "169.99",
+      "priceDiscountRate": 50,
+      "sales": 17,
+      "ratingStar": "4.9",
+      "commissionRate": "0.33",
+      "sellerCommissionRate": "0.3",
+      "shopeeCommissionRate": "0.03",
+      "commission": "32.9967",
+      "shopId": 1028459403,
+      "shopName": "MULTIORIENTAL",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Banheiro"
+      ],
+      "keywords": [
+        "toalheiro banheiro"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "toalheiro banheiro"
+      ],
+      "intentMatchedKeywords": [
+        "toalheiro banheiro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "toalheiro banheiro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "toalheiro"
+            ],
+            [
+              "banheiro"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.92,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4918,
+        "search_demand_proxy": 1.0,
+        "sales": 0.2634,
+        "rating": 0.98,
+        "discount": 0.5,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 30.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 33.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58251353658,
+      "productName": "Varal De Chão Com Abas Dobrável Aço Secalux 12kg Varal de Apartamento Retratil",
+      "productLink": "https://shopee.com.br/product/659727139/58251353658",
+      "offerLink": "https://s.shopee.com.br/30osKFIlHk",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81z1k-mhqf3kve4phd06",
+      "priceMin": "59.9",
+      "priceMax": "170",
+      "priceDiscountRate": 55,
+      "sales": 8611,
+      "ratingStar": "4.6",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "7.787",
+      "shopId": 659727139,
+      "shopName": "Big_ecommerce",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao"
+      ],
+      "keywords": [
+        "varal de chao"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "varal de chao"
+      ],
+      "intentMatchedKeywords": [
+        "varal de chao"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "varal de chao": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "varal"
+            ],
+            [
+              "chao",
+              "dobravel"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.9,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8258,
+        "rating": 0.92,
+        "discount": 0.55,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58206652459,
+      "productName": "Fatiador KITOP descasca Legumes Prático para Couve e Repolho Fininho legumes fatiados",
+      "productLink": "https://shopee.com.br/product/1002244803/58206652459",
+      "offerLink": "https://s.shopee.com.br/8pmfGz51Cn",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8261y-mlnn8q39unls7a",
+      "priceMin": "19.9",
+      "priceMax": "19.9",
+      "priceDiscountRate": 75,
+      "sales": 2959,
+      "ratingStar": "4.8",
+      "commissionRate": "0.16",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.06",
+      "commission": "3.184",
+      "shopId": 1002244803,
+      "shopName": "Mabê Store",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1793501999,
+      "categories": [
+        "Cozinha"
+      ],
+      "keywords": [
+        "fatiador de legumes"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "fatiador de legumes"
+      ],
+      "intentMatchedKeywords": [
+        "fatiador de legumes"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "fatiador de legumes": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "fatiador"
+            ],
+            [
+              "legumes"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.84,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7285,
+        "rating": 0.96,
+        "discount": 0.75,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 16.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58254362999,
+      "productName": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
+      "productLink": "https://shopee.com.br/product/1499865820/58254362999",
+      "offerLink": "https://s.shopee.com.br/1qcuw7a4Ct",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lp-msbgvjhckkcm23",
+      "priceMin": "79.5",
+      "priceMax": "99",
+      "priceDiscountRate": 39,
+      "sales": 912,
+      "ratingStar": "4.8",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.15",
+      "shopeeCommissionRate": "0.03",
+      "commission": "14.31",
+      "shopId": 1499865820,
+      "shopName": "StarMove",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Banheiro"
+      ],
+      "keywords": [
+        "toalheiro banheiro"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "toalheiro banheiro"
+      ],
+      "intentMatchedKeywords": [
+        "toalheiro banheiro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "toalheiro banheiro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "toalheiro"
+            ],
+            [
+              "banheiro",
+              "lavabo"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.71,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2459,
+        "search_demand_proxy": 1.0,
+        "sales": 0.6213,
+        "rating": 0.96,
+        "discount": 0.39,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 52207212755,
+      "productName": "1 Planta Artificial Hera Ivy Pendente + Vaso Vime Trançado BRANCO Arranjo Decorativo Completo Suspenso PT11BRANCO",
+      "productLink": "https://shopee.com.br/product/1178127148/52207212755",
+      "offerLink": "https://s.shopee.com.br/5VWDIpeRiw",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ln-mlteewjffbpgb3",
+      "priceMin": "12.5",
+      "priceMax": "12.5",
+      "priceDiscountRate": 58,
+      "sales": 6482,
+      "ratingStar": "4.6",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "1.625",
+      "shopId": 1178127148,
+      "shopName": "Sato Importacoes",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Decoracao"
+      ],
+      "keywords": [
+        "vaso decorativo"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "vaso decorativo"
+      ],
+      "intentMatchedKeywords": [
+        "vaso decorativo"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "vaso decorativo": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "vaso"
+            ],
+            [
+              "decorativo"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.66,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8,
+        "rating": 0.92,
+        "discount": 0.58,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 20299321793,
+      "productName": "1/2/3 Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio ES",
+      "productLink": "https://shopee.com.br/product/988030305/20299321793",
+      "offerLink": "https://s.shopee.com.br/9Kiv2U1e3t",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lv-mrxudl0bhlvoe7",
+      "priceMin": "15.8",
+      "priceMax": "53.9",
+      "priceDiscountRate": 55,
+      "sales": 5064,
+      "ratingStar": "4.8",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "2.054",
+      "shopId": 988030305,
+      "shopName": "ES Official Shop",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Banheiro"
+      ],
+      "keywords": [
+        "prateleira banheiro"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "prateleira banheiro"
+      ],
+      "intentMatchedKeywords": [
+        "prateleira banheiro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "prateleira banheiro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "prateleira",
+              "suporte",
+              "organizador"
+            ],
+            [
+              "banheiro",
+              "shampoo"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.57,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7775,
+        "rating": 0.96,
+        "discount": 0.55,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23594213342,
+      "productName": "Trilho Caminho de Mesa Decoração e Luxo Maquinetado Bainha Larda 4 e 6 lugares",
+      "productLink": "https://shopee.com.br/product/1062551370/23594213342",
+      "offerLink": "https://s.shopee.com.br/1qcuw5jfqS",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ly-mm6f54zxiqkk62",
+      "priceMin": "26.98",
+      "priceMax": "44.98",
+      "priceDiscountRate": 0,
+      "sales": 67,
+      "ratingStar": "4.9",
+      "commissionRate": "0.33",
+      "sellerCommissionRate": "0.3",
+      "shopeeCommissionRate": "0.03",
+      "commission": "8.9034",
+      "shopId": 1062551370,
+      "shopName": "ALGOESTER (Cama-Mesa-Banho)",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Decoracao"
+      ],
+      "keywords": [
+        "caminho de mesa"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "caminho de mesa"
+      ],
+      "intentMatchedKeywords": [
+        "caminho de mesa"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "caminho de mesa": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "caminho de mesa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.24,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4918,
+        "search_demand_proxy": 1.0,
+        "sales": 0.3846,
+        "rating": 0.98,
+        "discount": 0.0,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 30.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 33.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 11674191849,
+      "productName": "Fatiador De Legumes Kitop Corta Couve Repolho Fino Prático",
+      "productLink": "https://shopee.com.br/product/386191827/11674191849",
+      "offerLink": "https://s.shopee.com.br/8V9osN6Hsh",
+      "imageUrl": "https://cf.shopee.com.br/file/2148a492309aaef6bcacf4f7158d642a",
+      "priceMin": "19.9",
+      "priceMax": "19.9",
+      "priceDiscountRate": 40,
+      "sales": 6741,
+      "ratingStar": "4.8",
+      "commissionRate": "0.16",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.06",
+      "commission": "3.184",
+      "shopId": 386191827,
+      "shopName": "Distribuidora KITOP",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1793501999,
+      "categories": [
+        "Cozinha"
+      ],
+      "keywords": [
+        "fatiador de legumes"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "fatiador de legumes"
+      ],
+      "intentMatchedKeywords": [
+        "fatiador de legumes"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "fatiador de legumes": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "fatiador"
+            ],
+            [
+              "legumes"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.21,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8035,
+        "rating": 0.96,
+        "discount": 0.4,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 16.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22598002731,
+      "productName": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
+      "productLink": "https://shopee.com.br/product/596608608/22598002731",
+      "offerLink": "https://s.shopee.com.br/1gJUjmkJBR",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m1zo5nd0qov30e",
+      "priceMin": "17.99",
+      "priceMax": "17.99",
+      "priceDiscountRate": 68,
+      "sales": 3,
+      "ratingStar": "5",
+      "commissionRate": "0.33",
+      "sellerCommissionRate": "0.3",
+      "shopeeCommissionRate": "0.03",
+      "commission": "5.9367",
+      "shopId": 596608608,
+      "shopName": "Cor Elegante",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Decoracao"
+      ],
+      "keywords": [
+        "caminho de mesa"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "caminho de mesa"
+      ],
+      "intentMatchedKeywords": [
+        "caminho de mesa"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "caminho de mesa": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "trilho de mesa"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 59.97,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4918,
+        "search_demand_proxy": 1.0,
+        "sales": 0.1264,
+        "rating": 1.0,
+        "discount": 0.68,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 30.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 33.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 20597689349,
+      "productName": "Protetor Impermeável Capa Colchão Matelada Cama Quarto Berço, Solteiro, Casal, Queen, King com Elástico",
+      "productLink": "https://shopee.com.br/product/296363855/20597689349",
+      "offerLink": "https://s.shopee.com.br/7pu859zYMU",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m97a2cdipgcic6",
+      "priceMin": "25.9",
+      "priceMax": "49.9",
+      "priceDiscountRate": 42,
+      "sales": 6302,
+      "ratingStar": "4.6",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "3.367",
+      "shopId": 296363855,
+      "shopName": "CasaLauraEnxovais",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Cama Mesa Banho"
+      ],
+      "keywords": [
+        "protetor de colchao"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "protetor de colchao"
+      ],
+      "intentMatchedKeywords": [
+        "protetor de colchao"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "protetor de colchao": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "protetor",
+              "capa"
+            ],
+            [
+              "colchao"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 59.82,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7974,
+        "rating": 0.92,
+        "discount": 0.42,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58204421120,
+      "productName": "Escorredor de Louças Rack Aço Carbono Organizador Preto",
+      "productLink": "https://shopee.com.br/product/316048997/58204421120",
+      "offerLink": "https://s.shopee.com.br/4B0ot03W8a",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81ztc-mk8xynsgml1d6f",
+      "priceMin": "92",
+      "priceMax": "92",
+      "priceDiscountRate": 61,
+      "sales": 4358,
+      "ratingStar": "4.8",
+      "commissionRate": "0.11",
+      "sellerCommissionRate": "0.08",
+      "shopeeCommissionRate": "0.03",
+      "commission": "10.12",
+      "shopId": 316048997,
+      "shopName": "KING BOUTIQUES",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Cozinha"
+      ],
+      "keywords": [
+        "escorredor de loucas"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "escorredor de loucas"
+      ],
+      "intentMatchedKeywords": [
+        "escorredor de loucas"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "escorredor de loucas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "escorredor"
+            ],
+            [
+              "loucas"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 59.35,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1311,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7638,
+        "rating": 0.96,
+        "discount": 0.61,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 8.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 11.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 20999381894,
+      "productName": "Conjunto 2/3/5/10 Potes 370/640/1040ml Vidro Hermético Mantimentos Marmita Fitness",
+      "productLink": "https://shopee.com.br/product/1345719405/20999381894",
+      "offerLink": "https://s.shopee.com.br/8AWyTkygjd",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820le-mpavso8ys2yp67",
+      "priceMin": "27.89",
+      "priceMax": "189.89",
+      "priceDiscountRate": 57,
+      "sales": 11562,
+      "ratingStar": "4.9",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "3.6257",
+      "shopId": 1345719405,
+      "shopName": "Life Hack Homeware",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Cozinha"
+      ],
+      "keywords": [
+        "potes hermeticos"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 0.8912037037037038,
+      "sourceKeywords": [
+        "potes hermeticos"
+      ],
+      "intentMatchedKeywords": [
+        "potes hermeticos"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "potes hermeticos": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "potes"
+            ],
+            [
+              "hermetico"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 59.28,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1639,
+        "search_demand_proxy": 0.8912,
+        "sales": 0.8527,
+        "rating": 0.98,
+        "discount": 0.57,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    }
+  ]
+}
