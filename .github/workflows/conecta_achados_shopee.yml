@@ -1,19 +1,11 @@
 name: Conecta Achados — Shopee + ChatGPT (Rascunho)
 
 on:
+  # Modo seguro de homologação.
+  # O schedule diário será habilitado somente depois de:
+  # 1) configurar OPENAI_API_KEY;
+  # 2) executar e validar um rascunho completo no Conecta Achados.
   workflow_dispatch:
-
-  schedule:
-    # 10:00 no horário de Recife/Brasília (UTC-3)
-    - cron: "0 13 * * *"
-
-  push:
-    branches:
-      - main
-    paths:
-      - "conecta_achados/src/**"
-      - "conecta_achados/config.json"
-      - ".github/workflows/conecta_achados_shopee.yml"
 
 permissions:
   contents: write
@@ -69,7 +61,7 @@ jobs:
         run: |
           if [ -n "$(git status --porcelain -- conecta_achados/data/state.json)" ]; then
             git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git config user.email "41898282+adelrib27@users.noreply.github.com"
             git add conecta_achados/data/state.json
             git commit -m "Conecta Achados: registrar produto usado"
             git pull --rebase origin main
