@@ -1,5 +1,3 @@
-import json
-import os
 import sys
 from pathlib import Path
 
@@ -23,46 +21,49 @@ def main():
     )
     used = {str(x) for x in state.get("used_item_ids", [])}
     min_rating = float(config.get("min_rating", 4.0))
-    limit = max(10, min(int(config.get("shopee_limit", 20)), 50))
+    limit = max(15, min(int(config.get("shopee_limit", 20)), 50))
 
     pools = []
     seen = set(used)
 
     for group in config.get("query_groups") or []:
         label = str(group.get("label") or "").strip()
-        group_candidates = []
+        keywords = [
+            str(k or "").strip()
+            for k in (group.get("keywords") or [])
+            if str(k or "").strip()
+        ]
+        if not label or not keywords:
+            continue
 
-        for keyword in group.get("keywords") or []:
-            keyword = str(keyword or "").strip()
-            if not keyword:
+        group_candidates = []
+        keyword = keywords[0]
+        print(f"Shopee API: {label} / {keyword}")
+        products = automation.fetch_shopee_products(keyword, limit)
+
+        for product in products:
+            item_id = str(product.get("itemId") or "").strip()
+            name = str(product.get("productName") or "").strip()
+            link = str(product.get("offerLink") or "").strip()
+            image = str(product.get("imageUrl") or "").strip()
+            rating = automation.parse_float(product.get("ratingStar"))
+
+            if not item_id or not name or not link or not image:
+                continue
+            if item_id in seen:
+                continue
+            if rating and rating < min_rating:
                 continue
 
-            print(f"Shopee API: {label} / {keyword}")
-            products = automation.fetch_shopee_products(keyword, limit)
-
-            for product in products:
-                item_id = str(product.get("itemId") or "").strip()
-                name = str(product.get("productName") or "").strip()
-                link = str(product.get("offerLink") or "").strip()
-                image = str(product.get("imageUrl") or "").strip()
-                rating = automation.parse_float(product.get("ratingStar"))
-
-                if not item_id or not name or not link or not image:
-                    continue
-                if item_id in seen:
-                    continue
-                if rating and rating < min_rating:
-                    continue
-
-                candidate = dict(product)
-                candidate["category"] = label
-                candidate["source_keyword"] = keyword
-                candidate["score"] = round(automation.product_score(product), 4)
-                group_candidates.append(candidate)
-                seen.add(item_id)
+            candidate = dict(product)
+            candidate["category"] = label
+            candidate["source_keyword"] = keyword
+            candidate["score"] = round(automation.product_score(product), 4)
+            group_candidates.append(candidate)
+            seen.add(item_id)
 
         group_candidates.sort(key=lambda p: p.get("score", 0), reverse=True)
-        pools.append(group_candidates)
+        pools.append(group_candidates[:5])
 
     selected = []
     index = 0
