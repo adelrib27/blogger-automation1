@@ -1,0 +1,112 @@
+name: Casa e Decoração — Loja Shopee Autônoma
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "casa_decoracao/store_live_kickoff.txt"
+  schedule:
+    # America/Recife (UTC-3): 08:10 diariamente, antes do editorial das 09:17.
+    - cron: "10 11 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: casa-decoracao-store-autonomous
+  cancel-in-progress: false
+
+jobs:
+  atualizar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+      CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+      CASA_STORE_DRY_RUN: "false"
+      CASA_STORE_ITEMS_PER_CATEGORY: "4"
+      CASA_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "64"
+      SHOPEE_OPPORTUNITIES_CONFIG: casa_decoracao/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: casa_decoracao/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: casa_decoracao/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código antes da publicação
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            casa_decoracao/src/shopee_oportunidades_casa.py \
+            casa_decoracao/src/store_auto.py \
+            casa_decoracao/src/store_auto_self_test.py
+          PYTHONPATH=src:casa_decoracao/src python casa_decoracao/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$CASA_WORDPRESS_USERNAME"
+          test -n "$CASA_WORDPRESS_APP_PASSWORD"
+
+      - name: Atualizar vitrine com Shopee API
+        run: |
+          PYTHONPATH=src:casa_decoracao/src python -u casa_decoracao/src/store_auto.py
+
+      - name: Verificar renderização pública
+        run: |
+          set -euo pipefail
+          ok=0
+          for attempt in 1 2 3 4 5 6; do
+            curl -fsS --max-time 40 "https://casaedecoracao.radartechbr.com.br/loja/?casa_store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/casa-loja.html
+            count=$(grep -o 'data-item-id=' /tmp/casa-loja.html | wc -l | tr -d ' ')
+            if grep -q "cds-store-grid" /tmp/casa-loja.html && [ "$count" -eq 32 ]; then
+              ok=1
+              break
+            fi
+            echo "Tentativa ${attempt}: ${count}/32 cards visíveis; aguardando cache."
+            sleep 5
+          done
+          test "$ok" -eq 1
+          echo "Renderização pública confirmada com 32 cards automáticos."
+
+      - name: Persistir estado da rotação
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- casa_decoracao/data/store_rotation.json casa_decoracao/data/store_last_selection.json)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add casa_decoracao/data/store_rotation.json casa_decoracao/data/store_last_selection.json
+          git commit -m "Atualizar rotação automática da Loja Casa e Decoração"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-store-auto-${{ github.run_number }}
+          path: |
+            casa_decoracao/data/store_last_selection.json
+            casa_decoracao/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
