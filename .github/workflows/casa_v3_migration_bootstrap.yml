@@ -90,5 +90,4 @@ jobs:
             exit 0
           fi
           git commit -m "feat(casa): implantar base editorial v3 segura"
-          git pull --rebase origin main
           git push origin HEAD:main
