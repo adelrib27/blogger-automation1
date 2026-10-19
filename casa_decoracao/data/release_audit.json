@@ -2,14 +2,13 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 19,
+    "total": 18,
     "draft_ready": 1,
-    "rejected": 18,
-    "not_generated": 0,
-    "published_history": 4,
+    "rejected": 16,
+    "not_generated": 1,
+    "published_history": 6,
     "rotation_cycle": 1,
     "rotation_pending": [
-      "Organização",
       "Sala",
       "Quarto",
       "Cozinha",
@@ -20,85 +19,19 @@
   },
   "items": [
     {
-      "id": 16,
-      "shopee_item_id": "52207212755",
-      "category": "Decoração",
-      "product": "1 Planta Artificial Hera Ivy Pendente + Vaso Vime Trançado BRANCO Arranjo Decorativo Completo Suspenso PT11BRANCO",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 125,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "alegacao_absoluta_nao_sustentada",
-          "alegacao_medica_ou_terapeutica_nao_sustentada"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 716,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 49,
-          "meta_description_length": 151,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 18,
-      "shopee_item_id": "23594213342",
-      "category": "Decoração",
-      "product": "Trilho Caminho de Mesa Decoração e Luxo Maquinetado Bainha Larda 4 e 6 lugares",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 133,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 621,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 55,
-          "meta_description_length": 154,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 5,
-      "shopee_item_id": "23798236080",
+      "id": 20,
+      "shopee_item_id": "58205899287",
       "category": "Organização",
-      "product": "Caixa Organizadora Estampada Flexível Closet Roupa Cobertor Casacos Armário",
-      "queue_status": "PENDING",
+      "product": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
-        "status": "REJECTED",
+        "status": "NOT_GENERATED",
         "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
+          "arquivo_gerado_ausente"
         ],
         "warnings": [],
-        "metrics": {
-          "word_count": 973,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 49,
-          "meta_description_length": 127,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
       }
     },
     {
@@ -106,33 +39,19 @@
       "shopee_item_id": "22294942726",
       "category": "Organização",
       "product": "Kit 100 Saco Organizador Lençol Toalha 28 x 34 x 5 Pvc Guarda Roupa Armário",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 149,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "alegacao_absoluta_nao_sustentada",
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 875,
+          "word_count": 582,
           "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 47,
-          "meta_description_length": 125,
-          "cta_count": 1
+          "seo_title_length": 45,
+          "meta_description_length": 148,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -390,42 +309,6 @@
       }
     },
     {
-      "id": 19,
-      "shopee_item_id": "58204421120",
-      "category": "Cozinha",
-      "product": "Escorredor de Louças Rack Aço Carbono Organizador Preto",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 869,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 50,
-          "meta_description_length": 128,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
       "id": 8,
       "shopee_item_id": "21034795993",
       "category": "Banheiro",
@@ -463,10 +346,10 @@
       }
     },
     {
-      "id": 14,
-      "shopee_item_id": "58257638413",
+      "id": 21,
+      "shopee_item_id": "58254362999",
       "category": "Banheiro",
-      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "product": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -488,11 +371,11 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 909,
+          "word_count": 917,
           "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 46,
-          "meta_description_length": 124,
+          "seo_title_length": 51,
+          "meta_description_length": 129,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -673,6 +556,77 @@
           "internal_links": 1,
           "seo_title_length": 45,
           "meta_description_length": 123,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 22,
+      "shopee_item_id": "22598002731",
+      "category": "Decoração",
+      "product": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 752,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 53,
+          "meta_description_length": 139,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 23,
+      "shopee_item_id": "58203899022",
+      "category": "Decoração",
+      "product": "Kit 4 Vaso de Plantas Suculentas Vaso Decorativo em Gesso para e Cactos Decoração Sala Pequena Mesas",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 867,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 49,
+          "meta_description_length": 127,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
