@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Regras deterministicas para impedir falso positivo semantico na busca de produtos Shopee. A regra valida o produto real procurado, nao apenas a presenca solta da palavra-chave no titulo.",
   "rules": {
     "projetor portatil": {
@@ -15,8 +15,8 @@
       "block_phrases": ["pulseira para smartwatch", "capa para smartwatch", "pelicula para smartwatch", "carregador para smartwatch"]
     },
     "carregador rapido": {
-      "require_groups": [["carregador", "carregamento rapido", "carregamento turbo"]],
-      "block_phrases": ["capa para carregador", "organizador de cabo"]
+      "require_groups": [["carregador", "fonte de carregamento", "adaptador usb", "carregador turbo"]],
+      "block_phrases": ["cabo usb", "cabo de carregamento", "cabo tipo c", "cabo lightning", "cabo v8", "organizador de cabo"]
     },
     "aspirador de po": {
       "require_groups": [["aspirador"]],
@@ -31,7 +31,7 @@
     },
     "ventilador": {
       "require_groups": [["ventilador"]],
-      "block_phrases": ["carimbo", "impressao 3d", "confeitaria", "molde ventilador", "chaveiro ventilador", "adesivo ventilador", "topper ventilador"]
+      "block_phrases": ["carimbo", "impressao 3d", "confeitaria", "molde ventilador", "chaveiro ventilador", "adesivo ventilador", "topper ventilador", "ventilador interno", "painel ar", "painel do carro", "automotivo", "grand siena", "radiador", "ventoinha", "motor ventilador", "resistencia ventilador"]
     },
     "luminaria": {
       "require_groups": [["luminaria", "abajur", "plafon", "lampada led", "luz led"]],
