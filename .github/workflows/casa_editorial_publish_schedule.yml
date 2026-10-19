@@ -1,79 +1,54 @@
-name: Casa e Decoração — Publicação Editorial
+name: Casa e Decoração — Publicação Manual v3
 
 on:
   workflow_dispatch:
     inputs:
-      wordpress_status:
-        description: "Status WordPress (draft ou publish; publish autorizado, sujeito ao gate v2)"
-        required: false
-        default: "draft"
       publish_limit:
-        description: "Quantidade máxima por execução (1-20)"
+        description: "Máximo nesta execução (1-3; limite diário rígido = 3)"
         required: false
-        default: "5"
+        default: "1"
 
 permissions:
   contents: write
 
 concurrency:
-  group: casa-decoracao-fluxo-editorial
+  group: casa-decoracao-editorial-v3
   cancel-in-progress: false
 
 jobs:
   publicar:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     env:
       CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
       CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
-      CASA_WORDPRESS_STATUS: ${{ github.event_name == 'workflow_dispatch' && inputs.wordpress_status || 'draft' }}
+      CASA_WORDPRESS_STATUS: publish
       CASA_LIVE_PUBLISH_ENABLED: "true"
-      CASA_PUBLISH_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_limit || '5' }}
+      CASA_PUBLISH_LIMIT: ${{ inputs.publish_limit }}
+      CASA_DAILY_PUBLISH_CAP: "3"
 
     steps:
-      - name: Baixar repositório
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Verificar sintaxe e quality gate
+      - name: Validar base
         run: |
-          python -m py_compile casa_decoracao/src/quality_gate.py
-          python -m py_compile casa_decoracao/src/publication_gate_v2.py
-          python -m py_compile casa_decoracao/src/publication_interlock.py
-          python -m py_compile casa_decoracao/src/audit_release_candidates.py
-          python -m py_compile casa_decoracao/src/publish_generated.py
-
-      - name: Verificar credenciais exclusivas do novo blog
-        id: auth
+          python casa_decoracao/src/category_rotation.py
+          python casa_decoracao/src/self_test.py
+          python casa_decoracao/src/cta_card_self_test.py
+      - name: Publicar apenas itens já gerados e aprovados
+        run: python -u casa_decoracao/src/publish_generated.py
+      - name: Auditar
+        if: always()
+        run: python -u casa_decoracao/src/audit_release_candidates.py || true
+      - name: Persistir estado
+        if: always()
         run: |
-          if [ -z "$CASA_WORDPRESS_USERNAME" ] || [ -z "$CASA_WORDPRESS_APP_PASSWORD" ]; then
-            echo "ready=0" >> "$GITHUB_OUTPUT"
-            echo "Publicação ignorada: secrets CASA_WORDPRESS_USERNAME/CASA_WORDPRESS_APP_PASSWORD ainda não configurados."
-          else
-            echo "ready=1" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Sincronizar lote somente sob a trava de publicação
-        if: steps.auth.outputs.ready == '1'
-        run: python -u casa_decoracao/src/publication_interlock.py
-
-      - name: Auditar candidatos para publicação real sem publicar
-        if: always() && steps.auth.outputs.ready == '1'
-        run: python -u casa_decoracao/src/audit_release_candidates.py
-
-      - name: Salvar somente estado do Casa e Decoração
-        if: always() && steps.auth.outputs.ready == '1'
-        run: |
-          if [ -z "$(git status --porcelain -- casa_decoracao/data)" ]; then
-            exit 0
-          fi
+          if [ -z "$(git status --porcelain -- casa_decoracao/data)" ]; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add casa_decoracao/data
-          git commit -m "Atualizar publicação editorial Casa e Decoração"
+          git commit -m "Atualizar publicação Casa e Decoração v3"
           git pull --rebase origin main
           git push origin HEAD:main

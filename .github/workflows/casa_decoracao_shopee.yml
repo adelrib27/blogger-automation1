@@ -1,29 +1,24 @@
-name: Casa e Decoração — Shopee Oportunidades
+name: Casa e Decoração — Shopee Manual Compatível v3
 
 on:
   workflow_dispatch:
     inputs:
       category:
-        description: "Categoria (all, Organizacao, Cozinha, Cama Mesa Banho, Limpeza, Decoracao e Conforto)"
+        description: "Categoria das 8 oficiais ou all"
         required: false
         default: "all"
       top_n:
         description: "Quantidade final de oportunidades"
         required: false
-        default: "30"
+        default: "32"
 
 permissions:
   contents: read
 
-concurrency:
-  group: casa-decoracao-shopee-oportunidades
-  cancel-in-progress: false
-
 jobs:
-  ranking-casa-decoracao:
+  ranking:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
+    timeout-minutes: 20
     env:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
@@ -32,30 +27,14 @@ jobs:
       SHOPEE_OPPORTUNITIES_CONFIG: casa_decoracao/config/shopee_oportunidades.json
       SHOPEE_INTENT_RULES: casa_decoracao/config/shopee_intent_rules.json
       SHOPEE_OUTPUT_DIR: casa_decoracao/data/shopee_oportunidades
-
     steps:
-      - name: Baixar repositório
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Verificar sintaxe
-        run: |
-          python -m py_compile src/shopee_oportunidades.py
-          python -m py_compile src/shopee_oportunidades_v22.py
-          python -m py_compile src/shopee_oportunidades_v23.py
-          python -m py_compile casa_decoracao/src/shopee_oportunidades_casa.py
-
-      - name: Gerar ranking Casa e Decoração
-        run: python -u casa_decoracao/src/shopee_oportunidades_casa.py
-
-      - name: Publicar relatório como artefato
-        uses: actions/upload-artifact@v4
+      - run: python -u casa_decoracao/src/shopee_oportunidades_casa.py
+      - uses: actions/upload-artifact@v4
         with:
-          name: casa-decoracao-shopee-${{ github.run_number }}
+          name: casa-shopee-manual-v3-${{ github.run_number }}
           path: casa_decoracao/data/shopee_oportunidades/
-          if-no-files-found: error
           retention-days: 14

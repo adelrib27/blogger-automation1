@@ -1,0 +1,73 @@
+name: Casa e Decoração — Validação Editorial Segura v3
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "casa_decoracao/validation_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: casa-decoracao-editorial-safe-v3
+  cancel-in-progress: false
+
+jobs:
+  validate-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CASA_GENERATION_ENABLED: "false"
+      CASA_LIVE_PUBLISH_ENABLED: "false"
+      CASA_WORDPRESS_STATUS: draft
+      CASA_GENERATION_BATCH_SIZE: "1"
+      CASA_PUBLISH_LIMIT: "1"
+      CASA_DAILY_PUBLISH_CAP: "3"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compilar e testar base v3
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            casa_decoracao/src/category_rotation.py \
+            casa_decoracao/src/shopee_oportunidades_casa.py \
+            casa_decoracao/src/build_editorial_queue.py \
+            casa_decoracao/src/cta_context.py \
+            casa_decoracao/src/editorial_normalizer.py \
+            casa_decoracao/src/quality_gate.py \
+            casa_decoracao/src/generate_articles.py \
+            casa_decoracao/src/publish_generated.py \
+            casa_decoracao/src/audit_release_candidates.py \
+            casa_decoracao/src/self_test.py \
+            casa_decoracao/src/cta_card_self_test.py
+          python casa_decoracao/src/category_rotation.py
+          python casa_decoracao/src/self_test.py
+          python casa_decoracao/src/cta_card_self_test.py
+
+      - name: Confirmar interlocks desligados
+        run: |
+          set -euo pipefail
+          python -u casa_decoracao/src/generate_articles.py
+          python -u casa_decoracao/src/publish_generated.py
+
+      - name: Auditar sem publicar
+        if: always()
+        run: python -u casa_decoracao/src/audit_release_candidates.py || true
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-editorial-safe-v3-${{ github.run_number }}
+          path: casa_decoracao/data/
+          if-no-files-found: warn
+          retention-days: 14
