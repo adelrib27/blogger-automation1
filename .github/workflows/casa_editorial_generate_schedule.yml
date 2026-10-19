@@ -1,13 +1,142 @@
-name: Casa e Decoração — Editorial v3 (implantação segura)
+name: Casa e Decoração — Editorial Autônomo v3 3x/dia
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "casa_decoracao/kickoff.txt"
+  schedule:
+    # America/Recife (UTC-3): 09:17, 14:17 e 19:17.
+    - cron: "17 12 * * *"
+    - cron: "17 17 * * *"
+    - cron: "17 22 * * *"
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: casa-decoracao-editorial-v3
+  cancel-in-progress: false
 
 jobs:
-  interlock:
+  autonomo:
     runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_OPPORTUNITIES_CONFIG: casa_decoracao/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: casa_decoracao/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: casa_decoracao/data/shopee_oportunidades
+      SHOPEE_CATEGORY: all
+      SHOPEE_TOP_N: "32"
+      CASA_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CASA_CLOUDFLARE_ACCOUNT_ID }}
+      CASA_CLOUDFLARE_API_TOKEN: ${{ secrets.CASA_CLOUDFLARE_API_TOKEN }}
+      CASA_AI_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      CASA_GENERATION_ENABLED: "true"
+      CASA_GENERATION_BATCH_SIZE: "1"
+      CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+      CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+      CASA_WORDPRESS_STATUS: publish
+      CASA_LIVE_PUBLISH_ENABLED: "true"
+      CASA_PUBLISH_LIMIT: "1"
+      CASA_DAILY_PUBLISH_CAP: "3"
+
     steps:
-      - run: echo "Automação ao vivo temporariamente pausada durante a validação segura v3."
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código e gates v3
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            casa_decoracao/src/category_rotation.py \
+            casa_decoracao/src/shopee_oportunidades_casa.py \
+            casa_decoracao/src/build_editorial_queue.py \
+            casa_decoracao/src/cta_context.py \
+            casa_decoracao/src/editorial_normalizer.py \
+            casa_decoracao/src/quality_gate.py \
+            casa_decoracao/src/generate_articles.py \
+            casa_decoracao/src/publish_generated.py \
+            casa_decoracao/src/audit_release_candidates.py \
+            casa_decoracao/src/self_test.py \
+            casa_decoracao/src/cta_card_self_test.py
+          python casa_decoracao/src/category_rotation.py
+          python casa_decoracao/src/self_test.py
+          python casa_decoracao/src/cta_card_self_test.py
+
+      - name: Confirmar credenciais obrigatórias
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$CASA_CLOUDFLARE_ACCOUNT_ID"
+          test -n "$CASA_CLOUDFLARE_API_TOKEN"
+          test -n "$CASA_WORDPRESS_USERNAME"
+          test -n "$CASA_WORDPRESS_APP_PASSWORD"
+
+      - name: Confirmar autenticação WordPress
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 30 \
+            -u "$CASA_WORDPRESS_USERNAME:$CASA_WORDPRESS_APP_PASSWORD" \
+            "https://casaedecoracao.radartechbr.com.br/wp-json/wp/v2/users/me?context=edit" >/dev/null
+
+      - name: Descobrir produtos reais na Shopee
+        run: python -u casa_decoracao/src/shopee_oportunidades_casa.py
+
+      - name: Montar fila editorial com rotação por categoria
+        run: python -u casa_decoracao/src/build_editorial_queue.py
+
+      - name: Gerar próximo artigo com Qwen3
+        run: python -u casa_decoracao/src/generate_articles.py
+
+      - name: Publicar pelo gate v3 com imagem destacada real
+        run: python -u casa_decoracao/src/publish_generated.py
+
+      - name: Auditar estado final
+        if: always()
+        run: python -u casa_decoracao/src/audit_release_candidates.py || true
+
+      - name: Verificar saúde pública
+        if: always()
+        run: |
+          mkdir -p casa_decoracao/data
+          if curl -fsS --max-time 30 https://casaedecoracao.radartechbr.com.br/ >/dev/null; then
+            echo "ok $(date -u +%Y-%m-%dT%H:%M:%SZ)" > casa_decoracao/data/site_health.txt
+          else
+            echo "falha $(date -u +%Y-%m-%dT%H:%M:%SZ)" > casa_decoracao/data/site_health.txt
+            exit 1
+          fi
+
+      - name: Persistir somente o estado do Casa e Decoração
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- casa_decoracao/data)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add casa_decoracao/data
+          git commit -m "Atualizar estado autônomo Casa e Decoração v3"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-editorial-v3-${{ github.run_number }}
+          path: casa_decoracao/data/
+          if-no-files-found: warn
+          retention-days: 14
