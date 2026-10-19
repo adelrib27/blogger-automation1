@@ -1,0 +1,222 @@
+name: Radar Tech BR — Editorial vNext Autônomo 5x/dia
+
+on:
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "Slot editorial (HH:MM)"
+        required: true
+        default: "10:30"
+        type: choice
+        options:
+          - "08:00"
+          - "10:30"
+          - "13:00"
+          - "16:00"
+          - "19:00"
+  push:
+    paths:
+      - "radar_tech_br/live_kickoff.txt"
+  schedule:
+    # America/Sao_Paulo (UTC-3): 08:00, 10:30, 13:00, 16:00 e 19:00.
+    - cron: "0 11 * * *"
+    - cron: "30 13 * * *"
+    - cron: "0 16 * * *"
+    - cron: "0 19 * * *"
+    - cron: "0 22 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-tech-br-editorial-vnext
+  cancel-in-progress: false
+
+jobs:
+  autonomo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      RADAR_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.RADAR_CLOUDFLARE_ACCOUNT_ID }}
+      RADAR_CLOUDFLARE_API_TOKEN: ${{ secrets.RADAR_CLOUDFLARE_API_TOKEN }}
+      RADAR_AI_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      RADAR_GENERATION_ENABLED: "true"
+      RADAR_GENERATION_BATCH_SIZE: "1"
+      RADAR_WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+      RADAR_WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+      RADAR_WORDPRESS_STATUS: publish
+      RADAR_LIVE_PUBLISH_ENABLED: "true"
+      RADAR_PUBLISH_LIMIT: "1"
+      RADAR_DAILY_PUBLISH_CAP: "5"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolver slot desta execução
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          INPUT_SLOT: ${{ inputs.slot }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          event = os.environ.get("EVENT_NAME", "")
+          schedule = os.environ.get("EVENT_SCHEDULE", "")
+          slot = os.environ.get("INPUT_SLOT", "").strip()
+          mapping = {
+              "0 11 * * *": "08:00",
+              "30 13 * * *": "10:30",
+              "0 16 * * *": "13:00",
+              "0 19 * * *": "16:00",
+              "0 22 * * *": "19:00",
+          }
+          if event == "schedule":
+              slot = mapping.get(schedule, "")
+          elif event == "push":
+              text = Path("radar_tech_br/live_kickoff.txt").read_text(encoding="utf-8")
+              for line in text.splitlines():
+                  if line.strip().startswith("slot="):
+                      slot = line.split("=", 1)[1].strip()
+                      break
+          allowed = {"08:00", "10:30", "13:00", "16:00", "19:00"}
+          if slot not in allowed:
+              raise SystemExit(f"Slot inválido ou ausente: {slot!r}")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as fh:
+              fh.write(f"RADAR_TARGET_SLOT={slot}\n")
+          print("Slot resolvido:", slot)
+          PY
+
+      - name: Validar código, gates e guard semântico
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            src/fase3_fila_radar.py \
+            radar_tech_br/src/*.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/self_test.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/cta_card_self_test.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/semantic_self_test.py
+
+      - name: Validar fila atual e detectar slot já publicado
+        run: |
+          python - <<'PY'
+          import json, os
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          data = json.loads(Path("data/fase3/fila_dia.json").read_text(encoding="utf-8"))
+          today = datetime.now(ZoneInfo("America/Sao_Paulo")).date().isoformat()
+          if data.get("date") != today or data.get("complete") is not True:
+              raise SystemExit(f"Fila ausente/inválida para hoje: fila={data.get('date')} hoje={today}")
+          slots = data.get("slots") or []
+          cats = {str(s.get("category") or "") for s in slots}
+          expected = {"Tecnologia", "Casa & Decoração", "Cozinha & Utilidades", "Ferramentas & Automotivo", "Moda & Beleza"}
+          if len(slots) != 5 or cats != expected:
+              raise SystemExit("Fila não contém exatamente uma entrada para cada uma das 5 categorias")
+          target = os.environ["RADAR_TARGET_SLOT"]
+          selected = next((s for s in slots if str(s.get("time")) == target), None)
+          if not selected:
+              raise SystemExit("Slot não encontrado na fila diária")
+          skip = str(selected.get("status") or "") == "PUBLICADO"
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as fh:
+              fh.write(f"RADAR_SKIP={'true' if skip else 'false'}\n")
+          print("Slot já publicado; execução será idempotente." if skip else "Slot liberado para processamento.")
+          PY
+
+      - name: Confirmar credenciais obrigatórias
+        if: env.RADAR_SKIP != 'true'
+        run: |
+          set -euo pipefail
+          test -n "$RADAR_CLOUDFLARE_ACCOUNT_ID"
+          test -n "$RADAR_CLOUDFLARE_API_TOKEN"
+          test -n "$RADAR_WORDPRESS_USERNAME"
+          test -n "$RADAR_WORDPRESS_APP_PASSWORD"
+
+      - name: Confirmar autenticação WordPress
+        if: env.RADAR_SKIP != 'true'
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 30 \
+            -u "$RADAR_WORDPRESS_USERNAME:$RADAR_WORDPRESS_APP_PASSWORD" \
+            "https://radartechbr.com.br/wp-json/wp/v2/users/me?context=edit" >/dev/null
+
+      - name: Preparar produto do slot
+        if: env.RADAR_SKIP != 'true'
+        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/prepare_slot.py
+
+      - name: Gerar artigo com Qwen3
+        if: env.RADAR_SKIP != 'true'
+        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/generate_articles.py
+
+      - name: Publicar somente após gates e imagem destacada
+        if: env.RADAR_SKIP != 'true'
+        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/publish_generated.py
+
+      - name: Confirmar publicação do slot
+        if: env.RADAR_SKIP != 'true'
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads(Path("data/fase3/fila_dia.json").read_text(encoding="utf-8"))
+          target = os.environ["RADAR_TARGET_SLOT"]
+          slot = next((s for s in data.get("slots") or [] if str(s.get("time")) == target), None)
+          if not slot or slot.get("status") != "PUBLICADO":
+              status = None if not slot else slot.get("status")
+              error = "" if not slot else str(slot.get("lastError") or "")
+              raise SystemExit(f"Publicação não confirmada para {target}: status={status}; {error}")
+          wp = slot.get("wordpress") or {}
+          if not wp.get("postId") or not str(wp.get("url") or "").startswith("https://radartechbr.com.br/"):
+              raise SystemExit("Publicação marcada sem confirmação WordPress válida")
+          print("Publicação confirmada:", wp.get("postId"), wp.get("url"))
+          PY
+
+      - name: Auditar estado final
+        if: always() && env.RADAR_SKIP != 'true'
+        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/audit_release_candidates.py || true
+
+      - name: Verificar saúde pública
+        if: always()
+        run: |
+          mkdir -p radar_tech_br/data
+          curl -fsS --max-time 30 https://radartechbr.com.br/ >/dev/null
+          echo "ok $(date -u +%Y-%m-%dT%H:%M:%SZ)" > radar_tech_br/data/site_health.txt
+
+      - name: Persistir somente estado editorial Radar
+        if: always() && env.RADAR_SKIP != 'true'
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- radar_tech_br/data data/fase3/fila_dia.json)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add radar_tech_br/data data/fase3/fila_dia.json
+          git commit -m "Atualizar estado autônomo Radar Tech BR vNext"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-editorial-vnext-${{ github.run_number }}
+          path: |
+            radar_tech_br/data/
+            data/fase3/fila_dia.json
+          if-no-files-found: warn
+          retention-days: 14
