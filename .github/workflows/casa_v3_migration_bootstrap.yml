@@ -62,7 +62,7 @@ jobs:
           python -m json.tool casa_decoracao/data/category_rotation.json >/dev/null
           python -m json.tool casa_decoracao/data/publication_history.json >/dev/null
 
-      - name: Commitar base v3 sem liberar publicação automática
+      - name: Commitar código e estado v3
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -84,15 +84,9 @@ jobs:
             casa_decoracao/config/shopee_oportunidades.json \
             casa_decoracao/config/wordpress.json \
             casa_decoracao/data/category_rotation.json \
-            casa_decoracao/data/publication_history.json \
-            .github/workflows/casa_editorial_safe_v3.yml \
-            .github/workflows/casa_editorial_manual.yml \
-            .github/workflows/casa_editorial_publish_schedule.yml \
-            .github/workflows/casa_editorial_audit.yml \
-            .github/workflows/casa_shopee_oportunidades.yml \
-            .github/workflows/casa_decoracao_shopee.yml
+            casa_decoracao/data/publication_history.json
           if git diff --cached --quiet; then
-            echo "Base v3 já aplicada."
+            echo "Código v3 já aplicado."
             exit 0
           fi
           git commit -m "feat(casa): implantar base editorial v3 segura"
