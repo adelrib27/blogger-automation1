@@ -1,0 +1,117 @@
+name: Oficina & Garagem — Loja Shopee Autônoma
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "oficina_garagem/store_live_kickoff.txt"
+  schedule:
+    # America/Recife (UTC-3): 08:30 diariamente, antes do editorial das 09:07.
+    - cron: "30 11 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: oficina-garagem-store-autonomous
+  cancel-in-progress: false
+
+jobs:
+  atualizar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      OFICINA_WORDPRESS_USERNAME: "admin"
+      OFICINA_WORDPRESS_APP_PASSWORD: ${{ secrets.OFICINA_WORDPRESS_APP_PASSWORD }}
+      OFICINA_STORE_DRY_RUN: "false"
+      OFICINA_STORE_ITEMS_PER_CATEGORY: "4"
+      OFICINA_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "60"
+      SHOPEE_OPPORTUNITIES_CONFIG: oficina_garagem/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: oficina_garagem/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: oficina_garagem/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código antes da publicação
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            oficina_garagem/src/shopee_oportunidades_oficina.py \
+            oficina_garagem/src/store_auto.py \
+            oficina_garagem/src/store_auto_self_test.py \
+            oficina_garagem/src/store_hero_sync.py
+          PYTHONPATH=src:oficina_garagem/src python oficina_garagem/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$OFICINA_WORDPRESS_APP_PASSWORD"
+
+      - name: Atualizar vitrine com Shopee API
+        run: |
+          PYTHONPATH=src:oficina_garagem/src python -u oficina_garagem/src/store_auto.py
+
+      - name: Sincronizar mini-cards do carrossel
+        run: |
+          PYTHONPATH=src:oficina_garagem/src python -u oficina_garagem/src/store_hero_sync.py
+
+      - name: Verificar renderização pública
+        run: |
+          set -euo pipefail
+          ok=0
+          for attempt in 1 2 3 4 5 6; do
+            curl -fsS --max-time 40 "https://oficina.radartechbr.com.br/loja/?oficina_store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/oficina-loja.html
+            store_count=$(grep -o 'data-item-id=' /tmp/oficina-loja.html | wc -l | tr -d ' ')
+            hero_count=$(grep -o 'data-hero-item-id=' /tmp/oficina-loja.html | wc -l | tr -d ' ')
+            if grep -q "ogs-store-grid" /tmp/oficina-loja.html && grep -q "ogs-hero-grid" /tmp/oficina-loja.html && [ "$store_count" -eq 24 ] && [ "$hero_count" -eq 12 ]; then
+              ok=1
+              break
+            fi
+            echo "Tentativa ${attempt}: vitrine=${store_count}/24 hero=${hero_count}/12; aguardando cache."
+            sleep 5
+          done
+          test "$ok" -eq 1
+          echo "Renderização pública confirmada: 24 cards da vitrine + 12 mini-cards no carrossel."
+
+      - name: Persistir estado da rotação
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- oficina_garagem/data/store_rotation.json oficina_garagem/data/store_last_selection.json)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add oficina_garagem/data/store_rotation.json oficina_garagem/data/store_last_selection.json
+          git commit -m "Atualizar rotação automática da Loja Oficina & Garagem"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oficina-store-auto-${{ github.run_number }}
+          path: |
+            oficina_garagem/data/store_last_selection.json
+            oficina_garagem/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
