@@ -1,0 +1,71 @@
+name: Radar Tech BR — Loja Shopee SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "radar_tech_br/store_validation_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: radar-tech-br-store-safe
+  cancel-in-progress: false
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+      WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+      RADAR_STORE_DRY_RUN: "true"
+      RADAR_STORE_ITEMS_PER_CATEGORY: "4"
+      RADAR_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "40"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar sintaxe e testes locais
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            radar_tech_br/src/store_auto.py \
+            radar_tech_br/src/store_auto_self_test.py
+          PYTHONPATH=src:radar_tech_br/src python radar_tech_br/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$WORDPRESS_USERNAME"
+          test -n "$WORDPRESS_APP_PASSWORD"
+
+      - name: Dry-run real Shopee + leitura WordPress
+        run: |
+          PYTHONPATH=src:radar_tech_br/src python -u radar_tech_br/src/store_auto.py
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-store-safe-${{ github.run_number }}
+          path: |
+            radar_tech_br/data/store_last_selection.json
+            radar_tech_br/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
