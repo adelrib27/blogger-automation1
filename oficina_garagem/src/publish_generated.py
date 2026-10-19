@@ -31,6 +31,12 @@ CATEGORY_SLUGS = {
     "Limpeza e Conservação": "limpeza-e-conservacao",
     "Segurança e Proteção": "seguranca-e-protecao",
 }
+IMAGE_EXTENSIONS = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+    "image/gif": ".gif",
+}
 
 
 def load(path, default):
@@ -53,19 +59,23 @@ def credentials():
     return user, password
 
 
-def request(method, path, payload=None):
+def auth_header():
     user, password = credentials()
-    auth = base64.b64encode(f"{user}:{password}".encode()).decode()
+    token = base64.b64encode(f"{user}:{password}".encode()).decode()
+    return f"Basic {token}"
+
+
+def request(method, path, payload=None):
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode()
     req = urllib.request.Request(
         WP_URL + "/wp-json" + path,
         data=data,
         method=method,
         headers={
-            "Authorization": f"Basic {auth}",
+            "Authorization": auth_header(),
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "OficinaGaragem-AutonomousPublisher/1.1",
+            "User-Agent": "OficinaGaragem-AutonomousPublisher/1.2",
         },
     )
     try:
@@ -97,6 +107,62 @@ def existing(slug):
         + urllib.parse.quote(slug),
     )
     return rows[0] if isinstance(rows, list) and rows else None
+
+
+def download_image(url):
+    if not str(url or "").startswith("https://"):
+        raise RuntimeError("URL de imagem inválida ou ausente")
+    req = urllib.request.Request(
+        str(url),
+        headers={"User-Agent": "Mozilla/5.0 OficinaGaragem/1.0", "Accept": "image/*"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as response:
+            content_type = str(response.headers.get_content_type() or "").lower()
+            data = response.read(12 * 1024 * 1024 + 1)
+    except urllib.error.HTTPError as exc:
+        raise RuntimeError(f"Falha ao baixar imagem do produto: HTTP {exc.code}") from exc
+    if not content_type.startswith("image/"):
+        raise RuntimeError("URL do produto não retornou uma imagem")
+    if len(data) > 12 * 1024 * 1024:
+        raise RuntimeError("Imagem do produto excede 12 MB")
+    if not data:
+        raise RuntimeError("Imagem do produto vazia")
+    return data, content_type
+
+
+def upload_featured_image(post_id, article):
+    image_url = str(article.get("image_url") or "").strip()
+    image_data, content_type = download_image(image_url)
+    extension = IMAGE_EXTENSIONS.get(content_type, ".jpg")
+    base_name = slugify(article.get("product") or article.get("seo_title") or "imagem-produto")[:64] or "imagem-produto"
+    filename = base_name + extension
+    path = f"/wp-json/wp/v2/media?post={int(post_id)}"
+    req = urllib.request.Request(
+        WP_URL + path,
+        data=image_data,
+        method="POST",
+        headers={
+            "Authorization": auth_header(),
+            "Content-Type": content_type,
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Accept": "application/json",
+            "User-Agent": "OficinaGaragem-AutonomousPublisher/1.2",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=90) as response:
+            media = json.loads(response.read().decode("utf-8", "replace"))
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", "replace")[:800]
+        raise RuntimeError(f"Falha ao enviar imagem destacada: WordPress HTTP {exc.code}: {detail}") from exc
+    media_id = int(media.get("id") or 0)
+    if not media_id:
+        raise RuntimeError("WordPress não confirmou o upload da imagem destacada")
+    updated = request("POST", f"/wp/v2/posts/{int(post_id)}", {"featured_media": media_id})
+    if int(updated.get("featured_media") or 0) != media_id:
+        raise RuntimeError("WordPress não confirmou a imagem destacada no post")
+    return media_id
 
 
 def set_aioseo(post_id, article):
@@ -233,6 +299,10 @@ def main():
                 if old_title and old_title != str(article.get("seo_title") or "").strip():
                     raise RuntimeError("slug já pertence a outro artigo publicado")
                 post_id = int(old["id"])
+                if not int(old.get("featured_media") or 0):
+                    item["featured_media"] = upload_featured_image(post_id, article)
+                else:
+                    item["featured_media"] = int(old.get("featured_media") or 0)
                 url = old.get("link")
                 append_history(history, item, article, post_id, url, source="automatic_existing")
                 item["wordpress_post_id"] = post_id
@@ -245,18 +315,23 @@ def main():
             payload = {
                 "title": article["seo_title"],
                 "slug": slug,
-                "status": "publish",
+                "status": "draft",
                 "categories": [category_id(article["category"])],
                 "excerpt": article["excerpt"],
                 "content": article["content_html"],
             }
             result = request("POST", f"/wp/v2/posts/{int(old['id'])}" if old else "/wp/v2/posts", payload)
             post_id = int(result.get("id") or 0)
-            if not post_id or result.get("status") != "publish":
-                raise RuntimeError("WordPress não confirmou publicação")
+            if not post_id:
+                raise RuntimeError("WordPress não confirmou criação do rascunho")
+            media_id = upload_featured_image(post_id, article)
+            result = request("POST", f"/wp/v2/posts/{post_id}", {"status": "publish", "featured_media": media_id})
+            if result.get("status") != "publish" or int(result.get("featured_media") or 0) != media_id:
+                raise RuntimeError("WordPress não confirmou publicação com imagem destacada")
             url = result.get("link")
             item["wordpress_post_id"] = post_id
             item["wordpress_url"] = url
+            item["featured_media"] = media_id
             item["seo_synced"] = set_aioseo(post_id, article)
             item["status"] = "PUBLISHED"
             item["last_error"] = ""
