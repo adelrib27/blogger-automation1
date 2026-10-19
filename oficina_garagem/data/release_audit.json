@@ -2,8 +2,8 @@
   "project": "Oficina & Garagem",
   "live_publish_enabled": false,
   "summary": {
-    "total": 15,
-    "draft_ready": 0,
+    "total": 16,
+    "draft_ready": 1,
     "human_review": 0,
     "rejected": 0,
     "not_generated": 15
@@ -12,15 +12,21 @@
     {
       "id": 1,
       "product": "Furadeira De Impacto Com Kit 650w 10mm 110V G1905K/BR1 Gamma",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 39,
       "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
-        "metrics": {}
+        "metrics": {
+          "word_count": 561,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 61,
+          "meta_description_length": 151,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
       }
     },
     {
@@ -95,7 +101,7 @@
     },
     {
       "id": 7,
-      "product": "Lavadora de Alta Pressão Portátil 1500Psi 1400w 110v Karcher",
+      "product": "Conjunto Profissional de Multímetro Digital ANENG SZ01: Medidor de Tensão AC/DC, Corrente e Resistência + Detector de",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -109,7 +115,7 @@
     },
     {
       "id": 8,
-      "product": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
+      "product": "Lavadora de Alta Pressão Portátil 1500Psi 1400w 110v Karcher",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -123,7 +129,7 @@
     },
     {
       "id": 9,
-      "product": "Protetor Auricular Silicone com Cordão EPI Auditivo Plug Ouvido – Escolha a Quantidade",
+      "product": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -137,7 +143,7 @@
     },
     {
       "id": 10,
-      "product": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
+      "product": "Protetor Auricular Silicone com Cordão EPI Auditivo Plug Ouvido – Escolha a Quantidade",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -151,7 +157,7 @@
     },
     {
       "id": 11,
-      "product": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade, Fixação no Banco Traseiro, Rede Multiuso",
+      "product": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -165,7 +171,7 @@
     },
     {
       "id": 12,
-      "product": "Jogo De Soquetes E Bits 27 Peças Para Reparos Automotivos E Casa 1/4 E 1/2",
+      "product": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade, Fixação no Banco Traseiro, Rede Multiuso",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -179,7 +185,7 @@
     },
     {
       "id": 13,
-      "product": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
+      "product": "Jogo De Soquetes E Bits 27 Peças Para Reparos Automotivos E Casa 1/4 E 1/2",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -193,7 +199,7 @@
     },
     {
       "id": 14,
-      "product": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v",
+      "product": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -207,6 +213,20 @@
     },
     {
       "id": 15,
+      "product": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 16,
       "product": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
       "queue_status": "PENDING",
       "wordpress_post_id": null,

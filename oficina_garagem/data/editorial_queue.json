@@ -4,10 +4,10 @@
   "source": "Shopee intent_report v2.3 + ranking details + publication history",
   "editorial_policy": "produto real -> um único título editorial -> conteúdo útil -> CTA contextual -> gate -> publicação",
   "max_per_keyword": 1,
-  "total": 15,
+  "total": 16,
   "skipped": {
     "produto_ja_publicado": 1,
-    "limite_por_intencao": 14
+    "limite_por_intencao": 13
   },
   "items": [
     {
@@ -22,7 +22,7 @@
       "category": "Ferramentas",
       "opportunity_score": 81.32,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
+      "status": "PUBLISHED",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
@@ -30,8 +30,26 @@
         "safety_review": false,
         "single_editorial_title": true
       },
-      "generation_attempts": 1,
-      "last_error": "Falha Workers AI: 'dict' object has no attribute 'strip'"
+      "topic": "Como escolher uma furadeira de impacto certa para seu projeto",
+      "editorial_title": "Como escolher uma furadeira de impacto certa para seu projeto",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 561,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 61,
+          "meta_description_length": 151,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "last_error": "",
+      "wordpress_post_id": 39,
+      "wordpress_url": "https://oficina.radartechbr.com.br/como-escolher-uma-furadeira-de-impacto-certa-para-seu-projeto/",
+      "seo_synced": true
     },
     {
       "id": 2,
@@ -140,6 +158,27 @@
     },
     {
       "id": 7,
+      "shopee_item_id": "56510815613",
+      "product": "Conjunto Profissional de Multímetro Digital ANENG SZ01: Medidor de Tensão AC/DC, Corrente e Resistência + Detector de",
+      "affiliate_link": "https://s.shopee.com.br/3LRicDCT1n",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134253-822ws-moeq07985c0d31",
+      "shop_name": "Choice Oficial",
+      "source_keyword": "multimetro digital",
+      "editorial_label": "Multímetro digital",
+      "category": "Manutenção",
+      "opportunity_score": 68.82,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "safety_review": false,
+        "single_editorial_title": true
+      }
+    },
+    {
+      "id": 8,
       "shopee_item_id": "46668803829",
       "product": "Lavadora de Alta Pressão Portátil 1500Psi 1400w 110v Karcher",
       "affiliate_link": "https://s.shopee.com.br/3B8IAXNwzm",
@@ -160,7 +199,7 @@
       }
     },
     {
-      "id": 8,
+      "id": 9,
       "shopee_item_id": "58256818829",
       "product": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
       "affiliate_link": "https://s.shopee.com.br/BUgb0idwG",
@@ -181,7 +220,7 @@
       }
     },
     {
-      "id": 9,
+      "id": 10,
       "shopee_item_id": "22394334585",
       "product": "Protetor Auricular Silicone com Cordão EPI Auditivo Plug Ouvido – Escolha a Quantidade",
       "affiliate_link": "https://s.shopee.com.br/Lo6nKzGx2",
@@ -202,7 +241,7 @@
       }
     },
     {
-      "id": 10,
+      "id": 11,
       "shopee_item_id": "22992747047",
       "product": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
       "affiliate_link": "https://s.shopee.com.br/5fpd98VxlS",
@@ -223,7 +262,7 @@
       }
     },
     {
-      "id": 11,
+      "id": 12,
       "shopee_item_id": "22899126718",
       "product": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade, Fixação no Banco Traseiro, Rede Multiuso",
       "affiliate_link": "https://s.shopee.com.br/6Altk2YvqX",
@@ -244,7 +283,7 @@
       }
     },
     {
-      "id": 12,
+      "id": 13,
       "shopee_item_id": "58266648874",
       "product": "Jogo De Soquetes E Bits 27 Peças Para Reparos Automotivos E Casa 1/4 E 1/2",
       "affiliate_link": "https://s.shopee.com.br/6VOk8dgw2k",
@@ -265,7 +304,7 @@
       }
     },
     {
-      "id": 13,
+      "id": 14,
       "shopee_item_id": "24575870687",
       "product": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
       "affiliate_link": "https://s.shopee.com.br/9APVJYwdli",
@@ -286,7 +325,7 @@
       }
     },
     {
-      "id": 14,
+      "id": 15,
       "shopee_item_id": "58207052374",
       "product": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v",
       "affiliate_link": "https://s.shopee.com.br/3Vl6Ti8htZ",
@@ -307,7 +346,7 @@
       }
     },
     {
-      "id": 15,
+      "id": 16,
       "shopee_item_id": "57755036915",
       "product": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
       "affiliate_link": "https://s.shopee.com.br/BUgb14i6L",
