@@ -40,6 +40,22 @@ ABSOLUTE_CLAIM_PATTERNS = (
     r"\bpreservar\s+a\s+qualidade\b",
     r"\bevitar?\s+acidentes?\b",
 )
+ACCESSIBILITY_CLAIM_PATTERNS = (
+    r"\b(?:mobilidade reduzida|idos[oa]s?)\b.{0,100}\b(?:benefici|facilita|ideal|indicado|acess[ií]vel)\w*\b",
+    r"\b(?:benefici|facilita|ideal|indicado|acess[ií]vel)\w*\b.{0,100}\b(?:mobilidade reduzida|idos[oa]s?)\b",
+)
+UNVERIFIED_INSTALLATION_PATTERNS = (
+    r"\b(?:pode|podem|deve|devem)\s+ser\s+(?:instalad[oa]s?|fixad[oa]s?|montad[oa]s?)\b",
+    r"\b(?:instala[cç][aã]o|fixa[cç][aã]o)\s+(?:é|e)\s+(?:simples|f[aá]cil|vers[aá]til)\b",
+)
+UNSOURCED_TREND_PATTERNS = (
+    r"\btem\s+se\s+destacado\b",
+    r"\b(?:é|e)\s+(?:uma\s+)?op[cç][aã]o\s+popular\b",
+)
+CAUSAL_BENEFIT_PATTERNS = (
+    r"\breduz\w*\b.{0,70}\b(?:tempo|estresse|esfor[cç]o|movimento)\b",
+    r"\bmenos\s+(?:estressante|cansativo)\b",
+)
 NUMERIC_SPEC = re.compile(
     r"\b\d+(?:[.,]\d+)?\s*(?:kg|g|cm|mm|m|l|ml|w|v|ah|mah|nm|psi|bar|%|hz|rpm|amp|ampere|amperes)\b",
     re.I,
@@ -174,6 +190,26 @@ def quality(article):
     for pattern in ABSOLUTE_CLAIM_PATTERNS:
         if re.search(pattern, folded, re.I):
             reasons.append("alegacao_absoluta_de_seguranca_ou_conservacao")
+            break
+
+    for pattern in ACCESSIBILITY_CLAIM_PATTERNS:
+        if re.search(pattern, folded, re.I):
+            reasons.append("alegacao_de_acessibilidade_nao_sustentada")
+            break
+
+    for pattern in UNVERIFIED_INSTALLATION_PATTERNS:
+        if re.search(pattern, folded, re.I):
+            reasons.append("instalacao_ou_fixacao_nao_confirmada")
+            break
+
+    for pattern in UNSOURCED_TREND_PATTERNS:
+        if re.search(pattern, folded, re.I):
+            reasons.append("alegacao_de_popularidade_sem_fonte")
+            break
+
+    for pattern in CAUSAL_BENEFIT_PATTERNS:
+        if re.search(pattern, folded, re.I):
+            reasons.append("beneficio_funcional_nao_sustentado")
             break
 
     if re.search(r"\b(?:pre[cç]o|desconto|estoque)\s+(?:de|por|atual|agora)\b", folded, re.I):

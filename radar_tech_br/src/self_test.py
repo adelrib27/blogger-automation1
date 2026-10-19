@@ -67,6 +67,18 @@ def main():
     fake_test = build(item(), plan(), editorial(bad="Nós testamos este produto e comprovamos o resultado."), enforce=False)
     assert "alegacao_de_teste_nao_comprovada" in fake_test["quality"]["reasons"]
 
+    accessibility = build(item(), plan(), editorial(bad="Pessoas com mobilidade reduzida ou idosos podem se beneficiar porque o produto facilita o acesso."), enforce=False)
+    assert "alegacao_de_acessibilidade_nao_sustentada" in accessibility["quality"]["reasons"]
+
+    installation = build(item(), plan(), editorial(bad="O suporte pode ser instalado em paredes laterais do ambiente."), enforce=False)
+    assert "instalacao_ou_fixacao_nao_confirmada" in installation["quality"]["reasons"]
+
+    trend = build(item(), plan(), editorial(bad="Esse tipo de produto tem se destacado e é uma opção popular."), enforce=False)
+    assert "alegacao_de_popularidade_sem_fonte" in trend["quality"]["reasons"]
+
+    causal = build(item(), plan(), editorial(bad="A solução reduz o tempo gasto na rotina e deixa o uso menos estressante."), enforce=False)
+    assert "beneficio_funcional_nao_sustentado" in causal["quality"]["reasons"]
+
     copied = build(item(), plan(), editorial(bad=item()["product"]), enforce=False)
     assert "titulo_comercial_copiado_no_corpo" in copied["quality"]["reasons"]
 
@@ -85,7 +97,7 @@ def main():
     meta = meta_description(plan())
     assert 110 <= len(meta) <= 160, len(meta)
 
-    print("Self-test Radar Tech BR vNext: 10/10 OK")
+    print("Self-test Radar Tech BR vNext: 14/14 OK")
 
 
 if __name__ == "__main__":

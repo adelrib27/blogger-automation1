@@ -246,6 +246,11 @@ def universal_article_rules(item):
 - Evite frases genéricas repetitivas e conclusões vazias.
 - Não dê instruções passo a passo de reparos críticos, elevação de veículo, corte, solda ou intervenções elétricas.
 - Não faça alegações absolutas de segurança, proteção, durabilidade ou conservação.
+- Não associe o produto a benefícios para idosos, pessoas com mobilidade reduzida, acessibilidade, saúde ou redução de esforço sem fonte verificável.
+- Não diga que um produto é popular, que “tem se destacado” ou faça afirmações de tendência sem fonte verificável.
+- Não presuma instalação, fixação em parede/teto, montagem, forma de apoio ou local de uso apenas pelo nome do produto; quando isso não estiver confirmado, oriente a conferir anúncio ou manual.
+- Não prometa redução de tempo, esforço, estresse ou movimentos e não deduza economia de espaço, uso vertical ou outros benefícios causais apenas a partir de uma característica do produto.
+- Descreva funcionamento específico somente quando estiver sustentado pelo contexto disponível; caso contrário, trate como critério a verificar.
 - Use naturalmente a palavra-chave principal.
 - Inclua contexto de uso, para quem a solução pode fazer sentido, limitações relevantes e o que conferir antes da compra.
 - Não escreva CTA, links, imagem do produto, preço ou bloco de afiliado; o código insere isso depois.
