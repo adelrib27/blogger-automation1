@@ -5,7 +5,6 @@
   "editorial_policy": "produto real -> rotação entre 8 categorias -> título editorial -> Qwen3 -> CTA contextual -> imagem real -> gate -> publicação",
   "category_rotation_cycle": 1,
   "category_rotation_pending": [
-    "Organização",
     "Sala",
     "Quarto",
     "Cozinha",
@@ -14,24 +13,24 @@
     "Cama, Mesa e Banho"
   ],
   "max_per_keyword": 1,
-  "total": 18,
+  "total": 19,
   "skipped": {
-    "limite_por_intencao": 10,
+    "limite_por_intencao": 8,
+    "produto_ja_publicado": 2,
     "produto_quase_duplicado": 1,
-    "produto_semelhante_ja_publicado": 2,
-    "produto_ja_publicado": 1
+    "produto_semelhante_ja_publicado": 2
   },
   "items": [
     {
-      "id": 20,
-      "shopee_item_id": "58205899287",
-      "product": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
-      "affiliate_link": "https://s.shopee.com.br/W7XLeAojY",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lj-ml6nlbjv4sg4ac",
-      "shop_name": "Gloss Box",
-      "source_keyword": "caixa organizadora",
-      "category": "Organização",
-      "opportunity_score": 64.22,
+      "id": 2,
+      "shopee_item_id": "58208566937",
+      "product": "Tapete Sala Quarto Aveludado Premium Geométrico Antiderrapante 1x 1,40 2x 1,40 2x 2,40 Várias Cores",
+      "affiliate_link": "https://s.shopee.com.br/2BFlKihrbF",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m1-mmv2wi1nnksg7a",
+      "shop_name": "A CASA DO LAR",
+      "source_keyword": "tapete sala",
+      "category": "Sala",
+      "opportunity_score": 66.14,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -42,88 +41,7 @@
         "category_rotation_required": true
       },
       "generation_attempts": 1,
-      "last_error": "geração editorial bloqueada após revisões: artigo curto: 463"
-    },
-    {
-      "id": 10,
-      "shopee_item_id": "22294942726",
-      "product": "Kit 100 Saco Organizador Lençol Toalha 28 x 34 x 5 Pvc Guarda Roupa Armário",
-      "affiliate_link": "https://s.shopee.com.br/1BGkk3JLk",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820ld-mlxdq7z2ae4gc7",
-      "shop_name": "Isaplastic",
-      "source_keyword": "organizador armario",
-      "category": "Organização",
-      "opportunity_score": 63.7,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "topic": "Como organizar roupas e acessórios no armário",
-      "editorial_title": "Como organizar roupas e acessórios no armário",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 582,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 45,
-          "meta_description_length": 148,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "last_error": "",
-      "wordpress_post_id": 149,
-      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-organizar-roupas-e-acessorios-no-armario/",
-      "featured_media": 150,
-      "seo_synced": true
-    },
-    {
-      "id": 13,
-      "shopee_item_id": "21071530577",
-      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
-      "affiliate_link": "https://s.shopee.com.br/2gC1vdK1xi",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7augbm6ixf693",
-      "shop_name": "Na Web Group De Marcas",
-      "source_keyword": "varal de chao",
-      "category": "Organização",
-      "opportunity_score": 61.48,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
-    },
-    {
-      "id": 2,
-      "shopee_item_id": "58208566937",
-      "product": "Tapete Sala Quarto Aveludado Premium Geométrico Antiderrapante 1x 1,40 2x 1,40 2x 2,40 Várias Cores",
-      "affiliate_link": "https://s.shopee.com.br/2BFlKihrbF",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m1-mmv2wi1nnksg7a",
-      "shop_name": "A CASA DO LAR",
-      "source_keyword": "tapete sala",
-      "category": "Sala",
-      "opportunity_score": 66.13,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:549"
     },
     {
       "id": 1,
@@ -134,16 +52,37 @@
       "shop_name": "Innova Embalagens",
       "source_keyword": "organizador guarda roupa",
       "category": "Quarto",
-      "opportunity_score": 77.66,
+      "opportunity_score": 77.65,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "PUBLISHED",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "topic": "Como organizar roupas e cobertores de forma prática",
+      "editorial_title": "Como organizar roupas e cobertores de forma prática",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 624,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 51,
+          "meta_description_length": 153,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "last_error": "",
+      "wordpress_post_id": 152,
+      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-organizar-roupas-e-cobertores-de-forma-pratica/",
+      "featured_media": 153,
+      "seo_synced": true
     },
     {
       "id": 4,
@@ -154,7 +93,7 @@
       "shop_name": "Debela Home",
       "source_keyword": "travesseiro",
       "category": "Quarto",
-      "opportunity_score": 65.41,
+      "opportunity_score": 65.45,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -174,7 +113,7 @@
       "shop_name": "Haute Decor",
       "source_keyword": "abajur quarto",
       "category": "Quarto",
-      "opportunity_score": 64.74,
+      "opportunity_score": 64.76,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -194,7 +133,7 @@
       "shop_name": "Invention Hunters",
       "source_keyword": "potes hermeticos",
       "category": "Cozinha",
-      "opportunity_score": 63.92,
+      "opportunity_score": 63.99,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -214,7 +153,27 @@
       "shop_name": "Mabê Store",
       "source_keyword": "fatiador de legumes",
       "category": "Cozinha",
-      "opportunity_score": 60.84,
+      "opportunity_score": 60.92,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 26,
+      "shopee_item_id": "58204421120",
+      "product": "Escorredor de Louças Rack Aço Carbono Organizador Preto",
+      "affiliate_link": "https://s.shopee.com.br/2LZCJCtZAT",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-81ztc-mk8xynsgml1d6f",
+      "shop_name": "KING BOUTIQUES",
+      "source_keyword": "escorredor de loucas",
+      "category": "Cozinha",
+      "opportunity_score": 59.35,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -234,7 +193,7 @@
       "shop_name": "MG Enxovais",
       "source_keyword": "tapete banheiro",
       "category": "Banheiro",
-      "opportunity_score": 64.11,
+      "opportunity_score": 64.09,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -246,15 +205,15 @@
       }
     },
     {
-      "id": 21,
-      "shopee_item_id": "58254362999",
-      "product": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
-      "affiliate_link": "https://s.shopee.com.br/1qcuw7a4Ct",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lp-msbgvjhckkcm23",
-      "shop_name": "StarMove",
+      "id": 24,
+      "shopee_item_id": "58257638413",
+      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "affiliate_link": "https://s.shopee.com.br/9Kivru7aEi",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m6-mrg17tz0uy2v01",
+      "shop_name": "MULTIORIENTAL",
       "source_keyword": "toalheiro banheiro",
       "category": "Banheiro",
-      "opportunity_score": 60.71,
+      "opportunity_score": 61.01,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -289,12 +248,12 @@
       "id": 3,
       "shopee_item_id": "23892379352",
       "product": "1/2/4 PCS Luminária Parede Solar  100 Leds Com Sensor de Movimento Jardim Externa Prova D'água Casa",
-      "affiliate_link": "https://s.shopee.com.br/80DZMZ3j7Z",
+      "affiliate_link": "https://s.shopee.com.br/AKbUKM5wVU",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-825b9-msuv9j38rl6t71",
       "shop_name": "NEW WORD MAGAZINE",
       "source_keyword": "luminaria solar jardim",
       "category": "Área Externa",
-      "opportunity_score": 65.79,
+      "opportunity_score": 65.78,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -309,12 +268,12 @@
       "id": 11,
       "shopee_item_id": "23695000959",
       "product": "Pedra Dolomita Natural Branca Seixo Para Decoração Vaso Fonte Canteiro Pedra Jardim",
-      "affiliate_link": "https://s.shopee.com.br/5fpdVAqCdz",
+      "affiliate_link": "https://s.shopee.com.br/AKbUKMJD5a",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-824i9-mpjkk5tddzwuc7",
       "shop_name": "WR Shopping da Jardinagem",
       "source_keyword": "vaso jardim",
       "category": "Área Externa",
-      "opportunity_score": 63.13,
+      "opportunity_score": 63.14,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -334,7 +293,7 @@
       "shop_name": "Nosso Lar Enxovais",
       "source_keyword": "lencol casal",
       "category": "Cama, Mesa e Banho",
-      "opportunity_score": 64.14,
+      "opportunity_score": 64.12,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -354,7 +313,7 @@
       "shop_name": "Loja do Koala",
       "source_keyword": "protetor de colchao",
       "category": "Cama, Mesa e Banho",
-      "opportunity_score": 62.23,
+      "opportunity_score": 62.26,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -394,7 +353,69 @@
       "shop_name": "BENTO’S DECOR",
       "source_keyword": "vaso decorativo",
       "category": "Decoração",
-      "opportunity_score": 59.71,
+      "opportunity_score": 59.75,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 20,
+      "shopee_item_id": "58205899287",
+      "product": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
+      "affiliate_link": "https://s.shopee.com.br/W7XLeAojY",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lj-ml6nlbjv4sg4ac",
+      "shop_name": "Gloss Box",
+      "source_keyword": "caixa organizadora",
+      "category": "Organização",
+      "opportunity_score": 64.22,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 463",
+      "generation_attempts": 1
+    },
+    {
+      "id": 13,
+      "shopee_item_id": "21071530577",
+      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
+      "affiliate_link": "https://s.shopee.com.br/2gC1vdK1xi",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7augbm6ixf693",
+      "shop_name": "Na Web Group De Marcas",
+      "source_keyword": "varal de chao",
+      "category": "Organização",
+      "opportunity_score": 61.48,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 25,
+      "shopee_item_id": "23798178107",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "affiliate_link": "https://s.shopee.com.br/1LgeLC2hge",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-81z1k-mfvhv2o7wtfk77",
+      "shop_name": "Maison Plus",
+      "source_keyword": "organizador armario",
+      "category": "Organização",
+      "opportunity_score": 60.13,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {

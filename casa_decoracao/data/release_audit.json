@@ -2,15 +2,14 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 18,
+    "total": 19,
     "draft_ready": 1,
-    "rejected": 16,
+    "rejected": 17,
     "not_generated": 1,
-    "published_history": 6,
+    "published_history": 7,
     "rotation_cycle": 1,
     "rotation_pending": [
       "Sala",
-      "Quarto",
       "Cozinha",
       "Banheiro",
       "Área Externa",
@@ -19,85 +18,11 @@
   },
   "items": [
     {
-      "id": 20,
-      "shopee_item_id": "58205899287",
-      "category": "Organização",
-      "product": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 10,
-      "shopee_item_id": "22294942726",
-      "category": "Organização",
-      "product": "Kit 100 Saco Organizador Lençol Toalha 28 x 34 x 5 Pvc Guarda Roupa Armário",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 149,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 582,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 45,
-          "meta_description_length": 148,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 13,
-      "shopee_item_id": "21071530577",
-      "category": "Organização",
-      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 800,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 44,
-          "meta_description_length": 122,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
       "id": 2,
       "shopee_item_id": "58208566937",
       "category": "Sala",
       "product": "Tapete Sala Quarto Aveludado Premium Geométrico Antiderrapante 1x 1,40 2x 1,40 2x 2,40 Várias Cores",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -132,32 +57,19 @@
       "shopee_item_id": "58210221228",
       "category": "Quarto",
       "product": "Kit 5 Saco Organizador zíper Cobertor Casaco Guarda Roupa Anti-Poeira Anti-Umidade Multiuso 44 x 20 x 38",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 152,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 911,
-          "h2_count": 4,
+          "word_count": 624,
+          "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 58,
-          "meta_description_length": 144,
-          "cta_count": 1
+          "seo_title_length": 51,
+          "meta_description_length": 153,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -309,6 +221,42 @@
       }
     },
     {
+      "id": 26,
+      "shopee_item_id": "58204421120",
+      "category": "Cozinha",
+      "product": "Escorredor de Louças Rack Aço Carbono Organizador Preto",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "categoria_invalida",
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 725,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 51,
+          "meta_description_length": 153,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
       "id": 8,
       "shopee_item_id": "21034795993",
       "category": "Banheiro",
@@ -346,22 +294,23 @@
       }
     },
     {
-      "id": 21,
-      "shopee_item_id": "58254362999",
+      "id": 24,
+      "shopee_item_id": "58257638413",
       "category": "Banheiro",
-      "product": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
+      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
         "reasons": [
+          "alegacao_absoluta_nao_sustentada",
           "chamada_consulta_contextual_quantidade_invalida:0",
           "disclosure_afiliado_quantidade_invalida:0",
           "focus_keyword_ausente_ou_invalida",
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
+          "poucos_h2:3",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
@@ -371,11 +320,11 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 917,
-          "h2_count": 4,
+          "word_count": 831,
+          "h2_count": 3,
           "internal_links": 1,
-          "seo_title_length": 51,
-          "meta_description_length": 129,
+          "seo_title_length": 54,
+          "meta_description_length": 132,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -627,6 +576,96 @@
           "internal_links": 1,
           "seo_title_length": 49,
           "meta_description_length": 127,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 20,
+      "shopee_item_id": "58205899287",
+      "category": "Organização",
+      "product": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 13,
+      "shopee_item_id": "21071530577",
+      "category": "Organização",
+      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 800,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 44,
+          "meta_description_length": 122,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 25,
+      "shopee_item_id": "23798178107",
+      "category": "Organização",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "categoria_invalida",
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:3",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida",
+          "word_count_alto:1254"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 1254,
+          "h2_count": 3,
+          "internal_links": 1,
+          "seo_title_length": 56,
+          "meta_description_length": 139,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
