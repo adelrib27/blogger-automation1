@@ -1,0 +1,100 @@
+name: Casa e Decoração — Bootstrap migração v3
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "casa_decoracao/migration_v3_kickoff.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: casa-decoracao-migration-v3
+  cancel-in-progress: false
+
+jobs:
+  migrar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Reconstruir e aplicar payload v3
+        run: |
+          set -euo pipefail
+          cat casa_decoracao/migration_v3/part0{1,2,3,4,5,6,7,8,9} > /tmp/casa_v3.b64
+          base64 -d /tmp/casa_v3.b64 > /tmp/casa_v3.zip
+          unzip -t /tmp/casa_v3.zip
+          unzip -qo /tmp/casa_v3.zip -d .
+
+      - name: Validar base antes do commit
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            casa_decoracao/src/category_rotation.py \
+            casa_decoracao/src/shopee_oportunidades_casa.py \
+            casa_decoracao/src/build_editorial_queue.py \
+            casa_decoracao/src/cta_context.py \
+            casa_decoracao/src/editorial_normalizer.py \
+            casa_decoracao/src/quality_gate.py \
+            casa_decoracao/src/generate_articles.py \
+            casa_decoracao/src/publish_generated.py \
+            casa_decoracao/src/audit_release_candidates.py \
+            casa_decoracao/src/self_test.py \
+            casa_decoracao/src/cta_card_self_test.py
+          python casa_decoracao/src/category_rotation.py
+          python casa_decoracao/src/self_test.py
+          python casa_decoracao/src/cta_card_self_test.py
+          python -m json.tool casa_decoracao/config/politica_editorial.json >/dev/null
+          python -m json.tool casa_decoracao/config/shopee_intent_rules.json >/dev/null
+          python -m json.tool casa_decoracao/config/shopee_oportunidades.json >/dev/null
+          python -m json.tool casa_decoracao/config/wordpress.json >/dev/null
+          python -m json.tool casa_decoracao/data/category_rotation.json >/dev/null
+          python -m json.tool casa_decoracao/data/publication_history.json >/dev/null
+
+      - name: Commitar base v3 sem liberar publicação automática
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            casa_decoracao/src/category_rotation.py \
+            casa_decoracao/src/shopee_oportunidades_casa.py \
+            casa_decoracao/src/build_editorial_queue.py \
+            casa_decoracao/src/cta_context.py \
+            casa_decoracao/src/editorial_normalizer.py \
+            casa_decoracao/src/quality_gate.py \
+            casa_decoracao/src/generate_articles.py \
+            casa_decoracao/src/publish_generated.py \
+            casa_decoracao/src/audit_release_candidates.py \
+            casa_decoracao/src/self_test.py \
+            casa_decoracao/src/cta_card_self_test.py \
+            casa_decoracao/config/politica_editorial.json \
+            casa_decoracao/config/shopee_intent_rules.json \
+            casa_decoracao/config/shopee_oportunidades.json \
+            casa_decoracao/config/wordpress.json \
+            casa_decoracao/data/category_rotation.json \
+            casa_decoracao/data/publication_history.json \
+            .github/workflows/casa_editorial_safe_v3.yml \
+            .github/workflows/casa_editorial_manual.yml \
+            .github/workflows/casa_editorial_publish_schedule.yml \
+            .github/workflows/casa_editorial_audit.yml \
+            .github/workflows/casa_shopee_oportunidades.yml \
+            .github/workflows/casa_decoracao_shopee.yml
+          if git diff --cached --quiet; then
+            echo "Base v3 já aplicada."
+            exit 0
+          fi
+          git commit -m "feat(casa): implantar base editorial v3 segura"
+          git pull --rebase origin main
+          git push origin HEAD:main
