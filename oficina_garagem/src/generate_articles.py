@@ -40,6 +40,45 @@ def creds():
     return account, token
 
 
+def _text_value(value):
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, dict):
+        for key in ("content", "text", "output_text", "response"):
+            if key in value:
+                text = _text_value(value.get(key))
+                if text:
+                    return text
+        message = value.get("message")
+        if message is not None:
+            text = _text_value(message)
+            if text:
+                return text
+    if isinstance(value, list):
+        for part in value:
+            text = _text_value(part)
+            if text:
+                return text
+    return ""
+
+
+def extract_text(payload):
+    result = payload.get("result") if isinstance(payload, dict) else None
+    if not isinstance(result, dict):
+        return ""
+    for key in ("response", "text", "output_text"):
+        text = _text_value(result.get(key))
+        if text:
+            return text
+    for choice in result.get("choices") or []:
+        if not isinstance(choice, dict):
+            continue
+        text = _text_value(choice.get("message"))
+        if text:
+            return text
+    return ""
+
+
 def ai(prompt, retries=3):
     account, token = creds()
     prompt = str(prompt or "").strip()
@@ -64,17 +103,16 @@ def ai(prompt, retries=3):
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "OficinaGaragem-Editorial/2.5",
+                "User-Agent": "OficinaGaragem-Editorial/2.6",
             },
         )
         try:
             with urllib.request.urlopen(req, timeout=120) as response:
                 payload = json.loads(response.read().decode("utf-8", "replace"))
-            result = payload.get("result") if isinstance(payload, dict) else None
-            text = (result or {}).get("response") if isinstance(result, dict) else ""
+            text = extract_text(payload)
             if text:
-                return text.strip()
-            last = "resposta vazia"
+                return text
+            last = "resposta vazia ou em formato não reconhecido"
         except Exception as exc:
             last = str(exc)
         if attempt + 1 < retries:
