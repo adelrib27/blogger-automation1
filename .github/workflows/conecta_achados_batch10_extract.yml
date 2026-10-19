@@ -1,0 +1,45 @@
+name: Conecta Achados — Extrair 10 produtos Shopee
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "conecta_achados/src/extract_batch10.py"
+      - ".github/workflows/conecta_achados_batch10_extract.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extrair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install requests cloudinary pillow
+
+      - name: Extrair 10 produtos reais da Shopee
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+        run: python conecta_achados/src/extract_batch10.py
+
+      - name: Salvar lote extraído
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+adelrib27@users.noreply.github.com"
+          git add conecta_achados/data/batch_10_products.json
+          git commit -m "Conecta Achados: salvar lote inicial de 10 produtos Shopee"
+          git pull --rebase origin main
+          git push origin HEAD:main
