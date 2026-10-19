@@ -1,0 +1,2816 @@
+{
+  "version": "2.3",
+  "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
+  "primarySemanticFilter": {
+    "input": 510,
+    "accepted": 262,
+    "rejected": 248
+  },
+  "reserveSemanticFilter": null,
+  "diversity": {
+    "policy": {
+      "enabled": true,
+      "max_per_shop": 3,
+      "max_per_keyword": 3,
+      "max_per_category": 7,
+      "relaxed_caps": {
+        "max_per_shop": 5,
+        "max_per_keyword": 5,
+        "max_per_category": 9
+      },
+      "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
+    },
+    "selectionPasses": {
+      "strict": 30,
+      "relaxed": 0,
+      "fallback": 0
+    },
+    "shopDistribution": [
+      [
+        "844004880",
+        3
+      ],
+      [
+        "1092274438",
+        3
+      ],
+      [
+        "1028459403",
+        2
+      ],
+      [
+        "411693079",
+        2
+      ],
+      [
+        "832036467",
+        1
+      ],
+      [
+        "1258554467",
+        1
+      ],
+      [
+        "832040275",
+        1
+      ],
+      [
+        "1520942179",
+        1
+      ],
+      [
+        "427457955",
+        1
+      ],
+      [
+        "1332034013",
+        1
+      ],
+      [
+        "728389176",
+        1
+      ],
+      [
+        "1016471898",
+        1
+      ],
+      [
+        "1180298845",
+        1
+      ],
+      [
+        "305201598",
+        1
+      ],
+      [
+        "1310142226",
+        1
+      ],
+      [
+        "1609020700",
+        1
+      ],
+      [
+        "408715442",
+        1
+      ],
+      [
+        "1626437729",
+        1
+      ],
+      [
+        "1006215031",
+        1
+      ],
+      [
+        "1212721731",
+        1
+      ],
+      [
+        "1800621646",
+        1
+      ],
+      [
+        "1534000949",
+        1
+      ],
+      [
+        "807597901",
+        1
+      ],
+      [
+        "1663630412",
+        1
+      ]
+    ],
+    "keywordDistribution": [
+      [
+        "pano microfibra automotivo",
+        3
+      ],
+      [
+        "parafusadeira",
+        3
+      ],
+      [
+        "aspirador automotivo",
+        3
+      ],
+      [
+        "organizador porta malas",
+        3
+      ],
+      [
+        "painel ferramentas",
+        3
+      ],
+      [
+        "jogo de chaves",
+        2
+      ],
+      [
+        "maleta ferramentas",
+        2
+      ],
+      [
+        "lavadora alta pressao",
+        2
+      ],
+      [
+        "luva de protecao",
+        2
+      ],
+      [
+        "caixa ferramentas",
+        1
+      ],
+      [
+        "furadeira",
+        1
+      ],
+      [
+        "suporte celular carro",
+        1
+      ],
+      [
+        "protetor auricular",
+        1
+      ],
+      [
+        "jogo de soquetes",
+        1
+      ],
+      [
+        "escova limpeza automotiva",
+        1
+      ],
+      [
+        "compressor de ar portatil",
+        1
+      ]
+    ],
+    "categoryDistribution": [
+      [
+        "Ferramentas",
+        7
+      ],
+      [
+        "Acessorios Automotivos",
+        7
+      ],
+      [
+        "Organizacao de Garagem",
+        6
+      ],
+      [
+        "Limpeza e Conservacao",
+        6
+      ],
+      [
+        "Seguranca e Protecao",
+        3
+      ],
+      [
+        "Manutencao",
+        1
+      ]
+    ]
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "itemId": 55700815031,
+      "productName": "Caixa Ferramentas Sanfonada 7 Gavetas C/Alça Fixa Marcon",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "caixa ferramentas"
+      ],
+      "opportunityScore": 83.09,
+      "shopName": "MBC FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/4LKFYft2dm"
+    },
+    {
+      "rank": 2,
+      "itemId": 22298037153,
+      "productName": "Furadeira De Impacto Com Kit 650w 10mm 110V G1905K/BR1 Gamma",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "opportunityScore": 81.32,
+      "shopName": "MBC FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/5q91Fzqt0N"
+    },
+    {
+      "rank": 3,
+      "itemId": 20699205697,
+      "productName": "Pano de Limpeza Multiuso Kit 10 Panos De Limpeza Microfibra Super Absorvente , Limpeza Doméstica e Automotiva de Carro",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "opportunityScore": 75.3,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/5AtMYD7fsh"
+    },
+    {
+      "rank": 4,
+      "itemId": 22892833180,
+      "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas para Reparo de Carros / Conjuntos de Chaves",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "jogo de chaves",
+        "caixa ferramentas"
+      ],
+      "opportunityScore": 74.79,
+      "shopName": "RISESHOP_brasil",
+      "offerLink": "https://s.shopee.com.br/3Vl8Z7nopZ"
+    },
+    {
+      "rank": 5,
+      "itemId": 29535501772,
+      "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas Completa Reversível Soquetes Maleta",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "jogo de chaves",
+        "jogo de soquetes",
+        "caixa ferramentas",
+        "maleta ferramentas"
+      ],
+      "opportunityScore": 72.82,
+      "shopName": "HONG11.br",
+      "offerLink": "https://s.shopee.com.br/3LRiMpwv08"
+    },
+    {
+      "rank": 6,
+      "itemId": 21455455470,
+      "productName": "Mini Parafusadeira sem Fio Recarregável USB com Maleta 49 peças  MQL-PFU49A EXBOM",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira"
+      ],
+      "opportunityScore": 71.44,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/2qVPgTtRIS"
+    },
+    {
+      "rank": 7,
+      "itemId": 22391737343,
+      "productName": "2000mAh Aspirador Portátil Automotivo Potente Recarregável Premium Super Mega Oferta",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 70.69,
+      "shopName": "P&H  Oficial",
+      "offerLink": "https://s.shopee.com.br/1Lgdz9ibO3"
+    },
+    {
+      "rank": 8,
+      "itemId": 22598454534,
+      "productName": "Kit de Ferramentas 46 Peças com Catraca Soquete – Maleta Portátil – Ideal para Reparos Domésticos MN",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "maleta ferramentas"
+      ],
+      "opportunityScore": 69.05,
+      "shopName": "MANIA UTILIDADES E AFINS LTDA",
+      "offerLink": "https://s.shopee.com.br/9fLluTlwC7"
+    },
+    {
+      "rank": 9,
+      "itemId": 49466540071,
+      "productName": "Pano Microfibra Toalha Grande Limpar Casa moveis Secar Carro Automotivo Lavagem Secagem Polimento",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "opportunityScore": 67.4,
+      "shopName": "TMZ UTILIDADES",
+      "offerLink": "https://s.shopee.com.br/8AWy7iwFpm"
+    },
+    {
+      "rank": 10,
+      "itemId": 46668803829,
+      "productName": "Lavadora de Alta Pressão Portátil 1500Psi 1400w 110v Karcher",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lavadora alta pressao"
+      ],
+      "opportunityScore": 66.95,
+      "shopName": "MBC FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/3B8IAXNwzm"
+    },
+    {
+      "rank": 11,
+      "itemId": 22892919440,
+      "productName": "Parafusadeira elétrica de precisão automática recarregável 68 em 1 ponteiras imantadas EXBOM-CKE6800",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira"
+      ],
+      "opportunityScore": 66.38,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/2gBzUAu4dR"
+    },
+    {
+      "rank": 12,
+      "itemId": 58256818829,
+      "productName": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "suporte celular carro"
+      ],
+      "opportunityScore": 66.26,
+      "shopName": "Umicc shop",
+      "offerLink": "https://s.shopee.com.br/BUgb0idwG"
+    },
+    {
+      "rank": 13,
+      "itemId": 58217601055,
+      "productName": "Parafusadeira Furadeira 25V Nakasaki Sem Fio a Bateria Profissional Kit Completo com Maleta",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira",
+        "furadeira"
+      ],
+      "opportunityScore": 65.83,
+      "shopName": "MAQ TOOLS",
+      "offerLink": "https://s.shopee.com.br/6fi8FWjNnM"
+    },
+    {
+      "rank": 14,
+      "itemId": 22394334585,
+      "productName": "Protetor Auricular Silicone com Cordão EPI Auditivo Plug Ouvido – Escolha a Quantidade",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "protetor auricular"
+      ],
+      "opportunityScore": 65.57,
+      "shopName": "GTEPIS Comercio e Participações",
+      "offerLink": "https://s.shopee.com.br/Lo6nKzGx2"
+    },
+    {
+      "rank": 15,
+      "itemId": 23594156062,
+      "productName": "Kit 10 Panos de Limpeza Microfibra Alta Absorção Flanela Automotivo Carro Pia 30x30cm Vidro Multiuso Pano De Limpeza",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "opportunityScore": 65.35,
+      "shopName": "JWC.EMPORIUM",
+      "offerLink": "https://s.shopee.com.br/8V9oWKuz9o"
+    },
+    {
+      "rank": 16,
+      "itemId": 22992747047,
+      "productName": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "luva de protecao"
+      ],
+      "opportunityScore": 65.23,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/5fpd98VxlS"
+    },
+    {
+      "rank": 17,
+      "itemId": 23298660358,
+      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 64.89,
+      "shopName": "ONE LIGHT SHOP",
+      "offerLink": "https://s.shopee.com.br/2VsbNIeA1A"
+    },
+    {
+      "rank": 18,
+      "itemId": 22899126718,
+      "productName": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade, Fixação no Banco Traseiro, Rede Multiuso",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador porta malas"
+      ],
+      "opportunityScore": 64.83,
+      "shopName": "MELHOR ",
+      "offerLink": "https://s.shopee.com.br/6Altk2YvqX"
+    },
+    {
+      "rank": 19,
+      "itemId": 58250382369,
+      "productName": "Bolsa De Armazenamento De Ferramentas De Carro Em Feltro Para O Porta-Malas Do Carro",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador porta malas"
+      ],
+      "opportunityScore": 64.19,
+      "shopName": "UR.bestie🧡",
+      "offerLink": "https://s.shopee.com.br/2LZBB00j26"
+    },
+    {
+      "rank": 20,
+      "itemId": 58266648874,
+      "productName": "Jogo De Soquetes E Bits 27 Peças Para Reparos Automotivos E Casa 1/4 E 1/2",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "jogo de soquetes"
+      ],
+      "opportunityScore": 63.47,
+      "shopName": "SHR ELETRONICOS",
+      "offerLink": "https://s.shopee.com.br/6VOk8dgw2k"
+    },
+    {
+      "rank": 21,
+      "itemId": 22499407636,
+      "productName": "Luva Volk Ranhurada Original CA Protecao Trabalho EPI Segurança Lavar Louças Banheiro Tira Pelos",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "luva de protecao"
+      ],
+      "opportunityScore": 62.99,
+      "shopName": "JF ECOMMERCE",
+      "offerLink": "https://s.shopee.com.br/Lo6nKujdi"
+    },
+    {
+      "rank": 22,
+      "itemId": 24575870687,
+      "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "escova limpeza automotiva"
+      ],
+      "opportunityScore": 62.93,
+      "shopName": "Choice Oficial",
+      "offerLink": "https://s.shopee.com.br/9APVJYwdli"
+    },
+    {
+      "rank": 23,
+      "itemId": 58207052374,
+      "productName": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v ",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "compressor de ar portatil"
+      ],
+      "opportunityScore": 62.8,
+      "shopName": "GR7 Imports",
+      "offerLink": "https://s.shopee.com.br/3Vl6Ti8htZ"
+    },
+    {
+      "rank": 24,
+      "itemId": 58213601132,
+      "productName": "Bolsa de Armazenamento em Feltro para Porta-Malas do Carro, Organizador de Ferramentas e Acessórios Automotivos",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador porta malas"
+      ],
+      "opportunityScore": 62.74,
+      "shopName": "RunFu",
+      "offerLink": "https://s.shopee.com.br/7pu7j6SaSl"
+    },
+    {
+      "rank": 25,
+      "itemId": 23294140061,
+      "productName": "Lavadora De Alta Pressão Recarregável Sem Fio 48V Baterias Linha Premium Para Carros e Jardins",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lavadora alta pressao"
+      ],
+      "opportunityScore": 62.53,
+      "shopName": "ANXIN TECH LTDA",
+      "offerLink": "https://s.shopee.com.br/113naYafQx"
+    },
+    {
+      "rank": 26,
+      "itemId": 23391722517,
+      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 62.18,
+      "shopName": "BIG MO",
+      "offerLink": "https://s.shopee.com.br/1BNDmqjEi3"
+    },
+    {
+      "rank": 27,
+      "itemId": 57755036915,
+      "productName": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 61.96,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/BUgb14i6L"
+    },
+    {
+      "rank": 28,
+      "itemId": 22494655461,
+      "productName": "Kit Ferramentas 10 40 46 Peças Aço Cromo Vanádio Chave Soquete Maleta Estojo Para Carro Moto e Casa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "maleta ferramentas"
+      ],
+      "opportunityScore": 61.71,
+      "shopName": "ZAZU SHOP",
+      "offerLink": "https://s.shopee.com.br/9KivVrnCs1"
+    },
+    {
+      "rank": 29,
+      "itemId": 23293604983,
+      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 118x35 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 61.58,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/113naY1XPa"
+    },
+    {
+      "rank": 30,
+      "itemId": 23793600890,
+      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 89x52 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 61.48,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/qkNOF2AkX"
+    }
+  ],
+  "rejectedSample": [
+    {
+      "itemId": 23698208840,
+      "productName": "Adaptador Angular Para Parafusadeira 105 Graus PROFISSIONAL",
+      "shopName": "MULTIORIENTAL",
+      "keywords": [
+        "parafusadeira"
+      ],
+      "evaluations": {
+        "parafusadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "adaptador angular"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22298215521,
+      "productName": "Adaptador Angular Para Parafusadeira 105 Graus PROFISSIONAL",
+      "shopName": "DeinShop",
+      "keywords": [
+        "parafusadeira"
+      ],
+      "evaluations": {
+        "parafusadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "adaptador angular"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22699146351,
+      "productName": "Adaptador para Parafusadeira Encaixe 1/4 Angular Magnético Profissional",
+      "shopName": "Planeta Dig",
+      "keywords": [
+        "parafusadeira"
+      ],
+      "evaluations": {
+        "parafusadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "adaptador para parafusadeira"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22599380159,
+      "productName": "Cinto Duplo Preto Solze Porta Parafusadeira Ferramentas + Multiuso",
+      "shopName": "Solze & Holger",
+      "keywords": [
+        "parafusadeira"
+      ],
+      "evaluations": {
+        "parafusadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "porta parafusadeira",
+            "cinto duplo"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 20797417922,
+      "productName": "Cinto Duplo Solze Verde Militar para ferramentas. Bolsa Multiuso + Coldre para parafusadeira + cinto acolchoado e fivela",
+      "shopName": "SOLZE OFICIAL",
+      "keywords": [
+        "parafusadeira"
+      ],
+      "evaluations": {
+        "parafusadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cinto duplo"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23194652778,
+      "productName": "Kit Jogo 16 Brocas Estojo Ferro Concreto Madeira Videa Aço Para Furadeira - HSS Aço Rápido",
+      "shopName": "MRMUNDOUTILSHOP",
+      "keywords": [
+        "furadeira",
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "furadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "kit jogo 16 brocas"
+          ],
+          "matched": []
+        },
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo",
+              "kit"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58264788999,
+      "productName": "Coletor de Poeira para Furadeira Drill Dust Collector em PLA 3D Preto Branco Cinza",
+      "shopName": "Nexus3Dlab",
+      "keywords": [
+        "furadeira"
+      ],
+      "evaluations": {
+        "furadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "coletor de poeira",
+            "dust collector"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22794271951,
+      "productName": "JOGO 5 DISCOS DE CORTE MADEIRA 24 DENTES SERRA CIRCULAR MARCENEIRO PEDREIRO CONSTRUTOR",
+      "shopName": "KIKA UTILIDADES",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21499674796,
+      "productName": "5pcs Jogo De Lima Rotativa Grossa Aço Para Madeira, Metal e Escultura",
+      "shopName": "SUPERMERCADO RJ",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22493876691,
+      "productName": "Jogo 10/15 Brocas Diamantadas Serra Copo furar Vidro Granito Ceramica 6 a 50 mm kit ferramentas",
+      "shopName": "ManufaturaPrecisa",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo",
+              "kit"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 48455747079,
+      "productName": "Bits Magnético Ponteira Philips Parafusadeira Ph2 Jogo 6 Pcs Imantado Antiderrapante Com Imã Sextavado",
+      "shopName": "Jialvo.br",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 28453771048,
+      "productName": "30pcs/20pcs/10pcs Adivinhe Ovos De Adivinhação Chave Tesoura De Rosto E Brinquedos Torção Presente Criativo Em Estoque",
+      "shopName": "PuPu Store.br",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "chave"
+            ]
+          ],
+          "missing": [
+            [
+              "jogo",
+              "kit"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22999247409,
+      "productName": "Jogo 6 Ponteiras Philips Magnéticos PH2 de Impacto Anti Derrapante Parafusadeira Bits Cruzado",
+      "shopName": "Global Kitchen Hub",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22699131975,
+      "productName": "Cabo 6A USB Tipo-C | Carregamento Rápido e Dados",
+      "shopName": "Kog Store ",
+      "keywords": [
+        "jogo de soquetes"
+      ],
+      "evaluations": {
+        "jogo de soquetes": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "soquete",
+              "soquetes"
+            ],
+            [
+              "jogo",
+              "kit",
+              "catraca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58270254411,
+      "productName": "Conjunto Alicates Profissional 3 Peças Bico Universal Corte PVC STARTOOLS",
+      "shopName": "PICFY",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58219184222,
+      "productName": "Conjunto Alicates Profissional 3 Peças Bico Universal Corte PVC STARTOOLS",
+      "shopName": "DUNIKA",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23194450705,
+      "productName": "Kit 3 mini Alicates  Aço Forjado Universal Corte e Bico Linha PREMIUM",
+      "shopName": "XIUPRIME999",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22399471744,
+      "productName": "Kit 5 Alicates Mini Corte Bico Universal Profissional",
+      "shopName": "XIUPRIME999",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58258118190,
+      "productName": "Kit 5 Peças Mini Alicates Profissional Corte Bico Universal Cabo Antiderrapante Jogo De Precisão",
+      "shopName": "XQW - ELETRÔNICOS E VARIEDADES",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58257835304,
+      "productName": "Kit Profissional 4 Alicates Universal Corte Bico E Pressão",
+      "shopName": "idemarketplace",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 44918972228,
+      "productName": "Conjunto Alicates Profissional 3 Peças Bico Universal Corte PVC STARTOOLS",
+      "shopName": "On the way group",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 18511752683,
+      "productName": "KIT 10 UN Caneta detector de voltagem e corrente elétrica digital LCD CNTT-D10 AC/DC/12V a 250V",
+      "shopName": "Trissolaris Vooloja",
+      "keywords": [
+        "multimetro digital"
+      ],
+      "evaluations": {
+        "multimetro digital": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "digital"
+            ]
+          ],
+          "missing": [
+            [
+              "multimetro",
+              "multímetro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58201806006,
+      "productName": "Alicate Amperímetro Digital Portátil - Preta",
+      "shopName": "Lelox Commerce",
+      "keywords": [
+        "multimetro digital"
+      ],
+      "evaluations": {
+        "multimetro digital": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "digital"
+            ]
+          ],
+          "missing": [
+            [
+              "multimetro",
+              "multímetro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22898749090,
+      "productName": "Alicate Amperimetro Digital Portatil Eletrico Com Tela Lcd Preto",
+      "shopName": "NILS STAR",
+      "keywords": [
+        "multimetro digital"
+      ],
+      "evaluations": {
+        "multimetro digital": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "digital"
+            ]
+          ],
+          "missing": [
+            [
+              "multimetro",
+              "multímetro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 20399893324,
+      "productName": "Chave Teste Digital de Corrente e Voltagem Thompson 12V a 220V – Alta Precisão e Segurança",
+      "shopName": "Shop Luluka fashion",
+      "keywords": [
+        "multimetro digital"
+      ],
+      "evaluations": {
+        "multimetro digital": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "digital"
+            ]
+          ],
+          "missing": [
+            [
+              "multimetro",
+              "multímetro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58266885844,
+      "productName": "Motocompressor Ar Schulz MS2,3 Jet Fácil Plus 1/3CV 220V Monofásico 60Hz Diafragma Portátil Amarelo",
+      "shopName": "Pet Anzai",
+      "keywords": [
+        "compressor de ar portatil"
+      ],
+      "evaluations": {
+        "compressor de ar portatil": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "portatil",
+              "portátil"
+            ]
+          ],
+          "missing": [
+            [
+              "compressor",
+              "inflador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58266746911,
+      "productName": "Enchedor Pneu Portátil Jump Starter Multifuncional Digital 6 em 1. Auxiliar de partida",
+      "shopName": "Ns Perpetuo",
+      "keywords": [
+        "compressor de ar portatil"
+      ],
+      "evaluations": {
+        "compressor de ar portatil": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "portatil",
+              "portátil",
+              "pneu"
+            ]
+          ],
+          "missing": [
+            [
+              "compressor",
+              "inflador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22794403369,
+      "productName": "Kit Com 10 Unidades de Porta Óculos Sol ou Grau Universal Para Carro Suporte Com Prendedor",
+      "shopName": "LMC Magazine",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 18598203413,
+      "productName": "Kit 2 Peças Suporte Para Copo Bebidas Universal Automotivo Carro Ajustável Preto",
+      "shopName": "SHR ELETRONICOS",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro",
+              "automotivo"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23294029203,
+      "productName": "Kit 2 Peças Suporte Para Copo Bebidas Universal Automotivo Carro Ajustável Preto",
+      "shopName": "XQW - ELETRÔNICOS E VARIEDADES",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro",
+              "automotivo"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 18699770181,
+      "productName": "Kit 2 Peças Suporte Para Copo Bebidas Universal Automotivo Carro Ajustável Preto",
+      "shopName": "RC - CINTOS E ACESSÓRIOS",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro",
+              "automotivo"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22699380141,
+      "productName": "360 ° Suporte Magnético Forte Para Telefone Carro , Design Dobrável , Vácuo Ajustável/Mesa/Uso Universal",
+      "shopName": "XIUPRIME999",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 45764540564,
+      "productName": "Suporte De Telefone Móvel Para Instalação De Carro De Plástico PP Ajustável De Largura Criativa/Navegação GPS Anti-Queda",
+      "shopName": "I LOVE SHOPPING",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 11091546110,
+      "productName": "Porta Telefone Universal Automóvel GPS Saída de Ar para Carro de 4-11 polegadas Telescópico Ajustável Expansível, Rotatível",
+      "shopName": " xnyocn Official store",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "suporte"
+            ],
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19899238225,
+      "productName": "Ventilador Mini Portátil Recarregável Com Clip P/ Carro Casa Carregamento USB Leve e com design moderno",
+      "shopName": "Miss Lin",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "suporte"
+            ],
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 56709684636,
+      "productName": "Suporte Para Copos Carro Tablet E Telefone , Ajustável Dispositivos De 4 A 14 Polegadas , Estável No Do Veículo Navegaçã",
+      "shopName": " xnyocn Official store",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 47118402818,
+      "productName": "Suporte Magnético de telefone para carro com sucção á vácuo 360 graus .",
+      "shopName": "Trade Global",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 12385073173,
+      "productName": "Mais Novo De 360 Graus De Rotação Do Carro Air Vent Mount Holder Suporte Para Ipad 1 3 4 mini 4-10 \"  Tablet Telefone Gps Etc",
+      "shopName": " xnyocn Official store",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22997617365,
+      "productName": "Suporte de Carro PARA PAINEL Curvo Veicular Articulado com Rotação De 360 Graus Universal  para Carro H'MASTON VENTOSA",
+      "shopName": "BRUHSHOPP",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "carro",
+              "veicular"
+            ]
+          ],
+          "missing": [
+            [
+              "celular",
+              "smartphone"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 45305369187,
+      "productName": "PuraCool Garrafa Térmica 1000ml Inox 304 com Suporte Magnético Celular Dupla Parede Mantém Gelado 24H",
+      "shopName": "PuraCoolSP.br",
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "evaluations": {
+        "suporte celular carro": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "celular"
+            ]
+          ],
+          "missing": [
+            [
+              "carro",
+              "automotivo",
+              "veicular"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23399515247,
+      "productName": "Aspirador Portatil Compacto Potente 2 Em 1 Vertical Cores Sortidas Limpeza Residencial Automotiva",
+      "shopName": "Garimpo Salvador Comércio Ltda",
+      "keywords": [
+        "aspirador automotivo"
+      ],
+      "evaluations": {
+        "aspirador automotivo": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "aspirador"
+            ]
+          ],
+          "missing": [
+            [
+              "automotivo",
+              "carro",
+              "veicular"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58263159772,
+      "productName": "Aspirador Portatil Vertical Com Fio Potente 2 Em 1 110v Limpeza Residencial Automotiva",
+      "shopName": "Garimpo Salvador Comércio Ltda",
+      "keywords": [
+        "aspirador automotivo"
+      ],
+      "evaluations": {
+        "aspirador automotivo": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "aspirador"
+            ]
+          ],
+          "missing": [
+            [
+              "automotivo",
+              "carro",
+              "veicular"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58204633438,
+      "productName": "Tapete Protetor Organizador Puxa empurra Para Caçamba Caminhonete Frontier",
+      "shopName": "CARGOLOCK.SP",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22394639037,
+      "productName": "Porta jaleco scrub estetoscópio enfermagem medicina odontologia farmacia veterinaria mala maternidadebebê saúde saquinho",
+      "shopName": "Tessihbolsas",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ],
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22495121837,
+      "productName": "Kit Audi: Bolsa Organizadora Porta Mala Preta + Tapete A3 Sportback 2007 A 2012 Preto",
+      "shopName": "MR_mercado",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ],
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22193930893,
+      "productName": "Bolsa Organizadora Porta Malas Renegade, Compass, Cherokee -> Carpete Preto",
+      "shopName": "MR_mercado",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "porta malas",
+              "porta-malas"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 42782303156,
+      "productName": "Armazenamento Dobrável Para Porta-Malas De Carro Bolsa Compartimentos Organizadores De Vários Slots Bolso De Rede Trasei",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22994062628,
+      "productName": "Kit 4 Bolsa Mala Saída Maternidade + Mochila Bordado Bebê Menino Menina Organizador Porta Fralda Exclusive Safari Luxo",
+      "shopName": "Artfine Oficial ",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23498637020,
+      "productName": "Bolsa Organizadora Porta Malas Fiat 500, UNO, Argo, Pulse -> Carpete Preto",
+      "shopName": "Cleo_magazine__",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "porta malas",
+              "porta-malas"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23293002448,
+      "productName": "Porta Shampoo Holografica Necessaire Brinde Aniversário Organizador Mala Viagem/Natação Necessaire",
+      "shopName": "MiniZzí",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58258191931,
+      "productName": "Porta Shampoo Frasqueira Transparente Brinde Aniversário Organizador Mala Viagem/Natação Pós-Treino",
+      "shopName": "MiniZzí",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 3978650599,
+      "productName": "Necessaire masculina Organizador Mala Viagem Porta Maquiagem couro sintético  resistente",
+      "shopName": "ATRAÇÃO ACESSORIOS",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23693537930,
+      "productName": "Kit Viagem com 2 Necessaires Porta Shampoo Transparente Ideal para Praia, Avião e Mala",
+      "shopName": "Loja.Trevo",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ],
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 20298025358,
+      "productName": "Necessaire Organizador Bolsa Porta Sapato Mala Academia Viagem Passeio Academia Organizadora Armário Gaveta 127",
+      "shopName": "BBQalegre",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22692447818,
+      "productName": "Kit 6 Saquinhos Bebe Gestante Organizador Mala Maternidade TAG + 2 Nécessaire Porta Fraldas Remédio.",
+      "shopName": "UniqueOrganiza",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22697702597,
+      "productName": "Mala Esportiva Bolsa Feminina Organizadora Passeio Viagem Porta Tenis",
+      "shopName": "soooi",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ],
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23302574458,
+      "productName": "Rede Elástica Porta Obj Porta Malas",
+      "shopName": "mirandaeunice",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "porta malas",
+              "porta-malas"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22393809246,
+      "productName": "Necessaire Organizador Bolsa Porta Sapato Mala Academia Viagem Passeio Academia Organizadora Armário Gaveta 127",
+      "shopName": "MEGA STORES",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58205794616,
+      "productName": "Kit 6 Saquinhos Organizador Mala Maternidade Bebe Gestante TAG + 2 Necessaire Porta Fraldas Remédio.",
+      "shopName": "Casa de Coisinhas",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58206815999,
+      "productName": "Gancho para Guarda-chuvas Sol Suporte Porta Malas para Sistema Isofix - Simples ou Duplo",
+      "shopName": "VEXEL_",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "porta malas",
+              "porta-malas"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58217261485,
+      "productName": "Necessaire Feminina Organizadora Porta Pincéis Maquiagem Com Faixa Para Fixar na Mala de Viagem",
+      "shopName": "LUMEN  LTDA",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ],
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21897975967,
+      "productName": "Kit c/5 unidades- Estojo Necessaire -Organizador Multiuso - Ideal p/ Malas, Bolsa, Maletas de maquiagem  Porta objetos",
+      "shopName": "Plásticos GA-HO",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22894447600,
+      "productName": "Kit 10/20/40/60 peças clipes dreno placa solar escoar drenar água painel 30mm/33mm/35mm/40mm",
+      "shopName": "DN MAGAZINE",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23898409317,
+      "productName": "Alça P/ Subir No Caminhão Do Painel - Ld Ford Cargo Cinza - 6C45E045B15AA",
+      "shopName": "AFM Auto Peças",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23298869760,
+      "productName": "Carenagem Painel Frontal em Fibra Paletrans PT16/Fast 426009",
+      "shopName": "Metalift Ferramentas",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 43578618975,
+      "productName": "Alicate De Remoção De Clipe Automotivo Resistente , Ferramenta Removedora De Prendedor De Carro Para Painéis De Porta , ",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "ferramenta"
+            ]
+          ],
+          "missing": [
+            [
+              "painel",
+              "pegboard"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 24721994890,
+      "productName": "Um Conjunto De Painéis De Parede À Prova De Som De Espuma Acústica De Estúdio De 10 Pces , Esponja De Tratamento De Abso",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "painel",
+              "pegboard"
+            ],
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 20498329066,
+      "productName": "Kit 100 Presilhas Automotivas Universais – Fixadores Plásticos para Painel, Para-choque e Forro",
+      "shopName": "BLACK LOCK OFICIAL",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 52506449459,
+      "productName": "Fita Dupla Face Extra Forte Fracionada Adesiva 9MM Cartela Tiras Placa PVC 3D Painel Cabeceira",
+      "shopName": "MAXELITE",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22497494357,
+      "productName": "Espátula De Plástico Remoção Painéis Rádio Forro 5 Peças",
+      "shopName": "Padroeira Oficial",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "painel",
+              "pegboard"
+            ],
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19499254712,
+      "productName": "Kit 5 Chave Espátula Porta Painéis Internos Rádio Forro",
+      "shopName": "Padroeira Oficial",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "painel",
+              "pegboard"
+            ],
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22398391373,
+      "productName": "Painel Instrumento Vw Golf Mk3 1991 Á 1998 1812012113b Orig Preto",
+      "shopName": "zg.autopecasusadas",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22798552689,
+      "productName": "Alicate Crimpador Terminais Painel Solar Vonder MC4 VD",
+      "shopName": "Cicampo Maquinas e Ferramentas",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 57854084081,
+      "productName": "Painel Blackout De Soldagem Capa De Proteção Ocular Equipamento De Soldador Antirreflexo",
+      "shopName": "senmi.br",
+      "keywords": [
+        "painel ferramentas",
+        "oculos de protecao",
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        },
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "oculos",
+              "óculos"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        },
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "luva",
+              "luvas"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23898776729,
+      "productName": "Fita Dupla Face Extra Forte Fracionada Pronta Entrega Para Placa PVC 3D Painel Ripado Cabeceira",
+      "shopName": "HGO DECOR",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 55805207201,
+      "productName": "Perfil de Acabamento Painel Ripado de Madeira MDF 90cm x 3cm",
+      "shopName": "Gs Home Décor",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19598290126,
+      "productName": "Fita Dupla Face Extra Forte Adesiva 12mm x 2/5/20m Transparente Colar Quadro Painel Parede",
+      "shopName": "Usual Mix",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58252348514,
+      "productName": "100 Peças Parafusos De Expansão Multiuso Para Painel De Cimento Painel De Isolamento Placa De Gesso Drywall",
+      "shopName": "Mochileiragem___SHOP",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 56755580448,
+      "productName": "36 Peças(5㎡) Piso Painel Revestimento Vinílico Adesivo Lavável Madeira 91,4CMx15,2CM",
+      "shopName": "KKAHDS.br",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 47355599290,
+      "productName": "KIT 3 Fitas EVA para Ripado Branco Autocolante 5cmx5mmx30m Painel Decorativo Parede Porta e Vedaçao",
+      "shopName": "DPR Fitas e Acabamentos",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "painel decorativo"
+          ],
+          "matched": []
+        }
+      }
+    }
+  ]
+}

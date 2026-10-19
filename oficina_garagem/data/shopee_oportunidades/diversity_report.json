@@ -1,0 +1,209 @@
+{
+  "policy": {
+    "enabled": true,
+    "max_per_shop": 3,
+    "max_per_keyword": 3,
+    "max_per_category": 7,
+    "relaxed_caps": {
+      "max_per_shop": 5,
+      "max_per_keyword": 5,
+      "max_per_category": 9
+    },
+    "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
+  },
+  "selectionPasses": {
+    "strict": 30,
+    "relaxed": 0,
+    "fallback": 0
+  },
+  "shopDistribution": [
+    [
+      "844004880",
+      3
+    ],
+    [
+      "1092274438",
+      3
+    ],
+    [
+      "1028459403",
+      2
+    ],
+    [
+      "411693079",
+      2
+    ],
+    [
+      "832036467",
+      1
+    ],
+    [
+      "1258554467",
+      1
+    ],
+    [
+      "832040275",
+      1
+    ],
+    [
+      "1520942179",
+      1
+    ],
+    [
+      "427457955",
+      1
+    ],
+    [
+      "1332034013",
+      1
+    ],
+    [
+      "728389176",
+      1
+    ],
+    [
+      "1016471898",
+      1
+    ],
+    [
+      "1180298845",
+      1
+    ],
+    [
+      "305201598",
+      1
+    ],
+    [
+      "1310142226",
+      1
+    ],
+    [
+      "1609020700",
+      1
+    ],
+    [
+      "408715442",
+      1
+    ],
+    [
+      "1626437729",
+      1
+    ],
+    [
+      "1006215031",
+      1
+    ],
+    [
+      "1212721731",
+      1
+    ],
+    [
+      "1800621646",
+      1
+    ],
+    [
+      "1534000949",
+      1
+    ],
+    [
+      "807597901",
+      1
+    ],
+    [
+      "1663630412",
+      1
+    ]
+  ],
+  "keywordDistribution": [
+    [
+      "pano microfibra automotivo",
+      3
+    ],
+    [
+      "parafusadeira",
+      3
+    ],
+    [
+      "aspirador automotivo",
+      3
+    ],
+    [
+      "organizador porta malas",
+      3
+    ],
+    [
+      "painel ferramentas",
+      3
+    ],
+    [
+      "jogo de chaves",
+      2
+    ],
+    [
+      "maleta ferramentas",
+      2
+    ],
+    [
+      "lavadora alta pressao",
+      2
+    ],
+    [
+      "luva de protecao",
+      2
+    ],
+    [
+      "caixa ferramentas",
+      1
+    ],
+    [
+      "furadeira",
+      1
+    ],
+    [
+      "suporte celular carro",
+      1
+    ],
+    [
+      "protetor auricular",
+      1
+    ],
+    [
+      "jogo de soquetes",
+      1
+    ],
+    [
+      "escova limpeza automotiva",
+      1
+    ],
+    [
+      "compressor de ar portatil",
+      1
+    ]
+  ],
+  "categoryDistribution": [
+    [
+      "Ferramentas",
+      7
+    ],
+    [
+      "Acessorios Automotivos",
+      7
+    ],
+    [
+      "Organizacao de Garagem",
+      6
+    ],
+    [
+      "Limpeza e Conservacao",
+      6
+    ],
+    [
+      "Seguranca e Protecao",
+      3
+    ],
+    [
+      "Manutencao",
+      1
+    ]
+  ]
+}
