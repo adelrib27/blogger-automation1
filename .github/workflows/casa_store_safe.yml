@@ -49,7 +49,8 @@ jobs:
             src/shopee_oportunidades_v23.py \
             casa_decoracao/src/shopee_oportunidades_casa.py \
             casa_decoracao/src/store_auto.py \
-            casa_decoracao/src/store_auto_self_test.py
+            casa_decoracao/src/store_auto_self_test.py \
+            casa_decoracao/src/store_hero_sync.py
           PYTHONPATH=src:casa_decoracao/src python casa_decoracao/src/store_auto_self_test.py
 
       - name: Confirmar secrets obrigatórios
@@ -64,13 +65,17 @@ jobs:
         run: |
           PYTHONPATH=src:casa_decoracao/src python -u casa_decoracao/src/store_auto.py
 
+      - name: Validar carrossel sem publicar
+        run: |
+          PYTHONPATH=src:casa_decoracao/src python -u casa_decoracao/src/store_hero_sync.py
+
       - name: Confirmar que SAFE não alterou WordPress
         run: |
           set -euo pipefail
           grep -q '"status": "DRY_RUN_OK"' casa_decoracao/data/store_last_selection.json
           grep -q '"dryRun": true' casa_decoracao/data/store_last_selection.json
           test "$(grep -o '"itemId"' casa_decoracao/data/store_last_selection.json | wc -l | tr -d ' ')" -eq 32
-          echo "SAFE confirmado: 32 produtos selecionados; WordPress permaneceu somente leitura."
+          echo "SAFE confirmado: 32 produtos + 12 mini-cards do carrossel validados; WordPress permaneceu somente leitura."
 
       - name: Guardar diagnóstico SAFE
         if: always()
