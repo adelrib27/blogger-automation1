@@ -1,0 +1,5 @@
+- Inspect Shopee client and current Radar queue selectors.
+- Build dry-run store selector.
+- Update only /loja/ product block.
+- Validate deduplication, category balance and affiliate attributes.
+- Enable schedule only after safe validation.
