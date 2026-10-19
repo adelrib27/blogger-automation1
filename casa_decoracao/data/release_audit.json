@@ -27,8 +27,11 @@
       "queue_status": "PUBLISHED",
       "wordpress_post_id": 125,
       "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
+        "status": "REJECTED",
+        "reasons": [
+          "alegacao_absoluta_nao_sustentada",
+          "alegacao_medica_ou_terapeutica_nao_sustentada"
+        ],
         "warnings": [],
         "metrics": {
           "word_count": 716,
@@ -46,32 +49,19 @@
       "shopee_item_id": "23594213342",
       "category": "Decoração",
       "product": "Trilho Caminho de Mesa Decoração e Luxo Maquinetado Bainha Larda 4 e 6 lugares",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 133,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 822,
+          "word_count": 621,
           "h2_count": 5,
           "internal_links": 1,
           "seo_title_length": 55,
-          "meta_description_length": 133,
-          "cta_count": 1
+          "meta_description_length": 154,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
