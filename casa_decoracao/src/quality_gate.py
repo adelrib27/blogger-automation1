@@ -33,12 +33,20 @@ MEDICAL_PATTERNS = (
     r"\b(?:cura|trata|elimina|resolve)\b.{0,70}\b(?:dor|ins[oô]nia|cervical|coluna|alergia|refluxo)\b",
     r"\b(?:corrige|garante)\b.{0,70}\b(?:postura|coluna|alinhamento|sono)\b",
     r"\bbenef[ií]cio terap[eê]utico\b",
+    r"\b(?:ideal|indicado|recomendad[oa])\b.{0,80}\b(?:alergia|al[eé]rgic[oa]s?|asma|rinite)\b",
+    r"\b(?:n[aã]o|sem)\b.{0,30}\b(?:p[oó]len|esporos?)\b",
 )
 ABSOLUTE_PATTERNS = (
     r"\b(?:100\s*%|totalmente)\s+(?:seguro|imperme[aá]vel|antiderrapante|garantido|eficaz)\b",
     r"\bgarante\b.{0,80}\b(?:seguran[cç]a|durabilidade|prote[cç][aã]o|resultado|conforto)\b",
     r"\bevitar?\s+acidentes?\b",
     r"\bnunca\s+(?:mofa|escorrega|quebra|vaza)\b",
+    r"\b(?:segur[oa]|inofensiv[oa])\b.{0,70}\b(?:crian[cç]as?|beb[eê]s?|animais?|pets?)\b",
+    r"\b(?:crian[cç]as?|beb[eê]s?|animais?|pets?)\b.{0,70}\b(?:segur[oa]|inofensiv[oa])\b",
+    r"\bn[aã]o\s+(?:possui|possuem|cont[eé]m|tem)\b.{0,50}\b(?:subst[aâ]ncias?\s+t[oó]xicas?|toxicidade)\b",
+    r"\b(?:sustent[aá]vel|ecol[oó]gic[oa]|econ[oô]mic[oa])\b.{0,80}\b(?:a longo prazo|sempre|garantid[oa])\b",
+    r"\b(?:permanece|permane[cç]a|dura|duram)\b.{0,70}\b(?:intact[oa]s?|por muito tempo|anos?)\b",
+    r"\bn[aã]o\s+corre(?:m)?\s+o\s+risco\b.{0,80}\b(?:danificad[oa]s?|arrancad[oa]s?|quebrad[oa]s?)\b",
 )
 NUMERIC_SPEC = re.compile(
     r"\b\d+(?:[.,]\d+)?\s*(?:kg|g|cm|mm|m|l|ml|w|v|ah|mah|%|hz|rpm|litros?|pe[cç]as?)\b",

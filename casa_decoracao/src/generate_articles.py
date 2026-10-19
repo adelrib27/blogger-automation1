@@ -241,6 +241,9 @@ def universal_article_rules(item):
 - Quando uma medida, material ou especificação for relevante e não estiver confirmada, oriente a conferir o anúncio, ficha técnica ou manual.
 - Não diga que testamos, usamos ou comprovamos o produto.
 - Não faça alegações médicas, terapêuticas ou de correção postural.
+- Não associe produtos a alergias, asma, rinite, ausência de pólen/esporos ou qualquer benefício de saúde sem fonte verificável.
+- Não declare que um produto é seguro para crianças, bebês ou animais, não tóxico, inofensivo, sustentável, ecológico ou econômico a longo prazo sem fonte verificável.
+- Não prometa que algo permanecerá intacto, durará por muito tempo ou não poderá ser arrancado, quebrado ou danificado.
 - Não dê passo a passo de instalação elétrica, gás, ligação de fios ou misturas químicas.
 - Não faça promessas absolutas de segurança, impermeabilidade, durabilidade, conforto ou resultado.
 - Para organização e decoração, considere espaço disponível, rotina, manutenção, armazenamento e compatibilidade visual sem inventar fatos do produto.

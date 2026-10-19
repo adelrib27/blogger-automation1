@@ -70,6 +70,9 @@ def main():
     must_reject(item, plan(), "O item suporta exatamente 90 kg.", "especificacao_numerica"); tests += 1
     must_reject(item, plan(), "Desligue o disjuntor e conecte os fios da rede elétrica.", "instrucao_domestica_de_alto_risco"); tests += 1
     must_reject(item, plan(), "Este modelo cura dor cervical e melhora a coluna.", "alegacao_medica"); tests += 1
+    must_reject(item, plan(), "É ideal para pessoas com alergias, pois não libera pólen ou esporos.", "alegacao_medica"); tests += 1
+    must_reject(item, plan(), "É uma alternativa segura para crianças e pets e não possui substâncias tóxicas.", "alegacao_absoluta"); tests += 1
+    must_reject(item, plan(), "É uma opção sustentável e econômica a longo prazo.", "alegacao_absoluta"); tests += 1
     must_reject(item, plan(), "O material garante durabilidade e proteção.", "alegacao_absoluta"); tests += 1
     must_reject(item, plan(), "Vaso Decorativo Cerâmica Minimalista para Sala é a referência principal.", "titulo_comercial_copiado"); tests += 1
 
