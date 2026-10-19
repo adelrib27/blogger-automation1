@@ -1,125 +1,17 @@
-name: Radar Tech BR — Fase 3 Publicação
+name: Radar Tech BR — Fase 3 Publicação LEGACY DESATIVADA
 
 on:
   workflow_dispatch:
-    inputs:
-      slot:
-        description: "Slot da Fase 3"
-        required: true
-        type: choice
-        options:
-          - "08:00"
-          - "10:30"
-          - "13:00"
-          - "16:00"
-          - "19:00"
-  schedule:
-    - cron: "0 11 * * *"
-    - cron: "30 13 * * *"
-    - cron: "0 16 * * *"
-    - cron: "0 19 * * *"
-    - cron: "0 22 * * *"
 
 permissions:
-  contents: write
-
-concurrency:
-  group: radar-tech-br-fase3-publicacao
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  publicar-slot:
+  legado-desativado:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Resolver slot
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          EVENT_SCHEDULE: ${{ github.event.schedule || '' }}
-          MANUAL_SLOT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.slot || '' }}
+      - name: Informar substituição
         run: |
-          SLOT="$MANUAL_SLOT"
-          if [ "$EVENT_NAME" = "schedule" ]; then
-            case "$EVENT_SCHEDULE" in
-              "0 11 * * *") SLOT="08:00" ;;
-              "30 13 * * *") SLOT="10:30" ;;
-              "0 16 * * *") SLOT="13:00" ;;
-              "0 19 * * *") SLOT="16:00" ;;
-              "0 22 * * *") SLOT="19:00" ;;
-              *) exit 1 ;;
-            esac
-          fi
-
-          HOJE=$(TZ=America/Sao_Paulo date +%F)
-
-          # Antes de 15/10/2026, somente execuções agendadas ficam bloqueadas.
-          # Execuções manuais podem usar os slots validados da fila do próprio dia.
-          if [ "$EVENT_NAME" = "schedule" ] && [[ "$HOJE" < "2026-10-15" ]]; then
-            echo "RADAR_PHASE3_SKIP=1" >> "$GITHUB_ENV"
-            echo "Execução agendada ignorada antes da data oficial de ativação."
-          else
-            echo "RADAR_PHASE3_SLOT=$SLOT" >> "$GITHUB_ENV"
-            echo "Slot liberado para execução: $SLOT"
-          fi
-
-      - name: Instalar dependências
-        if: env.RADAR_PHASE3_SKIP != '1'
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install requests cloudinary pillow
-
-      - name: Verificar sintaxe
-        if: env.RADAR_PHASE3_SKIP != '1'
-        run: python -m compileall -q src
-
-      - name: Selecionar produto do slot
-        if: env.RADAR_PHASE3_SKIP != '1'
-        run: python -u src/fase3_fila_radar.py select-slot --slot "$RADAR_PHASE3_SLOT"
-
-      - name: Publicar slot da Fase 3
-        if: env.RADAR_PHASE3_SKIP != '1'
-        env:
-          WORDPRESS_URL: https://radartechbr.com.br
-          WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
-          WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.RADAR_CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.RADAR_CLOUDFLARE_API_TOKEN }}
-          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
-        run: |
-          python - <<'PY'
-          import os
-          import runpy
-          import sys
-
-          sys.path.insert(0, "src")
-
-          import fase3_runtime_guard
-
-          fase3_runtime_guard.instalar()
-
-          if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
-              script = "src/main_wordpress_fase3_manual.py"
-          else:
-              script = "src/main_wordpress_fase3.py"
-
-          runpy.run_path(script, run_name="__main__")
-          PY
-
-      - name: Salvar estado
-        if: always() && env.RADAR_PHASE3_SKIP != '1'
-        run: |
-          if [ -z "$(git status --porcelain -- data/wordpress_historico.json data/wordpress_rascunhos.json data/fase3/fila_dia.json)" ]; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/wordpress_historico.json data/wordpress_rascunhos.json data/fase3/fila_dia.json
-          git commit -m "Atualizar estado da Fase 3"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          echo "Workflow legado desativado."
+          echo "A publicação automática do Radar Tech BR usa radar_editorial_vnext_autonomous.yml."
+          echo "Nenhuma publicação foi executada por este workflow."
