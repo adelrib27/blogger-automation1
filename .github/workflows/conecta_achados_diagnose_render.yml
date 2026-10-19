@@ -1,0 +1,75 @@
+name: Conecta Achados — Diagnóstico de renderização
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/conecta_achados_diagnose_render.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  diagnosticar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Diagnosticar home, feed e categoria
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, urllib.request, urllib.error
+          from pathlib import Path
+
+          urls = {
+              'home': 'https://conectaachados.blogspot.com/',
+              'feed_json': 'https://conectaachados.blogspot.com/feeds/posts/default?alt=json&max-results=20',
+              'label_fones': 'https://conectaachados.blogspot.com/search/label/Fones',
+              'post_exemplo': 'https://conectaachados.blogspot.com/2026/10/hmaston-ly-101pro-fone-bluetooth-53-sem.html',
+          }
+          needle = "H'maston LY-101Pro"
+          report = {}
+
+          for key, url in urls.items():
+              req = urllib.request.Request(url, headers={'User-Agent':'Mozilla/5.0'})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      body = r.read().decode('utf-8', 'replace')
+                      report[key] = {
+                          'url': url,
+                          'status': r.status,
+                          'content_type': r.headers.get('content-type'),
+                          'length': len(body),
+                          'contains_known_post': needle.lower() in body.lower(),
+                          'contains_empty_message': 'Novos achados estão chegando'.lower() in body.lower(),
+                      }
+                      if key == 'feed_json':
+                          try:
+                              data = json.loads(body)
+                              entries = (data.get('feed') or {}).get('entry') or []
+                              report[key]['entry_count'] = len(entries)
+                              report[key]['titles'] = [((e.get('title') or {}).get('$t') or '') for e in entries[:20]]
+                          except Exception as exc:
+                              report[key]['json_error'] = str(exc)
+              except urllib.error.HTTPError as exc:
+                  report[key] = {'url':url,'status':exc.code,'error':str(exc)}
+              except Exception as exc:
+                  report[key] = {'url':url,'status':None,'error':str(exc)}
+
+          Path('conecta_achados/data/render_diagnostic.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
+          )
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Salvar diagnóstico
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+adelrib27@users.noreply.github.com"
+          git add conecta_achados/data/render_diagnostic.json
+          git commit -m "Conecta Achados: salvar diagnóstico de renderização" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
