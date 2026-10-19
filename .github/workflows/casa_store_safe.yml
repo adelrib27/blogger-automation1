@@ -1,0 +1,84 @@
+name: Casa e Decoração — Loja Shopee SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "casa_decoracao/store_safe_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: casa-decoracao-store-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+      CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+      CASA_STORE_DRY_RUN: "true"
+      CASA_STORE_ITEMS_PER_CATEGORY: "4"
+      CASA_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "64"
+      SHOPEE_OPPORTUNITIES_CONFIG: casa_decoracao/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: casa_decoracao/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: casa_decoracao/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código e testes locais
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            casa_decoracao/src/shopee_oportunidades_casa.py \
+            casa_decoracao/src/store_auto.py \
+            casa_decoracao/src/store_auto_self_test.py
+          PYTHONPATH=src:casa_decoracao/src python casa_decoracao/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$CASA_WORDPRESS_USERNAME"
+          test -n "$CASA_WORDPRESS_APP_PASSWORD"
+
+      - name: Validar Shopee e página sem publicar
+        run: |
+          PYTHONPATH=src:casa_decoracao/src python -u casa_decoracao/src/store_auto.py
+
+      - name: Confirmar que SAFE não alterou WordPress
+        run: |
+          set -euo pipefail
+          grep -q '"status": "DRY_RUN_OK"' casa_decoracao/data/store_last_selection.json
+          grep -q '"dryRun": true' casa_decoracao/data/store_last_selection.json
+          test "$(grep -o '"itemId"' casa_decoracao/data/store_last_selection.json | wc -l | tr -d ' ')" -eq 32
+          echo "SAFE confirmado: 32 produtos selecionados; WordPress permaneceu somente leitura."
+
+      - name: Guardar diagnóstico SAFE
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-store-safe-${{ github.run_number }}
+          path: |
+            casa_decoracao/data/store_last_selection.json
+            casa_decoracao/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
