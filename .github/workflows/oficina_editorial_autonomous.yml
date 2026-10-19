@@ -29,8 +29,8 @@ jobs:
       SHOPEE_OPPORTUNITIES_CONFIG: oficina_garagem/config/shopee_oportunidades.json
       SHOPEE_INTENT_RULES: oficina_garagem/config/shopee_intent_rules.json
       SHOPEE_OUTPUT_DIR: oficina_garagem/data/shopee_oportunidades
-      OFICINA_CLOUDFLARE_ACCOUNT_ID: "b1515400afe32581994c4d3f038f835f"
-      OFICINA_CLOUDFLARE_API_TOKEN: ${{ secrets.OFICINA_CLOUDFLARE_API_TOKEN }}
+      OFICINA_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CASA_CLOUDFLARE_ACCOUNT_ID }}
+      OFICINA_CLOUDFLARE_API_TOKEN: ${{ secrets.CASA_CLOUDFLARE_API_TOKEN }}
       OFICINA_WORDPRESS_USERNAME: "admin"
       OFICINA_WORDPRESS_APP_PASSWORD: ${{ secrets.OFICINA_WORDPRESS_APP_PASSWORD }}
       OFICINA_AI_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
