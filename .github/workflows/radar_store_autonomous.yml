@@ -1,0 +1,99 @@
+name: Radar Tech BR — Loja Shopee Autônoma
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "radar_tech_br/store_live_kickoff.txt"
+  schedule:
+    # America/Sao_Paulo (UTC-3): 07:40 diariamente.
+    - cron: "40 10 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-tech-br-store-autonomous
+  cancel-in-progress: false
+
+jobs:
+  atualizar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+      WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+      RADAR_STORE_DRY_RUN: "false"
+      RADAR_STORE_ITEMS_PER_CATEGORY: "4"
+      RADAR_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "40"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código antes da publicação
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            radar_tech_br/src/store_auto.py \
+            radar_tech_br/src/store_auto_self_test.py
+          PYTHONPATH=src:radar_tech_br/src python radar_tech_br/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$WORDPRESS_USERNAME"
+          test -n "$WORDPRESS_APP_PASSWORD"
+
+      - name: Atualizar vitrine com Shopee API
+        run: |
+          PYTHONPATH=src:radar_tech_br/src python -u radar_tech_br/src/store_auto.py
+
+      - name: Verificar renderização pública
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 40 "https://radartechbr.com.br/loja/?radar_store_verify=${GITHUB_RUN_ID}" > /tmp/loja.html
+          grep -q "rtm-showcase-auto" /tmp/loja.html
+          count=$(grep -o 'data-item-id=' /tmp/loja.html | wc -l | tr -d ' ')
+          test "$count" -eq 20
+          echo "Renderização pública confirmada com 20 cards automáticos."
+
+      - name: Persistir estado da rotação
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- radar_tech_br/data/store_rotation.json radar_tech_br/data/store_last_selection.json)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add radar_tech_br/data/store_rotation.json radar_tech_br/data/store_last_selection.json
+          git commit -m "Atualizar rotação automática da Loja Radar Tech BR"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-store-auto-${{ github.run_number }}
+          path: |
+            radar_tech_br/data/store_last_selection.json
+            radar_tech_br/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
