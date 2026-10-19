@@ -54,7 +54,8 @@ jobs:
             src/shopee_oportunidades_v23.py \
             casa_decoracao/src/shopee_oportunidades_casa.py \
             casa_decoracao/src/store_auto.py \
-            casa_decoracao/src/store_auto_self_test.py
+            casa_decoracao/src/store_auto_self_test.py \
+            casa_decoracao/src/store_hero_sync.py
           PYTHONPATH=src:casa_decoracao/src python casa_decoracao/src/store_auto_self_test.py
 
       - name: Confirmar secrets obrigatórios
@@ -69,22 +70,27 @@ jobs:
         run: |
           PYTHONPATH=src:casa_decoracao/src python -u casa_decoracao/src/store_auto.py
 
+      - name: Sincronizar mini-cards do carrossel
+        run: |
+          PYTHONPATH=src:casa_decoracao/src python -u casa_decoracao/src/store_hero_sync.py
+
       - name: Verificar renderização pública
         run: |
           set -euo pipefail
           ok=0
           for attempt in 1 2 3 4 5 6; do
             curl -fsS --max-time 40 "https://casaedecoracao.radartechbr.com.br/loja/?casa_store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/casa-loja.html
-            count=$(grep -o 'data-item-id=' /tmp/casa-loja.html | wc -l | tr -d ' ')
-            if grep -q "cds-store-grid" /tmp/casa-loja.html && [ "$count" -eq 32 ]; then
+            store_count=$(grep -o 'data-item-id=' /tmp/casa-loja.html | wc -l | tr -d ' ')
+            hero_count=$(grep -o 'data-hero-item-id=' /tmp/casa-loja.html | wc -l | tr -d ' ')
+            if grep -q "cds-store-grid" /tmp/casa-loja.html && grep -q "cds-hero-grid" /tmp/casa-loja.html && [ "$store_count" -eq 32 ] && [ "$hero_count" -eq 12 ]; then
               ok=1
               break
             fi
-            echo "Tentativa ${attempt}: ${count}/32 cards visíveis; aguardando cache."
+            echo "Tentativa ${attempt}: vitrine=${store_count}/32 hero=${hero_count}/12; aguardando cache."
             sleep 5
           done
           test "$ok" -eq 1
-          echo "Renderização pública confirmada com 32 cards automáticos."
+          echo "Renderização pública confirmada: 32 cards da vitrine + 12 mini-cards no carrossel."
 
       - name: Persistir estado da rotação
         run: |
