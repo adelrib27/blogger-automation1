@@ -34,6 +34,58 @@ jobs:
           unzip -t /tmp/casa_v3.zip
           unzip -qo /tmp/casa_v3.zip -d .
 
+      - name: Reforçar gates contra alegações editoriais não sustentadas
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          q = Path('casa_decoracao/src/quality_gate.py')
+          s = q.read_text(encoding='utf-8')
+          s = s.replace(
+              '    r"\\bbenef[ií]cio terap[eê]utico\\b",\n)',
+              '    r"\\bbenef[ií]cio terap[eê]utico\\b",\n'
+              '    r"\\b(?:ideal|indicado|recomendad[oa])\\b.{0,80}\\b(?:alergia|al[eé]rgic[oa]s?|asma|rinite)\\b",\n'
+              '    r"\\b(?:n[aã]o|sem)\\b.{0,30}\\b(?:p[oó]len|esporos?)\\b",\n)'
+          )
+          s = s.replace(
+              '    r"\\bnunca\\s+(?:mofa|escorrega|quebra|vaza)\\b",\n)',
+              '    r"\\bnunca\\s+(?:mofa|escorrega|quebra|vaza)\\b",\n'
+              '    r"\\b(?:segur[oa]|inofensiv[oa])\\b.{0,70}\\b(?:crian[cç]as?|beb[eê]s?|animais?|pets?)\\b",\n'
+              '    r"\\b(?:crian[cç]as?|beb[eê]s?|animais?|pets?)\\b.{0,70}\\b(?:segur[oa]|inofensiv[oa])\\b",\n'
+              '    r"\\bn[aã]o\\s+(?:possui|possuem|cont[eé]m|tem)\\b.{0,50}\\b(?:subst[aâ]ncias?\\s+t[oó]xicas?|toxicidade)\\b",\n'
+              '    r"\\b(?:sustent[aá]vel|ecol[oó]gic[oa]|econ[oô]mic[oa])\\b.{0,80}\\b(?:a longo prazo|sempre|garantid[oa])\\b",\n'
+              '    r"\\b(?:permanece|permane[cç]a|dura|duram)\\b.{0,70}\\b(?:intact[oa]s?|por muito tempo|anos?)\\b",\n'
+              '    r"\\bn[aã]o\\s+corre(?:m)?\\s+o\\s+risco\\b.{0,80}\\b(?:danificad[oa]s?|arrancad[oa]s?|quebrad[oa]s?)\\b",\n)'
+          )
+          q.write_text(s, encoding='utf-8')
+
+          g = Path('casa_decoracao/src/generate_articles.py')
+          s = g.read_text(encoding='utf-8')
+          s = s.replace(
+              '- Não faça alegações médicas, terapêuticas ou de correção postural.\n- Não dê passo a passo de instalação elétrica, gás, ligação de fios ou misturas químicas.',
+              '- Não faça alegações médicas, terapêuticas ou de correção postural.\n'
+              '- Não associe produtos a alergias, asma, rinite, ausência de pólen/esporos ou qualquer benefício de saúde sem fonte verificável.\n'
+              '- Não declare que um produto é seguro para crianças, bebês ou animais, não tóxico, inofensivo, sustentável, ecológico ou econômico a longo prazo sem fonte verificável.\n'
+              '- Não prometa que algo permanecerá intacto, durará por muito tempo ou não poderá ser arrancado, quebrado ou danificado.\n'
+              '- Não dê passo a passo de instalação elétrica, gás, ligação de fios ou misturas químicas.'
+          )
+          g.write_text(s, encoding='utf-8')
+
+          t = Path('casa_decoracao/src/self_test.py')
+          s = t.read_text(encoding='utf-8')
+          s = s.replace(
+              '    must_reject(item, plan(), "Este modelo cura dor cervical e melhora a coluna.", "alegacao_medica"); tests += 1\n'
+              '    must_reject(item, plan(), "O material garante durabilidade e proteção.", "alegacao_absoluta"); tests += 1',
+              '    must_reject(item, plan(), "Este modelo cura dor cervical e melhora a coluna.", "alegacao_medica"); tests += 1\n'
+              '    must_reject(item, plan(), "É ideal para pessoas com alergias, pois não libera pólen ou esporos.", "alegacao_medica"); tests += 1\n'
+              '    must_reject(item, plan(), "É uma alternativa segura para crianças e pets e não possui substâncias tóxicas.", "alegacao_absoluta"); tests += 1\n'
+              '    must_reject(item, plan(), "É uma opção sustentável e econômica a longo prazo.", "alegacao_absoluta"); tests += 1\n'
+              '    must_reject(item, plan(), "O material garante durabilidade e proteção.", "alegacao_absoluta"); tests += 1'
+          )
+          t.write_text(s, encoding='utf-8')
+          PY
+
       - name: Validar base antes do commit
         run: |
           set -euo pipefail
@@ -89,5 +141,5 @@ jobs:
             echo "Código v3 já aplicado."
             exit 0
           fi
-          git commit -m "feat(casa): implantar base editorial v3 segura"
+          git commit -m "fix(casa): reforçar gates editoriais v3"
           git push origin HEAD:main
