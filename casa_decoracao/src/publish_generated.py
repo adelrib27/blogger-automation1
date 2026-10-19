@@ -6,22 +6,25 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
-from quality_gate import (
-    cannibalization_reasons,
-    draft_quality,
-    publication_quality,
-)
+from category_rotation import load_state, mark_published, order_items, save_state
+from cta_context import CTA_PRODUCT_TITLE_CLASS
+from quality_gate import quality
 
 ROOT = Path(__file__).resolve().parents[2]
-QUEUE_PATH = ROOT / "casa_decoracao" / "data" / "editorial_queue_100.json"
-GENERATED_DIR = ROOT / "casa_decoracao" / "data" / "generated"
+QUEUE = ROOT / "casa_decoracao" / "data" / "editorial_queue.json"
+GENERATED = ROOT / "casa_decoracao" / "data" / "generated"
+HISTORY = ROOT / "casa_decoracao" / "data" / "publication_history.json"
+ROTATION = ROOT / "casa_decoracao" / "data" / "category_rotation.json"
 WP_URL = "https://casaedecoracao.radartechbr.com.br"
+ENABLED = os.getenv("CASA_LIVE_PUBLISH_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+LIMIT = max(1, min(int(os.getenv("CASA_PUBLISH_LIMIT", "1")), 3))
+DAILY_CAP = max(1, min(int(os.getenv("CASA_DAILY_PUBLISH_CAP", "3")), 3))
 STATUS = os.getenv("CASA_WORDPRESS_STATUS", "draft").strip().lower()
-PUBLISH_LIMIT = max(1, min(int(os.getenv("CASA_PUBLISH_LIMIT", "5")), 20))
-IMAGE_MODEL = os.getenv("CASA_IMAGE_MODEL", "@cf/black-forest-labs/flux-1-schnell").strip()
-
+LOCAL_TZ = ZoneInfo("America/Recife")
 CATEGORY_SLUGS = {
     "Decoração": "decoracao",
     "Organização": "organizacao",
@@ -31,19 +34,24 @@ CATEGORY_SLUGS = {
     "Banheiro": "banheiro",
     "Área Externa": "area-externa",
     "Cama, Mesa e Banho": "cama-mesa-banho",
-    "Iluminação": "iluminacao",
-    "Limpeza e Utilidades": "limpeza-utilidades",
+}
+IMAGE_EXTENSIONS = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+    "image/gif": ".gif",
 }
 
 
-def load_json(path, default):
+def load(path, default):
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return default
 
 
-def save_json(path, data):
+def save(path, data):
+    path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -52,16 +60,8 @@ def credentials():
     user = os.getenv("CASA_WORDPRESS_USERNAME", "").strip()
     password = os.getenv("CASA_WORDPRESS_APP_PASSWORD", "").strip()
     if not user or not password:
-        raise RuntimeError("CASA_WORDPRESS_USERNAME/CASA_WORDPRESS_APP_PASSWORD ausentes")
+        raise RuntimeError("Credenciais WordPress Casa e Decoração ausentes")
     return user, password
-
-
-def cloudflare_credentials():
-    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID", "").strip()
-    token = os.getenv("CLOUDFLARE_API_TOKEN", "").strip()
-    if not account_id or not token:
-        raise RuntimeError("CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN ausentes para imagem")
-    return account_id, token
 
 
 def auth_header():
@@ -71,7 +71,7 @@ def auth_header():
 
 
 def request(method, path, payload=None):
-    data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode()
     req = urllib.request.Request(
         WP_URL + "/wp-json" + path,
         data=data,
@@ -80,313 +80,298 @@ def request(method, path, payload=None):
             "Authorization": auth_header(),
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "CasaEDecoracao-Publisher/2.1",
+            "User-Agent": "CasaEDecoracao-AutonomousPublisher/3.0",
         },
     )
     try:
         with urllib.request.urlopen(req, timeout=60) as response:
-            raw = response.read().decode("utf-8", errors="replace")
+            raw = response.read().decode("utf-8", "replace")
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")[:1200]
+        detail = exc.read().decode("utf-8", "replace")[:800]
         raise RuntimeError(f"WordPress HTTP {exc.code}: {detail}") from exc
     return json.loads(raw) if raw else {}
+
+
+def slugify(value):
+    value = str(value or "").casefold().translate(str.maketrans("áàâãéêíóôõúç", "aaaaeeiooouc"))
+    return re.sub(r"[^a-z0-9]+", "-", value).strip("-")[:78].rstrip("-")
 
 
 def category_id(name):
     slug = CATEGORY_SLUGS.get(name)
     if not slug:
-        raise RuntimeError(f"categoria sem slug: {name}")
+        raise RuntimeError("Categoria fora das 8 categorias oficiais: " + str(name))
     rows = request("GET", "/wp/v2/categories?slug=" + urllib.parse.quote(slug))
     if not isinstance(rows, list) or not rows:
-        raise RuntimeError(f"categoria não encontrada no WordPress: {name} ({slug})")
+        raise RuntimeError("Categoria ausente no WordPress: " + name)
     return int(rows[0]["id"])
 
 
-def slugify(text):
-    value = str(text or "").casefold()
-    table = str.maketrans("áàâãéêíóôõúç", "aaaaeeiooouc")
-    value = value.translate(table)
-    value = re.sub(r"[^a-z0-9]+", "-", value).strip("-")
-    return value[:78].rstrip("-")
-
-
-def find_existing(slug):
-    statuses = "publish,draft,pending,private,future"
-    path = "/wp/v2/posts?context=edit&per_page=5&slug=" + urllib.parse.quote(slug) + "&status=" + statuses
-    rows = request("GET", path)
-    if isinstance(rows, list) and rows:
-        return rows[0]
-    return None
-
-
-def existing_posts_for_quality():
-    statuses = urllib.parse.quote("publish,draft,pending,private,future", safe=",")
-    fields = urllib.parse.quote("id,slug,title,excerpt,content,status,link", safe=",")
-    path = f"/wp/v2/posts?context=edit&per_page=100&status={statuses}&_fields={fields}"
-    rows = request("GET", path)
-    return rows if isinstance(rows, list) else []
-
-
-def related_posts(cat_id, current_slug, limit=2):
-    fields = urllib.parse.quote("id,slug,title,link", safe=",")
-    path = f"/wp/v2/posts?status=publish&per_page=8&categories={cat_id}&orderby=date&order=desc&_fields={fields}"
-    rows = request("GET", path)
-    if not isinstance(rows, list):
-        return []
-    return [row for row in rows if str(row.get("slug") or "") != current_slug][:limit]
-
-
-def clean_rendered_title(value):
-    if isinstance(value, dict):
-        value = value.get("rendered") or ""
-    value = re.sub(r"<[^>]+>", " ", str(value or ""))
-    return html.unescape(re.sub(r"\s+", " ", value)).strip()
-
-
-def add_related_internal_links(article, cat_id, stable_slug):
-    content = str(article.get("content_html") or "")
-    if "class=\"cd-links-internos\"" in content:
-        return content
-    rows = related_posts(cat_id, stable_slug, limit=2)
-    if not rows:
-        return content
-    items = []
-    for row in rows:
-        title = html.escape(clean_rendered_title(row.get("title")))
-        link = html.escape(str(row.get("link") or ""), quote=True)
-        if title and link.startswith(WP_URL):
-            items.append(f'<li><a href="{link}">{title}</a></li>')
-    if not items:
-        return content
-    block = '<div class="cd-links-internos"><h2>Veja também</h2><ul>' + "".join(items) + "</ul></div>\n"
-    marker = '<div class="cd-produto-relacionado"'
-    if marker in content:
-        return content.replace(marker, block + marker, 1)
-    return content + "\n" + block
-
-
-def set_aioseo(post_id, article):
-    request("POST", "/aioseo/v1/post", {
-        "id": int(post_id),
-        "title": article["seo_title"],
-        "description": article["meta_description"],
-    })
-    request("POST", f"/aioseo/v1/truseo/posts/{int(post_id)}", {
-        "focus_keyword": article["focus_keyword"],
-        "additional_keywords": [],
-        "truseo_locale": "pt_BR",
-    })
-
-
-def image_prompt(article):
-    topic = str(article.get("topic") or article.get("seo_title") or "Casa e decoração").strip()
-    product = str(article.get("product") or "item para casa").strip()
-    category = str(article.get("category") or "Casa e Decoração").strip()
-    return (
-        f"Fotografia editorial horizontal, ultra-realista e elegante para um artigo brasileiro de casa e decoração. "
-        f"Tema: {topic}. Categoria: {category}. Contexto visual relacionado a {product}, mostrado apenas de forma genérica "
-        "e não como reprodução de um produto comercial específico. Ambiente doméstico realista, organizado e acolhedor, "
-        "luz natural suave, materiais e proporções plausíveis, composição de revista de decoração, alta qualidade. "
-        "Sem texto, sem letras, sem logotipos, sem marcas, sem etiquetas, sem preço, sem embalagem identificável, sem watermark. "
-        "Não inventar especificações técnicas nem características exclusivas de um produto real."
+def existing(slug):
+    rows = request(
+        "GET",
+        "/wp/v2/posts?context=edit&status=draft,pending,private,future,publish&per_page=5&slug="
+        + urllib.parse.quote(slug),
     )
+    return rows[0] if isinstance(rows, list) and rows else None
 
 
-def generate_featured_image(article):
-    account_id, token = cloudflare_credentials()
-    endpoint = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{IMAGE_MODEL}"
-    seed = int(article.get("id") or 1) * 1009 % 2147483647
-    body = json.dumps({
-        "prompt": image_prompt(article),
-        "steps": 6,
-        "seed": seed,
-    }, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(endpoint, data=body, method="POST", headers={
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "User-Agent": "CasaEDecoracao-FeaturedImage/1.0",
-    })
-    try:
-        with urllib.request.urlopen(req, timeout=180) as response:
-            raw = response.read().decode("utf-8", errors="replace")
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")[:1200]
-        raise RuntimeError(f"Workers AI imagem HTTP {exc.code}: {detail}") from exc
-    payload = json.loads(raw)
-    result = payload.get("result") if isinstance(payload, dict) else None
-    image_b64 = result.get("image") if isinstance(result, dict) else None
-    if not isinstance(image_b64, str) or not image_b64.strip():
-        raise RuntimeError("Workers AI não retornou imagem base64")
-    try:
-        return base64.b64decode(image_b64)
-    except Exception as exc:
-        raise RuntimeError("imagem base64 inválida") from exc
+def rendered_title(post):
+    title = post.get("title") or {}
+    if isinstance(title, dict):
+        title = title.get("rendered") or title.get("raw") or ""
+    return html.unescape(re.sub(r"<[^>]+>", "", str(title or ""))).strip()
 
 
-def upload_featured_media(article, image_bytes):
-    if not image_bytes:
-        raise RuntimeError("imagem destacada vazia")
-    filename = (slugify(article.get("topic") or article.get("seo_title")) or f"casa-{article.get('id', 'post')}")[:60] + ".jpg"
+def download_image(url):
+    if not str(url or "").startswith("https://"):
+        raise RuntimeError("URL de imagem inválida ou ausente")
     req = urllib.request.Request(
-        WP_URL + "/wp-json/wp/v2/media",
-        data=image_bytes,
+        str(url),
+        headers={"User-Agent": "Mozilla/5.0 CasaEDecoracao/3.0", "Accept": "image/*"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as response:
+            content_type = str(response.headers.get_content_type() or "").lower()
+            data = response.read(12 * 1024 * 1024 + 1)
+    except urllib.error.HTTPError as exc:
+        raise RuntimeError(f"Falha ao baixar imagem do produto: HTTP {exc.code}") from exc
+    if not content_type.startswith("image/"):
+        raise RuntimeError("URL do produto não retornou uma imagem")
+    if len(data) > 12 * 1024 * 1024:
+        raise RuntimeError("Imagem do produto excede 12 MB")
+    if not data:
+        raise RuntimeError("Imagem do produto vazia")
+    return data, content_type
+
+
+def upload_featured_image(post_id, article):
+    image_url = str(article.get("image_url") or "").strip()
+    image_data, content_type = download_image(image_url)
+    extension = IMAGE_EXTENSIONS.get(content_type, ".jpg")
+    base_name = slugify(article.get("product") or article.get("seo_title") or "imagem-produto")[:64] or "imagem-produto"
+    filename = base_name + extension
+    req = urllib.request.Request(
+        WP_URL + f"/wp-json/wp/v2/media?post={int(post_id)}",
+        data=image_data,
         method="POST",
         headers={
             "Authorization": auth_header(),
-            "Content-Type": "image/jpeg",
+            "Content-Type": content_type,
             "Content-Disposition": f'attachment; filename="{filename}"',
             "Accept": "application/json",
-            "User-Agent": "CasaEDecoracao-Publisher/2.1",
+            "User-Agent": "CasaEDecoracao-AutonomousPublisher/3.0",
         },
     )
     try:
-        with urllib.request.urlopen(req, timeout=120) as response:
-            raw = response.read().decode("utf-8", errors="replace")
+        with urllib.request.urlopen(req, timeout=90) as response:
+            media = json.loads(response.read().decode("utf-8", "replace"))
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")[:1200]
-        raise RuntimeError(f"WordPress upload imagem HTTP {exc.code}: {detail}") from exc
-    media = json.loads(raw) if raw else {}
+        detail = exc.read().decode("utf-8", "replace")[:800]
+        raise RuntimeError(f"Falha ao enviar imagem destacada: WordPress HTTP {exc.code}: {detail}") from exc
     media_id = int(media.get("id") or 0)
     if not media_id:
-        raise RuntimeError("WordPress não retornou ID da imagem")
-    alt = f"Imagem editorial sobre {str(article.get('topic') or article.get('seo_title') or 'casa e decoração').strip()}"
-    alt = re.sub(r"\s+", " ", alt).strip()[:180]
-    request("POST", f"/wp/v2/media/{media_id}", {"alt_text": alt})
-    return {
-        "id": media_id,
-        "url": str(media.get("source_url") or ""),
-        "alt": alt,
-    }
+        raise RuntimeError("WordPress não confirmou o upload da imagem destacada")
+    request("POST", f"/wp/v2/media/{media_id}", {"alt_text": str(article.get("product") or article.get("seo_title") or "")[:180]})
+    updated = request("POST", f"/wp/v2/posts/{int(post_id)}", {"featured_media": media_id})
+    if int(updated.get("featured_media") or 0) != media_id:
+        raise RuntimeError("WordPress não confirmou a imagem destacada no post")
+    return media_id
 
 
-def ensure_featured_image(article):
-    media_id = int(article.get("featured_media_id") or 0)
-    featured_url = str(article.get("featured_image_url") or "").strip()
-    if media_id or featured_url:
-        return
-    image_bytes = generate_featured_image(article)
-    media = upload_featured_media(article, image_bytes)
-    article["featured_media_id"] = media["id"]
-    article["featured_image_url"] = media["url"]
-    article["featured_image_alt"] = media["alt"]
-    article["featured_image_source"] = IMAGE_MODEL
-
-
-def set_featured_alt(article):
-    media_id = int(article.get("featured_media_id") or 0)
-    alt = str(article.get("featured_image_alt") or "").strip()
-    if media_id and alt:
-        request("POST", f"/wp/v2/media/{media_id}", {"alt_text": alt})
-
-
-def publish_article(article, existing_posts):
-    cat_id = category_id(article["category"])
-    stable_slug = slugify(article.get("topic") or article["seo_title"])
-    article["content_html"] = add_related_internal_links(article, cat_id, stable_slug)
-
-    gate = draft_quality(article)
-    if gate["status"] != "DRAFT_READY":
-        raise RuntimeError("quality gate de rascunho: " + ", ".join(gate["reasons"]))
-
-    duplicate_reasons = cannibalization_reasons(article, existing_posts, current_slug=stable_slug)
-    if duplicate_reasons:
-        raise RuntimeError("canibalização/duplicidade: " + ", ".join(duplicate_reasons))
-
-    ensure_featured_image(article)
-    publication_gate = publication_quality(article, existing_posts, current_slug=stable_slug)
-    article["quality"] = publication_gate
-    if STATUS == "publish" and publication_gate["status"] != "QUALITY_APPROVED":
-        raise RuntimeError("publicação ao vivo bloqueada: " + ", ".join(publication_gate["reasons"]))
-
-    payload = {
-        "title": article["seo_title"],
-        "slug": stable_slug,
-        "status": STATUS,
-        "categories": [cat_id],
-        "excerpt": article.get("excerpt") or article.get("meta_description") or "",
-        "content": article["content_html"],
-    }
-    media_id = int(article.get("featured_media_id") or 0)
-    if media_id:
-        payload["featured_media"] = media_id
-
-    existing = find_existing(stable_slug)
-    if existing and existing.get("id"):
-        result = request("POST", f"/wp/v2/posts/{int(existing['id'])}", payload)
-        action = "updated"
-    else:
-        result = request("POST", "/wp/v2/posts", payload)
-        action = "created"
-
-    post_id = int(result.get("id") or 0)
-    if not post_id:
-        raise RuntimeError("WordPress não retornou ID do post")
-    set_aioseo(post_id, article)
-    set_featured_alt(article)
-
-    return {
-        "id": post_id,
-        "status": result.get("status"),
-        "url": result.get("link"),
-        "slug": stable_slug,
-        "action": action,
-        "seo_synced": True,
-        "featured_media_id": media_id,
-        "quality_status": publication_gate["status"],
-        "quality_reasons": publication_gate["reasons"],
-    }
-
-
-def needs_image_repair(item):
-    if item.get("status") != "WORDPRESS_DRAFT":
+def set_aioseo(post_id, article):
+    try:
+        request("POST", "/aioseo/v1/post", {
+            "id": int(post_id),
+            "title": article["seo_title"],
+            "description": article["meta_description"],
+        })
+        request("POST", f"/aioseo/v1/truseo/posts/{int(post_id)}", {
+            "focus_keyword": article["focus_keyword"],
+            "additional_keywords": [],
+            "truseo_locale": "pt_BR",
+        })
+        return True
+    except Exception as exc:
+        print("Aviso AIOSEO:", exc)
         return False
-    quality = item.get("quality") or {}
-    reasons = quality.get("reasons") or []
-    return "imagem_destacada_ausente" in reasons
+
+
+def validate_card_product_title(article):
+    content = str(article.get("content_html") or "")
+    product = html.escape(str(article.get("product") or "").strip())
+    marker = f'class="{CTA_PRODUCT_TITLE_CLASS}"'
+    if content.count(marker) != 2:
+        raise RuntimeError("título original do produto ausente ou duplicado nos cards CTA")
+    pattern = re.compile(
+        rf'<p\s+class="{re.escape(CTA_PRODUCT_TITLE_CLASS)}"[^>]*>\s*{re.escape(product)}\s*</p>', re.I
+    )
+    if len(pattern.findall(content)) != 2:
+        raise RuntimeError("título original do produto não está fiel nos dois cards CTA")
+    if re.search(rf"<h[1-6][^>]*>[^<]*{re.escape(product)}", content, re.I):
+        raise RuntimeError("título comercial do produto não pode ser heading editorial")
+
+
+def history_ids(history):
+    return {
+        str(row.get("shopee_item_id") or "").strip()
+        for row in (history.get("items") or [])
+        if str(row.get("shopee_item_id") or "").strip()
+    }
+
+
+def count_publications_for_local_date(history, local_date):
+    count = 0
+    for row in history.get("items") or []:
+        if str(row.get("source") or "") == "automatic_existing":
+            continue
+        raw = str(row.get("published_at") or "").strip()
+        if not raw:
+            continue
+        try:
+            stamp = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+            if stamp.tzinfo is None:
+                stamp = stamp.replace(tzinfo=timezone.utc)
+        except ValueError:
+            continue
+        if stamp.astimezone(LOCAL_TZ).date() == local_date:
+            count += 1
+    return count
+
+
+def publications_today(history):
+    return count_publications_for_local_date(history, datetime.now(LOCAL_TZ).date())
+
+
+def append_history(history, item, article, post_id, url, source="automatic_gate"):
+    item_id = str(item.get("shopee_item_id") or "").strip()
+    if item_id and item_id in history_ids(history):
+        return
+    history.setdefault("version", 2)
+    history.setdefault("project", "Casa e Decoração")
+    history.setdefault("items", []).append({
+        "shopee_item_id": item_id,
+        "product": str(item.get("product") or ""),
+        "category": str(article.get("category") or item.get("category") or ""),
+        "editorial_title": str(article.get("editorial_title") or article.get("seo_title") or ""),
+        "wordpress_post_id": int(post_id),
+        "wordpress_url": str(url or ""),
+        "published_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "source": source,
+    })
 
 
 def main():
-    if STATUS not in {"draft", "publish", "pending", "private"}:
-        raise RuntimeError("CASA_WORDPRESS_STATUS deve ser draft/publish/pending/private")
+    if not ENABLED:
+        print("Publicação ao vivo desativada por CASA_LIVE_PUBLISH_ENABLED=false.")
+        return
+    if STATUS != "publish":
+        raise RuntimeError("Trava de publicação: CASA_WORDPRESS_STATUS deve ser publish")
+    credentials()
 
-    queue = load_json(QUEUE_PATH, {})
-    items = queue.get("items") or []
-    candidates = [x for x in items if x.get("status") == "GENERATED" or needs_image_repair(x)][:PUBLISH_LIMIT]
-    if not candidates:
-        print("Nenhum artigo GENERATED ou rascunho pendente de imagem para sincronizar.")
+    doc = load(QUEUE, {})
+    history = load(HISTORY, {"version": 2, "project": "Casa e Decoração", "items": []})
+    rotation = load_state(ROTATION)
+    used_today = publications_today(history)
+    remaining_today = max(0, DAILY_CAP - used_today)
+    effective_limit = min(LIMIT, remaining_today)
+    if effective_limit <= 0:
+        print(f"Limite diário atingido: {used_today}/{DAILY_CAP} publicações em America/Recife; nenhuma nova publicação.")
         return
 
-    index = {int(x["id"]): x for x in items}
-    existing_posts = existing_posts_for_quality()
+    published = history_ids(history)
+    done = 0
 
-    for item in candidates:
-        item_id = int(item["id"])
-        article_path = GENERATED_DIR / f"{item_id:03d}.json"
-        article = load_json(article_path, {})
-        if not article:
-            index[item_id]["status"] = "QUARANTINE"
-            index[item_id]["last_error"] = "arquivo gerado ausente"
+    while done < effective_limit:
+        candidates = order_items(
+            [item for item in (doc.get("items") or []) if item.get("status") == "GENERATED"],
+            rotation,
+            pending_only=True,
+        )
+        if not candidates:
+            break
+        item = candidates[0]
+        item_id = str(item.get("shopee_item_id") or "").strip()
+        if item_id and item_id in published:
+            item["status"] = "PUBLISHED"
+            item["last_error"] = ""
             continue
+
+        article_path = GENERATED / f"{int(item['id']):03d}.json"
+        article = load(article_path, {})
+        gate = quality(article)
+        if gate["status"] != "DRAFT_READY":
+            item["status"] = "BLOCKED"
+            item["last_error"] = "quality gate antes da publicação: " + ", ".join(gate.get("reasons") or [])
+            continue
+
         try:
-            result = publish_article(article, existing_posts)
-            article["wordpress"] = result
-            article["status"] = "PUBLISHED" if result.get("status") == "publish" else "WORDPRESS_DRAFT"
-            save_json(article_path, article)
-            index[item_id]["status"] = article["status"]
-            index[item_id]["wordpress"] = result
-            index[item_id]["quality"] = article.get("quality")
-            index[item_id].pop("last_error", None)
-            print(f"WordPress {item_id}: {result}")
+            category = str(article.get("category") or item.get("category") or "")
+            if category not in rotation.get("pending_categories", []):
+                raise RuntimeError("categoria já coberta no ciclo atual de rotação")
+            validate_card_product_title(article)
+            slug = slugify(article.get("topic") or article.get("seo_title"))
+            old = existing(slug)
+            if old:
+                old_title = rendered_title(old)
+                if old_title and old_title != str(article.get("seo_title") or "").strip():
+                    raise RuntimeError("slug já pertence a outro artigo")
+                if old.get("status") == "publish":
+                    post_id = int(old["id"])
+                    if not int(old.get("featured_media") or 0):
+                        item["featured_media"] = upload_featured_image(post_id, article)
+                    else:
+                        item["featured_media"] = int(old.get("featured_media") or 0)
+                    url = old.get("link")
+                    append_history(history, item, article, post_id, url, source="automatic_existing")
+                    item["wordpress_post_id"] = post_id
+                    item["wordpress_url"] = url
+                    item["status"] = "PUBLISHED"
+                    item["last_error"] = ""
+                    if item_id:
+                        published.add(item_id)
+                    continue
 
-            existing_posts = existing_posts_for_quality()
+            payload = {
+                "title": article["seo_title"],
+                "slug": slug,
+                "status": "draft",
+                "categories": [category_id(category)],
+                "excerpt": article["excerpt"],
+                "content": article["content_html"],
+            }
+            result = request("POST", f"/wp/v2/posts/{int(old['id'])}" if old else "/wp/v2/posts", payload)
+            post_id = int(result.get("id") or 0)
+            if not post_id:
+                raise RuntimeError("WordPress não confirmou criação do rascunho")
+
+            media_id = upload_featured_image(post_id, article)
+            result = request("POST", f"/wp/v2/posts/{post_id}", {"status": "publish", "featured_media": media_id})
+            if result.get("status") != "publish" or int(result.get("featured_media") or 0) != media_id:
+                raise RuntimeError("WordPress não confirmou publicação com imagem destacada")
+
+            url = result.get("link")
+            item["wordpress_post_id"] = post_id
+            item["wordpress_url"] = url
+            item["featured_media"] = media_id
+            item["seo_synced"] = set_aioseo(post_id, article)
+            item["status"] = "PUBLISHED"
+            item["last_error"] = ""
+            append_history(history, item, article, post_id, url)
+            rotation = mark_published(rotation, category)
+            if item_id:
+                published.add(item_id)
+            done += 1
         except Exception as exc:
-            index[item_id]["status"] = "QUARANTINE"
-            index[item_id]["last_error"] = str(exc)[:700]
-            print(f"QUARANTINE {item_id}: {exc}")
+            item["publication_attempts"] = int(item.get("publication_attempts") or 0) + 1
+            item["last_error"] = str(exc)[:800]
+            if item["publication_attempts"] >= 3:
+                item["status"] = "PUBLISH_BLOCKED"
 
-    queue["items"] = [index[int(x["id"])] for x in items]
-    save_json(QUEUE_PATH, queue)
+    save(QUEUE, doc)
+    save(HISTORY, history)
+    save_state(ROTATION, rotation)
+    print(f"Publicações confirmadas nesta execução: {done} | hoje={used_today + done}/{DAILY_CAP} | ciclo={rotation.get('cycle')} | pendentes={rotation.get('pending_categories')}")
 
 
 if __name__ == "__main__":

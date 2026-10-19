@@ -2,12 +2,14 @@
   "project": "Casa e Decoração",
   "url_blog": "https://casaedecoracao.radartechbr.com.br/",
   "timezone": "America/Recife",
-  "content_mode": "editorial_affiliate",
+  "content_mode": "editorial_affiliate_v3",
   "auto_publish": true,
+  "daily_publish_cap": 3,
+  "posts_per_run": 1,
   "isolation": {
-    "history_path": "casa_decoracao/data/wordpress_historico.json",
-    "drafts_path": "casa_decoracao/data/wordpress_rascunhos.json",
-    "queue_path": "casa_decoracao/data/fila_dia.json",
+    "history_path": "casa_decoracao/data/publication_history.json",
+    "rotation_path": "casa_decoracao/data/category_rotation.json",
+    "queue_path": "casa_decoracao/data/editorial_queue.json",
     "never_use_radar_state": true
   },
   "categories": [
@@ -18,15 +20,13 @@
     "Cozinha",
     "Banheiro",
     "Área Externa",
-    "Cama, Mesa e Banho",
-    "Iluminação",
-    "Limpeza e Utilidades"
+    "Cama, Mesa e Banho"
   ],
   "seo": {
     "permalink": "/%postname%/",
-    "meta_description_target": "120-160",
+    "meta_description_target": "120-155",
     "affiliate_links_rel": "nofollow sponsored",
     "require_featured_image_alt": true,
-    "require_internal_links_when_available": true
+    "require_internal_links": true
   }
 }

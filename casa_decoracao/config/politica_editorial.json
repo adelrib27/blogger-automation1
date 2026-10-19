@@ -1,12 +1,18 @@
 {
-  "version": 1,
+  "version": 3,
   "project": "Casa e Decoração",
+  "site_url": "https://casaedecoracao.radartechbr.com.br/",
   "timezone": "America/Recife",
-  "status": "PUBLICACAO_CONDICIONADA_AO_GATE_V2",
-  "daily_publication_policy": {
-    "publish_only_qualified_products": true,
-    "never_force_low_quality_content": true,
-    "cover_categories_with_natural_diversity": true
+  "automation": {
+    "mode": "autonomous",
+    "posts_per_day": 3,
+    "posts_per_run": 1,
+    "hard_daily_cap": 3,
+    "category_rotation_required": true,
+    "rotation_policy": "não repetir categoria enquanto houver outra categoria oficial ainda pendente no ciclo",
+    "category_cycle_target_days": 3,
+    "generation_model": "@cf/qwen/qwen3-30b-a3b-fp8",
+    "featured_image_source": "Shopee imageUrl do produto real"
   },
   "allowed_categories": [
     "Decoração",
@@ -16,89 +22,36 @@
     "Cozinha",
     "Banheiro",
     "Área Externa",
-    "Cama, Mesa e Banho",
-    "Iluminação",
-    "Limpeza e Utilidades"
+    "Cama, Mesa e Banho"
   ],
-  "product_rules": {
-    "min_rating_when_available": 4,
-    "allow_products_without_rating": true,
-    "min_extra_commission_rate": 0.03,
-    "extra_commission_first": true,
-    "standard_commission_only_as_reserve": true,
-    "require_semantic_intent": true,
-    "require_affiliate_offer_link": true
-  },
-  "duplicate_control": {
-    "block_exact_product_already_used": true,
-    "block_exact_affiliate_link_already_used": true,
-    "block_duplicate_item_id": true,
-    "avoid_recent_similar_product_or_theme": true,
-    "recent_history_window_posts": 50
-  },
-  "editorial": {
-    "language": "pt-BR",
-    "word_count_min": 900,
-    "word_count_max": 1400,
-    "title_max_chars": 60,
-    "meta_description_min_chars": 120,
-    "meta_description_max_chars": 155,
-    "natural_seo": true,
-    "quick_summary_near_start": true,
-    "include_real_advantages_and_limitations": true,
-    "include_use_context": true,
-    "include_who_it_is_for": true,
-    "include_what_to_check_before_buying": true,
-    "no_fake_physical_testing": true,
-    "affiliate_transparency": true,
+  "editorial_rules": {
+    "single_editorial_title": true,
+    "commercial_title_only_in_cta": true,
+    "minimum_words": 550,
+    "target_words": "600-900",
+    "minimum_h2": 5,
+    "two_contextual_ctas": true,
     "affiliate_rel": "nofollow sponsored",
-    "factual_mode_when_data_is_sparse": true,
-    "never_invent_missing_product_data": true,
-    "featured_image_alt_required": true,
-    "contextual_internal_links": {
-      "enabled": true,
-      "max_per_article": 3,
-      "use_natural_anchor_text": true,
-      "only_when_relevant_term_exists_in_article": true,
-      "never_force_unrelated_link": true
-    }
+    "require_affiliate_disclosure": true,
+    "no_fake_testing": true,
+    "no_invented_specs": true,
+    "no_unverified_price_stock_discount": true,
+    "no_medical_or_therapeutic_claims": true,
+    "no_dangerous_electrical_gas_or_chemical_steps": true,
+    "require_internal_category_link": true,
+    "require_real_product_image_in_cta": true,
+    "require_featured_product_image_before_publish": true,
+    "fail_closed": true
   },
-  "prohibited_unverified_claims": [
-    "preço atual ou desconto não confirmado",
-    "estoque ou disponibilidade não confirmados",
-    "prazo de entrega não confirmado",
-    "potência não confirmada",
-    "voltagem não confirmada",
-    "autonomia não confirmada",
-    "capacidade não confirmada",
-    "material não confirmado",
-    "dimensões não confirmadas",
-    "peso não confirmado",
-    "garantia não confirmada",
-    "compatibilidade não confirmada",
-    "certificações não confirmadas",
-    "desempenho técnico não sustentado pelos dados de origem",
-    "instrução específica de limpeza ou manutenção sem fonte",
-    "instrução específica de segurança ou instalação sem fonte",
-    "testamos ou comprovamos sem teste físico real",
-    "é o melhor ou 100% garantido sem base verificável"
-  ],
-  "missing_data_policy": {
-    "never_fill_gaps_by_guessing": true,
-    "preferred_safe_phrase": "vale conferir no anúncio",
-    "refer_to_manual_or_official_listing_when_applicable": true
-  },
-  "failure_policy": {
-    "max_generation_attempts_per_product": 3,
-    "on_repeated_failure": "QUARENTENA",
-    "continue_with_next_product": true,
-    "never_stop_whole_pipeline_for_one_product": true
-  },
-  "automation_mode": {
-    "shopee_discovery": true,
-    "queue_selection": true,
-    "content_generation": true,
-    "wordpress_auto_publish": true,
-    "note": "Publicação ao vivo autorizada pelo usuário em 2026-10-18, exclusiva do Casa e Decoração. Fluxo autônomo a cada 3 horas, até 2 artigos por execução, condicionado ao gate v2. Rascunhos reprovados permanecem bloqueados."
+  "publication": {
+    "wordpress_status": "publish",
+    "create_as_draft_first": true,
+    "upload_featured_image_before_publish": true,
+    "verify_featured_media_before_publish_confirmation": true,
+    "dedupe_by_shopee_item_id": true,
+    "dedupe_by_product_similarity": true,
+    "history_path": "casa_decoracao/data/publication_history.json",
+    "rotation_path": "casa_decoracao/data/category_rotation.json",
+    "queue_path": "casa_decoracao/data/editorial_queue.json"
   }
 }

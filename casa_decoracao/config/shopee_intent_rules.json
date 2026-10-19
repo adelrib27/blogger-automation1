@@ -1,38 +1,90 @@
 {
-  "version": 1,
-  "description": "Regras semanticas isoladas do projeto Casa e Decoracao para reduzir falsos positivos na Shopee.",
+  "version": 3,
+  "description": "Regras semânticas do Casa e Decoração para as 8 categorias oficiais da rotação editorial.",
   "rules": {
-    "organizador banheiro": {
-      "require_groups": [["organizador", "prateleira", "suporte", "cesto", "dispenser", "dispensador"], ["banheiro", "lavabo", "shampoo", "sabonete", "escova de dente"]],
-      "block_phrases": ["brinquedo", "fantasia", "decoracao de festa"]
+    "caminho de mesa": {
+      "require_groups": [["caminho de mesa", "trilho de mesa"]],
+      "block_phrases": ["tecido por metro", "papel descartavel", "festa infantil"]
     },
-    "organizador cozinha": {
-      "require_groups": [["organizador", "prateleira", "suporte", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"], ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "talher", "geladeira", "pia"]],
-      "block_phrases": ["organizador de maquiagem", "cesto de roupa"]
+    "vaso decorativo": {
+      "require_groups": [["vaso"], ["decorativo", "decoracao", "ceramica", "vidro", "resina"]],
+      "block_phrases": ["vaso sanitario", "vaso de expansao", "vaso para moto"]
+    },
+    "almofada decorativa": {
+      "require_groups": [["almofada", "capa de almofada"], ["decorativa", "decoracao", "sala", "sofa"]],
+      "block_phrases": ["almofada cervical", "almofada ortopedica", "almofada pet"]
+    },
+    "caixa organizadora": {
+      "require_groups": [["caixa", "cesto", "cesta"], ["organizadora", "organizador", "organizacao"]],
+      "block_phrases": ["caixa de som", "caixa de ferramentas", "caixa de pesca", "brinquedo"]
+    },
+    "organizador armario": {
+      "require_groups": [["organizador", "colmeia", "divisoria", "prateleira"], ["armario", "guarda roupa", "gaveta", "roupa"]],
+      "block_phrases": ["organizador maquiagem", "organizador carro", "organizador escritorio"]
     },
     "varal de chao": {
       "require_groups": [["varal"], ["chao", "dobravel", "roupa", "roupas"]],
-      "block_phrases": ["miniatura", "brinquedo"]
+      "block_phrases": ["miniatura", "brinquedo", "varal de luz"]
     },
-    "kit potes hermeticos": {
-      "require_groups": [["pote", "potes"], ["hermetico", "hermeticos", "trava", "travas", "alimentos"]],
-      "block_phrases": ["pote para tinta", "pote cosmetico"]
+    "manta sofa": {
+      "require_groups": [["manta", "cobertor"], ["sofa", "decorativa", "decoracao", "sala"]],
+      "block_phrases": ["manta termica automotiva", "manta asfaltica", "manta para pet"]
+    },
+    "mesa lateral": {
+      "require_groups": [["mesa"], ["lateral", "apoio", "canto"]],
+      "block_phrases": ["mesa cirurgica", "mesa para notebook automotivo", "miniatura"]
+    },
+    "tapete sala": {
+      "require_groups": [["tapete"], ["sala", "decorativo", "decoracao"]],
+      "block_phrases": ["tapete automotivo", "tapete banheiro", "tapete cozinha", "tapete infantil brinquedo"]
+    },
+    "travesseiro": {
+      "require_groups": [["travesseiro"]],
+      "block_phrases": ["fronha", "capa avulsa", "travesseiro pet", "travesseiro infantil brinquedo"]
+    },
+    "organizador guarda roupa": {
+      "require_groups": [["organizador", "colmeia", "divisoria", "caixa"], ["guarda roupa", "armario", "gaveta", "roupa"]],
+      "block_phrases": ["organizador carro", "organizador maquiagem"]
+    },
+    "abajur quarto": {
+      "require_groups": [["abajur", "luminaria"], ["quarto", "mesa de cabeceira", "cabeceira", "noturna"]],
+      "block_phrases": ["luminaria automotiva", "farol", "lanterna"]
     },
     "escorredor de loucas": {
       "require_groups": [["escorredor"], ["louca", "loucas", "prato", "pratos", "talher", "talheres", "copo", "copos"]],
       "block_phrases": ["escorredor macarrao", "escorredor arroz", "escorredor legumes", "tapete escorredor"]
     },
+    "potes hermeticos": {
+      "require_groups": [["pote", "potes"], ["hermetico", "hermeticos", "trava", "travas", "alimentos"]],
+      "block_phrases": ["pote para tinta", "pote cosmetico", "pote pet"]
+    },
     "fatiador de legumes": {
       "require_groups": [["fatiador", "cortador"], ["legume", "legumes", "verdura", "verduras"]],
-      "block_phrases": ["peca para fatiador", "lamina avulsa"]
+      "block_phrases": ["peca para fatiador", "lamina avulsa", "fatiador industrial reposicao"]
     },
-    "petisqueira": {
-      "require_groups": [["petisqueira", "barquinha", "canoa"], ["petisco", "petiscos", "frios", "servir"]],
-      "block_phrases": ["brinquedo", "miniatura"]
+    "toalheiro banheiro": {
+      "require_groups": [["toalheiro", "porta toalha", "suporte toalha"], ["banheiro", "lavabo", "toalha"]],
+      "block_phrases": ["toalheiro aquecido industrial", "toalheiro automotivo"]
     },
-    "mixer eletrico": {
-      "require_groups": [["mixer"]],
-      "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer"]
+    "tapete banheiro": {
+      "require_groups": [["tapete"], ["banheiro", "box", "lavabo", "antiderrapante"]],
+      "block_phrases": ["tapete automotivo", "tapete sala", "tapete cozinha"]
+    },
+    "prateleira banheiro": {
+      "require_groups": [["prateleira", "nicho", "suporte", "organizador"], ["banheiro", "box", "lavabo", "shampoo", "sabonete"]],
+      "block_phrases": ["prateleira oficina", "prateleira garagem", "prateleira para roteador"]
+    },
+    "luminaria solar jardim": {
+      "require_groups": [["luminaria", "luz", "lampada"], ["solar"], ["jardim", "externa", "quintal", "area externa"]],
+      "block_phrases": ["placa solar", "controlador solar", "luminaria automotiva"]
+    },
+    "vaso jardim": {
+      "require_groups": [["vaso", "cachepot"], ["planta", "jardim", "flor", "externa"]],
+      "block_phrases": ["vaso sanitario", "vaso de expansao", "vaso automotivo"]
+    },
+    "cadeira varanda": {
+      "require_groups": [["cadeira", "poltrona"], ["varanda", "jardim", "externa", "area externa"]],
+      "block_phrases": ["cadeira gamer", "cadeira escritorio", "cadeira automotiva", "cadeirinha infantil"]
     },
     "protetor de colchao": {
       "require_groups": [["protetor", "capa"], ["colchao"]],
@@ -44,39 +96,7 @@
     },
     "lencol casal": {
       "require_groups": [["lencol", "lencois"], ["casal", "queen", "king"]],
-      "block_phrases": ["tecido para lencol"]
-    },
-    "colcha cobre leito": {
-      "require_groups": [["colcha", "cobre leito", "cobreleito"]],
-      "block_phrases": ["tecido para colcha", "capa de almofada"]
-    },
-    "mop giratorio": {
-      "require_groups": [["mop"], ["giratorio", "balde", "centrifuga"]],
-      "block_phrases": ["refil para mop", "cabo para mop"]
-    },
-    "escova eletrica limpeza": {
-      "require_groups": [["escova"], ["eletrica", "recarregavel"], ["limpeza", "limpar"]],
-      "block_phrases": ["escova de dente", "escova cabelo"]
-    },
-    "aspirador de po": {
-      "require_groups": [["aspirador"]],
-      "block_phrases": ["filtro para aspirador", "saco para aspirador", "mangueira para aspirador", "bico para aspirador", "peca para aspirador"]
-    },
-    "luminaria": {
-      "require_groups": [["luminaria", "abajur", "plafon", "lampada led", "luz led"]],
-      "block_phrases": ["fita led", "adesivo", "miniatura"]
-    },
-    "travesseiro cervical": {
-      "require_groups": [["travesseiro"], ["cervical", "ortopedico"]],
-      "block_phrases": ["fronha avulsa"]
-    },
-    "caminho de mesa": {
-      "require_groups": [["caminho de mesa", "trilho de mesa"]],
-      "block_phrases": ["tecido por metro"]
-    },
-    "manta microfibra": {
-      "require_groups": [["manta", "cobertor"], ["microfibra", "soft"]],
-      "block_phrases": ["tecido por metro"]
+      "block_phrases": ["tecido para lencol", "lencol hospitalar descartavel"]
     }
   }
 }
