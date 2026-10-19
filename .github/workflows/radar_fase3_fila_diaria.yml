@@ -2,6 +2,9 @@ name: Radar Tech BR — Fase 3 Fila Diária
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "radar_tech_br/queue_kickoff.txt"
   schedule:
     # 07:15 no horário de Brasília (UTC-3)
     - cron: "15 10 * * *"
