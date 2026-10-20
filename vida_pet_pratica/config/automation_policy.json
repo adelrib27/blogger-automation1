@@ -1,11 +1,12 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "min_ready": 3,
   "candidate_attempt_limit": 20,
   "evidence": {
     "max_search_results": 8,
-    "min_exact_sources": 1,
+    "min_external_authorized_sources": 1,
     "similar_product_specs_authorized": false,
+    "exact_product_source_required": true,
     "allow_keyless_firecrawl_lab": true
   },
   "rotation": {
