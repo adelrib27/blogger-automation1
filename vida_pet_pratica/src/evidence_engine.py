@@ -88,7 +88,7 @@ def firecrawl_search(query: str, limit: int = 8) -> tuple[list[dict], dict]:
         "sources": ["web"],
         "scrapeOptions": {"formats": ["markdown"], "onlyMainContent": True},
     }
-    headers = {"Content-Type": "application/json", "Accept": "application/json", "User-Agent": "VidaPetPratica-EvidenceEngine/1.0"}
+    headers = {"Content-Type": "application/json", "Accept": "application/json", "User-Agent": "VidaPetPratica-EvidenceEngine/1.1"}
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
     request = urllib.request.Request(FIRECRAWL_ENDPOINT, data=json.dumps(payload, ensure_ascii=False).encode("utf-8"), method="POST", headers=headers)
@@ -126,13 +126,26 @@ class EvidenceSource:
     reason: str
 
 
-def build_evidence_package(item: dict, max_results: int = 8, min_exact_sources: int = 1) -> dict:
+def build_evidence_package(item: dict, max_results: int = 8, min_external_authorized_sources: int = 1) -> dict:
     item_id = str(item.get("itemId") or "").strip()
     product_name = re.sub(r"\s+", " ", str(item.get("productName") or "")).strip()
     if not item_id or not product_name:
         return {"status": "REJECTED_EVIDENCE", "reasons": ["missing_item_identity"], "product": {"itemId": item_id, "productName": product_name}, "sources": []}
 
-    results, search_meta = firecrawl_search(f'"{product_name}" "{item_id}"', limit=max_results)
+    search_runs = []
+    merged_results = []
+    seen_urls = set()
+    for query in (f'"{product_name}"', f'"{item_id}" site:shopee.com.br'):
+        results, meta = firecrawl_search(query, limit=max_results)
+        search_runs.append(meta)
+        for result in results:
+            url = str(result.get("url") or "").strip()
+            if url and url not in seen_urls:
+                seen_urls.add(url)
+                merged_results.append(result)
+        if any(_exact_shopee_match(str(r.get("url") or ""), item_id) for r in merged_results):
+            break
+
     models = model_tokens(product_name)
     sources = [EvidenceSource(
         evidence_id="EV-SHOPEE-API-" + item_id,
@@ -146,10 +159,10 @@ def build_evidence_package(item: dict, max_results: int = 8, min_exact_sources: 
         reason="Shopee Affiliate API returned this exact itemId and productName",
     )]
 
-    for index, result in enumerate(results, start=1):
+    for index, result in enumerate(merged_results, start=1):
         url = str(result.get("url") or "").strip()
         title = re.sub(r"\s+", " ", str(result.get("title") or "")).strip()
-        excerpt = _safe_excerpt(result)
+        excerpt = _safe_excerpt(result) or title
         identity, allowed, confidence = "SIMILAR_PRODUCT", False, 0.30
         reason = "Search result is context only; exact identity not proven"
         if _exact_shopee_match(url, item_id):
@@ -164,17 +177,14 @@ def build_evidence_package(item: dict, max_results: int = 8, min_exact_sources: 
             source_title=title, support_text=excerpt, allowed_in_article=allowed, confidence=confidence, reason=reason,
         ))
 
-    exact_sources = [s for s in sources if s.identity_level == "EXACT_PRODUCT"]
-    allowed_sources = [s for s in sources if s.allowed_in_article and s.support_text]
+    external_authorized = [s for s in sources if s.source_domain != "open-api.affiliate.shopee.com.br" and s.allowed_in_article and s.support_text]
     reasons = []
-    if len(exact_sources) < min_exact_sources:
-        reasons.append(f"exact_sources:{len(exact_sources)}<{min_exact_sources}")
-    if not allowed_sources:
-        reasons.append("no_authorized_evidence")
+    if len(external_authorized) < min_external_authorized_sources:
+        reasons.append(f"external_authorized_sources:{len(external_authorized)}<{min_external_authorized_sources}")
 
     return {
         "status": "VERIFIED" if not reasons else "REJECTED_EVIDENCE",
-        "version": "EVIDENCE_ENGINE_V1",
+        "version": "EVIDENCE_ENGINE_V1_1",
         "verified_at": int(time.time()),
         "product": {
             "itemId": item_id, "productName": product_name, "shopName": item.get("shopName"),
@@ -182,12 +192,14 @@ def build_evidence_package(item: dict, max_results: int = 8, min_exact_sources: 
             "intentMatchedKeywords": item.get("intentMatchedKeywords") or item.get("keywords") or [],
             "categories": item.get("categories") or [], "modelTokens": models,
         },
-        "search": search_meta,
+        "search_runs": search_runs,
         "rules": {
             "similar_product_specs_authorized": False,
             "exact_product_authorized": True,
             "matched_model_authorized_only_with_distinct_model_tokens": True,
+            "min_external_authorized_sources": min_external_authorized_sources,
         },
-        "authorized_evidence_ids": [s.evidence_id for s in allowed_sources],
+        "authorized_evidence_ids": [s.evidence_id for s in sources if s.allowed_in_article and s.support_text],
+        "external_authorized_evidence_ids": [s.evidence_id for s in external_authorized],
         "conflicts": [], "reasons": reasons, "sources": [asdict(s) for s in sources],
     }
