@@ -52,6 +52,7 @@ jobs:
             vida_pet_pratica/src/automation_core_persistent_v2.py \
             vida_pet_pratica/src/article_builder_v1.py \
             vida_pet_pratica/src/article_builder_safe_v5.py \
+            vida_pet_pratica/src/article_builder_evergreen_v6.py \
             vida_pet_pratica/src/article_builder_persistent_v2.py \
             vida_pet_pratica/src/d1_persistence.py
           python - <<'PY'
@@ -96,7 +97,7 @@ jobs:
       - name: Build persistent candidate buffer
         run: python vida_pet_pratica/src/automation_core_persistent_v2.py
 
-      - name: Build grounded post buffer with SAFE V5 persistent guard
+      - name: Build grounded post buffer with SAFE persistent guard
         run: python vida_pet_pratica/src/article_builder_persistent_v2.py
 
       - name: Persist VERIFIED_READY posts to D1
