@@ -56,7 +56,8 @@ jobs:
             vida_pet_pratica/src/article_builder_evergreen_v7.py \
             vida_pet_pratica/src/article_builder_evergreen_v8.py \
             vida_pet_pratica/src/article_builder_persistent_v2.py \
-            vida_pet_pratica/src/d1_persistence.py
+            vida_pet_pratica/src/d1_persistence.py \
+            vida_pet_pratica/src/d1_persistence_v2.py
           python - <<'PY'
           import json
           from pathlib import Path
@@ -66,6 +67,7 @@ jobs:
           assert policy["rotation"]["new_products_first"] is True
           assert policy["rotation"]["evergreen_enabled"] is True
           assert int(policy["min_ready"]) == 3
+          assert int(policy["rotation"]["product_cooldown_days"]) == 30
           assert d1["persistence_enabled"] is True
           assert d1["lab_only"] is True
           assert d1["account_id"] == "b1515400afe32581994c4d3f038f835f"
@@ -85,10 +87,10 @@ jobs:
           fi
 
       - name: Verify D1 connection and schema
-        run: python vida_pet_pratica/src/d1_persistence.py verify
+        run: python vida_pet_pratica/src/d1_persistence_v2.py verify
 
       - name: Hydrate persistent editorial history
-        run: python vida_pet_pratica/src/d1_persistence.py hydrate
+        run: python vida_pet_pratica/src/d1_persistence_v2.py hydrate
 
       - name: Clean ephemeral generation output
         shell: bash
@@ -103,10 +105,10 @@ jobs:
         run: python vida_pet_pratica/src/article_builder_persistent_v2.py
 
       - name: Persist VERIFIED_READY posts to D1
-        run: python vida_pet_pratica/src/d1_persistence.py persist
+        run: python vida_pet_pratica/src/d1_persistence_v2.py persist
 
       - name: Verify persistent state after run
-        run: python vida_pet_pratica/src/d1_persistence.py verify
+        run: python vida_pet_pratica/src/d1_persistence_v2.py verify
 
       - name: Verify no WordPress writer exists
         if: always()
