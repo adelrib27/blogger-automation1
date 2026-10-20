@@ -9,6 +9,7 @@ import d1_persistence as base
 LAB_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = LAB_ROOT / "config" / "automation_policy.json"
 OUT_DIR = LAB_ROOT / "data" / "architecture_lab"
+EVERGREEN_VERSION = "SAFE_V10_EVERGREEN_EDITORIAL_GUIDED_RETRY"
 
 
 def iso(dt):
@@ -43,7 +44,7 @@ def persist_v2():
             continue
         gate = post.get("gate") or {}
         if evergreen:
-            version = "SAFE_V9_EVERGREEN_EDITORIAL_ORIGINAL"
+            version = EVERGREEN_VERSION
         else:
             version = str(gate.get("editorial_sanitizer") or "SAFE_V5_CATEGORY_AWARE")
         a_fp = base.angle_fp(angle)
@@ -62,7 +63,7 @@ def persist_v2():
     run_id = f"github-{os.getenv('GITHUB_RUN_ID', 'local')}-{os.getenv('GITHUB_RUN_ATTEMPT', '1')}"
     mode = str(architecture.get("mode") or ("EVERGREEN_ROTATION_FORCED" if evergreen else "NEW_PRODUCT_DISCOVERY"))
     notes = {
-        "builder": "SAFE_V9_EVERGREEN_EDITORIAL_ORIGINAL" if evergreen else "SAFE_V5_CATEGORY_AWARE",
+        "builder": EVERGREEN_VERSION if evergreen else "SAFE_V5_CATEGORY_AWARE",
         "wordpress_written": False,
         "cooldown_days": cooldown_days,
         "items": updated,
