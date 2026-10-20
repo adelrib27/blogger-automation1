@@ -61,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           ! grep -R -E "wp-json|wp-admin|WORDPRESS_APP_PASSWORD|status.?=.?(publish|draft)" \
-            vida_pet_pratica/src vida_pet_pratica/config .github/workflows/vida_pet_pratica_groq_qwen_lab.yml
+            vida_pet_pratica/src vida_pet_pratica/config
 
       - name: Upload laboratory artifacts
         if: always()
