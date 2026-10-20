@@ -35,6 +35,20 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Verify Shopee App ID fingerprint
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import os
+          expected = "a46bc2db89ee7357c289a915f3f059ac7277fb9bfd19c3bdba68a73b88d65a07"
+          actual = hashlib.sha256(os.environ["SHOPEE_APP_ID"].encode("utf-8")).hexdigest()
+          if actual != expected:
+              raise SystemExit("SHOPEE_APP_ID fingerprint mismatch")
+          print("SHOPEE_APP_ID fingerprint MATCH")
+          PY
+
       - name: SAFE preflight
         shell: bash
         run: |
