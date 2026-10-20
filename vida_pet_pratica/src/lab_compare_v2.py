@@ -3,9 +3,9 @@ import json
 import os
 import re
 import time
-from pathlib import Path
 
 import lab_compare as lab
+import run_lab as pet_runner
 
 
 def parse_model_object(raw):
@@ -96,6 +96,7 @@ def main():
     print("Qualidade editorial e compliance de formato são medidos separadamente.")
     print("Sem escrita no WordPress. Sem cron. Um único produto real para A/B.")
 
+    lab.shopee.run_regression_checks = pet_runner.pet_regression_checks
     ranking = lab.shopee.scan_v23()
     source, globally_rejected = lab.choose_source(ranking)
     lab.save("source_item.json", source)
