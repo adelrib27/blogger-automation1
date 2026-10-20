@@ -2,6 +2,13 @@ name: LAB Topic Graph SAFE
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - lab/topic-graph-safe-v1
+    paths:
+      - "lab_topic_graph/**"
+      - ".github/workflows/lab_topic_graph_safe.yml"
+      - "data/historico.json"
 
 permissions:
   contents: read
