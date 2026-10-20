@@ -2,16 +2,15 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 18,
+    "total": 17,
     "draft_ready": 1,
-    "rejected": 16,
+    "rejected": 15,
     "not_generated": 1,
-    "published_history": 9,
+    "published_history": 10,
     "rotation_cycle": 1,
     "rotation_pending": [
       "Sala",
-      "Banheiro",
-      "Cama, Mesa e Banho"
+      "Banheiro"
     ]
   },
   "items": [
@@ -161,95 +160,23 @@
       }
     },
     {
-      "id": 3,
-      "shopee_item_id": "23892379352",
-      "category": "Área Externa",
-      "product": "1/2/4 PCS Luminária Parede Solar  100 Leds Com Sensor de Movimento Jardim Externa Prova D'água Casa",
+      "id": 30,
+      "shopee_item_id": "22893738408",
+      "category": "Cama, Mesa e Banho",
+      "product": "Jogo de Lençol 400 Fios Extra Macio c/ Fronhas Ponto Palito Berço Solteiro Casal Queen King 02 e 03 Peças",
       "queue_status": "PUBLISHED",
-      "wordpress_post_id": 160,
+      "wordpress_post_id": 163,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 661,
+          "word_count": 624,
           "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 42,
+          "seo_title_length": 57,
           "meta_description_length": 152,
           "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 11,
-      "shopee_item_id": "23695000959",
-      "category": "Área Externa",
-      "product": "Pedra Dolomita Natural Branca Seixo Para Decoração Vaso Fonte Canteiro Pedra Jardim",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 862,
-          "h2_count": 3,
-          "internal_links": 1,
-          "seo_title_length": 45,
-          "meta_description_length": 123,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 30,
-      "shopee_item_id": "22893738408",
-      "category": "Cama, Mesa e Banho",
-      "product": "Jogo de Lençol 400 Fios Extra Macio c/ Fronhas Ponto Palito Berço Solteiro Casal Queen King 02 e 03 Peças",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 854,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 38,
-          "meta_description_length": 142,
-          "cta_count": 1
         },
         "safety_class": "STANDARD"
       }
@@ -627,6 +554,42 @@
           "internal_links": 1,
           "seo_title_length": 39,
           "meta_description_length": 143,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 11,
+      "shopee_item_id": "23695000959",
+      "category": "Área Externa",
+      "product": "Pedra Dolomita Natural Branca Seixo Para Decoração Vaso Fonte Canteiro Pedra Jardim",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:3",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 862,
+          "h2_count": 3,
+          "internal_links": 1,
+          "seo_title_length": 45,
+          "meta_description_length": 123,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
