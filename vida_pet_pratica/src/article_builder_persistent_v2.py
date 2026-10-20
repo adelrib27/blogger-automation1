@@ -32,8 +32,9 @@ def persistent_candidate_from_item(item, history, max_similarity, max_results):
 builder.candidate_from_item = persistent_candidate_from_item
 
 # NORMAL preserva o SAFE Builder V5 validado.
-# EVERGREEN usa V6 angle-aware para impedir repetição estrutural do mesmo produto.
+# EVERGREEN usa V7: Groq escolhe apenas o plano entre blocos seguros,
+# enquanto fatos específicos continuam exclusivamente ligados às evidências.
 if os.getenv("VIDAPET_FORCE_EVERGREEN", "").strip() == "1":
-    import article_builder_evergreen_v6  # noqa: E402,F401
+    import article_builder_evergreen_v7  # noqa: E402,F401
 else:
     import article_builder_safe_v5  # noqa: E402,F401
