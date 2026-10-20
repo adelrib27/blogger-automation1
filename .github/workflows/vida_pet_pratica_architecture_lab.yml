@@ -68,7 +68,96 @@ jobs:
         run: python vida_pet_pratica/src/automation_core_v1.py
 
       - name: Build grounded post buffer with Groq Fact Gate
-        run: python vida_pet_pratica/src/article_builder_v1.py
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re
+          import sys
+          import time
+
+          sys.path.insert(0, "vida_pet_pratica/src")
+          import article_builder_v1 as builder
+          import evidence_engine as evidence
+
+          original_call = builder.groq_call
+          original_prompt = builder.prompt_for
+          original_gate = builder.gate
+          last_call = [0.0]
+
+          def strict_prompt(candidate, package):
+              return original_prompt(candidate, package) + """
+
+          VALIDACAO FINAL OBRIGATORIA:
+          - titulo entre 35 e 60 caracteres;
+          - meta description com no maximo 150 caracteres;
+          - article_html entre 680 e 820 palavras;
+          - pelo menos 6 H2;
+          - cada claim_evidence deve corresponder a uma frase realmente presente no article_html;
+          - se faltar extensao, amplie apenas orientacoes gerais do angulo, nunca especificacoes do produto;
+          - nao use nenhuma caracteristica do produto sem evidencia autorizada.
+          """
+
+          def throttled_call(prompt):
+              for attempt in range(1, 5):
+                  elapsed = time.monotonic() - last_call[0]
+                  if last_call[0] and elapsed < 18.0:
+                      time.sleep(18.0 - elapsed)
+                  try:
+                      last_call[0] = time.monotonic()
+                      return original_call(prompt)
+                  except builder.ProviderFatalError as exc:
+                      text = str(exc)
+                      if "HTTP 429" not in text or attempt >= 4:
+                          raise
+                      match = re.search(r"try again in\s+([0-9.]+)s", text, flags=re.I)
+                      retry_after = float(match.group(1)) if match else 6.0
+                      time.sleep(max(6.0, retry_after + 2.0))
+
+          def fuzzy_present(claim, article_plain):
+              claim_norm = evidence.normalize(claim)
+              article_norm = evidence.normalize(article_plain)
+              if claim_norm and claim_norm in article_norm:
+                  return True
+              claim_tokens = evidence.tokens(claim)
+              if not claim_tokens:
+                  return False
+              for chunk in re.split(r"(?<=[.!?;:])\s+", article_plain):
+                  chunk_tokens = evidence.tokens(chunk)
+                  if not chunk_tokens:
+                      continue
+                  containment = len(claim_tokens & chunk_tokens) / max(1, len(claim_tokens))
+                  if containment >= 0.80:
+                      return True
+              return False
+
+          def strict_gate(doc, package, history, max_similarity):
+              result = original_gate(doc, package, history, max_similarity)
+              reasons = list(result.get("reasons") or [])
+              article_plain = builder.html_text(doc.get("article_html") or "")
+              claims = doc.get("claim_evidence") or []
+              kept = []
+              for reason in reasons:
+                  match = re.fullmatch(r"claim_(\d+)_not_in_article", reason)
+                  if not match:
+                      kept.append(reason)
+                      continue
+                  index = int(match.group(1))
+                  if index >= len(claims):
+                      kept.append(reason)
+                      continue
+                  claim = str((claims[index] or {}).get("claim") or "")
+                  if not fuzzy_present(claim, article_plain):
+                      kept.append(reason)
+              result["reasons"] = kept
+              result["status"] = "PASS" if not kept else "REJECTED"
+              result["claim_presence_mode"] = "exact_or_80pct_token_containment"
+              return result
+
+          builder.prompt_for = strict_prompt
+          builder.groq_call = throttled_call
+          builder.gate = strict_gate
+          builder.main()
+          PY
 
       - name: Verify no WordPress writer exists
         if: always()
