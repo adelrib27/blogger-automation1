@@ -46,7 +46,7 @@ jobs:
             vida_pet_pratica/src/evidence_engine.py \
             vida_pet_pratica/src/automation_core_v1.py \
             vida_pet_pratica/src/article_builder_v1.py \
-            vida_pet_pratica/src/article_builder_safe_v4.py
+            vida_pet_pratica/src/article_builder_safe_v5.py
           python - <<'PY'
           import json
           import sys
@@ -68,8 +68,8 @@ jobs:
       - name: Build verified candidate buffer from Shopee and Firecrawl
         run: python vida_pet_pratica/src/automation_core_v1.py
 
-      - name: Build grounded post buffer with Article Builder SAFE V4
-        run: python vida_pet_pratica/src/article_builder_safe_v4.py
+      - name: Build grounded post buffer with Article Builder SAFE V5
+        run: python vida_pet_pratica/src/article_builder_safe_v5.py
 
       - name: Verify no WordPress writer exists
         if: always()
