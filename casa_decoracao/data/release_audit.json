@@ -2,16 +2,15 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 19,
+    "total": 18,
     "draft_ready": 1,
-    "rejected": 17,
+    "rejected": 16,
     "not_generated": 1,
-    "published_history": 8,
+    "published_history": 9,
     "rotation_cycle": 1,
     "rotation_pending": [
       "Sala",
       "Banheiro",
-      "Área Externa",
       "Cama, Mesa e Banho"
     ]
   },
@@ -21,7 +20,7 @@
       "shopee_item_id": "58208566937",
       "category": "Sala",
       "product": "Tapete Sala Quarto Aveludado Premium Geométrico Antiderrapante 1x 1,40 2x 1,40 2x 2,40 Várias Cores",
-      "queue_status": "QUARANTINE",
+      "queue_status": "BLOCKED",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -52,69 +51,11 @@
       }
     },
     {
-      "id": 9,
-      "shopee_item_id": "58267485793",
-      "category": "Cozinha",
-      "product": "Kit Potes Mantimentos Vidro Herméticos Com Tampa Bambu Alta Resistência Epsilon Transparente",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 155,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 620,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 54,
-          "meta_description_length": 155,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 26,
-      "shopee_item_id": "58204421120",
-      "category": "Cozinha",
-      "product": "Escorredor de Louças Rack Aço Carbono Organizador Preto",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "categoria_invalida",
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 725,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 51,
-          "meta_description_length": 153,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
       "id": 8,
       "shopee_item_id": "21034795993",
       "category": "Banheiro",
       "product": "Tapete de Banheiro Antiderrapante Bolinha Macarrão Várias Cores",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -151,7 +92,7 @@
       "shopee_item_id": "58257638413",
       "category": "Banheiro",
       "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -188,7 +129,7 @@
       "shopee_item_id": "20299321793",
       "category": "Banheiro",
       "product": "1/2/3 Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio ES",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -224,34 +165,19 @@
       "shopee_item_id": "23892379352",
       "category": "Área Externa",
       "product": "1/2/4 PCS Luminária Parede Solar  100 Leds Com Sensor de Movimento Jardim Externa Prova D'água Casa",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 160,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "seo_title_tamanho:28",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 876,
-          "h2_count": 3,
+          "word_count": 661,
+          "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 28,
-          "meta_description_length": 139,
-          "cta_count": 1
+          "seo_title_length": 42,
+          "meta_description_length": 152,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -293,10 +219,10 @@
       }
     },
     {
-      "id": 7,
-      "shopee_item_id": "22893873080",
+      "id": 30,
+      "shopee_item_id": "22893738408",
       "category": "Cama, Mesa e Banho",
-      "product": "Jogo de Lençol 400 fios Toque Suave e Acetinado Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "product": "Jogo de Lençol 400 Fios Extra Macio c/ Fronhas Ponto Palito Berço Solteiro Casal Queen King 02 e 03 Peças",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -308,6 +234,7 @@
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
@@ -317,11 +244,11 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 831,
-          "h2_count": 6,
+          "word_count": 854,
+          "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 41,
-          "meta_description_length": 154,
+          "seo_title_length": 38,
+          "meta_description_length": 142,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -429,43 +356,6 @@
           "internal_links": 1,
           "seo_title_length": 49,
           "meta_description_length": 127,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 29,
-      "shopee_item_id": "58257090824",
-      "category": "Decoração",
-      "product": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "especificacao_numerica_nao_confirmada:158 cm",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 740,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 48,
-          "meta_description_length": 152,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -664,6 +554,79 @@
           "internal_links": 1,
           "seo_title_length": 49,
           "meta_description_length": 127,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 31,
+      "shopee_item_id": "58206652459",
+      "category": "Cozinha",
+      "product": "Fatiador KITOP descasca Legumes Prático para Couve e Repolho Fininho legumes fatiados",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "condicao_comercial_nao_confirmada",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 925,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 38,
+          "meta_description_length": 142,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 32,
+      "shopee_item_id": "20999381894",
+      "category": "Cozinha",
+      "product": "Conjunto 2/3/5/10 Potes 370/640/1040ml Vidro Hermético Mantimentos Marmita Fitness",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 705,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 39,
+          "meta_description_length": 143,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
