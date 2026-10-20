@@ -1,0 +1,79 @@
+name: Vida Pet Prática — Architecture Lab SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "vida_pet_pratica/architecture_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vida-pet-pratica-architecture-lab
+  cancel-in-progress: false
+
+jobs:
+  architecture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: SAFE preflight and local guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -f vida_pet_pratica/wordpress_write.flag
+          python -m py_compile \
+            vida_pet_pratica/src/evidence_engine.py \
+            vida_pet_pratica/src/automation_core_v1.py
+          python - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "vida_pet_pratica/src")
+          import evidence_engine as ev
+          import automation_core_v1 as core
+
+          policy = json.loads(Path("vida_pet_pratica/config/automation_policy.json").read_text(encoding="utf-8"))
+          assert policy["wordpress"]["writes_enabled"] is False
+          assert int(policy["min_ready"]) == 3
+          assert core.source_guard({"productName": "Recipiente Porta Ração Pet"})[0] is True
+          assert core.source_guard({"productName": "Ração Seca Premium para Gatos"})[0] is False
+          assert ev.similarity("organização do cantinho do gato", "organização do espaço do gato") > 0
+          print("SAFE guards OK")
+          PY
+
+      - name: Run real Shopee + Firecrawl architecture lab
+        run: python vida_pet_pratica/src/automation_core_v1.py
+
+      - name: Verify no WordPress writer exists
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -R -E "wp-json|wp-admin|WORDPRESS_APP_PASSWORD|status.?=.?(publish|draft)" \
+            vida_pet_pratica/src vida_pet_pratica/config vida_pet_pratica/state
+
+      - name: Upload architecture artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vida-pet-pratica-architecture-lab
+          path: |
+            vida_pet_pratica/data/architecture_lab/
+            vida_pet_pratica/data/shopee_oportunidades/
+          if-no-files-found: warn
+          retention-days: 14
