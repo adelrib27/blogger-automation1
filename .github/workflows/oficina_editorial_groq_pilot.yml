@@ -1,0 +1,96 @@
+name: Oficina & Garagem — Piloto Groq vs Qwen SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "oficina_garagem/groq_pilot_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oficina-garagem-groq-pilot
+  cancel-in-progress: false
+
+jobs:
+  comparar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_CATEGORY: all
+      SHOPEE_TOP_N: "30"
+      SHOPEE_OPPORTUNITIES_CONFIG: oficina_garagem/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: oficina_garagem/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: oficina_garagem/data/shopee_oportunidades
+      OFICINA_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CASA_CLOUDFLARE_ACCOUNT_ID }}
+      OFICINA_CLOUDFLARE_API_TOKEN: ${{ secrets.CASA_CLOUDFLARE_API_TOKEN }}
+      OFICINA_AI_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      OFICINA_GENERATION_BODY_ATTEMPTS: "3"
+      OFICINA_CTA_ATTEMPTS: "2"
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: "openai/gpt-oss-120b"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Confirmar credenciais do piloto
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID" || (echo "SHOPEE_APP_ID ausente" >&2; exit 1)
+          test -n "$SHOPEE_SECRET" || (echo "SHOPEE_SECRET ausente" >&2; exit 1)
+          test -n "$OFICINA_CLOUDFLARE_ACCOUNT_ID" || (echo "Cloudflare account ausente" >&2; exit 1)
+          test -n "$OFICINA_CLOUDFLARE_API_TOKEN" || (echo "Cloudflare token ausente" >&2; exit 1)
+          test -n "$GROQ_API_KEY" || (echo "GROQ_API_KEY ausente — adicione a chave gratuita da Groq aos Actions Secrets" >&2; exit 1)
+
+      - name: Validar código e gates atuais
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            oficina_garagem/src/shopee_oportunidades_oficina.py \
+            oficina_garagem/src/build_editorial_queue.py \
+            oficina_garagem/src/quality_gate.py \
+            oficina_garagem/src/cta_context.py \
+            oficina_garagem/src/editorial_normalizer.py \
+            oficina_garagem/src/generate_articles.py \
+            oficina_garagem/src/compare_groq_qwen_pilot.py \
+            oficina_garagem/src/self_test.py \
+            oficina_garagem/src/cta_card_self_test.py
+          python oficina_garagem/src/self_test.py
+          python oficina_garagem/src/cta_card_self_test.py
+
+      - name: Descobrir oportunidades reais na Shopee
+        run: python -u oficina_garagem/src/shopee_oportunidades_oficina.py
+
+      - name: Montar fila editorial real sem publicar
+        run: python -u oficina_garagem/src/build_editorial_queue.py
+
+      - name: Comparar Qwen atual com Groq no mesmo produto
+        run: python -u oficina_garagem/src/compare_groq_qwen_pilot.py
+
+      - name: Confirmar interlock WordPress
+        if: always()
+        run: |
+          set -euo pipefail
+          test ! -f oficina_garagem/data/groq_pilot/wordpress_write.flag
+          echo "SAFE confirmado: este workflow não contém etapa de sync_drafts nem publish_generated."
+
+      - name: Guardar comparação
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oficina-groq-vs-qwen-${{ github.run_number }}
+          path: oficina_garagem/data/groq_pilot/
+          if-no-files-found: warn
+          retention-days: 14
