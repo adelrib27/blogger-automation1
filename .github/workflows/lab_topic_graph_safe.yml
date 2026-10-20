@@ -1,0 +1,60 @@
+name: LAB Topic Graph SAFE
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-topic-graph:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      LAB_TOPIC_GRAPH_WRITE_CMS: "false"
+      LAB_TOPIC_GRAPH_PUBLISH: "false"
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile LAB module
+        run: python -m compileall -q lab_topic_graph
+
+      - name: Run fail-closed tests
+        run: python -m unittest discover -s lab_topic_graph/tests -v
+
+      - name: Run offline shadow baseline
+        run: |
+          rm -rf /tmp/topic-graph-safe
+          python -m lab_topic_graph.topic_graph_safe \
+            --history data/historico.json \
+            --registry lab_topic_graph/config/cluster_registry.lab.json \
+            --output /tmp/topic-graph-safe
+
+      - name: Enforce SAFE manifest and no ready links without health verification
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('/tmp/topic-graph-safe')
+          manifest = json.loads((root / 'run_manifest.json').read_text(encoding='utf-8'))
+          graph = json.loads((root / 'link_graph.json').read_text(encoding='utf-8'))
+          assert manifest['mode'] == 'LAB_SAFE_OFFLINE'
+          assert manifest['safety']['cms_write_capability'] is False
+          assert manifest['safety']['publishing'] is False
+          assert manifest['safety']['external_api_calls'] is False
+          assert not any(edge['status'] == 'PLAN_READY' for edge in graph['edges'])
+          print('SAFE_INTERLOCK_PASS')
+          PY
+
+      - name: Upload diagnostic artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: topic-graph-safe-diagnostics
+          path: /tmp/topic-graph-safe/*.json
+          if-no-files-found: error
