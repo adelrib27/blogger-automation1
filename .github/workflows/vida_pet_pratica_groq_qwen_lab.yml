@@ -40,7 +40,7 @@ jobs:
         run: |
           set -euo pipefail
           test ! -f vida_pet_pratica/wordpress_write.flag
-          python -m py_compile vida_pet_pratica/src/lab_compare.py
+          python -m py_compile vida_pet_pratica/src/lab_compare.py vida_pet_pratica/src/run_lab.py
           python - <<'PY'
           import json
           for path in [
@@ -53,7 +53,7 @@ jobs:
           PY
 
       - name: Run real Shopee + Qwen + Groq comparison
-        run: python vida_pet_pratica/src/lab_compare.py
+        run: python vida_pet_pratica/src/run_lab.py
 
       - name: Verify no WordPress writer exists
         if: always()
