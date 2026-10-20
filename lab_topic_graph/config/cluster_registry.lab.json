@@ -1,0 +1,172 @@
+{
+  "schema_version": "1.0",
+  "site_id": "achadosparacasa-blogger-lab",
+  "site_host": "achadosparacasa2026.blogspot.com",
+  "status": "HYPOTHESIS_ONLY",
+  "notes": "Taxonomia inicial para shadow classification. Nenhum pillar esta aprovado para producao.",
+  "silos": [
+    {
+      "silo_id": "silo-quarto",
+      "name": "Quarto",
+      "clusters": [
+        {
+          "cluster_id": "quarto-cama-textil",
+          "name": "Cama, colchao e texteis do quarto",
+          "pillar_article_id": null,
+          "source_categories": ["Quarto", "Casa e Decoração"],
+          "include_terms": ["cama", "colchao", "lencol", "colcha", "fronha", "fronhas", "queen"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        },
+        {
+          "cluster_id": "quarto-conforto-termico",
+          "name": "Conforto termico no quarto",
+          "pillar_article_id": null,
+          "source_categories": ["Quarto", "Casa e Decoração"],
+          "include_terms": ["temperatura", "fresco", "ar condicionado", "ventilacao", "calor"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        }
+      ]
+    },
+    {
+      "silo_id": "silo-cozinha",
+      "name": "Cozinha",
+      "clusters": [
+        {
+          "cluster_id": "cozinha-pia-louca",
+          "name": "Pia, louca e escorredor",
+          "pillar_article_id": null,
+          "source_categories": ["Cozinha", "Organização"],
+          "include_terms": ["pia", "louca", "loucas", "escorredor", "bancada", "torneira"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        },
+        {
+          "cluster_id": "cozinha-preparo-refeicoes",
+          "name": "Preparo de refeicoes",
+          "pillar_article_id": null,
+          "source_categories": ["Cozinha"],
+          "include_terms": ["refeicao", "refeicoes", "preparo", "preparar", "utensilio", "utensilios"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        },
+        {
+          "cluster_id": "cozinha-mesa",
+          "name": "Mesa e apoio",
+          "pillar_article_id": null,
+          "source_categories": ["Cozinha", "Casa e Decoração"],
+          "include_terms": ["caminho de mesa", "mesa posta", "toalha de mesa"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        },
+        {
+          "cluster_id": "cozinha-bebidas",
+          "name": "Bebidas e preparo rapido",
+          "pillar_article_id": null,
+          "source_categories": ["Cozinha"],
+          "include_terms": ["bebida", "bebidas", "gelada", "geladas"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        }
+      ]
+    },
+    {
+      "silo_id": "silo-seguranca-casa",
+      "name": "Seguranca residencial",
+      "clusters": [
+        {
+          "cluster_id": "seguranca-monitoramento",
+          "name": "Cameras e monitoramento residencial",
+          "pillar_article_id": null,
+          "source_categories": ["Organização", "Casa e Decoração", "Iluminação"],
+          "include_terms": ["camera de seguranca", "camera", "monitorar", "monitoramento", "seguranca"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        }
+      ]
+    },
+    {
+      "silo_id": "silo-banheiro",
+      "name": "Banheiro",
+      "clusters": [
+        {
+          "cluster_id": "banheiro-toalhas",
+          "name": "Toalhas e conforto de banho",
+          "pillar_article_id": null,
+          "source_categories": ["Banheiro"],
+          "include_terms": ["toalha", "toalhas", "banho"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        }
+      ]
+    },
+    {
+      "silo_id": "silo-lavanderia",
+      "name": "Lavanderia",
+      "clusters": [
+        {
+          "cluster_id": "lavanderia-roupas",
+          "name": "Cuidado e passagem de roupas",
+          "pillar_article_id": null,
+          "source_categories": ["Lavanderia", "Organização"],
+          "include_terms": ["passar roupas", "passar roupa", "lavanderia", "ferro de passar"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        }
+      ]
+    },
+    {
+      "silo_id": "silo-limpeza-organizacao",
+      "name": "Limpeza e organizacao",
+      "clusters": [
+        {
+          "cluster_id": "limpeza-pisos",
+          "name": "Limpeza de pisos",
+          "pillar_article_id": null,
+          "source_categories": ["Organização", "Casa e Decoração"],
+          "include_terms": ["limpeza do piso", "limpar piso", "piso", "pisos"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        }
+      ]
+    },
+    {
+      "silo_id": "silo-conforto-casa",
+      "name": "Conforto ambiental",
+      "clusters": [
+        {
+          "cluster_id": "conforto-umidade",
+          "name": "Umidade em ambientes",
+          "pillar_article_id": null,
+          "source_categories": ["Casa e Decoração"],
+          "include_terms": ["umidade", "mofo", "ambiente fechado", "ambientes fechados"],
+          "forbidden_terms": [],
+          "min_term_hits": 1,
+          "allow_category_drift": false,
+          "link_budget": {"SATELLITE": 3, "PILLAR": 8}
+        }
+      ]
+    }
+  ]
+}
