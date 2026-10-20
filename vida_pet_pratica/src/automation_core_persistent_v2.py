@@ -80,7 +80,7 @@ def main():
     max_results = int((policy.get("evidence") or {}).get("max_search_results", 8))
     new_products_first = bool((policy.get("rotation") or {}).get("new_products_first", True))
     force_evergreen = os.getenv("VIDAPET_FORCE_EVERGREEN", "").strip() == "1"
-    target = min_ready if force_evergreen else max(min_ready, int(os.getenv("VIDAPET_CANDIDATE_BUFFER_TARGET", "5")))
+    target = max(min_ready, int(os.getenv("VIDAPET_CANDIDATE_BUFFER_TARGET", "5")))
 
     if (policy.get("wordpress") or {}).get("writes_enabled") is not False:
         raise SystemExit("SAFE bloqueado: WordPress precisa continuar desativado")
@@ -165,6 +165,7 @@ def main():
         "rejections": rejected,
         "guards": {
             "candidate_failover": True,
+            "candidate_reserve": True,
             "evidence_fail_closed": True,
             "new_products_first_strict": True,
             "persistent_history": True,
