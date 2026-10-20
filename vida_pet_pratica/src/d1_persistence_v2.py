@@ -43,7 +43,7 @@ def persist_v2():
             continue
         gate = post.get("gate") or {}
         if evergreen:
-            version = "SAFE_V8_EVERGREEN_PLAN_ONLY_EXTENDED"
+            version = "SAFE_V9_EVERGREEN_EDITORIAL_ORIGINAL"
         else:
             version = str(gate.get("editorial_sanitizer") or "SAFE_V5_CATEGORY_AWARE")
         a_fp = base.angle_fp(angle)
@@ -62,7 +62,7 @@ def persist_v2():
     run_id = f"github-{os.getenv('GITHUB_RUN_ID', 'local')}-{os.getenv('GITHUB_RUN_ATTEMPT', '1')}"
     mode = str(architecture.get("mode") or ("EVERGREEN_ROTATION_FORCED" if evergreen else "NEW_PRODUCT_DISCOVERY"))
     notes = {
-        "builder": "SAFE_V8_EVERGREEN_PLAN_ONLY_EXTENDED" if evergreen else "SAFE_V5_CATEGORY_AWARE",
+        "builder": "SAFE_V9_EVERGREEN_EDITORIAL_ORIGINAL" if evergreen else "SAFE_V5_CATEGORY_AWARE",
         "wordpress_written": False,
         "cooldown_days": cooldown_days,
         "items": updated,
