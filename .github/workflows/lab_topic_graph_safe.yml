@@ -44,7 +44,10 @@ jobs:
             --output /tmp/topic-graph-safe
 
       - name: Build enhanced read-only diagnostics
-        run: python -m lab_topic_graph.diagnostics_v2 --output /tmp/topic-graph-safe
+        run: |
+          python -m lab_topic_graph.diagnostics_v2 \
+            --history data/historico.json \
+            --output /tmp/topic-graph-safe
 
       - name: Enforce SAFE manifest and no ready links without health verification
         run: |
@@ -56,6 +59,7 @@ jobs:
           graph = json.loads((root / 'link_graph.json').read_text(encoding='utf-8'))
           health = json.loads((root / 'link_health.json').read_text(encoding='utf-8'))
           enhanced = json.loads((root / 'comparison_ab_v2.json').read_text(encoding='utf-8'))
+          temporal = json.loads((root / 'comparison_publication_time_v2.json').read_text(encoding='utf-8'))
           assert manifest['mode'] == 'LAB_SAFE_OFFLINE'
           assert manifest['safety']['cms_write_capability'] is False
           assert manifest['safety']['publishing'] is False
@@ -63,6 +67,7 @@ jobs:
           assert health['verification_mode'] == 'OFFLINE_REGISTERED_ONLY'
           assert not any(edge['status'] == 'PLAN_READY' for edge in graph['edges'])
           assert enhanced['aggregate']['legacy_links_accounted'] >= 0
+          assert temporal['evaluation_mode'] == 'PUBLICATION_TIME_SHADOW'
           print('SAFE_INTERLOCK_PASS')
           PY
 
