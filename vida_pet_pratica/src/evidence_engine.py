@@ -80,6 +80,31 @@ def _matched_model(result: dict, product_name: str, models: list[str]) -> bool:
     return all(normalize(m) in haystack for m in models) and similarity(product_name, haystack) >= 0.35
 
 
+def _firecrawl_retry_after(detail: str, headers=None) -> float:
+    values = []
+    if headers:
+        raw = headers.get("Retry-After") or headers.get("retry-after")
+        if raw:
+            try:
+                values.append(float(raw))
+            except Exception:
+                pass
+    try:
+        parsed = json.loads(detail)
+        raw = parsed.get("retry_after_seconds")
+        if raw is not None:
+            values.append(float(raw))
+    except Exception:
+        pass
+    match = re.search(r"retry after\s+([0-9.]+)s", detail, flags=re.I)
+    if match:
+        try:
+            values.append(float(match.group(1)))
+        except Exception:
+            pass
+    return max(values or [3.0])
+
+
 def firecrawl_search(query: str, limit: int = 8) -> tuple[list[dict], dict]:
     api_key = os.getenv("FIRECRAWL_API_KEY", "").strip()
     payload = {
@@ -88,18 +113,36 @@ def firecrawl_search(query: str, limit: int = 8) -> tuple[list[dict], dict]:
         "sources": ["web"],
         "scrapeOptions": {"formats": ["markdown"], "onlyMainContent": True},
     }
-    headers = {"Content-Type": "application/json", "Accept": "application/json", "User-Agent": "VidaPetPratica-EvidenceEngine/1.1"}
+    headers = {"Content-Type": "application/json", "Accept": "application/json", "User-Agent": "VidaPetPratica-EvidenceEngine/1.2"}
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
-    request = urllib.request.Request(FIRECRAWL_ENDPOINT, data=json.dumps(payload, ensure_ascii=False).encode("utf-8"), method="POST", headers=headers)
-    try:
-        with urllib.request.urlopen(request, timeout=90) as response:
-            doc = json.loads(response.read().decode("utf-8", "replace"))
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", "replace")[:1200]
-        raise RuntimeError(f"Firecrawl HTTP {exc.code}: {detail}") from exc
-    except Exception as exc:
-        raise RuntimeError(f"Firecrawl indisponível: {exc}") from exc
+
+    doc = None
+    last_error = None
+    for attempt in range(1, 5):
+        request = urllib.request.Request(FIRECRAWL_ENDPOINT, data=json.dumps(payload, ensure_ascii=False).encode("utf-8"), method="POST", headers=headers)
+        try:
+            with urllib.request.urlopen(request, timeout=90) as response:
+                doc = json.loads(response.read().decode("utf-8", "replace"))
+            break
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", "replace")[:1600]
+            last_error = f"Firecrawl HTTP {exc.code}: {detail}"
+            if exc.code == 429 and attempt < 4:
+                wait = min(15.0, max(2.0, _firecrawl_retry_after(detail, exc.headers) + 1.0))
+                time.sleep(wait)
+                continue
+            raise RuntimeError(last_error) from exc
+        except Exception as exc:
+            last_error = f"Firecrawl indisponível: {exc}"
+            if attempt < 3:
+                time.sleep(3.0 * attempt)
+                continue
+            raise RuntimeError(last_error) from exc
+
+    if doc is None:
+        raise RuntimeError(last_error or "Firecrawl sem resposta após retries")
+
     data = doc.get("data") or {}
     web = data.get("web") or doc.get("web") or []
     if not isinstance(web, list):
@@ -184,7 +227,7 @@ def build_evidence_package(item: dict, max_results: int = 8, min_external_author
 
     return {
         "status": "VERIFIED" if not reasons else "REJECTED_EVIDENCE",
-        "version": "EVIDENCE_ENGINE_V1_1",
+        "version": "EVIDENCE_ENGINE_V1_2",
         "verified_at": int(time.time()),
         "product": {
             "itemId": item_id, "productName": product_name, "shopName": item.get("shopName"),
@@ -198,6 +241,7 @@ def build_evidence_package(item: dict, max_results: int = 8, min_external_author
             "exact_product_authorized": True,
             "matched_model_authorized_only_with_distinct_model_tokens": True,
             "min_external_authorized_sources": min_external_authorized_sources,
+            "rate_limit_retry_enabled": True,
         },
         "authorized_evidence_ids": [s.evidence_id for s in sources if s.allowed_in_article and s.support_text],
         "external_authorized_evidence_ids": [s.evidence_id for s in external_authorized],
