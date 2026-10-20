@@ -16,11 +16,13 @@ concurrency:
 jobs:
   architecture:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     env:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
       FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      VIDAPET_GROQ_MODEL: "openai/gpt-oss-120b"
 
     steps:
       - name: Checkout
@@ -38,7 +40,8 @@ jobs:
           test ! -f vida_pet_pratica/wordpress_write.flag
           python -m py_compile \
             vida_pet_pratica/src/evidence_engine.py \
-            vida_pet_pratica/src/automation_core_v1.py
+            vida_pet_pratica/src/automation_core_v1.py \
+            vida_pet_pratica/src/article_builder_v1.py
           python - <<'PY'
           import json
           import sys
@@ -56,8 +59,11 @@ jobs:
           print("SAFE guards OK")
           PY
 
-      - name: Run real Shopee + Firecrawl architecture lab
+      - name: Build verified candidate buffer from Shopee and Firecrawl
         run: python vida_pet_pratica/src/automation_core_v1.py
+
+      - name: Build grounded post buffer with Groq Fact Gate
+        run: python vida_pet_pratica/src/article_builder_v1.py
 
       - name: Verify no WordPress writer exists
         if: always()
