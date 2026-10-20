@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lab.local/topic-graph-contract.schema.json",
+  "title": "Topic Graph LAB SAFE contract",
+  "type": "object",
+  "$defs": {
+    "classification": {
+      "type": "object",
+      "required": ["version", "method", "status", "score", "matched_terms", "reasons"],
+      "properties": {
+        "version": {"type": "string"},
+        "method": {"const": "deterministic_shadow"},
+        "status": {
+          "enum": [
+            "APPROVED",
+            "UNCLASSIFIED_NO_MATCH",
+            "BLOCKED_AMBIGUOUS",
+            "BLOCKED_CATEGORY_CONFLICT"
+          ]
+        },
+        "score": {"type": "number", "minimum": 0},
+        "matched_terms": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "reasons": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "article": {
+      "type": "object",
+      "required": [
+        "article_id",
+        "site_id",
+        "url",
+        "status",
+        "title",
+        "role",
+        "classification",
+        "metadata_hash",
+        "target_health"
+      ],
+      "properties": {
+        "article_id": {"type": "string", "minLength": 1},
+        "site_id": {"type": "string", "minLength": 1},
+        "cms_id": {"type": "string"},
+        "url": {"type": "string"},
+        "canonical_url": {"type": ["string", "null"]},
+        "status": {"enum": ["LIVE", "BLOCKED_URL_INVALID"]},
+        "title": {"type": "string"},
+        "category": {"type": "string"},
+        "primary_keyword": {"type": "string"},
+        "silo_id": {"type": ["string", "null"]},
+        "cluster_id": {"type": ["string", "null"]},
+        "role": {"enum": ["PILLAR", "SATELLITE"]},
+        "primary_intent": {"type": ["string", "null"]},
+        "classification": {"$ref": "#/$defs/classification"},
+        "content_hash": {"type": ["string", "null"]},
+        "metadata_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "target_health": {"enum": ["REGISTERED_ONLY", "VERIFIED", "INVALID_URL"]},
+        "last_verified_at": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": [
+        "edge_id",
+        "source_article_id",
+        "target_article_id",
+        "relationship",
+        "anchor_text",
+        "anchor_type",
+        "semantic_score",
+        "target_health",
+        "status",
+        "blocking_reasons"
+      ],
+      "properties": {
+        "edge_id": {"type": "string"},
+        "source_article_id": {"type": "string"},
+        "target_article_id": {"type": "string"},
+        "relationship": {
+          "enum": ["SATELLITE_TO_PILLAR", "SATELLITE_TO_SATELLITE", "PILLAR_TO_SATELLITE"]
+        },
+        "anchor_text": {"type": "string", "maxLength": 120},
+        "anchor_type": {"enum": ["TITLE_VARIANT", "DESCRIPTIVE", "PARTIAL_TOPIC", "ENTITY_TOPIC"]},
+        "semantic_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "target_health": {"enum": ["REGISTERED_ONLY", "VERIFIED", "INVALID_URL"]},
+        "status": {"type": "string"},
+        "blocking_reasons": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}
