@@ -1,7 +1,6 @@
 import json
 import os
 import re
-import time
 import urllib.error
 import urllib.request
 from html import unescape
@@ -16,6 +15,10 @@ POLICY_PATH = LAB_ROOT / "config" / "automation_policy.json"
 HISTORY_PATH = LAB_ROOT / "state" / "article_history.json"
 RANKING_PATH = LAB_ROOT / "data" / "shopee_oportunidades" / "ranking.json"
 GROQ_MODEL = os.getenv("VIDAPET_GROQ_MODEL", "openai/gpt-oss-120b").strip()
+
+
+class ProviderFatalError(RuntimeError):
+    pass
 
 
 def load_json(path, default):
@@ -53,7 +56,7 @@ def parse_json(raw):
 def groq_call(prompt):
     key = os.getenv("GROQ_API_KEY", "").strip()
     if not key:
-        raise RuntimeError("GROQ_API_KEY ausente")
+        raise ProviderFatalError("GROQ_API_KEY ausente")
     payload = json.dumps({
         "model": GROQ_MODEL,
         "messages": [{"role": "user", "content": prompt}],
@@ -65,14 +68,24 @@ def groq_call(prompt):
         "https://api.groq.com/openai/v1/chat/completions",
         data=payload,
         method="POST",
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json", "Accept": "application/json"},
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "VidaPetPratica-Lab/1.0",
+        },
     )
     try:
         with urllib.request.urlopen(req, timeout=180) as response:
             doc = json.loads(response.read().decode("utf-8", "replace"))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", "replace")[:1200]
-        raise RuntimeError(f"Groq HTTP {exc.code}: {detail}") from exc
+        message = f"Groq HTTP {exc.code}: {detail}"
+        if exc.code in {401, 403, 429} or "browser_signature_banned" in detail:
+            raise ProviderFatalError(message) from exc
+        raise RuntimeError(message) from exc
+    except (urllib.error.URLError, TimeoutError) as exc:
+        raise ProviderFatalError(f"Groq indisponível: {exc}") from exc
     choices = doc.get("choices") or []
     raw = ((choices[0] or {}).get("message") or {}).get("content") if choices else ""
     if not raw:
@@ -221,6 +234,25 @@ def candidate_from_item(item, history, max_similarity, max_results):
     }, None
 
 
+def write_provider_failure(message, generation_attempts, rejected):
+    report = {
+        "status": "PROVIDER_BLOCKED",
+        "version": "ARTICLE_BUILDER_V1_1",
+        "provider": "groq",
+        "model": GROQ_MODEL,
+        "reason": message,
+        "generation_attempts": generation_attempts,
+        "candidate_failover_suspended": True,
+        "why": "Falha do provedor não invalida produtos; failover é reservado para falhas do produto/evidência/artigo.",
+        "wordpress_written": False,
+        "publishing_enabled": False,
+        "rejections": rejected,
+    }
+    save_json(OUT_DIR / "provider_failure.json", report)
+    save_json(OUT_DIR / "post_buffer_report.json", report)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
 def main():
     policy = load_json(POLICY_PATH, {})
     min_ready = int(policy.get("min_ready", 3))
@@ -269,6 +301,9 @@ def main():
             try:
                 doc, usage = groq_call(prompt_for(candidate, package))
                 gate_result = gate(doc, package, history, max_similarity)
+            except ProviderFatalError as exc:
+                write_provider_failure(str(exc), generation_attempts, rejected)
+                raise SystemExit("Provider Groq bloqueado; failover de produtos suspenso para preservar recursos") from exc
             except Exception as exc:
                 doc, usage = None, {}
                 gate_result = {"status": "ERROR", "reasons": [str(exc)]}
@@ -289,7 +324,7 @@ def main():
 
     report = {
         "status": "POST_BUFFER_COMPLETE" if len(posts) >= min_ready else "POST_BUFFER_INCOMPLETE",
-        "version": "ARTICLE_BUILDER_V1", "min_ready": min_ready, "ready_posts": len(posts),
+        "version": "ARTICLE_BUILDER_V1_1", "min_ready": min_ready, "ready_posts": len(posts),
         "generation_attempts": generation_attempts, "candidate_failover": True,
         "wordpress_written": False, "publishing_enabled": False, "posts": posts, "rejections": rejected,
     }
