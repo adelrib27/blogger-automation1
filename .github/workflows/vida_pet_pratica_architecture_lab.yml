@@ -66,7 +66,7 @@ jobs:
       - name: Build verified candidate buffer from Shopee and Firecrawl
         run: python vida_pet_pratica/src/automation_core_v1.py
 
-      - name: Build grounded post buffer with separated evidence facts
+      - name: Build grounded post buffer with editorial sanitizer
         shell: bash
         run: |
           python - <<'PY'
@@ -84,6 +84,15 @@ jobs:
           current_candidate = [{}]
           current_package = [{}]
 
+          SAFE_BLOCKS = [
+              ("Organize antes de escolher", "Comece observando onde o acessório será usado e como ele se encaixa na rotina da casa. Considere circulação, espaço disponível, facilidade de acesso e a forma como o animal costuma interagir com aquele ambiente. O objetivo é entender o contexto antes de comparar produtos. Essa etapa não exige presumir desempenho nem benefício: serve apenas para definir quais informações do anúncio realmente precisam ser verificadas antes da decisão."),
+              ("Confirme os dados no anúncio", "Use a página atual do produto como referência para características que podem variar entre versões ou vendedores. Medidas, materiais, capacidade, compatibilidade, instruções e demais especificações só devem ser tratadas como confirmadas quando aparecem de forma clara na fonte consultada. Se um dado estiver ausente ou ambíguo, mantenha-o como não confirmado em vez de preencher a lacuna com uma suposição."),
+              ("Observe a adaptação no uso", "Quando um novo acessório entra na rotina, acompanhe a interação do pet sem presumir que a experiência será igual para todos os animais. Mudanças de posição, ambiente ou forma de apresentação podem alterar a adaptação. O acompanhamento serve para perceber se a organização escolhida faz sentido na prática. Se surgir dúvida relacionada à saúde ou ao bem-estar do animal, a decisão deve ser separada da avaliação comercial do produto e encaminhada a um profissional apropriado."),
+              ("Revise o estado do acessório", "Inclua uma verificação visual do item na rotina e observe sinais evidentes de desgaste, dano ou partes soltas. Se houver algo que gere dúvida, interrompa o uso e confira as instruções disponíveis antes de continuar. Para limpeza e conservação, siga a orientação do fabricante ou do anúncio, evitando receitas improvisadas. Assim, a manutenção permanece baseada em informação verificável e não em recomendações genéricas que podem não servir para todos os materiais."),
+              ("Compare opções pelo que está confirmado", "Ao comparar anúncios, separe fatos verificáveis de linguagem promocional. Dê prioridade às informações que ajudam a decidir se o item cabe no espaço, atende à finalidade pretendida e possui instruções claras de uso e manutenção. Não transforme avaliações de terceiros ou descrições de produtos parecidos em especificações deste item. Quando duas fontes divergirem, marque o dado como conflitante e confira a versão atual do anúncio antes de usar essa informação."),
+              ("Registre o que já foi verificado", "Manter um pequeno histórico das informações confirmadas ajuda a evitar que detalhes antigos sejam reutilizados sem nova checagem. Registre o produto, a fonte, a data da consulta e o assunto já abordado. Esse cuidado também facilita criar novos conteúdos sobre o mesmo item sem repetir o texto anterior, porque o sistema consegue distinguir fatos permanentes, dados que precisam de nova verificação e ângulos editoriais que já foram usados."),
+          ]
+
           TITLE_FALLBACKS = {
               "Higiene": "Higiene pet: como organizar uma rotina mais prática",
               "Diversao e Enriquecimento": "Brincadeiras para pets: rotina com mais variedade",
@@ -93,11 +102,11 @@ jobs:
               "Conforto": "Conforto do pet: critérios para a rotina diária",
           }
 
-          SAFE_BLOCKS = [
-              ("Adaptação à rotina", "Ao incluir um novo acessório na rotina do pet, observe como o animal reage e evite mudar vários elementos do ambiente ao mesmo tempo. O objetivo é perceber se a organização escolhida funciona na prática para a casa e para o animal. Se houver resistência ou dificuldade de uso, reveja o posicionamento e a forma de introdução antes de concluir que aquela solução é adequada. A observação do dia a dia é mais útil do que presumir resultados a partir do nome comercial de um produto."),
-              ("Manutenção e observação", "Crie o hábito de observar o estado geral dos acessórios e do espaço onde eles são usados. Quando houver sujeira, desgaste, peça solta ou qualquer condição que gere dúvida, interrompa o uso até conferir as orientações do fabricante ou do anúncio. Evite receitas improvisadas de limpeza e não presuma que um material aceita determinado produto químico. Uma rotina simples de inspeção ajuda a tomar decisões com base no estado real do item, sem depender de promessas não verificadas."),
-              ("Critérios antes de escolher", "Antes de comprar, compare o espaço disponível, a rotina da casa e a forma como o pet utiliza aquele tipo de acessório. Medidas, materiais, capacidade, compatibilidade e instruções de uso devem ser confirmados diretamente no anúncio ou nas orientações do fabricante. Quando algum dado não estiver claro, trate a informação como não confirmada. Esse cuidado reduz decisões baseadas em suposições e torna a comparação entre opções mais objetiva."),
-              ("Revisão ao longo do tempo", "Mesmo depois de incorporar um acessório à rotina, vale reavaliar periodicamente se ele continua adequado. Mudanças no ambiente, no comportamento do animal ou no estado do próprio item podem alterar a experiência de uso. Faça essa revisão sem transformar observações pessoais em garantias universais. Se surgir uma dúvida relacionada à saúde ou ao bem-estar do animal, procure orientação profissional em vez de atribuir ao acessório uma função terapêutica que não esteja comprovada."),
+          RISK_TERMS = [
+              "saude", "bem estar", "estresse", "ansiedade", "previne", "prevenir", "garante", "garantir",
+              "seguranca", "seguro", "reduz", "reduzir", "evita", "evitar", "estimulo mental", "estimular a mente",
+              "treinamento", "comando", "recompensa", "petisco", "racao", "vinagre", "sabao", "lubrif",
+              "absorv", "antiderrap", "durabil", "eficacia", "resistent", "lavavel", "peso suportado"
           ]
 
           def safe_title(candidate):
@@ -138,51 +147,59 @@ jobs:
               current_candidate[0] = candidate
               current_package[0] = package
               return f"""Você é editor do blog Vida Pet Prática.
-          Escreva um guia editorial GERAL sobre o tema abaixo. Você NÃO recebeu especificações de nenhum produto e não deve inventá-las.
-
+          Produza um texto editorial GERAL e de baixo risco. Você não conhece especificações do produto.
           CATEGORIA: {candidate.get('category')}
-          PALAVRA-CHAVE/TEMA: {candidate.get('keyword')}
+          TEMA: {candidate.get('keyword')}
           ÂNGULO: {candidate.get('angle')}
 
-          Retorne SOMENTE JSON válido com as chaves:
-          title, focus_keyword, meta_description, article_html, cta_text, claim_evidence.
-
-          Regras:
-          - Português do Brasil.
-          - 500 a 620 palavras e pelo menos 5 H2; sem H1.
-          - HTML permitido: <p>, <h2>, <h3>, <ul>, <li>, <strong>, <em>.
-          - NÃO mencione marca, modelo, preço, medida, material, capacidade ou característica específica de um produto.
-          - NÃO explique que um produto possui determinada camada, componente, mecanismo, resistência, absorção, aderência ou desempenho.
-          - Foque em organização da rotina, critérios de escolha, observação, supervisão e confirmação de dados no anúncio/fabricante.
-          - Sem receitas químicas de limpeza, tempos/frequências fixas, recomendações de alimento, petisco ou medicamento.
-          - Sem diagnóstico, tratamento, promessa de saúde, redução de estresse, prevenção de comportamento, cura ou garantia de segurança.
-          - claim_evidence deve ser uma lista vazia; os fatos do produto serão inseridos posteriormente pelo Evidence Engine.
-          - CTA neutro, sem urgência ou escassez.
+          Retorne SOMENTE JSON válido: title, focus_keyword, meta_description, article_html, cta_text, claim_evidence.
+          - Português do Brasil; cerca de 420 a 520 palavras; pelo menos 5 H2; sem H1.
+          - Fale apenas de organização, critérios de comparação, observação e necessidade de confirmar dados no anúncio/fabricante.
+          - Não dê instruções com números, horários, frequência ou medidas.
+          - Não faça afirmações sobre saúde, bem-estar, estresse, comportamento, segurança ou eficácia.
+          - Não recomende limpeza química, alimentos, petiscos, medicamentos, treinamento ou comandos.
+          - Não descreva material, mecanismo, resistência, aderência, absorção ou desempenho de produto.
+          - Não mencione marca/modelo específico.
+          - claim_evidence deve ser [].
           """
+
+          def risky_text(text):
+              norm = evidence.normalize(text)
+              if re.search(r"\d", str(text or "")):
+                  return True
+              return any(evidence.normalize(term) in norm for term in RISK_TERMS)
+
+          def sanitize_general_html(html):
+              html = str(html or "")
+              def clean_tag(match):
+                  tag = match.group(1)
+                  body = match.group(2)
+                  plain = builder.html_text(body)
+                  return "" if risky_text(plain) else f"<{tag}>{body}</{tag}>"
+              html = re.sub(r"<(p|li)>(.*?)</\1>", clean_tag, html, flags=re.I | re.S)
+              html = re.sub(r"<ul>\s*</ul>", "", html, flags=re.I | re.S)
+              html = re.sub(r"<h2[^>]*>.*?</h2>\s*(?=<h2|$)", "", html, flags=re.I | re.S)
+              return html.strip()
 
           def normalize_doc(doc, candidate, package):
               if not isinstance(doc, dict):
                   return doc
+              doc["title"] = safe_title(candidate)
+              keyword = str(candidate.get("keyword") or "acessório pet")
+              doc["focus_keyword"] = keyword
+              doc["meta_description"] = clip_text(
+                  f"Veja critérios práticos para avaliar {keyword} na rotina do pet e confirme no anúncio os detalhes do item antes de escolher.", 150
+              )
+              doc["cta_text"] = "Confira no anúncio as informações e condições atuais do item antes de decidir se ele combina com a rotina do seu pet."
 
-              title = re.sub(r"\s+", " ", str(doc.get("title") or "")).strip()
-              if not 35 <= len(title) <= 65:
-                  doc["title"] = safe_title(candidate)
-
-              meta = re.sub(r"\s+", " ", str(doc.get("meta_description") or "")).strip()
-              if not meta:
-                  meta = "Veja critérios práticos para organizar a rotina do pet e confira no anúncio os detalhes confirmados antes de escolher."
-              doc["meta_description"] = clip_text(meta, 150)
-
-              html = str(doc.get("article_html") or "").strip()
+              html = sanitize_general_html(doc.get("article_html") or "")
               product_name = re.sub(r"\s+", " ", str(candidate.get("productName") or "")).strip()
               ids = exact_evidence_ids(package)
-              verified_section = (
+              html += (
                   "<h2>O que foi confirmado sobre este item</h2>"
                   "<p>Na identificação consultada do anúncio, o item aparece como <strong>" + product_name + "</strong>. "
-                  "Essa é a informação factual autorizada nesta etapa. Medidas, materiais, compatibilidade e demais detalhes devem ser conferidos na página atual do produto antes da decisão.</p>"
+                  "Essa é a informação factual autorizada nesta etapa. Outros detalhes devem ser conferidos na página atual do produto antes da decisão.</p>"
               )
-              html += verified_section
-
               used = set(re.findall(r"<h2[^>]*>(.*?)</h2>", html, flags=re.I | re.S))
               for heading, paragraph in SAFE_BLOCKS:
                   if builder.word_count(html) >= 680 and len(re.findall(r"<h2\b", html, flags=re.I)) >= 6:
@@ -191,11 +208,8 @@ jobs:
                       continue
                   html += f"<h2>{heading}</h2><p>{paragraph}</p>"
                   used.add(heading)
-
               doc["article_html"] = html
               doc["claim_evidence"] = [{"claim": product_name, "evidence_ids": ids[:2]}]
-              if not str(doc.get("cta_text") or "").strip():
-                  doc["cta_text"] = "Confira no anúncio os detalhes e condições atuais do item antes de decidir."
               return doc
 
           def throttled_call(prompt):
@@ -217,17 +231,14 @@ jobs:
 
           def strict_gate(doc, package, history, max_similarity):
               result = original_gate(doc, package, history, max_similarity)
-              article_norm = evidence.normalize(builder.html_text(doc.get("article_html") or ""))
-              extra_patterns = [
-                  "agua e vinagre", "lubrifique", "reduz o estresse", "reduzir o estresse",
-                  "previne comportamento", "prevenir comportamento", "garante seguranca",
-                  "garantir a seguranca", "resultado garantido", "petisco", "laser"
-              ]
-              hits = [p for p in extra_patterns if evidence.normalize(p) in article_norm]
-              if hits:
-                  result["reasons"] = list(result.get("reasons") or []) + ["unsafe_general_claim:" + ",".join(hits)]
+              html = str(doc.get("article_html") or "")
+              verified_split = html.split("<h2>O que foi confirmado sobre este item</h2>", 1)
+              general_part = verified_split[0]
+              if risky_text(builder.html_text(general_part)):
+                  result["reasons"] = list(result.get("reasons") or []) + ["editorial_sanitizer_residual_risk"]
                   result["status"] = "REJECTED"
               result["product_fact_mode"] = "deterministic_evidence_section_only"
+              result["editorial_sanitizer"] = "enabled"
               return result
 
           builder.prompt_for = general_prompt
