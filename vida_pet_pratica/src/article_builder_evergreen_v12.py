@@ -1,5 +1,6 @@
 import hashlib
 import re
+import time
 from html import escape
 from pathlib import Path
 
@@ -32,6 +33,8 @@ ABSOLUTE_PATTERNS = ns["ABSOLUTE_PATTERNS"]
 TARGET_WORDS = 650
 MIN_ORIGINAL_WORDS = 360
 MAX_LOCAL_ADDED_WORDS = 290
+MIN_CALL_INTERVAL_SECONDS = 18.0
+LAST_CALL = [0.0]
 
 SAFE_HEADINGS = [
     ["Comece pela pergunta principal", "Organize a decisão antes de comparar", "Defina o foco desta análise"],
@@ -207,6 +210,10 @@ def local_repair_editorial(raw_html, candidate):
 
 
 def editorial_call(prompt):
+    elapsed = time.monotonic() - LAST_CALL[0]
+    if LAST_CALL[0] and elapsed < MIN_CALL_INTERVAL_SECONDS:
+        time.sleep(MIN_CALL_INTERVAL_SECONDS - elapsed)
+    LAST_CALL[0] = time.monotonic()
     raw, usage = original_call(prompt)
     if not isinstance(raw, dict):
         raise RuntimeError("SAFE V12: resposta editorial não é objeto JSON")
