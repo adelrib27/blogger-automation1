@@ -37,6 +37,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$FIRECRAWL_API_KEY"
+          test -n "$GROQ_API_KEY"
           test ! -f vida_pet_pratica/wordpress_write.flag
           python -m py_compile \
             vida_pet_pratica/src/evidence_engine.py \
@@ -52,6 +56,7 @@ jobs:
 
           policy = json.loads(Path("vida_pet_pratica/config/automation_policy.json").read_text(encoding="utf-8"))
           assert policy["wordpress"]["writes_enabled"] is False
+          assert policy["evidence"]["allow_keyless_firecrawl_lab"] is False
           assert int(policy["min_ready"]) == 3
           assert core.source_guard({"productName": "Recipiente Porta Ração Pet"})[0] is True
           assert core.source_guard({"productName": "Ração Seca Premium para Gatos"})[0] is False
