@@ -30,6 +30,9 @@ Componentes:
 - diagnóstico A/B temporal, limitado a alvos existentes na data de publicação;
 - anchor registry;
 - link health registry offline;
+- auditor/validador do grafo LIVE observado;
+- snapshot compacto do grafo editorial LIVE observado;
+- candidatos shadow a pillar, sem promoção;
 - testes adversariais;
 - workflow GitHub Actions exclusivo da branch LAB.
 
@@ -98,51 +101,119 @@ Somente alvos com `publicado_em` anterior ao artigo fonte são elegíveis:
 
 `cross-silo` é sinal de revisão, não prova automática de erro.
 
+## Grafo editorial LIVE observado — Blogger readonly
+
+A leitura integral dos 35 artigos editoriais foi concluída via Blogger API readonly. O escopo de edge é o bloco editorial `Veja também`; links afiliados e navegação do template não entram na medição.
+
+Métricas observadas:
+
+- artigos editoriais: 35;
+- classificados: 29;
+- não classificados: 6;
+- arestas editoriais LIVE: 70;
+- fontes com links editoriais: 28;
+- fontes sem links editoriais: 7;
+- artigos com inbound zero: 13;
+- mesmo cluster: 22;
+- mesmo silo, cluster diferente: 13;
+- cross-silo: 16;
+- arestas envolvendo conteúdo não classificado: 19;
+- alvos internos desconhecidos: 0;
+- source→target duplicado: 0;
+- alvos com repetição do anchor exato do título: 17;
+- arestas com canonical/HTTP externamente verificado: 0.
+
+O snapshot versionado está em `reviews/live_link_graph_observed.v1.json`. A fonte primária é `blogger_api_readonly`. O crawler público em lote foi explicitamente rejeitado como evidência porque omitiu links conhecidos em páginas-controle.
+
+### Órfãos por inbound
+
+Foram observados 13 artigos sem links editoriais recebidos. Isso inclui conteúdo recente e páginas específicas de cama/lençóis, conforto térmico, mesa, iluminação/fotos, lavanderia, petiscos, barbeador e drinks. O status de órfão é diagnóstico; não autoriza backfill automático.
+
 ## Evidência LIVE de ruído semântico
 
-Amostra dirigida de risco com conteúdo completo lido via Blogger readonly: 6 artigos e 14 links internos reais.
+A amostra dirigida e o grafo completo confirmam coexistência de links bons e fracos.
 
-Classificação manual de revisão:
+Exemplos coerentes:
 
-- `RELEVANT`: 4;
-- `WEAK_BROAD`: 5;
-- `LIKELY_IRRELEVANT`: 5.
+- escorredor → secar louças;
+- lençóis Queen → renovar quarto com lençóis;
+- roupas amassadas → rotina de passar roupas.
 
-Exemplos confirmados de ruído:
+Exemplos estruturalmente frágeis/incorretos:
 
-- artigo sobre ar seco → câmera de segurança com lâmpada;
+- câmera de segurança → limpeza de piso;
 - câmera de segurança → controle de umidade;
-- câmera de segurança → manter ambiente fresco sem ar-condicionado;
-- drinks → secagem de louças.
+- caminho de mesa → luminária de cabeceira;
+- rotina de passar roupas → secar louças/preparar refeições/escorredor;
+- protetor de colchão → câmera de segurança com lâmpada.
 
-Também houve evidência de links contextualmente válidos entre umidade, ar seco e conforto térmico. Portanto, ainda é necessário calibrar fronteiras entre clusters/silos ambientais; não se deve marcar todo cross-silo como falso positivo.
+Também existe evidência de relações ambientais plausíveis que hoje aparecem como cross-silo, como ar seco → ambiente fresco. Portanto, `cross-silo` continua sendo sinal de revisão, não taxa automática de erro.
 
-Arquivo de evidência: `reviews/live_link_semantic_sample_v1.json`.
+## Candidatos shadow a pillar
+
+Arquivo: `reviews/pillar_candidates.shadow.json`.
+
+`CANDIDATE_FOR_REVIEW`, sem promoção:
+
+- `conforto-umidade` → `Controle da umidade em ambientes fechados com soluções`;
+- `cozinha-bebidas` → `Como preparar bebidas geladas de forma rápida e prática`;
+- `lavanderia-roupas` → `Como organizar a rotina de passar roupas de forma eficiente`;
+- `quarto-conforto-termico` → `Como manter o ambiente fresco sem ar-condicionado em dias`;
+- `seguranca-monitoramento` → `Como escolher uma câmera de segurança para monitorar a casa`.
+
+Clusters multiartigo sem pillar existente adequado:
+
+- `cozinha-mesa`;
+- `cozinha-pia-louca`;
+- `quarto-cama-textil`.
+
+Clusters com apenas um artigo permanecem `BLOCKED_SINGLETON_CLUSTER`.
+
+Nenhum `pillar_article_id` foi promovido no registry oficial do LAB e nenhum backfill foi liberado.
+
+## Testes do grafo observado
+
+O validador `observed_live_graph.py` verifica fail-closed:
+
+- fonte readonly e modo LAB;
+- inventário completo;
+- zero capacidade de escrita/publicação/alteração de produção;
+- `PLAN_READY=false`;
+- ausência de alegação de hash completo ou canonical verificado;
+- IDs/paths únicos;
+- todos os artigos marcados LIVE;
+- source/target conhecidos;
+- ausência de self-link e duplicata;
+- relacionamento silo/cluster recalculado e comparado ao armazenado;
+- métricas recalculadas e comparadas ao snapshot.
+
+A suíte específica do grafo observado passou localmente: **7/7 PASS**.
 
 ## Riscos ainda abertos
 
 1. `palavra_chave` histórica tem cobertura 0%; títulos/categorias carregam quase todo o sinal.
 2. A taxonomia ambiental ainda pode estar fragmentada entre quarto e conforto da casa.
 3. O corpus é pequeno; cobertura de 29/35 não é suficiente para declarar taxonomia final.
-4. Link health ainda é `REGISTERED_ONLY`; a camada offline não libera links sem verificação externa.
-5. Ainda não existem pillars aprovados; `pillar_article_id` permanece `null` no registry LAB.
-6. Backfill permanece bloqueado porque não há captura/versionamento de `content_hash` do HTML fonte no runner offline.
-7. A revisão semântica LIVE é uma amostra dirigida de risco, não estimativa de precisão global.
+4. Ainda não há verificação HTTP/canonical independente para os targets; `PLAN_READY` permanece bloqueado.
+5. Existem apenas candidatos shadow a pillar; nenhum pillar foi aprovado/promovido.
+6. Backfill permanece bloqueado porque o snapshot do grafo guarda links observados, não o HTML completo versionado com `content_hash` por fonte.
+7. A contagem cross-silo é estrutural e necessita julgamento semântico antes de ser tratada como erro.
+8. Anchors observados repetem o título completo do alvo; diversidade/clareza ainda precisam ser testadas em patch plans, nunca em produção nesta fase.
 
 ## Próxima etapa autônoma
 
 Continuar somente no LAB:
 
-1. instrumentar snapshot read-only do grafo LIVE de links internos;
-2. construir verificação de alvo por ID/URL/status a partir de snapshot readonly, sem CMS write;
-3. revisar fronteiras ambientais e registrar relações permitidas como hipótese, sem liberar cross-silo por padrão;
-4. selecionar candidatos a pillar somente por critérios mensuráveis, sem promover automaticamente artigo existente;
-5. ampliar revisão A/B com amostra estratificada e medir falsos positivos/relevância;
-6. testar backfill apenas como patch plan com hash do conteúdo;
-7. decisão final somente após evidência suficiente.
+1. verificar targets por HTTP/canonical em modo read-only e registrar timestamp/redirect/status;
+2. materializar `content_hash` seguro do HTML fonte para os artigos que entrarem em simulação de backfill;
+3. recalibrar a fronteira ambiental usando evidência do grafo e revisão semântica;
+4. simular pillar↔satellite e satellite↔satellite apenas para candidatos elegíveis;
+5. produzir patch plans com hash, anchor proposto, orçamento e blocking reasons;
+6. executar A/B dos patch plans versus links LIVE atuais;
+7. manter qualquer promoção/migração bloqueada até evidência suficiente.
 
 ## Decisão atual
 
 **AINDA NÃO VALIDADO.**
 
-Há evidência real de que o seletor lexical atual produz links semanticamente fracos/incorretos e de que o Topic Graph pode reduzir esse risco estruturalmente. Ainda não há evidência suficiente para migrar produção, definir pillars ou habilitar atualização automática de posts.
+Há evidência real e agora censitária do grafo editorial LIVE de que o seletor lexical atual produz associações estruturalmente fracas e de que o Topic Graph pode reduzir esse risco. Ainda não há evidência suficiente para migrar produção, promover pillars ou habilitar atualização automática de posts.
