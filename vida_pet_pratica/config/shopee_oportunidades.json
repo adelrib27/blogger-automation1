@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "project": "Vida Pet Prática",
+  "market": "BR",
+  "currency": "BRL",
+  "min_seller_commission_rate": 0.03,
+  "min_rating_when_available": 4.0,
+  "reserve_enabled": true,
+  "reserve_min_rating_when_available": 4.0,
+  "query_limit": 12,
+  "reserve_query_limit": 12,
+  "top_n": 24,
+  "weights": {
+    "seller_extra_commission": 0.40,
+    "search_demand_proxy": 0.25,
+    "sales": 0.15,
+    "rating": 0.10,
+    "discount": 0.05,
+    "top_performance": 0.05
+  },
+  "diversity": {
+    "enabled": true,
+    "max_per_shop": 3,
+    "max_per_keyword": 2,
+    "max_per_category": 5,
+    "relaxed_caps": {"max_per_shop": 4, "max_per_keyword": 3, "max_per_category": 7},
+    "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
+  },
+  "categories": {
+    "Conforto": ["cama pet"],
+    "Alimentacao e Hidratacao": ["comedouro pet", "bebedouro fonte pet", "comedouro lento pet"],
+    "Higiene": ["tapete higienico cachorro", "caixa areia gato", "tapete coletor areia gato", "escova tira pelos pet"],
+    "Diversao e Enriquecimento": ["brinquedo interativo pet", "arranhador gato"],
+    "Transporte e Passeio": ["caixa transporte pet", "peitoral cachorro", "guia cachorro"],
+    "Organizacao": ["porta racao pet", "organizador acessorios pet"]
+  }
+}
