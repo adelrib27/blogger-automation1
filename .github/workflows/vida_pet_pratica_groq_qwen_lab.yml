@@ -1,0 +1,75 @@
+name: Vida Pet Prática — Laboratório Groq vs Qwen SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "vida_pet_pratica/pilot_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vida-pet-pratica-groq-qwen-lab
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      VIDAPET_QWEN_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      VIDAPET_GROQ_MODEL: "openai/gpt-oss-120b"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: SAFE preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -f vida_pet_pratica/wordpress_write.flag
+          python -m py_compile vida_pet_pratica/src/lab_compare.py
+          python - <<'PY'
+          import json
+          for path in [
+              "vida_pet_pratica/config/shopee_oportunidades.json",
+              "vida_pet_pratica/config/shopee_intent_rules.json",
+          ]:
+              with open(path, encoding="utf-8") as fh:
+                  json.load(fh)
+              print("JSON OK:", path)
+          PY
+
+      - name: Run real Shopee + Qwen + Groq comparison
+        run: python vida_pet_pratica/src/lab_compare.py
+
+      - name: Verify no WordPress writer exists
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -R -E "wp-json|wp-admin|WORDPRESS_APP_PASSWORD|status.?=.?(publish|draft)" \
+            vida_pet_pratica/src vida_pet_pratica/config .github/workflows/vida_pet_pratica_groq_qwen_lab.yml
+
+      - name: Upload laboratory artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vida-pet-pratica-groq-qwen-lab
+          path: |
+            vida_pet_pratica/data/pilot/
+            vida_pet_pratica/data/shopee_oportunidades/
+          if-no-files-found: warn
+          retention-days: 14
