@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "min_ready": 3,
+  "candidate_attempt_limit": 20,
+  "evidence": {
+    "max_search_results": 8,
+    "min_exact_sources": 1,
+    "similar_product_specs_authorized": false,
+    "allow_keyless_firecrawl_lab": true
+  },
+  "rotation": {
+    "new_products_first": true,
+    "product_cooldown_days": 30,
+    "evergreen_enabled": true
+  },
+  "anti_duplicate": {
+    "max_similarity": 0.72,
+    "store_product_keyword_angle_fingerprint": true
+  },
+  "buffer": {
+    "healthy_at_or_above": 3,
+    "attention_at": 2,
+    "urgent_at": 1,
+    "emergency_at": 0
+  },
+  "wordpress": {
+    "writes_enabled": false
+  }
+}
