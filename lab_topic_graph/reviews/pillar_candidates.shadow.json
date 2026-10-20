@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "mode": "LAB_SHADOW_PILLAR_CANDIDATES",
+  "site_id": "achadosparacasa-blogger-lab",
+  "based_on_observation": "live_link_graph_observed.v1.json",
+  "safety": {
+    "production_modified": false,
+    "pillar_promoted": false,
+    "backfill_allowed": false,
+    "plan_ready_allowed": false
+  },
+  "clusters": [
+    {
+      "cluster_id": "banheiro-toalhas",
+      "member_count": 1,
+      "status": "BLOCKED_SINGLETON_CLUSTER",
+      "candidate_article_id": null,
+      "reason": "A one-article cluster cannot demonstrate pillar/satellite structure yet."
+    },
+    {
+      "cluster_id": "conforto-umidade",
+      "member_count": 2,
+      "status": "CANDIDATE_FOR_REVIEW",
+      "candidate_article_id": "188906792662651024",
+      "candidate_title": "Controle da umidade em ambientes fechados com soluções",
+      "reason": "Broad topic coverage and highest same-cluster inbound; still requires canonical/content-hash verification."
+    },
+    {
+      "cluster_id": "cozinha-bebidas",
+      "member_count": 2,
+      "status": "CANDIDATE_FOR_REVIEW",
+      "candidate_article_id": "3468973181580297498",
+      "candidate_title": "Como preparar bebidas geladas de forma rápida e prática",
+      "reason": "Broader beverage-preparation article and receives the only same-cluster inbound."
+    },
+    {
+      "cluster_id": "cozinha-mesa",
+      "member_count": 2,
+      "status": "NO_SUITABLE_EXISTING_PILLAR",
+      "candidate_article_id": null,
+      "candidate_title": null,
+      "reason": "Both existing pages are specific table-runner articles; no broad hub exists."
+    },
+    {
+      "cluster_id": "cozinha-pia-louca",
+      "member_count": 3,
+      "status": "NO_SUITABLE_EXISTING_PILLAR",
+      "candidate_article_id": null,
+      "candidate_title": null,
+      "reason": "Most-linked target is a faucet product review, which is too narrow/commercial to serve as editorial hub."
+    },
+    {
+      "cluster_id": "cozinha-preparo-refeicoes",
+      "member_count": 1,
+      "status": "BLOCKED_SINGLETON_CLUSTER",
+      "candidate_article_id": null,
+      "reason": "A one-article cluster cannot demonstrate pillar/satellite structure yet."
+    },
+    {
+      "cluster_id": "iluminacao-cabeceira",
+      "member_count": 1,
+      "status": "BLOCKED_SINGLETON_CLUSTER",
+      "candidate_article_id": null,
+      "reason": "A one-article cluster cannot demonstrate pillar/satellite structure yet."
+    },
+    {
+      "cluster_id": "lavanderia-roupas",
+      "member_count": 2,
+      "status": "CANDIDATE_FOR_REVIEW",
+      "candidate_article_id": "5111423430186970519",
+      "candidate_title": "Como organizar a rotina de passar roupas de forma eficiente",
+      "reason": "General ironing-routine guide; receives same-cluster inbound from wrinkle-removal satellite."
+    },
+    {
+      "cluster_id": "limpeza-pisos",
+      "member_count": 1,
+      "status": "BLOCKED_SINGLETON_CLUSTER",
+      "candidate_article_id": null,
+      "reason": "A one-article cluster cannot demonstrate pillar/satellite structure yet."
+    },
+    {
+      "cluster_id": "quarto-cama-textil",
+      "member_count": 10,
+      "status": "NO_SUITABLE_EXISTING_PILLAR",
+      "candidate_article_id": null,
+      "candidate_title": null,
+      "reason": "Current high-inbound pages are too narrow (hotel bed, mattress protection, colcha) for the full bedding cluster."
+    },
+    {
+      "cluster_id": "quarto-conforto-termico",
+      "member_count": 2,
+      "status": "CANDIDATE_FOR_REVIEW",
+      "candidate_article_id": "1700748833526884934",
+      "candidate_title": "Como manter o ambiente fresco sem ar-condicionado em dias",
+      "reason": "Broader thermal-comfort article and receives same-cluster inbound."
+    },
+    {
+      "cluster_id": "seguranca-monitoramento",
+      "member_count": 2,
+      "status": "CANDIDATE_FOR_REVIEW",
+      "candidate_article_id": "5417384586004316128",
+      "candidate_title": "Como escolher uma câmera de segurança para monitorar a casa",
+      "reason": "General monitoring guide is broader than the lamp-camera satellite despite weak current internal linking."
+    }
+  ],
+  "decision": "ainda não validado"
+}
