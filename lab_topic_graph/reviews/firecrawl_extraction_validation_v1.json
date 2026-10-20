@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "mode": "LAB_READ_ONLY_EXTRACTION_VALIDATION",
+  "tested_at": "2026-10-20",
+  "site_id": "achadosparacasa-blogger-lab",
+  "results": [
+    {
+      "method": "firecrawl_crawl_links_only_main_content",
+      "scope": "37 public URLs",
+      "result": "REJECTED_FOR_GRAPH_EXTRACTION",
+      "reason": "Returned only self #main links and did not expose known Veja também links."
+    },
+    {
+      "method": "firecrawl_crawl_json_only_main_content",
+      "scope": "37 public URLs",
+      "result": "REJECTED_FOR_GRAPH_EXTRACTION",
+      "reason": "Returned empty related_links even for pages independently confirmed to contain Veja também links."
+    },
+    {
+      "method": "firecrawl_single_page_query_full_page",
+      "scope": "control page: solucoes-para-ambientes-com-ar-seco.html",
+      "result": "CONTROL_PASS",
+      "links_found": 3,
+      "reason": "Recovered the same three Veja também targets previously confirmed from Blogger readonly full content."
+    }
+  ],
+  "decision": "Do not use Firecrawl batch extraction as live-link ground truth. Use Blogger readonly content or individually validated page extraction. Any incomplete extraction remains fail-closed.",
+  "safety": {
+    "cms_writes": false,
+    "publishing": false,
+    "production_changes": false
+  }
+}
