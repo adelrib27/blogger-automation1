@@ -32,10 +32,10 @@ def persistent_candidate_from_item(item, history, max_similarity, max_results):
 builder.candidate_from_item = persistent_candidate_from_item
 
 # NORMAL preserva o SAFE Builder V5 validado.
-# EVERGREEN V11: a IA recebe somente categoria/keyword/ângulo e escreve a camada
-# editorial geral. Rascunhos rejeitados são revisados incrementalmente, mantendo
-# os mesmos gates; nome e fatos específicos continuam determinísticos/evidenciados.
+# EVERGREEN V12: uma única geração editorial por candidato; saneamento e ajuste
+# de comprimento são locais e limitados. Gates e fatos específicos continuam
+# determinísticos/evidenciados e permanecem fail-closed.
 if os.getenv("VIDAPET_FORCE_EVERGREEN", "").strip() == "1":
-    import article_builder_evergreen_v11  # noqa: E402,F401
+    import article_builder_evergreen_v12  # noqa: E402,F401
 else:
     import article_builder_safe_v5  # noqa: E402,F401
