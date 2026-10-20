@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "description": "Regras semânticas SAFE para o Vida Pet Prática. O laboratório cobre somente acessórios, conforto, higiene, enriquecimento, transporte, passeio e organização para cães e gatos. Exclui medicamentos, suplementos, rações, antipulgas, itens veterinários e alegações terapêuticas.",
+  "rules": {
+    "cama pet": {"require_groups": [["cama"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["cama casal", "cama solteiro", "cama infantil", "cama boneca", "colchao humano", "colchão humano"]},
+    "comedouro pet": {"require_groups": [["comedouro", "alimentador"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["comedouro aves", "comedouro passaro", "comedouro pássaro", "comedouro galinha", "comedouro bovino"]},
+    "bebedouro fonte pet": {"require_groups": [["bebedouro", "fonte"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["bebedouro aves", "bebedouro passaro", "bebedouro pássaro", "bebedouro galinha", "bebedouro hamster"]},
+    "comedouro lento pet": {"require_groups": [["comedouro", "alimentador"], ["lento", "slow"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["comedouro aves", "comedouro passaro", "comedouro pássaro", "brinquedo infantil"]},
+    "tapete higienico cachorro": {"require_groups": [["tapete"], ["higienico", "higiênico"], ["cachorro", "cao", "cão", "pet"]], "block_phrases": ["tapete banheiro", "tapete cozinha", "tapete sala", "tapete yoga", "tapete infantil"]},
+    "caixa areia gato": {"require_groups": [["caixa", "bandeja"], ["areia"], ["gato", "gatos", "felino"]], "block_phrases": ["caixa organizadora", "caixa brinquedo", "areia decorativa", "areia aquario", "areia aquário"]},
+    "tapete coletor areia gato": {"require_groups": [["tapete"], ["areia"], ["gato", "gatos", "felino"]], "block_phrases": ["tapete banheiro", "tapete cozinha", "tapete yoga", "tapete infantil"]},
+    "escova tira pelos pet": {"require_groups": [["escova", "rasqueadeira", "removedor"], ["pelo", "pelos"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["escova cabelo", "escova humana", "escova dental", "escova de dente", "depilador humano"]},
+    "brinquedo interativo pet": {"require_groups": [["brinquedo"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["brinquedo infantil", "bebe", "bebê", "crianca", "criança", "boneca"]},
+    "arranhador gato": {"require_groups": [["arranhador"], ["gato", "gatos", "felino"]], "block_phrases": ["arranhador parede humano", "lixa", "brinquedo infantil"]},
+    "caixa transporte pet": {"require_groups": [["caixa", "bolsa", "mochila"], ["transporte", "transportadora"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["mochila escolar", "mala viagem", "caixa correio", "caixa organizadora"]},
+    "peitoral cachorro": {"require_groups": [["peitoral"], ["cachorro", "cao", "cão", "pet"]], "block_phrases": ["peitoral academia", "peitoral esportivo humano", "colete humano", "fantasia"]},
+    "guia cachorro": {"require_groups": [["guia", "coleira"], ["cachorro", "cao", "cão", "pet"]], "block_phrases": ["guia livro", "guia manual", "guia turistico", "guia turístico", "coleira cervical humana"]},
+    "porta racao pet": {"require_groups": [["porta racao", "porta ração", "recipiente", "container"], ["racao", "ração"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["ração inclusa", "racao inclusa", "saco de racao", "saco de ração", "suplemento", "medicamento"]},
+    "organizador acessorios pet": {"require_groups": [["organizador", "cesto", "caixa"], ["pet", "cachorro", "cao", "cão", "gato"]], "block_phrases": ["organizador maquiagem", "organizador cozinha", "organizador ferramenta", "brinquedo infantil"]}
+  }
+}
