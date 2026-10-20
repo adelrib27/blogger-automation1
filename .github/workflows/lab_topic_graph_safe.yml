@@ -43,6 +43,9 @@ jobs:
             --registry lab_topic_graph/config/cluster_registry.lab.json \
             --output /tmp/topic-graph-safe
 
+      - name: Build enhanced read-only diagnostics
+        run: python -m lab_topic_graph.diagnostics_v2 --output /tmp/topic-graph-safe
+
       - name: Enforce SAFE manifest and no ready links without health verification
         run: |
           python - <<'PY'
@@ -51,11 +54,15 @@ jobs:
           root = Path('/tmp/topic-graph-safe')
           manifest = json.loads((root / 'run_manifest.json').read_text(encoding='utf-8'))
           graph = json.loads((root / 'link_graph.json').read_text(encoding='utf-8'))
+          health = json.loads((root / 'link_health.json').read_text(encoding='utf-8'))
+          enhanced = json.loads((root / 'comparison_ab_v2.json').read_text(encoding='utf-8'))
           assert manifest['mode'] == 'LAB_SAFE_OFFLINE'
           assert manifest['safety']['cms_write_capability'] is False
           assert manifest['safety']['publishing'] is False
           assert manifest['safety']['external_api_calls'] is False
+          assert health['verification_mode'] == 'OFFLINE_REGISTERED_ONLY'
           assert not any(edge['status'] == 'PLAN_READY' for edge in graph['edges'])
+          assert enhanced['aggregate']['legacy_links_accounted'] >= 0
           print('SAFE_INTERLOCK_PASS')
           PY
 
