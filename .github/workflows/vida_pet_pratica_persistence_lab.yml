@@ -52,6 +52,7 @@ jobs:
             vida_pet_pratica/src/evidence_cache_hydrator.py \
             vida_pet_pratica/src/evidence_reuse_self_test.py \
             vida_pet_pratica/src/firecrawl_cost_self_test.py \
+            vida_pet_pratica/src/builder_evidence_reuse_self_test.py \
             vida_pet_pratica/src/automation_core_v1.py \
             vida_pet_pratica/src/automation_core_persistent_v2.py \
             vida_pet_pratica/src/automation_core_persistent_v3.py \
@@ -73,6 +74,7 @@ jobs:
             vida_pet_pratica/src/article_builder_evergreen_v14_5.py \
             vida_pet_pratica/src/article_builder_evergreen_v14_6.py \
             vida_pet_pratica/src/article_builder_persistent_v2.py \
+            vida_pet_pratica/src/article_builder_persistent_v3.py \
             vida_pet_pratica/src/d1_persistence.py \
             vida_pet_pratica/src/d1_persistence_v2.py
           python - <<'PY'
@@ -128,6 +130,9 @@ jobs:
       - name: Validate Firecrawl lean search cost guard
         run: python vida_pet_pratica/src/firecrawl_cost_self_test.py
 
+      - name: Validate builder failover persisted evidence reuse
+        run: python vida_pet_pratica/src/builder_evidence_reuse_self_test.py
+
       - name: Consume hydrated READY for independent LAB rotation
         shell: bash
         run: |
@@ -178,7 +183,7 @@ jobs:
 
       - name: Build grounded post buffer with SAFE persistent guard
         if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
-        run: python vida_pet_pratica/src/article_builder_persistent_v2.py
+        run: python vida_pet_pratica/src/article_builder_persistent_v3.py
 
       - name: Persist VERIFIED_READY posts to D1
         if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
