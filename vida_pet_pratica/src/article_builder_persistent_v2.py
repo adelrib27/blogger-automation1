@@ -32,10 +32,9 @@ def persistent_candidate_from_item(item, history, max_similarity, max_results):
 builder.candidate_from_item = persistent_candidate_from_item
 
 # NORMAL preserva o SAFE Builder V5 validado.
-# EVERGREEN V14: o provedor escolhe apenas variantes A/B/C. Headings, perguntas
-# e corpo são templates locais revisados; fatos específicos continuam
-# determinísticos/evidenciados e todos os gates permanecem fail-closed.
+# EVERGREEN V14.1: hotfix técnico de namespace sobre o V14; conteúdo, templates,
+# thresholds e gates do V14 permanecem inalterados e fail-closed.
 if os.getenv("VIDAPET_FORCE_EVERGREEN", "").strip() == "1":
-    import article_builder_evergreen_v14  # noqa: E402,F401
+    import article_builder_evergreen_v14_1  # noqa: E402,F401
 else:
     import article_builder_safe_v5  # noqa: E402,F401
