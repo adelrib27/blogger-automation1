@@ -51,6 +51,7 @@ jobs:
             vida_pet_pratica/src/evidence_engine_persistent_v13.py \
             vida_pet_pratica/src/evidence_cache_hydrator.py \
             vida_pet_pratica/src/evidence_reuse_self_test.py \
+            vida_pet_pratica/src/firecrawl_cost_self_test.py \
             vida_pet_pratica/src/automation_core_v1.py \
             vida_pet_pratica/src/automation_core_persistent_v2.py \
             vida_pet_pratica/src/automation_core_persistent_v3.py \
@@ -85,6 +86,7 @@ jobs:
           assert policy["rotation"]["evergreen_enabled"] is True
           assert int(policy["min_ready"]) == 3
           assert int(policy["rotation"]["product_cooldown_days"]) == 30
+          assert 1 <= int(policy["evidence"]["max_search_results"]) <= 10
           assert d1["persistence_enabled"] is True
           assert d1["lab_only"] is True
           assert d1["account_id"] == "b1515400afe32581994c4d3f038f835f"
@@ -122,6 +124,9 @@ jobs:
 
       - name: Validate evidence reuse fail-closed policy
         run: python vida_pet_pratica/src/evidence_reuse_self_test.py
+
+      - name: Validate Firecrawl lean search cost guard
+        run: python vida_pet_pratica/src/firecrawl_cost_self_test.py
 
       - name: Consume hydrated READY for independent LAB rotation
         shell: bash
