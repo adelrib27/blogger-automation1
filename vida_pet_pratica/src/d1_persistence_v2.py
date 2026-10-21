@@ -9,7 +9,7 @@ import d1_persistence as base
 LAB_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = LAB_ROOT / "config" / "automation_policy.json"
 OUT_DIR = LAB_ROOT / "data" / "architecture_lab"
-EVERGREEN_VERSION = "SAFE_V13_EVERGREEN_QUESTION_OUTLINE_RENDER"
+EVERGREEN_VERSION = "SAFE_V14_EVERGREEN_LOCAL_TEMPLATES_VARIANT_SELECTOR"
 
 
 def iso(dt):
