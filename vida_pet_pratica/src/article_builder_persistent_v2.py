@@ -32,10 +32,10 @@ def persistent_candidate_from_item(item, history, max_similarity, max_results):
 builder.candidate_from_item = persistent_candidate_from_item
 
 # NORMAL preserva o SAFE Builder V5 validado.
-# EVERGREEN V14.2 preserva V14/V14.1 para auditoria e corrige apenas a
-# repetição estrutural detectada pela própria proteção semântica na R16.
+# EVERGREEN V14.3 preserva V14.2 para auditoria e acrescenta apenas conteúdo
+# editorial local suficiente para atender o comprimento SAFE detectado na R17.
 # Nenhum threshold, gate factual ou regra de segurança é reduzido.
 if os.getenv("VIDAPET_FORCE_EVERGREEN", "").strip() == "1":
-    import article_builder_evergreen_v14_2  # noqa: E402,F401
+    import article_builder_evergreen_v14_3  # noqa: E402,F401
 else:
     import article_builder_safe_v5  # noqa: E402,F401
