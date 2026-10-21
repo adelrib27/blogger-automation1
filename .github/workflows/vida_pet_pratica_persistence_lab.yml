@@ -98,6 +98,17 @@ jobs:
       - name: Hydrate persistent editorial history
         run: python vida_pet_pratica/src/d1_persistence_v2.py hydrate
 
+      - name: Consume hydrated READY for independent LAB rotation
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q "CONSUME_READY_LAB=1" vida_pet_pratica/persistence_kickoff.txt; then
+            python vida_pet_pratica/src/d1_persistence_v2.py consume-ready-lab
+            python vida_pet_pratica/src/d1_persistence_v2.py verify
+          else
+            echo "Hydrated READY retained for this LAB round"
+          fi
+
       - name: Clean ephemeral generation output
         shell: bash
         run: |
