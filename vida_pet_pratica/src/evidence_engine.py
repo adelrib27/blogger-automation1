@@ -10,6 +10,7 @@ from dataclasses import dataclass, asdict
 from urllib.parse import urlparse
 
 FIRECRAWL_ENDPOINT = os.getenv("FIRECRAWL_SEARCH_ENDPOINT", "https://api.firecrawl.dev/v2/search").strip()
+FIRECRAWL_CONTENT_MODE = "SEARCH_SNIPPET_ONLY"
 
 
 def normalize(text: str) -> str:
@@ -59,6 +60,17 @@ def _safe_excerpt(result: dict, max_chars: int = 2400) -> str:
             seen.add(clean)
             unique.append(clean)
     return "\n".join(unique)[:max_chars]
+
+
+def _meaningful_search_support(result: dict, title: str) -> str:
+    excerpt = _safe_excerpt(result)
+    if not excerpt:
+        return ""
+    if normalize(excerpt) == normalize(title):
+        return ""
+    if len(tokens(excerpt)) < 4:
+        return ""
+    return excerpt
 
 
 def _domain(url: str) -> str:
@@ -111,9 +123,8 @@ def firecrawl_search(query: str, limit: int = 8) -> tuple[list[dict], dict]:
         "query": query,
         "limit": max(1, min(int(limit), 20)),
         "sources": ["web"],
-        "scrapeOptions": {"formats": ["markdown"], "onlyMainContent": True},
     }
-    headers = {"Content-Type": "application/json", "Accept": "application/json", "User-Agent": "VidaPetPratica-EvidenceEngine/1.2"}
+    headers = {"Content-Type": "application/json", "Accept": "application/json", "User-Agent": "VidaPetPratica-EvidenceEngine/1.3"}
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
 
@@ -153,6 +164,8 @@ def firecrawl_search(query: str, limit: int = 8) -> tuple[list[dict], dict]:
         "search_id": doc.get("id"),
         "credits_used": doc.get("creditsUsed"),
         "query": query,
+        "content_mode": FIRECRAWL_CONTENT_MODE,
+        "scrape_results": False,
     }
 
 
@@ -186,7 +199,12 @@ def build_evidence_package(item: dict, max_results: int = 8, min_external_author
             if url and url not in seen_urls:
                 seen_urls.add(url)
                 merged_results.append(result)
-        if any(_exact_shopee_match(str(r.get("url") or ""), item_id) for r in merged_results):
+        exact_supported = any(
+            _exact_shopee_match(str(r.get("url") or ""), item_id)
+            and bool(_meaningful_search_support(r, str(r.get("title") or "")))
+            for r in merged_results
+        )
+        if exact_supported:
             break
 
     models = model_tokens(product_name)
@@ -205,19 +223,30 @@ def build_evidence_package(item: dict, max_results: int = 8, min_external_author
     for index, result in enumerate(merged_results, start=1):
         url = str(result.get("url") or "").strip()
         title = re.sub(r"\s+", " ", str(result.get("title") or "")).strip()
-        excerpt = _safe_excerpt(result) or title
+        excerpt = _meaningful_search_support(result, title)
+        support_text = excerpt or title
         identity, allowed, confidence = "SIMILAR_PRODUCT", False, 0.30
         reason = "Search result is context only; exact identity not proven"
         if _exact_shopee_match(url, item_id):
-            identity, allowed, confidence = "EXACT_PRODUCT", True, 1.0
-            reason = "Shopee URL contains the exact itemId"
+            identity = "EXACT_PRODUCT"
+            if excerpt:
+                allowed, confidence = True, 1.0
+                reason = "Shopee URL contains the exact itemId and search snippet provides factual support"
+            else:
+                allowed, confidence = False, 0.70
+                reason = "Exact Shopee identity proven, but search snippet is insufficient for factual use"
         elif _matched_model(result, product_name, models):
-            identity, allowed, confidence = "MATCHED_MODEL", True, 0.85
-            reason = "Distinct model token(s) and product similarity matched"
+            identity = "MATCHED_MODEL"
+            if excerpt:
+                allowed, confidence = True, 0.85
+                reason = "Distinct model token(s), product similarity and search snippet matched"
+            else:
+                allowed, confidence = False, 0.60
+                reason = "Matched model identity lacks meaningful search snippet support"
         key = hashlib.sha256(f"{item_id}|{url}|{index}".encode("utf-8")).hexdigest()[:12]
         sources.append(EvidenceSource(
             evidence_id=f"EV-WEB-{key}", identity_level=identity, source_url=url, source_domain=_domain(url),
-            source_title=title, support_text=excerpt, allowed_in_article=allowed, confidence=confidence, reason=reason,
+            source_title=title, support_text=support_text, allowed_in_article=allowed, confidence=confidence, reason=reason,
         ))
 
     external_authorized = [s for s in sources if s.source_domain != "open-api.affiliate.shopee.com.br" and s.allowed_in_article and s.support_text]
@@ -227,7 +256,7 @@ def build_evidence_package(item: dict, max_results: int = 8, min_external_author
 
     return {
         "status": "VERIFIED" if not reasons else "REJECTED_EVIDENCE",
-        "version": "EVIDENCE_ENGINE_V1_2",
+        "version": "EVIDENCE_ENGINE_V1_3_SEARCH_LEAN",
         "verified_at": int(time.time()),
         "product": {
             "itemId": item_id, "productName": product_name, "shopName": item.get("shopName"),
@@ -242,6 +271,8 @@ def build_evidence_package(item: dict, max_results: int = 8, min_external_author
             "matched_model_authorized_only_with_distinct_model_tokens": True,
             "min_external_authorized_sources": min_external_authorized_sources,
             "rate_limit_retry_enabled": True,
+            "firecrawl_search_scrape_results": False,
+            "meaningful_search_snippet_required_for_external_claims": True,
         },
         "authorized_evidence_ids": [s.evidence_id for s in sources if s.allowed_in_article and s.support_text],
         "external_authorized_evidence_ids": [s.evidence_id for s in external_authorized],
