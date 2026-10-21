@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "enabled": true,
+  "lab_only": true,
+  "ttl_days": 7,
+  "require_verified_product_status": true,
+  "require_same_normalized_product_name": true,
+  "min_external_authorized_sources": 1,
+  "require_exact_evidence_count": 2,
+  "refresh_does_not_extend_ttl": true,
+  "fallback": "FIRECRAWL",
+  "fail_closed_when_fallback_unavailable": true
+}
