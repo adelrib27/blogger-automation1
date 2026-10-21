@@ -1,4 +1,4 @@
-name: Vida Pet Prática — Persistence Lab SAFE V2
+name: Vida Pet Prática — Persistence Lab SAFE V3
 
 on:
   workflow_dispatch:
@@ -48,8 +48,12 @@ jobs:
           test ! -f vida_pet_pratica/wordpress_write.flag
           python -m py_compile \
             vida_pet_pratica/src/evidence_engine.py \
+            vida_pet_pratica/src/evidence_engine_persistent_v13.py \
+            vida_pet_pratica/src/evidence_cache_hydrator.py \
+            vida_pet_pratica/src/evidence_reuse_self_test.py \
             vida_pet_pratica/src/automation_core_v1.py \
             vida_pet_pratica/src/automation_core_persistent_v2.py \
+            vida_pet_pratica/src/automation_core_persistent_v3.py \
             vida_pet_pratica/src/article_builder_v1.py \
             vida_pet_pratica/src/article_builder_safe_v5.py \
             vida_pet_pratica/src/article_builder_evergreen_v6.py \
@@ -70,6 +74,7 @@ jobs:
           from pathlib import Path
           policy = json.loads(Path("vida_pet_pratica/config/automation_policy.json").read_text(encoding="utf-8"))
           d1 = json.loads(Path("vida_pet_pratica/config/d1_state.json").read_text(encoding="utf-8"))
+          reuse = json.loads(Path("vida_pet_pratica/config/evidence_reuse_policy.json").read_text(encoding="utf-8"))
           assert policy["wordpress"]["writes_enabled"] is False
           assert policy["rotation"]["new_products_first"] is True
           assert policy["rotation"]["evergreen_enabled"] is True
@@ -78,7 +83,15 @@ jobs:
           assert d1["persistence_enabled"] is True
           assert d1["lab_only"] is True
           assert d1["account_id"] == "b1515400afe32581994c4d3f038f835f"
-          print("Persistence SAFE preflight OK")
+          assert reuse["enabled"] is True
+          assert reuse["lab_only"] is True
+          assert 1 <= int(reuse["ttl_days"]) <= 30
+          assert int(reuse["min_external_authorized_sources"]) >= 1
+          assert int(reuse["require_exact_evidence_count"]) >= 2
+          assert reuse["refresh_does_not_extend_ttl"] is True
+          assert reuse["fallback"] == "FIRECRAWL"
+          assert reuse["fail_closed_when_fallback_unavailable"] is True
+          print("Persistence SAFE V3 preflight OK")
           PY
 
       - name: Resolve lab mode
@@ -99,6 +112,12 @@ jobs:
       - name: Hydrate persistent editorial history
         run: python vida_pet_pratica/src/d1_persistence_v2.py hydrate
 
+      - name: Hydrate persisted evidence cache
+        run: python vida_pet_pratica/src/evidence_cache_hydrator.py
+
+      - name: Validate evidence reuse fail-closed policy
+        run: python vida_pet_pratica/src/evidence_reuse_self_test.py
+
       - name: Consume hydrated READY for independent LAB rotation
         shell: bash
         run: |
@@ -116,8 +135,8 @@ jobs:
           rm -rf vida_pet_pratica/data/architecture_lab vida_pet_pratica/data/shopee_oportunidades
           mkdir -p vida_pet_pratica/data/architecture_lab vida_pet_pratica/data/shopee_oportunidades
 
-      - name: Build persistent candidate buffer
-        run: python vida_pet_pratica/src/automation_core_persistent_v2.py
+      - name: Build persistent candidate buffer with evidence reuse
+        run: python vida_pet_pratica/src/automation_core_persistent_v3.py
 
       - name: Build grounded post buffer with SAFE persistent guard
         run: python vida_pet_pratica/src/article_builder_persistent_v2.py
@@ -146,5 +165,6 @@ jobs:
             vida_pet_pratica/data/shopee_oportunidades/
             vida_pet_pratica/state/persistence_snapshot.json
             vida_pet_pratica/state/article_history.json
+            vida_pet_pratica/state/evidence_cache.json
           if-no-files-found: warn
           retention-days: 14
