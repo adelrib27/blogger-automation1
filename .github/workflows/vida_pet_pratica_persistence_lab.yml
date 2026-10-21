@@ -134,19 +134,49 @@ jobs:
             echo "Hydrated READY retained for this LAB round"
           fi
 
+      - name: Resolve persistent READY refill
+        shell: bash
+        run: |
+          set -euo pipefail
+          python vida_pet_pratica/src/d1_persistence_v2.py verify > /tmp/vidapet_ready_state.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          state = json.loads(Path("/tmp/vidapet_ready_state.json").read_text(encoding="utf-8"))
+          policy = json.loads(Path("vida_pet_pratica/config/automation_policy.json").read_text(encoding="utf-8"))
+          ready_count = int(state.get("ready_count") or 0)
+          min_ready = int(policy.get("min_ready") or 3)
+          refill_required = ready_count < min_ready
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"VIDAPET_READY_REFILL_REQUIRED={'1' if refill_required else '0'}\n")
+          print(json.dumps({
+              "status": "PERSISTENT_READY_REFILL_DECISION",
+              "ready_count": ready_count,
+              "min_ready": min_ready,
+              "refill_required": refill_required,
+              "wordpress_written": False,
+          }, ensure_ascii=False))
+          PY
+
       - name: Clean ephemeral generation output
+        if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
         shell: bash
         run: |
           rm -rf vida_pet_pratica/data/architecture_lab vida_pet_pratica/data/shopee_oportunidades
           mkdir -p vida_pet_pratica/data/architecture_lab vida_pet_pratica/data/shopee_oportunidades
 
       - name: Build persistent candidate buffer with evidence reuse
+        if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
         run: python vida_pet_pratica/src/automation_core_persistent_v3.py
 
       - name: Build grounded post buffer with SAFE persistent guard
+        if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
         run: python vida_pet_pratica/src/article_builder_persistent_v2.py
 
       - name: Persist VERIFIED_READY posts to D1
+        if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
         run: python vida_pet_pratica/src/d1_persistence_v2.py persist
 
       - name: Verify persistent state after run
