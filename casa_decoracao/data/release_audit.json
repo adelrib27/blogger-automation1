@@ -3,13 +3,20 @@
   "policy_version": 3,
   "summary": {
     "total": 17,
-    "draft_ready": 0,
-    "rejected": 16,
+    "draft_ready": 1,
+    "rejected": 15,
     "not_generated": 1,
-    "published_history": 11,
-    "rotation_cycle": 1,
+    "published_history": 12,
+    "rotation_cycle": 2,
     "rotation_pending": [
-      "Sala"
+      "Decoração",
+      "Organização",
+      "Sala",
+      "Quarto",
+      "Cozinha",
+      "Banheiro",
+      "Área Externa",
+      "Cama, Mesa e Banho"
     ]
   },
   "items": [
@@ -18,33 +25,19 @@
       "shopee_item_id": "58208566937",
       "category": "Sala",
       "product": "Tapete Sala Quarto Aveludado Premium Geométrico Antiderrapante 1x 1,40 2x 1,40 2x 2,40 Várias Cores",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 173,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "alegacao_absoluta_nao_sustentada",
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 870,
+          "word_count": 584,
           "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 50,
-          "meta_description_length": 128,
-          "cta_count": 1
+          "seo_title_length": 48,
+          "meta_description_length": 154,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -174,10 +167,10 @@
       }
     },
     {
-      "id": 45,
-      "shopee_item_id": "23798178107",
+      "id": 48,
+      "shopee_item_id": "12277774078",
       "category": "Organização",
-      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "product": "Kit 10 Saco Organizador Guarda Roupa Brinquedos C/ Ziper",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -199,11 +192,11 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 948,
+          "word_count": 984,
           "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 38,
-          "meta_description_length": 142,
+          "seo_title_length": 48,
+          "meta_description_length": 152,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -500,10 +493,10 @@
       }
     },
     {
-      "id": 11,
-      "shopee_item_id": "23695000959",
+      "id": 47,
+      "shopee_item_id": "58257036596",
       "category": "Área Externa",
-      "product": "Pedra Dolomita Natural Branca Seixo Para Decoração Vaso Fonte Canteiro Pedra Jardim",
+      "product": "Kit 2 Paletes Madeira Pinus 50x50cm Laminado Estrado Pronto Jardim Vaso Decoração",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -515,7 +508,7 @@
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
+          "poucos_h2:4",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
@@ -525,11 +518,11 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 862,
-          "h2_count": 3,
+          "word_count": 932,
+          "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 45,
-          "meta_description_length": 123,
+          "seo_title_length": 42,
+          "meta_description_length": 146,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
