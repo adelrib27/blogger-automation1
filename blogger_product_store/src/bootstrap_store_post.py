@@ -15,7 +15,7 @@ SOURCE_PAGE_ID = os.getenv("BLOGGER_STORE_SOURCE_PAGE_ID", "5473313787015756722"
 
 def main() -> None:
     blogger = criar_servico_blogger()
-    posts = blogger.posts().list(blogId=BLOG_ID, maxResults=100, status=["live"]).execute().get("items", [])
+    posts = blogger.posts().list(blogId=BLOG_ID, maxResults=100, status=["LIVE"]).execute().get("items", [])
     existing = [p for p in posts if str(p.get("title") or "").strip().lower() == "loja"]
     if existing:
         post = existing[0]
