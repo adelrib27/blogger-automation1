@@ -23,7 +23,7 @@ jobs:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
       BLOGGER_BLOG_ID: "5271798990390532475"
-      BLOGGER_STORE_PAGE_ID: "5473313787015756722"
+      BLOGGER_STORE_POST_ID: "8867555367475283866"
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
@@ -60,8 +60,11 @@ jobs:
             src/shopee_oportunidades_v23.py \
             blogger_product_store/src/shopee_oportunidades_liquidificador.py \
             blogger_product_store/src/store_auto.py \
+            blogger_product_store/src/store_auto_post.py \
             blogger_product_store/src/store_auto_self_test.py \
-            blogger_product_store/src/store_hero_sync.py
+            blogger_product_store/src/store_hero_sync.py \
+            blogger_product_store/src/store_hero_sync_post.py \
+            blogger_product_store/src/post_target_proxy.py
           PYTHONPATH=src:blogger_product_store/src python blogger_product_store/src/store_auto_self_test.py
 
       - name: Confirmar secrets obrigatórios
@@ -73,9 +76,9 @@ jobs:
           test -n "$BLOGGER_CLIENT_SECRET"
           test -n "$BLOGGER_REFRESH_TOKEN"
 
-      - name: Executar SAFE real sem escrita no Blogger
+      - name: Executar SAFE real contra post Loja sem escrita
         run: |
-          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_auto.py
+          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_auto_post.py
 
       - name: Guardar diagnóstico SAFE
         if: always()
