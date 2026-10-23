@@ -64,6 +64,7 @@ jobs:
             blogger_product_store/src/shopee_oportunidades_liquidificador.py \
             blogger_product_store/src/store_auto.py \
             blogger_product_store/src/store_auto_post.py \
+            blogger_product_store/src/store_layout_patch.py \
             blogger_product_store/src/store_auto_self_test.py \
             blogger_product_store/src/store_hero_sync.py \
             blogger_product_store/src/store_hero_sync_post.py \
@@ -100,7 +101,7 @@ jobs:
             fi
             store_count=$(python -c "print(open('/tmp/blogger-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
             hero_count=$(python -c "print(open('/tmp/blogger-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
-            if grep -q "bls-store-grid" /tmp/blogger-loja.html && grep -q "blh-grid" /tmp/blogger-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+            if grep -q "bls-store-grid" /tmp/blogger-loja.html && grep -q "blh-grid" /tmp/blogger-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/blogger-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
               ok=1
               break
             fi
@@ -108,7 +109,7 @@ jobs:
             sleep 5
           done
           test "$ok" -eq 1
-          echo "Renderização pública confirmada: 20 cards da vitrine + 12 mini-cards no carrossel."
+          echo "Renderização pública confirmada: layout amplo + 20 cards da vitrine + 12 mini-cards no carrossel."
 
       - name: Persistir estado da rotação somente após validação pública
         run: |
