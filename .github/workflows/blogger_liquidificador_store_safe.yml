@@ -1,0 +1,88 @@
+name: Blogger Liquidificador — Loja Shopee SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "blogger_product_store/**"
+      - ".github/workflows/blogger_liquidificador_store_safe.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blogger-liquidificador-store-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "5271798990390532475"
+      BLOGGER_STORE_PAGE_ID: "5473313787015756722"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      BLOGGER_STORE_DRY_RUN: "true"
+      BLOGGER_STORE_ITEMS_PER_CATEGORY: "4"
+      BLOGGER_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "50"
+      SHOPEE_OPPORTUNITIES_CONFIG: blogger_product_store/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: blogger_product_store/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: blogger_product_store/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validar código e self-test
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/criar_rascunho.py \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            blogger_product_store/src/shopee_oportunidades_liquidificador.py \
+            blogger_product_store/src/store_auto.py \
+            blogger_product_store/src/store_auto_self_test.py \
+            blogger_product_store/src/store_hero_sync.py
+          PYTHONPATH=src:blogger_product_store/src python blogger_product_store/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+
+      - name: Executar SAFE real sem escrita no Blogger
+        run: |
+          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_auto.py
+
+      - name: Guardar diagnóstico SAFE
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blogger-liquidificador-store-safe-${{ github.run_number }}
+          path: |
+            blogger_product_store/data/store_last_selection.json
+            blogger_product_store/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
