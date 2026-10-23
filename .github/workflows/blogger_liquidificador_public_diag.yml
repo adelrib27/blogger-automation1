@@ -1,0 +1,45 @@
+name: Blogger Liquidificador — Diagnóstico Público
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/blogger_liquidificador_public_diag.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnosticar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Consultar página pública
+        run: |
+          set -u
+          base="https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html"
+          for suffix in "" "?m=1" "?output=1"; do
+            name=$(printf '%s' "$suffix" | tr -cd '[:alnum:]')
+            [ -n "$name" ] || name="base"
+            curl -L -sS --max-time 40 -D "/tmp/headers-${name}.txt" -o "/tmp/page-${name}.html" -w "variant=${name} http=%{http_code} final=%{url_effective} bytes=%{size_download}\n" "${base}${suffix}" || true
+            python - "$name" <<'PY'
+          import pathlib, re, sys
+          name=sys.argv[1]
+          p=pathlib.Path(f"/tmp/page-{name}.html")
+          text=p.read_text(encoding="utf-8", errors="ignore") if p.exists() else ""
+          title=re.search(r"<title[^>]*>(.*?)</title>", text, re.I|re.S)
+          print(f"{name}: store={text.count('data-item-id=')} hero={text.count('data-hero-item-id=')} bls={text.count('bls-store-grid')} chars={len(text)} title={(title.group(1).strip() if title else 'SEM_TITLE')[:160]}")
+          print(f"{name}: markers store_start={text.count('BLOGGER_LIQ_STORE_AUTO_START')} hero_start={text.count('BLOGGER_LIQ_HERO_AUTO_1_START')}")
+          PY
+          done
+
+      - name: Guardar respostas públicas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blogger-liquidificador-public-diag-${{ github.run_number }}
+          path: |
+            /tmp/page-*.html
+            /tmp/headers-*.txt
+          if-no-files-found: warn
+          retention-days: 7
