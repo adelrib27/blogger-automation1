@@ -5,7 +5,6 @@ on:
   push:
     paths:
       - "blogger_product_store/store_live_kickoff.txt"
-      - ".github/workflows/blogger_liquidificador_store_autonomous.yml"
 
 permissions:
   contents: write
@@ -22,7 +21,7 @@ jobs:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
       BLOGGER_BLOG_ID: "5271798990390532475"
-      BLOGGER_STORE_PAGE_ID: "5473313787015756722"
+      BLOGGER_STORE_POST_ID: "8867555367475283866"
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
@@ -61,8 +60,11 @@ jobs:
             src/shopee_oportunidades_v23.py \
             blogger_product_store/src/shopee_oportunidades_liquidificador.py \
             blogger_product_store/src/store_auto.py \
+            blogger_product_store/src/store_auto_post.py \
             blogger_product_store/src/store_auto_self_test.py \
-            blogger_product_store/src/store_hero_sync.py
+            blogger_product_store/src/store_hero_sync.py \
+            blogger_product_store/src/store_hero_sync_post.py \
+            blogger_product_store/src/post_target_proxy.py
           BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:blogger_product_store/src python blogger_product_store/src/store_auto_self_test.py
 
       - name: Confirmar secrets obrigatórios
@@ -74,19 +76,19 @@ jobs:
           test -n "$BLOGGER_CLIENT_SECRET"
           test -n "$BLOGGER_REFRESH_TOKEN"
 
-      - name: Atualizar vitrine com Shopee API
+      - name: Atualizar vitrine no post Loja com Shopee API
         run: |
-          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_auto.py
+          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_auto_post.py
 
-      - name: Sincronizar mini-cards do carrossel
+      - name: Sincronizar mini-cards do carrossel no post Loja
         run: |
-          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_hero_sync.py
+          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_hero_sync_post.py
 
       - name: Verificar renderização pública
         run: |
           set -euo pipefail
           ok=0
-          url="https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html"
+          url="https://liquidificador-philips-walita-ri2242.blogspot.com/2026/10/loja.html"
           for attempt in 1 2 3 4 5 6; do
             if ! curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/blogger-loja.html; then
               echo "Tentativa ${attempt}: curl falhou; aguardando propagação."
@@ -105,7 +107,7 @@ jobs:
           test "$ok" -eq 1
           echo "Renderização pública confirmada: 20 cards da vitrine + 12 mini-cards no carrossel."
 
-      - name: Persistir estado da rotação
+      - name: Persistir estado da rotação somente após validação pública
         run: |
           set -euo pipefail
           if [ -z "$(git status --porcelain -- blogger_product_store/data/store_rotation.json blogger_product_store/data/store_last_selection.json)" ]; then
