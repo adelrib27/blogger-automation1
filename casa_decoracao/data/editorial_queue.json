@@ -5,7 +5,6 @@
   "editorial_policy": "produto real -> rotação entre 8 categorias -> título editorial -> Qwen3 -> CTA contextual -> imagem real -> gate -> publicação",
   "category_rotation_cycle": 2,
   "category_rotation_pending": [
-    "Decoração",
     "Sala",
     "Quarto",
     "Cozinha",
@@ -23,69 +22,6 @@
   },
   "items": [
     {
-      "id": 22,
-      "shopee_item_id": "22598002731",
-      "product": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
-      "affiliate_link": "https://s.shopee.com.br/9zyiKzaMfZ",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m1zo5nd0qov30e",
-      "shop_name": "Cor Elegante",
-      "source_keyword": "caminho de mesa",
-      "category": "Decoração",
-      "opportunity_score": 59.98,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:501",
-      "generation_attempts": 2
-    },
-    {
-      "id": 55,
-      "shopee_item_id": "58203899022",
-      "product": "Kit 4 Vaso de Plantas Suculentas Vaso Decorativo em Gesso para e Cactos Decoração Sala Pequena Mesas",
-      "affiliate_link": "https://s.shopee.com.br/1BNLP3A6sA",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8261v-mjt7wieqq3utbd",
-      "shop_name": "BENTO’S DECOR",
-      "source_keyword": "vaso decorativo",
-      "category": "Decoração",
-      "opportunity_score": 59.9,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "topic": "Como escolher vasos para decoração de sala pequena",
-      "editorial_title": "Como escolher vasos para decoração de sala pequena",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 639,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 50,
-          "meta_description_length": 148,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "last_error": "",
-      "wordpress_post_id": 181,
-      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-escolher-vasos-para-decoracao-de-sala-pequena/",
-      "featured_media": 182,
-      "seo_synced": true
-    },
-    {
       "id": 50,
       "shopee_item_id": "22597699817",
       "product": "Tapete Passadeira Corredor Quarto Sala Felpudo Várias Cores E Tamanhos",
@@ -96,34 +32,57 @@
       "category": "Sala",
       "opportunity_score": 61.28,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:539"
     },
     {
-      "id": 27,
-      "shopee_item_id": "58210215150",
-      "product": "Kit 5 Saco Organizador Pvc para Edredom e Cobertor com Zíper Preto Guarda-Roupa",
-      "affiliate_link": "https://s.shopee.com.br/4LKNAtFBFf",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820ma-mnx2m0edy8ec1f",
-      "shop_name": "Innova Embalagens",
+      "id": 57,
+      "shopee_item_id": "23032999814",
+      "product": "3 Saco Organizador Multiuso Embalagem Transparente Edredom Coberta Toalhas de Pvc e Ziper Preto Enxoval Guarda Roupa",
+      "affiliate_link": "https://s.shopee.com.br/BUoDEV2hw",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-lusgv3w44b51bc",
+      "shop_name": "Isaplastic",
       "source_keyword": "organizador guarda roupa",
       "category": "Quarto",
-      "opportunity_score": 72.16,
+      "opportunity_score": 72.2,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "PUBLISHED",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "topic": "Como organizar roupas e mantas no armário",
+      "editorial_title": "Como organizar roupas e mantas no armário",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 694,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 41,
+          "meta_description_length": 153,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "last_error": "",
+      "wordpress_post_id": 184,
+      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-organizar-roupas-e-mantas-no-armario/",
+      "featured_media": 185,
+      "seo_synced": true
     },
     {
       "id": 6,
@@ -134,7 +93,7 @@
       "shop_name": "Haute Decor",
       "source_keyword": "abajur quarto",
       "category": "Quarto",
-      "opportunity_score": 64.81,
+      "opportunity_score": 64.84,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -154,7 +113,7 @@
       "shop_name": "Bennetex",
       "source_keyword": "travesseiro",
       "category": "Quarto",
-      "opportunity_score": 62.79,
+      "opportunity_score": 62.77,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -174,7 +133,7 @@
       "shop_name": "Mabê Store",
       "source_keyword": "fatiador de legumes",
       "category": "Cozinha",
-      "opportunity_score": 61.18,
+      "opportunity_score": 61.25,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -234,7 +193,7 @@
       "shop_name": "StarMove",
       "source_keyword": "toalheiro banheiro",
       "category": "Banheiro",
-      "opportunity_score": 61.11,
+      "opportunity_score": 61.16,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -249,12 +208,12 @@
       "id": 44,
       "shopee_item_id": "23299291762",
       "product": "Nicho Triplo Prateleira, Decoração Sala, Nicho para Banheiro , Cozinha , Quarto 07",
-      "affiliate_link": "https://s.shopee.com.br/40hWmIBiLV",
+      "affiliate_link": "https://s.shopee.com.br/2VsjJ105Y7",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-81ztc-mjuefjhl6zupe3",
       "shop_name": "MoveisKZA",
       "source_keyword": "prateleira banheiro",
       "category": "Banheiro",
-      "opportunity_score": 60.67,
+      "opportunity_score": 60.81,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -274,7 +233,7 @@
       "shop_name": "WR Shopping da Jardinagem",
       "source_keyword": "vaso jardim",
       "category": "Área Externa",
-      "opportunity_score": 63.19,
+      "opportunity_score": 63.17,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -294,7 +253,7 @@
       "shop_name": "Nosso Lar Enxovais",
       "source_keyword": "lencol casal",
       "category": "Cama, Mesa e Banho",
-      "opportunity_score": 64.05,
+      "opportunity_score": 64.03,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -314,7 +273,7 @@
       "shop_name": "Loja do Koala",
       "source_keyword": "protetor de colchao",
       "category": "Cama, Mesa e Banho",
-      "opportunity_score": 62.35,
+      "opportunity_score": 62.37,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -324,6 +283,28 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       }
+    },
+    {
+      "id": 22,
+      "shopee_item_id": "22598002731",
+      "product": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
+      "affiliate_link": "https://s.shopee.com.br/9zyiKzaMfZ",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m1zo5nd0qov30e",
+      "shop_name": "Cor Elegante",
+      "source_keyword": "caminho de mesa",
+      "category": "Decoração",
+      "opportunity_score": 59.98,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:501",
+      "generation_attempts": 2
     },
     {
       "id": 20,
@@ -356,7 +337,7 @@
       "shop_name": "Na Web Group De Marcas",
       "source_keyword": "varal de chao",
       "category": "Organização",
-      "opportunity_score": 61.7,
+      "opportunity_score": 61.74,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -368,6 +349,26 @@
       },
       "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
       "generation_attempts": 1
+    },
+    {
+      "id": 58,
+      "shopee_item_id": "23798178107",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "affiliate_link": "https://s.shopee.com.br/9fLtWgzLTi",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-81z1k-mfvhv2o7wtfk77",
+      "shop_name": "Maison Plus",
+      "source_keyword": "organizador armario",
+      "category": "Organização",
+      "opportunity_score": 60.2,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
     }
   ]
 }

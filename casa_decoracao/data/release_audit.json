@@ -4,13 +4,12 @@
   "summary": {
     "total": 16,
     "draft_ready": 1,
-    "rejected": 14,
-    "not_generated": 1,
-    "published_history": 14,
+    "rejected": 13,
+    "not_generated": 2,
+    "published_history": 15,
     "rotation_cycle": 2,
     "rotation_pending": [
       "Sala",
-      "Quarto",
       "Cozinha",
       "Banheiro",
       "Área Externa",
@@ -19,69 +18,11 @@
   },
   "items": [
     {
-      "id": 22,
-      "shopee_item_id": "22598002731",
-      "category": "Decoração",
-      "product": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 752,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 139,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 55,
-      "shopee_item_id": "58203899022",
-      "category": "Decoração",
-      "product": "Kit 4 Vaso de Plantas Suculentas Vaso Decorativo em Gesso para e Cactos Decoração Sala Pequena Mesas",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 181,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 639,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 50,
-          "meta_description_length": 148,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
       "id": 50,
       "shopee_item_id": "22597699817",
       "category": "Sala",
       "product": "Tapete Passadeira Corredor Quarto Sala Felpudo Várias Cores E Tamanhos",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -114,37 +55,23 @@
       }
     },
     {
-      "id": 27,
-      "shopee_item_id": "58210215150",
+      "id": 57,
+      "shopee_item_id": "23032999814",
       "category": "Quarto",
-      "product": "Kit 5 Saco Organizador Pvc para Edredom e Cobertor com Zíper Preto Guarda-Roupa",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "product": "3 Saco Organizador Multiuso Embalagem Transparente Edredom Coberta Toalhas de Pvc e Ziper Preto Enxoval Guarda Roupa",
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 184,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "categoria_invalida",
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 930,
+          "word_count": 694,
           "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 155,
-          "cta_count": 1
+          "seo_title_length": 41,
+          "meta_description_length": 153,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -511,6 +438,42 @@
       }
     },
     {
+      "id": 22,
+      "shopee_item_id": "22598002731",
+      "category": "Decoração",
+      "product": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 752,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 53,
+          "meta_description_length": 139,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
       "id": 20,
       "shopee_item_id": "58205899287",
       "category": "Organização",
@@ -560,6 +523,22 @@
           "cta_count": 1
         },
         "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 58,
+      "shopee_item_id": "23798178107",
+      "category": "Organização",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
       }
     }
   ]
