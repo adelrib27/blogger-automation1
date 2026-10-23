@@ -1,58 +1,58 @@
 {
-  "version": 1,
-  "description": "Regras semânticas para a loja Blogger do Liquidificador Philips Walita RI2242.",
+  "version": 2,
+  "description": "Regras semânticas endurecidas para a loja Blogger do Liquidificador Philips Walita RI2242. Prioriza produto completo e bloqueia peças, acessórios e falsos positivos.",
   "rules": {
     "liquidificador": {
       "require_groups": [["liquidificador"]],
-      "block_phrases": ["copo para liquidificador", "jarra para liquidificador", "lamina para liquidificador", "peça para liquidificador", "peca para liquidificador", "acessorio para liquidificador", "motor para liquidificador"]
+      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo para liquidificador", "jarra liquidificador", "jarra de liquidificador", "jarra para liquidificador", "lamina avulsa", "lâmina avulsa", "kit lamina", "kit lâmina", "peca liquidificador", "peça liquidificador", "peca para liquidificador", "peça para liquidificador", "acessorio liquidificador", "acessório liquidificador", "motor liquidificador", "acoplamento liquidificador", "anel liquidificador", "tampa liquidificador"]
     },
     "liquidificador philips walita": {
       "require_groups": [["liquidificador"], ["philips", "walita"]],
-      "block_phrases": ["copo para", "jarra para", "lamina", "peça", "peca", "acessorio"]
+      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo para", "jarra liquidificador", "jarra de liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "peca", "peça", "acessorio", "acessório", "acoplamento", "anel", "tampa avulsa"]
     },
     "liquidificador 1400w": {
       "require_groups": [["liquidificador"], ["1400w", "1400 w", "1400 watts"]],
-      "block_phrases": ["copo para", "jarra para", "lamina", "peça", "peca", "acessorio"]
+      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo para", "jarra liquidificador", "jarra de liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "peca", "peça", "acessorio", "acessório", "acoplamento", "anel"]
     },
     "mixer eletrico": {
       "require_groups": [["mixer"], ["eletrico", "elétrico", "portatil", "portátil", "mao", "mão"]],
-      "block_phrases": ["torneira", "misturador de agua", "haste avulsa", "batedor avulso", "peca para mixer", "peça para mixer"]
+      "block_phrases": ["torneira", "misturador de agua", "haste avulsa", "batedor avulso", "peca para mixer", "peça para mixer", "acessorio para mixer", "acessório para mixer"]
     },
     "mixer 3 em 1": {
       "require_groups": [["mixer"], ["3 em 1", "3x1", "3 in 1"]],
-      "block_phrases": ["haste avulsa", "batedor avulso", "peca", "peça"]
+      "block_phrases": ["haste avulsa", "batedor avulso", "peca", "peça", "acessorio", "acessório"]
     },
     "mixer de mao": {
       "require_groups": [["mixer"], ["mao", "mão", "hand"]],
-      "block_phrases": ["torneira", "haste avulsa", "peca", "peça"]
+      "block_phrases": ["torneira", "haste avulsa", "peca", "peça", "acessorio", "acessório"]
     },
     "processador de alimentos": {
       "require_groups": [["processador", "multiprocessador"], ["alimento", "alimentos", "cozinha"]],
-      "block_phrases": ["processador intel", "processador amd", "cpu", "computador", "notebook", "placa mae"]
+      "block_phrases": ["processador intel", "processador amd", "cpu", "computador", "notebook", "placa mae", "copo liquidificador", "copo multiprocessador", "copo para", "jarra para", "peca", "peça", "acessorio", "acessório"]
     },
     "multiprocessador": {
       "require_groups": [["multiprocessador"]],
-      "block_phrases": ["intel", "amd", "cpu", "computador", "notebook"]
+      "block_phrases": ["intel", "amd", "cpu", "computador", "notebook", "copo liquidificador", "copo multiprocessador", "copo para", "jarra", "peca", "peça", "acessorio", "acessório"]
     },
     "mini processador eletrico": {
       "require_groups": [["processador"], ["mini", "compacto"], ["eletrico", "elétrico", "cozinha", "alimentos"]],
-      "block_phrases": ["intel", "amd", "cpu", "computador"]
+      "block_phrases": ["intel", "amd", "cpu", "computador", "copo para", "jarra para", "peca", "peça", "acessorio", "acessório"]
     },
     "triturador eletrico": {
       "require_groups": [["triturador", "chopper"], ["eletrico", "elétrico", "alimento", "alimentos", "cozinha", "alho", "cebola"]],
-      "block_phrases": ["triturador de papel", "forrageiro", "galhos", "residuos", "resíduos", "pia", "sanitario", "sanitário"]
+      "block_phrases": ["triturador de papel", "forrageiro", "galhos", "residuos", "resíduos", "pia", "sanitario", "sanitário", "descascador"]
     },
     "mini triturador alho": {
       "require_groups": [["triturador", "chopper"], ["alho", "cebola", "tempero", "alimentos"]],
-      "block_phrases": ["papel", "forrageiro", "galhos", "residuos", "resíduos"]
+      "block_phrases": ["papel", "forrageiro", "galhos", "residuos", "resíduos", "descascador"]
     },
     "chopper eletrico": {
       "require_groups": [["chopper", "triturador"], ["eletrico", "elétrico", "cozinha", "alimentos"]],
-      "block_phrases": ["papel", "forrageiro", "galhos"]
+      "block_phrases": ["papel", "forrageiro", "galhos", "descascador"]
     },
     "espremedor eletrico": {
       "require_groups": [["espremedor"], ["eletrico", "elétrico", "laranja", "limao", "limão", "fruta", "frutas"]],
-      "block_phrases": ["alicate", "tubo", "ferramenta", "manual industrial"]
+      "block_phrases": ["alicate", "tubo", "ferramenta", "manual industrial", "peca", "peça", "acessorio", "acessório"]
     },
     "balanca digital cozinha": {
       "require_groups": [["balanca", "balança"], ["digital"], ["cozinha", "alimento", "alimentos", "culinaria", "culinária"]],
@@ -60,7 +60,7 @@
     },
     "copo medidor cozinha": {
       "require_groups": [["copo", "jarra"], ["medidor", "graduado", "medidas"], ["cozinha", "culinaria", "culinária"]],
-      "block_phrases": ["copo para liquidificador", "jarra para liquidificador", "laboratorio", "laboratório"]
+      "block_phrases": ["copo para liquidificador", "jarra para liquidificador", "pote hermetico", "pote hermético", "com copo medidor", "laboratorio", "laboratório"]
     }
   }
 }
