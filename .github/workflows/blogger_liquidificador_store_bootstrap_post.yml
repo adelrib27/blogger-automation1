@@ -1,0 +1,29 @@
+name: Blogger Liquidificador — Bootstrap Loja como Post
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/blogger_liquidificador_store_bootstrap_post.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BLOGGER_BLOG_ID: "5271798990390532475"
+      BLOGGER_STORE_SOURCE_PAGE_ID: "5473313787015756722"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Criar ou localizar post Loja
+        run: PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/bootstrap_store_post.py
