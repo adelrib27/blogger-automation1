@@ -36,6 +36,21 @@ def strict_valid_product(product: dict) -> bool:
         )
         if accessory_prefix.search(title):
             return False
+
+        accessory_phrases = (
+            "kit arraste",
+            "arraste copo",
+            "copo e motor",
+            "copo para liquidificador",
+            "jarra para liquidificador",
+            "tampa para liquidificador",
+            "lamina para liquidificador",
+            "acoplamento para liquidificador",
+            "peca para liquidificador",
+        )
+        if "arraste" in title or any(phrase in title for phrase in accessory_phrases):
+            return False
+
         if "compativel" in title and any(
             token in title for token in ("copo", "jarra", "tampa", "lamina", "acoplamento", "anel", "peca")
         ):
