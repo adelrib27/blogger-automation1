@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "description": "Regras semânticas para a loja Blogger do Liquidificador Philips Walita RI2242.",
+  "rules": {
+    "liquidificador": {
+      "require_groups": [["liquidificador"]],
+      "block_phrases": ["copo para liquidificador", "jarra para liquidificador", "lamina para liquidificador", "peça para liquidificador", "peca para liquidificador", "acessorio para liquidificador", "motor para liquidificador"]
+    },
+    "liquidificador philips walita": {
+      "require_groups": [["liquidificador"], ["philips", "walita"]],
+      "block_phrases": ["copo para", "jarra para", "lamina", "peça", "peca", "acessorio"]
+    },
+    "liquidificador 1400w": {
+      "require_groups": [["liquidificador"], ["1400w", "1400 w", "1400 watts"]],
+      "block_phrases": ["copo para", "jarra para", "lamina", "peça", "peca", "acessorio"]
+    },
+    "mixer eletrico": {
+      "require_groups": [["mixer"], ["eletrico", "elétrico", "portatil", "portátil", "mao", "mão"]],
+      "block_phrases": ["torneira", "misturador de agua", "haste avulsa", "batedor avulso", "peca para mixer", "peça para mixer"]
+    },
+    "mixer 3 em 1": {
+      "require_groups": [["mixer"], ["3 em 1", "3x1", "3 in 1"]],
+      "block_phrases": ["haste avulsa", "batedor avulso", "peca", "peça"]
+    },
+    "mixer de mao": {
+      "require_groups": [["mixer"], ["mao", "mão", "hand"]],
+      "block_phrases": ["torneira", "haste avulsa", "peca", "peça"]
+    },
+    "processador de alimentos": {
+      "require_groups": [["processador", "multiprocessador"], ["alimento", "alimentos", "cozinha"]],
+      "block_phrases": ["processador intel", "processador amd", "cpu", "computador", "notebook", "placa mae"]
+    },
+    "multiprocessador": {
+      "require_groups": [["multiprocessador"]],
+      "block_phrases": ["intel", "amd", "cpu", "computador", "notebook"]
+    },
+    "mini processador eletrico": {
+      "require_groups": [["processador"], ["mini", "compacto"], ["eletrico", "elétrico", "cozinha", "alimentos"]],
+      "block_phrases": ["intel", "amd", "cpu", "computador"]
+    },
+    "triturador eletrico": {
+      "require_groups": [["triturador", "chopper"], ["eletrico", "elétrico", "alimento", "alimentos", "cozinha", "alho", "cebola"]],
+      "block_phrases": ["triturador de papel", "forrageiro", "galhos", "residuos", "resíduos", "pia", "sanitario", "sanitário"]
+    },
+    "mini triturador alho": {
+      "require_groups": [["triturador", "chopper"], ["alho", "cebola", "tempero", "alimentos"]],
+      "block_phrases": ["papel", "forrageiro", "galhos", "residuos", "resíduos"]
+    },
+    "chopper eletrico": {
+      "require_groups": [["chopper", "triturador"], ["eletrico", "elétrico", "cozinha", "alimentos"]],
+      "block_phrases": ["papel", "forrageiro", "galhos"]
+    },
+    "espremedor eletrico": {
+      "require_groups": [["espremedor"], ["eletrico", "elétrico", "laranja", "limao", "limão", "fruta", "frutas"]],
+      "block_phrases": ["alicate", "tubo", "ferramenta", "manual industrial"]
+    },
+    "balanca digital cozinha": {
+      "require_groups": [["balanca", "balança"], ["digital"], ["cozinha", "alimento", "alimentos", "culinaria", "culinária"]],
+      "block_phrases": ["balanca corporal", "balança corporal", "banheiro", "pessoa", "bagagem"]
+    },
+    "copo medidor cozinha": {
+      "require_groups": [["copo", "jarra"], ["medidor", "graduado", "medidas"], ["cozinha", "culinaria", "culinária"]],
+      "block_phrases": ["copo para liquidificador", "jarra para liquidificador", "laboratorio", "laboratório"]
+    }
+  }
+}
