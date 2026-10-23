@@ -27,3 +27,5 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Criar ou localizar post Loja
         run: PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/bootstrap_store_post.py
+      - name: Confirmar bootstrap
+        run: echo "Bootstrap Blogger Loja executado."
