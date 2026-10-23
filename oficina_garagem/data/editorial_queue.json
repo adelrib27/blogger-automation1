@@ -4,25 +4,25 @@
   "source": "Shopee intent_report v2.3 + ranking details + publication history",
   "editorial_policy": "produto real -> um único título editorial -> conteúdo útil -> CTA contextual -> gate -> publicação",
   "max_per_keyword": 1,
-  "total": 15,
+  "total": 13,
   "skipped": {
-    "produto_ja_publicado": 3,
-    "limite_por_intencao": 12
+    "produto_ja_publicado": 4,
+    "limite_por_intencao": 13
   },
   "items": [
     {
       "id": 1,
-      "shopee_item_id": "46668803829",
-      "product": "Lavadora de Alta Pressão Portátil 1500Psi 1400w 110v Karcher",
-      "affiliate_link": "https://s.shopee.com.br/1BMQzKk1a",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8259c-mty2rq1fubd451",
-      "shop_name": "MBC FERRAMENTAS",
-      "source_keyword": "lavadora alta pressao",
-      "editorial_label": "Lavadora de alta pressão",
-      "category": "Limpeza e Conservação",
-      "opportunity_score": 76.7,
+      "shopee_item_id": "29535501772",
+      "product": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas Completa Reversível Soquetes Maleta",
+      "affiliate_link": "https://s.shopee.com.br/5q9Ay2D723",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-7rfi6-m96pnweedbdz0a",
+      "shop_name": "HONG11.br",
+      "source_keyword": "caixa ferramentas",
+      "editorial_label": "Caixa de ferramentas",
+      "category": "Organização de Garagem",
+      "opportunity_score": 72.7,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
@@ -30,54 +30,14 @@
         "safety_review": false,
         "single_editorial_title": true
       },
-      "topic": "Como escolher uma lavadora de alta pressão eficiente",
-      "editorial_title": "Como escolher uma lavadora de alta pressão eficiente",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 576,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 52,
-          "meta_description_length": 149,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "last_error": "",
-      "wordpress_post_id": 61,
-      "wordpress_url": "https://oficina.radartechbr.com.br/como-escolher-uma-lavadora-de-alta-pressao-eficiente/",
-      "featured_media": 62,
-      "seo_synced": true
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 453"
     },
     {
       "id": 2,
-      "shopee_item_id": "29535501772",
-      "product": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas Completa Reversível Soquetes Maleta",
-      "affiliate_link": "https://s.shopee.com.br/7AeX2sGEDW",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-7rfi6-m96pnweedbdz0a",
-      "shop_name": "HONG11.br",
-      "source_keyword": "jogo de chaves",
-      "editorial_label": "Jogo de chaves",
-      "category": "Ferramentas",
-      "opportunity_score": 72.7,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "safety_review": false,
-        "single_editorial_title": true
-      }
-    },
-    {
-      "id": 3,
       "shopee_item_id": "21455455470",
       "product": "Mini Parafusadeira sem Fio Recarregável USB com Maleta 49 peças  MQL-PFU49A EXBOM",
-      "affiliate_link": "https://s.shopee.com.br/AUuytOmsCz",
+      "affiliate_link": "https://s.shopee.com.br/5AtUApbFFD",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-lo8fvivweaaxf8",
       "shop_name": "Trissolaris Vooloja",
       "source_keyword": "parafusadeira",
@@ -95,10 +55,10 @@
       }
     },
     {
-      "id": 4,
+      "id": 3,
       "shopee_item_id": "22598454534",
       "product": "Kit de Ferramentas 46 Peças com Catraca Soquete – Maleta Portátil – Ideal para Reparos Domésticos MN",
-      "affiliate_link": "https://s.shopee.com.br/9APbLpUFKx",
+      "affiliate_link": "https://s.shopee.com.br/BUoDdyTRx",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m8jl4odrplgxa0",
       "shop_name": "MANIA UTILIDADES E AFINS LTDA",
       "source_keyword": "maleta ferramentas",
@@ -116,10 +76,10 @@
       }
     },
     {
-      "id": 5,
+      "id": 4,
       "shopee_item_id": "49466540071",
       "product": "Pano Microfibra Toalha Grande Limpar Casa moveis Secar Carro Automotivo Lavagem Secagem Polimento",
-      "affiliate_link": "https://s.shopee.com.br/8pmkxDe6lH",
+      "affiliate_link": "https://s.shopee.com.br/gR4oZ5VQA",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-820m2-mujs767pyo7478",
       "shop_name": "TMZ UTILIDADES",
       "source_keyword": "pano microfibra automotivo",
@@ -137,31 +97,10 @@
       }
     },
     {
-      "id": 6,
-      "shopee_item_id": "53668853073",
-      "product": "Kit 10 Maletas Jogo de Soquetes Sextavados 40 Peças Titanium",
-      "affiliate_link": "https://s.shopee.com.br/4fxBzXTyZE",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-825bb-mu0na4fdkd1h0d",
-      "shop_name": "MBC FERRAMENTAS",
-      "source_keyword": "jogo de soquetes",
-      "editorial_label": "Jogo de soquetes",
-      "category": "Ferramentas",
-      "opportunity_score": 66.7,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "safety_review": false,
-        "single_editorial_title": true
-      }
-    },
-    {
-      "id": 7,
+      "id": 5,
       "shopee_item_id": "58256818829",
       "product": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
-      "affiliate_link": "https://s.shopee.com.br/60SZZzy670",
+      "affiliate_link": "https://s.shopee.com.br/1LglbmCEy1",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-820lk-mlqojhea9r7q2f",
       "shop_name": "Umicc shop",
       "source_keyword": "suporte celular carro",
@@ -179,10 +118,10 @@
       }
     },
     {
-      "id": 8,
+      "id": 6,
       "shopee_item_id": "22394334585",
       "product": "Protetor Auricular Silicone com Cordão EPI Auditivo Plug Ouvido – Escolha a Quantidade",
-      "affiliate_link": "https://s.shopee.com.br/1BMQzkvwV",
+      "affiliate_link": "https://s.shopee.com.br/1qd2CieaqM",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-820lg-msj4djabv9c775",
       "shop_name": "GTEPIS Comercio e Participações",
       "source_keyword": "protetor auricular",
@@ -200,10 +139,10 @@
       }
     },
     {
-      "id": 9,
+      "id": 7,
       "shopee_item_id": "22992747047",
       "product": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
-      "affiliate_link": "https://s.shopee.com.br/5LCsmnDdYV",
+      "affiliate_link": "https://s.shopee.com.br/5q9Ay4CEfX",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-lpjdougddnrc94",
       "shop_name": "MULTIORIENTAL",
       "source_keyword": "luva de protecao",
@@ -221,10 +160,10 @@
       }
     },
     {
-      "id": 10,
+      "id": 8,
       "shopee_item_id": "22899126718",
       "product": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade, Fixação no Banco Traseiro, Rede Multiuso",
-      "affiliate_link": "https://s.shopee.com.br/40hVCKNNaN",
+      "affiliate_link": "https://s.shopee.com.br/3g4gO4KopZ",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-825b4-mg845kroxv64af",
       "shop_name": "MELHOR ",
       "source_keyword": "organizador porta malas",
@@ -242,16 +181,58 @@
       }
     },
     {
-      "id": 11,
+      "id": 9,
       "shopee_item_id": "23298660358",
       "product": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
-      "affiliate_link": "https://s.shopee.com.br/BUmaOMQFH",
+      "affiliate_link": "https://s.shopee.com.br/6Am1Mf2Qwq",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-7rash-mb5rcz7ytftub4",
       "shop_name": "ONE LIGHT SHOP",
       "source_keyword": "aspirador automotivo",
       "editorial_label": "Aspirador automotivo",
       "category": "Acessórios Automotivos",
-      "opportunity_score": 63.95,
+      "opportunity_score": 64.95,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "safety_review": false,
+        "single_editorial_title": true
+      }
+    },
+    {
+      "id": 10,
+      "shopee_item_id": "23093555184",
+      "product": "Kit 2 em 1 Cinto Duplo Para Ferramentas, Coldre Porta Furadeira & Cinto Porta F. Solze",
+      "affiliate_link": "https://s.shopee.com.br/1LglblGq3l",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m35a3ozeetj94d",
+      "shop_name": "Solze & Holger",
+      "source_keyword": "furadeira",
+      "editorial_label": "Furadeira",
+      "category": "Ferramentas",
+      "opportunity_score": 63.61,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "safety_review": false,
+        "single_editorial_title": true
+      }
+    },
+    {
+      "id": 11,
+      "shopee_item_id": "41314419184",
+      "product": "120ml  Limpador De Vidro Esponja Automotiva Escova De Limpeza Para-Brisa Óleo Filme Agente De Polimento Anti Mancha",
+      "affiliate_link": "https://s.shopee.com.br/3VlGBm3aUh",
+      "image_url": "https://cf.shopee.com.br/file/cn-11134207-820l4-mhjxwfmquepu9f",
+      "shop_name": "YF_globa.br",
+      "source_keyword": "escova limpeza automotiva",
+      "editorial_label": "Escova de limpeza automotiva",
+      "category": "Limpeza e Conservação",
+      "opportunity_score": 62.99,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -264,15 +245,15 @@
     },
     {
       "id": 12,
-      "shopee_item_id": "58207126680",
-      "product": "Multímetro Digital Inteligente Automático Profissional LCD HD - Medidor De Tensão E Corrente Com Detecção NCV",
-      "affiliate_link": "https://s.shopee.com.br/BUmdH2qO7",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8261j-mlyqv1a0w00f0f",
-      "shop_name": "ARTIGOS_E_MAGIA1",
-      "source_keyword": "multimetro digital",
-      "editorial_label": "Multímetro digital",
-      "category": "Manutenção",
-      "opportunity_score": 63.47,
+      "shopee_item_id": "23294140061",
+      "product": "Lavadora De Alta Pressão Recarregável Sem Fio 48V Baterias Linha Premium Para Carros e Jardins",
+      "affiliate_link": "https://s.shopee.com.br/1LglbnG1vE",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820l7-mtxysxdl90jma6",
+      "shop_name": "ANXIN TECH LTDA",
+      "source_keyword": "lavadora alta pressao",
+      "editorial_label": "Lavadora de alta pressão",
+      "category": "Limpeza e Conservação",
+      "opportunity_score": 62.35,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -285,51 +266,9 @@
     },
     {
       "id": 13,
-      "shopee_item_id": "58207052374",
-      "product": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v",
-      "affiliate_link": "https://s.shopee.com.br/7puDiVElLV",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8262m-mlxhb9sl0rgod8",
-      "shop_name": "GR7 Imports",
-      "source_keyword": "compressor de ar portatil",
-      "editorial_label": "Compressor de ar portátil",
-      "category": "Manutenção",
-      "opportunity_score": 62.76,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "safety_review": false,
-        "single_editorial_title": true
-      }
-    },
-    {
-      "id": 14,
-      "shopee_item_id": "24575870687",
-      "product": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
-      "affiliate_link": "https://s.shopee.com.br/AKbYjyYT2m",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-823r2-mp4n4weiypkx69",
-      "shop_name": "Choice Oficial",
-      "source_keyword": "escova limpeza automotiva",
-      "editorial_label": "Escova de limpeza automotiva",
-      "category": "Limpeza e Conservação",
-      "opportunity_score": 62.74,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "safety_review": false,
-        "single_editorial_title": true
-      }
-    },
-    {
-      "id": 15,
       "shopee_item_id": "57755036915",
       "product": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
-      "affiliate_link": "https://s.shopee.com.br/70L6lqGUqG",
+      "affiliate_link": "https://s.shopee.com.br/9Kj38U7ybu",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-81ztc-mjrhsagrpibq06",
       "shop_name": "EXBIAN FERRAMENTAS",
       "source_keyword": "painel ferramentas",
