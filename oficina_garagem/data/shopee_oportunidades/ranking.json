@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1792774853,
+  "generatedAt": 1792799466,
   "method": "seller-extra-first; standard commission only as reserve; Google Autocomplete proxy; Shopee performance",
   "searchSignalWarning": "Google Autocomplete é proxy de intenção/popularidade, não volume mensal exato.",
   "priorityPolicy": {
@@ -131,11 +131,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 81.33,
+      "opportunityScore": 81.32,
       "scoreComponents": {
         "seller_extra_commission": 1.0,
         "search_demand_proxy": 1.0,
-        "sales": 0.2319,
+        "sales": 0.2316,
         "rating": 0.98,
         "discount": 0.61,
         "top_performance": 0.0
@@ -155,7 +155,7 @@
       "priceMin": "366.6",
       "priceMax": "366.6",
       "priceDiscountRate": 36,
-      "sales": 0,
+      "sales": 1,
       "ratingStar": "5",
       "commissionRate": "0.41",
       "sellerCommissionRate": "0.38",
@@ -204,11 +204,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 76.8,
+      "opportunityScore": 77.9,
       "scoreComponents": {
         "seller_extra_commission": 1.0,
         "search_demand_proxy": 1.0,
-        "sales": 0.0,
+        "sales": 0.0731,
         "rating": 1.0,
         "discount": 0.36,
         "top_performance": 0.0
@@ -223,12 +223,12 @@
       "itemId": 20699205697,
       "productName": "Pano de Limpeza Multiuso Kit 10 Panos De Limpeza Microfibra Super Absorvente , Limpeza Doméstica e Automotiva de Carro",
       "productLink": "https://shopee.com.br/product/1028459403/20699205697",
-      "offerLink": "https://s.shopee.com.br/70L8MCd43x",
+      "offerLink": "https://s.shopee.com.br/4LKNiLiH7r",
       "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7rcf8-ls8v23rr5oa180",
       "priceMin": "33.99",
       "priceMax": "44.99",
       "priceDiscountRate": 44,
-      "sales": 78,
+      "sales": 75,
       "ratingStar": "4.8",
       "commissionRate": "0.33",
       "sellerCommissionRate": "0.3",
@@ -279,11 +279,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 75.3,
+      "opportunityScore": 75.23,
       "scoreComponents": {
         "seller_extra_commission": 0.7895,
         "search_demand_proxy": 1.0,
-        "sales": 0.4613,
+        "sales": 0.4565,
         "rating": 0.96,
         "discount": 0.44,
         "top_performance": 0.0
@@ -303,7 +303,7 @@
       "priceMin": "28.99",
       "priceMax": "32.99",
       "priceDiscountRate": 67,
-      "sales": 13001,
+      "sales": 13192,
       "ratingStar": "4.8",
       "commissionRate": "0.19",
       "sellerCommissionRate": "0.16",
@@ -317,9 +317,11 @@
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
+        "Ferramentas",
         "Organizacao de Garagem"
       ],
       "keywords": [
+        "jogo de chaves",
         "caixa ferramentas"
       ],
       "sourceModes": [
@@ -328,15 +330,50 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
+        "jogo de chaves",
+        "jogo de soquetes",
         "caixa ferramentas",
         "maleta ferramentas"
       ],
       "intentMatchedKeywords": [
+        "jogo de chaves",
         "caixa ferramentas"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
+        "jogo de chaves": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "jogo"
+            ],
+            [
+              "chave",
+              "chaves"
+            ]
+          ],
+          "missing": []
+        },
+        "jogo de soquetes": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo",
+              "catraca"
+            ]
+          ],
+          "missing": [
+            [
+              "soquete",
+              "soquetes"
+            ]
+          ]
+        },
         "caixa ferramentas": {
           "accepted": true,
           "score": 1.0,
@@ -386,12 +423,12 @@
       "itemId": 29535501772,
       "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas Completa Reversível Soquetes Maleta",
       "productLink": "https://shopee.com.br/product/1258554467/29535501772",
-      "offerLink": "https://s.shopee.com.br/5q9Ay2D723",
+      "offerLink": "https://s.shopee.com.br/4B0xW19uVI",
       "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7rfi6-m96pnweedbdz0a",
       "priceMin": "29.9",
       "priceMax": "33.99",
       "priceDiscountRate": 77,
-      "sales": 2531,
+      "sales": 2502,
       "ratingStar": "4.8",
       "commissionRate": "0.19",
       "sellerCommissionRate": "0.16",
@@ -405,9 +442,12 @@
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
+        "Ferramentas",
         "Organizacao de Garagem"
       ],
       "keywords": [
+        "jogo de chaves",
+        "jogo de soquetes",
         "caixa ferramentas",
         "maleta ferramentas"
       ],
@@ -417,16 +457,49 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
+        "jogo de chaves",
+        "jogo de soquetes",
         "caixa ferramentas",
         "maleta ferramentas"
       ],
       "intentMatchedKeywords": [
+        "jogo de chaves",
+        "jogo de soquetes",
         "caixa ferramentas",
         "maleta ferramentas"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
+        "jogo de chaves": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "jogo"
+            ],
+            [
+              "chave"
+            ]
+          ],
+          "missing": []
+        },
+        "jogo de soquetes": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "soquetes"
+            ],
+            [
+              "jogo",
+              "catraca"
+            ]
+          ],
+          "missing": []
+        },
         "caixa ferramentas": {
           "accepted": true,
           "score": 1.0,
@@ -457,11 +530,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 72.7,
+      "opportunityScore": 72.66,
       "scoreComponents": {
         "seller_extra_commission": 0.4211,
         "search_demand_proxy": 1.0,
-        "sales": 0.8273,
+        "sales": 0.8248,
         "rating": 0.96,
         "discount": 0.77,
         "top_performance": 1.0
@@ -481,7 +554,7 @@
       "priceMin": "76.9",
       "priceMax": "76.9",
       "priceDiscountRate": 0,
-      "sales": 17,
+      "sales": 14,
       "ratingStar": "4.8",
       "commissionRate": "0.33",
       "sellerCommissionRate": "0.3",
@@ -543,11 +616,11 @@
           ]
         }
       },
-      "opportunityScore": 70.76,
+      "opportunityScore": 70.46,
       "scoreComponents": {
         "seller_extra_commission": 0.7895,
         "search_demand_proxy": 1.0,
-        "sales": 0.3051,
+        "sales": 0.2854,
         "rating": 0.96,
         "discount": 0.0,
         "top_performance": 0.0
@@ -567,7 +640,7 @@
       "priceMin": "27.9",
       "priceMax": "27.9",
       "priceDiscountRate": 77,
-      "sales": 550,
+      "sales": 565,
       "ratingStar": "4.8",
       "commissionRate": "0.18",
       "sellerCommissionRate": "0.15",
@@ -615,11 +688,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 69.23,
+      "opportunityScore": 69.26,
       "scoreComponents": {
         "seller_extra_commission": 0.3947,
         "search_demand_proxy": 1.0,
-        "sales": 0.6663,
+        "sales": 0.6681,
         "rating": 0.96,
         "discount": 0.77,
         "top_performance": 1.0
@@ -692,11 +765,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 67.41,
+      "opportunityScore": 67.39,
       "scoreComponents": {
         "seller_extra_commission": 0.2895,
         "search_demand_proxy": 1.0,
-        "sales": 0.7921,
+        "sales": 0.7909,
         "rating": 0.98,
         "discount": 0.83,
         "top_performance": 1.0
@@ -704,6 +777,79 @@
       "sellerExtraCommissionPct": 11.0,
       "shopeeCommissionPct": 3.0,
       "totalCommissionPct": 14.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 53668853073,
+      "productName": "Kit 10 Maletas Jogo de Soquetes Sextavados 40 Peças Titanium",
+      "productLink": "https://shopee.com.br/product/844004880/53668853073",
+      "offerLink": "https://s.shopee.com.br/AUv0Wc494u",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-825bb-mu0na4fdkd1h0d",
+      "priceMin": "236.11",
+      "priceMax": "236.11",
+      "priceDiscountRate": 34,
+      "sales": 0,
+      "ratingStar": "0",
+      "commissionRate": "0.41",
+      "sellerCommissionRate": "0.38",
+      "shopeeCommissionRate": "0.03",
+      "commission": "96.8051",
+      "shopId": 844004880,
+      "shopName": "MBC FERRAMENTAS",
+      "shopType": [
+        1
+      ],
+      "periodStartTime": 1791374669,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Ferramentas"
+      ],
+      "keywords": [
+        "jogo de soquetes"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "jogo de soquetes"
+      ],
+      "intentMatchedKeywords": [
+        "jogo de soquetes"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "jogo de soquetes": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "soquetes"
+            ],
+            [
+              "jogo",
+              "kit"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 66.7,
+      "scoreComponents": {
+        "seller_extra_commission": 1.0,
+        "search_demand_proxy": 1.0,
+        "sales": 0.0,
+        "rating": 0.0,
+        "discount": 0.34,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 38.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 41.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -840,7 +986,7 @@
       "scoreComponents": {
         "seller_extra_commission": 0.6579,
         "search_demand_proxy": 1.0,
-        "sales": 0.1463,
+        "sales": 0.1461,
         "rating": 1.0,
         "discount": 0.55,
         "top_performance": 0.0
@@ -860,7 +1006,7 @@
       "priceMin": "89.99",
       "priceMax": "89.99",
       "priceDiscountRate": 70,
-      "sales": 2781,
+      "sales": 2907,
       "ratingStar": "4.8",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
@@ -875,7 +1021,8 @@
         "Ferramentas"
       ],
       "keywords": [
-        "parafusadeira"
+        "parafusadeira",
+        "furadeira"
       ],
       "sourceModes": [
         "top_performance"
@@ -883,10 +1030,12 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "parafusadeira"
+        "parafusadeira",
+        "furadeira"
       ],
       "intentMatchedKeywords": [
-        "parafusadeira"
+        "parafusadeira",
+        "furadeira"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
@@ -901,15 +1050,101 @@
             ]
           ],
           "missing": []
+        },
+        "furadeira": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "furadeira"
+            ]
+          ],
+          "missing": []
         }
       },
-      "opportunityScore": 66.18,
+      "opportunityScore": 66.24,
       "scoreComponents": {
         "seller_extra_commission": 0.2632,
         "search_demand_proxy": 1.0,
-        "sales": 0.8372,
+        "sales": 0.8406,
         "rating": 0.96,
         "discount": 0.7,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23499011933,
+      "productName": "Suporte Magnético 360° Dobrável p/ Celular com Sucção a Vácuo Forte – Carro Mesa Parede",
+      "productLink": "https://shopee.com.br/product/1074025557/23499011933",
+      "offerLink": "https://s.shopee.com.br/50a3yW2TVs",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-824gc-mfprp3yzdrm497",
+      "priceMin": "15.86",
+      "priceMax": "42.88",
+      "priceDiscountRate": 64,
+      "sales": 3956,
+      "ratingStar": "4.7",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "2.0618",
+      "shopId": 1074025557,
+      "shopName": "COCONUT SHOP",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Acessorios Automotivos"
+      ],
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "suporte celular carro"
+      ],
+      "intentMatchedKeywords": [
+        "suporte celular carro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "suporte celular carro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "celular"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 66.22,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2632,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8731,
+        "rating": 0.94,
+        "discount": 0.64,
         "top_performance": 1.0
       },
       "sellerExtraCommissionPct": 10.0,
@@ -927,7 +1162,7 @@
       "priceMin": "8.55",
       "priceMax": "16.06",
       "priceDiscountRate": 5,
-      "sales": 531,
+      "sales": 532,
       "ratingStar": "4.8",
       "commissionRate": "0.18",
       "sellerCommissionRate": "0.15",
@@ -979,11 +1214,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 65.58,
+      "opportunityScore": 65.57,
       "scoreComponents": {
         "seller_extra_commission": 0.3947,
         "search_demand_proxy": 1.0,
-        "sales": 0.6626,
+        "sales": 0.6618,
         "rating": 0.96,
         "discount": 0.05,
         "top_performance": 1.0
@@ -1003,7 +1238,7 @@
       "priceMin": "11.5",
       "priceMax": "19.9",
       "priceDiscountRate": 75,
-      "sales": 1850,
+      "sales": 1863,
       "ratingStar": "4.6",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
@@ -1055,11 +1290,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 65.39,
+      "opportunityScore": 65.38,
       "scoreComponents": {
         "seller_extra_commission": 0.2632,
         "search_demand_proxy": 1.0,
-        "sales": 0.7942,
+        "sales": 0.7937,
         "rating": 0.92,
         "discount": 0.75,
         "top_performance": 1.0
@@ -1227,11 +1462,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 65.11,
+      "opportunityScore": 65.09,
       "scoreComponents": {
         "seller_extra_commission": 0.3947,
         "search_demand_proxy": 1.0,
-        "sales": 0.4677,
+        "sales": 0.467,
         "rating": 0.98,
         "discount": 0.5,
         "top_performance": 1.0
@@ -1243,22 +1478,22 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 23298660358,
-      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
-      "productLink": "https://shopee.com.br/product/305201598/23298660358",
-      "offerLink": "https://s.shopee.com.br/6Am1Mf2Qwq",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7rash-mb5rcz7ytftub4",
-      "priceMin": "22.88",
-      "priceMax": "28.88",
-      "priceDiscountRate": 24,
-      "sales": 3602,
-      "ratingStar": "4.6",
-      "commissionRate": "0.14",
-      "sellerCommissionRate": "0.11",
+      "itemId": 23493907428,
+      "productName": "Electro Nest Suporte Magnetico de Celular mini Suporte Celular Carro Veicular Forte adsorção CJ-50",
+      "productLink": "https://shopee.com.br/product/1515130648/23493907428",
+      "offerLink": "https://s.shopee.com.br/6L5RYxxOoG",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m8u9p6k2pqma9d",
+      "priceMin": "14.99",
+      "priceMax": "27.98",
+      "priceDiscountRate": 60,
+      "sales": 1558,
+      "ratingStar": "4.9",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
       "shopeeCommissionRate": "0.03",
-      "commission": "3.2032",
-      "shopId": 305201598,
-      "shopName": "ONE LIGHT SHOP",
+      "commission": "1.9487",
+      "shopId": 1515130648,
+      "shopName": "Electro Nest",
       "shopType": [
         2
       ],
@@ -1268,7 +1503,7 @@
         "Acessorios Automotivos"
       ],
       "keywords": [
-        "aspirador automotivo"
+        "suporte celular carro"
       ],
       "sourceModes": [
         "top_performance"
@@ -1276,24 +1511,28 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "aspirador automotivo"
+        "suporte celular carro"
       ],
       "intentMatchedKeywords": [
-        "aspirador automotivo"
+        "suporte celular carro"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "aspirador automotivo": {
+        "suporte celular carro": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "aspirador"
+              "suporte"
             ],
             [
-              "automotivo"
+              "celular"
+            ],
+            [
+              "carro",
+              "veicular"
             ]
           ],
           "missing": []
@@ -1301,16 +1540,16 @@
       },
       "opportunityScore": 64.95,
       "scoreComponents": {
-        "seller_extra_commission": 0.2895,
+        "seller_extra_commission": 0.2632,
         "search_demand_proxy": 1.0,
-        "sales": 0.8645,
-        "rating": 0.92,
-        "discount": 0.24,
+        "sales": 0.7749,
+        "rating": 0.98,
+        "discount": 0.6,
         "top_performance": 1.0
       },
-      "sellerExtraCommissionPct": 11.0,
+      "sellerExtraCommissionPct": 10.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 14.0,
+      "totalCommissionPct": 13.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -1323,7 +1562,7 @@
       "priceMin": "32.9",
       "priceMax": "32.9",
       "priceDiscountRate": 60,
-      "sales": 912,
+      "sales": 921,
       "ratingStar": "4.9",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
@@ -1377,7 +1616,7 @@
       "scoreComponents": {
         "seller_extra_commission": 0.2632,
         "search_demand_proxy": 1.0,
-        "sales": 0.7196,
+        "sales": 0.7195,
         "rating": 0.98,
         "discount": 0.6,
         "top_performance": 1.0
@@ -1389,71 +1628,74 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 23093555184,
-      "productName": "Kit 2 em 1 Cinto Duplo Para Ferramentas, Coldre Porta Furadeira & Cinto Porta F. Solze",
-      "productLink": "https://shopee.com.br/product/1403196542/23093555184",
-      "offerLink": "https://s.shopee.com.br/1LglblGq3l",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m35a3ozeetj94d",
-      "priceMin": "118.91",
-      "priceMax": "118.91",
-      "priceDiscountRate": 15,
-      "sales": 2,
-      "ratingStar": "4.9",
-      "commissionRate": "0.28",
-      "sellerCommissionRate": "0.25",
+      "itemId": 23298660358,
+      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
+      "productLink": "https://shopee.com.br/product/305201598/23298660358",
+      "offerLink": "https://s.shopee.com.br/6Am1Mf2Qwq",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7rash-mb5rcz7ytftub4",
+      "priceMin": "28.88",
+      "priceMax": "29.99",
+      "priceDiscountRate": 4,
+      "sales": 3626,
+      "ratingStar": "4.6",
+      "commissionRate": "0.14",
+      "sellerCommissionRate": "0.11",
       "shopeeCommissionRate": "0.03",
-      "commission": "33.2948",
-      "shopId": 1403196542,
-      "shopName": "Solze & Holger",
+      "commission": "4.0432",
+      "shopId": 305201598,
+      "shopName": "ONE LIGHT SHOP",
       "shopType": [
         2
       ],
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
-        "Ferramentas"
+        "Acessorios Automotivos"
       ],
       "keywords": [
-        "furadeira"
+        "aspirador automotivo"
       ],
       "sourceModes": [
-        "extra_commission"
+        "top_performance"
       ],
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "furadeira"
+        "aspirador automotivo"
       ],
       "intentMatchedKeywords": [
-        "furadeira"
+        "aspirador automotivo"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "furadeira": {
+        "aspirador automotivo": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "furadeira"
+              "aspirador"
+            ],
+            [
+              "automotivo"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 63.61,
+      "opportunityScore": 63.94,
       "scoreComponents": {
-        "seller_extra_commission": 0.6579,
+        "seller_extra_commission": 0.2895,
         "search_demand_proxy": 1.0,
-        "sales": 0.116,
-        "rating": 0.98,
-        "discount": 0.15,
-        "top_performance": 0.0
+        "sales": 0.8639,
+        "rating": 0.92,
+        "discount": 0.04,
+        "top_performance": 1.0
       },
-      "sellerExtraCommissionPct": 25.0,
+      "sellerExtraCommissionPct": 11.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 28.0,
+      "totalCommissionPct": 14.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -1466,7 +1708,7 @@
       "priceMin": "11.99",
       "priceMax": "27.99",
       "priceDiscountRate": 67,
-      "sales": 1977,
+      "sales": 1888,
       "ratingStar": "4.6",
       "commissionRate": "0.11",
       "sellerCommissionRate": "0.08",
@@ -1512,11 +1754,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 62.99,
+      "opportunityScore": 62.9,
       "scoreComponents": {
         "seller_extra_commission": 0.2105,
         "search_demand_proxy": 1.0,
-        "sales": 0.8012,
+        "sales": 0.7951,
         "rating": 0.92,
         "discount": 0.67,
         "top_performance": 1.0
@@ -1524,75 +1766,6 @@
       "sellerExtraCommissionPct": 8.0,
       "shopeeCommissionPct": 3.0,
       "totalCommissionPct": 11.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 58270871239,
-      "productName": "Kit Jogo Serra Copo 6 Peças Broca Madeira Gesso Drywall 32 38 44 51mm Furadeira Furador de Madeira Cortador de Furos",
-      "productLink": "https://shopee.com.br/product/1605362607/58270871239",
-      "offerLink": "https://s.shopee.com.br/1qd0ZTSfOF",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lb-muih7fsdv6ki79",
-      "priceMin": "23.33",
-      "priceMax": "23.33",
-      "priceDiscountRate": 22,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.38",
-      "sellerCommissionRate": "0.35",
-      "shopeeCommissionRate": "0.03",
-      "commission": "8.8654",
-      "shopId": 1605362607,
-      "shopName": "O Barateiro Ferragens 3",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1792443002,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Ferramentas"
-      ],
-      "keywords": [
-        "furadeira"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "furadeira"
-      ],
-      "intentMatchedKeywords": [
-        "furadeira"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "furadeira": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "furadeira"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 62.94,
-      "scoreComponents": {
-        "seller_extra_commission": 0.9211,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.22,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 35.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 38.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -1605,7 +1778,7 @@
       "priceMin": "23.59",
       "priceMax": "45.49",
       "priceDiscountRate": 76,
-      "sales": 234,
+      "sales": 253,
       "ratingStar": "4.9",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
@@ -1656,11 +1829,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 62.77,
+      "opportunityScore": 62.88,
       "scoreComponents": {
         "seller_extra_commission": 0.2632,
         "search_demand_proxy": 1.0,
-        "sales": 0.5763,
+        "sales": 0.5836,
         "rating": 0.98,
         "discount": 0.76,
         "top_performance": 1.0
@@ -1668,6 +1841,79 @@
       "sellerExtraCommissionPct": 10.0,
       "shopeeCommissionPct": 3.0,
       "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23098642201,
+      "productName": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
+      "productLink": "https://shopee.com.br/product/1533370985/23098642201",
+      "offerLink": "https://s.shopee.com.br/5fplImQP6K",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7ratg-maww153sck8mc0",
+      "priceMin": "47.9",
+      "priceMax": "47.9",
+      "priceDiscountRate": 29,
+      "sales": 0,
+      "ratingStar": "5",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
+      "shopeeCommissionRate": "0.03",
+      "commission": "13.412",
+      "shopId": 1533370985,
+      "shopName": "SantaCasa",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Manutencao"
+      ],
+      "keywords": [
+        "multimetro digital"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "multimetro digital"
+      ],
+      "intentMatchedKeywords": [
+        "multimetro digital"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "multimetro digital": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "multimetro",
+              "multímetro"
+            ],
+            [
+              "digital"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 62.77,
+      "scoreComponents": {
+        "seller_extra_commission": 0.6579,
+        "search_demand_proxy": 1.0,
+        "sales": 0.0,
+        "rating": 1.0,
+        "discount": 0.29,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 25.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 28.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -1680,7 +1926,7 @@
       "priceMin": "13.89",
       "priceMax": "17.33",
       "priceDiscountRate": 26,
-      "sales": 43,
+      "sales": 42,
       "ratingStar": "4.7",
       "commissionRate": "0.23",
       "sellerCommissionRate": "0.2",
@@ -1728,11 +1974,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 62.74,
+      "opportunityScore": 62.7,
       "scoreComponents": {
         "seller_extra_commission": 0.5263,
         "search_demand_proxy": 1.0,
-        "sales": 0.3995,
+        "sales": 0.3964,
         "rating": 0.94,
         "discount": 0.26,
         "top_performance": 0.0
@@ -1740,79 +1986,6 @@
       "sellerExtraCommissionPct": 20.0,
       "shopeeCommissionPct": 3.0,
       "totalCommissionPct": 23.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 23294140061,
-      "productName": "Lavadora De Alta Pressão Recarregável Sem Fio 48V Baterias Linha Premium Para Carros e Jardins",
-      "productLink": "https://shopee.com.br/product/1534000949/23294140061",
-      "offerLink": "https://s.shopee.com.br/1LglbnG1vE",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820l7-mtxysxdl90jma6",
-      "priceMin": "106.58",
-      "priceMax": "139.99",
-      "priceDiscountRate": 73,
-      "sales": 1872,
-      "ratingStar": "4.7",
-      "commissionRate": "0.1",
-      "sellerCommissionRate": "0.07",
-      "shopeeCommissionRate": "0.03",
-      "commission": "10.658",
-      "shopId": 1534000949,
-      "shopName": "ANXIN TECH LTDA",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Limpeza e Conservacao"
-      ],
-      "keywords": [
-        "lavadora alta pressao"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "lavadora alta pressao"
-      ],
-      "intentMatchedKeywords": [
-        "lavadora alta pressao"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "lavadora alta pressao": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "lavadora"
-            ],
-            [
-              "alta pressao",
-              "alta pressão"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 62.35,
-      "scoreComponents": {
-        "seller_extra_commission": 0.1842,
-        "search_demand_proxy": 1.0,
-        "sales": 0.7955,
-        "rating": 0.94,
-        "discount": 0.73,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 7.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 10.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -1825,7 +1998,7 @@
       "priceMin": "27.85",
       "priceMax": "32.85",
       "priceDiscountRate": 44,
-      "sales": 512,
+      "sales": 551,
       "ratingStar": "4.8",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
@@ -1890,11 +2063,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 62.21,
+      "opportunityScore": 62.31,
       "scoreComponents": {
         "seller_extra_commission": 0.2632,
         "search_demand_proxy": 1.0,
-        "sales": 0.6588,
+        "sales": 0.6655,
         "rating": 0.96,
         "discount": 0.44,
         "top_performance": 1.0
@@ -1902,6 +2075,79 @@
       "sellerExtraCommissionPct": 10.0,
       "shopeeCommissionPct": 3.0,
       "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23294140061,
+      "productName": "Lavadora De Alta Pressão Recarregável Sem Fio 48V Baterias Linha Premium Para Carros e Jardins",
+      "productLink": "https://shopee.com.br/product/1534000949/23294140061",
+      "offerLink": "https://s.shopee.com.br/1LglbnG1vE",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820l7-mtxysxdl90jma6",
+      "priceMin": "106.58",
+      "priceMax": "139.99",
+      "priceDiscountRate": 73,
+      "sales": 1764,
+      "ratingStar": "4.7",
+      "commissionRate": "0.1",
+      "sellerCommissionRate": "0.07",
+      "shopeeCommissionRate": "0.03",
+      "commission": "10.658",
+      "shopId": 1534000949,
+      "shopName": "ANXIN TECH LTDA",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Limpeza e Conservacao"
+      ],
+      "keywords": [
+        "lavadora alta pressao"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "lavadora alta pressao"
+      ],
+      "intentMatchedKeywords": [
+        "lavadora alta pressao"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "lavadora alta pressao": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "lavadora"
+            ],
+            [
+              "alta pressao",
+              "alta pressão"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 62.24,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1842,
+        "search_demand_proxy": 1.0,
+        "sales": 0.788,
+        "rating": 0.94,
+        "discount": 0.73,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 7.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 10.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -1914,7 +2160,7 @@
       "priceMin": "146.37",
       "priceMax": "146.37",
       "priceDiscountRate": 2,
-      "sales": 345,
+      "sales": 335,
       "ratingStar": "4.9",
       "commissionRate": "0.15",
       "sellerCommissionRate": "0.12",
@@ -1962,11 +2208,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 61.79,
+      "opportunityScore": 61.73,
       "scoreComponents": {
         "seller_extra_commission": 0.3158,
         "search_demand_proxy": 1.0,
-        "sales": 0.6172,
+        "sales": 0.6131,
         "rating": 0.98,
         "discount": 0.02,
         "top_performance": 1.0
@@ -1986,7 +2232,7 @@
       "priceMin": "82.31",
       "priceMax": "82.31",
       "priceDiscountRate": 2,
-      "sales": 162,
+      "sales": 165,
       "ratingStar": "4.9",
       "commissionRate": "0.16",
       "sellerCommissionRate": "0.13",
@@ -2034,11 +2280,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 61.65,
+      "opportunityScore": 61.67,
       "scoreComponents": {
         "seller_extra_commission": 0.3421,
         "search_demand_proxy": 1.0,
-        "sales": 0.5377,
+        "sales": 0.5388,
         "rating": 0.98,
         "discount": 0.02,
         "top_performance": 1.0
@@ -2058,7 +2304,7 @@
       "priceMin": "14.9",
       "priceMax": "63.89",
       "priceDiscountRate": 45,
-      "sales": 790,
+      "sales": 804,
       "ratingStar": "4.9",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
@@ -2116,11 +2362,11 @@
           "missing": []
         }
       },
-      "opportunityScore": 61.58,
+      "opportunityScore": 61.59,
       "scoreComponents": {
         "seller_extra_commission": 0.2632,
         "search_demand_proxy": 0.9375,
-        "sales": 0.7045,
+        "sales": 0.7052,
         "rating": 0.98,
         "discount": 0.45,
         "top_performance": 1.0
@@ -2140,7 +2386,7 @@
       "priceMin": "82.31",
       "priceMax": "82.31",
       "priceDiscountRate": 2,
-      "sales": 144,
+      "sales": 149,
       "ratingStar": "4.9",
       "commissionRate": "0.16",
       "sellerCommissionRate": "0.13",
@@ -2188,155 +2434,13 @@
           "missing": []
         }
       },
-      "opportunityScore": 61.46,
+      "opportunityScore": 61.51,
       "scoreComponents": {
         "seller_extra_commission": 0.3421,
         "search_demand_proxy": 1.0,
-        "sales": 0.5254,
+        "sales": 0.5281,
         "rating": 0.98,
         "discount": 0.02,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 13.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 16.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 22998706834,
-      "productName": "Mini Aspirador Automotivo Portátil Potente Recarregável Premium B-88-2",
-      "productLink": "https://shopee.com.br/product/1568639279/22998706834",
-      "offerLink": "https://s.shopee.com.br/4VdnNb4W7J",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134202-7rdyk-mc11voo0btg8c1",
-      "priceMin": "77.9",
-      "priceMax": "77.9",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "5",
-      "commissionRate": "0.28",
-      "sellerCommissionRate": "0.25",
-      "shopeeCommissionRate": "0.03",
-      "commission": "21.812",
-      "shopId": 1568639279,
-      "shopName": "Premium.Store",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Acessorios Automotivos"
-      ],
-      "keywords": [
-        "aspirador automotivo"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentMatchedKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "aspirador automotivo": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "aspirador"
-            ],
-            [
-              "automotivo"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 61.32,
-      "scoreComponents": {
-        "seller_extra_commission": 0.6579,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 1.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 25.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 28.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 44074831609,
-      "productName": "Mini Aspirador De Pó Sem Fio Automotivo Profissional Recarregável Casa Sofá BOMVINK",
-      "productLink": "https://shopee.com.br/product/1391355567/44074831609",
-      "offerLink": "https://s.shopee.com.br/AKbaKJmZUp",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81ztc-mjeu603pb20z50",
-      "priceMin": "39.99",
-      "priceMax": "39.99",
-      "priceDiscountRate": 43,
-      "sales": 47,
-      "ratingStar": "4.4",
-      "commissionRate": "0.16",
-      "sellerCommissionRate": "0.13",
-      "shopeeCommissionRate": "0.03",
-      "commission": "6.3984",
-      "shopId": 1391355567,
-      "shopName": "GL Global",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Acessorios Automotivos"
-      ],
-      "keywords": [
-        "aspirador automotivo"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentMatchedKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "aspirador automotivo": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "aspirador"
-            ],
-            [
-              "automotivo"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 60.76,
-      "scoreComponents": {
-        "seller_extra_commission": 0.3421,
-        "search_demand_proxy": 1.0,
-        "sales": 0.4087,
-        "rating": 0.88,
-        "discount": 0.43,
         "top_performance": 1.0
       },
       "sellerExtraCommissionPct": 13.0,
