@@ -3,61 +3,26 @@
   "project": "Casa e Decoração",
   "source": "Shopee intent_report v2.3 + ranking details + publication history",
   "editorial_policy": "produto real -> rotação entre 8 categorias -> título editorial -> Qwen3 -> CTA contextual -> imagem real -> gate -> publicação",
-  "category_rotation_cycle": 1,
+  "category_rotation_cycle": 2,
   "category_rotation_pending": [
-    "Sala"
+    "Decoração",
+    "Organização",
+    "Sala",
+    "Quarto",
+    "Cozinha",
+    "Banheiro",
+    "Área Externa",
+    "Cama, Mesa e Banho"
   ],
   "max_per_keyword": 1,
   "total": 17,
   "skipped": {
-    "produto_ja_publicado": 7,
-    "produto_quase_duplicado": 1,
-    "limite_por_intencao": 5,
+    "produto_ja_publicado": 8,
+    "produto_quase_duplicado": 2,
+    "limite_por_intencao": 3,
     "produto_semelhante_ja_publicado": 2
   },
   "items": [
-    {
-      "id": 43,
-      "shopee_item_id": "58208566937",
-      "product": "Tapete Sala Quarto Aveludado Premium Geométrico Antiderrapante 1x 1,40 2x 1,40 2x 2,40 Várias Cores",
-      "affiliate_link": "https://s.shopee.com.br/9APbLThX67",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m1-mmv2wi1nnksg7a",
-      "shop_name": "A CASA DO LAR",
-      "source_keyword": "tapete sala",
-      "category": "Sala",
-      "opportunity_score": 66.43,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "last_error": "",
-      "generation_attempts": 1,
-      "topic": "Como escolher um tapete que combina com sua sala",
-      "editorial_title": "Como escolher um tapete que combina com sua sala",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 584,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 48,
-          "meta_description_length": 154,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "wordpress_post_id": 173,
-      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-escolher-um-tapete-que-combina-com-sua-sala/",
-      "featured_media": 174,
-      "seo_synced": true
-    },
     {
       "id": 22,
       "shopee_item_id": "22598002731",
@@ -69,34 +34,38 @@
       "category": "Decoração",
       "opportunity_score": 59.98,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:535"
     },
     {
-      "id": 46,
-      "shopee_item_id": "58203899022",
-      "product": "Kit 4 Vaso de Plantas Suculentas Vaso Decorativo em Gesso para e Cactos Decoração Sala Pequena Mesas",
-      "affiliate_link": "https://s.shopee.com.br/2gC7bWFHAI",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8261v-mjt7wieqq3utbd",
-      "shop_name": "BENTO’S DECOR",
-      "source_keyword": "vaso decorativo",
+      "id": 52,
+      "shopee_item_id": "58257090824",
+      "product": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
+      "affiliate_link": "https://s.shopee.com.br/4LKLaaHrq2",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m9-mmm1sfjpscna7b",
+      "shop_name": "VISIO DECORE ",
+      "source_keyword": "almofada decorativa",
       "category": "Decoração",
-      "opportunity_score": 59.9,
+      "opportunity_score": 59.3,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: meta_description_tamanho:156"
     },
     {
       "id": 20,
@@ -117,8 +86,8 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "last_error": "geração editorial bloqueada após revisões: artigo curto: 463",
-      "generation_attempts": 1
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:502",
+      "generation_attempts": 2
     },
     {
       "id": 13,
@@ -131,14 +100,16 @@
       "category": "Organização",
       "opportunity_score": 61.7,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada"
     },
     {
       "id": 48,
@@ -150,6 +121,47 @@
       "source_keyword": "organizador armario",
       "category": "Organização",
       "opportunity_score": 61.24,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PUBLISHED",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "topic": "Como organizar brinquedos no armário de forma prática",
+      "editorial_title": "Como organizar brinquedos no armário de forma prática",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 640,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 53,
+          "meta_description_length": 153,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "last_error": "",
+      "wordpress_post_id": 176,
+      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-organizar-brinquedos-no-armario-de-forma-pratica/",
+      "featured_media": 177,
+      "seo_synced": true
+    },
+    {
+      "id": 50,
+      "shopee_item_id": "22597699817",
+      "product": "Tapete Passadeira Corredor Quarto Sala Felpudo Várias Cores E Tamanhos",
+      "affiliate_link": "https://s.shopee.com.br/5AtSa815jA",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lf-mtz1sta57xtt5c",
+      "shop_name": "STYLLO CASA ENXOVAIS",
+      "source_keyword": "tapete sala",
+      "category": "Sala",
+      "opportunity_score": 61.28,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -241,15 +253,15 @@
       }
     },
     {
-      "id": 40,
-      "shopee_item_id": "20999381894",
-      "product": "Conjunto 2/3/5/10 Potes 370/640/1040ml Vidro Hermético Mantimentos Marmita Fitness",
-      "affiliate_link": "https://s.shopee.com.br/AUuyvwOiS6",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820le-mpavso8ys2yp67",
-      "shop_name": "Life Hack Homeware",
-      "source_keyword": "potes hermeticos",
+      "id": 51,
+      "shopee_item_id": "58204421120",
+      "product": "Escorredor de Louças Rack Aço Carbono Organizador Preto",
+      "affiliate_link": "https://s.shopee.com.br/AAI8Umjx3N",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-81ztc-mk8xynsgml1d6f",
+      "shop_name": "KING BOUTIQUES",
+      "source_keyword": "escorredor de loucas",
       "category": "Cozinha",
-      "opportunity_score": 59.57,
+      "opportunity_score": 59.35,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -323,15 +335,15 @@
       }
     },
     {
-      "id": 47,
-      "shopee_item_id": "58257036596",
-      "product": "Kit 2 Paletes Madeira Pinus 50x50cm Laminado Estrado Pronto Jardim Vaso Decoração",
-      "affiliate_link": "https://s.shopee.com.br/30oy0AUrl6",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8261i-mlwolmdp1uytdb",
-      "shop_name": "FGVITALFARMA",
+      "id": 49,
+      "shopee_item_id": "23695000959",
+      "product": "Pedra Dolomita Natural Branca Seixo Para Decoração Vaso Fonte Canteiro Pedra Jardim",
+      "affiliate_link": "https://s.shopee.com.br/BUmcxk7WP",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-824i9-mpjkk5tddzwuc7",
+      "shop_name": "WR Shopping da Jardinagem",
       "source_keyword": "vaso jardim",
       "category": "Área Externa",
-      "opportunity_score": 62.51,
+      "opportunity_score": 63.19,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
