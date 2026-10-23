@@ -88,9 +88,13 @@ jobs:
           ok=0
           url="https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html"
           for attempt in 1 2 3 4 5 6; do
-            curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/blogger-loja.html
-            store_count=$(grep -o 'data-item-id=' /tmp/blogger-loja.html | wc -l | tr -d ' ')
-            hero_count=$(grep -o 'data-hero-item-id=' /tmp/blogger-loja.html | wc -l | tr -d ' ')
+            if ! curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/blogger-loja.html; then
+              echo "Tentativa ${attempt}: curl falhou; aguardando propagação."
+              sleep 5
+              continue
+            fi
+            store_count=$(python -c "print(open('/tmp/blogger-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
+            hero_count=$(python -c "print(open('/tmp/blogger-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
             if grep -q "bls-store-grid" /tmp/blogger-loja.html && grep -q "blh-grid" /tmp/blogger-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
               ok=1
               break
