@@ -19,8 +19,12 @@ import shopee_oportunidades_v23 as v23  # noqa: E402
 def regression_checks(rules_doc):
     cases = [
         ("Liquidificador Philips Walita 1400W Copo 3L", "liquidificador", True),
+        ("Liquidificador Britania Copo De Vidro 1400W Turbo 2,3L", "liquidificador 1400w", True),
         ("Copo para Liquidificador Philips Walita RI2242", "liquidificador", False),
         ("Copo Liquidificador Philips Walita Original RI2240", "liquidificador philips walita", False),
+        ("Copo Do Liquidificador Lâmina Laranja Philips Walita RI7300 Original", "liquidificador philips walita", False),
+        ("Copo Sem Lâminas do Liquidificador Arno Power Max 1400W", "liquidificador 1400w", False),
+        ("Sobretampa Cristal da Tampa Compatível P/ Liquidificador Philips Walita RI2240", "liquidificador philips walita", False),
         ("Copo Liquidificador Walita Philips Multiprocessador RI7625", "liquidificador philips walita", False),
         ("Escova de Limpeza Multifuncional Para Garrafas e Liquidificador", "liquidificador", False),
         ("Mixer Elétrico 3 em 1 com Haste Inox", "mixer eletrico", True),
