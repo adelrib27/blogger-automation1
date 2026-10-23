@@ -3,7 +3,8 @@ name: Blogger Liquidificador — Loja Shopee Autônoma
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 11 * * *"
+    - cron: "35 8 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "blogger_product_store/store_live_kickoff.txt"
