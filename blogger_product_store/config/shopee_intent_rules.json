@@ -1,18 +1,18 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Regras semânticas endurecidas para a loja Blogger do Liquidificador Philips Walita RI2242. Prioriza produto completo e bloqueia peças, acessórios e falsos positivos.",
   "rules": {
     "liquidificador": {
       "require_groups": [["liquidificador"]],
-      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo para liquidificador", "jarra liquidificador", "jarra de liquidificador", "jarra para liquidificador", "lamina avulsa", "lâmina avulsa", "kit lamina", "kit lâmina", "peca liquidificador", "peça liquidificador", "peca para liquidificador", "peça para liquidificador", "acessorio liquidificador", "acessório liquidificador", "motor liquidificador", "acoplamento liquidificador", "anel liquidificador", "tampa liquidificador"]
+      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo do liquidificador", "copo para liquidificador", "copo sem laminas", "copo sem lâminas", "jarra liquidificador", "jarra de liquidificador", "jarra do liquidificador", "jarra para liquidificador", "lamina avulsa", "lâmina avulsa", "kit lamina", "kit lâmina", "peca liquidificador", "peça liquidificador", "peca para liquidificador", "peça para liquidificador", "acessorio liquidificador", "acessório liquidificador", "motor liquidificador", "acoplamento liquidificador", "anel liquidificador", "sobretampa", "tampa compativel", "tampa compatível", "tampa avulsa"]
     },
     "liquidificador philips walita": {
       "require_groups": [["liquidificador"], ["philips", "walita"]],
-      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo para", "jarra liquidificador", "jarra de liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "peca", "peça", "acessorio", "acessório", "acoplamento", "anel", "tampa avulsa"]
+      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo do liquidificador", "copo para", "copo sem laminas", "copo sem lâminas", "jarra liquidificador", "jarra de liquidificador", "jarra do liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "peca", "peça", "acessorio", "acessório", "acoplamento", "anel", "sobretampa", "tampa compativel", "tampa compatível", "tampa avulsa"]
     },
     "liquidificador 1400w": {
       "require_groups": [["liquidificador"], ["1400w", "1400 w", "1400 watts"]],
-      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo para", "jarra liquidificador", "jarra de liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "peca", "peça", "acessorio", "acessório", "acoplamento", "anel"]
+      "block_phrases": ["escova", "copo liquidificador", "copo de liquidificador", "copo do liquidificador", "copo para", "copo sem laminas", "copo sem lâminas", "jarra liquidificador", "jarra de liquidificador", "jarra do liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "peca", "peça", "acessorio", "acessório", "acoplamento", "anel", "sobretampa", "tampa compativel", "tampa compatível", "tampa avulsa"]
     },
     "mixer eletrico": {
       "require_groups": [["mixer"], ["eletrico", "elétrico", "portatil", "portátil", "mao", "mão"]],
