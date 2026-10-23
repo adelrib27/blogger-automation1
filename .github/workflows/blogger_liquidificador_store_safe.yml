@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "blogger_product_store/**"
+      - "blogger_product_store/config/**"
+      - "blogger_product_store/src/**"
       - ".github/workflows/blogger_liquidificador_store_safe.yml"
 
 permissions:
