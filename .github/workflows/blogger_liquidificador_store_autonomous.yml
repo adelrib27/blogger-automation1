@@ -2,6 +2,8 @@ name: Blogger Liquidificador — Loja Shopee Autônoma
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "35 11 * * *"
   push:
     paths:
       - "blogger_product_store/store_live_kickoff.txt"
