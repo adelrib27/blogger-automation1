@@ -20,18 +20,24 @@ def regression_checks(rules_doc):
     cases = [
         ("Liquidificador Philips Walita 1400W Copo 3L", "liquidificador", True),
         ("Copo para Liquidificador Philips Walita RI2242", "liquidificador", False),
+        ("Copo Liquidificador Philips Walita Original RI2240", "liquidificador philips walita", False),
+        ("Copo Liquidificador Walita Philips Multiprocessador RI7625", "liquidificador philips walita", False),
+        ("Escova de Limpeza Multifuncional Para Garrafas e Liquidificador", "liquidificador", False),
         ("Mixer Elétrico 3 em 1 com Haste Inox", "mixer eletrico", True),
         ("Haste Avulsa para Mixer 3 em 1", "mixer eletrico", False),
         ("Multiprocessador de Alimentos 900W para Cozinha", "processador de alimentos", True),
+        ("Copo Liquidificador Walita Philips Multiprocessador RI7625", "multiprocessador", False),
         ("Processador Intel Core i5 para Computador", "processador de alimentos", False),
         ("Mini Triturador Elétrico de Alho e Cebola", "triturador eletrico", True),
         ("Triturador de Papel Elétrico para Escritório", "triturador eletrico", False),
+        ("Descascador Elétrico de Frutas Automático Triturador Recarregável", "triturador eletrico", False),
         ("Espremedor Elétrico de Laranja e Limão", "espremedor eletrico", True),
         ("Alicate Espremedor para Tubo", "espremedor eletrico", False),
         ("Balança Digital de Cozinha para Alimentos", "balanca digital cozinha", True),
         ("Balança Corporal Digital para Banheiro", "balanca digital cozinha", False),
         ("Copo Medidor de Cozinha 1 Litro Graduado", "copo medidor cozinha", True),
         ("Copo para Liquidificador Philips Walita 3L", "copo medidor cozinha", False),
+        ("Pote Hermético 2.5L Com Copo Medidor Cozinha", "copo medidor cozinha", False),
     ]
     failures = []
     for title, keyword, expected in cases:
