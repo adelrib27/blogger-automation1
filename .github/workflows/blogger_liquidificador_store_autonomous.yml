@@ -1,0 +1,127 @@
+name: Blogger Liquidificador — Loja Shopee Autônoma
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "blogger_product_store/store_live_kickoff.txt"
+      - ".github/workflows/blogger_liquidificador_store_autonomous.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blogger-liquidificador-store-autonomous
+  cancel-in-progress: false
+
+jobs:
+  atualizar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "5271798990390532475"
+      BLOGGER_STORE_PAGE_ID: "5473313787015756722"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      BLOGGER_STORE_DRY_RUN: "false"
+      BLOGGER_STORE_ITEMS_PER_CATEGORY: "4"
+      BLOGGER_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "50"
+      SHOPEE_OPPORTUNITIES_CONFIG: blogger_product_store/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: blogger_product_store/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: blogger_product_store/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validar código antes da publicação
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/criar_rascunho.py \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            blogger_product_store/src/shopee_oportunidades_liquidificador.py \
+            blogger_product_store/src/store_auto.py \
+            blogger_product_store/src/store_auto_self_test.py \
+            blogger_product_store/src/store_hero_sync.py
+          BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:blogger_product_store/src python blogger_product_store/src/store_auto_self_test.py
+
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+
+      - name: Atualizar vitrine com Shopee API
+        run: |
+          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_auto.py
+
+      - name: Sincronizar mini-cards do carrossel
+        run: |
+          PYTHONPATH=src:blogger_product_store/src python -u blogger_product_store/src/store_hero_sync.py
+
+      - name: Verificar renderização pública
+        run: |
+          set -euo pipefail
+          ok=0
+          url="https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html"
+          for attempt in 1 2 3 4 5 6; do
+            curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/blogger-loja.html
+            store_count=$(grep -o 'data-item-id=' /tmp/blogger-loja.html | wc -l | tr -d ' ')
+            hero_count=$(grep -o 'data-hero-item-id=' /tmp/blogger-loja.html | wc -l | tr -d ' ')
+            if grep -q "bls-store-grid" /tmp/blogger-loja.html && grep -q "blh-grid" /tmp/blogger-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+              ok=1
+              break
+            fi
+            echo "Tentativa ${attempt}: vitrine=${store_count}/20 hero=${hero_count}/12; aguardando propagação."
+            sleep 5
+          done
+          test "$ok" -eq 1
+          echo "Renderização pública confirmada: 20 cards da vitrine + 12 mini-cards no carrossel."
+
+      - name: Persistir estado da rotação
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- blogger_product_store/data/store_rotation.json blogger_product_store/data/store_last_selection.json)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blogger_product_store/data/store_rotation.json blogger_product_store/data/store_last_selection.json
+          git commit -m "Atualizar rotação automática da Loja Blogger Liquidificador"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blogger-liquidificador-store-live-${{ github.run_number }}
+          path: |
+            blogger_product_store/data/store_last_selection.json
+            blogger_product_store/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
