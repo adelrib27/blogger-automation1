@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Consultar página pública
+      - name: Consultar Loja pública como post
         run: |
           set -u
-          base="https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html"
+          base="https://liquidificador-philips-walita-ri2242.blogspot.com/2026/10/loja.html"
           for suffix in "" "?m=1" "?output=1"; do
             name=$(printf '%s' "$suffix" | tr -cd '[:alnum:]')
             [ -n "$name" ] || name="base"
@@ -32,6 +32,18 @@ jobs:
           print(f"{name}: markers store_start={text.count('BLOGGER_LIQ_STORE_AUTO_START')} hero_start={text.count('BLOGGER_LIQ_HERO_AUTO_1_START')}")
           PY
           done
+
+      - name: Exigir renderização completa
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('/tmp/page-base.html').read_text(encoding='utf-8', errors='ignore')
+          assert text.count('data-item-id=') == 20, text.count('data-item-id=')
+          assert text.count('data-hero-item-id=') == 12, text.count('data-hero-item-id=')
+          assert 'bls-store-grid' in text
+          assert 'blh-grid' in text
+          print('PUBLIC_POST_OK store=20 hero=12')
+          PY
 
       - name: Guardar respostas públicas
         if: always()
