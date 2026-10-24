@@ -6,7 +6,7 @@ SITE_URL = "https://radartechbr.com.br"
 CTA_CLASS = "og-produto-relacionado"
 CTA_PRODUCT_TITLE_CLASS = "og-produto-titulo-original"
 CTA_CONSULT_TEXT = "consultar o modelo na Shopee"
-MIN_WORDS = 900
+MIN_WORDS = 700
 MAX_WORDS = 1400
 ALLOWED_CATEGORIES = {"Tecnologia", "Casa & Decoração", "Cozinha & Utilidades", "Ferramentas & Automotivo", "Moda & Beleza"}
 

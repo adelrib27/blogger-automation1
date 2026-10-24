@@ -232,7 +232,7 @@ def universal_article_rules(item):
         else ""
     )
     return f"""
-- 900 a 1400 palavras e pelo menos 5 H2 distintos; sem H1.
+- 700 a 1400 palavras e pelo menos 5 H2 distintos; sem H1.
 - O artigo deve entregar valor por si só, mesmo sem clique no produto.
 - O produto é apenas uma opção relacionada; não escreva o artigo como página de venda, anúncio, review obrigatório ou ficha técnica.
 - O nome comercial do produto serve somente como contexto interno. NÃO repita no corpo a oferta específica, marca, modelo ou título comercial completo.
@@ -325,7 +325,7 @@ def insert_contextual_blocks(editorial, item, cta_lead):
 def build(item, plan, raw, enforce=True, cta_lead=None, cta_generation_mode="test-or-fallback"):
     editorial = normalize_editorial(clean(raw))
     wc = word_count(editorial)
-    if wc < 900:
+    if wc < 700:
         raise RuntimeError(f"artigo curto: {wc}")
     title = plan["title"]
     article_item = {**item, "topic": title, "editorial_title": title}
