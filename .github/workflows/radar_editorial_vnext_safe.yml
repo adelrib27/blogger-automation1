@@ -45,6 +45,7 @@ jobs:
           PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/self_test.py
           PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/cta_card_self_test.py
           PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/semantic_self_test.py
+          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/word_count_threshold_self_test.py
 
       - name: Validar integração com a fila diária sem publicar
         run: |
