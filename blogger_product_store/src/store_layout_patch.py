@@ -84,7 +84,10 @@ def patch_store_layout() -> None:
 
     blogger = criar_servico_blogger()
     post = blogger.posts().get(blogId=BLOG_ID, postId=POST_ID).execute()
-    raw = str(post.get("content") or "")
+    raw_original = str(post.get("content") or "")
+    old_store_label = "Loja do Liquidificador Philips Walita RI2242"
+    neutral_store_label = "Vitrine de produtos para preparo na cozinha"
+    raw = raw_original.replace(old_store_label, neutral_store_label)
 
     required_store_markers = ("BLOGGER_LIQ_STORE_AUTO_START", "BLOGGER_LIQ_HERO_AUTO_1_START")
     if any(marker not in raw for marker in required_store_markers):
@@ -103,7 +106,7 @@ def patch_store_layout() -> None:
     else:
         updated = BLOCK + "\n" + raw
 
-    if updated == raw:
+    if updated == raw_original:
         print("LAYOUT_WIDE_ALREADY_OK")
         return
 
@@ -122,8 +125,13 @@ def patch_store_layout() -> None:
     missing = [marker for marker in required if marker not in verify_raw]
     if missing:
         raise RuntimeError(f"Falha na verificação do layout; ausentes={missing}")
+    if old_store_label in verify_raw:
+        raise RuntimeError("A identificação antiga da loja ainda aparece no post; publicação interrompida.")
+    if neutral_store_label not in verify_raw:
+        raise RuntimeError("A identificação neutra da vitrine não foi confirmada.")
 
     print("LAYOUT_WIDE_APPLIED")
+    print("STORE_LABEL_NEUTRALIZED")
 
 
 if __name__ == "__main__":
