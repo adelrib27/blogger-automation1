@@ -2,14 +2,13 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 16,
+    "total": 15,
     "draft_ready": 1,
-    "rejected": 13,
+    "rejected": 12,
     "not_generated": 2,
-    "published_history": 15,
+    "published_history": 16,
     "rotation_cycle": 2,
     "rotation_pending": [
-      "Sala",
       "Cozinha",
       "Banheiro",
       "Área Externa",
@@ -22,129 +21,19 @@
       "shopee_item_id": "22597699817",
       "category": "Sala",
       "product": "Tapete Passadeira Corredor Quarto Sala Felpudo Várias Cores E Tamanhos",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "especificacao_numerica_nao_confirmada:40 cm",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 889,
-          "h2_count": 3,
-          "internal_links": 1,
-          "seo_title_length": 36,
-          "meta_description_length": 138,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 57,
-      "shopee_item_id": "23032999814",
-      "category": "Quarto",
-      "product": "3 Saco Organizador Multiuso Embalagem Transparente Edredom Coberta Toalhas de Pvc e Ziper Preto Enxoval Guarda Roupa",
       "queue_status": "PUBLISHED",
-      "wordpress_post_id": 184,
+      "wordpress_post_id": 187,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 694,
-          "h2_count": 5,
+          "word_count": 555,
+          "h2_count": 6,
           "internal_links": 1,
-          "seo_title_length": 41,
-          "meta_description_length": 153,
+          "seo_title_length": 42,
+          "meta_description_length": 148,
           "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 6,
-      "shopee_item_id": "20452224775",
-      "category": "Quarto",
-      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "especificacao_numerica_nao_confirmada:400 g",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 878,
-          "h2_count": 3,
-          "internal_links": 1,
-          "seo_title_length": 49,
-          "meta_description_length": 127,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 53,
-      "shopee_item_id": "58202630911",
-      "category": "Quarto",
-      "product": "Kit Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:2",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 737,
-          "h2_count": 2,
-          "internal_links": 1,
-          "seo_title_length": 46,
-          "meta_description_length": 154,
-          "cta_count": 1
         },
         "safety_class": "STANDARD"
       }
@@ -539,6 +428,79 @@
         ],
         "warnings": [],
         "metrics": {}
+      }
+    },
+    {
+      "id": 6,
+      "shopee_item_id": "20452224775",
+      "category": "Quarto",
+      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "especificacao_numerica_nao_confirmada:400 g",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:3",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 878,
+          "h2_count": 3,
+          "internal_links": 1,
+          "seo_title_length": 49,
+          "meta_description_length": 127,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 53,
+      "shopee_item_id": "58202630911",
+      "category": "Quarto",
+      "product": "Kit Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:2",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 737,
+          "h2_count": 2,
+          "internal_links": 1,
+          "seo_title_length": 46,
+          "meta_description_length": 154,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
       }
     }
   ]
