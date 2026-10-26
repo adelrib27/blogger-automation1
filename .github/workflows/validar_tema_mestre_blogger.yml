@@ -1,0 +1,30 @@
+name: Validar Tema Mestre Blogger
+
+on:
+  push:
+    paths:
+      - "blogger_themes/**"
+      - "src/validar_tema_blogger.py"
+      - ".github/workflows/validar_tema_mestre_blogger.yml"
+  pull_request:
+    paths:
+      - "blogger_themes/**"
+      - "src/validar_tema_blogger.py"
+      - ".github/workflows/validar_tema_mestre_blogger.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validar-tema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validar estrutura do tema
+        run: python src/validar_tema_blogger.py
