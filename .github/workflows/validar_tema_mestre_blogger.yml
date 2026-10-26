@@ -6,12 +6,14 @@ on:
       - "blogger_themes/**"
       - "src/validar_tema_blogger.py"
       - "src/validar_tema_editorial_blogger.py"
+      - "src/validar_tema_editorial_achados_blogger.py"
       - ".github/workflows/validar_tema_mestre_blogger.yml"
   pull_request:
     paths:
       - "blogger_themes/**"
       - "src/validar_tema_blogger.py"
       - "src/validar_tema_editorial_blogger.py"
+      - "src/validar_tema_editorial_achados_blogger.py"
       - ".github/workflows/validar_tema_mestre_blogger.yml"
   workflow_dispatch:
 
@@ -30,5 +32,7 @@ jobs:
           python-version: "3.12"
       - name: Validar tema de produto V3.0
         run: python src/validar_tema_blogger.py
-      - name: Validar tema editorial independente V1.0
+      - name: Validar tema editorial independente V1.0 (histórico)
         run: python src/validar_tema_editorial_blogger.py
+      - name: Validar tema editorial baseado no Achados para Casa V1.0
+        run: python src/validar_tema_editorial_achados_blogger.py
