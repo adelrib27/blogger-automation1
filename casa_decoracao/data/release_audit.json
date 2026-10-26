@@ -4,12 +4,11 @@
   "summary": {
     "total": 14,
     "draft_ready": 1,
-    "rejected": 7,
-    "not_generated": 6,
-    "published_history": 20,
+    "rejected": 8,
+    "not_generated": 5,
+    "published_history": 21,
     "rotation_cycle": 3,
     "rotation_pending": [
-      "Decoração",
       "Organização",
       "Sala",
       "Quarto",
@@ -21,49 +20,11 @@
   },
   "items": [
     {
-      "id": 64,
-      "shopee_item_id": "22893873080",
-      "category": "Cama, Mesa e Banho",
-      "product": "Jogo de Lençol 400 fios Toque Suave e Acetinado Berço Solteiro Casal Queen King 02 e 03 Peças",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 203,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 571,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 57,
-          "meta_description_length": 152,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 72,
-      "shopee_item_id": "23392973710",
-      "category": "Cama, Mesa e Banho",
-      "product": "Protetor Impermeável para Colchão SUPER SILENCIOSO 100% Impermeável Tecido Jacquard Premium Tamanhos",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
       "id": 77,
       "shopee_item_id": "58253704479",
       "category": "Decoração",
       "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "NOT_GENERATED",
@@ -79,15 +40,21 @@
       "shopee_item_id": "22598002731",
       "category": "Decoração",
       "product": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 208,
       "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
-        "metrics": {}
+        "metrics": {
+          "word_count": 609,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 60,
+          "meta_description_length": 155,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
       }
     },
     {
@@ -137,6 +104,43 @@
           "internal_links": 1,
           "seo_title_length": 44,
           "meta_description_length": 122,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 83,
+      "shopee_item_id": "23798178107",
+      "category": "Organização",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "especificacao_numerica_nao_confirmada:1 50m",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "meta_description_tamanho:158",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida",
+          "word_count_alto:1102"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 1102,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 57,
+          "meta_description_length": 158,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -287,10 +291,10 @@
       }
     },
     {
-      "id": 82,
-      "shopee_item_id": "22312840596",
+      "id": 84,
+      "shopee_item_id": "20999381894",
       "category": "Cozinha",
-      "product": "Esteira de Louça Grade Flexível Dobrável Escorredor Grande Inox Cozinha Pia",
+      "product": "Conjunto 2/3/5/10 Potes 370/640/1040ml Vidro Hermético Mantimentos Marmita Fitness",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -301,21 +305,22 @@
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
-          "meta_description_tamanho:157",
+          "meta_description_tamanho:156",
           "poucos_h2:4",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
           "titulo_produto_cta_nao_fiel",
           "titulo_produto_cta_quantidade_invalida"
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 985,
+          "word_count": 902,
           "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 56,
-          "meta_description_length": 157,
+          "seo_title_length": 52,
+          "meta_description_length": 156,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -386,6 +391,22 @@
           "cta_count": 1
         },
         "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 72,
+      "shopee_item_id": "23392973710",
+      "category": "Cama, Mesa e Banho",
+      "product": "Protetor Impermeável para Colchão SUPER SILENCIOSO 100% Impermeável Tecido Jacquard Premium Tamanhos",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
       }
     }
   ]
