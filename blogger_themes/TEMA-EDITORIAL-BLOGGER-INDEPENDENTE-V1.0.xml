@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:layoutsVersion='3' b:responsive='true'
+      expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale.language'
+      xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:b='http://www.google.com/2005/gml/b'
+      xmlns:data='http://www.google.com/2005/gml/data'
+      xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+  <meta content='width=device-width, initial-scale=1' name='viewport'/>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+  <b:include data='blog' name='all-head-content'/>
+  <link expr:href='data:blog.canonicalUrl' rel='canonical'/>
+  <meta content='index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' name='robots'/>
+  <b:if cond='data:blog.metaDescription'>
+    <meta expr:content='data:blog.metaDescription' name='description'/>
+    <meta expr:content='data:blog.metaDescription' property='og:description'/>
+  <b:else/>
+    <meta expr:content='data:blog.description' name='description'/>
+    <meta expr:content='data:blog.description' property='og:description'/>
+  </b:if>
+  <meta expr:content='data:blog.pageTitle' property='og:title'/>
+  <meta expr:content='data:blog.canonicalUrl' property='og:url'/>
+  <meta expr:content='data:blog.title' property='og:site_name'/>
+  <b:if cond='data:view.isPost'>
+    <meta content='article' property='og:type'/>
+  <b:else/>
+    <meta content='website' property='og:type'/>
+  </b:if>
+
+  <b:skin><![CDATA[
+    :root{
+      --ink:#252724;
+      --muted:#6d7069;
+      --paper:#fbfaf7;
+      --surface:#ffffff;
+      --soft:#f2eee7;
+      --line:#e6e0d7;
+      --accent:#b45336;
+      --accent-dark:#823720;
+      --max:1160px;
+      --radius:20px
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.7}
+    a{color:var(--accent-dark);text-underline-offset:3px}
+    a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    img{max-width:100%;height:auto}
+    .skip-link{position:absolute;left:-9999px;top:12px;z-index:1000;background:var(--ink);color:#fff;padding:10px 14px;border-radius:8px}
+    .skip-link:focus{left:12px}
+    .site-header{background:rgba(251,250,247,.97);border-bottom:1px solid var(--line)}
+    .header-inner{max-width:var(--max);margin:0 auto;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+    .brand{min-width:0;max-width:620px;display:block;color:var(--ink);text-decoration:none}
+    .brand-name{display:block;font-family:Georgia,'Times New Roman',serif;font-size:1.65rem;font-weight:700;line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}
+    .brand-description{display:block;margin-top:5px;color:var(--muted);font-size:.88rem;line-height:1.45}
+    .nav{display:flex;align-items:center;justify-content:flex-end;gap:18px;flex-wrap:wrap}
+    .nav a{font-size:.9rem;font-weight:700;text-decoration:none;color:var(--ink)}
+    .nav a:hover{color:var(--accent)}
+    .page-shell{max-width:var(--max);margin:0 auto;padding:24px 24px 64px}
+    .home-intro{padding:clamp(28px,5vw,58px);margin:8px 0 44px;background:linear-gradient(135deg,#f3eee7 0%,#fbfaf7 80%);border:1px solid var(--line);border-radius:var(--radius)}
+    .eyebrow{margin:0 0 12px;color:var(--accent-dark);font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800}
+    .home-intro h1{max-width:850px;margin:0;font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.3rem,5.6vw,4.5rem);font-weight:700;line-height:1.03;letter-spacing:-.055em;overflow-wrap:anywhere}
+    .home-description{max-width:780px;margin:20px 0 0;color:#55574f;font-size:1.08rem;line-height:1.8}
+    .posts-section{margin:0}
+    .section-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:0 0 22px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+    .section-heading h1,.section-heading h2{margin:0;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.65rem,3vw,2.35rem);line-height:1.18;letter-spacing:-.035em;overflow-wrap:anywhere}
+    .section-heading p{max-width:360px;margin:0;color:var(--muted);font-size:.9rem;text-align:right}
+    .posts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+    .post-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);transition:transform .18s ease,box-shadow .18s ease}
+    .post-card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(38,31,23,.08)}
+    .post-card-image{display:flex;align-items:center;justify-content:center;aspect-ratio:16/10;overflow:hidden;background:var(--soft);color:var(--accent-dark);text-decoration:none}
+    .post-card-image img{display:block;width:100%;height:100%;object-fit:cover}
+    .post-card-image.no-image{padding:18px;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;font-weight:700;text-align:center}
+    .post-card-content{display:flex;flex:1;flex-direction:column;padding:22px}
+    .post-meta{margin:0 0 10px;color:var(--muted);font-size:.79rem;letter-spacing:.02em}
+    .post-card h2,.post-card h3{margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:1.35rem;line-height:1.3;letter-spacing:-.025em;overflow-wrap:anywhere}
+    .post-card h2 a,.post-card h3 a{color:var(--ink);text-decoration:none}
+    .post-card h2 a:hover,.post-card h3 a:hover{color:var(--accent-dark)}
+    .post-excerpt{margin:0 0 20px;color:#5c5e57;font-size:.95rem;line-height:1.7}
+    .read-more{display:inline-flex;align-items:center;gap:8px;margin-top:auto;width:max-content;font-size:.9rem;font-weight:800;text-decoration:none}
+    .read-more:hover{text-decoration:underline}
+    .blog-pager{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:34px 0 0}
+    .pager-link{display:inline-block;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;text-decoration:none;font-weight:700;font-size:.9rem}
+    .pager-link:hover{border-color:var(--accent);color:var(--accent-dark)}
+    .empty-state{padding:28px;background:#fff;border:1px dashed #d4c8ba;border-radius:14px;color:var(--muted)}
+    .article-page{max-width:850px;margin:10px auto 0;padding:clamp(24px,5vw,58px);background:#fff;border:1px solid var(--line);border-radius:var(--radius)}
+    .article-header{margin:0 0 30px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+    .article-header .post-meta{margin-bottom:12px}
+    .article-header h1{margin:0;font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.08;letter-spacing:-.05em;overflow-wrap:anywhere}
+    .article-content{color:#30322d;font-size:1.06rem;line-height:1.9;overflow-wrap:anywhere}
+    .article-content h2{margin:2.2em 0 .7em;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.55rem,3vw,2.1rem);line-height:1.2;letter-spacing:-.03em}
+    .article-content h3{margin:1.8em 0 .6em;font-family:Georgia,'Times New Roman',serif;font-size:1.35rem;line-height:1.3}
+    .article-content p{margin:0 0 1.35em}
+    .article-content ul,.article-content ol{padding-left:1.5rem;margin:0 0 1.5em}
+    .article-content li{margin:.35em 0}
+    .article-content img{display:block;max-width:100%;height:auto;margin:1.5em auto;border-radius:12px}
+    .article-content figure{max-width:100%;margin:1.6em 0}
+    .article-content figcaption{color:var(--muted);font-size:.85rem;text-align:center}
+    .article-content blockquote{margin:1.6em 0;padding:12px 20px;border-left:4px solid var(--accent);background:var(--soft);color:#4d4e47}
+    .article-content table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse}
+    .article-content th,.article-content td{padding:10px 12px;border:1px solid var(--line);text-align:left}
+    .article-content pre{max-width:100%;overflow-x:auto;padding:16px;background:#f4f1eb;border-radius:10px}
+    .article-content iframe{max-width:100%}
+    .article-footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+    .article-footer a{font-weight:800;text-decoration:none}
+    .article-footer a:hover{text-decoration:underline}
+    .site-footer{background:#262722;color:#f8f5ef}
+    .footer-inner{max-width:var(--max);margin:0 auto;padding:34px 24px 40px}
+    .footer-title{font-family:Georgia,'Times New Roman',serif;font-size:1.35rem;font-weight:700}
+    .footer-links{display:flex;gap:16px;flex-wrap:wrap;margin:15px 0}
+    .footer-links a{color:#f8f5ef;text-decoration:none;font-size:.88rem}
+    .footer-links a:hover{text-decoration:underline}
+    .footer-note{max-width:850px;color:#d4d1c9;font-size:.82rem;line-height:1.7}
+    @media(max-width:900px){
+      .header-inner{align-items:flex-start;flex-direction:column;gap:16px}
+      .nav{justify-content:flex-start;gap:12px 18px}
+      .posts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .section-heading{align-items:flex-start;flex-direction:column}
+      .section-heading p{text-align:left}
+    }
+    @media(max-width:600px){
+      body{font-size:15px}
+      .header-inner{padding:17px 18px}
+      .brand-name{font-size:1.45rem}
+      .page-shell{padding:16px 16px 42px}
+      .home-intro{margin:4px 0 30px;padding:28px 22px}
+      .posts-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+      .post-card-content{padding:19px}
+      .article-page{padding:24px 20px;border-radius:14px}
+      .article-content{font-size:1rem}
+      .footer-inner{padding:28px 18px 32px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{transition:none!important;animation:none!important}
+    }
+  ]]></b:skin>
+</head>
+<body>
+  <a class='skip-link' href='#conteudo'>Pular para o conteúdo</a>
+
+  <header class='site-header'>
+    <div class='header-inner'>
+      <a class='brand' expr:href='data:blog.homepageUrl'>
+        <span class='brand-name'><data:blog.title/></span>
+        <b:if cond='data:blog.description'>
+          <span class='brand-description'><data:blog.description/></span>
+        </b:if>
+      </a>
+      <nav class='nav' aria-label='Navegação principal'>
+        <a expr:href='data:blog.homepageUrl'>Início</a>
+        <a href='/p/sobre.html'>Sobre</a>
+        <a href='/p/contato.html'>Contato</a>
+        <a href='/p/politica-de-privacidade.html'>Privacidade</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class='page-shell' id='conteudo'>
+    <b:if cond='data:view.isHomepage'>
+      <section class='home-intro'>
+        <p class='eyebrow'>Ideias, guias e informação</p>
+        <h1><data:blog.title/></h1>
+        <b:if cond='data:blog.description'>
+          <p class='home-description'><data:blog.description/></p>
+        <b:else/>
+          <p class='home-description'>Artigos e conteúdos para explorar ideias, aprender e encontrar informações úteis para o dia a dia.</p>
+        </b:if>
+      </section>
+    </b:if>
+
+    <b:section id='page_body' showaddelement='no'>
+      <b:widget id='Blog1' mobile='yes' locked='true' title='Publicações' type='Blog' version='2' visible='true'>
+        <b:includable id='main' var='top'>
+          <b:if cond='data:view.isHomepage'>
+            <section class='posts-section' aria-label='Publicações recentes'>
+              <div class='section-heading'>
+                <h2>Publicações recentes</h2>
+                <p>Escolha um artigo para ler o conteúdo completo.</p>
+              </div>
+              <b:if cond='data:posts'>
+                <div class='posts-grid'>
+                  <b:loop values='data:posts' var='post'>
+                    <article class='post-card'>
+                      <b:if cond='data:post.firstImageUrl'>
+                        <a class='post-card-image' expr:href='data:post.url'>
+                          <img expr:alt='data:post.title' expr:src='data:post.firstImageUrl' loading='lazy'/>
+                        </a>
+                      <b:else/>
+                        <a class='post-card-image no-image' expr:href='data:post.url'>
+                          <span>Leia a publicação</span>
+                        </a>
+                      </b:if>
+                      <div class='post-card-content'>
+                        <p class='post-meta'><data:post.dateHeader/></p>
+                        <h3><a expr:href='data:post.url'><data:post.title/></a></h3>
+                        <p class='post-excerpt'><data:post.snippet/></p>
+                        <a class='read-more' expr:href='data:post.url'>Continuar lendo <span aria-hidden='true'>→</span></a>
+                      </div>
+                    </article>
+                  </b:loop>
+                </div>
+                <div class='blog-pager'>
+                  <b:if cond='data:newerPageUrl'>
+                    <a class='pager-link' expr:href='data:newerPageUrl'>← Publicações mais recentes</a>
+                  </b:if>
+                  <b:if cond='data:olderPageUrl'>
+                    <a class='pager-link' expr:href='data:olderPageUrl'>Publicações anteriores →</a>
+                  </b:if>
+                </div>
+              <b:else/>
+                <div class='empty-state'>Ainda não há publicações. Quando você publicar um artigo, ele aparecerá automaticamente nesta página.</div>
+              </b:if>
+            </section>
+          <b:else/>
+            <b:if cond='data:view.isPost'>
+              <b:loop values='data:posts' var='post'>
+                <article class='article-page'>
+                  <header class='article-header'>
+                    <p class='post-meta'><data:post.dateHeader/></p>
+                    <h1><data:post.title/></h1>
+                  </header>
+                  <div class='article-content post-body'><data:post.body/></div>
+                  <footer class='article-footer'>
+                    <a expr:href='data:blog.homepageUrl'>← Voltar às publicações</a>
+                  </footer>
+                </article>
+              </b:loop>
+            <b:else/>
+              <b:if cond='data:view.isPage'>
+                <b:loop values='data:posts' var='post'>
+                  <article class='article-page static-page'>
+                    <header class='article-header'>
+                      <h1><data:post.title/></h1>
+                    </header>
+                    <div class='article-content post-body'><data:post.body/></div>
+                    <footer class='article-footer'>
+                      <a expr:href='data:blog.homepageUrl'>← Voltar à página inicial</a>
+                    </footer>
+                  </article>
+                </b:loop>
+              <b:else/>
+                <section class='posts-section' aria-label='Lista de publicações'>
+                  <div class='section-heading'>
+                    <h1><data:blog.pageTitle/></h1>
+                  </div>
+                  <b:if cond='data:posts'>
+                    <div class='posts-grid'>
+                      <b:loop values='data:posts' var='post'>
+                        <article class='post-card'>
+                          <b:if cond='data:post.firstImageUrl'>
+                            <a class='post-card-image' expr:href='data:post.url'>
+                              <img expr:alt='data:post.title' expr:src='data:post.firstImageUrl' loading='lazy'/>
+                            </a>
+                          <b:else/>
+                            <a class='post-card-image no-image' expr:href='data:post.url'>
+                              <span>Leia a publicação</span>
+                            </a>
+                          </b:if>
+                          <div class='post-card-content'>
+                            <p class='post-meta'><data:post.dateHeader/></p>
+                            <h2><a expr:href='data:post.url'><data:post.title/></a></h2>
+                            <p class='post-excerpt'><data:post.snippet/></p>
+                            <a class='read-more' expr:href='data:post.url'>Continuar lendo <span aria-hidden='true'>→</span></a>
+                          </div>
+                        </article>
+                      </b:loop>
+                    </div>
+                  <b:else/>
+                    <div class='empty-state'>Não há publicações para exibir nesta página.</div>
+                  </b:if>
+                  <div class='blog-pager'>
+                    <b:if cond='data:newerPageUrl'>
+                      <a class='pager-link' expr:href='data:newerPageUrl'>← Mais recentes</a>
+                    </b:if>
+                    <b:if cond='data:olderPageUrl'>
+                      <a class='pager-link' expr:href='data:olderPageUrl'>Mais antigos →</a>
+                    </b:if>
+                  </div>
+                </section>
+              </b:if>
+            </b:if>
+          </b:if>
+        </b:includable>
+      </b:widget>
+    </b:section>
+  </main>
+
+  <footer class='site-footer'>
+    <div class='footer-inner'>
+      <div class='footer-title'><data:blog.title/></div>
+      <div class='footer-links'>
+        <a expr:href='data:blog.homepageUrl'>Início</a>
+        <a href='/p/sobre.html'>Sobre</a>
+        <a href='/p/contato.html'>Contato</a>
+        <a href='/p/politica-de-privacidade.html'>Política de privacidade</a>
+        <a href='/p/termos-de-uso.html'>Termos de uso</a>
+      </div>
+      <div class='footer-note'>Conteúdo editorial independente. As informações são apresentadas para fins informativos; confira a data e as fontes indicadas em cada publicação quando aplicável.</div>
+    </div>
+  </footer>
+</body>
+</html>
