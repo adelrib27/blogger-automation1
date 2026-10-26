@@ -5,7 +5,6 @@
   "editorial_policy": "produto real -> rotação entre 8 categorias -> título editorial -> Qwen3 -> CTA contextual -> imagem real -> gate -> publicação",
   "category_rotation_cycle": 3,
   "category_rotation_pending": [
-    "Decoração",
     "Organização",
     "Sala",
     "Quarto",
@@ -15,77 +14,14 @@
     "Cama, Mesa e Banho"
   ],
   "max_per_keyword": 1,
-  "total": 14,
+  "total": 13,
   "skipped": {
-    "produto_ja_publicado": 12,
+    "produto_ja_publicado": 13,
     "produto_quase_duplicado": 1,
     "limite_por_intencao": 3,
     "produto_semelhante_ja_publicado": 2
   },
   "items": [
-    {
-      "id": 77,
-      "shopee_item_id": "58253704479",
-      "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
-      "affiliate_link": "https://s.shopee.com.br/6fiMqNXH0j",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820l4-mq3q1j9gt5a96a",
-      "shop_name": "Artt mineira",
-      "source_keyword": "vaso decorativo",
-      "category": "Decoração",
-      "opportunity_score": 60.63,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "generation_attempts": 1,
-      "last_error": "geração editorial bloqueada após revisões: artigo curto: 445"
-    },
-    {
-      "id": 67,
-      "shopee_item_id": "22598002731",
-      "product": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
-      "affiliate_link": "https://s.shopee.com.br/1LgqUZimG0",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m1zo5nd0qov30e",
-      "shop_name": "Cor Elegante",
-      "source_keyword": "caminho de mesa",
-      "category": "Decoração",
-      "opportunity_score": 59.98,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "topic": "Como escolher um caminho de mesa que combina com a decoração",
-      "editorial_title": "Como escolher um caminho de mesa que combina com a decoração",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 609,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 60,
-          "meta_description_length": 155,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "last_error": "",
-      "wordpress_post_id": 208,
-      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-escolher-um-caminho-de-mesa-que-combina-com-a-decoracao/",
-      "featured_media": 209,
-      "seo_synced": true
-    },
     {
       "id": 20,
       "shopee_item_id": "58205899287",
@@ -97,7 +33,7 @@
       "category": "Organização",
       "opportunity_score": 64.22,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
+      "status": "PUBLISHED",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
@@ -105,8 +41,28 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:502",
-      "generation_attempts": 2
+      "last_error": "",
+      "generation_attempts": 2,
+      "topic": "Como organizar pequenos objetos em casa",
+      "editorial_title": "Como organizar pequenos objetos em casa",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 554,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 39,
+          "meta_description_length": 151,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "wordpress_post_id": 211,
+      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-organizar-pequenos-objetos-em-casa/",
+      "featured_media": 212,
+      "seo_synced": true
     },
     {
       "id": 13,
@@ -117,7 +73,7 @@
       "shop_name": "Na Web Group De Marcas",
       "source_keyword": "varal de chao",
       "category": "Organização",
-      "opportunity_score": 61.8,
+      "opportunity_score": 61.82,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -134,12 +90,12 @@
       "id": 83,
       "shopee_item_id": "23798178107",
       "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
-      "affiliate_link": "https://s.shopee.com.br/AUv5PReLNG",
+      "affiliate_link": "https://s.shopee.com.br/3qOBZ07kpJ",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-81z1k-mfvhv2o7wtfk77",
       "shop_name": "Maison Plus",
       "source_keyword": "organizador armario",
       "category": "Organização",
-      "opportunity_score": 60.2,
+      "opportunity_score": 60.11,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -159,7 +115,7 @@
       "shop_name": "fenixpijamas1",
       "source_keyword": "tapete sala",
       "category": "Sala",
-      "opportunity_score": 61.49,
+      "opportunity_score": 61.58,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -179,7 +135,7 @@
       "shop_name": "Debela Home",
       "source_keyword": "travesseiro",
       "category": "Quarto",
-      "opportunity_score": 65.35,
+      "opportunity_score": 65.37,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -194,12 +150,12 @@
       "id": 6,
       "shopee_item_id": "20452224775",
       "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
-      "affiliate_link": "https://s.shopee.com.br/7Ky3dcyzWm",
+      "affiliate_link": "https://s.shopee.com.br/9zyp6NzJHm",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-8260p-mkcfopp4p5hc85",
       "shop_name": "Haute Decor",
       "source_keyword": "abajur quarto",
       "category": "Quarto",
-      "opportunity_score": 64.82,
+      "opportunity_score": 64.8,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -219,7 +175,7 @@
       "shop_name": "Mabê Store",
       "source_keyword": "fatiador de legumes",
       "category": "Cozinha",
-      "opportunity_score": 61.23,
+      "opportunity_score": 61.27,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -231,26 +187,6 @@
       },
       "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada, word_count_baixo:524",
       "generation_attempts": 1
-    },
-    {
-      "id": 84,
-      "shopee_item_id": "20999381894",
-      "product": "Conjunto 2/3/5/10 Potes 370/640/1040ml Vidro Hermético Mantimentos Marmita Fitness",
-      "affiliate_link": "https://s.shopee.com.br/2BFxU8aOgp",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820le-mpavso8ys2yp67",
-      "shop_name": "Life Hack Homeware",
-      "source_keyword": "potes hermeticos",
-      "category": "Cozinha",
-      "opportunity_score": 59.51,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
     },
     {
       "id": 71,
@@ -305,7 +241,7 @@
       "shop_name": "FGVITALFARMA",
       "source_keyword": "vaso jardim",
       "category": "Área Externa",
-      "opportunity_score": 62.74,
+      "opportunity_score": 62.75,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -325,7 +261,49 @@
       "shop_name": "Loja do Koala",
       "source_keyword": "protetor de colchao",
       "category": "Cama, Mesa e Banho",
-      "opportunity_score": 62.38,
+      "opportunity_score": 62.39,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 77,
+      "shopee_item_id": "58253704479",
+      "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
+      "affiliate_link": "https://s.shopee.com.br/6fiMqNXH0j",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820l4-mq3q1j9gt5a96a",
+      "shop_name": "Artt mineira",
+      "source_keyword": "vaso decorativo",
+      "category": "Decoração",
+      "opportunity_score": 60.64,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 445",
+      "generation_attempts": 1
+    },
+    {
+      "id": 85,
+      "shopee_item_id": "58257090824",
+      "product": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
+      "affiliate_link": "https://s.shopee.com.br/2gCE51zYy2",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m9-mmm1sfjpscna7b",
+      "shop_name": "VISIO DECORE ",
+      "source_keyword": "almofada decorativa",
+      "category": "Decoração",
+      "opportunity_score": 59.35,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
