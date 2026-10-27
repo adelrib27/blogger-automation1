@@ -8,29 +8,28 @@
     "Sala",
     "Quarto",
     "Cozinha",
-    "Banheiro",
     "Área Externa",
     "Cama, Mesa e Banho"
   ],
   "max_per_keyword": 1,
   "total": 10,
   "skipped": {
-    "produto_ja_publicado": 15,
-    "produto_quase_duplicado": 2,
-    "limite_por_intencao": 3,
-    "produto_semelhante_ja_publicado": 2
+    "produto_ja_publicado": 17,
+    "produto_quase_duplicado": 1,
+    "produto_semelhante_ja_publicado": 2,
+    "limite_por_intencao": 2
   },
   "items": [
     {
       "id": 81,
       "shopee_item_id": "23499666463",
       "product": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
-      "affiliate_link": "https://s.shopee.com.br/6L5WRmY4Lu",
+      "affiliate_link": "https://s.shopee.com.br/8pmsy2ZNz6",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-8258v-msvmss9ziyvadf",
       "shop_name": "fenixpijamas1",
       "source_keyword": "tapete sala",
       "category": "Sala",
-      "opportunity_score": 61.58,
+      "opportunity_score": 61.63,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -40,19 +39,41 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "generation_attempts": 1,
-      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:528"
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 435",
+      "generation_attempts": 2
     },
     {
       "id": 79,
       "shopee_item_id": "58200253216",
       "product": "Kit Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
-      "affiliate_link": "https://s.shopee.com.br/1LgqUb4RMD",
+      "affiliate_link": "https://s.shopee.com.br/1W0IEZEdhO",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-81z1k-mgjve1j1ueww5a",
       "shop_name": "Debela Home",
       "source_keyword": "travesseiro",
       "category": "Quarto",
-      "opportunity_score": 65.37,
+      "opportunity_score": 65.38,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 414",
+      "generation_attempts": 2
+    },
+    {
+      "id": 87,
+      "shopee_item_id": "20452224775",
+      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "affiliate_link": "https://s.shopee.com.br/6fiOO4CZME",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8260p-mkcfopp4p5hc85",
+      "shop_name": "Haute Decor",
+      "source_keyword": "abajur quarto",
+      "category": "Quarto",
+      "opportunity_score": 64.79,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -63,20 +84,20 @@
         "category_rotation_required": true
       },
       "generation_attempts": 1,
-      "last_error": "geração editorial bloqueada após revisões: artigo curto: 491"
+      "last_error": "geração editorial bloqueada após revisões: quality gate: meta_description_tamanho:156, poucos_h2:4"
     },
     {
       "id": 31,
       "shopee_item_id": "58206652459",
       "product": "Fatiador KITOP descasca Legumes Prático para Couve e Repolho Fininho legumes fatiados",
-      "affiliate_link": "https://s.shopee.com.br/9zyooXFNKO",
+      "affiliate_link": "https://s.shopee.com.br/7puLmDYOBK",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-8261y-mlnn8q39unls7a",
       "shop_name": "Mabê Store",
       "source_keyword": "fatiador de legumes",
       "category": "Cozinha",
-      "opportunity_score": 61.27,
+      "opportunity_score": 61.3,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
+      "status": "PUBLISHED",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
@@ -84,14 +105,34 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:517",
-      "generation_attempts": 2
+      "last_error": "",
+      "generation_attempts": 2,
+      "topic": "Como cortar couve e repolho de forma rápida e limpa",
+      "editorial_title": "Como cortar couve e repolho de forma rápida e limpa",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 550,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 51,
+          "meta_description_length": 153,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "wordpress_post_id": 219,
+      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-cortar-couve-e-repolho-de-forma-rapida-e-limpa/",
+      "featured_media": 220,
+      "seo_synced": true
     },
     {
       "id": 86,
       "shopee_item_id": "22312840596",
       "product": "Esteira de Louça Grade Flexível Dobrável Escorredor Grande Inox Cozinha Pia",
-      "affiliate_link": "https://s.shopee.com.br/1BSrxc3TY",
+      "affiliate_link": "https://s.shopee.com.br/AUv6uO4Vdf",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-820ld-mtsa0x8yvi8296",
       "shop_name": "Demima",
       "source_keyword": "escorredor de loucas",
@@ -106,103 +147,19 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "generation_attempts": 1,
-      "last_error": "título editorial fora da faixa: 31"
-    },
-    {
-      "id": 71,
-      "shopee_item_id": "21299673093",
-      "product": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
-      "affiliate_link": "https://s.shopee.com.br/2gCE53q1Xi",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m82ov28y0wepdb",
-      "shop_name": "Smart Ultra Cat Bio",
-      "source_keyword": "tapete banheiro",
-      "category": "Banheiro",
-      "opportunity_score": 62.64,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
-      "generation_attempts": 2
-    },
-    {
-      "id": 73,
-      "shopee_item_id": "58254362999",
-      "product": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
-      "affiliate_link": "https://s.shopee.com.br/5AtZ3ecFEp",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lp-msbgvjhckkcm23",
-      "shop_name": "StarMove",
-      "source_keyword": "toalheiro banheiro",
-      "category": "Banheiro",
-      "opportunity_score": 61.2,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "last_error": "",
-      "generation_attempts": 1,
-      "topic": "Organize seu banheiro com acessórios práticos",
-      "editorial_title": "Organize seu banheiro com acessórios práticos",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 636,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 45,
-          "meta_description_length": 151,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "wordpress_post_id": 214,
-      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/organize-seu-banheiro-com-acessorios-praticos/",
-      "featured_media": 215,
-      "seo_synced": true
-    },
-    {
-      "id": 80,
-      "shopee_item_id": "58207037675",
-      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
-      "affiliate_link": "https://s.shopee.com.br/3g4lGu89AO",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8261c-mlwo86kczhn355",
-      "shop_name": "FGVITALFARMA",
-      "source_keyword": "vaso jardim",
-      "category": "Área Externa",
-      "opportunity_score": 62.75,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
+      "last_error": "título editorial fora da faixa: 31",
+      "generation_attempts": 1
     },
     {
       "id": 72,
       "shopee_item_id": "23392973710",
       "product": "Protetor Impermeável para Colchão SUPER SILENCIOSO 100% Impermeável Tecido Jacquard Premium Tamanhos",
-      "affiliate_link": "https://s.shopee.com.br/1LgqaQYXFV",
+      "affiliate_link": "https://s.shopee.com.br/9Kj9YzSLKl",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-luid8vxkfyqca0",
       "shop_name": "Loja do Koala",
       "source_keyword": "protetor de colchao",
       "category": "Cama, Mesa e Banho",
-      "opportunity_score": 62.39,
+      "opportunity_score": 62.41,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -217,7 +174,7 @@
       "id": 77,
       "shopee_item_id": "58253704479",
       "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
-      "affiliate_link": "https://s.shopee.com.br/6fiMqNXH0j",
+      "affiliate_link": "https://s.shopee.com.br/3VlMcE2p4x",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-820l4-mq3q1j9gt5a96a",
       "shop_name": "Artt mineira",
       "source_keyword": "vaso decorativo",
@@ -239,12 +196,12 @@
       "id": 13,
       "shopee_item_id": "21071530577",
       "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
-      "affiliate_link": "https://s.shopee.com.br/50a8rKHHdz",
+      "affiliate_link": "https://s.shopee.com.br/3VlMcEc5co",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7augbm6ixf693",
       "shop_name": "Na Web Group De Marcas",
       "source_keyword": "varal de chao",
       "category": "Organização",
-      "opportunity_score": 61.82,
+      "opportunity_score": 61.84,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -256,6 +213,48 @@
       },
       "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
       "generation_attempts": 1
+    },
+    {
+      "id": 71,
+      "shopee_item_id": "21299673093",
+      "product": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
+      "affiliate_link": "https://s.shopee.com.br/4B13PTzTem",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m82ov28y0wepdb",
+      "shop_name": "Smart Ultra Cat Bio",
+      "source_keyword": "tapete banheiro",
+      "category": "Banheiro",
+      "opportunity_score": 62.64,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
+      "generation_attempts": 2
+    },
+    {
+      "id": 88,
+      "shopee_item_id": "58257638413",
+      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "affiliate_link": "https://s.shopee.com.br/3qOD0rs5ME",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m6-mrg17tz0uy2v01",
+      "shop_name": "MULTIORIENTAL",
+      "source_keyword": "toalheiro banheiro",
+      "category": "Banheiro",
+      "opportunity_score": 60.96,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
     }
   ]
 }

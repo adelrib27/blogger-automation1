@@ -6,12 +6,11 @@
     "draft_ready": 1,
     "rejected": 6,
     "not_generated": 3,
-    "published_history": 23,
+    "published_history": 24,
     "rotation_cycle": 3,
     "rotation_pending": [
       "Sala",
       "Quarto",
-      "Cozinha",
       "Área Externa",
       "Cama, Mesa e Banho"
     ]
@@ -88,19 +87,17 @@
       }
     },
     {
-      "id": 31,
-      "shopee_item_id": "58206652459",
-      "category": "Cozinha",
-      "product": "Fatiador KITOP descasca Legumes Prático para Couve e Repolho Fininho legumes fatiados",
+      "id": 87,
+      "shopee_item_id": "20452224775",
+      "category": "Quarto",
+      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
       "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
         "reasons": [
           "chamada_consulta_contextual_quantidade_invalida:0",
-          "condicao_comercial_nao_confirmada",
           "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
@@ -114,12 +111,34 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 925,
+          "word_count": 787,
           "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 38,
-          "meta_description_length": 142,
+          "seo_title_length": 53,
+          "meta_description_length": 153,
           "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 31,
+      "shopee_item_id": "58206652459",
+      "category": "Cozinha",
+      "product": "Fatiador KITOP descasca Legumes Prático para Couve e Repolho Fininho legumes fatiados",
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 219,
+      "gate": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 550,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 51,
+          "meta_description_length": 153,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -154,79 +173,6 @@
           "internal_links": 1,
           "seo_title_length": 60,
           "meta_description_length": 154,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 71,
-      "shopee_item_id": "21299673093",
-      "category": "Banheiro",
-      "product": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 73,
-      "shopee_item_id": "58254362999",
-      "category": "Banheiro",
-      "product": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 214,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 636,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 45,
-          "meta_description_length": 151,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 80,
-      "shopee_item_id": "58207037675",
-      "category": "Área Externa",
-      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 910,
-          "h2_count": 4,
-          "internal_links": 2,
-          "seo_title_length": 52,
-          "meta_description_length": 155,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -295,6 +241,57 @@
           "internal_links": 1,
           "seo_title_length": 44,
           "meta_description_length": 122,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 71,
+      "shopee_item_id": "21299673093",
+      "category": "Banheiro",
+      "product": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 88,
+      "shopee_item_id": "58257638413",
+      "category": "Banheiro",
+      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida",
+          "word_count_alto:1260"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 1260,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 59,
+          "meta_description_length": 152,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
