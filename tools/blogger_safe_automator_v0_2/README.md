@@ -1,85 +1,97 @@
-# Blogger Safe Automator v0.2 — UI Provisioning
+# Blogger Safe Automator v0.3 — Chrome oficial via CDP
 
-Camada local complementar ao Blogger Bridge/API. Objetivo: cobrir ações que a API Blogger v3 não expõe, começando pela criação segura de um novo blog no painel do Blogger.
+Camada complementar ao Blogger Bridge/API para ações que a API Blogger v3 não expõe. Esta versão **não inicia o Chromium do Playwright**: conecta ao **Google Chrome oficial já autenticado** via CDP.
 
-## Princípios de segurança
+## Segurança mantida
 
-- sessão Playwright persistente e visível;
-- não automatiza login/senha Google;
+- nenhuma exclusão automática;
+- login/senha Google nunca são automatizados nem armazenados;
+- CDP fica em loopback por padrão (`127.0.0.1:9222`);
 - `audit` é somente leitura;
-- `create-blog` faz apenas pré-validação por padrão;
-- criação real exige `--apply` **e** `--confirm "CREATE BLOG"`;
-- se o seletor de blogs, campos ou botões não forem identificados com segurança, a execução falha sem clicar em alternativas genéricas;
-- salva diagnóstico local (`json` + screenshot) para ajuste de seletores;
-- não contém rotinas de exclusão;
-- não altera blogs existentes.
+- `create-blog` faz preflight por padrão;
+- criação real exige `--apply` + `--confirm "CREATE BLOG"`;
+- seletores são fail-closed;
+- sucesso só é retornado depois de detectar um Blog ID novo e validar a URL pública com HTTP 200;
+- URLs gravadas em diagnóstico têm query/fragmento removidos;
+- ao terminar, o script **não fecha o Chrome oficial**;
+- CDP remoto é bloqueado por padrão.
 
-## Instalação no Windows
+## Instalação
 
 ```bat
 py -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m playwright install chromium
 ```
 
-## 1. Auditoria do painel
+**Não execute `playwright install chromium` para autenticar Google.**
+
+## Iniciar o Chrome oficial com CDP
+
+```bat
+start "" "%ProgramFiles%\Google\Chrome\Application\chrome.exe" ^
+  --remote-debugging-port=9222 ^
+  --remote-debugging-address=127.0.0.1 ^
+  --user-data-dir="C:\Blogger-Automator\chrome-debug-profile" ^
+  "https://www.blogger.com/"
+```
+
+O perfil `chrome-debug-profile` deve continuar separado do perfil normal do Chrome.
+
+Verificação:
+
+```bat
+curl http://127.0.0.1:9222/json/version
+```
+
+## Auditoria
 
 ```bat
 .\.venv\Scripts\python.exe browser_provision.py audit
 ```
 
-Na primeira execução, se a sessão persistente ainda não estiver autenticada, faça o login manualmente no Chromium aberto pelo Playwright e execute o comando novamente.
-
-O perfil padrão fica em:
+Resultado esperado:
 
 ```text
-.blogger-playwright-profile
+"AUDIT_OK"
 ```
 
-Para reaproveitar outro perfil persistente já existente:
-
-```bat
-.\.venv\Scripts\python.exe browser_provision.py --profile-dir "CAMINHO_DO_PERFIL" audit
-```
-
-## 2. Pré-validação de um novo blog — não cria nada
+## Preflight de criação — não cria nada
 
 ```bat
 .\.venv\Scripts\python.exe browser_provision.py create-blog ^
-  --title "Nome do Produto" ^
-  --address "nome-do-produto"
+  --title "TESTE BLOGGER AUTOMATION" ^
+  --address "teste-blogger-automation"
 ```
 
 Resultado esperado:
 
 ```text
-PREFLIGHT_OK_NO_CHANGES
+"PREFLIGHT_OK_NO_CHANGES"
 ```
 
-## 3. Criação real
+## Criação real
 
-Somente depois de a auditoria/pré-validação estar correta:
+Somente após o preflight:
 
 ```bat
 .\.venv\Scripts\python.exe browser_provision.py create-blog ^
-  --title "Nome do Produto" ^
-  --address "nome-do-produto" ^
+  --title "TESTE BLOGGER AUTOMATION" ^
+  --address "teste-blogger-automation" ^
   --apply ^
   --confirm "CREATE BLOG"
 ```
 
-O fluxo segue a sequência documentada oficialmente pelo Blogger:
+O comando só retorna `CREATE_BLOG_VALIDATED` depois de:
 
-1. abrir o seletor de blogs;
-2. `Novo blog`;
-3. preencher o nome;
-4. `Próxima`;
-5. preencher o endereço;
-6. `Salvar`.
+1. executar o fluxo `Novo blog`;
+2. detectar um Blog ID diferente do blog de origem;
+3. confirmar a URL pública com HTTP 200.
+
+Se alguma validação falhar, o processo não registra sucesso.
 
 ## Diagnósticos
 
-Por padrão:
+Padrão:
 
 ```text
 logs/browser_diagnostics/
@@ -94,18 +106,32 @@ Arquivos possíveis:
 - `failure_controls.json`
 - `failure.png`
 
-Esses arquivos não devem conter senhas; ainda assim, trate screenshots do painel como dados privados.
+Screenshots do painel devem ser tratados como dados privados.
 
-## Escopo desta v0.2
+## Testes locais
+
+```bat
+.\.venv\Scripts\python.exe -m unittest test_browser_provision.py
+```
+
+## Escopo atual
 
 Incluído:
+
+- Chrome oficial + CDP;
 - auditoria do painel;
-- criação segura de blog via UI.
+- preflight fail-closed;
+- criação segura de blog;
+- proteção contra confundir o Blog ID antigo com o novo;
+- validação da URL pública;
+- testes de regressão de segurança.
 
 Ainda não incluído:
-- instalação/edição de tema XML;
-- alterações de Configurações;
-- exclusão de blog;
-- automação de login Google.
 
-Essas etapas devem ser adicionadas somente depois de validar o fluxo de criação em sessão real.
+- Configurações;
+- Layout;
+- Tema;
+- ponte externa ChatGPT → runner;
+- implantação Cloudflare Tunnel.
+
+Essas etapas devem usar o mesmo Chrome oficial/CDP, sem voltar ao Chromium interno do Playwright.
