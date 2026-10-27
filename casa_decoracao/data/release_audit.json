@@ -2,123 +2,27 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 13,
+    "total": 10,
     "draft_ready": 1,
-    "rejected": 8,
-    "not_generated": 4,
-    "published_history": 22,
+    "rejected": 6,
+    "not_generated": 3,
+    "published_history": 23,
     "rotation_cycle": 3,
     "rotation_pending": [
       "Sala",
       "Quarto",
       "Cozinha",
-      "Banheiro",
       "Área Externa",
       "Cama, Mesa e Banho"
     ]
   },
   "items": [
     {
-      "id": 20,
-      "shopee_item_id": "58205899287",
-      "category": "Organização",
-      "product": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 211,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 554,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 39,
-          "meta_description_length": 151,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 13,
-      "shopee_item_id": "21071530577",
-      "category": "Organização",
-      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 800,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 44,
-          "meta_description_length": 122,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 83,
-      "shopee_item_id": "23798178107",
-      "category": "Organização",
-      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "especificacao_numerica_nao_confirmada:1 50m",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "meta_description_tamanho:158",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1102"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 1102,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 57,
-          "meta_description_length": 158,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
       "id": 81,
       "shopee_item_id": "23499666463",
       "category": "Sala",
       "product": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -153,7 +57,7 @@
       "shopee_item_id": "58200253216",
       "category": "Quarto",
       "product": "Kit Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -178,43 +82,6 @@
           "internal_links": 1,
           "seo_title_length": 52,
           "meta_description_length": 155,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 6,
-      "shopee_item_id": "20452224775",
-      "category": "Quarto",
-      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "especificacao_numerica_nao_confirmada:400 g",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 878,
-          "h2_count": 3,
-          "internal_links": 1,
-          "seo_title_length": 49,
-          "meta_description_length": 127,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -258,6 +125,41 @@
       }
     },
     {
+      "id": 86,
+      "shopee_item_id": "22312840596",
+      "category": "Cozinha",
+      "product": "Esteira de Louça Grade Flexível Dobrável Escorredor Grande Inox Cozinha Pia",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 796,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 60,
+          "meta_description_length": 154,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
       "id": 71,
       "shopee_item_id": "21299673093",
       "category": "Banheiro",
@@ -278,15 +180,21 @@
       "shopee_item_id": "58254362999",
       "category": "Banheiro",
       "product": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 214,
       "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
-        "metrics": {}
+        "metrics": {
+          "word_count": 636,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 45,
+          "meta_description_length": 151,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
       }
     },
     {
@@ -357,17 +265,18 @@
       }
     },
     {
-      "id": 85,
-      "shopee_item_id": "58257090824",
-      "category": "Decoração",
-      "product": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
-      "queue_status": "PENDING",
+      "id": 13,
+      "shopee_item_id": "21071530577",
+      "category": "Organização",
+      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
         "reasons": [
           "chamada_consulta_contextual_quantidade_invalida:0",
           "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
@@ -381,11 +290,11 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 905,
+          "word_count": 800,
           "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 50,
-          "meta_description_length": 150,
+          "seo_title_length": 44,
+          "meta_description_length": 122,
           "cta_count": 1
         },
         "safety_class": "STANDARD"

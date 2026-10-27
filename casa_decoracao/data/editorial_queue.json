@@ -5,7 +5,6 @@
   "editorial_policy": "produto real -> rotação entre 8 categorias -> título editorial -> Qwen3 -> CTA contextual -> imagem real -> gate -> publicação",
   "category_rotation_cycle": 3,
   "category_rotation_pending": [
-    "Organização",
     "Sala",
     "Quarto",
     "Cozinha",
@@ -14,98 +13,14 @@
     "Cama, Mesa e Banho"
   ],
   "max_per_keyword": 1,
-  "total": 13,
+  "total": 10,
   "skipped": {
-    "produto_ja_publicado": 13,
-    "produto_quase_duplicado": 1,
+    "produto_ja_publicado": 15,
+    "produto_quase_duplicado": 2,
     "limite_por_intencao": 3,
     "produto_semelhante_ja_publicado": 2
   },
   "items": [
-    {
-      "id": 20,
-      "shopee_item_id": "58205899287",
-      "product": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
-      "affiliate_link": "https://s.shopee.com.br/5q9FqqryYh",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lj-ml6nlbjv4sg4ac",
-      "shop_name": "Gloss Box",
-      "source_keyword": "caixa organizadora",
-      "category": "Organização",
-      "opportunity_score": 64.22,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "last_error": "",
-      "generation_attempts": 2,
-      "topic": "Como organizar pequenos objetos em casa",
-      "editorial_title": "Como organizar pequenos objetos em casa",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 554,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 39,
-          "meta_description_length": 151,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "wordpress_post_id": 211,
-      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-organizar-pequenos-objetos-em-casa/",
-      "featured_media": 212,
-      "seo_synced": true
-    },
-    {
-      "id": 13,
-      "shopee_item_id": "21071530577",
-      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
-      "affiliate_link": "https://s.shopee.com.br/50a8rKHHdz",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7augbm6ixf693",
-      "shop_name": "Na Web Group De Marcas",
-      "source_keyword": "varal de chao",
-      "category": "Organização",
-      "opportunity_score": 61.82,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
-      "generation_attempts": 1
-    },
-    {
-      "id": 83,
-      "shopee_item_id": "23798178107",
-      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
-      "affiliate_link": "https://s.shopee.com.br/3qOBZ07kpJ",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-81z1k-mfvhv2o7wtfk77",
-      "shop_name": "Maison Plus",
-      "source_keyword": "organizador armario",
-      "category": "Organização",
-      "opportunity_score": 60.11,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
-    },
     {
       "id": 81,
       "shopee_item_id": "23499666463",
@@ -117,14 +32,16 @@
       "category": "Sala",
       "opportunity_score": 61.58,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:528"
     },
     {
       "id": 79,
@@ -137,34 +54,16 @@
       "category": "Quarto",
       "opportunity_score": 65.37,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
-    },
-    {
-      "id": 6,
-      "shopee_item_id": "20452224775",
-      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
-      "affiliate_link": "https://s.shopee.com.br/9zyp6NzJHm",
-      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8260p-mkcfopp4p5hc85",
-      "shop_name": "Haute Decor",
-      "source_keyword": "abajur quarto",
-      "category": "Quarto",
-      "opportunity_score": 64.8,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 491"
     },
     {
       "id": 31,
@@ -185,8 +84,30 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada, word_count_baixo:524",
-      "generation_attempts": 1
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:517",
+      "generation_attempts": 2
+    },
+    {
+      "id": 86,
+      "shopee_item_id": "22312840596",
+      "product": "Esteira de Louça Grade Flexível Dobrável Escorredor Grande Inox Cozinha Pia",
+      "affiliate_link": "https://s.shopee.com.br/1BSrxc3TY",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820ld-mtsa0x8yvi8296",
+      "shop_name": "Demima",
+      "source_keyword": "escorredor de loucas",
+      "category": "Cozinha",
+      "opportunity_score": 59.75,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "generation_attempts": 1,
+      "last_error": "título editorial fora da faixa: 31"
     },
     {
       "id": 71,
@@ -208,7 +129,7 @@
         "category_rotation_required": true
       },
       "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
-      "generation_attempts": 1
+      "generation_attempts": 2
     },
     {
       "id": 73,
@@ -221,7 +142,7 @@
       "category": "Banheiro",
       "opportunity_score": 61.2,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
+      "status": "PUBLISHED",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
@@ -229,8 +150,28 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "last_error": "geração editorial bloqueada após revisões: artigo curto: 479",
-      "generation_attempts": 1
+      "last_error": "",
+      "generation_attempts": 1,
+      "topic": "Organize seu banheiro com acessórios práticos",
+      "editorial_title": "Organize seu banheiro com acessórios práticos",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 636,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 45,
+          "meta_description_length": 151,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "wordpress_post_id": 214,
+      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/organize-seu-banheiro-com-acessorios-praticos/",
+      "featured_media": 215,
+      "seo_synced": true
     },
     {
       "id": 80,
@@ -295,24 +236,26 @@
       "generation_attempts": 1
     },
     {
-      "id": 85,
-      "shopee_item_id": "58257090824",
-      "product": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
-      "affiliate_link": "https://s.shopee.com.br/2gCE51zYy2",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m9-mmm1sfjpscna7b",
-      "shop_name": "VISIO DECORE ",
-      "source_keyword": "almofada decorativa",
-      "category": "Decoração",
-      "opportunity_score": 59.35,
+      "id": 13,
+      "shopee_item_id": "21071530577",
+      "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
+      "affiliate_link": "https://s.shopee.com.br/50a8rKHHdz",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7augbm6ixf693",
+      "shop_name": "Na Web Group De Marcas",
+      "source_keyword": "varal de chao",
+      "category": "Organização",
+      "opportunity_score": 61.82,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
+      "status": "QUARANTINE",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
         "publication_requires_gate": true,
         "single_editorial_title": true,
         "category_rotation_required": true
-      }
+      },
+      "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
+      "generation_attempts": 1
     }
   ]
 }
