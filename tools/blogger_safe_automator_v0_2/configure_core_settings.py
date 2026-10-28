@@ -20,10 +20,6 @@ class SettingsError(bp.SafeAutomationError):
     pass
 
 
-def norm(value: str | None) -> str:
-    return re.sub(r"\s+", " ", value or "").strip()
-
-
 def first_visible(locator):
     try:
         for i in range(locator.count()):
@@ -61,11 +57,10 @@ def visible_dialog(page):
 def click_dialog_action(page, label: str) -> None:
     dialog = visible_dialog(page)
     pattern = re.compile(rf"^{re.escape(label)}$", re.I)
-    candidates = [
+    for loc in (
         dialog.get_by_role("button", name=pattern),
         dialog.get_by_text(pattern, exact=True),
-    ]
-    for loc in candidates:
+    ):
         item = first_visible(loc)
         if item is None:
             continue
@@ -157,7 +152,7 @@ def set_timezone(page, target: str) -> dict:
         chosen.evaluate("el => el.click()")
     page.wait_for_timeout(250)
     click_dialog_action(page, "SALVAR")
-    return {"target": target}
+    return {"target": target, "selected_and_saved": True}
 
 
 def snapshot(page) -> dict:
@@ -176,7 +171,7 @@ def snapshot(page) -> dict:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="Aplica perfil-base seguro de Configurações do Blogger.")
+    p = argparse.ArgumentParser(description="Configura perfil-base seguro do Blogger.")
     p.add_argument("--expected-blog-id", required=True)
     p.add_argument("--description", required=True)
     p.add_argument("--search-description", required=True)
@@ -186,19 +181,22 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
-def main() -> int:
-    args = build_parser().parse_args()
-    if not args.apply or args.confirm != CONFIRMATION:
-        raise SettingsError(
-            f'Alteração bloqueada. Use --apply --confirm "{CONFIRMATION}" somente após revisar os valores.'
-        )
+def validate_args(args) -> None:
     if not re.fullmatch(r"\d+", args.expected_blog_id):
         raise SettingsError("Blog ID esperado inválido.")
     if not (1 <= len(args.description) <= 500):
         raise SettingsError("Descrição deve ter entre 1 e 500 caracteres.")
     if not (1 <= len(args.search_description) <= 500):
         raise SettingsError("Descrição de pesquisa deve ter entre 1 e 500 caracteres.")
+    if args.apply and args.confirm != CONFIRMATION:
+        raise SettingsError(f'Para aplicar, use --confirm "{CONFIRMATION}".')
+    if not args.apply and args.confirm:
+        raise SettingsError("--confirm só pode ser usado junto com --apply.")
 
+
+def main() -> int:
+    args = build_parser().parse_args()
+    validate_args(args)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as p:
@@ -213,6 +211,38 @@ def main() -> int:
             )
         core.goto_settings(page, blog_id)
         before = snapshot(page)
+
+        plan = {
+            "description": args.description,
+            "search_visibility": True,
+            "https_redirect": True,
+            "lazy_images": True,
+            "webp_images": True,
+            "search_description_enabled": True,
+            "search_description": args.search_description,
+            "timezone": args.timezone,
+            "custom_robots_txt": "UNCHANGED",
+            "custom_robots_headers": "UNCHANGED",
+        }
+
+        if not args.apply:
+            result = {
+                "status": "SETTINGS_PREFLIGHT_OK",
+                "read_only": True,
+                "blog_id": blog_id,
+                "settings_url": bp.sanitize_url(page.url),
+                "current": before,
+                "planned": plan,
+                "message": (
+                    f'Nenhuma configuração foi alterada. Para aplicar após revisar, use '
+                    f'--apply --confirm "{CONFIRMATION}".'
+                ),
+            }
+            (OUT_DIR / "settings_profile_preflight.json").write_text(
+                json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
 
         actions = []
         actions.append(set_dialog_text(page, "Descrição", args.description, ("Descrição", "Description")))
@@ -233,14 +263,13 @@ def main() -> int:
         page.wait_for_timeout(800)
         after = snapshot(page)
 
-        required_true = (
+        for key in (
             "search_visibility",
             "https_redirect",
             "lazy_images",
             "webp_images",
             "search_description",
-        )
-        for key in required_true:
+        ):
             if after[key].get("aria_checked") != "true":
                 raise SettingsError(f"Validação final falhou para {key}.")
 
@@ -251,9 +280,10 @@ def main() -> int:
 
         result = {
             "status": "SETTINGS_PROFILE_VALIDATED",
+            "read_only": False,
             "blog_id": blog_id,
             "settings_url": bp.sanitize_url(page.url),
-            "timezone_target": args.timezone,
+            "planned": plan,
             "before": before,
             "actions": actions,
             "after": after,
