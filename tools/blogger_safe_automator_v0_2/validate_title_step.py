@@ -10,7 +10,7 @@ from playwright.sync_api import sync_playwright
 CDP_URL = bp.DEFAULT_CDP_URL
 TEST_TITLE = "TESTE BLOGGER AUTOMATION"
 NEW_BLOG_RE = re.compile(r"^(Novo blog(?:\.\.\.|…)?|New blog(?:\.\.\.|…)?)$", re.I)
-NEXT_RE = re.compile(r"^(Pr[oó]xima|Next|Continuar|Continue)$", re.I)
+NEXT_RE = re.compile(r"^(Avan[cç]ar|Advance|Pr[oó]xima|Next|Continuar|Continue)$", re.I)
 
 
 def norm(value: str | None) -> str:
@@ -140,15 +140,15 @@ def main() -> int:
                 "ok": bool(next_matches),
                 "title_field_detected": True,
                 "temporary_title_filled": TEST_TITLE,
-                "next_matches": next_matches,
+                "advance_matches": next_matches,
                 "clickables": clickables,
-                "message": "O título foi preenchido apenas temporariamente. Nenhum botão Próxima/Salvar foi acionado.",
+                "message": "O título foi preenchido apenas temporariamente. Nenhum botão Avançar/Salvar foi acionado.",
             }
         except Exception as exc:
             result = {
                 "ok": False,
                 "error": norm(str(exc))[:700],
-                "message": "Nenhum botão Próxima/Salvar foi acionado.",
+                "message": "Nenhum botão Avançar/Salvar foi acionado.",
             }
         finally:
             try:
