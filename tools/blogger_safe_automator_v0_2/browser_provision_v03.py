@@ -9,10 +9,28 @@ NEW_BLOG_PATTERN = re.compile(r"^(Novo blog(?:\.\.\.|…)?|New blog(?:\.\.\.|…
 BLOG_SELECTION_PATTERN = re.compile(r"^(Blog Selection|Sele[cç][aã]o de blog)$", re.I)
 
 
+def _normalized_text(locator) -> str:
+    try:
+        return re.sub(r"\s+", " ", locator.inner_text() or "").strip()
+    except Exception:
+        return ""
+
+
 def find_new_blog(page):
+    # No Blogger atual, "Novo blog..." aparece como role=option com texto
+    # visível, mas sem aria-label. Por isso percorremos as opções visíveis
+    # e comparamos o texto real antes de usar os fallbacks semânticos.
+    options = page.get_by_role("option")
+    for i in range(options.count()):
+        item = options.nth(i)
+        try:
+            if item.is_visible() and NEW_BLOG_PATTERN.fullmatch(_normalized_text(item)):
+                return item
+        except Exception:
+            continue
+
     return bp.visible_first(
         [
-            page.get_by_role("option", name=NEW_BLOG_PATTERN),
             page.get_by_role("button", name=NEW_BLOG_PATTERN),
             page.get_by_role("menuitem", name=NEW_BLOG_PATTERN),
             page.get_by_text(NEW_BLOG_PATTERN, exact=True),
