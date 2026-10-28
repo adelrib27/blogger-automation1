@@ -17,9 +17,8 @@ def _normalized_text(locator) -> str:
 
 
 def find_new_blog(page):
-    # No Blogger atual, "Novo blog..." aparece como role=option com texto
-    # visível, mas sem aria-label. Por isso percorremos as opções visíveis
-    # e comparamos o texto real antes de usar os fallbacks semânticos.
+    # O Blogger atual expõe "Novo blog..." como role=option sem aria-label.
+    # Percorremos as opções visíveis e comparamos o texto real.
     options = page.get_by_role("option")
     for i in range(options.count()):
         item = options.nth(i)
@@ -39,9 +38,20 @@ def find_new_blog(page):
 
 
 def open_blog_switcher(page) -> None:
+    # Estrutura confirmada no Blogger atual: um listbox visível chamado
+    # "Blog Selection". Mesmo quando aria-expanded="true", o clique é
+    # necessário para materializar/atualizar as options para o Playwright.
+    listbox = page.get_by_role("listbox", name=BLOG_SELECTION_PATTERN)
+    try:
+        if listbox.count() == 1 and listbox.first.is_visible():
+            listbox.first.click(timeout=10_000)
+            page.wait_for_timeout(900)
+            return
+    except Exception:
+        pass
+
     switcher = bp.visible_first(
         [
-            page.get_by_role("listbox", name=BLOG_SELECTION_PATTERN),
             page.get_by_role(
                 "button",
                 name=re.compile(
@@ -58,10 +68,8 @@ def open_blog_switcher(page) -> None:
             "Nenhum clique de criação foi executado."
         )
 
-    expanded = (switcher.get_attribute("aria-expanded") or "").strip().lower()
-    if expanded != "true":
-        switcher.click(timeout=10_000)
-        page.wait_for_timeout(700)
+    switcher.click(timeout=10_000)
+    page.wait_for_timeout(900)
 
 
 # Injeta a correção no módulo original para que audit/preflight/create usem
