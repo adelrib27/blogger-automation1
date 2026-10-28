@@ -5,15 +5,16 @@ import json
 import re
 
 import browser_provision as bp
-import browser_provision_v03 as v03
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, sync_playwright
 
 CDP_URL = bp.DEFAULT_CDP_URL
+NEW_BLOG_PATTERN = re.compile(r"^(Novo blog(?:\.\.\.|…)?|New blog(?:\.\.\.|…)?)$", re.I)
 TITLE_MARKERS = re.compile(
     r"(escolha.*nome.*blog|nome.*blog|t[ií]tulo|choose.*name.*blog|blog.*title)",
     re.I,
 )
 NEXT_MARKERS = re.compile(r"^(pr[oó]xima|next|continuar|continue)$", re.I)
+MAIN_MENU_PATTERN = re.compile(r"^(Menu principal|Main menu)$", re.I)
 
 
 def norm(value: str | None) -> str:
@@ -21,8 +22,21 @@ def norm(value: str | None) -> str:
 
 
 def compact_error(exc: Exception) -> str:
-    text = norm(str(exc))
-    return text[:500]
+    return norm(str(exc))[:500]
+
+
+def first_visible(locator):
+    try:
+        for i in range(locator.count()):
+            item = locator.nth(i)
+            try:
+                if item.is_visible():
+                    return item
+            except Exception:
+                continue
+    except Exception:
+        pass
+    return None
 
 
 def visible_snapshot(page) -> dict:
@@ -83,29 +97,80 @@ def visible_snapshot(page) -> dict:
     }
 
 
+def reset_to_original(page, original_url: str) -> None:
+    # Cada tentativa começa de um estado novo. Isso evita locators antigos,
+    # drawers fechados e opções destacadas/destacadas pelo teste anterior.
+    page.goto(original_url, wait_until="domcontentloaded", timeout=60_000)
+    page.wait_for_timeout(1200)
+
+
+def ensure_blog_switcher(page):
+    switcher = first_visible(
+        page.locator('[role="listbox"][aria-label="Blog Selection"], '
+                     '[role="listbox"][aria-label*="Seleção de blog" i]')
+    )
+    if switcher is not None:
+        return switcher
+
+    # Em algumas renderizações o drawer lateral nasce fechado. Abrimos apenas
+    # o menu de navegação, nunca uma ação de criação.
+    menu = first_visible(
+        page.get_by_role("button", name=MAIN_MENU_PATTERN)
+    ) or first_visible(
+        page.locator('[role="button"][aria-label="Menu principal"], '
+                     '[role="button"][aria-label="Main menu"]')
+    )
+    if menu is not None:
+        try:
+            menu.click(timeout=3_000)
+        except Exception:
+            try:
+                menu.evaluate("el => el.click()")
+            except Exception:
+                pass
+        page.wait_for_timeout(500)
+
+    switcher = first_visible(
+        page.locator('[role="listbox"][aria-label="Blog Selection"], '
+                     '[role="listbox"][aria-label*="Seleção de blog" i]')
+    )
+    if switcher is None:
+        raise bp.SafeAutomationError(
+            "Blog Selection não ficou visível após restaurar a página e verificar o drawer."
+        )
+    return switcher
+
+
 def reacquire_new_blog(page):
-    v03.open_blog_switcher(page)
-    page.wait_for_timeout(250)
-    control = v03.find_new_blog(page)
-    if control is None:
-        raise bp.SafeAutomationError('A opção "Novo blog..." não foi localizada.')
-    return control
+    switcher = ensure_blog_switcher(page)
 
-
-def restore(page, original_url: str) -> None:
+    # O Blogger materializa/estabiliza as opções após interação com o listbox.
     try:
-        page.keyboard.press("Escape")
-        page.wait_for_timeout(300)
+        switcher.click(timeout=3_000)
     except Exception:
-        pass
-    if bp.sanitize_url(page.url) != bp.sanitize_url(original_url):
-        page.goto(original_url, wait_until="domcontentloaded", timeout=60_000)
-        page.wait_for_timeout(700)
+        try:
+            switcher.evaluate("el => el.click()")
+        except Exception:
+            pass
+    page.wait_for_timeout(450)
+
+    options = page.get_by_role("option")
+    for i in range(options.count()):
+        item = options.nth(i)
+        try:
+            if item.is_visible() and NEW_BLOG_PATTERN.fullmatch(norm(item.inner_text())):
+                return item
+        except Exception:
+            continue
+
+    raise bp.SafeAutomationError('A opção "Novo blog..." não ficou visível após abrir o seletor.')
 
 
-def activate_once(page, method: str) -> tuple[bool, str | None]:
-    control = reacquire_new_blog(page)
+def activate_once(page, method: str, original_url: str) -> tuple[bool, str | None]:
     try:
+        reset_to_original(page, original_url)
+        control = reacquire_new_blog(page)
+
         if method == "click":
             control.click(timeout=3_000)
         elif method == "force-click":
@@ -138,21 +203,26 @@ def main() -> int:
         activated = False
         activation_method = None
         final_snapshot = None
+        metadata = None
 
-        first = reacquire_new_blog(page)
-        metadata = {
-            "text": norm(first.inner_text()),
-            "role": first.get_attribute("role") or "",
-            "aria": first.get_attribute("aria-label") or "",
-            "tabindex": first.get_attribute("tabindex") or "",
-            "class": first.get_attribute("class") or "",
-            "box": first.bounding_box(),
-        }
+        try:
+            reset_to_original(page, original_url)
+            first = reacquire_new_blog(page)
+            metadata = {
+                "text": norm(first.inner_text()),
+                "role": first.get_attribute("role") or "",
+                "aria": first.get_attribute("aria-label") or "",
+                "tabindex": first.get_attribute("tabindex") or "",
+                "class": first.get_attribute("class") or "",
+                "box": first.bounding_box(),
+            }
+        except Exception as exc:
+            metadata = {"error": compact_error(exc)}
 
         methods = ("click", "force-click", "enter", "space", "dom-click")
         for method in methods:
-            invoked, error = activate_once(page, method)
-            page.wait_for_timeout(900 if invoked else 250)
+            invoked, error = activate_once(page, method, original_url)
+            page.wait_for_timeout(900 if invoked else 200)
             snap = visible_snapshot(page)
             attempts.append({
                 "method": method,
@@ -171,13 +241,11 @@ def main() -> int:
                 final_snapshot = snap
                 break
 
-            try:
-                page.keyboard.press("Escape")
-                page.wait_for_timeout(250)
-            except Exception:
-                pass
-
-        restore(page, original_url)
+        # Restauração explícita ao final, mesmo quando uma tentativa funcionou.
+        try:
+            reset_to_original(page, original_url)
+        except Exception:
+            pass
         current_blog_id = bp.extract_current_blog_id(page)
 
         result = {
