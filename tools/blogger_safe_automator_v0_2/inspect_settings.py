@@ -26,27 +26,79 @@ KEYWORDS = (
     "favicon",
 )
 
+SETTINGS_RE = re.compile(r"^(Configura[cç][oõ]es|Settings)$", re.I)
+
 
 def norm(value: str | None) -> str:
     return re.sub(r"\s+", " ", value or "").strip()
 
 
-def find_settings_href(page, blog_id: str) -> str | None:
-    links = page.locator('a[href*="settings"]')
-    fallback = None
-    for i in range(links.count()):
-        item = links.nth(i)
-        try:
-            href = item.get_attribute("href") or ""
-            if not href:
+def first_visible(locator):
+    try:
+        for i in range(locator.count()):
+            item = locator.nth(i)
+            try:
+                if item.is_visible():
+                    return item
+            except Exception:
                 continue
-            if fallback is None:
-                fallback = href
-            if blog_id in href:
-                return href
-        except Exception:
-            continue
-    return fallback
+    except Exception:
+        pass
+    return None
+
+
+def open_settings(page, blog_id: str) -> None:
+    """Abre Configurações pela própria UI do Blogger.
+
+    Evita navegar diretamente por hrefs relativos usados pelo SPA do Blogger.
+    Esta ação apenas navega; não altera nenhuma configuração.
+    """
+    candidates = [
+        page.get_by_role("menuitem", name=SETTINGS_RE),
+        page.get_by_text(SETTINGS_RE, exact=True),
+        page.locator(f'a[href*="settings"][href*="{blog_id}"]'),
+    ]
+
+    target = None
+    for candidate in candidates:
+        target = first_visible(candidate)
+        if target is not None:
+            break
+
+    if target is None:
+        raise bp.SafeAutomationError(
+            "Item Configurações não foi localizado com segurança. Nenhuma alteração foi feita."
+        )
+
+    try:
+        target.click(timeout=5_000)
+    except Exception:
+        try:
+            target.evaluate("el => el.click()")
+        except Exception as exc:
+            raise bp.SafeAutomationError(
+                "Configurações foi localizado, mas não pôde ser aberto com segurança."
+            ) from exc
+
+    deadline_ms = 12_000
+    elapsed = 0
+    while elapsed < deadline_ms:
+        current = page.url.lower()
+        if "settings" in current and blog_id in current:
+            return
+        page.wait_for_timeout(250)
+        elapsed += 250
+
+    # Alguns estados do SPA não atualizam a URL imediatamente. Aceita a tela
+    # somente se um marcador inequívoco de Configurações estiver visível.
+    markers = page.get_by_text(
+        re.compile(r"^(B[aá]sicas|Privacidade|Publica[cç][aã]o|HTTPS|Rastreadores e indexa[cç][aã]o)$", re.I),
+        exact=True,
+    )
+    if first_visible(markers) is None:
+        raise bp.SafeAutomationError(
+            "A navegação para Configurações não pôde ser confirmada. Nenhuma alteração foi feita."
+        )
 
 
 def inspect_settings(page) -> dict:
@@ -123,13 +175,7 @@ def main() -> int:
         if not blog_id:
             raise bp.SafeAutomationError("Não foi possível identificar o Blog ID atual.")
 
-        settings_href = find_settings_href(page, blog_id)
-        if not settings_href:
-            raise bp.SafeAutomationError(
-                "Link de Configurações não foi localizado com segurança. Nenhuma alteração foi feita."
-            )
-
-        page.goto(settings_href, wait_until="domcontentloaded", timeout=60_000)
+        open_settings(page, blog_id)
         page.wait_for_timeout(1500)
 
         snapshot = inspect_settings(page)
