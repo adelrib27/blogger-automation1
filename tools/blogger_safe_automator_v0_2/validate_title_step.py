@@ -10,7 +10,7 @@ from playwright.sync_api import sync_playwright
 CDP_URL = bp.DEFAULT_CDP_URL
 TEST_TITLE = "TESTE BLOGGER AUTOMATION"
 NEW_BLOG_RE = re.compile(r"^(Novo blog(?:\.\.\.|…)?|New blog(?:\.\.\.|…)?)$", re.I)
-NEXT_RE = re.compile(r"^(Avan[cç]ar|Advance|Pr[oó]xima|Next|Continuar|Continue)$", re.I)
+ADVANCE_RE = re.compile(r"^(Avan[cç]ar|Advance|Pr[oó]xima|Next|Continuar|Continue)$", re.I)
 
 
 def norm(value: str | None) -> str:
@@ -41,7 +41,12 @@ def ensure_switcher(page):
     if switcher is not None:
         return switcher
 
-    menu = first_visible(page.locator('[role="button"][aria-label="Menu principal"], [role="button"][aria-label="Main menu"]'))
+    menu = first_visible(
+        page.locator(
+            '[role="button"][aria-label="Menu principal"], '
+            '[role="button"][aria-label="Main menu"]'
+        )
+    )
     if menu is not None:
         try:
             menu.click(timeout=3_000)
@@ -81,33 +86,50 @@ def open_create_ui(page) -> None:
     page.wait_for_timeout(900)
 
 
-def snapshot_clickables(page) -> list[dict]:
-    data = page.evaluate(
+def find_advance_targets(page) -> list[dict]:
+    # Procura o texto de ação diretamente em TODOS os elementos visíveis.
+    # Depois registra também o ancestral clicável mais próximo. Isso evita
+    # perder o botão por limite de snapshot ou por falta de role semântico.
+    return page.evaluate(
         r"""() => {
-          const out = [];
-          const nodes = [...document.querySelectorAll('button,[role="button"],[role="option"],[jsaction],[tabindex]')];
-          for (const el of nodes) {
+          const labels = new Set(['AVANÇAR', 'AVANCAR', 'ADVANCE', 'PRÓXIMA', 'PROXIMA', 'NEXT', 'CONTINUAR', 'CONTINUE']);
+          const norm = (s) => (s || '').trim().replace(/\s+/g, ' ');
+          const visible = (el) => {
             const r = el.getBoundingClientRect();
             const s = getComputedStyle(el);
-            if (r.width <= 0 || r.height <= 0 || s.display === 'none' || s.visibility === 'hidden') continue;
-            const text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
-            const aria = (el.getAttribute('aria-label') || '').trim();
-            if (!text && !aria) continue;
+            return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+          };
+          const describe = (el) => ({
+            tag: el.tagName,
+            role: el.getAttribute('role') || '',
+            text: norm(el.innerText || el.textContent || '').slice(0, 180),
+            aria: norm(el.getAttribute('aria-label') || '').slice(0, 180),
+            tabindex: el.getAttribute('tabindex') || '',
+            disabled: el.hasAttribute('disabled') || el.getAttribute('aria-disabled') || '',
+            jsaction: (el.getAttribute('jsaction') || '').slice(0, 180)
+          });
+
+          const out = [];
+          const seen = new Set();
+          for (const el of document.querySelectorAll('body *')) {
+            if (!visible(el)) continue;
+            const text = norm(el.innerText || el.textContent || '').toUpperCase();
+            const aria = norm(el.getAttribute('aria-label') || '').toUpperCase();
+            if (!labels.has(text) && !labels.has(aria)) continue;
+
+            const clickable = el.closest('button,[role="button"],[jsaction],[tabindex]') || el;
+            const key = `${clickable.tagName}|${clickable.getAttribute('role') || ''}|${norm(clickable.innerText || clickable.textContent || '')}|${clickable.getAttribute('jsaction') || ''}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+
             out.push({
-              tag: el.tagName,
-              role: el.getAttribute('role') || '',
-              text: text.slice(0, 180),
-              aria: aria.slice(0, 180),
-              tabindex: el.getAttribute('tabindex') || '',
-              disabled: el.hasAttribute('disabled') || el.getAttribute('aria-disabled') || '',
-              jsaction: (el.getAttribute('jsaction') || '').slice(0, 180)
+              matched_element: describe(el),
+              clickable_ancestor: describe(clickable)
             });
-            if (out.length >= 120) break;
           }
           return out;
         }"""
     )
-    return data
 
 
 def main() -> int:
@@ -130,18 +152,17 @@ def main() -> int:
             title.fill(TEST_TITLE)
             page.wait_for_timeout(500)
 
-            clickables = snapshot_clickables(page)
-            next_matches = [
-                x for x in clickables
-                if NEXT_RE.fullmatch(norm(x.get("text") or x.get("aria")))
-            ]
+            advance_matches = find_advance_targets(page)
+            semantic_match = first_visible(
+                page.get_by_text(ADVANCE_RE, exact=True)
+            )
 
             result = {
-                "ok": bool(next_matches),
+                "ok": bool(advance_matches or semantic_match is not None),
                 "title_field_detected": True,
                 "temporary_title_filled": TEST_TITLE,
-                "advance_matches": next_matches,
-                "clickables": clickables,
+                "advance_matches": advance_matches,
+                "semantic_text_match": semantic_match is not None,
                 "message": "O título foi preenchido apenas temporariamente. Nenhum botão Avançar/Salvar foi acionado.",
             }
         except Exception as exc:
