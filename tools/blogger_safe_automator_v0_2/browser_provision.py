@@ -31,6 +31,33 @@ BLOG_ID_PATTERNS = (
 )
 LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
 
+NEW_BLOG_RE = re.compile(r"^(Novo blog(?:\.\.\.|…)?|New blog(?:\.\.\.|…)?)$", re.I)
+BLOG_SELECTION_RE = re.compile(r"^(Blog Selection|Sele[cç][aã]o de blog)$", re.I)
+ADVANCE_LABELS = ("AVANÇAR", "Advance", "Próxima", "Next", "Continuar", "Continue")
+FINAL_LABELS = ("SALVAR", "Save", "Criar blog", "Create blog", "Concluir", "Finish")
+TITLE_FIELD_SELECTORS = (
+    'input[aria-label="Título"]',
+    'input[aria-label="Title"]',
+)
+ADDRESS_FIELD_SELECTORS = (
+    'input[aria-label="Endereço"]',
+    'input[aria-label="Address"]',
+    'input[aria-label="URL"]',
+)
+ADDRESS_UNAVAILABLE_MARKERS = (
+    "este endereço de blog não está disponível",
+    "esse endereço de blog não está disponível",
+    "este endereço de blog é inválido",
+    "endereço de blog inválido",
+    "this blog address is not available",
+    "sorry, this blog address is not available",
+    "this blog address is invalid",
+)
+ADDRESS_AVAILABLE_MARKERS = (
+    "este endereço de blog está disponível",
+    "this blog address is available",
+)
+
 
 class SafeAutomationError(RuntimeError):
     pass
@@ -70,6 +97,10 @@ def sanitize_url(value: str) -> str:
         return urlunparse((parsed.scheme, parsed.netloc, parsed.path, "", "", ""))
     except Exception:
         return value.split("?", 1)[0].split("#", 1)[0]
+
+
+def _norm(value: str | None) -> str:
+    return re.sub(r"\s+", " ", value or "").strip()
 
 
 def validate_cdp_url(cdp_url: str, *, allow_remote: bool = False) -> str:
@@ -155,7 +186,9 @@ def require_blogger_session(page: Page) -> None:
 def dump_visible_controls(page: Page, out_path: Path | None = None) -> dict:
     data = page.evaluate(
         r"""() => {
-          const nodes = [...document.querySelectorAll('button,a,input,[role="button"],[role="menuitem"]')];
+          const nodes = [...document.querySelectorAll(
+            'button,a,input,[role="button"],[role="menuitem"],[role="listbox"],[role="option"]'
+          )];
           const safeHref = (raw) => {
             if (!raw) return '';
             try {
@@ -171,7 +204,7 @@ def dump_visible_controls(page: Page, out_path: Path | None = None) -> dict:
               const s = getComputedStyle(el);
               return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none';
             })
-            .slice(0, 250)
+            .slice(0, 350)
             .map(el => ({
               tag: el.tagName,
               text: (el.innerText || el.value || '').trim().replace(/\s+/g, ' ').slice(0, 180),
@@ -188,127 +221,236 @@ def dump_visible_controls(page: Page, out_path: Path | None = None) -> dict:
     return payload
 
 
-def find_new_blog(page: Page) -> Locator | None:
-    return visible_first(
+def _ensure_main_drawer(page: Page) -> None:
+    listbox = visible_first([page.get_by_role("listbox", name=BLOG_SELECTION_RE)])
+    if listbox is not None:
+        return
+
+    menu = visible_first(
         [
-            page.get_by_role("button", name=re.compile(r"^(Novo blog|New blog)$", re.I)),
-            page.get_by_role("menuitem", name=re.compile(r"^(Novo blog|New blog)$", re.I)),
-            page.get_by_text(re.compile(r"^(Novo blog|New blog)$", re.I), exact=True),
+            page.locator('[role="button"][aria-label="Menu principal"]'),
+            page.locator('[role="button"][aria-label="Main menu"]'),
         ]
     )
+    if menu is not None:
+        try:
+            menu.click(timeout=3_000)
+        except Exception:
+            menu.evaluate("el => el.click()")
+        page.wait_for_timeout(500)
 
 
 def open_blog_switcher(page: Page) -> None:
-    switcher = visible_first(
-        [
-            page.get_by_role(
-                "button",
-                name=re.compile(
-                    r"(Selecionar blog|Lista de blogs|Trocar blog|Choose a blog|Blog list|Switch blog)",
-                    re.I,
-                ),
-            ),
-            page.locator('button[aria-label*="blog" i], [role="button"][aria-label*="blog" i]'),
-        ]
-    )
-    if switcher is None:
+    _ensure_main_drawer(page)
+    listbox = visible_first([page.get_by_role("listbox", name=BLOG_SELECTION_RE)])
+    if listbox is None:
         raise SafeAutomationError(
             "Não foi possível identificar com segurança o seletor de blogs. "
             "Nenhum clique de criação foi executado."
         )
-    switcher.click(timeout=10_000)
-    page.wait_for_timeout(700)
+
+    try:
+        listbox.click(timeout=3_000)
+    except Exception:
+        try:
+            listbox.evaluate("el => el.click()")
+        except Exception as exc:
+            raise SafeAutomationError(
+                "O seletor de blogs foi localizado, mas não pôde ser aberto com segurança."
+            ) from exc
+    page.wait_for_timeout(500)
+
+
+def find_new_blog(page: Page) -> Locator | None:
+    options = page.get_by_role("option")
+    for i in range(options.count()):
+        item = options.nth(i)
+        try:
+            if item.is_visible() and NEW_BLOG_RE.fullmatch(_norm(item.inner_text())):
+                return item
+        except Exception:
+            continue
+    return None
 
 
 def ensure_new_blog_available(page: Page) -> bool:
-    control = find_new_blog(page)
-    if control is None:
+    try:
         open_blog_switcher(page)
         control = find_new_blog(page)
-    found = control is not None
-    try:
-        page.keyboard.press("Escape")
-    except Exception:
-        pass
-    return found
-
-
-def click_new_blog(page: Page) -> None:
-    control = find_new_blog(page)
-    if control is None:
-        open_blog_switcher(page)
-        control = find_new_blog(page)
-    if control is None:
-        raise SafeAutomationError(
-            'O comando "Novo blog" não ficou visível após abrir o seletor. '
-            "Nenhuma criação foi iniciada."
-        )
-    control.click(timeout=10_000)
-
-
-def dialog_or_page(page: Page) -> Locator:
-    dialogs = page.get_by_role("dialog")
-    try:
-        if dialogs.count() and dialogs.last.is_visible():
-            return dialogs.last
-    except Exception:
-        pass
-    return page.locator("body")
-
-
-def fill_named_textbox(scope: Locator, names: list[str], value: str) -> None:
-    for name in names:
-        candidate = scope.get_by_role("textbox", name=re.compile(name, re.I))
+        return control is not None
+    finally:
         try:
-            if candidate.count() and candidate.first.is_visible():
-                candidate.first.fill(value)
-                return
+            page.keyboard.press("Escape")
         except Exception:
             pass
 
-    visible = []
-    boxes = scope.get_by_role("textbox")
-    for i in range(boxes.count()):
-        box = boxes.nth(i)
-        try:
-            if box.is_visible():
-                visible.append(box)
-        except Exception:
-            continue
-    if len(visible) == 1:
-        visible[0].fill(value)
-        return
 
-    raise SafeAutomationError("Campo de texto esperado não foi identificado com segurança.")
+def _visible_field(page: Page, selectors: tuple[str, ...]) -> Locator | None:
+    for selector in selectors:
+        loc = page.locator(selector)
+        for i in range(loc.count()):
+            item = loc.nth(i)
+            try:
+                if item.is_visible():
+                    return item
+            except Exception:
+                continue
+    return None
 
 
-def click_named_button(scope: Locator, pattern: str) -> None:
-    button = scope.get_by_role("button", name=re.compile(pattern, re.I))
-    if not button.count():
-        raise SafeAutomationError(f"Botão esperado não encontrado: /{pattern}/")
-    visible = None
-    for i in range(button.count()):
-        item = button.nth(i)
-        try:
-            if item.is_visible() and item.is_enabled():
-                visible = item
-                break
-        except Exception:
-            continue
-    if visible is None:
-        raise SafeAutomationError(f"Botão esperado não está visível/ativo: /{pattern}/")
-    visible.click(timeout=10_000)
-
-
-def detect_address_unavailable(page: Page) -> bool:
-    text = page.locator("body").inner_text().lower()
-    markers = (
-        "este endereço de blog não está disponível",
-        "esse endereço de blog não está disponível",
-        "this blog address is not available",
-        "sorry, this blog address is not available",
+def _dom_action_state(page: Page, labels: tuple[str, ...]) -> list[dict]:
+    return page.evaluate(
+        r"""(labels) => {
+          const wanted = new Set(labels.map(x => String(x).trim().replace(/\s+/g, ' ').toLocaleLowerCase()));
+          const out = [];
+          for (const el of document.querySelectorAll('body *')) {
+            const r = el.getBoundingClientRect();
+            const s = getComputedStyle(el);
+            if (r.width <= 0 || r.height <= 0 || s.display === 'none' || s.visibility === 'hidden') continue;
+            const text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+            const aria = (el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
+            const value = text || aria;
+            if (!wanted.has(value.toLocaleLowerCase())) continue;
+            const role = el.getAttribute('role') || '';
+            const clickable = el.tagName === 'BUTTON' || role === 'button' || el.getAttribute('tabindex') === '0';
+            const disabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true' || el.getAttribute('tabindex') === '-1';
+            const cx = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
+            const cy = Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2));
+            const hit = document.elementFromPoint(cx, cy);
+            const topmost = !!hit && (hit === el || el.contains(hit) || hit.contains(el));
+            out.push({
+              tag: el.tagName,
+              role,
+              text: text.slice(0, 160),
+              aria: aria.slice(0, 160),
+              tabindex: el.getAttribute('tabindex') || '',
+              clickable,
+              disabled,
+              topmost,
+              width: Math.round(r.width),
+              height: Math.round(r.height)
+            });
+          }
+          return out;
+        }""",
+        list(labels),
     )
-    return any(marker in text for marker in markers)
+
+
+def _click_exact_action(page: Page, labels: tuple[str, ...]) -> dict:
+    result = page.evaluate(
+        r"""(labels) => {
+          const wanted = new Set(labels.map(x => String(x).trim().replace(/\s+/g, ' ').toLocaleLowerCase()));
+          const candidates = [];
+          for (const el of document.querySelectorAll('body *')) {
+            const r = el.getBoundingClientRect();
+            const s = getComputedStyle(el);
+            if (r.width <= 0 || r.height <= 0 || s.display === 'none' || s.visibility === 'hidden') continue;
+            const text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+            const aria = (el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
+            const value = text || aria;
+            if (!wanted.has(value.toLocaleLowerCase())) continue;
+            const role = el.getAttribute('role') || '';
+            const clickable = el.tagName === 'BUTTON' || role === 'button' || el.getAttribute('tabindex') === '0';
+            if (!clickable) continue;
+            if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true' || el.getAttribute('tabindex') === '-1') continue;
+            const cx = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
+            const cy = Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2));
+            const hit = document.elementFromPoint(cx, cy);
+            if (!hit || !(hit === el || el.contains(hit) || hit.contains(el))) continue;
+            candidates.push({el, r, text, aria, role});
+          }
+          if (!candidates.length) return {ok: false};
+          candidates.sort((a, b) => (a.r.width * a.r.height) - (b.r.width * b.r.height));
+          const c = candidates[0];
+          c.el.click();
+          return {
+            ok: true,
+            meta: {
+              tag: c.el.tagName,
+              role: c.role,
+              text: c.text.slice(0, 160),
+              aria: c.aria.slice(0, 160),
+              tabindex: c.el.getAttribute('tabindex') || ''
+            }
+          };
+        }""",
+        list(labels),
+    )
+    if not result or not result.get("ok"):
+        raise SafeAutomationError(
+            f"Nenhuma ação visível, habilitada e no topo foi encontrada para: {', '.join(labels)}"
+        )
+    return result["meta"]
+
+
+def click_new_blog(page: Page) -> None:
+    open_blog_switcher(page)
+    control = find_new_blog(page)
+    if control is None:
+        raise SafeAutomationError(
+            'O comando "Novo blog..." não ficou visível após abrir o seletor. '
+            "Nenhuma criação foi iniciada."
+        )
+
+    try:
+        control.evaluate("el => el.click()")
+    except Exception as exc:
+        raise SafeAutomationError(
+            'A opção "Novo blog..." foi localizada, mas não pôde ser ativada com segurança.'
+        ) from exc
+
+    page.wait_for_timeout(900)
+    if _visible_field(page, TITLE_FIELD_SELECTORS) is None:
+        raise SafeAutomationError(
+            'A ação "Novo blog..." foi disparada, mas o campo de título não apareceu. '
+            "Nenhum dado foi preenchido."
+        )
+
+
+def _body_text_lower(page: Page) -> str:
+    try:
+        return _norm(page.locator("body").inner_text()).casefold()
+    except Exception:
+        return ""
+
+
+def _wait_for_address_ready(page: Page, address_field: Locator, timeout_seconds: int = 15) -> dict:
+    deadline = time.time() + timeout_seconds
+    last_state: dict = {}
+
+    while time.time() < deadline:
+        body = _body_text_lower(page)
+        aria_invalid = (address_field.get_attribute("aria-invalid") or "").lower()
+        actions = _dom_action_state(page, FINAL_LABELS)
+        save_enabled = any(
+            item.get("clickable") and not item.get("disabled") and item.get("topmost")
+            for item in actions
+        )
+        unavailable = any(marker in body for marker in ADDRESS_UNAVAILABLE_MARKERS)
+        available = any(marker in body for marker in ADDRESS_AVAILABLE_MARKERS)
+
+        last_state = {
+            "aria_invalid": aria_invalid,
+            "save_enabled": save_enabled,
+            "address_available_marker": available,
+            "address_unavailable_or_invalid": unavailable,
+            "final_action_matches": actions[:12],
+        }
+
+        if unavailable:
+            raise SafeAutomationError(
+                "O endereço solicitado foi rejeitado pelo Blogger. Nenhum clique em SALVAR foi executado."
+            )
+        if save_enabled and aria_invalid != "true":
+            return last_state
+
+        page.wait_for_timeout(350)
+
+    raise SafeAutomationError(
+        "O Blogger não confirmou o endereço como utilizável dentro do tempo esperado. "
+        "Nenhum clique em SALVAR foi executado."
+    )
 
 
 def extract_blog_id_from_url(value: str) -> str | None:
@@ -407,23 +549,25 @@ def validate_public_blog(
 def create_blog(page: Page, context: BrowserContext, req: CreateBlogRequest) -> dict:
     previous_blog_id = extract_current_blog_id(page)
     click_new_blog(page)
-    page.wait_for_timeout(600)
 
-    scope = dialog_or_page(page)
-    fill_named_textbox(scope, [r"t[ií]tulo", r"nome.*blog", r"title"], req.title)
-    click_named_button(scope, r"^(Pr[oó]xima|Next)$")
-    page.wait_for_timeout(650)
+    title = _visible_field(page, TITLE_FIELD_SELECTORS)
+    if title is None:
+        raise SafeAutomationError("Campo de título não foi localizado com segurança.")
+    title.fill(req.title)
+    page.wait_for_timeout(350)
 
-    scope = dialog_or_page(page)
-    fill_named_textbox(scope, [r"endere[cç]o", r"url", r"address"], req.address)
-    page.wait_for_timeout(1200)
+    advance_action = _click_exact_action(page, ADVANCE_LABELS)
+    page.wait_for_timeout(900)
 
-    if detect_address_unavailable(page):
+    address = _visible_field(page, ADDRESS_FIELD_SELECTORS)
+    if address is None:
         raise SafeAutomationError(
-            "O endereço solicitado não está disponível. Nenhum clique em Salvar foi executado."
+            "Campo de endereço não foi localizado após AVANÇAR. Nenhum clique em SALVAR foi executado."
         )
+    address.fill(req.address)
 
-    click_named_button(scope, r"^(Salvar|Save)$")
+    validation = _wait_for_address_ready(page, address)
+    save_action = _click_exact_action(page, FINAL_LABELS)
     blog_id = wait_for_created_blog(page, req, previous_blog_id)
 
     expected_url = f"https://{req.address}.blogspot.com/"
@@ -440,6 +584,9 @@ def create_blog(page: Page, context: BrowserContext, req: CreateBlogRequest) -> 
         "blog_id": blog_id,
         "expected_url": expected_url,
         "panel_url": sanitize_url(page.url),
+        "advance_action": advance_action,
+        "address_validation": validation,
+        "save_action": save_action,
         "public_validation": public_validation,
     }
 
@@ -491,8 +638,9 @@ def execute_preflight(
         require_blogger_session(page)
         if not ensure_new_blog_available(page):
             raise SafeAutomationError(
-                'O comando "Novo blog" não foi encontrado no preflight. Nenhuma criação foi iniciada.'
+                'O comando "Novo blog..." não foi encontrado no preflight. Nenhuma criação foi iniciada.'
             )
+        diagnostics_dir.mkdir(parents=True, exist_ok=True)
         dump_visible_controls(page, diagnostics_dir / "preflight_controls.json")
         return {
             "status": "PREFLIGHT_OK_NO_CHANGES",
@@ -543,7 +691,7 @@ def execute_create(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Blogger Safe Automator v0.2 — Chrome oficial via CDP."
+        description="Blogger Safe Automator v0.3 — Chrome oficial via CDP."
     )
     parser.add_argument(
         "--cdp-url",
