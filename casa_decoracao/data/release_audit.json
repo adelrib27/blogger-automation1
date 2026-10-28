@@ -2,15 +2,14 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 10,
+    "total": 11,
     "draft_ready": 1,
-    "rejected": 6,
+    "rejected": 7,
     "not_generated": 3,
-    "published_history": 24,
+    "published_history": 25,
     "rotation_cycle": 3,
     "rotation_pending": [
       "Sala",
-      "Quarto",
       "Área Externa",
       "Cama, Mesa e Banho"
     ]
@@ -21,7 +20,7 @@
       "shopee_item_id": "23499666463",
       "category": "Sala",
       "product": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
-      "queue_status": "QUARANTINE",
+      "queue_status": "BLOCKED",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -56,32 +55,19 @@
       "shopee_item_id": "58200253216",
       "category": "Quarto",
       "product": "Kit Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 222,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 760,
-          "h2_count": 4,
+          "word_count": 597,
+          "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 52,
-          "meta_description_length": 155,
-          "cta_count": 1
+          "seo_title_length": 53,
+          "meta_description_length": 147,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -116,63 +102,6 @@
           "internal_links": 1,
           "seo_title_length": 53,
           "meta_description_length": 153,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 31,
-      "shopee_item_id": "58206652459",
-      "category": "Cozinha",
-      "product": "Fatiador KITOP descasca Legumes Prático para Couve e Repolho Fininho legumes fatiados",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 219,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 550,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 51,
-          "meta_description_length": 153,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 86,
-      "shopee_item_id": "22312840596",
-      "category": "Cozinha",
-      "product": "Esteira de Louça Grade Flexível Dobrável Escorredor Grande Inox Cozinha Pia",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 796,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 60,
-          "meta_description_length": 154,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -241,6 +170,113 @@
           "internal_links": 1,
           "seo_title_length": 44,
           "meta_description_length": 122,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 90,
+      "shopee_item_id": "23798178107",
+      "category": "Organização",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 818,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 57,
+          "meta_description_length": 155,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 89,
+      "shopee_item_id": "11674191849",
+      "category": "Cozinha",
+      "product": "Fatiador De Legumes Kitop Corta Couve Repolho Fino Prático",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "meta_description_tamanho:156",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 753,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 53,
+          "meta_description_length": 156,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 91,
+      "shopee_item_id": "20999381894",
+      "category": "Cozinha",
+      "product": "Conjunto 2/3/5/10 Potes 370/640/1040ml Vidro Hermético Mantimentos Marmita Fitness",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "meta_description_tamanho:158",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 762,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 60,
+          "meta_description_length": 158,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
