@@ -12,9 +12,9 @@ CDP_URL = bp.DEFAULT_CDP_URL
 TEST_TITLE = "TESTE BLOGGER AUTOMATION"
 TEST_ADDRESS = f"teste-blogger-automation-{datetime.now().strftime('%Y%m%d%H%M%S')}"
 NEW_BLOG_RE = re.compile(r"^(Novo blog(?:\.\.\.|…)?|New blog(?:\.\.\.|…)?)$", re.I)
-ADVANCE_RE = re.compile(r"^(Avan[cç]ar|Advance|Pr[oó]xima|Next|Continuar|Continue)$", re.I)
 ADDRESS_RE = re.compile(r"(endere[cç]o|address|url)", re.I)
-FINAL_RE = re.compile(r"^(Salvar|Save|Criar blog|Create blog|Concluir|Finish)$", re.I)
+ADVANCE_LABELS = ["AVANÇAR", "Advance", "Próxima", "Next", "Continuar", "Continue"]
+FINAL_LABELS = ["SALVAR", "Save", "Criar blog", "Create blog", "Concluir", "Finish"]
 
 
 def norm(value: str | None) -> str:
@@ -88,23 +88,84 @@ def open_create_ui(page) -> None:
     page.wait_for_timeout(900)
 
 
-def exact_visible_text_match(page, pattern: re.Pattern):
-    handles = page.locator("body *")
-    matches = []
-    for i in range(handles.count()):
-        item = handles.nth(i)
-        try:
-            if not item.is_visible():
-                continue
-            text = norm(item.inner_text())
-            aria = norm(item.get_attribute("aria-label"))
-            value = text or aria
-            if not pattern.fullmatch(value):
-                continue
-            matches.append(item)
-        except Exception:
-            continue
-    return matches
+def dom_exact_matches(page, labels: list[str]) -> list[dict]:
+    """Busca textos exatos dentro do próprio navegador em uma única chamada.
+
+    Evita milhares de round-trips Playwright/Python ao percorrer body *.
+    Retorna apenas metadados; não executa clique.
+    """
+    return page.evaluate(
+        r"""(labels) => {
+          const wanted = new Set(labels.map(x => String(x).trim().replace(/\s+/g, ' ').toLocaleLowerCase()));
+          const out = [];
+          for (const el of document.querySelectorAll('body *')) {
+            const r = el.getBoundingClientRect();
+            const s = getComputedStyle(el);
+            if (r.width <= 0 || r.height <= 0 || s.display === 'none' || s.visibility === 'hidden') continue;
+            const text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+            const aria = (el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
+            const value = text || aria;
+            if (!wanted.has(value.toLocaleLowerCase())) continue;
+            out.push({
+              tag: el.tagName,
+              role: el.getAttribute('role') || '',
+              text: text.slice(0, 160),
+              aria: aria.slice(0, 160),
+              tabindex: el.getAttribute('tabindex') || '',
+              disabled: el.hasAttribute('disabled') || el.getAttribute('aria-disabled') || '',
+              jsaction: (el.getAttribute('jsaction') || '').slice(0, 180),
+              width: Math.round(r.width),
+              height: Math.round(r.height)
+            });
+          }
+          return out;
+        }""",
+        labels,
+    )
+
+
+def dom_click_exact(page, labels: list[str]) -> dict:
+    """Clica somente um elemento visível/clicável com texto exato permitido."""
+    result = page.evaluate(
+        r"""(labels) => {
+          const wanted = new Set(labels.map(x => String(x).trim().replace(/\s+/g, ' ').toLocaleLowerCase()));
+          const candidates = [];
+          for (const el of document.querySelectorAll('body *')) {
+            const r = el.getBoundingClientRect();
+            const s = getComputedStyle(el);
+            if (r.width <= 0 || r.height <= 0 || s.display === 'none' || s.visibility === 'hidden') continue;
+            const text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+            const aria = (el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
+            const value = text || aria;
+            if (!wanted.has(value.toLocaleLowerCase())) continue;
+            const role = el.getAttribute('role') || '';
+            const clickable = el.tagName === 'BUTTON' || role === 'button' || el.getAttribute('tabindex') === '0';
+            if (!clickable) continue;
+            if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') continue;
+            candidates.push({el, r, text, aria, role});
+          }
+          if (!candidates.length) return {ok: false};
+          candidates.sort((a, b) => (a.r.width * a.r.height) - (b.r.width * b.r.height));
+          const c = candidates[0];
+          c.el.click();
+          return {
+            ok: true,
+            meta: {
+              tag: c.el.tagName,
+              role: c.role,
+              text: c.text.slice(0, 160),
+              aria: c.aria.slice(0, 160),
+              tabindex: c.el.getAttribute('tabindex') || ''
+            }
+          };
+        }""",
+        labels,
+    )
+    if not result or not result.get("ok"):
+        raise bp.SafeAutomationError(
+            f"Nenhuma ação clicável visível encontrada para: {', '.join(labels)}"
+        )
+    return result["meta"]
 
 
 def element_meta(item) -> dict:
@@ -179,25 +240,11 @@ def main() -> int:
             title.fill(TEST_TITLE)
             page.wait_for_timeout(350)
 
-            advance_matches = exact_visible_text_match(page, ADVANCE_RE)
+            advance_matches = dom_exact_matches(page, ADVANCE_LABELS)
             if not advance_matches:
                 raise bp.SafeAutomationError("Botão AVANÇAR não foi localizado com segurança.")
 
-            # Usa o menor elemento clicável que contém exatamente AVANÇAR.
-            advance = None
-            for item in reversed(advance_matches):
-                try:
-                    role = (item.get_attribute("role") or "").lower()
-                    if item.evaluate("el => el.tagName") == "BUTTON" or role == "button" or item.get_attribute("tabindex") == "0":
-                        advance = item
-                        break
-                except Exception:
-                    continue
-            advance = advance or advance_matches[-1]
-            try:
-                advance.click(timeout=3_000)
-            except Exception:
-                advance.evaluate("el => el.click()")
+            advance_meta = dom_click_exact(page, ADVANCE_LABELS)
             page.wait_for_timeout(1000)
 
             before_fields = visible_fields(page)
@@ -221,19 +268,19 @@ def main() -> int:
                 re.I,
             )) and not unavailable
 
-            final_matches = exact_visible_text_match(page, FINAL_RE)
-            final_meta = [element_meta(item) for item in final_matches[:12]]
+            final_matches = dom_exact_matches(page, FINAL_LABELS)
 
             result = {
                 "ok": bool(address_meta) and bool(final_matches),
                 "title_step_advanced": True,
+                "advance_action": advance_meta,
                 "address_field_detected": True,
                 "temporary_address_filled": TEST_ADDRESS,
                 "address_field": address_meta,
                 "visible_fields_after_advance": before_fields,
                 "address_unavailable": unavailable,
                 "address_available_marker": available_marker,
-                "final_action_matches": final_meta,
+                "final_action_matches": final_matches[:12],
                 "message": "Título e endereço foram preenchidos apenas temporariamente. Nenhum botão final Salvar/Criar foi acionado.",
             }
         except Exception as exc:
