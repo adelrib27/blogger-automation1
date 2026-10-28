@@ -6,6 +6,25 @@ import re
 from playwright.sync_api import sync_playwright
 
 CDP_URL = "http://127.0.0.1:9222"
+ACTION_RE = re.compile(r"(novo|nova|new|criar|create|adicionar|add)", re.I)
+
+
+def visible_items(page, role: str, limit: int = 120) -> list[dict]:
+    out: list[dict] = []
+    loc = page.get_by_role(role)
+    count = min(loc.count(), limit)
+    for i in range(count):
+        item = loc.nth(i)
+        try:
+            if not item.is_visible():
+                continue
+            text = re.sub(r"\s+", " ", item.inner_text() or "").strip()
+            aria = (item.get_attribute("aria-label") or "").strip()
+            if text or aria:
+                out.append({"role": role, "text": text[:180], "aria": aria[:180]})
+        except Exception:
+            continue
+    return out
 
 
 def main() -> int:
@@ -25,23 +44,21 @@ def main() -> int:
             print(json.dumps({"ok": False, "error": "Blog Selection não foi identificado de forma única e visível."}, ensure_ascii=False, indent=2))
             return 2
 
+        before_expanded = switcher.first.get_attribute("aria-expanded")
         switcher.first.click(timeout=10_000)
-        page.wait_for_timeout(700)
+        page.wait_for_timeout(900)
+        after_expanded = switcher.first.get_attribute("aria-expanded")
 
-        candidates = []
-        for role in ("option", "menuitem", "button"):
-            loc = page.get_by_role(role, name=re.compile(r"^(Novo blog|New blog)$", re.I))
-            for i in range(loc.count()):
-                item = loc.nth(i)
-                if item.is_visible():
-                    candidates.append({"role": role, "text": item.inner_text().strip()})
+        all_visible: list[dict] = []
+        for role in ("option", "menuitem", "button", "link"):
+            all_visible.extend(visible_items(page, role))
 
-        if not candidates:
-            text = page.get_by_text(re.compile(r"^(Novo blog|New blog)$", re.I), exact=True)
-            for i in range(text.count()):
-                item = text.nth(i)
-                if item.is_visible():
-                    candidates.append({"role": "text", "text": item.inner_text().strip()})
+        action_matches = [
+            item for item in all_visible
+            if ACTION_RE.search(item.get("text", "")) or ACTION_RE.search(item.get("aria", ""))
+        ]
+
+        options = [item for item in all_visible if item["role"] == "option"]
 
         try:
             page.keyboard.press("Escape")
@@ -50,9 +67,15 @@ def main() -> int:
 
         print(json.dumps({
             "ok": True,
-            "switcher": {"role": "listbox", "aria": "Blog Selection"},
-            "new_blog_visible": bool(candidates),
-            "matches": candidates,
+            "switcher": {
+                "role": "listbox",
+                "aria": "Blog Selection",
+                "aria_expanded_before": before_expanded,
+                "aria_expanded_after": after_expanded,
+            },
+            "option_count": len(options),
+            "options": options,
+            "action_matches": action_matches,
         }, ensure_ascii=False, indent=2))
         return 0
 
