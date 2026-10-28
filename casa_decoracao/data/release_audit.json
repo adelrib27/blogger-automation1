@@ -4,23 +4,22 @@
   "summary": {
     "total": 11,
     "draft_ready": 1,
-    "rejected": 7,
-    "not_generated": 3,
-    "published_history": 25,
+    "rejected": 8,
+    "not_generated": 2,
+    "published_history": 26,
     "rotation_cycle": 3,
     "rotation_pending": [
       "Sala",
-      "Área Externa",
-      "Cama, Mesa e Banho"
+      "Área Externa"
     ]
   },
   "items": [
     {
-      "id": 81,
-      "shopee_item_id": "23499666463",
+      "id": 92,
+      "shopee_item_id": "58263985618",
       "category": "Sala",
-      "product": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
-      "queue_status": "BLOCKED",
+      "product": "Kit Mesa de Centro Mesa Lateral Orgânica Móveis para Sala Decoração Recepção Consultório Luxo",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -36,72 +35,15 @@
           "titulo_comercial_copiado_no_corpo",
           "titulo_produto_cta_nao_fiel",
           "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1288"
+          "word_count_alto:1206"
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 1288,
-          "h2_count": 7,
+          "word_count": 1206,
+          "h2_count": 6,
           "internal_links": 1,
-          "seo_title_length": 56,
-          "meta_description_length": 145,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 79,
-      "shopee_item_id": "58200253216",
-      "category": "Quarto",
-      "product": "Kit Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 222,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 597,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 147,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 87,
-      "shopee_item_id": "20452224775",
-      "category": "Quarto",
-      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 787,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 153,
+          "seo_title_length": 57,
+          "meta_description_length": 151,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
@@ -112,15 +54,21 @@
       "shopee_item_id": "23392973710",
       "category": "Cama, Mesa e Banho",
       "product": "Protetor Impermeável para Colchão SUPER SILENCIOSO 100% Impermeável Tecido Jacquard Premium Tamanhos",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 227,
       "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
-        "metrics": {}
+        "metrics": {
+          "word_count": 690,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 44,
+          "meta_description_length": 151,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
       }
     },
     {
@@ -137,6 +85,43 @@
         ],
         "warnings": [],
         "metrics": {}
+      }
+    },
+    {
+      "id": 95,
+      "shopee_item_id": "58257090824",
+      "category": "Decoração",
+      "product": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "categoria_invalida",
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "meta_description_tamanho:156",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 942,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 60,
+          "meta_description_length": 156,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
       }
     },
     {
@@ -211,6 +196,41 @@
       }
     },
     {
+      "id": 87,
+      "shopee_item_id": "20452224775",
+      "category": "Quarto",
+      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 787,
+          "h2_count": 4,
+          "internal_links": 1,
+          "seo_title_length": 53,
+          "meta_description_length": 153,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
       "id": 89,
       "shopee_item_id": "11674191849",
       "category": "Cozinha",
@@ -247,42 +267,6 @@
       }
     },
     {
-      "id": 91,
-      "shopee_item_id": "20999381894",
-      "category": "Cozinha",
-      "product": "Conjunto 2/3/5/10 Potes 370/640/1040ml Vidro Hermético Mantimentos Marmita Fitness",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "meta_description_tamanho:158",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 762,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 60,
-          "meta_description_length": 158,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
       "id": 71,
       "shopee_item_id": "21299673093",
       "category": "Banheiro",
@@ -299,15 +283,51 @@
       }
     },
     {
-      "id": 88,
-      "shopee_item_id": "58257638413",
+      "id": 93,
+      "shopee_item_id": "20299321793",
       "category": "Banheiro",
-      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "product": "1/2/3 Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio ES",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
         "reasons": [
+          "categoria_invalida",
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 1054,
+          "h2_count": 6,
+          "internal_links": 1,
+          "seo_title_length": 42,
+          "meta_description_length": 155,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 94,
+      "shopee_item_id": "58258071799",
+      "category": "Banheiro",
+      "product": "Kit Banheiro Acessórios 5 Peças Completo Toalheiro Saboneteira Decoração Preto Branco Cromado Decor",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "categoria_invalida",
           "chamada_consulta_contextual_quantidade_invalida:0",
           "disclosure_afiliado_quantidade_invalida:0",
           "imagem_produto_ausente",
@@ -319,15 +339,15 @@
           "titulo_comercial_copiado_no_corpo",
           "titulo_produto_cta_nao_fiel",
           "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1260"
+          "word_count_alto:1283"
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 1260,
+          "word_count": 1283,
           "h2_count": 5,
           "internal_links": 1,
           "seo_title_length": 59,
-          "meta_description_length": 152,
+          "meta_description_length": 155,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
