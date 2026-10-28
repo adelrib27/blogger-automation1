@@ -1,0 +1,48 @@
+name: Blogger — Teste controlado de escrita Python
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/blogger_python_write_probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  write-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BLOGGER_BLOG_ID: "7786400812903822301"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Criar rascunho via Python
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from criar_rascunho import criar_rascunho
+
+          resultado = criar_rascunho(
+              titulo="TESTE DE ESCRITA PYTHON — NÃO PUBLICAR",
+              conteudo_html=(
+                  "<p>Teste controlado de escrita realizado pelo módulo Python "
+                  "do projeto blogger-automation1.</p>"
+                  "<p>Este conteúdo foi criado somente como rascunho e não foi publicado.</p>"
+              ),
+              categoria="teste-python",
+              publicar=False,
+          )
+          print(json.dumps(resultado, ensure_ascii=False, indent=2))
+          if str(resultado.get("status") or "").upper() != "DRAFT":
+              raise SystemExit("ERRO: o teste não retornou status DRAFT")
+          if not str(resultado.get("id") or "").strip():
+              raise SystemExit("ERRO: Blogger não retornou ID do rascunho")
+          PY
