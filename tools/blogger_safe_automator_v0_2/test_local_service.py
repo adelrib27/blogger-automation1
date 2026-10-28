@@ -77,6 +77,70 @@ class LocalServiceTests(unittest.TestCase):
         audit.assert_called_once()
         self.assertFalse(audit.call_args.kwargs["allow_remote_cdp"])
 
+    def test_settings_preflight_endpoint_calls_read_only_runner(self):
+        fake = {"status": "SETTINGS_PREFLIGHT_OK", "read_only": True}
+        body = {
+            "expected_blog_id": "123456789",
+            "description": "Descrição de teste",
+            "search_description": "Descrição de pesquisa de teste",
+        }
+        with patch.object(local_service, "execute_settings_preflight", return_value=fake) as runner:
+            with running_server(self.TOKEN) as base:
+                status, payload = self.request(
+                    base + "/v1/preflight/settings-profile",
+                    method="POST",
+                    token=self.TOKEN,
+                    body=body,
+                )
+        self.assertEqual(status, 200)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["result"], fake)
+        runner.assert_called_once()
+        self.assertEqual(runner.call_args.args[0], "123456789")
+        self.assertFalse(runner.call_args.kwargs["allow_remote_cdp"])
+
+    def test_configure_settings_requires_explicit_confirmation(self):
+        body = {
+            "expected_blog_id": "123456789",
+            "description": "Descrição de teste",
+            "search_description": "Descrição de pesquisa de teste",
+        }
+        with patch.object(local_service, "execute_configure_settings") as runner:
+            with running_server(self.TOKEN) as base:
+                status, payload = self.request(
+                    base + "/v1/configure-settings",
+                    method="POST",
+                    token=self.TOKEN,
+                    body=body,
+                )
+        self.assertEqual(status, 400)
+        self.assertFalse(payload["ok"])
+        self.assertEqual(payload["error"], "confirmation_required")
+        runner.assert_not_called()
+
+    def test_configure_settings_calls_runner_with_confirmation(self):
+        fake = {"status": "SETTINGS_PROFILE_VALIDATED", "robots_untouched": True}
+        body = {
+            "expected_blog_id": "123456789",
+            "description": "Descrição de teste",
+            "search_description": "Descrição de pesquisa de teste",
+            "confirm": local_service.SETTINGS_CONFIRMATION,
+        }
+        with patch.object(local_service, "execute_configure_settings", return_value=fake) as runner:
+            with running_server(self.TOKEN) as base:
+                status, payload = self.request(
+                    base + "/v1/configure-settings",
+                    method="POST",
+                    token=self.TOKEN,
+                    body=body,
+                )
+        self.assertEqual(status, 200)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["result"], fake)
+        runner.assert_called_once()
+        self.assertEqual(runner.call_args.kwargs["confirm"], local_service.SETTINGS_CONFIRMATION)
+        self.assertFalse(runner.call_args.kwargs["allow_remote_cdp"])
+
 
 if __name__ == "__main__":
     unittest.main()
