@@ -17,6 +17,12 @@ from browser_provision import (
     execute_preflight,
 )
 from resilient_create import execute_create_resilient
+from settings_profile import (
+    CONFIRMATION as SETTINGS_CONFIRMATION,
+    DEFAULT_TIMEZONE,
+    execute_configure_settings,
+    execute_settings_preflight,
+)
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
@@ -116,7 +122,10 @@ class Handler(BaseHTTPRequestHandler):
             result = fn()
             self._send(HTTPStatus.OK, {"ok": True, "result": result})
         except SafeAutomationError as exc:
-            self._send(HTTPStatus.CONFLICT, {"ok": False, "error": "safe_automation_error", "message": str(exc)})
+            self._send(
+                HTTPStatus.CONFLICT,
+                {"ok": False, "error": "safe_automation_error", "message": str(exc)},
+            )
         except Exception:
             # Fail closed; do not leak stack traces or local paths through the API.
             self._send(HTTPStatus.INTERNAL_SERVER_ERROR, {"ok": False, "error": "internal_error"})
@@ -145,7 +154,10 @@ class Handler(BaseHTTPRequestHandler):
         try:
             payload = self._read_json()
         except ValueError as exc:
-            self._send(HTTPStatus.BAD_REQUEST, {"ok": False, "error": "bad_request", "message": str(exc)})
+            self._send(
+                HTTPStatus.BAD_REQUEST,
+                {"ok": False, "error": "bad_request", "message": str(exc)},
+            )
             return
 
         if self.path == "/v1/audit":
@@ -191,6 +203,54 @@ class Handler(BaseHTTPRequestHandler):
                     title,
                     address,
                     confirm=confirm,
+                    cdp_url=_cdp_url(),
+                    diagnostics_dir=_diagnostics_dir(),
+                    allow_remote_cdp=False,
+                )
+            )
+            return
+
+        if self.path == "/v1/preflight/settings-profile":
+            expected_blog_id = str(payload.get("expected_blog_id") or "")
+            description = str(payload.get("description") or "")
+            search_description = str(payload.get("search_description") or "")
+            timezone = str(payload.get("timezone") or DEFAULT_TIMEZONE)
+            self._run_exclusive(
+                lambda: execute_settings_preflight(
+                    expected_blog_id,
+                    description,
+                    search_description,
+                    timezone=timezone,
+                    cdp_url=_cdp_url(),
+                    diagnostics_dir=_diagnostics_dir(),
+                    allow_remote_cdp=False,
+                )
+            )
+            return
+
+        if self.path == "/v1/configure-settings":
+            expected_blog_id = str(payload.get("expected_blog_id") or "")
+            description = str(payload.get("description") or "")
+            search_description = str(payload.get("search_description") or "")
+            timezone = str(payload.get("timezone") or DEFAULT_TIMEZONE)
+            confirm = str(payload.get("confirm") or "")
+            if confirm != SETTINGS_CONFIRMATION:
+                self._send(
+                    HTTPStatus.BAD_REQUEST,
+                    {
+                        "ok": False,
+                        "error": "confirmation_required",
+                        "message": f'Use confirm="{SETTINGS_CONFIRMATION}".',
+                    },
+                )
+                return
+            self._run_exclusive(
+                lambda: execute_configure_settings(
+                    expected_blog_id,
+                    description,
+                    search_description,
+                    confirm=confirm,
+                    timezone=timezone,
                     cdp_url=_cdp_url(),
                     diagnostics_dir=_diagnostics_dir(),
                     allow_remote_cdp=False,
