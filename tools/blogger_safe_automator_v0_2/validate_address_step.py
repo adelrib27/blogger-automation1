@@ -10,7 +10,8 @@ from playwright.sync_api import sync_playwright
 
 CDP_URL = bp.DEFAULT_CDP_URL
 TEST_TITLE = "TESTE BLOGGER AUTOMATION"
-TEST_ADDRESS = f"teste-blogger-automation-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+# Mantém o slug curto e único para reduzir falsos negativos de validação.
+TEST_ADDRESS = f"teste-bga-{datetime.now().strftime('%Y%m%d%H%M%S')}"
 NEW_BLOG_RE = re.compile(r"^(Novo blog(?:\.\.\.|…)?|New blog(?:\.\.\.|…)?)$", re.I)
 ADDRESS_RE = re.compile(r"(endere[cç]o|address|url)", re.I)
 ADVANCE_LABELS = ["AVANÇAR", "Advance", "Próxima", "Next", "Continuar", "Continue"]
@@ -89,11 +90,7 @@ def open_create_ui(page) -> None:
 
 
 def dom_exact_matches(page, labels: list[str]) -> list[dict]:
-    """Busca textos exatos dentro do próprio navegador em uma única chamada.
-
-    Evita milhares de round-trips Playwright/Python ao percorrer body *.
-    Retorna apenas metadados; não executa clique.
-    """
+    """Busca textos exatos no DOM visível em uma única chamada, sem clicar."""
     return page.evaluate(
         r"""(labels) => {
           const wanted = new Set(labels.map(x => String(x).trim().replace(/\s+/g, ' ').toLocaleLowerCase()));
@@ -112,7 +109,7 @@ def dom_exact_matches(page, labels: list[str]) -> list[dict]:
               text: text.slice(0, 160),
               aria: aria.slice(0, 160),
               tabindex: el.getAttribute('tabindex') || '',
-              disabled: el.hasAttribute('disabled') || el.getAttribute('aria-disabled') || '',
+              disabled: el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true',
               jsaction: (el.getAttribute('jsaction') || '').slice(0, 180),
               width: Math.round(r.width),
               height: Math.round(r.height)
@@ -177,7 +174,8 @@ def element_meta(item) -> dict:
         "placeholder": norm(item.get_attribute("placeholder"))[:160],
         "type": item.get_attribute("type") or "",
         "tabindex": item.get_attribute("tabindex") or "",
-        "disabled": item.get_attribute("disabled") or item.get_attribute("aria-disabled") or "",
+        "disabled": bool(item.get_attribute("disabled")) or item.get_attribute("aria-disabled") == "true",
+        "aria_invalid": item.get_attribute("aria-invalid") or "",
     }
 
 
@@ -214,10 +212,50 @@ def find_address_field(page):
         except Exception:
             continue
 
-    # Na segunda etapa do modal deve haver um único campo não-pesquisa.
     if len(candidates) == 1:
         return candidates[0]
     return None
+
+
+def validation_snapshot(page, address) -> dict:
+    """Lê o estado da validação sem acionar SALVAR."""
+    final_matches = dom_exact_matches(page, FINAL_LABELS)
+    save_buttons = [x for x in final_matches if x.get("role") == "button" or x.get("tag") == "BUTTON"]
+    save_enabled = any(not bool(x.get("disabled")) for x in save_buttons)
+
+    body_text = norm(page.locator("body").inner_text())
+    unavailable = bool(re.search(
+        r"(endere[cç]o.*n[aã]o.*dispon[ií]vel|address.*not.*available|"
+        r"endere[cç]o.*inv[aá]lid|invalid.*address|url.*inv[aá]lid)",
+        body_text,
+        re.I,
+    ))
+
+    relevant_text = page.evaluate(
+        r"""() => {
+          const out = [];
+          for (const el of document.querySelectorAll('body *')) {
+            const r = el.getBoundingClientRect();
+            const s = getComputedStyle(el);
+            if (r.width <= 0 || r.height <= 0 || s.display === 'none' || s.visibility === 'hidden') continue;
+            const t = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+            if (!t || t.length > 220) continue;
+            if (/(endere[cç]o|address|url|dispon[ií]vel|available|inv[aá]lid|invalid|blogspot)/i.test(t)) {
+              out.push(t);
+              if (out.length >= 20) break;
+            }
+          }
+          return [...new Set(out)];
+        }"""
+    )
+
+    return {
+        "save_enabled": save_enabled,
+        "save_buttons": save_buttons,
+        "address_unavailable_or_invalid": unavailable,
+        "address_aria_invalid": address.get_attribute("aria-invalid") or "",
+        "validation_text": relevant_text,
+    }
 
 
 def main() -> int:
@@ -240,8 +278,7 @@ def main() -> int:
             title.fill(TEST_TITLE)
             page.wait_for_timeout(350)
 
-            advance_matches = dom_exact_matches(page, ADVANCE_LABELS)
-            if not advance_matches:
+            if not dom_exact_matches(page, ADVANCE_LABELS):
                 raise bp.SafeAutomationError("Botão AVANÇAR não foi localizado com segurança.")
 
             advance_meta = dom_click_exact(page, ADVANCE_LABELS)
@@ -254,33 +291,35 @@ def main() -> int:
 
             address_meta = element_meta(address)
             address.fill(TEST_ADDRESS)
-            page.wait_for_timeout(1400)
+            # Força a validação de campo sem acionar nenhuma ação final.
+            try:
+                address.press("Tab")
+            except Exception:
+                pass
 
-            body_text = norm(page.locator("body").inner_text())
-            unavailable = bool(re.search(
-                r"(endere[cç]o.*n[aã]o.*dispon[ií]vel|address.*not.*available)",
-                body_text,
-                re.I,
-            ))
-            available_marker = bool(re.search(
-                r"(endere[cç]o.*dispon[ií]vel|address.*available)",
-                body_text,
-                re.I,
-            )) and not unavailable
+            validation = None
+            for _ in range(20):
+                page.wait_for_timeout(500)
+                validation = validation_snapshot(page, address)
+                if validation["save_enabled"] or validation["address_unavailable_or_invalid"]:
+                    break
 
-            final_matches = dom_exact_matches(page, FINAL_LABELS)
+            validation = validation or validation_snapshot(page, address)
 
             result = {
-                "ok": bool(address_meta) and bool(final_matches),
+                "ok": bool(validation["save_enabled"]),
                 "title_step_advanced": True,
                 "advance_action": advance_meta,
                 "address_field_detected": True,
                 "temporary_address_filled": TEST_ADDRESS,
                 "address_field": address_meta,
                 "visible_fields_after_advance": before_fields,
-                "address_unavailable": unavailable,
-                "address_available_marker": available_marker,
-                "final_action_matches": final_matches[:12],
+                "address_validated": bool(validation["save_enabled"]),
+                "address_unavailable_or_invalid": validation["address_unavailable_or_invalid"],
+                "address_aria_invalid": validation["address_aria_invalid"],
+                "save_enabled": validation["save_enabled"],
+                "final_action_matches": validation["save_buttons"],
+                "validation_text": validation["validation_text"],
                 "message": "Título e endereço foram preenchidos apenas temporariamente. Nenhum botão final Salvar/Criar foi acionado.",
             }
         except Exception as exc:
