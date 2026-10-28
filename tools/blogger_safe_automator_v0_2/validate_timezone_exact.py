@@ -10,7 +10,7 @@ from playwright.sync_api import sync_playwright
 
 CDP_URL = bp.DEFAULT_CDP_URL
 OUT_DIR = Path("logs/browser_diagnostics")
-TARGET = "(GMT-03:00) Horário Padrão de Brasília – Recife"
+TARGET = "(GMT-03:00) Horário Padrão de Brasília – São Paulo"
 
 
 def find_modal_box(page):
