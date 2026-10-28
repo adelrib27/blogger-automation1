@@ -6,7 +6,7 @@ import re
 
 import browser_provision as bp
 import browser_provision_v03 as v03
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, sync_playwright
 
 CDP_URL = bp.DEFAULT_CDP_URL
 TITLE_MARKERS = re.compile(
@@ -18,6 +18,11 @@ NEXT_MARKERS = re.compile(r"^(pr[oó]xima|next|continuar|continue)$", re.I)
 
 def norm(value: str | None) -> str:
     return re.sub(r"\s+", " ", value or "").strip()
+
+
+def compact_error(exc: Exception) -> str:
+    text = norm(str(exc))
+    return text[:500]
 
 
 def visible_snapshot(page) -> dict:
@@ -80,7 +85,7 @@ def visible_snapshot(page) -> dict:
 
 def reacquire_new_blog(page):
     v03.open_blog_switcher(page)
-    page.wait_for_timeout(350)
+    page.wait_for_timeout(250)
     control = v03.find_new_blog(page)
     if control is None:
         raise bp.SafeAutomationError('A opção "Novo blog..." não foi localizada.')
@@ -90,12 +95,35 @@ def reacquire_new_blog(page):
 def restore(page, original_url: str) -> None:
     try:
         page.keyboard.press("Escape")
-        page.wait_for_timeout(350)
+        page.wait_for_timeout(300)
     except Exception:
         pass
     if bp.sanitize_url(page.url) != bp.sanitize_url(original_url):
         page.goto(original_url, wait_until="domcontentloaded", timeout=60_000)
         page.wait_for_timeout(700)
+
+
+def activate_once(page, method: str) -> tuple[bool, str | None]:
+    control = reacquire_new_blog(page)
+    try:
+        if method == "click":
+            control.click(timeout=3_000)
+        elif method == "force-click":
+            control.click(timeout=3_000, force=True)
+        elif method in {"enter", "space"}:
+            try:
+                control.focus(timeout=3_000)
+            except PlaywrightTimeoutError:
+                control.evaluate("el => el.focus()")
+            page.wait_for_timeout(100)
+            page.keyboard.press("Enter" if method == "enter" else "Space")
+        elif method == "dom-click":
+            control.evaluate("el => el.click()")
+        else:
+            raise ValueError(f"Método desconhecido: {method}")
+        return True, None
+    except Exception as exc:
+        return False, compact_error(exc)
 
 
 def main() -> int:
@@ -109,39 +137,34 @@ def main() -> int:
         attempts = []
         activated = False
         activation_method = None
-
-        control = reacquire_new_blog(page)
-        metadata = {
-            "text": norm(control.inner_text()),
-            "role": control.get_attribute("role") or "",
-            "aria": control.get_attribute("aria-label") or "",
-            "tabindex": control.get_attribute("tabindex") or "",
-            "class": control.get_attribute("class") or "",
-            "box": control.bounding_box(),
-        }
-
-        methods = ("click", "enter", "space")
         final_snapshot = None
 
-        for method in methods:
-            control = reacquire_new_blog(page)
-            if method == "click":
-                control.click(timeout=10_000)
-            else:
-                control.focus()
-                page.wait_for_timeout(150)
-                page.keyboard.press("Enter" if method == "enter" else "Space")
+        first = reacquire_new_blog(page)
+        metadata = {
+            "text": norm(first.inner_text()),
+            "role": first.get_attribute("role") or "",
+            "aria": first.get_attribute("aria-label") or "",
+            "tabindex": first.get_attribute("tabindex") or "",
+            "class": first.get_attribute("class") or "",
+            "box": first.bounding_box(),
+        }
 
-            page.wait_for_timeout(900)
+        methods = ("click", "force-click", "enter", "space", "dom-click")
+        for method in methods:
+            invoked, error = activate_once(page, method)
+            page.wait_for_timeout(900 if invoked else 250)
             snap = visible_snapshot(page)
             attempts.append({
                 "method": method,
+                "invoked": invoked,
+                "error": error,
                 "url": bp.sanitize_url(page.url),
                 "creation_ui_detected": snap["creation_ui_detected"],
                 "non_search_field_count": len(snap["non_search_fields"]),
                 "next_button_count": len(snap["next_buttons"]),
                 "title_marker_in_body": snap["title_marker_in_body"],
             })
+
             if snap["creation_ui_detected"]:
                 activated = True
                 activation_method = method
