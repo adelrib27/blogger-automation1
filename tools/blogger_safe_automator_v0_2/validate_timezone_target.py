@@ -12,77 +12,119 @@ CDP_URL = bp.DEFAULT_CDP_URL
 OUT_DIR = Path("logs/browser_diagnostics")
 
 
-def scan_timezone_dialog(page) -> dict:
-    """Percorre somente por rolagem o seletor de fuso e procura GMT-03/Brasil.
+def scan_timezone_ui(page) -> dict:
+    """Procura GMT-03/Brasil sem selecionar ou salvar nada.
 
-    Não clica, não seleciona opção e não salva nada.
+    O Blogger pode virtualizar a lista e variar o contêiner/role do seletor.
+    Por isso a descoberta não depende de role="dialog": primeiro procura em todo
+    o DOM (inclusive nós não visíveis) e, se necessário, percorre contêineres
+    realmente roláveis encontrados na página.
     """
     return page.evaluate(
         r"""async () => {
           const norm = v => String(v || '').trim().replace(/\s+/g, ' ');
-          const wanted = /(GMT-03(?::00)?|Bras[ií]lia|S[aã]o Paulo|Sao Paulo)/i;
-          const dialogs = [...document.querySelectorAll('[role="dialog"]')];
-          const dialog = dialogs.find(el => /Fuso hor[aá]rio/i.test(norm(el.innerText || el.textContent)));
-          if (!dialog) return {dialog_found:false, matches:[], scroll_steps:0, scrollables:0};
+          const target = /(GMT-03(?::00)?|Bras[ií]lia|S[aã]o Paulo|Sao Paulo)/i;
+          const brazil = /(Bras[ií]lia|S[aã]o Paulo|Sao Paulo)/i;
+          const timezoneMarker = /(Fuso hor[aá]rio|GMT-11:00|Hor[aá]rio Padr[aã]o de Samoa|Midway)/i;
 
-          const out = [];
+          const meta = el => {
+            const r = el.getBoundingClientRect();
+            return {
+              tag: el.tagName,
+              role: el.getAttribute('role') || '',
+              text: norm(el.innerText || el.textContent).slice(0, 700),
+              aria: norm(el.getAttribute('aria-label')).slice(0, 300),
+              aria_selected: el.getAttribute('aria-selected') || '',
+              tabindex: el.getAttribute('tabindex') || '',
+              disabled: el.matches(':disabled') || el.getAttribute('aria-disabled') === 'true',
+              width: Math.round(r.width),
+              height: Math.round(r.height),
+            };
+          };
+
           const seen = new Set();
-          const collect = () => {
-            for (const el of dialog.querySelectorAll('*')) {
+          const matches = [];
+          const collect = root => {
+            const nodes = root === document ? document.querySelectorAll('body *') : root.querySelectorAll('*');
+            for (const el of nodes) {
               const text = norm(el.innerText || el.textContent);
               const aria = norm(el.getAttribute('aria-label'));
-              const hay = `${text} ${aria}`;
-              if (!wanted.test(hay) || (!text && !aria)) continue;
+              if (!target.test(`${text} ${aria}`) || (!text && !aria)) continue;
               const key = `${el.tagName}|${el.getAttribute('role') || ''}|${text}|${aria}`;
               if (seen.has(key)) continue;
               seen.add(key);
-              const r = el.getBoundingClientRect();
-              out.push({
-                tag: el.tagName,
-                role: el.getAttribute('role') || '',
-                text: text.slice(0, 500),
-                aria: aria.slice(0, 300),
-                aria_selected: el.getAttribute('aria-selected') || '',
-                tabindex: el.getAttribute('tabindex') || '',
-                disabled: el.matches(':disabled') || el.getAttribute('aria-disabled') === 'true',
-                width: Math.round(r.width),
-                height: Math.round(r.height),
-              });
+              matches.push(meta(el));
             }
           };
 
-          collect();
+          // 1) Procura no DOM inteiro, inclusive itens virtualizados/não visíveis.
+          collect(document);
+          if (matches.some(x => brazil.test(`${x.text} ${x.aria}`))) {
+            return {
+              ui_found: true,
+              discovery: 'whole-dom',
+              matches,
+              scroll_steps: 0,
+              scrollables: 0,
+            };
+          }
 
-          const scrollables = [dialog, ...dialog.querySelectorAll('*')].filter(el => {
-            const s = getComputedStyle(el);
-            return el.scrollHeight > el.clientHeight + 4 && /(auto|scroll)/.test(s.overflowY);
+          // 2) Identifica regiões pertencentes ao seletor de fuso por conteúdo,
+          // sem depender de role="dialog".
+          const all = [...document.querySelectorAll('body *')];
+          const markerNodes = all.filter(el => timezoneMarker.test(norm(el.innerText || el.textContent)));
+
+          // Inclui os próprios marcadores, descendentes e até 4 ancestrais.
+          const candidates = new Set();
+          for (const node of markerNodes) {
+            candidates.add(node);
+            let cur = node.parentElement;
+            for (let i = 0; cur && i < 4; i++, cur = cur.parentElement) candidates.add(cur);
+          }
+
+          const scrollables = [...candidates].filter(el => {
+            try {
+              return el.scrollHeight > el.clientHeight + 4;
+            } catch (_) {
+              return false;
+            }
           });
 
           let steps = 0;
           for (const scroller of scrollables) {
             const original = scroller.scrollTop;
             const max = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
-            const step = Math.max(120, Math.floor(scroller.clientHeight * 0.75));
+            const step = Math.max(120, Math.floor(Math.max(scroller.clientHeight, 160) * 0.75));
+
             for (let pos = 0; pos <= max; pos += step) {
               scroller.scrollTop = Math.min(pos, max);
               scroller.dispatchEvent(new Event('scroll', {bubbles:true}));
-              await new Promise(r => setTimeout(r, 45));
-              collect();
+              await new Promise(r => setTimeout(r, 70));
+              collect(document);
               steps += 1;
-              if (out.some(x => /Bras[ií]lia|S[aã]o Paulo|Sao Paulo/i.test(`${x.text} ${x.aria}`))) break;
+              if (matches.some(x => brazil.test(`${x.text} ${x.aria}`))) break;
             }
+
+            // Garante uma leitura no fim da lista.
+            scroller.scrollTop = max;
+            scroller.dispatchEvent(new Event('scroll', {bubbles:true}));
+            await new Promise(r => setTimeout(r, 90));
+            collect(document);
+
             scroller.scrollTop = original;
             scroller.dispatchEvent(new Event('scroll', {bubbles:true}));
             await new Promise(r => setTimeout(r, 30));
-            if (out.some(x => /Bras[ií]lia|S[aã]o Paulo|Sao Paulo/i.test(`${x.text} ${x.aria}`))) break;
+
+            if (matches.some(x => brazil.test(`${x.text} ${x.aria}`))) break;
           }
 
-          collect();
           return {
-            dialog_found:true,
-            matches:out,
-            scroll_steps:steps,
-            scrollables:scrollables.length,
+            ui_found: markerNodes.length > 0,
+            discovery: 'scroll-fallback',
+            matches,
+            scroll_steps: steps,
+            scrollables: scrollables.length,
+            marker_nodes: markerNodes.length,
           };
         }"""
     )
@@ -101,9 +143,13 @@ def main() -> int:
             raise bp.SafeAutomationError("Não foi possível identificar o Blog ID atual.")
 
         core.goto_settings(page, blog_id)
+        current_timezone = core.row_text(page, "Fuso horário")
         opened = core.click_row_prefix(page, "Fuso horário")
-        scan = scan_timezone_dialog(page) if opened else {
-            "dialog_found": False,
+        page.wait_for_timeout(700)
+
+        scan = scan_timezone_ui(page) if opened else {
+            "ui_found": False,
+            "discovery": "not-opened",
             "matches": [],
             "scroll_steps": 0,
             "scrollables": 0,
@@ -118,17 +164,19 @@ def main() -> int:
         ]
 
         result = {
-            "ok": bool(opened and scan.get("dialog_found") and brazil_matches),
+            "ok": bool(opened and scan.get("ui_found") and brazil_matches),
             "read_only": True,
             "blog_id": blog_id,
+            "current_timezone": current_timezone,
             "dialog_opened": opened,
-            "dialog_found": scan.get("dialog_found"),
+            "timezone_ui_found": scan.get("ui_found"),
+            "discovery": scan.get("discovery"),
             "scrollables_scanned": scan.get("scrollables", 0),
             "scroll_steps": scan.get("scroll_steps", 0),
             "target_matches": matches,
             "brazil_target_matches": brazil_matches,
             "message": (
-                "Somente leitura. O seletor de fuso horário foi percorrido apenas por rolagem; "
+                "Somente leitura. O seletor de fuso horário foi apenas inspecionado; "
                 "nenhuma opção foi selecionada e nada foi salvo."
             ),
         }
