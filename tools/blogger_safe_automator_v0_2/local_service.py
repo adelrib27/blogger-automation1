@@ -14,9 +14,9 @@ from browser_provision import (
     DEFAULT_CDP_URL,
     SafeAutomationError,
     execute_audit,
-    execute_create,
     execute_preflight,
 )
+from resilient_create import execute_create_resilient
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
@@ -187,7 +187,7 @@ class Handler(BaseHTTPRequestHandler):
                 )
                 return
             self._run_exclusive(
-                lambda: execute_create(
+                lambda: execute_create_resilient(
                     title,
                     address,
                     confirm=confirm,
