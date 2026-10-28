@@ -9,7 +9,7 @@ Camada complementar ao Blogger Bridge/API para ações que a API Blogger v3 não
 - CDP fica em loopback por padrão (`127.0.0.1:9222`);
 - `audit` é somente leitura;
 - `create-blog` faz preflight por padrão;
-- criação real exige `--apply` + `--confirm "CREATE BLOG"`;
+- criação real exige confirmação explícita `CREATE BLOG`;
 - seletores são fail-closed;
 - sucesso só é retornado depois de detectar um Blog ID novo e validar a URL pública com HTTP 200;
 - URLs gravadas em diagnóstico têm query/fragmento removidos;
@@ -43,19 +43,15 @@ Verificação:
 curl http://127.0.0.1:9222/json/version
 ```
 
-## Auditoria
+## Uso direto pela CLI
+
+Auditoria:
 
 ```bat
 .\.venv\Scripts\python.exe browser_provision.py audit
 ```
 
-Resultado esperado:
-
-```text
-"AUDIT_OK"
-```
-
-## Preflight de criação — não cria nada
+Preflight — não cria nada:
 
 ```bat
 .\.venv\Scripts\python.exe browser_provision.py create-blog ^
@@ -63,15 +59,7 @@ Resultado esperado:
   --address "teste-blogger-automation"
 ```
 
-Resultado esperado:
-
-```text
-"PREFLIGHT_OK_NO_CHANGES"
-```
-
-## Criação real
-
-Somente após o preflight:
+Criação real, somente após o preflight:
 
 ```bat
 .\.venv\Scripts\python.exe browser_provision.py create-blog ^
@@ -81,13 +69,31 @@ Somente após o preflight:
   --confirm "CREATE BLOG"
 ```
 
-O comando só retorna `CREATE_BLOG_VALIDATED` depois de:
+## Serviço local para a futura ponte do ChatGPT
 
-1. executar o fluxo `Novo blog`;
-2. detectar um Blog ID diferente do blog de origem;
-3. confirmar a URL pública com HTTP 200.
+`local_service.py` expõe o automador apenas no próprio PC:
 
-Se alguma validação falhar, o processo não registra sucesso.
+```text
+http://127.0.0.1:8765
+```
+
+Ele **não escuta na rede local nem na internet** e exige um Bearer token de pelo menos 32 caracteres.
+
+No Prompt de Comando, defina um token somente para a sessão atual e inicie:
+
+```bat
+set BLOGGER_RUNNER_TOKEN=COLOQUE_AQUI_UM_TOKEN_ALEATORIO_COM_32_OU_MAIS_CARACTERES
+.\.venv\Scripts\python.exe local_service.py
+```
+
+Endpoints atuais:
+
+- `GET /v1/health`
+- `POST /v1/audit`
+- `POST /v1/preflight`
+- `POST /v1/create-blog`
+
+O endpoint de criação continua exigindo `confirm = "CREATE BLOG"`. O serviço força `allow_remote_cdp = false` e serializa operações do navegador para evitar duas escritas simultâneas.
 
 ## Diagnósticos
 
@@ -111,7 +117,7 @@ Screenshots do painel devem ser tratados como dados privados.
 ## Testes locais
 
 ```bat
-.\.venv\Scripts\python.exe -m unittest test_browser_provision.py
+.\.venv\Scripts\python.exe -m unittest test_browser_provision.py test_local_service.py
 ```
 
 ## Escopo atual
@@ -124,6 +130,7 @@ Incluído:
 - criação segura de blog;
 - proteção contra confundir o Blog ID antigo com o novo;
 - validação da URL pública;
+- serviço HTTP local autenticado e restrito ao loopback;
 - testes de regressão de segurança.
 
 Ainda não incluído:
@@ -131,7 +138,7 @@ Ainda não incluído:
 - Configurações;
 - Layout;
 - Tema;
-- ponte externa ChatGPT → runner;
-- implantação Cloudflare Tunnel.
+- exposição segura da ponte externa;
+- plugin privado do ChatGPT.
 
 Essas etapas devem usar o mesmo Chrome oficial/CDP, sem voltar ao Chromium interno do Playwright.
