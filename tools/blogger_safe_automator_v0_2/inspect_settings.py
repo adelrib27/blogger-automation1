@@ -10,27 +10,7 @@ from playwright.sync_api import sync_playwright
 
 CDP_URL = bp.DEFAULT_CDP_URL
 OUT_DIR = Path("logs/browser_diagnostics")
-
-KEYWORDS = (
-    "título", "title",
-    "descrição", "description",
-    "idioma do blog", "blog language",
-    "visível para mecanismos de pesquisa", "visible to search engines",
-    "redirecionamento para https", "https redirect",
-    "endereço do blog", "blog address",
-    "domínio personalizado", "custom domain",
-    "rastreadores e indexação", "crawlers and indexing",
-    "robots.txt", "robots",
-    "tags de cabeçalho de robôs personalizadas", "custom robots header tags",
-    "tags de robôs personalizadas", "custom robots tags",
-    "favicon",
-)
-
 SETTINGS_RE = re.compile(r"^(Configura[cç][oõ]es|Settings)$", re.I)
-
-
-def norm(value: str | None) -> str:
-    return re.sub(r"\s+", " ", value or "").strip()
 
 
 def first_visible(locator):
@@ -48,11 +28,7 @@ def first_visible(locator):
 
 
 def open_settings(page, blog_id: str) -> None:
-    """Abre Configurações pela própria UI do Blogger.
-
-    Evita navegar diretamente por hrefs relativos usados pelo SPA do Blogger.
-    Esta ação apenas navega; não altera nenhuma configuração.
-    """
+    """Abre Configurações pela própria UI do Blogger, sem alterar valores."""
     candidates = [
         page.get_by_role("menuitem", name=SETTINGS_RE),
         page.get_by_text(SETTINGS_RE, exact=True),
@@ -89,8 +65,6 @@ def open_settings(page, blog_id: str) -> None:
         page.wait_for_timeout(250)
         elapsed += 250
 
-    # Alguns estados do SPA não atualizam a URL imediatamente. Aceita a tela
-    # somente se um marcador inequívoco de Configurações estiver visível.
     markers = page.get_by_text(
         re.compile(r"^(B[aá]sicas|Privacidade|Publica[cç][aã]o|HTTPS|Rastreadores e indexa[cç][aã]o)$", re.I),
         exact=True,
@@ -102,11 +76,16 @@ def open_settings(page, blog_id: str) -> None:
 
 
 def inspect_settings(page) -> dict:
-    data = page.evaluate(
-        r"""(keywords) => {
+    """Inventário integral e somente leitura da página Configurações.
+
+    Não filtra por SEO. Coleta:
+    - todos os controles interativos visíveis;
+    - todas as linhas clicáveis/tabindex=0 visíveis;
+    - candidatos a cabeçalhos de seção curtos.
+    """
+    return page.evaluate(
+        r"""() => {
           const norm = (v) => String(v || '').trim().replace(/\s+/g, ' ');
-          const lower = (v) => norm(v).toLocaleLowerCase();
-          const wanted = keywords.map(lower);
           const visible = (el) => {
             const r = el.getBoundingClientRect();
             const s = getComputedStyle(el);
@@ -117,51 +96,79 @@ def inspect_settings(page) -> dict:
             return {
               tag: el.tagName,
               role: el.getAttribute('role') || '',
-              text: norm(el.innerText || el.textContent).slice(0, 240),
-              aria: norm(el.getAttribute('aria-label')).slice(0, 240),
+              text: norm(el.innerText || el.textContent || el.value).slice(0, 500),
+              aria: norm(el.getAttribute('aria-label')).slice(0, 300),
               aria_checked: el.getAttribute('aria-checked') || '',
               aria_disabled: el.getAttribute('aria-disabled') || '',
               checked: 'checked' in el ? !!el.checked : null,
               disabled: 'disabled' in el ? !!el.disabled : null,
               tabindex: el.getAttribute('tabindex') || '',
+              type: el.getAttribute('type') || '',
+              name: el.getAttribute('name') || '',
               href: (el.getAttribute('href') || '').slice(0, 300),
               width: Math.round(r.width),
-              height: Math.round(r.height)
+              height: Math.round(r.height),
+              top: Math.round(r.top + window.scrollY)
             };
           };
 
+          const dedupe = (items) => {
+            const seen = new Set();
+            const out = [];
+            for (const item of items) {
+              const key = [
+                item.tag, item.role, item.text, item.aria, item.aria_checked,
+                item.tabindex, item.type, item.name, item.href, item.top
+              ].join('|');
+              if (seen.has(key)) continue;
+              seen.add(key);
+              out.push(item);
+            }
+            return out;
+          };
+
           const controls = [];
-          for (const el of document.querySelectorAll('input,button,a,[role="button"],[role="switch"],[role="checkbox"],[aria-checked]')) {
+          const controlSelector = [
+            'input', 'textarea', 'select', 'button', 'a[href]',
+            '[role="button"]', '[role="switch"]', '[role="checkbox"]',
+            '[role="radio"]', '[role="combobox"]', '[role="listbox"]',
+            '[role="menuitem"]', '[aria-checked]'
+          ].join(',');
+          for (const el of document.querySelectorAll(controlSelector)) {
+            if (!visible(el)) continue;
+            controls.push(meta(el));
+          }
+
+          const rows = [];
+          for (const el of document.querySelectorAll('[tabindex="0"], [role="button"], [role="checkbox"], [role="switch"]')) {
             if (!visible(el)) continue;
             const m = meta(el);
-            const hay = lower(`${m.text} ${m.aria}`);
-            if (wanted.some(k => hay.includes(k)) || m.aria_checked !== '') controls.push(m);
+            if (!m.text && !m.aria) continue;
+            rows.push(m);
           }
 
-          const matches = [];
-          const seen = new Set();
-          for (const el of document.querySelectorAll('body *')) {
+          const sectionCandidates = [];
+          for (const el of document.querySelectorAll('h1,h2,h3,h4,h5,h6,div,span')) {
             if (!visible(el)) continue;
             const text = norm(el.innerText || el.textContent);
-            if (!text || text.length > 500) continue;
-            const hay = lower(text);
-            if (!wanted.some(k => hay.includes(k))) continue;
-            const key = `${el.tagName}|${text}`;
-            if (seen.has(key)) continue;
-            seen.add(key);
-            const parent = el.parentElement;
-            matches.push({
-              ...meta(el),
-              parent: parent ? meta(parent) : null
-            });
-            if (matches.length >= 100) break;
+            if (!text || text.length > 90) continue;
+            const childText = [...el.children].map(c => norm(c.innerText || c.textContent)).join(' ');
+            if (childText && childText === text) continue;
+            const style = getComputedStyle(el);
+            const weight = parseInt(style.fontWeight || '400', 10) || 400;
+            const size = parseFloat(style.fontSize || '0') || 0;
+            if (!/^H[1-6]$/.test(el.tagName) && weight < 500 && size < 18) continue;
+            sectionCandidates.push(meta(el));
           }
 
-          return {controls, matches};
-        }""",
-        list(KEYWORDS),
+          return {
+            controls: dedupe(controls).sort((a, b) => a.top - b.top),
+            rows: dedupe(rows).sort((a, b) => a.top - b.top),
+            section_candidates: dedupe(sectionCandidates).sort((a, b) => a.top - b.top),
+            page_text: norm(document.body.innerText).slice(0, 30000)
+          };
+        }"""
     )
-    return data
 
 
 def main() -> int:
@@ -182,14 +189,20 @@ def main() -> int:
         result = {
             "ok": True,
             "read_only": True,
+            "inventory_mode": "full",
             "blog_id": blog_id,
             "settings_url": bp.sanitize_url(page.url),
+            "control_count": len(snapshot.get("controls", [])),
+            "row_count": len(snapshot.get("rows", [])),
+            "section_candidate_count": len(snapshot.get("section_candidates", [])),
             "controls": snapshot.get("controls", []),
-            "matches": snapshot.get("matches", []),
-            "message": "Somente leitura. Nenhuma configuração foi alterada.",
+            "rows": snapshot.get("rows", []),
+            "section_candidates": snapshot.get("section_candidates", []),
+            "page_text": snapshot.get("page_text", ""),
+            "message": "Inventário completo em somente leitura. Nenhuma configuração foi alterada.",
         }
 
-        (OUT_DIR / "settings_inspection.json").write_text(
+        (OUT_DIR / "settings_full_inventory.json").write_text(
             json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
