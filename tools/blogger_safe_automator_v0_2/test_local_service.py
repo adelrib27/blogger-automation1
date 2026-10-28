@@ -43,7 +43,10 @@ class LocalServiceTests(unittest.TestCase):
             with urlopen(req, timeout=3) as response:
                 return response.status, json.loads(response.read().decode("utf-8"))
         except HTTPError as exc:
-            return exc.code, json.loads(exc.read().decode("utf-8"))
+            try:
+                return exc.code, json.loads(exc.read().decode("utf-8"))
+            finally:
+                exc.close()
 
     def test_health_rejects_missing_token(self):
         with running_server(self.TOKEN) as base:
