@@ -154,7 +154,7 @@ def require_blogger_session(page: Page) -> None:
 
 def dump_visible_controls(page: Page, out_path: Path | None = None) -> dict:
     data = page.evaluate(
-        """() => {
+        r"""() => {
           const nodes = [...document.querySelectorAll('button,a,input,[role="button"],[role="menuitem"]')];
           const safeHref = (raw) => {
             if (!raw) return '';
@@ -326,7 +326,7 @@ def extract_current_blog_id(page: Page) -> str | None:
 def extract_blog_id_from_title_link(page: Page, title: str) -> str | None:
     try:
         links = page.locator("a[href]").evaluate_all(
-            """els => els.slice(0, 500).map(a => ({
+            r"""els => els.slice(0, 500).map(a => ({
                 href: a.href || '',
                 text: (a.innerText || a.textContent || '').trim().replace(/\s+/g, ' ')
             }))"""
