@@ -96,46 +96,61 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
     }
 
 
-def _timezone_dialog(page):
-    pattern = re.compile(r"^Fuso horário(?:\s|$)", re.I)
-    dialogs = page.locator('[role="dialog"]').filter(has_text=pattern)
+def _current_timezone_matches(page, target: str) -> bool:
+    current = cfg.core.row_text(page, "Fuso horário") or ""
+    return target in current
+
+
+def _target_in_timezone_dialog(page, target: str):
+    """Return (target item, ancestor dialog) anchored by the exact timezone text.
+
+    We deliberately do not identify the modal by its title because Blogger exposes
+    unrelated UI containers as role=dialog. The exact timezone option is the safe
+    anchor; its closest visible role=dialog is then used for the SAVE action.
+    """
+    matches = page.get_by_text(target, exact=True)
     candidates = []
-    for i in range(dialogs.count()):
-        item = dialogs.nth(i)
+    for i in range(matches.count()):
+        item = matches.nth(i)
+        dialog = item.locator('xpath=ancestor::*[@role="dialog"][1]')
         try:
-            if item.is_visible():
-                candidates.append(item)
+            if dialog.count() == 0 or not dialog.first.is_visible():
+                continue
+            # The option may start outside the viewport; scroll it before testing visibility.
+            item.scroll_into_view_if_needed(timeout=4_000)
+            page.wait_for_timeout(150)
+            if not item.is_visible():
+                continue
+            candidates.append((item, dialog.first))
         except Exception:
             continue
+
     if len(candidates) > 1:
-        raise cfg.SettingsError("Mais de um diálogo de fuso horário está visível; operação bloqueada.")
-    return candidates[0] if candidates else None
+        raise cfg.SettingsError(
+            "Mais de uma opção idêntica de fuso horário está visível em diálogos distintos; operação bloqueada."
+        )
+    return candidates[0] if candidates else (None, None)
 
 
 def set_timezone(page, target: str) -> dict:
-    dialog = _timezone_dialog(page)
-    if dialog is None:
-        if not cfg.core.click_row_prefix(page, "Fuso horário"):
-            raise cfg.SettingsError("Fuso horário não foi localizado.")
-        page.wait_for_timeout(500)
-        dialog = _timezone_dialog(page)
-    if dialog is None:
-        raise cfg.SettingsError("Diálogo de fuso horário não foi identificado com segurança.")
+    # Idempotência: se a linha já mostra exatamente o fuso desejado, não abra modal nem salve.
+    if _current_timezone_matches(page, target):
+        return {
+            "target": target,
+            "selected_and_saved": True,
+            "changed": False,
+            "dialog_guard": "already_selected",
+        }
 
-    target_loc = dialog.get_by_text(target, exact=True)
-    chosen = None
-    for i in range(target_loc.count()):
-        item = target_loc.nth(i)
-        try:
-            item.scroll_into_view_if_needed(timeout=4_000)
-            page.wait_for_timeout(150)
-            if item.is_visible():
-                chosen = item
-                break
-        except Exception:
-            continue
-    if chosen is None:
-        raise cfg.SettingsError(f'Fuso alvo não localizado: {target}')
+    if not cfg.core.click_row_prefix(page, "Fuso horário"):
+        raise cfg.SettingsError("Fuso horário não foi localizado.")
+    page.wait_for_timeout(500)
+
+    chosen, dialog = _target_in_timezone_dialog(page, target)
+    if chosen is None or dialog is None:
+        raise cfg.SettingsError(
+            "Opção exata do fuso horário não foi identificada dentro de um diálogo visível."
+        )
 
     try:
         chosen.click(timeout=5_000)
@@ -143,8 +158,13 @@ def set_timezone(page, target: str) -> dict:
         chosen.evaluate("el => el.click()")
     page.wait_for_timeout(250)
     _click_action_in_dialog(page, dialog, "SALVAR")
+
+    if not _current_timezone_matches(page, target):
+        raise cfg.SettingsError("Fuso horário não foi confirmado na linha de configurações após salvar.")
+
     return {
         "target": target,
         "selected_and_saved": True,
-        "dialog_guard": "timezone_anchored",
+        "changed": True,
+        "dialog_guard": "target_anchored",
     }
