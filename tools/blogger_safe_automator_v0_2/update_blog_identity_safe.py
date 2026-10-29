@@ -10,6 +10,7 @@ import urllib.request
 import browser_provision as bp
 import validate_core_settings_profile as core
 import configure_core_settings as cfg
+from auto_blog_route import ensure_settings_page
 from blogger_session_guard import is_blogger_url
 from playwright.sync_api import sync_playwright
 
@@ -89,11 +90,10 @@ def main() -> int:
 
     with sync_playwright() as pw:
         browser, context = bp.connect_official_chrome(pw, safe_cdp)
-        page = core.select_expected_blog_page(context, blog_id)
+        page = ensure_settings_page(context, blog_id)
         if not is_blogger_url(page.url) or bp.extract_current_blog_id(page) != blog_id:
             raise bp.SafeAutomationError("Blog errado bloqueado antes da alteração.")
 
-        core.goto_settings(page, blog_id)
         page.wait_for_timeout(700)
         if bp.extract_current_blog_id(page) != blog_id:
             raise bp.SafeAutomationError("Blog ID mudou ao abrir Configurações.")
@@ -117,11 +117,9 @@ def main() -> int:
             "settings_url": bp.sanitize_url(page.url),
         }
 
-        if title.casefold() not in (after["title_row"] or "").casefold():
-            raise bp.SafeAutomationError(f"Título final não confere: {after['title_row']!r}")
-        if address.casefold() not in (after["address_row"] or "").casefold():
-            raise bp.SafeAutomationError(f"Endereço final não confere: {after['address_row']!r}")
-
+        # These row snapshots are kept as diagnostics only. Blogger may render just
+        # the row label after saving, so authoritative validation is the unchanged
+        # Blog ID plus the new public URL/title check below.
         public_validation = wait_public_url(public_url, title)
         result = {
             "status": "BLOG_IDENTITY_CHANGED_AND_VALIDATED",
