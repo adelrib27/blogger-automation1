@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 from pathlib import Path
 
 import browser_provision as bp
+from blogger_panel_route_guard import extract_panel_blog_id
 from playwright.sync_api import sync_playwright
 from validate_core_settings_profile import select_expected_blog_page, validate_expected_blog_id
 
@@ -33,7 +33,7 @@ def target_url(route: str, blog_id: str) -> str:
 
 
 def assert_expected_blog(page, expected_blog_id: str) -> None:
-    current = bp.extract_current_blog_id(page)
+    current = extract_panel_blog_id(page.url)
     if current != expected_blog_id:
         raise bp.SafeAutomationError(
             f"Blog ID inesperado durante diagnóstico: esperado {expected_blog_id}, obtido {current or 'nenhum'}."
@@ -111,7 +111,7 @@ def execute_diagnostic(expected_blog_id: str, *, cdp_url: str = bp.DEFAULT_CDP_U
                     "nodes": snap["nodes"],
                 }
         finally:
-            if original_url and bp.extract_blog_id_from_url(original_url) == expected_blog_id:
+            if original_url and extract_panel_blog_id(original_url) == expected_blog_id:
                 try:
                     page.goto(original_url, wait_until="domcontentloaded", timeout=60_000)
                     page.wait_for_timeout(600)
