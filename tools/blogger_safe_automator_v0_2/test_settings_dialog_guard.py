@@ -28,6 +28,14 @@ class SettingsDialogGuardTests(unittest.TestCase):
         self.assertEqual(result["dialog_guard"], "already_selected")
         click_row.assert_not_called()
 
+    def test_timezone_idempotency_normalizes_spacing_and_dash_variants(self):
+        target = "(GMT-03:00) Horário Padrão de Brasília – São Paulo"
+        current = "Fuso horário\u00a0 (GMT-03:00) Horário Padrão de Brasília — São   Paulo"
+        page = MagicMock()
+        page.get_by_text.return_value.count.return_value = 0
+        with patch.object(sdg.cfg.core, "row_text", return_value=current):
+            self.assertTrue(sdg._current_timezone_matches(page, target))
+
     def test_dialog_box_key_collapses_same_visual_modal(self):
         dialog_a = MagicMock()
         dialog_b = MagicMock()
