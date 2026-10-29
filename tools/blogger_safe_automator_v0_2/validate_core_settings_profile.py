@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import json
 import re
 from pathlib import Path
 
 import browser_provision as bp
+from blogger_session_guard import is_blogger_url
 from playwright.sync_api import sync_playwright
 
 CDP_URL = bp.DEFAULT_CDP_URL
 OUT_DIR = Path("logs/browser_diagnostics")
+BLOG_ID_RE = re.compile(r"^[0-9]+$")
 
 
 def norm(value: str | None) -> str:
@@ -28,6 +31,70 @@ def first_visible(locator):
     except Exception:
         pass
     return None
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Diagnóstico somente leitura das configurações-base do Blogger."
+    )
+    parser.add_argument(
+        "--expected-blog-id",
+        required=True,
+        help="Blog ID que deve estar aberto; o diagnóstico bloqueia qualquer outro blog.",
+    )
+    return parser
+
+
+def validate_expected_blog_id(value: str) -> str:
+    value = (value or "").strip()
+    if not BLOG_ID_RE.fullmatch(value):
+        raise bp.SafeAutomationError("Blog ID esperado inválido.")
+    return value
+
+
+def _page_visibility(page) -> bool:
+    try:
+        return page.evaluate("() => document.visibilityState") == "visible"
+    except Exception:
+        return False
+
+
+def select_expected_blog_page(context, expected_blog_id: str):
+    """Select only a Blogger tab whose URL resolves to the expected Blog ID.
+
+    This deliberately does not fall back to another Blogger tab. If the requested
+    blog is not present in the connected Chrome context, the diagnostic fails closed.
+    """
+    candidates = []
+    for page in context.pages:
+        try:
+            if not is_blogger_url(page.url):
+                continue
+            if bp.extract_current_blog_id(page) == expected_blog_id:
+                candidates.append(page)
+        except Exception:
+            continue
+
+    if not candidates:
+        raise bp.SafeAutomationError(
+            f"Nenhuma aba Blogger do Blog ID esperado {expected_blog_id} foi encontrada."
+        )
+
+    settings_candidates = [
+        page
+        for page in candidates
+        if f"/blog/settings/{expected_blog_id}" in bp.sanitize_url(page.url)
+    ]
+    visible_settings = [page for page in settings_candidates if _page_visibility(page)]
+    visible_candidates = [page for page in candidates if _page_visibility(page)]
+
+    if visible_settings:
+        return visible_settings[-1]
+    if settings_candidates:
+        return settings_candidates[-1]
+    if visible_candidates:
+        return visible_candidates[-1]
+    return candidates[-1]
 
 
 def goto_settings(page, blog_id: str) -> None:
@@ -166,17 +233,31 @@ def row_text(page, prefix: str) -> str | None:
 
 
 def main() -> int:
+    args = build_parser().parse_args()
+    expected_blog_id = validate_expected_blog_id(args.expected_blog_id)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as p:
         _, context = bp.connect_official_chrome(p, CDP_URL)
-        page = bp.select_page(context)
-        bp.require_blogger_session(page)
+        page = select_expected_blog_page(context, expected_blog_id)
+
+        # Never navigate to Blogger home here: that can silently switch to the
+        # account's default blog. The selected page already proved it is Blogger.
+        if not is_blogger_url(page.url):
+            raise bp.SafeAutomationError("A aba selecionada deixou de ser uma página do Blogger.")
 
         blog_id = bp.extract_current_blog_id(page)
-        if not blog_id:
-            raise bp.SafeAutomationError("Não foi possível identificar o Blog ID atual.")
-        goto_settings(page, blog_id)
+        if blog_id != expected_blog_id:
+            raise bp.SafeAutomationError(
+                f"Blog errado bloqueado: atual={blog_id!r}, esperado={expected_blog_id!r}."
+            )
+
+        goto_settings(page, expected_blog_id)
+        blog_id = bp.extract_current_blog_id(page)
+        if blog_id != expected_blog_id:
+            raise bp.SafeAutomationError(
+                f"Blog mudou durante o diagnóstico: atual={blog_id!r}, esperado={expected_blog_id!r}."
+            )
 
         direct_state = {
             "search_visibility": checkbox_state(page, "Visível para mecanismos de pesquisa"),
@@ -202,10 +283,17 @@ def main() -> int:
         timezone_overlay = overlay_snapshot(page) if timezone_opened else {}
         close_overlay(page)
 
+        final_blog_id = bp.extract_current_blog_id(page)
+        if final_blog_id != expected_blog_id:
+            raise bp.SafeAutomationError(
+                f"Blog mudou durante a coleta: atual={final_blog_id!r}, esperado={expected_blog_id!r}."
+            )
+
         result = {
             "ok": bool(description_opened and timezone_opened),
             "read_only": True,
-            "blog_id": blog_id,
+            "expected_blog_id": expected_blog_id,
+            "blog_id": final_blog_id,
             "settings_url": bp.sanitize_url(page.url),
             "direct_state": direct_state,
             "rows": rows,
@@ -223,7 +311,7 @@ def main() -> int:
             ),
         }
 
-        (OUT_DIR / "core_settings_profile.json").write_text(
+        (OUT_DIR / f"core_settings_profile_{expected_blog_id}.json").write_text(
             json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
