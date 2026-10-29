@@ -11,7 +11,6 @@ import browser_provision as bp
 from blogger_panel_route_guard import extract_panel_blog_id
 from inspect_theme_restore_dialog import (
     THEMES_ROUTE_RE,
-    _exactly_one_visible,
     _restore_card_is_open,
     inspect_restore_dom,
     open_restore_dialog,
@@ -51,6 +50,44 @@ def validate_lab_target(blog_id: str, public_url: str) -> None:
         )
 
 
+def _normalize_action_text(value: str | None) -> str:
+    return " ".join((value or "").split()).casefold()
+
+
+def _exact_visible_action_by_text(page, expected_text: str):
+    """Find one visible button/role=button by its rendered text or aria-label.
+
+    Blogger's Restore dialog exposes FAZER UPLOAD in the visible DOM, but the
+    Playwright accessibility-role lookup does not currently surface it. The
+    same DOM contract is already used by inspect_restore_dom().
+    """
+    target = _normalize_action_text(expected_text)
+    locator = page.locator('button,[role="button"]')
+    matches = []
+    observed = []
+
+    for index in range(locator.count()):
+        item = locator.nth(index)
+        try:
+            if not item.is_visible():
+                continue
+            text = _normalize_action_text(item.inner_text())
+            aria = _normalize_action_text(item.get_attribute("aria-label"))
+            if text or aria:
+                observed.append({"text": text, "aria": aria})
+            if text == target or aria == target:
+                matches.append(item)
+        except Exception:
+            continue
+
+    if len(matches) != 1:
+        raise bp.SafeAutomationError(
+            f"Ação {expected_text!r} ambígua ou ausente: esperado 1 elemento visível, "
+            f"encontrado(s) {len(matches)}. Ações visíveis observadas: {observed}."
+        )
+    return matches[0]
+
+
 def _clear_stale_file_inputs(page) -> int:
     """Clear only browser-local stale file selections from earlier failed attempts."""
     locator = page.locator('input[type="file"]')
@@ -74,10 +111,7 @@ def _clear_stale_file_inputs(page) -> int:
 
 def _select_theme_file_via_native_chooser(page, theme_path: str) -> str:
     """Follow the exact Blogger UI contract: FAZER UPLOAD -> native chooser -> XML."""
-    upload = _exactly_one_visible(
-        page.get_by_role("button", name=UPLOAD_LABEL, exact=True),
-        "Botão FAZER UPLOAD",
-    )
+    upload = _exact_visible_action_by_text(page, UPLOAD_LABEL)
     try:
         with page.expect_file_chooser(timeout=5_000) as chooser_info:
             upload.click(timeout=5_000)
