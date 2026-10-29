@@ -96,45 +96,135 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
     }
 
 
+def _has_visible_dialog_ancestor(item) -> bool:
+    ancestors = item.locator('xpath=ancestor::*[@role="dialog"]')
+    for i in range(ancestors.count()):
+        try:
+            if ancestors.nth(i).is_visible():
+                return True
+        except Exception:
+            continue
+    return False
+
+
 def _current_timezone_matches(page, target: str) -> bool:
+    # Fast path: some Blogger DOM variants expose the whole row text in one node.
     current = cfg.core.row_text(page, "Fuso horário") or ""
-    return target in current
+    if target in current:
+        return True
 
-
-def _target_in_timezone_dialog(page, target: str):
-    """Return (target item, ancestor dialog) anchored by the exact timezone text.
-
-    We deliberately do not identify the modal by its title because Blogger exposes
-    unrelated UI containers as role=dialog. The exact timezone option is the safe
-    anchor; its closest visible role=dialog is then used for the SAVE action.
-    """
+    # Other variants split the label and current value into sibling nodes. In that
+    # case accept the exact visible target only when it is outside any open dialog.
     matches = page.get_by_text(target, exact=True)
-    candidates = []
     for i in range(matches.count()):
         item = matches.nth(i)
-        dialog = item.locator('xpath=ancestor::*[@role="dialog"][1]')
         try:
-            if dialog.count() == 0 or not dialog.first.is_visible():
-                continue
-            # The option may start outside the viewport; scroll it before testing visibility.
-            item.scroll_into_view_if_needed(timeout=4_000)
-            page.wait_for_timeout(150)
+            if item.is_visible() and not _has_visible_dialog_ancestor(item):
+                return True
+        except Exception:
+            continue
+    return False
+
+
+def _dialog_box_key(dialog):
+    """Stable-enough visual key used only to collapse duplicate DOM text nodes.
+
+    Blogger can render multiple matching descendants for one visible radio option.
+    Those descendants resolve to the same modal. We deduplicate by the modal's
+    visible bounding box; genuinely distinct visible modals remain distinct and
+    therefore still trigger fail-closed behavior.
+    """
+    box = dialog.bounding_box()
+    if not box:
+        return None
+    return tuple(round(float(box[k]), 1) for k in ("x", "y", "width", "height"))
+
+
+def _dialog_looks_like_timezone(dialog, target: str) -> bool:
+    try:
+        title = cfg.first_visible(dialog.get_by_text("Fuso horário", exact=True))
+        save = cfg.first_visible(
+            dialog.get_by_role("button", name=re.compile(r"^SALVAR$", re.I))
+        ) or cfg.first_visible(dialog.get_by_text(re.compile(r"^SALVAR$", re.I), exact=True))
+        target_item = cfg.first_visible(dialog.get_by_text(target, exact=True))
+        return title is not None and save is not None and target_item is not None
+    except Exception:
+        return False
+
+
+def _timezone_dialog(page, target: str):
+    """Find exactly one active timezone modal, deduplicating same-modal DOM copies."""
+    matches = page.get_by_text(target, exact=True)
+    by_box = {}
+
+    for i in range(matches.count()):
+        item = matches.nth(i)
+        try:
             if not item.is_visible():
                 continue
-            candidates.append((item, dialog.first))
+            dialog = item.locator('xpath=ancestor::*[@role="dialog"][1]')
+            if dialog.count() == 0:
+                continue
+            dialog = dialog.first
+            if not dialog.is_visible() or not _dialog_looks_like_timezone(dialog, target):
+                continue
+            key = _dialog_box_key(dialog)
+            if key is not None:
+                by_box.setdefault(key, dialog)
         except Exception:
             continue
 
-    if len(candidates) > 1:
+    if len(by_box) > 1:
         raise cfg.SettingsError(
-            "Mais de uma opção idêntica de fuso horário está visível em diálogos distintos; operação bloqueada."
+            "Mais de um diálogo de fuso horário realmente visível foi encontrado; operação bloqueada."
         )
-    return candidates[0] if candidates else (None, None)
+    return next(iter(by_box.values())) if by_box else None
+
+
+def _target_control_in_dialog(dialog, target: str):
+    # Prefer the semantic radio control. Blogger may duplicate the text in child
+    # spans, but normally exposes one role=radio for the actual selectable option.
+    radio = cfg.first_visible(dialog.get_by_role("radio", name=target, exact=True))
+    if radio is not None:
+        return radio
+
+    text_matches = dialog.get_by_text(target, exact=True)
+    for i in range(text_matches.count()):
+        item = text_matches.nth(i)
+        try:
+            if not item.is_visible():
+                continue
+            ancestor_radio = item.locator('xpath=ancestor::*[@role="radio"][1]')
+            radio = cfg.first_visible(ancestor_radio)
+            if radio is not None:
+                return radio
+            return item
+        except Exception:
+            continue
+    return None
+
+
+def _control_is_selected(control) -> bool:
+    try:
+        aria_checked = control.get_attribute("aria-checked")
+        if aria_checked is not None:
+            return aria_checked == "true"
+    except Exception:
+        pass
+    try:
+        return bool(control.is_checked())
+    except Exception:
+        return False
 
 
 def set_timezone(page, target: str) -> dict:
-    # Idempotência: se a linha já mostra exatamente o fuso desejado, não abra modal nem salve.
-    if _current_timezone_matches(page, target):
+    # If a previous fail-closed attempt left the correct timezone modal open,
+    # reuse that modal rather than clicking the settings row again.
+    dialog = _timezone_dialog(page, target)
+
+    # Idempotência: if no modal is open and the settings page already shows the
+    # requested timezone, do not create a write at all.
+    if dialog is None and _current_timezone_matches(page, target):
         return {
             "target": target,
             "selected_and_saved": True,
@@ -142,15 +232,34 @@ def set_timezone(page, target: str) -> dict:
             "dialog_guard": "already_selected",
         }
 
-    if not cfg.core.click_row_prefix(page, "Fuso horário"):
-        raise cfg.SettingsError("Fuso horário não foi localizado.")
-    page.wait_for_timeout(500)
+    if dialog is None:
+        if not cfg.core.click_row_prefix(page, "Fuso horário"):
+            raise cfg.SettingsError("Fuso horário não foi localizado.")
+        page.wait_for_timeout(500)
+        dialog = _timezone_dialog(page, target)
 
-    chosen, dialog = _target_in_timezone_dialog(page, target)
-    if chosen is None or dialog is None:
+    if dialog is None:
         raise cfg.SettingsError(
-            "Opção exata do fuso horário não foi identificada dentro de um diálogo visível."
+            "Diálogo ativo de fuso horário não foi identificado com segurança."
         )
+
+    chosen = _target_control_in_dialog(dialog, target)
+    if chosen is None:
+        raise cfg.SettingsError(f'Fuso alvo não localizado no diálogo ativo: {target}')
+
+    # If Blogger already marks the target radio as selected, close without a write.
+    if _control_is_selected(chosen):
+        _click_action_in_dialog(page, dialog, "CANCELAR")
+        if not _current_timezone_matches(page, target):
+            raise cfg.SettingsError(
+                "O fuso selecionado no diálogo não correspondeu à linha de configurações após fechar."
+            )
+        return {
+            "target": target,
+            "selected_and_saved": True,
+            "changed": False,
+            "dialog_guard": "selected_radio_noop",
+        }
 
     try:
         chosen.click(timeout=5_000)
@@ -166,5 +275,5 @@ def set_timezone(page, target: str) -> dict:
         "target": target,
         "selected_and_saved": True,
         "changed": True,
-        "dialog_guard": "target_anchored",
+        "dialog_guard": "active_modal_radio_anchored",
     }
