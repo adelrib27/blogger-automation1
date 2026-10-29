@@ -16,7 +16,7 @@ from playwright.sync_api import sync_playwright
 BLOG_ID_RE = re.compile(r"^[0-9]+$")
 THEMES_ROUTE_RE = re.compile(r"/blog/themes/(\d+)(?:[/?#]|$)", re.I)
 MORE_ACTIONS_RE = re.compile(r"^\s*Mais ações\s*$", re.I)
-RESTORE_RE = re.compile(r"^\s*Restaurar\s*$", re.I)
+RESTORE_MENUITEM_RE = re.compile(r"^\s*Restaurar um tema antigo\s*$", re.I)
 CANCEL_RE = re.compile(r"^\s*CANCELAR\s*$", re.I)
 
 
@@ -87,10 +87,7 @@ def _exactly_one_visible(locator, label: str):
 
 
 def select_expected_theme_page(context, expected_blog_id: str):
-    """Select only the Blogger Theme tab for the expected Blog ID.
-
-    No fallback to settings, another Blogger tab, or another blog is allowed.
-    """
+    """Select only the Blogger Theme tab for the expected Blog ID."""
     candidates = []
     for page in context.pages:
         try:
@@ -200,11 +197,16 @@ def _restore_card_is_open(page) -> bool:
         return False
 
 
+def _restore_menuitem_visible(page):
+    items = _visible_items(page.get_by_role("menuitem", name=RESTORE_MENUITEM_RE))
+    if len(items) > 1:
+        raise bp.SafeAutomationError(
+            f"Menuitem Restaurar ambíguo: encontrado(s) {len(items)} elementos visíveis."
+        )
+    return items[0] if items else None
+
+
 def _open_theme_actions_menu(page) -> None:
-    # Verified against the current Blogger Theme DOM: the split-button arrow is
-    # a DIV with role="button" and accessible name aria-label="Mais ações".
-    # We target that explicit accessibility contract instead of inferring the
-    # control from PERSONALIZAR siblings or CSS classes.
     more_actions = _exactly_one_visible(
         page.get_by_role("button", name=MORE_ACTIONS_RE),
         "Botão Mais ações do tema",
@@ -217,17 +219,26 @@ def open_restore_dialog(page) -> dict:
     if _restore_card_is_open(page):
         return {"menu_opened": False, "restore_clicked": False, "already_open": True}
 
-    _open_theme_actions_menu(page)
-    restore = _exactly_one_visible(
-        page.get_by_text(RESTORE_RE, exact=True),
-        "Opção Restaurar",
-    )
+    restore = _restore_menuitem_visible(page)
+    menu_opened = False
+    if restore is None:
+        _open_theme_actions_menu(page)
+        menu_opened = True
+        restore = _restore_menuitem_visible(page)
+
+    if restore is None:
+        raise bp.SafeAutomationError(
+            "Menuitem Restaurar um tema antigo não foi localizado após abrir Mais ações."
+        )
+
+    # Verified in the current Blogger Theme DOM: the full clickable row is a
+    # SPAN role="menuitem" aria-label="Restaurar um tema antigo".
     restore.click(timeout=5_000)
-    page.wait_for_timeout(450)
+    page.wait_for_timeout(550)
 
     dom = inspect_restore_dom(page)
     validate_restore_evidence(dom)
-    return {"menu_opened": True, "restore_clicked": True, "already_open": False}
+    return {"menu_opened": menu_opened, "restore_clicked": True, "already_open": False}
 
 
 def close_restore_dialog(page) -> bool:
