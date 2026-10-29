@@ -24,6 +24,23 @@ def _field_by_aria(page, field_labels: tuple[str, ...]):
     return None
 
 
+def _wait_for_field_by_aria(page, field_labels: tuple[str, ...], timeout_ms: int = 5_000):
+    """Wait for Blogger's edit field to become visible after opening a dialog.
+
+    Some Blogger builds animate/render the modal after the settings row click. A
+    fixed short sleep can race that render and incorrectly report that the field is
+    missing. Poll only the exact aria-labelled field; never broaden the selector.
+    """
+    interval_ms = 100
+    attempts = max(1, int(timeout_ms / interval_ms))
+    for _ in range(attempts):
+        field = _field_by_aria(page, field_labels)
+        if field is not None:
+            return field
+        page.wait_for_timeout(interval_ms)
+    return _field_by_aria(page, field_labels)
+
+
 def _single_visible_dialog_field(page):
     fields = []
     dialogs = page.locator('[role="dialog"]')
@@ -163,8 +180,7 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
 
         if not cfg.core.click_row_prefix(page, row_label):
             raise cfg.SettingsError(f'Configuração "{row_label}" não foi localizada.')
-        page.wait_for_timeout(350)
-        field = _field_by_aria(page, field_labels)
+        field = _wait_for_field_by_aria(page, field_labels, timeout_ms=5_000)
 
     # Fallback restrito: somente um campo editável dentro de diálogo visível.
     if field is None:
