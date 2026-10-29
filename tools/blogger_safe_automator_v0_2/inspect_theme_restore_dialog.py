@@ -90,17 +90,23 @@ def inspect_restore_dom(page) -> dict:
     return page.evaluate(
         r"""() => {
           const norm = v => String(v || '').trim().replace(/\s+/g, ' ');
+          const fold = v => norm(v).toLocaleLowerCase('pt-BR');
           const visible = el => {
             const r = el.getBoundingClientRect();
             const s = getComputedStyle(el);
             return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
           };
+
+          const bodyTextFull = norm(document.body?.innerText || '');
+          const bodyFold = fold(bodyTextFull);
+
           const dialogs = [...document.querySelectorAll('[role="dialog"]')]
             .filter(visible)
             .map(el => ({
               text: norm(el.innerText || el.textContent).slice(0, 1200),
               aria: norm(el.getAttribute('aria-label')).slice(0, 200)
             }));
+
           const buttons = [...document.querySelectorAll('button,[role="button"]')]
             .filter(visible)
             .map(el => ({
@@ -109,6 +115,9 @@ def inspect_restore_dom(page) -> dict:
               disabled: el.matches(':disabled') || el.getAttribute('aria-disabled') === 'true'
             }))
             .filter(x => x.text || x.aria);
+
+          const actionNames = buttons.map(x => fold(x.text || x.aria || ''));
+
           const fileInputs = [...document.querySelectorAll('input[type="file"]')]
             .map(el => ({
               visible: visible(el),
@@ -119,14 +128,40 @@ def inspect_restore_dom(page) -> dict:
               id: el.id || '',
               files_selected: el.files ? el.files.length : 0
             }));
+
           return {
             dialogs,
             buttons,
             file_inputs: fileInputs,
-            body_text: norm(document.body?.innerText || '').slice(0, 5000)
+            restore_evidence: {
+              title_visible: bodyFold.includes('restaurar'),
+              explanation_visible:
+                bodyFold.includes('você pode fazer o upload de um tema a partir de um arquivo no seu computador') ||
+                bodyFold.includes('voce pode fazer o upload de um tema a partir de um arquivo no seu computador'),
+              cancel_action_visible: actionNames.includes('cancelar'),
+              upload_action_visible: actionNames.includes('fazer upload')
+            },
+            body_text: bodyTextFull.slice(0, 5000)
           };
         }"""
     )
+
+
+def validate_restore_evidence(dom: dict) -> dict:
+    evidence = dict(dom.get("restore_evidence") or {})
+    required = {
+        "title_visible": bool(evidence.get("title_visible")),
+        "explanation_visible": bool(evidence.get("explanation_visible")),
+        "cancel_action_visible": bool(evidence.get("cancel_action_visible")),
+        "upload_action_visible": bool(evidence.get("upload_action_visible")),
+    }
+    if not all(required.values()):
+        missing = [name for name, ok in required.items() if not ok]
+        raise bp.SafeAutomationError(
+            "O cartão Restaurar não foi confirmado por texto e ações visíveis. "
+            f"Evidências ausentes: {', '.join(missing)}."
+        )
+    return required
 
 
 def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str) -> dict:
@@ -150,18 +185,8 @@ def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str)
             )
 
         dom = inspect_restore_dom(page)
-        dialog_text = " ".join(item.get("text", "") for item in dom["dialogs"]).casefold()
-        visible_actions = " ".join(
-            (item.get("text") or item.get("aria") or "") for item in dom["buttons"]
-        ).casefold()
-        if "restaurar" not in dialog_text:
-            raise bp.SafeAutomationError(
-                "O diálogo Restaurar não está visível. Abra Tema > Restaurar manualmente e tente novamente."
-            )
-        if "fazer upload" not in visible_actions or "cancelar" not in visible_actions:
-            raise bp.SafeAutomationError(
-                "As ações CANCELAR e FAZER UPLOAD não foram confirmadas no diálogo Restaurar."
-            )
+        confirmed_evidence = validate_restore_evidence(dom)
+
         if any(item.get("files_selected", 0) for item in dom["file_inputs"]):
             raise bp.SafeAutomationError(
                 "Já existe arquivo selecionado no diálogo. Inspeção bloqueada para preservar o estado."
@@ -174,9 +199,10 @@ def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str)
             "url": bp.sanitize_url(page.url),
             "theme": theme,
             "backup": backup,
+            "restore_evidence": confirmed_evidence,
             "dialog": dom,
             "browser_connected": browser.is_connected(),
-            "message": "Somente leitura: nenhum clique, upload, restauração ou salvamento foi executado."
+            "message": "Somente leitura: nenhum clique, upload, restauração ou salvamento foi executado.",
         }
 
 
