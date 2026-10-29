@@ -13,6 +13,7 @@ from inspect_theme_restore_dialog import (
     THEMES_ROUTE_RE,
     _exactly_one_visible,
     _restore_card_is_open,
+    close_restore_dialog,
     inspect_restore_dom,
     open_restore_dialog,
     select_expected_theme_page,
@@ -23,6 +24,7 @@ from inspect_theme_restore_dialog import (
 from playwright.sync_api import sync_playwright
 
 LAB_BLOG_ID = "99449222854490000"
+LAB_PUBLIC_URL = "https://teste-tema-editorial-blogger.blogspot.com/"
 CONFIRM_PHRASE = "APPLY MASTER THEME"
 UPLOAD_LABEL = "FAZER UPLOAD"
 PUBLIC_MARKERS = (
@@ -39,36 +41,19 @@ def validate_confirmation(value: str) -> None:
         )
 
 
-def validate_lab_target(blog_id: str) -> None:
+def validate_lab_target(blog_id: str, public_url: str) -> None:
     if blog_id != LAB_BLOG_ID:
         raise bp.SafeAutomationError(
             f"Tema Mestre v1.0 permanece LAB_ONLY. Blog permitido: {LAB_BLOG_ID}."
         )
-
-
-def _enabled_file_inputs(page):
-    locator = page.locator('input[type="file"]')
-    items = []
-    for index in range(locator.count()):
-        item = locator.nth(index)
-        try:
-            if not item.is_disabled():
-                items.append(item)
-        except Exception:
-            continue
-    return items
-
-
-def _select_theme_file(page, theme_path: str) -> str:
-    inputs = _enabled_file_inputs(page)
-    if len(inputs) == 1:
-        inputs[0].set_input_files(theme_path)
-        return "direct_file_input"
-    if len(inputs) > 1:
+    if (public_url or "").strip() != LAB_PUBLIC_URL:
         raise bp.SafeAutomationError(
-            f"Upload bloqueado: encontrados {len(inputs)} inputs de arquivo habilitados."
+            f"URL pública bloqueada. Para o laboratório use exatamente: {LAB_PUBLIC_URL}"
         )
 
+
+def _select_theme_file_via_native_chooser(page, theme_path: str) -> str:
+    """Follow the exact Blogger UI contract: FAZER UPLOAD -> native chooser -> XML."""
     upload = _exactly_one_visible(
         page.get_by_role("button", name=UPLOAD_LABEL, exact=True),
         "Botão FAZER UPLOAD",
@@ -76,15 +61,16 @@ def _select_theme_file(page, theme_path: str) -> str:
     try:
         with page.expect_file_chooser(timeout=5_000) as chooser_info:
             upload.click(timeout=5_000)
-        chooser_info.value.set_files(theme_path)
-        return "file_chooser"
+        chooser = chooser_info.value
+        chooser.set_files(theme_path)
+        return "native_file_chooser"
     except Exception as exc:
         raise bp.SafeAutomationError(
-            f"Não foi possível selecionar o arquivo do Tema Mestre com segurança: {exc}"
+            f"Não foi possível selecionar o Tema Mestre pelo fluxo nativo FAZER UPLOAD: {exc}"
         ) from exc
 
 
-def _wait_restore_dialog_close(page, timeout_ms: int = 20_000) -> None:
+def _wait_restore_dialog_close(page, timeout_ms: int = 30_000) -> None:
     deadline = time.monotonic() + timeout_ms / 1000
     while time.monotonic() < deadline:
         if not _restore_card_is_open(page):
@@ -92,7 +78,7 @@ def _wait_restore_dialog_close(page, timeout_ms: int = 20_000) -> None:
         page.wait_for_timeout(250)
     evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
     raise bp.SafeAutomationError(
-        "O upload foi iniciado, mas o cartão Restaurar não fechou no prazo esperado. "
+        "O arquivo foi escolhido pelo seletor nativo, mas o cartão Restaurar não fechou no prazo esperado. "
         f"Evidências finais: {evidence}."
     )
 
@@ -110,7 +96,7 @@ def _fetch_public_html(public_url: str, timeout: float = 15.0) -> str:
         return response.read().decode("utf-8", errors="replace")
 
 
-def _wait_public_markers(public_url: str, timeout_seconds: int = 45) -> dict:
+def _wait_public_markers(public_url: str, timeout_seconds: int = 60) -> dict:
     deadline = time.monotonic() + timeout_seconds
     last_error = ""
     while time.monotonic() < deadline:
@@ -134,6 +120,25 @@ def _wait_public_markers(public_url: str, timeout_seconds: int = 45) -> dict:
     )
 
 
+def _ensure_clean_restore_dialog(page) -> tuple[dict, dict]:
+    """Open Restore and clear stale file selection left by an earlier failed attempt."""
+    navigation = open_restore_dialog(page)
+    dom = inspect_restore_dom(page)
+    validate_restore_evidence(dom)
+
+    if any(item.get("files_selected", 0) for item in dom.get("file_inputs", [])):
+        close_restore_dialog(page)
+        navigation = open_restore_dialog(page)
+        dom = inspect_restore_dom(page)
+        validate_restore_evidence(dom)
+        if any(item.get("files_selected", 0) for item in dom.get("file_inputs", [])):
+            raise bp.SafeAutomationError(
+                "Seleção de arquivo antiga persistiu mesmo após CANCELAR e reabrir Restaurar."
+            )
+
+    return navigation, dom
+
+
 def execute_apply(
     expected_blog_id: str,
     theme_path: str,
@@ -142,7 +147,7 @@ def execute_apply(
     confirm: str,
 ) -> dict:
     expected_blog_id = validate_blog_id(expected_blog_id)
-    validate_lab_target(expected_blog_id)
+    validate_lab_target(expected_blog_id, public_url)
     validate_confirmation(confirm)
 
     theme = validate_xml_file(theme_path, label="Tema Mestre")
@@ -165,16 +170,11 @@ def execute_apply(
         if not match or match.group(1) != expected_blog_id:
             raise bp.SafeAutomationError("A aba ativa precisa ser Tema do blog-laboratório.")
 
-        navigation = open_restore_dialog(page)
-        dom = inspect_restore_dom(page)
-        validate_restore_evidence(dom)
-        if any(item.get("files_selected", 0) for item in dom.get("file_inputs", [])):
-            raise bp.SafeAutomationError("Já existe arquivo selecionado; aplicação bloqueada.")
+        navigation, _ = _ensure_clean_restore_dialog(page)
 
-        selection_method = _select_theme_file(page, theme["path"])
+        selection_method = _select_theme_file_via_native_chooser(page, theme["path"])
         _wait_restore_dialog_close(page)
 
-        # Revalidate the target after the write-triggering file selection.
         if extract_panel_blog_id(page.url) != expected_blog_id:
             raise bp.SafeAutomationError("Blog ID mudou após o upload; validação bloqueada.")
 
