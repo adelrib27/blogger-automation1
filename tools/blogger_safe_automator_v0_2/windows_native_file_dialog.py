@@ -18,11 +18,18 @@ if os.name == "nt":
     WM_SETTEXT = 0x000C
     BM_CLICK = 0x00F5
 
-    EnumWindowsProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    # ctypes.wintypes is not identical across all supported Python builds.
+    # These Win32 pointer-sized integer aliases keep the helper compatible
+    # with builds where LRESULT (and, defensively, WPARAM/LPARAM) are absent.
+    LRESULT_T = getattr(wintypes, "LRESULT", ctypes.c_ssize_t)
+    WPARAM_T = getattr(wintypes, "WPARAM", ctypes.c_size_t)
+    LPARAM_T = getattr(wintypes, "LPARAM", ctypes.c_ssize_t)
 
-    user32.EnumWindows.argtypes = [EnumWindowsProc, wintypes.LPARAM]
+    EnumWindowsProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, LPARAM_T)
+
+    user32.EnumWindows.argtypes = [EnumWindowsProc, LPARAM_T]
     user32.EnumWindows.restype = wintypes.BOOL
-    user32.EnumChildWindows.argtypes = [wintypes.HWND, EnumWindowsProc, wintypes.LPARAM]
+    user32.EnumChildWindows.argtypes = [wintypes.HWND, EnumWindowsProc, LPARAM_T]
     user32.EnumChildWindows.restype = wintypes.BOOL
     user32.IsWindowVisible.argtypes = [wintypes.HWND]
     user32.IsWindowVisible.restype = wintypes.BOOL
@@ -36,8 +43,8 @@ if os.name == "nt":
     user32.GetWindowTextW.restype = ctypes.c_int
     user32.GetClassNameW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
     user32.GetClassNameW.restype = ctypes.c_int
-    user32.SendMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
-    user32.SendMessageW.restype = wintypes.LRESULT
+    user32.SendMessageW.argtypes = [wintypes.HWND, wintypes.UINT, WPARAM_T, LPARAM_T]
+    user32.SendMessageW.restype = LRESULT_T
     user32.SetForegroundWindow.argtypes = [wintypes.HWND]
     user32.SetForegroundWindow.restype = wintypes.BOOL
     user32.SetFocus.argtypes = [wintypes.HWND]
