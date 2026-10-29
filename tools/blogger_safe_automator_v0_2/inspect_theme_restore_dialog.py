@@ -249,10 +249,19 @@ def close_restore_dialog(page) -> bool:
         "Botão CANCELAR do cartão Restaurar",
     )
     cancel.click(timeout=5_000)
-    page.wait_for_timeout(250)
-    if _restore_card_is_open(page):
-        raise bp.SafeAutomationError("O cartão Restaurar permaneceu aberto após CANCELAR.")
-    return True
+
+    # Blogger closes this Material dialog with an animation. Do not assume a
+    # fixed 250 ms transition: poll the visible dialog evidence for up to 5 s.
+    for _ in range(20):
+        page.wait_for_timeout(250)
+        if not _restore_card_is_open(page):
+            return True
+
+    evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
+    raise bp.SafeAutomationError(
+        "O cartão Restaurar permaneceu visível após CANCELAR por mais de 5 segundos. "
+        f"Evidências finais: {evidence}."
+    )
 
 
 def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str) -> dict:
