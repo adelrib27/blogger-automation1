@@ -8,7 +8,7 @@ from pathlib import Path
 import browser_provision as bp
 from inspect_theme_restore_dialog import (
     CANCEL_RE,
-    PERSONALIZE_RE,
+    MORE_ACTIONS_RE,
     RESTORE_RE,
     select_expected_theme_page,
     validate_blog_id,
@@ -107,9 +107,10 @@ class ThemeRestoreInspectorTests(unittest.TestCase):
             validate_restore_evidence(dom)
 
     def test_theme_action_labels_are_strict(self):
-        self.assertIsNotNone(PERSONALIZE_RE.fullmatch("PERSONALIZAR"))
+        self.assertIsNotNone(MORE_ACTIONS_RE.fullmatch("Mais ações"))
         self.assertIsNotNone(RESTORE_RE.fullmatch("Restaurar"))
         self.assertIsNotNone(CANCEL_RE.fullmatch("CANCELAR"))
+        self.assertIsNone(MORE_ACTIONS_RE.fullmatch("Mais ações do tema agora"))
         self.assertIsNone(RESTORE_RE.fullmatch("Restaurar tema agora"))
         self.assertIsNone(CANCEL_RE.fullmatch("Cancelar upload"))
 
