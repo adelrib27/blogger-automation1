@@ -15,6 +15,16 @@ class SettingsDialogGuardTests(unittest.TestCase):
     def test_v04_patches_timezone_dialog_handler(self):
         self.assertIs(cfg.set_timezone, sdg.set_timezone)
 
+    def test_wait_for_field_by_aria_retries_until_visible(self):
+        page = MagicMock()
+        field = MagicMock()
+        with patch.object(sdg, "_field_by_aria", side_effect=[None, None, field]) as lookup:
+            result = sdg._wait_for_field_by_aria(page, ("Descrição",), timeout_ms=500)
+        self.assertIs(result, field)
+        self.assertEqual(lookup.call_count, 3)
+        self.assertEqual(page.wait_for_timeout.call_count, 2)
+        page.wait_for_timeout.assert_called_with(100)
+
     def test_text_setting_is_idempotent_when_page_already_shows_value(self):
         page = MagicMock()
         value = "Blog de teste para validação da automação Blogger."
