@@ -18,6 +18,7 @@ THEMES_ROUTE_RE = re.compile(r"/blog/themes/(\d+)(?:[/?#]|$)", re.I)
 MORE_ACTIONS_RE = re.compile(r"^\s*Mais ações\s*$", re.I)
 RESTORE_MENUITEM_RE = re.compile(r"^\s*Restaurar um tema antigo\s*$", re.I)
 CANCEL_RE = re.compile(r"^\s*CANCELAR\s*$", re.I)
+RESTORE_MENUITEM_LABEL = "Restaurar um tema antigo"
 
 
 def validate_blog_id(value: str) -> str:
@@ -87,7 +88,6 @@ def _exactly_one_visible(locator, label: str):
 
 
 def select_expected_theme_page(context, expected_blog_id: str):
-    """Select only the Blogger Theme tab for the expected Blog ID."""
     candidates = []
     for page in context.pages:
         try:
@@ -122,8 +122,12 @@ def inspect_restore_dom(page) -> dict:
             return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
           };
 
-          const bodyTextFull = norm(document.body?.innerText || '');
-          const bodyFold = fold(bodyTextFull);
+          const visibleText = [...document.querySelectorAll('body *')]
+            .filter(visible)
+            .map(el => norm(el.innerText || ''))
+            .filter(Boolean)
+            .join(' ');
+          const visibleFold = fold(visibleText);
 
           const dialogs = [...document.querySelectorAll('[role="dialog"]')]
             .filter(visible)
@@ -159,14 +163,14 @@ def inspect_restore_dom(page) -> dict:
             buttons,
             file_inputs: fileInputs,
             restore_evidence: {
-              title_visible: bodyFold.includes('restaurar'),
+              title_visible: visibleFold.includes('restaurar'),
               explanation_visible:
-                bodyFold.includes('você pode fazer o upload de um tema a partir de um arquivo no seu computador') ||
-                bodyFold.includes('voce pode fazer o upload de um tema a partir de um arquivo no seu computador'),
+                visibleFold.includes('você pode fazer o upload de um tema a partir de um arquivo no seu computador') ||
+                visibleFold.includes('voce pode fazer o upload de um tema a partir de um arquivo no seu computador'),
               cancel_action_visible: actionNames.includes('cancelar'),
               upload_action_visible: actionNames.includes('fazer upload')
             },
-            body_text: bodyTextFull.slice(0, 5000)
+            body_text: visibleText.slice(0, 5000)
           };
         }"""
     )
@@ -215,17 +219,46 @@ def _open_theme_actions_menu(page) -> None:
     page.wait_for_timeout(350)
 
 
-def _wait_restore_card_open(page, *, attempts: int = 20, delay_ms: int = 250) -> bool:
-    for _ in range(attempts):
-        if _restore_card_is_open(page):
-            return True
-        page.wait_for_timeout(delay_ms)
-    return _restore_card_is_open(page)
+def _active_aria_label(page) -> str:
+    try:
+        return page.evaluate(
+            "() => (document.activeElement && document.activeElement.getAttribute('aria-label')) || ''"
+        ) or ""
+    except Exception:
+        return ""
+
+
+def _activate_restore_with_keyboard(page) -> dict:
+    """Use the Blogger menu's native keyboard navigation.
+
+    The current Material menu opens with Backup focused. We move focus only
+    with ArrowDown and press Enter only after the exact Restaurar aria-label is
+    active. This fails closed before any upload action.
+    """
+    visited = []
+    for _ in range(8):
+        label = _active_aria_label(page)
+        visited.append(label)
+        if label == RESTORE_MENUITEM_LABEL:
+            page.keyboard.press("Enter")
+            return {"activation": "keyboard", "focus_path": visited}
+        page.keyboard.press("ArrowDown")
+        page.wait_for_timeout(100)
+
+    raise bp.SafeAutomationError(
+        "Não foi possível focar o menuitem Restaurar por navegação de teclado. "
+        f"Foco observado: {visited}."
+    )
 
 
 def open_restore_dialog(page) -> dict:
     if _restore_card_is_open(page):
-        return {"menu_opened": False, "restore_clicked": False, "already_open": True}
+        return {
+            "menu_opened": False,
+            "restore_activated": False,
+            "already_open": True,
+            "activation": "none",
+        }
 
     restore = _restore_menuitem_visible(page)
     menu_opened = False
@@ -239,35 +272,27 @@ def open_restore_dialog(page) -> dict:
             "Menuitem Restaurar um tema antigo não foi localizado após abrir Mais ações."
         )
 
-    # The current Blogger menuitem is a SPAN role="menuitem" with accessible
-    # name "Restaurar um tema antigo". A synthesized pointer click was observed
-    # to leave the row only focused/highlighted in this UI. Invoke the element's
-    # native DOM click directly, then wait for positive dialog evidence.
-    restore.evaluate("el => el.click()")
+    activation = _activate_restore_with_keyboard(page)
 
-    if not _wait_restore_card_open(page):
-        # Cleanup only: if the menu stayed open, close it without selecting any
-        # other action. No upload or theme write is attempted.
-        try:
-            if _restore_menuitem_visible(page) is not None:
-                page.keyboard.press("Escape")
-                page.wait_for_timeout(250)
-        except Exception:
-            pass
-        evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
-        raise bp.SafeAutomationError(
-            "O menuitem Restaurar foi acionado, mas o cartão Restaurar não abriu em até 5 segundos. "
-            f"Evidências finais: {evidence}."
-        )
+    for _ in range(20):
+        page.wait_for_timeout(250)
+        if _restore_card_is_open(page):
+            return {
+                "menu_opened": menu_opened,
+                "restore_activated": True,
+                "already_open": False,
+                **activation,
+            }
 
-    dom = inspect_restore_dom(page)
-    validate_restore_evidence(dom)
-    return {
-        "menu_opened": menu_opened,
-        "restore_clicked": True,
-        "activation": "dom_click",
-        "already_open": False,
-    }
+    try:
+        page.keyboard.press("Escape")
+    except Exception:
+        pass
+    evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
+    raise bp.SafeAutomationError(
+        "Restaurar foi ativado por teclado, mas o cartão não abriu em até 5 segundos. "
+        f"Evidências finais: {evidence}."
+    )
 
 
 def close_restore_dialog(page) -> bool:
@@ -279,8 +304,6 @@ def close_restore_dialog(page) -> bool:
     )
     cancel.click(timeout=5_000)
 
-    # Blogger closes this Material dialog with an animation. Do not assume a
-    # fixed 250 ms transition: poll the visible dialog evidence for up to 5 s.
     for _ in range(20):
         page.wait_for_timeout(250)
         if not _restore_card_is_open(page):
@@ -332,11 +355,10 @@ def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str)
                 "backup": backup,
                 "navigation": navigation,
                 "restore_evidence": confirmed_evidence,
-                "dialog": dom,
                 "browser_connected": browser.is_connected(),
                 "message": (
-                    "Preflight sem gravação: abriu Tema > opções > Restaurar, não selecionou arquivo, "
-                    "não clicou FAZER UPLOAD e fechou com CANCELAR."
+                    "Preflight sem gravação: abriu Tema > opções > Restaurar por teclado, "
+                    "não selecionou arquivo, não clicou FAZER UPLOAD e fechou com CANCELAR."
                 ),
             }
         finally:
