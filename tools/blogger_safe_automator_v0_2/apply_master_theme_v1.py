@@ -13,7 +13,6 @@ from inspect_theme_restore_dialog import (
     THEMES_ROUTE_RE,
     _exactly_one_visible,
     _restore_card_is_open,
-    close_restore_dialog,
     inspect_restore_dom,
     open_restore_dialog,
     select_expected_theme_page,
@@ -50,6 +49,27 @@ def validate_lab_target(blog_id: str, public_url: str) -> None:
         raise bp.SafeAutomationError(
             f"URL pública bloqueada. Para o laboratório use exatamente: {LAB_PUBLIC_URL}"
         )
+
+
+def _clear_stale_file_inputs(page) -> int:
+    """Clear only browser-local stale file selections from earlier failed attempts."""
+    locator = page.locator('input[type="file"]')
+    cleared = 0
+    for index in range(locator.count()):
+        item = locator.nth(index)
+        try:
+            selected = item.evaluate("el => el.files ? el.files.length : 0")
+        except Exception:
+            continue
+        if selected:
+            try:
+                item.set_input_files([])
+                cleared += 1
+            except Exception as exc:
+                raise bp.SafeAutomationError(
+                    f"Não foi possível limpar seleção local antiga do input de arquivo: {exc}"
+                ) from exc
+    return cleared
 
 
 def _select_theme_file_via_native_chooser(page, theme_path: str) -> str:
@@ -120,23 +140,22 @@ def _wait_public_markers(public_url: str, timeout_seconds: int = 60) -> dict:
     )
 
 
-def _ensure_clean_restore_dialog(page) -> tuple[dict, dict]:
-    """Open Restore and clear stale file selection left by an earlier failed attempt."""
+def _prepare_restore_dialog(page) -> tuple[dict, dict, int]:
+    """Open Restore, validate it, and clear browser-local stale file state without cancelling."""
     navigation = open_restore_dialog(page)
     dom = inspect_restore_dom(page)
     validate_restore_evidence(dom)
 
-    if any(item.get("files_selected", 0) for item in dom.get("file_inputs", [])):
-        close_restore_dialog(page)
-        navigation = open_restore_dialog(page)
-        dom = inspect_restore_dom(page)
-        validate_restore_evidence(dom)
-        if any(item.get("files_selected", 0) for item in dom.get("file_inputs", [])):
-            raise bp.SafeAutomationError(
-                "Seleção de arquivo antiga persistiu mesmo após CANCELAR e reabrir Restaurar."
-            )
+    cleared = _clear_stale_file_inputs(page)
+    dom = inspect_restore_dom(page)
+    validate_restore_evidence(dom)
 
-    return navigation, dom
+    if any(item.get("files_selected", 0) for item in dom.get("file_inputs", [])):
+        raise bp.SafeAutomationError(
+            "Persistiu seleção local de arquivo mesmo após limpeza; upload bloqueado."
+        )
+
+    return navigation, dom, cleared
 
 
 def execute_apply(
@@ -170,7 +189,7 @@ def execute_apply(
         if not match or match.group(1) != expected_blog_id:
             raise bp.SafeAutomationError("A aba ativa precisa ser Tema do blog-laboratório.")
 
-        navigation, _ = _ensure_clean_restore_dialog(page)
+        navigation, _, stale_inputs_cleared = _prepare_restore_dialog(page)
 
         selection_method = _select_theme_file_via_native_chooser(page, theme["path"])
         _wait_restore_dialog_close(page)
@@ -186,6 +205,7 @@ def execute_apply(
             "theme": theme,
             "backup": backup,
             "navigation": navigation,
+            "stale_inputs_cleared": stale_inputs_cleared,
             "selection_method": selection_method,
             "public_validation": public_validation,
             "browser_connected": browser.is_connected(),
