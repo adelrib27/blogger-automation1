@@ -9,9 +9,9 @@
     "Área Externa"
   ],
   "max_per_keyword": 1,
-  "total": 10,
+  "total": 9,
   "skipped": {
-    "produto_ja_publicado": 17,
+    "produto_ja_publicado": 18,
     "produto_semelhante_ja_publicado": 4,
     "limite_por_intencao": 1
   },
@@ -27,7 +27,7 @@
       "category": "Sala",
       "opportunity_score": 65.25,
       "priority_tier": "COMISSAO_EXTRA",
-      "status": "QUARANTINE",
+      "status": "BLOCKED",
       "rules": {
         "no_fake_testing": true,
         "no_invented_specs": true,
@@ -35,8 +35,8 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "last_error": "geração editorial bloqueada após revisões: artigo curto: 440",
-      "generation_attempts": 2
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 424",
+      "generation_attempts": 3
     },
     {
       "id": 77,
@@ -101,26 +101,6 @@
       },
       "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
       "generation_attempts": 1
-    },
-    {
-      "id": 90,
-      "shopee_item_id": "23798178107",
-      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
-      "affiliate_link": "https://s.shopee.com.br/3B8Xr4fuS3",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-81z1k-mfvhv2o7wtfk77",
-      "shop_name": "Maison Plus",
-      "source_keyword": "organizador armario",
-      "category": "Organização",
-      "opportunity_score": 59.86,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
     },
     {
       "id": 87,
