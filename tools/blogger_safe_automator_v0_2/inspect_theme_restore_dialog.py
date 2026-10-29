@@ -10,8 +10,8 @@ from pathlib import Path
 
 import browser_provision as bp
 from blogger_panel_route_guard import extract_panel_blog_id
+from blogger_session_guard import is_blogger_url
 from playwright.sync_api import sync_playwright
-from validate_core_settings_profile import select_expected_blog_page
 
 BLOG_ID_RE = re.compile(r"^[0-9]+$")
 THEMES_ROUTE_RE = re.compile(r"/blog/themes/(\d+)(?:[/?#]|$)", re.I)
@@ -49,6 +49,41 @@ def validate_xml_file(raw_path: str, *, label: str) -> dict:
         "sha256": sha256_file(path),
         "xml_valid": True,
     }
+
+
+def _page_visibility(page) -> bool:
+    try:
+        return page.evaluate("() => document.visibilityState") == "visible"
+    except Exception:
+        return False
+
+
+def select_expected_theme_page(context, expected_blog_id: str):
+    """Select only the Blogger Theme tab for the expected Blog ID.
+
+    No fallback to settings, another Blogger tab, or another blog is allowed.
+    """
+    candidates = []
+    for page in context.pages:
+        try:
+            if not is_blogger_url(page.url):
+                continue
+            if extract_panel_blog_id(page.url) != expected_blog_id:
+                continue
+            match = THEMES_ROUTE_RE.search(page.url or "")
+            if not match or match.group(1) != expected_blog_id:
+                continue
+            candidates.append(page)
+        except Exception:
+            continue
+
+    if not candidates:
+        raise bp.SafeAutomationError(
+            f"Nenhuma aba Tema (/blog/themes/) do Blog ID esperado {expected_blog_id} foi encontrada."
+        )
+
+    visible = [page for page in candidates if _page_visibility(page)]
+    return visible[-1] if visible else candidates[-1]
 
 
 def inspect_restore_dom(page) -> dict:
@@ -102,7 +137,7 @@ def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str)
 
     with sync_playwright() as p:
         browser, context = bp.connect_official_chrome(p, safe_cdp)
-        page = select_expected_blog_page(context, expected_blog_id)
+        page = select_expected_theme_page(context, expected_blog_id)
         current_blog_id = extract_panel_blog_id(page.url)
         if current_blog_id != expected_blog_id:
             raise bp.SafeAutomationError(
