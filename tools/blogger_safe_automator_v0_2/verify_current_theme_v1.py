@@ -4,12 +4,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import tempfile
 from pathlib import Path
 
 import browser_provision as bp
 from inspect_theme_restore_dialog import (
-    MORE_ACTIONS_RE,
     _active_aria_label,
     _exactly_one_visible,
     _open_theme_actions_menu,
@@ -23,6 +21,7 @@ from playwright.sync_api import sync_playwright
 
 LAB_BLOG_ID = "99449222854490000"
 BACKUP_LABEL = "Fazer backup do tema atual"
+DOWNLOAD_LABEL = "FAZER DOWNLOAD"
 MASTER_MARKERS = (
     "Tema Mestre Blogger v1.0",
     "tm-topbar",
@@ -32,6 +31,23 @@ MASTER_MARKERS = (
 
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest().upper()
+
+
+def _visible_exact_text_controls(page, text: str):
+    locator = page.locator('button,[role="button"]')
+    matches = []
+    wanted = text.strip()
+    for index in range(locator.count()):
+        item = locator.nth(index)
+        try:
+            if not item.is_visible():
+                continue
+            actual = (item.inner_text() or "").strip()
+            if actual == wanted:
+                matches.append(item)
+        except Exception:
+            continue
+    return matches
 
 
 def _download_current_theme(page) -> bytes:
@@ -55,9 +71,19 @@ def _download_current_theme(page) -> bytes:
             f"Backup não recebeu foco com segurança. Foco atual: {active!r}."
         )
 
+    # Enter opens the Backup dialog; it does not start the download.
+    page.keyboard.press("Enter")
+    page.wait_for_timeout(400)
+
+    download_controls = _visible_exact_text_controls(page, DOWNLOAD_LABEL)
+    if len(download_controls) != 1:
+        raise bp.SafeAutomationError(
+            f"Botão {DOWNLOAD_LABEL} ambíguo ou ausente: esperado 1 visível, encontrado(s) {len(download_controls)}."
+        )
+
     try:
-        with page.expect_download(timeout=10_000) as info:
-            page.keyboard.press("Enter")
+        with page.expect_download(timeout=15_000) as info:
+            download_controls[0].click(timeout=5_000)
         download = info.value
         path = download.path()
         if not path:
@@ -90,12 +116,12 @@ def main() -> int:
         browser, context = bp.connect_official_chrome(p, safe_cdp)
         page = select_expected_theme_page(context, blog_id)
         current_bytes = _download_current_theme(page)
+        connected = browser.is_connected()
 
     current_text = current_bytes.decode("utf-8", errors="replace")
     current_sha = sha256_bytes(current_bytes)
     markers = {marker: (marker in current_text) for marker in MASTER_MARKERS}
 
-    state = "UNKNOWN"
     if all(markers.values()):
         state = "MASTER_THEME_V1_PRESENT_IN_CURRENT_BACKUP"
     elif current_sha == old_backup["sha256"]:
@@ -117,7 +143,7 @@ def main() -> int:
         },
         "master_theme": master,
         "old_backup": old_backup,
-        "browser_connected": browser.is_connected(),
+        "browser_connected": connected,
     }
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
