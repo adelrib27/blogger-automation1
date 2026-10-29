@@ -20,6 +20,7 @@ from inspect_theme_restore_dialog import (
     validate_xml_file,
 )
 from playwright.sync_api import sync_playwright
+from windows_native_file_dialog import NativeFileDialogError, choose_file_and_open
 
 LAB_BLOG_ID = "99449222854490000"
 LAB_PUBLIC_URL = "https://teste-tema-editorial-blogger.blogspot.com/"
@@ -55,12 +56,7 @@ def _normalize_action_text(value: str | None) -> str:
 
 
 def _exact_visible_action_by_text(page, expected_text: str):
-    """Find one visible button/role=button by its rendered text or aria-label.
-
-    Blogger's Restore dialog exposes FAZER UPLOAD in the visible DOM, but the
-    Playwright accessibility-role lookup does not currently surface it. The
-    same DOM contract is already used by inspect_restore_dom().
-    """
+    """Find one visible button/role=button by rendered text or aria-label."""
     target = _normalize_action_text(expected_text)
     locator = page.locator('button,[role="button"]')
     matches = []
@@ -89,7 +85,7 @@ def _exact_visible_action_by_text(page, expected_text: str):
 
 
 def _clear_stale_file_inputs(page) -> int:
-    """Clear only browser-local stale file selections from earlier failed attempts."""
+    """Clear browser-local stale file selections from earlier failed attempts."""
     locator = page.locator('input[type="file"]')
     cleared = 0
     for index in range(locator.count()):
@@ -109,18 +105,25 @@ def _clear_stale_file_inputs(page) -> int:
     return cleared
 
 
-def _select_theme_file_via_native_chooser(page, theme_path: str) -> str:
-    """Follow the exact Blogger UI contract: FAZER UPLOAD -> native chooser -> XML."""
+def _select_theme_file_via_windows_dialog(page, theme_path: str) -> dict:
+    """Follow the visible UI literally: FAZER UPLOAD -> Windows Abrir -> theme.xml -> Abrir."""
     upload = _exact_visible_action_by_text(page, UPLOAD_LABEL)
     try:
-        with page.expect_file_chooser(timeout=5_000) as chooser_info:
-            upload.click(timeout=5_000)
-        chooser = chooser_info.value
-        chooser.set_files(theme_path)
-        return "native_file_chooser"
+        # Do not intercept Playwright's file chooser. Let Windows open the real
+        # native dialog, then drive that dialog explicitly and verify the path.
+        upload.click(timeout=5_000)
+        native = choose_file_and_open(theme_path, timeout_seconds=10.0)
+        return {
+            "method": "windows_native_open_dialog",
+            **native,
+        }
+    except NativeFileDialogError as exc:
+        raise bp.SafeAutomationError(
+            f"Falha no seletor nativo do Windows ao escolher o Tema Mestre: {exc}"
+        ) from exc
     except Exception as exc:
         raise bp.SafeAutomationError(
-            f"Não foi possível selecionar o Tema Mestre pelo fluxo nativo FAZER UPLOAD: {exc}"
+            f"Não foi possível iniciar o fluxo FAZER UPLOAD -> Abrir do Windows: {exc}"
         ) from exc
 
 
@@ -132,7 +135,7 @@ def _wait_restore_dialog_close(page, timeout_ms: int = 30_000) -> None:
         page.wait_for_timeout(250)
     evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
     raise bp.SafeAutomationError(
-        "O arquivo foi escolhido pelo seletor nativo, mas o cartão Restaurar não fechou no prazo esperado. "
+        "O arquivo foi confirmado na janela Abrir, mas o cartão Restaurar não fechou no prazo esperado. "
         f"Evidências finais: {evidence}."
     )
 
@@ -175,7 +178,7 @@ def _wait_public_markers(public_url: str, timeout_seconds: int = 60) -> dict:
 
 
 def _prepare_restore_dialog(page) -> tuple[dict, dict, int]:
-    """Open Restore, validate it, and clear browser-local stale file state without cancelling."""
+    """Open Restore, validate it, and clear only stale browser-local file state."""
     navigation = open_restore_dialog(page)
     dom = inspect_restore_dom(page)
     validate_restore_evidence(dom)
@@ -225,7 +228,7 @@ def execute_apply(
 
         navigation, _, stale_inputs_cleared = _prepare_restore_dialog(page)
 
-        selection_method = _select_theme_file_via_native_chooser(page, theme["path"])
+        selection = _select_theme_file_via_windows_dialog(page, theme["path"])
         _wait_restore_dialog_close(page)
 
         if extract_panel_blog_id(page.url) != expected_blog_id:
@@ -240,7 +243,7 @@ def execute_apply(
             "backup": backup,
             "navigation": navigation,
             "stale_inputs_cleared": stale_inputs_cleared,
-            "selection_method": selection_method,
+            "selection": selection,
             "public_validation": public_validation,
             "browser_connected": browser.is_connected(),
             "message": "Tema Mestre v1.0 aplicado no blog-laboratório e validado no HTML público.",
