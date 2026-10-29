@@ -9,7 +9,7 @@ import browser_provision as bp
 from inspect_theme_restore_dialog import (
     CANCEL_RE,
     MORE_ACTIONS_RE,
-    RESTORE_RE,
+    RESTORE_MENUITEM_RE,
     select_expected_theme_page,
     validate_blog_id,
     validate_restore_evidence,
@@ -108,10 +108,11 @@ class ThemeRestoreInspectorTests(unittest.TestCase):
 
     def test_theme_action_labels_are_strict(self):
         self.assertIsNotNone(MORE_ACTIONS_RE.fullmatch("Mais ações"))
-        self.assertIsNotNone(RESTORE_RE.fullmatch("Restaurar"))
+        self.assertIsNotNone(RESTORE_MENUITEM_RE.fullmatch("Restaurar um tema antigo"))
         self.assertIsNotNone(CANCEL_RE.fullmatch("CANCELAR"))
         self.assertIsNone(MORE_ACTIONS_RE.fullmatch("Mais ações do tema agora"))
-        self.assertIsNone(RESTORE_RE.fullmatch("Restaurar tema agora"))
+        self.assertIsNone(RESTORE_MENUITEM_RE.fullmatch("Restaurar"))
+        self.assertIsNone(RESTORE_MENUITEM_RE.fullmatch("Restaurar um tema antigo agora"))
         self.assertIsNone(CANCEL_RE.fullmatch("Cancelar upload"))
 
 
