@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 
 import configure_core_settings as cfg
 
@@ -107,14 +108,26 @@ def _has_visible_dialog_ancestor(item) -> bool:
     return False
 
 
+def _norm_timezone_text(value: str | None) -> str:
+    """Normalize display-only Unicode differences without changing timezone semantics."""
+    text = unicodedata.normalize("NFKC", value or "")
+    text = text.replace("\u00a0", " ").replace("\u202f", " ")
+    text = re.sub(r"[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]", "-", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text.casefold()
+
+
 def _current_timezone_matches(page, target: str) -> bool:
-    # Fast path: some Blogger DOM variants expose the whole row text in one node.
+    # Primary path: compare the settings row after normalizing harmless display
+    # differences (NBSP, repeated whitespace and Unicode dash variants).
     current = cfg.core.row_text(page, "Fuso horário") or ""
-    if target in current:
+    target_norm = _norm_timezone_text(target)
+    current_norm = _norm_timezone_text(current)
+    if target_norm and target_norm in current_norm:
         return True
 
-    # Other variants split the label and current value into sibling nodes. In that
-    # case accept the exact visible target only when it is outside any open dialog.
+    # Some Blogger DOM variants split the label and current value into sibling nodes.
+    # Accept the exact visible target only when it is outside any open dialog.
     matches = page.get_by_text(target, exact=True)
     for i in range(matches.count()):
         item = matches.nth(i)
