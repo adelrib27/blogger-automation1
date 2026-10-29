@@ -15,7 +15,7 @@ from playwright.sync_api import sync_playwright
 
 BLOG_ID_RE = re.compile(r"^[0-9]+$")
 THEMES_ROUTE_RE = re.compile(r"/blog/themes/(\d+)(?:[/?#]|$)", re.I)
-PERSONALIZE_RE = re.compile(r"^\s*PERSONALIZAR\s*$", re.I)
+MORE_ACTIONS_RE = re.compile(r"^\s*Mais ações\s*$", re.I)
 RESTORE_RE = re.compile(r"^\s*Restaurar\s*$", re.I)
 CANCEL_RE = re.compile(r"^\s*CANCELAR\s*$", re.I)
 
@@ -201,46 +201,15 @@ def _restore_card_is_open(page) -> bool:
 
 
 def _open_theme_actions_menu(page) -> None:
-    personalize = _exactly_one_visible(
-        page.get_by_role("button", name=PERSONALIZE_RE),
-        "Botão PERSONALIZAR",
+    # Verified against the current Blogger Theme DOM: the split-button arrow is
+    # a DIV with role="button" and accessible name aria-label="Mais ações".
+    # We target that explicit accessibility contract instead of inferring the
+    # control from PERSONALIZAR siblings or CSS classes.
+    more_actions = _exactly_one_visible(
+        page.get_by_role("button", name=MORE_ACTIONS_RE),
+        "Botão Mais ações do tema",
     )
-
-    # Current Blogger Theme UI uses a split button: PERSONALIZAR + the adjacent
-    # dropdown arrow. We require that adjacent control instead of clicking the
-    # primary PERSONALIZAR action.
-    arrow = None
-    for candidate in (
-        personalize.locator("xpath=following-sibling::button[1]"),
-        personalize.locator("xpath=following-sibling::*[@role='button'][1]"),
-    ):
-        visible = _visible_items(candidate)
-        if len(visible) == 1:
-            arrow = visible[0]
-            break
-        if len(visible) > 1:
-            raise bp.SafeAutomationError("Seta de opções do tema ficou ambígua.")
-
-    if arrow is None:
-        parent = personalize.locator("xpath=..")
-        siblings = _visible_items(parent.locator("button,[role='button']"))
-        alternatives = []
-        for item in siblings:
-            try:
-                text = (item.inner_text() or "").strip()
-            except Exception:
-                text = ""
-            if not PERSONALIZE_RE.fullmatch(text):
-                alternatives.append(item)
-        if len(alternatives) == 1:
-            arrow = alternatives[0]
-
-    if arrow is None:
-        raise bp.SafeAutomationError(
-            "Seta de opções ao lado de PERSONALIZAR não foi localizada de forma única."
-        )
-
-    arrow.click(timeout=5_000)
+    more_actions.click(timeout=5_000)
     page.wait_for_timeout(350)
 
 
