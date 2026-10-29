@@ -215,6 +215,14 @@ def _open_theme_actions_menu(page) -> None:
     page.wait_for_timeout(350)
 
 
+def _wait_restore_card_open(page, *, attempts: int = 20, delay_ms: int = 250) -> bool:
+    for _ in range(attempts):
+        if _restore_card_is_open(page):
+            return True
+        page.wait_for_timeout(delay_ms)
+    return _restore_card_is_open(page)
+
+
 def open_restore_dialog(page) -> dict:
     if _restore_card_is_open(page):
         return {"menu_opened": False, "restore_clicked": False, "already_open": True}
@@ -231,14 +239,35 @@ def open_restore_dialog(page) -> dict:
             "Menuitem Restaurar um tema antigo não foi localizado após abrir Mais ações."
         )
 
-    # Verified in the current Blogger Theme DOM: the full clickable row is a
-    # SPAN role="menuitem" aria-label="Restaurar um tema antigo".
-    restore.click(timeout=5_000)
-    page.wait_for_timeout(550)
+    # The current Blogger menuitem is a SPAN role="menuitem" with accessible
+    # name "Restaurar um tema antigo". A synthesized pointer click was observed
+    # to leave the row only focused/highlighted in this UI. Invoke the element's
+    # native DOM click directly, then wait for positive dialog evidence.
+    restore.evaluate("el => el.click()")
+
+    if not _wait_restore_card_open(page):
+        # Cleanup only: if the menu stayed open, close it without selecting any
+        # other action. No upload or theme write is attempted.
+        try:
+            if _restore_menuitem_visible(page) is not None:
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(250)
+        except Exception:
+            pass
+        evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
+        raise bp.SafeAutomationError(
+            "O menuitem Restaurar foi acionado, mas o cartão Restaurar não abriu em até 5 segundos. "
+            f"Evidências finais: {evidence}."
+        )
 
     dom = inspect_restore_dom(page)
     validate_restore_evidence(dom)
-    return {"menu_opened": menu_opened, "restore_clicked": True, "already_open": False}
+    return {
+        "menu_opened": menu_opened,
+        "restore_clicked": True,
+        "activation": "dom_click",
+        "already_open": False,
+    }
 
 
 def close_restore_dialog(page) -> bool:
