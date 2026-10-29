@@ -10,22 +10,22 @@ from pathlib import Path
 
 OLD_URL = "https://airfryer-gourmet-forma-de-vidro.blogspot.com/"
 NEW_URL = "https://guia-de-achados-e-ofertas.blogspot.com/"
-MARKER = "emporio-revisao-visual-02-safe"
+MARKER = "emporio-revisao-visual-02-safe2"
 
-STATIC_NAV = """
-<nav aria-label='Navegação principal' class='ga-static-nav'>
+STATIC_NAV = f"""
+<div aria-label='Navegação principal' class='ga-static-nav' data-theme-build='{MARKER}'>
   <a href='https://guia-de-achados-e-ofertas.blogspot.com/'>Início</a>
   <a href='https://guia-de-achados-e-ofertas.blogspot.com/p/sobre.html'>Sobre</a>
   <a href='https://guia-de-achados-e-ofertas.blogspot.com/p/aviso-de-afiliados.html'>Afiliados</a>
   <a href='https://guia-de-achados-e-ofertas.blogspot.com/p/contato.html'>Contato</a>
   <a href='https://guia-de-achados-e-ofertas.blogspot.com/p/politica-de-privacidade.html'>Privacidade</a>
   <a href='https://guia-de-achados-e-ofertas.blogspot.com/p/termos-de-uso.html'>Termos</a>
-</nav>
+</div>
 """
 
 EXTRA_CSS = r'''
-/* Revisão Visual 02 SAFE — sem alterar estado interno de widgets */
-.blog-name .widget.PageList{display:none!important}
+/* Revisão Visual 02 SAFE2 — sem alterar estado interno de widgets */
+.top-nav #page_list_top{display:none!important}
 .ga-static-nav{
   border-top:1px solid #e1e7ed;
   display:flex;
@@ -101,7 +101,7 @@ def sha256(path: Path) -> str:
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Gera revisão 02 SAFE a partir da V1 aceita pelo Blogger.")
+    p = argparse.ArgumentParser(description="Gera revisão 02 SAFE2 a partir da V1 aceita pelo Blogger.")
     p.add_argument("--base-theme", required=True)
     p.add_argument("--output-theme", required=True)
     args = p.parse_args()
@@ -123,34 +123,39 @@ def main() -> int:
         count=1,
     )
 
-    # Não altera PageList1 nem ContactForm1. O Blogger pode preservar estado de widgets
-    # durante Restore; a navegação é adicionada como HTML simples e previsível.
-    nav_pattern = r"(<nav role='navigation'>.*?</nav>)"
-    text, n = re.subn(nav_pattern, lambda m: m.group(1) + STATIC_NAV, text, count=1, flags=re.S)
+    # Não altera PageList1 nem ContactForm1. Insere navegação HTML simples
+    # dentro do <nav class='top-nav' role='navigation'> já existente no Emporio.
+    nav_pattern = r"(<nav\b[^>]*\brole='navigation'[^>]*>)(.*?)(</nav>)"
+    text, n = re.subn(
+        nav_pattern,
+        lambda m: m.group(1) + m.group(2) + STATIC_NAV + m.group(3),
+        text,
+        count=1,
+        flags=re.S,
+    )
     if n != 1:
-        raise SystemExit("Navegação nativa não localizada para inserção segura do menu.")
+        raise SystemExit("Navegação Emporio não localizada para inserção segura do menu.")
 
     mobile_marker = "/* Mobile */"
     if mobile_marker not in text:
         raise SystemExit("Marcador CSS Mobile não encontrado.")
     text = text.replace(mobile_marker, EXTRA_CSS + "\n" + mobile_marker, 1)
 
-    # Marcador novo independente do marcador antigo, para validar publicação.
-    if MARKER not in text:
-        if "<head>" not in text:
-            raise SystemExit("Elemento <head> não encontrado.")
-        text = text.replace(
-            "<head>",
-            "<head>\n    <meta content='" + MARKER + "' name='x-theme-build-v2'/>",
-            1,
-        )
+    # Marcador também no head para validação pública redundante.
+    if "<head>" not in text:
+        raise SystemExit("Elemento <head> não encontrado.")
+    text = text.replace(
+        "<head>",
+        "<head>\n    <meta content='" + MARKER + "' name='x-theme-build-v2'/>",
+        1,
+    )
 
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text, encoding="utf-8")
     ET.parse(out)
 
     print(json.dumps({
-        "status": "THEME_REVISION_02_SAFE_BUILT",
+        "status": "THEME_REVISION_02_SAFE2_BUILT",
         "base_theme": str(src),
         "path": str(out),
         "size_bytes": out.stat().st_size,
@@ -159,6 +164,7 @@ def main() -> int:
         "public_marker": MARKER,
         "widget_state_modified": False,
         "static_navigation": True,
+        "nav_anchor": "top-nav",
     }, ensure_ascii=False, indent=2))
     return 0
 
