@@ -25,6 +25,7 @@ LAB_BLOG_ID = "99449222854490000"
 LAB_PUBLIC_URL = "https://teste-tema-editorial-blogger.blogspot.com/"
 CONFIRM_PHRASE = "APPLY MASTER THEME"
 UPLOAD_LABEL = "FAZER UPLOAD"
+EXPECTED_UPLOAD_MIME = "text/xml"
 PUBLIC_MARKERS = (
     "Conteúdo editorial independente com foco em informação útil e decisões de compra.",
     "tm-topbar",
@@ -103,14 +104,19 @@ def _clear_stale_file_inputs(page) -> int:
 
 
 def _select_theme_file_via_playwright_chooser(page, theme_path: str) -> dict:
-    """Click FAZER UPLOAD and prove that the exact theme.xml reached Blogger's file input."""
+    """Click FAZER UPLOAD and attach theme.xml explicitly as text/xml."""
     path = Path(theme_path).resolve()
+    payload = {
+        "name": path.name,
+        "mimeType": EXPECTED_UPLOAD_MIME,
+        "buffer": path.read_bytes(),
+    }
     upload = _exact_visible_action_by_text(page, UPLOAD_LABEL)
     try:
         with page.expect_file_chooser(timeout=8_000) as chooser_info:
             upload.click(timeout=5_000)
         chooser = chooser_info.value
-        chooser.set_files(str(path))
+        chooser.set_files(payload)
         evidence = chooser.element.evaluate(
             """el => ({
               count: el.files ? el.files.length : 0,
@@ -122,7 +128,7 @@ def _select_theme_file_via_playwright_chooser(page, theme_path: str) -> dict:
         )
     except Exception as exc:
         raise bp.SafeAutomationError(
-            f"Falha ao selecionar o Tema Mestre pelo file chooser do Chrome/Playwright: {exc}"
+            f"Falha ao selecionar o Tema Mestre como text/xml pelo file chooser: {exc}"
         ) from exc
 
     expected_size = path.stat().st_size
@@ -138,12 +144,17 @@ def _select_theme_file_via_playwright_chooser(page, theme_path: str) -> dict:
         raise bp.SafeAutomationError(
             f"Tamanho do arquivo selecionado não confere: esperado {expected_size}, observado {evidence}."
         )
+    if evidence.get("type") != EXPECTED_UPLOAD_MIME:
+        raise bp.SafeAutomationError(
+            f"MIME do arquivo selecionado não confere: esperado {EXPECTED_UPLOAD_MIME!r}, observado {evidence}."
+        )
 
     return {
-        "method": "playwright_file_chooser",
+        "method": "playwright_file_chooser_payload",
         "selected_path": str(path),
         "selected_name": evidence.get("name"),
         "selected_size": evidence.get("size"),
+        "selected_mime": evidence.get("type"),
         "file_count": evidence.get("count"),
         "selection_verified": True,
     }
@@ -157,7 +168,7 @@ def _wait_restore_dialog_close(page, timeout_ms: int = 30_000) -> None:
         page.wait_for_timeout(250)
     evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
     raise bp.SafeAutomationError(
-        "O theme.xml foi confirmado no input, mas o cartão Restaurar não fechou no prazo esperado. "
+        "O theme.xml foi confirmado como text/xml, mas o cartão Restaurar não fechou no prazo esperado. "
         f"Evidências finais: {evidence}."
     )
 
@@ -166,7 +177,7 @@ def _visible_feedback(page) -> list[str]:
     """Collect short visible status/error messages after Blogger processes the upload."""
     try:
         values = page.evaluate(
-            """() => {
+            r"""() => {
               const visible = el => {
                 const r = el.getBoundingClientRect();
                 const s = getComputedStyle(el);
