@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import browser_provision as bp
 from active_blogger_page import select_active_blogger_page
+from auto_blog_route import ensure_settings_page
 from blogger_session_guard import is_blogger_url
 
 
@@ -33,6 +34,72 @@ import settings_dialog_guard as sdg  # noqa: E402
 
 cfg.set_dialog_text = sdg.set_dialog_text
 cfg.set_timezone = sdg.set_timezone
+
+# Make settings operations independent from whichever Blogger tab is foreground.
+# The wrapper temporarily routes bp.select_page to the exact Blog ID requested by
+# the operation. settings_profile then runs its already-validated logic unchanged.
+import settings_profile as sp  # noqa: E402
+
+_original_settings_preflight = sp.execute_settings_preflight
+_original_configure_settings = sp.execute_configure_settings
+
+
+def _settings_preflight_auto(
+    expected_blog_id,
+    description,
+    search_description,
+    *,
+    timezone=sp.DEFAULT_TIMEZONE,
+    cdp_url=bp.DEFAULT_CDP_URL,
+    diagnostics_dir="logs/browser_diagnostics",
+    allow_remote_cdp=False,
+):
+    previous_selector = bp.select_page
+    bp.select_page = lambda context: ensure_settings_page(context, str(expected_blog_id))
+    try:
+        return _original_settings_preflight(
+            expected_blog_id,
+            description,
+            search_description,
+            timezone=timezone,
+            cdp_url=cdp_url,
+            diagnostics_dir=diagnostics_dir,
+            allow_remote_cdp=allow_remote_cdp,
+        )
+    finally:
+        bp.select_page = previous_selector
+
+
+def _configure_settings_auto(
+    expected_blog_id,
+    description,
+    search_description,
+    *,
+    confirm,
+    timezone=sp.DEFAULT_TIMEZONE,
+    cdp_url=bp.DEFAULT_CDP_URL,
+    diagnostics_dir="logs/browser_diagnostics",
+    allow_remote_cdp=False,
+):
+    previous_selector = bp.select_page
+    bp.select_page = lambda context: ensure_settings_page(context, str(expected_blog_id))
+    try:
+        return _original_configure_settings(
+            expected_blog_id,
+            description,
+            search_description,
+            confirm=confirm,
+            timezone=timezone,
+            cdp_url=cdp_url,
+            diagnostics_dir=diagnostics_dir,
+            allow_remote_cdp=allow_remote_cdp,
+        )
+    finally:
+        bp.select_page = previous_selector
+
+
+sp.execute_settings_preflight = _settings_preflight_auto
+sp.execute_configure_settings = _configure_settings_auto
 
 import local_service  # noqa: E402  (must import after patching browser_provision/settings)
 
