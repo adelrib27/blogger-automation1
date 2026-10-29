@@ -15,6 +15,9 @@ from playwright.sync_api import sync_playwright
 
 BLOG_ID_RE = re.compile(r"^[0-9]+$")
 THEMES_ROUTE_RE = re.compile(r"/blog/themes/(\d+)(?:[/?#]|$)", re.I)
+PERSONALIZE_RE = re.compile(r"^\s*PERSONALIZAR\s*$", re.I)
+RESTORE_RE = re.compile(r"^\s*Restaurar\s*$", re.I)
+CANCEL_RE = re.compile(r"^\s*CANCELAR\s*$", re.I)
 
 
 def validate_blog_id(value: str) -> str:
@@ -56,6 +59,31 @@ def _page_visibility(page) -> bool:
         return page.evaluate("() => document.visibilityState") == "visible"
     except Exception:
         return False
+
+
+def _visible_items(locator):
+    items = []
+    try:
+        count = locator.count()
+    except Exception:
+        return items
+    for index in range(count):
+        item = locator.nth(index)
+        try:
+            if item.is_visible():
+                items.append(item)
+        except Exception:
+            continue
+    return items
+
+
+def _exactly_one_visible(locator, label: str):
+    items = _visible_items(locator)
+    if len(items) != 1:
+        raise bp.SafeAutomationError(
+            f"{label} ambíguo ou ausente: esperado 1 elemento visível, encontrado(s) {len(items)}."
+        )
+    return items[0]
 
 
 def select_expected_theme_page(context, expected_blog_id: str):
@@ -164,6 +192,89 @@ def validate_restore_evidence(dom: dict) -> dict:
     return required
 
 
+def _restore_card_is_open(page) -> bool:
+    try:
+        validate_restore_evidence(inspect_restore_dom(page))
+        return True
+    except bp.SafeAutomationError:
+        return False
+
+
+def _open_theme_actions_menu(page) -> None:
+    personalize = _exactly_one_visible(
+        page.get_by_role("button", name=PERSONALIZE_RE),
+        "Botão PERSONALIZAR",
+    )
+
+    # Current Blogger Theme UI uses a split button: PERSONALIZAR + the adjacent
+    # dropdown arrow. We require that adjacent control instead of clicking the
+    # primary PERSONALIZAR action.
+    arrow = None
+    for candidate in (
+        personalize.locator("xpath=following-sibling::button[1]"),
+        personalize.locator("xpath=following-sibling::*[@role='button'][1]"),
+    ):
+        visible = _visible_items(candidate)
+        if len(visible) == 1:
+            arrow = visible[0]
+            break
+        if len(visible) > 1:
+            raise bp.SafeAutomationError("Seta de opções do tema ficou ambígua.")
+
+    if arrow is None:
+        parent = personalize.locator("xpath=..")
+        siblings = _visible_items(parent.locator("button,[role='button']"))
+        alternatives = []
+        for item in siblings:
+            try:
+                text = (item.inner_text() or "").strip()
+            except Exception:
+                text = ""
+            if not PERSONALIZE_RE.fullmatch(text):
+                alternatives.append(item)
+        if len(alternatives) == 1:
+            arrow = alternatives[0]
+
+    if arrow is None:
+        raise bp.SafeAutomationError(
+            "Seta de opções ao lado de PERSONALIZAR não foi localizada de forma única."
+        )
+
+    arrow.click(timeout=5_000)
+    page.wait_for_timeout(350)
+
+
+def open_restore_dialog(page) -> dict:
+    if _restore_card_is_open(page):
+        return {"menu_opened": False, "restore_clicked": False, "already_open": True}
+
+    _open_theme_actions_menu(page)
+    restore = _exactly_one_visible(
+        page.get_by_text(RESTORE_RE, exact=True),
+        "Opção Restaurar",
+    )
+    restore.click(timeout=5_000)
+    page.wait_for_timeout(450)
+
+    dom = inspect_restore_dom(page)
+    validate_restore_evidence(dom)
+    return {"menu_opened": True, "restore_clicked": True, "already_open": False}
+
+
+def close_restore_dialog(page) -> bool:
+    if not _restore_card_is_open(page):
+        return False
+    cancel = _exactly_one_visible(
+        page.get_by_role("button", name=CANCEL_RE),
+        "Botão CANCELAR do cartão Restaurar",
+    )
+    cancel.click(timeout=5_000)
+    page.wait_for_timeout(250)
+    if _restore_card_is_open(page):
+        raise bp.SafeAutomationError("O cartão Restaurar permaneceu aberto após CANCELAR.")
+    return True
+
+
 def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str) -> dict:
     expected_blog_id = validate_blog_id(expected_blog_id)
     theme = validate_xml_file(theme_path, label="Tema Mestre")
@@ -184,31 +295,41 @@ def execute_inspection(expected_blog_id: str, theme_path: str, backup_path: str)
                 "A aba correta deve estar na tela Tema (/blog/themes/<BlogID>) antes da inspeção."
             )
 
-        dom = inspect_restore_dom(page)
-        confirmed_evidence = validate_restore_evidence(dom)
+        navigation = open_restore_dialog(page)
+        try:
+            dom = inspect_restore_dom(page)
+            confirmed_evidence = validate_restore_evidence(dom)
 
-        if any(item.get("files_selected", 0) for item in dom["file_inputs"]):
-            raise bp.SafeAutomationError(
-                "Já existe arquivo selecionado no diálogo. Inspeção bloqueada para preservar o estado."
-            )
+            if any(item.get("files_selected", 0) for item in dom["file_inputs"]):
+                raise bp.SafeAutomationError(
+                    "Já existe arquivo selecionado no diálogo. Inspeção bloqueada para preservar o estado."
+                )
 
-        return {
-            "status": "THEME_RESTORE_DIALOG_INSPECTED",
-            "read_only": True,
-            "blog_id": expected_blog_id,
-            "url": bp.sanitize_url(page.url),
-            "theme": theme,
-            "backup": backup,
-            "restore_evidence": confirmed_evidence,
-            "dialog": dom,
-            "browser_connected": browser.is_connected(),
-            "message": "Somente leitura: nenhum clique, upload, restauração ou salvamento foi executado.",
-        }
+            result = {
+                "status": "THEME_RESTORE_PREFLIGHT_OK",
+                "read_only": True,
+                "blog_id": expected_blog_id,
+                "url": bp.sanitize_url(page.url),
+                "theme": theme,
+                "backup": backup,
+                "navigation": navigation,
+                "restore_evidence": confirmed_evidence,
+                "dialog": dom,
+                "browser_connected": browser.is_connected(),
+                "message": (
+                    "Preflight sem gravação: abriu Tema > opções > Restaurar, não selecionou arquivo, "
+                    "não clicou FAZER UPLOAD e fechou com CANCELAR."
+                ),
+            }
+        finally:
+            close_restore_dialog(page)
+
+        return result
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Inspeciona, sem cliques, o diálogo Restaurar do Tema Blogger."
+        description="Preflight sem gravação do fluxo Tema > Restaurar do Blogger."
     )
     parser.add_argument("--expected-blog-id", required=True)
     parser.add_argument("--theme-path", required=True)
