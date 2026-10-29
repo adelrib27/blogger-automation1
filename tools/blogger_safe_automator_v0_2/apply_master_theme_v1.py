@@ -20,7 +20,6 @@ from inspect_theme_restore_dialog import (
     validate_xml_file,
 )
 from playwright.sync_api import sync_playwright
-from windows_native_file_dialog import NativeFileDialogError, choose_file_and_open
 
 LAB_BLOG_ID = "99449222854490000"
 LAB_PUBLIC_URL = "https://teste-tema-editorial-blogger.blogspot.com/"
@@ -56,7 +55,6 @@ def _normalize_action_text(value: str | None) -> str:
 
 
 def _exact_visible_action_by_text(page, expected_text: str):
-    """Find one visible button/role=button by rendered text or aria-label."""
     target = _normalize_action_text(expected_text)
     locator = page.locator('button,[role="button"]')
     matches = []
@@ -85,7 +83,6 @@ def _exact_visible_action_by_text(page, expected_text: str):
 
 
 def _clear_stale_file_inputs(page) -> int:
-    """Clear browser-local stale file selections from earlier failed attempts."""
     locator = page.locator('input[type="file"]')
     cleared = 0
     for index in range(locator.count()):
@@ -105,26 +102,51 @@ def _clear_stale_file_inputs(page) -> int:
     return cleared
 
 
-def _select_theme_file_via_windows_dialog(page, theme_path: str) -> dict:
-    """Follow the visible UI literally: FAZER UPLOAD -> Windows Abrir -> theme.xml -> Abrir."""
+def _select_theme_file_via_playwright_chooser(page, theme_path: str) -> dict:
+    """Click FAZER UPLOAD and prove that the exact theme.xml reached Blogger's file input."""
+    path = Path(theme_path).resolve()
     upload = _exact_visible_action_by_text(page, UPLOAD_LABEL)
     try:
-        # Do not intercept Playwright's file chooser. Let Windows open the real
-        # native dialog, then drive that dialog explicitly and verify the path.
-        upload.click(timeout=5_000)
-        native = choose_file_and_open(theme_path, timeout_seconds=10.0)
-        return {
-            "method": "windows_native_open_dialog",
-            **native,
-        }
-    except NativeFileDialogError as exc:
-        raise bp.SafeAutomationError(
-            f"Falha no seletor nativo do Windows ao escolher o Tema Mestre: {exc}"
-        ) from exc
+        with page.expect_file_chooser(timeout=8_000) as chooser_info:
+            upload.click(timeout=5_000)
+        chooser = chooser_info.value
+        chooser.set_files(str(path))
+        evidence = chooser.element.evaluate(
+            """el => ({
+              count: el.files ? el.files.length : 0,
+              name: el.files && el.files[0] ? el.files[0].name : '',
+              size: el.files && el.files[0] ? el.files[0].size : -1,
+              type: el.files && el.files[0] ? el.files[0].type : '',
+              value: el.value || ''
+            })"""
+        )
     except Exception as exc:
         raise bp.SafeAutomationError(
-            f"Não foi possível iniciar o fluxo FAZER UPLOAD -> Abrir do Windows: {exc}"
+            f"Falha ao selecionar o Tema Mestre pelo file chooser do Chrome/Playwright: {exc}"
         ) from exc
+
+    expected_size = path.stat().st_size
+    if evidence.get("count") != 1:
+        raise bp.SafeAutomationError(
+            f"Seleção não confirmada: esperado 1 arquivo, observado {evidence}."
+        )
+    if evidence.get("name") != path.name:
+        raise bp.SafeAutomationError(
+            f"Arquivo incorreto no input: esperado {path.name!r}, observado {evidence}."
+        )
+    if int(evidence.get("size", -1)) != expected_size:
+        raise bp.SafeAutomationError(
+            f"Tamanho do arquivo selecionado não confere: esperado {expected_size}, observado {evidence}."
+        )
+
+    return {
+        "method": "playwright_file_chooser",
+        "selected_path": str(path),
+        "selected_name": evidence.get("name"),
+        "selected_size": evidence.get("size"),
+        "file_count": evidence.get("count"),
+        "selection_verified": True,
+    }
 
 
 def _wait_restore_dialog_close(page, timeout_ms: int = 30_000) -> None:
@@ -135,9 +157,39 @@ def _wait_restore_dialog_close(page, timeout_ms: int = 30_000) -> None:
         page.wait_for_timeout(250)
     evidence = (inspect_restore_dom(page).get("restore_evidence") or {})
     raise bp.SafeAutomationError(
-        "O arquivo foi confirmado na janela Abrir, mas o cartão Restaurar não fechou no prazo esperado. "
+        "O theme.xml foi confirmado no input, mas o cartão Restaurar não fechou no prazo esperado. "
         f"Evidências finais: {evidence}."
     )
+
+
+def _visible_feedback(page) -> list[str]:
+    """Collect short visible status/error messages after Blogger processes the upload."""
+    try:
+        values = page.evaluate(
+            """() => {
+              const visible = el => {
+                const r = el.getBoundingClientRect();
+                const s = getComputedStyle(el);
+                return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+              };
+              const selectors = [
+                '[role="alert"]', '[role="status"]', '[aria-live]',
+                '.snackbar', '.toast', '.error', '.warning'
+              ];
+              const out = [];
+              for (const sel of selectors) {
+                for (const el of document.querySelectorAll(sel)) {
+                  if (!visible(el)) continue;
+                  const t = String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+                  if (t && t.length <= 800) out.push(t);
+                }
+              }
+              return [...new Set(out)];
+            }"""
+        )
+        return list(values or [])[:20]
+    except Exception:
+        return []
 
 
 def _fetch_public_html(public_url: str, timeout: float = 15.0) -> str:
@@ -178,7 +230,6 @@ def _wait_public_markers(public_url: str, timeout_seconds: int = 60) -> dict:
 
 
 def _prepare_restore_dialog(page) -> tuple[dict, dict, int]:
-    """Open Restore, validate it, and clear only stale browser-local file state."""
     navigation = open_restore_dialog(page)
     dom = inspect_restore_dom(page)
     validate_restore_evidence(dom)
@@ -228,13 +279,21 @@ def execute_apply(
 
         navigation, _, stale_inputs_cleared = _prepare_restore_dialog(page)
 
-        selection = _select_theme_file_via_windows_dialog(page, theme["path"])
+        selection = _select_theme_file_via_playwright_chooser(page, theme["path"])
         _wait_restore_dialog_close(page)
+        page.wait_for_timeout(800)
+        feedback = _visible_feedback(page)
 
         if extract_panel_blog_id(page.url) != expected_blog_id:
             raise bp.SafeAutomationError("Blog ID mudou após o upload; validação bloqueada.")
 
-        public_validation = _wait_public_markers(public_url)
+        try:
+            public_validation = _wait_public_markers(public_url)
+        except bp.SafeAutomationError as exc:
+            raise bp.SafeAutomationError(
+                f"{exc} Seleção do arquivo foi comprovada: {selection}. "
+                f"Feedback visível do Blogger após processamento: {feedback}."
+            ) from exc
 
         return {
             "status": "MASTER_THEME_V1_APPLIED_AND_PUBLICLY_VALIDATED",
@@ -244,6 +303,7 @@ def execute_apply(
             "navigation": navigation,
             "stale_inputs_cleared": stale_inputs_cleared,
             "selection": selection,
+            "blogger_feedback": feedback,
             "public_validation": public_validation,
             "browser_connected": browser.is_connected(),
             "message": "Tema Mestre v1.0 aplicado no blog-laboratório e validado no HTML público.",
