@@ -9,6 +9,7 @@ import browser_provision as bp
 from inspect_theme_restore_dialog import (
     select_expected_theme_page,
     validate_blog_id,
+    validate_restore_evidence,
     validate_xml_file,
 )
 
@@ -61,6 +62,13 @@ class ThemeRestoreInspectorTests(unittest.TestCase):
         selected = select_expected_theme_page(FakeContext([settings, other, theme]), expected)
         self.assertIs(selected, theme)
 
+    def test_select_expected_theme_page_prefers_visible_candidate(self):
+        expected = "99449222854490000"
+        hidden = FakePage(f"https://draft.blogger.com/blog/themes/{expected}", visible=False)
+        visible = FakePage(f"https://draft.blogger.com/blog/themes/{expected}?hl=pt-BR", visible=True)
+        selected = select_expected_theme_page(FakeContext([visible, hidden]), expected)
+        self.assertIs(selected, visible)
+
     def test_select_expected_theme_page_fails_closed_without_theme_tab(self):
         expected = "99449222854490000"
         context = FakeContext([
@@ -69,6 +77,31 @@ class ThemeRestoreInspectorTests(unittest.TestCase):
         ])
         with self.assertRaises(bp.SafeAutomationError):
             select_expected_theme_page(context, expected)
+
+    def test_restore_evidence_does_not_require_role_dialog(self):
+        dom = {
+            "dialogs": [],
+            "restore_evidence": {
+                "title_visible": True,
+                "explanation_visible": True,
+                "cancel_action_visible": True,
+                "upload_action_visible": True,
+            },
+        }
+        result = validate_restore_evidence(dom)
+        self.assertTrue(all(result.values()))
+
+    def test_restore_evidence_fails_closed_when_upload_action_missing(self):
+        dom = {
+            "restore_evidence": {
+                "title_visible": True,
+                "explanation_visible": True,
+                "cancel_action_visible": True,
+                "upload_action_visible": False,
+            },
+        }
+        with self.assertRaises(bp.SafeAutomationError):
+            validate_restore_evidence(dom)
 
 
 if __name__ == "__main__":
