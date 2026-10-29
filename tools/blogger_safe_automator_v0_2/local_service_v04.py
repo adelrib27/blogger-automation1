@@ -25,7 +25,16 @@ def _require_blogger_session(page):
 bp.select_page = _select_page
 bp.require_blogger_session = _require_blogger_session
 
-import local_service  # noqa: E402  (must import after patching browser_provision)
+# Patch only the dialog-targeting layer used by settings_profile. This keeps the
+# validated settings logic intact while preventing Blogger's navigation drawer
+# from being mistaken for the active edit dialog.
+import configure_core_settings as cfg  # noqa: E402
+import settings_dialog_guard as sdg  # noqa: E402
+
+cfg.set_dialog_text = sdg.set_dialog_text
+cfg.set_timezone = sdg.set_timezone
+
+import local_service  # noqa: E402  (must import after patching browser_provision/settings)
 
 
 if __name__ == "__main__":
