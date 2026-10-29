@@ -45,7 +45,7 @@ def _single_visible_dialog_field(page):
     return None
 
 
-def _click_action_in_dialog(dialog, label: str) -> None:
+def _click_action_in_dialog(page, dialog, label: str) -> None:
     pattern = re.compile(rf"^{re.escape(label)}$", re.I)
     for loc in (
         dialog.get_by_role("button", name=pattern),
@@ -61,7 +61,7 @@ def _click_action_in_dialog(dialog, label: str) -> None:
                 item.evaluate("el => el.click()")
             except Exception:
                 continue
-        item.page.wait_for_timeout(700)
+        page.wait_for_timeout(700)
         return
     raise cfg.SettingsError(f'Botão "{label}" não foi localizado no diálogo correto.')
 
@@ -87,7 +87,7 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
         raise cfg.SettingsError(f'Valor de "{row_label}" excede o limite de {maxlength} caracteres.')
 
     field.fill(value)
-    _click_action_in_dialog(dialog, "SALVAR")
+    _click_action_in_dialog(page, dialog, "SALVAR")
     return {
         "row": row_label,
         "value": value,
@@ -142,7 +142,7 @@ def set_timezone(page, target: str) -> dict:
     except Exception:
         chosen.evaluate("el => el.click()")
     page.wait_for_timeout(250)
-    _click_action_in_dialog(dialog, "SALVAR")
+    _click_action_in_dialog(page, dialog, "SALVAR")
     return {
         "target": target,
         "selected_and_saved": True,
