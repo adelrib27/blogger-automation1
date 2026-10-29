@@ -15,6 +15,43 @@ class SettingsDialogGuardTests(unittest.TestCase):
     def test_v04_patches_timezone_dialog_handler(self):
         self.assertIs(cfg.set_timezone, sdg.set_timezone)
 
+    def test_text_setting_is_idempotent_when_page_already_shows_value(self):
+        page = MagicMock()
+        value = "Blog de teste para validação da automação Blogger."
+        with patch.object(sdg, "_field_by_aria", return_value=None), patch.object(
+            sdg, "_current_text_setting_matches", return_value=True
+        ), patch.object(sdg.cfg.core, "click_row_prefix") as click_row:
+            result = sdg.set_dialog_text(page, "Descrição", value, ("Descrição",))
+        self.assertFalse(result["changed"])
+        self.assertEqual(result["dialog_guard"], "already_selected")
+        click_row.assert_not_called()
+
+    def test_open_text_field_with_same_value_uses_cancel_no_write(self):
+        page = MagicMock()
+        field = MagicMock()
+        dialog = MagicMock()
+        value = "Ambiente de teste para validar automação segura."
+        with patch.object(sdg, "_field_by_aria", return_value=field), patch.object(
+            sdg, "_dialog_for_field", return_value=dialog
+        ), patch.object(sdg, "_field_value_matches", return_value=True), patch.object(
+            sdg, "_click_action_in_dialog"
+        ) as click_action:
+            result = sdg.set_dialog_text(
+                page,
+                "Descrição da pesquisa",
+                value,
+                ("Descrição da pesquisa",),
+            )
+        click_action.assert_called_once_with(page, dialog, "CANCELAR")
+        field.fill.assert_not_called()
+        self.assertFalse(result["changed"])
+        self.assertEqual(result["dialog_guard"], "open_field_noop")
+
+    def test_text_normalization_handles_nbsp_and_repeated_spacing(self):
+        left = "Texto\u00a0de   teste"
+        right = "Texto de teste"
+        self.assertEqual(sdg._norm_setting_text(left), sdg._norm_setting_text(right))
+
     def test_timezone_is_idempotent_when_target_already_selected(self):
         target = "(GMT-03:00) Horário Padrão de Brasília – São Paulo"
         page = MagicMock()
