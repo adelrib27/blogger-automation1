@@ -67,10 +67,100 @@ def _click_action_in_dialog(page, dialog, label: str) -> None:
     raise cfg.SettingsError(f'Botão "{label}" não foi localizado no diálogo correto.')
 
 
+def _norm_setting_text(value: str | None) -> str:
+    text = unicodedata.normalize("NFKC", value or "")
+    text = text.replace("\u00a0", " ").replace("\u202f", " ")
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _field_value_matches(field, value: str) -> bool:
+    try:
+        current = field.input_value()
+    except Exception:
+        try:
+            current = field.get_attribute("value") or ""
+        except Exception:
+            return False
+    return _norm_setting_text(current) == _norm_setting_text(value)
+
+
+def _item_belongs_to_setting_row(item, row_label: str) -> bool:
+    """Require the displayed value to share a reasonably close ancestor with its row label."""
+    try:
+        return bool(
+            item.evaluate(
+                r"""(el, label) => {
+                  const norm = v => String(v || '')
+                    .normalize('NFKC')
+                    .replace(/[\u00a0\u202f]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                  const wanted = norm(label);
+                  let node = el;
+                  for (let depth = 0; node && node !== document.body && depth < 8; depth++, node = node.parentElement) {
+                    const text = norm(node.innerText || node.textContent);
+                    if (text === wanted || text.startsWith(wanted + ' ')) return true;
+                  }
+                  return false;
+                }""",
+                row_label,
+            )
+        )
+    except Exception:
+        return False
+
+
+def _current_text_setting_matches(page, row_label: str, value: str) -> bool:
+    """Read-only idempotency check for Blogger text settings.
+
+    Prefer the existing row reader when Blogger exposes label+value together. When
+    Blogger splits them into sibling nodes, accept an exact visible value only if it
+    is outside a visible dialog and belongs to an ancestor beginning with the row
+    label. This avoids treating unrelated page text as the setting value.
+    """
+    current = cfg.core.row_text(page, row_label) or ""
+    current_norm = _norm_setting_text(current)
+    value_norm = _norm_setting_text(value)
+    if value_norm and value_norm in current_norm:
+        return True
+
+    matches = page.get_by_text(value, exact=True)
+    for i in range(matches.count()):
+        item = matches.nth(i)
+        try:
+            if not item.is_visible() or _has_visible_dialog_ancestor(item):
+                continue
+            if _item_belongs_to_setting_row(item, row_label):
+                return True
+        except Exception:
+            continue
+    return False
+
+
+def _text_noop_result(row_label: str, value: str, guard: str) -> dict:
+    return {
+        "row": row_label,
+        "value": value,
+        "maxlength": None,
+        "changed": False,
+        "dialog_guard": guard,
+    }
+
+
 def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, ...]) -> dict:
-    # Reaproveita um diálogo já aberto pela própria automação, se existir.
+    # First handle a dialog already left open by a previous fail-closed attempt.
     field = _field_by_aria(page, field_labels)
-    if field is None:
+    if field is not None:
+        dialog = _dialog_for_field(field)
+        if _field_value_matches(field, value):
+            _click_action_in_dialog(page, dialog, "CANCELAR")
+            return _text_noop_result(row_label, value, "open_field_noop")
+    else:
+        # Normal idempotent path: if the settings page already displays the exact
+        # desired value, do not open the dialog and do not create a write.
+        if _current_text_setting_matches(page, row_label, value):
+            return _text_noop_result(row_label, value, "already_selected")
+
         if not cfg.core.click_row_prefix(page, row_label):
             raise cfg.SettingsError(f'Configuração "{row_label}" não foi localizada.')
         page.wait_for_timeout(350)
@@ -80,6 +170,11 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
     if field is None:
         field = _single_visible_dialog_field(page)
     if field is None:
+        # One final read-only check: some Blogger builds update the row but fail to
+        # expose the expected textarea. If the exact desired value is already there,
+        # treat the operation as a safe no-op rather than forcing a write.
+        if _current_text_setting_matches(page, row_label, value):
+            return _text_noop_result(row_label, value, "post_click_already_selected")
         raise cfg.SettingsError(f'Campo editável de "{row_label}" não foi localizado.')
 
     dialog = _dialog_for_field(field)
@@ -87,12 +182,25 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
     if maxlength and len(value) > int(maxlength):
         raise cfg.SettingsError(f'Valor de "{row_label}" excede o limite de {maxlength} caracteres.')
 
+    # If opening the dialog reveals that it already contains the desired value,
+    # close with CANCELAR. This is still a no-op and avoids needless writes.
+    if _field_value_matches(field, value):
+        _click_action_in_dialog(page, dialog, "CANCELAR")
+        return {
+            "row": row_label,
+            "value": value,
+            "maxlength": maxlength,
+            "changed": False,
+            "dialog_guard": "opened_field_noop",
+        }
+
     field.fill(value)
     _click_action_in_dialog(page, dialog, "SALVAR")
     return {
         "row": row_label,
         "value": value,
         "maxlength": maxlength,
+        "changed": True,
         "dialog_guard": "field_anchored",
     }
 
