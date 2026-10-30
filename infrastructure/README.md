@@ -28,6 +28,55 @@ ChatGPT
 
 Não há dependência de ChatGPT Work.
 
+## Ordem correta de boot/reconexão
+
+### 1. Iniciar Chrome oficial com CDP loopback
+
+```bat
+start "" "%ProgramFiles%\Google\Chrome\Application\chrome.exe" ^
+  --remote-debugging-port=9222 ^
+  --remote-debugging-address=127.0.0.1 ^
+  --user-data-dir="C:\Blogger-Automator\chrome-debug-profile" ^
+  "https://www.blogger.com/"
+```
+
+Validar:
+
+```bat
+curl http://127.0.0.1:9222/json/version
+```
+
+O perfil `chrome-debug-profile` deve ser separado do perfil normal do Chrome.
+
+### 2. Iniciar o runner local
+
+O runner exige `BLOGGER_RUNNER_TOKEN` com pelo menos 32 caracteres. O valor é segredo operacional e **não deve ser commitado**.
+
+Exemplo de boot da versão v0.5:
+
+```bat
+cd /d C:\Blogger-Automator\blogger_safe_automator_v0_3\tools\blogger_safe_automator_v0_2
+set BLOGGER_RUNNER_TOKEN=<TOKEN_LOCAL_DE_32_OU_MAIS_CARACTERES>
+.venv\Scripts\python.exe local_service_v05.py
+```
+
+Se a cópia local ainda não tiver `local_service_v05.py`, sincronizar somente os arquivos validados da branch `blogger-safe-ui-provisioning-v0-2` antes de iniciar.
+
+### 3. Confirmar runner
+
+- `GET http://127.0.0.1:8765/v1/health`
+- depois `audit` via plugin/runner.
+
+### 4. Autorizar/reconectar plugin se necessário
+
+O gateway valida o token diretamente contra o runner. OAuth usa PKCE. O token local é recebido pela página de autorização e encapsulado nos tokens OAuth criptografados com `OAUTH_SECRET` no Worker; o valor de `OAUTH_SECRET` não está versionado.
+
+### 5. Atualizar ferramentas do ChatGPT se o schema estiver antigo
+
+`ChatGPT → Plugins → Blogger Local Runner → Gerir aplicação → Atualizar ferramentas`
+
+Se a conversa antiga continuar mostrando apenas seis tools, abrir uma nova conversa depois da atualização.
+
 ## Backup do gateway Cloudflare
 
 Diretório:
@@ -41,6 +90,8 @@ Arquivos:
 
 Produção no snapshot:
 
+- URL/base: `https://blogger-local-runner-gateway.comercebem-ar.workers.dev`
+- MCP resource: `https://blogger-local-runner-gateway.comercebem-ar.workers.dev/mcp`
 - script: `blogger-local-runner-gateway`
 - script ID: `0b0e553e489f47bebcf28d496718ae2d`
 - versão: 7
@@ -73,6 +124,16 @@ Rotas REST permitidas:
 - `POST /v1/preflight/settings-profile`
 - `POST /v1/configure-settings`
 - `POST /v1/adopt-model-v20`
+
+### Mapeamento MCP → runner
+
+- `health` → `GET /v1/health`
+- `audit` → `POST /v1/audit`
+- `preflight_blog` → `POST /v1/preflight`
+- `create_blog` → `POST /v1/create-blog`
+- `preflight_settings` → `POST /v1/preflight/settings-profile`
+- `configure_settings` → `POST /v1/configure-settings`
+- `adopt_model_v20` → `POST /v1/adopt-model-v20`
 
 ## Backup do plugin privado do ChatGPT
 
@@ -143,7 +204,7 @@ Provas operacionais:
 
 Isso é estado transitório de runtime, não regressão do V20 já instalado.
 
-## Recuperação
+## Recuperação resumida
 
 1. iniciar Chrome oficial com CDP loopback;
 2. confirmar `/json/version` em `127.0.0.1:9222`;
