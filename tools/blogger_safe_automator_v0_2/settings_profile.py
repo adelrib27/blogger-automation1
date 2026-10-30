@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlparse
 
 import browser_provision as bp
 import configure_core_settings as cfg
@@ -50,66 +51,135 @@ def _planned(description: str, search_description: str, timezone: str) -> dict:
     }
 
 
-def _open_expected_settings(page, expected_blog_id: str) -> str:
-    blog_id = bp.extract_current_blog_id(page)
-    if blog_id != expected_blog_id:
+def _validate_current_blogger_page(page, expected_blog_id: str) -> None:
+    """Valida a aba atual sem navegar para a Home do Blogger."""
+    host = (urlparse(page.url).hostname or "").lower()
+    if host == "accounts.google.com" or host.endswith(".accounts.google.com"):
+        raise cfg.SettingsError("A sessão do Chrome CDP não está autenticada no Blogger.")
+    if host != "blogger.com" and not host.endswith(".blogger.com"):
+        raise cfg.SettingsError(f"A aba atual não é do Blogger: {bp.sanitize_url(page.url)}")
+    actual = bp.extract_current_blog_id(page)
+    if actual != expected_blog_id:
         raise cfg.SettingsError(
-            f"Blog errado bloqueado: atual={blog_id!r}, esperado={expected_blog_id!r}."
+            f"Blog errado bloqueado: atual={actual!r}, esperado={expected_blog_id!r}."
         )
-    cfg.core.goto_settings(page, blog_id)
+
+
+def _open_expected_settings(page, expected_blog_id: str) -> str:
+    _validate_current_blogger_page(page, expected_blog_id)
+    cfg.core.goto_settings(page, expected_blog_id)
     blog_id_after = bp.extract_current_blog_id(page)
     if blog_id_after != expected_blog_id:
         raise cfg.SettingsError(
             f"Blog mudou ao abrir Configurações: atual={blog_id_after!r}, esperado={expected_blog_id!r}."
         )
-    return blog_id
+    return expected_blog_id
+
+
+def _collect_blog_option_labels(page) -> list[str]:
+    bp.open_blog_switcher(page)
+    labels: list[str] = []
+    try:
+        options = page.get_by_role("option")
+        count = min(options.count(), 80)
+        for i in range(count):
+            item = options.nth(i)
+            try:
+                if not item.is_visible():
+                    continue
+                text = re.sub(r"\s+", " ", item.inner_text()).strip()
+            except Exception:
+                continue
+            if not text or bp.NEW_BLOG_RE.fullmatch(text):
+                continue
+            if text not in labels:
+                labels.append(text)
+    finally:
+        try:
+            page.keyboard.press("Escape")
+            page.wait_for_timeout(250)
+        except Exception:
+            pass
+    return labels
+
+
+def _switch_via_blog_selector(page, expected_blog_id: str):
+    """Percorre apenas blogs existentes no seletor oficial até achar o Blog ID esperado.
+
+    Esta rotina só navega entre blogs; não abre criação nem executa escrita. O item
+    "Novo blog..." é explicitamente excluído. Cada troca é validada pelo Blog ID.
+    """
+    labels = _collect_blog_option_labels(page)
+    attempted: list[str] = []
+
+    for label in labels[:60]:
+        try:
+            bp.open_blog_switcher(page)
+            pattern = re.compile(rf"^{re.escape(label)}$", re.I)
+            matches = page.get_by_role("option", name=pattern)
+            target = None
+            for i in range(min(matches.count(), 10)):
+                candidate = matches.nth(i)
+                try:
+                    if candidate.is_visible():
+                        target = candidate
+                        break
+                except Exception:
+                    continue
+            if target is None:
+                try:
+                    page.keyboard.press("Escape")
+                except Exception:
+                    pass
+                continue
+
+            try:
+                target.click(timeout=4_000)
+            except Exception:
+                target.evaluate("el => el.click()")
+            page.wait_for_timeout(1_400)
+
+            try:
+                actual = bp.extract_current_blog_id(page)
+            except Exception:
+                actual = None
+            attempted.append(label)
+            if actual == expected_blog_id:
+                _validate_current_blogger_page(page, expected_blog_id)
+                return page
+        except Exception:
+            try:
+                page.keyboard.press("Escape")
+            except Exception:
+                pass
+            continue
+
+    preview = " | ".join(attempted[:12])
+    detail = f" Blogs testados: {preview}." if preview else ""
+    raise cfg.SettingsError(
+        f"O Blog ID esperado {expected_blog_id} não foi localizado pelo seletor oficial do Blogger.{detail}"
+    )
 
 
 def _select_expected_page(context, expected_blog_id: str):
-    """Seleciona o Blog ID esperado; se necessário, troca primeiro pela rota de Postagens.
-
-    A rota de Postagens é o ponto de entrada estável do Blogger para selecionar um blog.
-    O Blog ID é validado após a troca e novamente ao abrir Configurações, antes de escrita.
-    """
+    """Seleciona o Blog ID esperado sem permitir que a validação volte à Home."""
     try:
-        return cfg.core.select_expected_blog_page(context, expected_blog_id)
+        page = cfg.core.select_expected_blog_page(context, expected_blog_id)
+        _validate_current_blogger_page(page, expected_blog_id)
+        return page
     except Exception:
         pass
 
     try:
         page = bp.select_page(context)
+        # Aqui a navegação à Home é usada somente para confirmar a sessão antes da troca.
         bp.require_blogger_session(page)
     except Exception as exc:
         raise cfg.SettingsError(
-            f"Nenhuma aba Blogger autenticada está disponível para abrir o Blog ID esperado {expected_blog_id}."
+            f"Nenhuma aba Blogger autenticada está disponível para localizar o Blog ID esperado {expected_blog_id}."
         ) from exc
 
-    posts_url = f"https://draft.blogger.com/blog/posts/{expected_blog_id}"
-    try:
-        page.goto(posts_url, wait_until="domcontentloaded", timeout=15_000)
-        page.wait_for_timeout(1_500)
-    except Exception as exc:
-        raise cfg.SettingsError(
-            f"Não foi possível abrir com segurança as postagens do Blog ID esperado {expected_blog_id}."
-        ) from exc
-
-    try:
-        bp.require_blogger_session(page)
-        actual_blog_id = bp.extract_current_blog_id(page)
-    except Exception as exc:
-        raise cfg.SettingsError(
-            f"A troca para o Blog ID esperado {expected_blog_id} não resultou em uma página Blogger validável."
-        ) from exc
-
-    if actual_blog_id != expected_blog_id:
-        raise cfg.SettingsError(
-            f"Blog errado bloqueado após troca: atual={actual_blog_id!r}, esperado={expected_blog_id!r}."
-        )
-    if f"/blog/posts/{expected_blog_id}" not in bp.sanitize_url(page.url):
-        raise cfg.SettingsError(
-            f"A tela de postagens do Blog ID esperado {expected_blog_id} não abriu como esperado."
-        )
-    return page
+    return _switch_via_blog_selector(page, expected_blog_id)
 
 
 def execute_settings_preflight(
@@ -130,7 +200,7 @@ def execute_settings_preflight(
     with sync_playwright() as p:
         _, context = bp.connect_official_chrome(p, safe_cdp)
         page = _select_expected_page(context, blog_id)
-        bp.require_blogger_session(page)
+        _validate_current_blogger_page(page, blog_id)
         _open_expected_settings(page, blog_id)
         current = cfg.snapshot(page)
 
@@ -174,7 +244,7 @@ def execute_configure_settings(
     with sync_playwright() as p:
         _, context = bp.connect_official_chrome(p, safe_cdp)
         page = _select_expected_page(context, blog_id)
-        bp.require_blogger_session(page)
+        _validate_current_blogger_page(page, blog_id)
         _open_expected_settings(page, blog_id)
         before = cfg.snapshot(page)
 
