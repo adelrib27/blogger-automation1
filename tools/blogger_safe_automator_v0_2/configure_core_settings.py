@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import unicodedata
 from pathlib import Path
 
 import browser_provision as bp
@@ -48,7 +49,6 @@ def visible_dialog_candidates(page):
             candidates.append((box["width"] * box["height"], d))
         except Exception:
             continue
-    # Maior primeiro: overlays/toasts menores não devem roubar o foco do modal real.
     candidates.sort(key=lambda x: x[0], reverse=True)
     return [d for _, d in candidates]
 
@@ -105,8 +105,6 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
 
     dialog = None
     field = None
-    # O Blogger anima alguns modais e pode manter overlays/toasts visíveis.
-    # Retry curto, somente para localizar o editor; nenhuma escrita ocorre até encontrá-lo.
     for _ in range(12):
         page.wait_for_timeout(150)
         dialog, field = _find_dialog_text_field(page, field_labels)
@@ -150,32 +148,96 @@ def set_checkbox(page, aria_label: str, desired: bool) -> dict:
     return {"label": aria_label, "before": before, "after": after, "changed": changed}
 
 
+def _norm_text(value: str) -> str:
+    value = unicodedata.normalize("NFKD", str(value or ""))
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = value.replace("–", "-").replace("—", "-").replace("−", "-")
+    value = re.sub(r"\s+", " ", value).strip().lower()
+    return value
+
+
+def _timezone_text_matches(text: str, target: str) -> bool:
+    n = _norm_text(text)
+    t = _norm_text(target)
+    if t and t in n:
+        return True
+    compact = n.replace(" ", "")
+    has_gmt = "gmt-03:00" in compact or "gmt03:00" in compact
+    has_place = "sao paulo" in n or "brasilia" in n
+    return has_gmt and has_place
+
+
+def _find_timezone_candidate(dialog, target: str):
+    selectors = '[role="option"], [role="menuitem"], [role="radio"], li, div, span'
+    candidates = dialog.locator(selectors)
+    try:
+        count = min(candidates.count(), 1200)
+    except Exception:
+        return None
+    for i in range(count):
+        item = candidates.nth(i)
+        try:
+            text = item.inner_text(timeout=300).strip()
+        except Exception:
+            continue
+        if not text or not _timezone_text_matches(text, target):
+            continue
+        try:
+            item.scroll_into_view_if_needed(timeout=2_000)
+            if item.is_visible():
+                return item
+        except Exception:
+            continue
+    return None
+
+
+def _scroll_timezone_dialog(dialog) -> None:
+    try:
+        dialog.evaluate(
+            """el => {
+                const nodes = [el, ...el.querySelectorAll('*')];
+                for (const n of nodes) {
+                    try {
+                        if (n.scrollHeight > n.clientHeight + 24) {
+                            n.scrollTop = Math.min(n.scrollHeight, n.scrollTop + Math.max(280, n.clientHeight * 0.8));
+                        }
+                    } catch (_) {}
+                }
+            }"""
+        )
+    except Exception:
+        pass
+
+
 def set_timezone(page, target: str) -> dict:
     if not core.click_row_prefix(page, "Fuso horário"):
         raise SettingsError("Fuso horário não foi localizado.")
     page.wait_for_timeout(500)
     dialog = visible_dialog(page)
-    target_loc = dialog.get_by_text(target, exact=True)
+
     chosen = None
-    for i in range(target_loc.count()):
-        item = target_loc.nth(i)
-        try:
-            item.scroll_into_view_if_needed(timeout=4_000)
-            page.wait_for_timeout(150)
-            if item.is_visible():
-                chosen = item
-                break
-        except Exception:
-            continue
+    for _ in range(45):
+        chosen = _find_timezone_candidate(dialog, target)
+        if chosen is not None:
+            break
+        _scroll_timezone_dialog(dialog)
+        page.wait_for_timeout(120)
+
     if chosen is None:
         raise SettingsError(f'Fuso alvo não localizado: {target}')
+
+    chosen_text = ""
+    try:
+        chosen_text = chosen.inner_text(timeout=500).strip()
+    except Exception:
+        pass
     try:
         chosen.click(timeout=5_000)
     except Exception:
         chosen.evaluate("el => el.click()")
-    page.wait_for_timeout(250)
+    page.wait_for_timeout(300)
     click_dialog_action(page, "SALVAR", dialog=dialog)
-    return {"target": target, "selected_and_saved": True}
+    return {"target": target, "matched_text": chosen_text, "selected_and_saved": True}
 
 
 def snapshot(page) -> dict:
