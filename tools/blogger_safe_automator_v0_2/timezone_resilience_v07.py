@@ -188,7 +188,8 @@ def _find_candidate(page, target: str):
                 const visible = el => {
                     const r = el.getBoundingClientRect();
                     const s = getComputedStyle(el);
-                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden' &&
+                           r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
                 };
                 const norm = value => String(value || '')
                     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -277,8 +278,9 @@ def _open_nested_selector(page) -> bool:
 
 
 def _scroll_roots(page) -> bool:
+    """Avança a lista virtualizada; usa scrollTop e, se necessário, wheel/PageDown reais."""
     try:
-        return bool(page.evaluate(
+        moved = bool(page.evaluate(
             """() => {
                 const visible = el => {
                     const r = el.getBoundingClientRect();
@@ -292,7 +294,9 @@ def _scroll_roots(page) -> bool:
                         if (!visible(n)) continue;
                         const max = n.scrollHeight - n.clientHeight;
                         if (max <= 24) continue;
-                        const score = max + n.clientHeight;
+                        const style = getComputedStyle(n);
+                        let score = max + n.clientHeight;
+                        if (['auto','scroll'].includes(style.overflowY)) score += 5000;
                         if (!best || score > best.score) best = {n, score, max};
                     }
                 }
@@ -304,6 +308,29 @@ def _scroll_roots(page) -> bool:
                 return Math.abs(best.n.scrollTop - before) > 1;
             }"""
         ))
+        if moved:
+            return True
+    except Exception:
+        pass
+
+    dialog = page.locator('[role="dialog"]:visible').last
+    try:
+        box = dialog.bounding_box()
+    except Exception:
+        box = None
+    if box:
+        try:
+            page.mouse.move(box["x"] + box["width"] * 0.72, box["y"] + box["height"] * 0.72)
+            page.mouse.wheel(0, 900)
+            page.wait_for_timeout(90)
+            return True
+        except Exception:
+            pass
+
+    try:
+        page.keyboard.press("PageDown")
+        page.wait_for_timeout(90)
+        return True
     except Exception:
         return False
 
@@ -315,7 +342,8 @@ def _diagnostic_options(page) -> list[str]:
                 const visible = el => {
                     const r = el.getBoundingClientRect();
                     const s = getComputedStyle(el);
-                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden' &&
+                           r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
                 };
                 const out = [];
                 for (const root of [...document.querySelectorAll('[role="dialog"]')].filter(visible)) {
@@ -344,20 +372,14 @@ def set_timezone_resilient(page, target: str) -> dict:
 
     chosen = None
     chosen_text = ""
-    stagnant = 0
-    for _ in range(24):
+    for _ in range(20):
         match = _find_candidate(page, target)
         if match is not None:
             _, chosen, chosen_text = match
             break
-        moved = _scroll_roots(page)
+        if not _scroll_roots(page):
+            break
         page.wait_for_timeout(120)
-        if moved:
-            stagnant = 0
-        else:
-            stagnant += 1
-            if stagnant >= 2:
-                break
 
     if chosen is None:
         options = _diagnostic_options(page)
