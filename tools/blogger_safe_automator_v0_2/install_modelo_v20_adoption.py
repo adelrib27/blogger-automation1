@@ -35,7 +35,9 @@ def main() -> int:
 
     source_theme = root / "themes" / "blogger_emporio_v1_0" / "generated" / "theme.xml"
     template_theme = root / "themes" / "blogger_modelo_v20" / "theme.xml.tpl"
-    rendered_theme = root / "themes" / "blogger_modelo_v20" / "rendered" / f"{args.expected_blog_id}-theme.xml"
+    # apply_theme_safe.py intentionally requires the upload file to be named
+    # exactly "theme.xml". Keep each blog isolated in its own rendered folder.
+    rendered_theme = root / "themes" / "blogger_modelo_v20" / "rendered" / str(args.expected_blog_id) / "theme.xml"
     backup_theme = root.parent / "backups" / "blogger" / args.expected_blog_id / "theme-before-modelo-v20-adoption.xml"
 
     freeze = here / "freeze_modelo_v20_theme.py"
