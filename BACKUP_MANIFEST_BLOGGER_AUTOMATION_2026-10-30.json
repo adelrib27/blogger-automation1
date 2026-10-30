@@ -1,0 +1,143 @@
+{
+  "schema": "blogger-automation-backup-manifest/v1",
+  "snapshot_date": "2026-10-30",
+  "repository": "adelrib27/blogger-automation1",
+  "main_head_immediately_before_manifest": "000a8952a7f6688848575a1f0d1c85700bf40ce0",
+  "safe_ui_branch": {
+    "name": "blogger-safe-ui-provisioning-v0-2",
+    "head": "6420a44e43d411d2d3837363f7564c30f4bae4a1"
+  },
+  "checkpoint_files": [
+    {
+      "path": "CHECKPOINT_ATUAL.md",
+      "blob_sha": "bedc8fe20970133cd3aa1fffe900b0163bb9457a",
+      "purpose": "Entry point for future conversations"
+    },
+    {
+      "path": "CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md",
+      "blob_sha": "232de8a76151c7204ee816facfaf3537ecd2c45a",
+      "purpose": "Human-readable exhaustive operational checkpoint"
+    },
+    {
+      "path": "CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json",
+      "blob_sha": "e61368eaad6899ce40597d93ad5501fc138ad337",
+      "purpose": "Structured machine-readable state snapshot"
+    },
+    {
+      "path": "infrastructure/README.md",
+      "blob_sha": "18abecc94c52b423a5fe6c5ba8efdfc824f4edaf",
+      "purpose": "Infrastructure topology, boot and recovery map"
+    }
+  ],
+  "cloudflare_gateway_backup": {
+    "production_script": "blogger-local-runner-gateway",
+    "script_id": "0b0e553e489f47bebcf28d496718ae2d",
+    "production_version_number": 7,
+    "production_version_id": "0258427f-fb22-4aa8-afae-b1fe8c83c5c9",
+    "production_script_etag": "9f0c25773fb3fceea85dd45b5013df888c124778435580ea949a8373e7da99eb",
+    "source_mirror": {
+      "path": "infrastructure/cloudflare/blogger-local-runner-gateway/worker.js",
+      "blob_sha": "9a859427010adcf50af6fdcfa7edecda82adca21",
+      "note": "Normalized source mirror: multipart wrapper removed and formatting normalized; logical source copied from production v7."
+    },
+    "metadata": {
+      "path": "infrastructure/cloudflare/blogger-local-runner-gateway/worker-metadata.json",
+      "blob_sha": "fdc658ac33c47dbb4336d6c40f90fe583578acf5"
+    },
+    "secret_values_in_backup": false
+  },
+  "chatgpt_plugin_backup": {
+    "plugin_id": "plugin_asdk_app_6ae33f5d45f0819183150e461cff5616",
+    "app_id": "asdk_app_6ae33f5d45f0819183150e461cff5616",
+    "release_id": "PluginRelease_1c864196d5a881918c51960840960fcc",
+    "files": [
+      {
+        "path": "infrastructure/chatgpt/blogger-local-runner/.app.json",
+        "blob_sha": "b92ac13f11e2de383df18b5337c48bdc4e45bf01"
+      },
+      {
+        "path": "infrastructure/chatgpt/blogger-local-runner/plugin.json",
+        "blob_sha": "3176a8061e5a79daf0c28437e085912b5a619231"
+      },
+      {
+        "path": "infrastructure/chatgpt/blogger-local-runner/plugin-metadata.json",
+        "blob_sha": "539ada4380b10257c0a14c1998312ff47c91f754"
+      }
+    ]
+  },
+  "core_remote_sources": [
+    {
+      "ref": "blogger-safe-ui-provisioning-v0-2",
+      "path": "tools/blogger_safe_automator_v0_2/local_service_v05.py",
+      "blob_sha": "97f3e9c426909ba991c9d8485d685d347ff2d8a4"
+    },
+    {
+      "ref": "blogger-safe-ui-provisioning-v0-2",
+      "path": "tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py",
+      "blob_sha": "b5cc727c6715c257fe563bce809c4f57b83e63b6"
+    },
+    {
+      "ref": "blogger-safe-ui-provisioning-v0-2",
+      "path": "tools/blogger_safe_automator_v0_2/render_modelo_v20_theme.py",
+      "blob_sha": "6fb3d018a289edabdc2c83c179402080fcac456f"
+    },
+    {
+      "ref": "blogger-safe-ui-provisioning-v0-2",
+      "path": "tools/blogger_safe_automator_v0_2/render_modelo_v20_pages.py",
+      "blob_sha": "676426af2b70a173456652ada405b2be2b0af64b"
+    },
+    {
+      "ref": "main",
+      "path": "conecta_achados/src/automation.py",
+      "blob_sha": "9a3bf916733e476e52c406b39b6c16f26a6f15f7"
+    },
+    {
+      "ref": "main",
+      "path": "conecta_achados/src/automation_rich_cta.py",
+      "blob_sha": "be0683625eb06367d9d64091f597885b342b9621"
+    },
+    {
+      "ref": "main",
+      "path": ".github/workflows/conecta_achados_shopee.yml",
+      "blob_sha": "511aaf3c63a31008062b694ce5f538951c20397d"
+    },
+    {
+      "ref": "main",
+      "path": "conecta_achados/config.json",
+      "blob_sha": "86f6dfe1cb3bab85ca476e50efe841b0e5d45e02"
+    },
+    {
+      "ref": "main",
+      "path": "conecta_achados/data/state.json",
+      "blob_sha": "c25ea4222a0aaccf42b2dde278027a3386dbd20c"
+    }
+  ],
+  "validated_live_state": {
+    "blog": "Conecta Achados",
+    "blog_id": "1719259388907013414",
+    "url": "https://conectaachados.blogspot.com/",
+    "live_posts": 11,
+    "live_pages": 5,
+    "theme": "BLOGGER_MODELO_V20",
+    "palette": "emerald",
+    "public_marker": "emporio-revisao-visual-20-modelo-final",
+    "shopee_app_id": "18352820579"
+  },
+  "secret_values_backed_up": false,
+  "secret_binding_names_documented": true,
+  "known_unresolved_local_source_gap": [
+    {
+      "path": "tools/blogger_safe_automator_v0_2/apply_theme_safe.py",
+      "exists_and_executed_on_user_pc": true,
+      "present_in_git_history": false,
+      "source_bytes_backed_up_to_github": false
+    },
+    {
+      "path": "tools/blogger_safe_automator_v0_2/backup_theme_safe.py",
+      "exists_and_executed_on_user_pc": true,
+      "present_in_git_history": false,
+      "source_bytes_backed_up_to_github": false
+    }
+  ],
+  "completion_note": "All remotely accessible validated architecture/state was persisted. The only explicitly known gap is the source bytes of the two local-only safe theme modules, which the current connector cannot read from the PC filesystem."
+}
