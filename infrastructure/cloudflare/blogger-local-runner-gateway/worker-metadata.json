@@ -1,0 +1,53 @@
+{
+  "script_name": "blogger-local-runner-gateway",
+  "script_id": "0b0e553e489f47bebcf28d496718ae2d",
+  "snapshot_date": "2026-10-30",
+  "created_on": "2026-10-28T23:15:49.869223Z",
+  "modified_on": "2026-10-30T03:39:43.660773Z",
+  "production_version": {
+    "number": 7,
+    "id": "0258427f-fb22-4aa8-afae-b1fe8c83c5c9",
+    "created_on": "2026-10-30T03:39:43.660773Z",
+    "source": "api",
+    "triggered_by": "upload",
+    "script_etag": "9f0c25773fb3fceea85dd45b5013df888c124778435580ea949a8373e7da99eb",
+    "handlers": ["fetch"],
+    "compatibility_date": "2026-10-29",
+    "usage_model": "standard"
+  },
+  "bindings": [
+    {
+      "name": "BLOGGER_RUNNER",
+      "type": "vpc_service",
+      "service_id": "01a184cb-dd92-7242-8c7f-e8dd12909fa8"
+    },
+    {
+      "name": "OAUTH_SECRET",
+      "type": "secret_text",
+      "secret_value_in_backup": false
+    }
+  ],
+  "rest_routes": [
+    "GET /v1/health",
+    "POST /v1/audit",
+    "POST /v1/preflight",
+    "POST /v1/create-blog",
+    "POST /v1/preflight/settings-profile",
+    "POST /v1/configure-settings",
+    "POST /v1/adopt-model-v20"
+  ],
+  "mcp_tools": [
+    "health",
+    "audit",
+    "preflight_blog",
+    "create_blog",
+    "preflight_settings",
+    "configure_settings",
+    "adopt_model_v20"
+  ],
+  "notes": [
+    "No secret values are stored in this file.",
+    "The production Worker source is mirrored as worker.js in the same directory.",
+    "ChatGPT conversations may cache an older tool schema even though production Worker tools/list contains adopt_model_v20."
+  ]
+}
