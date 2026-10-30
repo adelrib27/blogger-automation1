@@ -34,7 +34,7 @@ def first_visible(locator):
     return None
 
 
-def visible_dialog(page):
+def visible_dialog_candidates(page):
     dialogs = page.locator('[role="dialog"]')
     candidates = []
     for i in range(dialogs.count()):
@@ -48,48 +48,71 @@ def visible_dialog(page):
             candidates.append((box["width"] * box["height"], d))
         except Exception:
             continue
+    # Maior primeiro: overlays/toasts menores não devem roubar o foco do modal real.
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    return [d for _, d in candidates]
+
+
+def visible_dialog(page):
+    candidates = visible_dialog_candidates(page)
     if not candidates:
         raise SettingsError("Nenhum diálogo visível foi encontrado.")
-    candidates.sort(key=lambda x: x[0])
-    return candidates[0][1]
+    return candidates[0]
 
 
-def click_dialog_action(page, label: str) -> None:
-    dialog = visible_dialog(page)
+def click_dialog_action(page, label: str, dialog=None) -> None:
+    dialogs = [dialog] if dialog is not None else visible_dialog_candidates(page)
+    if not dialogs:
+        raise SettingsError("Nenhum diálogo visível foi encontrado.")
     pattern = re.compile(rf"^{re.escape(label)}$", re.I)
-    for loc in (
-        dialog.get_by_role("button", name=pattern),
-        dialog.get_by_text(pattern, exact=True),
-    ):
-        item = first_visible(loc)
-        if item is None:
-            continue
-        try:
-            item.click(timeout=5_000)
-        except Exception:
-            try:
-                item.evaluate("el => el.click()")
-            except Exception:
+    for active_dialog in dialogs:
+        for loc in (
+            active_dialog.get_by_role("button", name=pattern),
+            active_dialog.get_by_text(pattern, exact=True),
+        ):
+            item = first_visible(loc)
+            if item is None:
                 continue
-        page.wait_for_timeout(700)
-        return
+            try:
+                item.click(timeout=5_000)
+            except Exception:
+                try:
+                    item.evaluate("el => el.click()")
+                except Exception:
+                    continue
+            page.wait_for_timeout(700)
+            return
     raise SettingsError(f'Botão "{label}" não foi localizado no diálogo ativo.')
+
+
+def _find_dialog_text_field(page, field_labels: tuple[str, ...]):
+    dialogs = visible_dialog_candidates(page)
+    for dialog in dialogs:
+        for aria in field_labels:
+            field = first_visible(dialog.locator(f'textarea[aria-label="{aria}"], input[aria-label="{aria}"]'))
+            if field is not None:
+                return dialog, field
+    for dialog in dialogs:
+        field = first_visible(dialog.locator("textarea, input[type=text]"))
+        if field is not None:
+            return dialog, field
+    return None, None
 
 
 def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, ...]) -> dict:
     if not core.click_row_prefix(page, row_label):
         raise SettingsError(f'Configuração "{row_label}" não foi localizada.')
-    page.wait_for_timeout(350)
-    dialog = visible_dialog(page)
 
+    dialog = None
     field = None
-    for aria in field_labels:
-        field = first_visible(dialog.locator(f'textarea[aria-label="{aria}"], input[aria-label="{aria}"]'))
+    # O Blogger anima alguns modais e pode manter overlays/toasts visíveis.
+    # Retry curto, somente para localizar o editor; nenhuma escrita ocorre até encontrá-lo.
+    for _ in range(12):
+        page.wait_for_timeout(150)
+        dialog, field = _find_dialog_text_field(page, field_labels)
         if field is not None:
             break
-    if field is None:
-        field = first_visible(dialog.locator("textarea, input[type=text]"))
-    if field is None:
+    if field is None or dialog is None:
         raise SettingsError(f'Campo editável de "{row_label}" não foi localizado.')
 
     maxlength = field.get_attribute("maxlength")
@@ -97,7 +120,7 @@ def set_dialog_text(page, row_label: str, value: str, field_labels: tuple[str, .
         raise SettingsError(f'Valor de "{row_label}" excede o limite de {maxlength} caracteres.')
 
     field.fill(value)
-    click_dialog_action(page, "SALVAR")
+    click_dialog_action(page, "SALVAR", dialog=dialog)
     return {"row": row_label, "value": value, "maxlength": maxlength}
 
 
@@ -151,7 +174,7 @@ def set_timezone(page, target: str) -> dict:
     except Exception:
         chosen.evaluate("el => el.click()")
     page.wait_for_timeout(250)
-    click_dialog_action(page, "SALVAR")
+    click_dialog_action(page, "SALVAR", dialog=dialog)
     return {"target": target, "selected_and_saved": True}
 
 
