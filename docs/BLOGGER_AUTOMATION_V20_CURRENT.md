@@ -7,7 +7,9 @@ Checkpoint operacional atual do projeto.
 **Tema:** BLOGGER_MODELO_V20 canônico  
 **Provisionamento ponta a ponta:** validado em 2026-10-30  
 **Auto-start após reboot sem CMD manual:** PASS  
-**Fluxo editorial Shopee real:** PASS nos 6 blogs canônicos
+**Fluxo editorial Shopee real:** PASS nos 6 blogs canônicos  
+**Conta Blogger conectada:** 18 blogs  
+**Lote diário 2026-10-30:** PASS — 1 post novo em cada um dos 18 blogs
 
 Documento canônico técnico detalhado:
 
@@ -38,8 +40,7 @@ ChatGPT acessando runner sem CMD manual: PASS
 - Blog ID: `9144338307944682868`
 - URL: https://vitrine-pratica.blogspot.com/
 - 5 páginas institucionais LIVE
-- 5 posts afiliados LIVE
-- 0 drafts
+- **6 posts afiliados LIVE**
 - CTA afiliado no segundo parágrafo: PASS
 - segundo CTA perto do fim: PASS
 - linkagem interna: PASS
@@ -56,14 +57,7 @@ Conforto & Ambientes
 - Travesseiro 50x70 anunciado como pluma de ganso
 - Tapete geométrico aveludado e antiderrapante
 - Luminária solar com sensor de movimento
-```
-
-Backups:
-
-```text
-backups/blogger-content/2026-10-30/vitrine-pratica/manifest.md
-backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/manifest.md
-backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/posts-full.html
+- Kit com 2 abajures de cúpula
 ```
 
 ### 2. Achados que Valem
@@ -71,8 +65,7 @@ backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/posts-full.html
 - Blog ID: `7527651041649593600`
 - URL: https://achados-que-valem.blogspot.com/
 - 5 páginas institucionais LIVE
-- 5 posts afiliados LIVE
-- 0 drafts
+- **6 posts afiliados LIVE**
 - Posicionamento editorial: oportunidades e custo-benefício
 - 2 CTAs: PASS
 - linkagem interna: PASS
@@ -89,13 +82,7 @@ Casa & Utilidades
 - Organizador de banheiro barato
 - Escorredor de louças de aço
 - Parafusadeira 25V com maleta
-```
-
-Backups:
-
-```text
-backups/blogger-content/2026-10-30/achados-que-valem/manifest.md
-backups/blogger-content/2026-10-30/achados-que-valem/posts-full.html
+- Parafusadeira de impacto anunciada como 48V com 2 baterias
 ```
 
 ### 3. Escolha Certa Online
@@ -103,8 +90,7 @@ backups/blogger-content/2026-10-30/achados-que-valem/posts-full.html
 - Blog ID: `5151950717041967683`
 - URL: https://escolha-certa-online.blogspot.com/
 - 5 páginas institucionais LIVE
-- 5 posts afiliados LIVE
-- 0 drafts
+- **6 posts afiliados LIVE**
 - Posicionamento editorial: guias comparativos e decisão de compra
 - 2 CTAs: PASS
 - linkagem interna: PASS
@@ -116,18 +102,12 @@ Silos:
 Cama & Banho
 - Lençol 400 fios
 - Tapete de banheiro antiderrapante
-- Kit de acessórios para banheiro em inox
+- Kit de acessórios para banheiro em inox 6 peças
+- Kit de banheiro com 5 peças
 
 Jardim & Decoração
 - Pedra dolomita branca
 - Suporte de madeira para vaso
-```
-
-Backups:
-
-```text
-backups/blogger-content/2026-10-30/escolha-certa-online/manifest.md
-backups/blogger-content/2026-10-30/escolha-certa-online/posts-full.html
 ```
 
 ### 4. Cozinha Sem Complicação
@@ -136,10 +116,9 @@ backups/blogger-content/2026-10-30/escolha-certa-online/posts-full.html
 - URL: https://cozinha-sem-complicacao.blogspot.com/
 - nicho: cozinha prática e organização da pia
 - V20/settings/SEO/páginas institucionais: PASS
-- 5 posts afiliados LIVE
-- 0 drafts
+- **6 posts afiliados LIVE**
 - 2 CTAs: PASS
-- linkagem interna recíproca: PASS
+- linkagem interna: PASS
 - Arquitetura de Silos: PASS
 
 Silos:
@@ -153,13 +132,7 @@ Pia Organizada
 - Escorredor de louças em aço carbono TEWL
 - Escorredor de louças de 2 andares RC Dias
 - Rack escorredor em aço carbono FBFS
-```
-
-Backups:
-
-```text
-backups/blogger-content/2026-10-30/cozinha-sem-complicacao/manifest.md
-backups/blogger-content/2026-10-30/cozinha-sem-complicacao/posts-full.html
+- Escorredor para 13 pratos e 6 copos J! Store
 ```
 
 ### 5. Casa em Ordem
@@ -168,10 +141,9 @@ backups/blogger-content/2026-10-30/cozinha-sem-complicacao/posts-full.html
 - URL: https://casa-em-ordem-pratica.blogspot.com/
 - nicho: organização doméstica, lavanderia e proteção de superfícies
 - V20/settings/SEO/páginas institucionais: PASS
-- 5 posts afiliados LIVE
-- 0 drafts
+- **6 posts afiliados LIVE**
 - 2 CTAs: PASS
-- linkagem interna recíproca: PASS
+- linkagem interna: PASS
 - Arquitetura de Silos: PASS
 
 Silos:
@@ -185,13 +157,7 @@ Armários & Lavanderia
 Proteção & Banheiro
 - Protetor impermeável para colchão
 - Suporte de shampoo sem furo
-```
-
-Backups:
-
-```text
-backups/blogger-content/2026-10-30/casa-em-ordem/manifest.md
-backups/blogger-content/2026-10-30/casa-em-ordem/posts-full.html
+- Protetor de colchão com elástico
 ```
 
 ### 6. Estilo no Dia a Dia — canônico
@@ -202,10 +168,9 @@ backups/blogger-content/2026-10-30/casa-em-ordem/posts-full.html
 - settings/SEO/fuso São Paulo: PASS
 - tema V20: PASS
 - 5 páginas institucionais LIVE
-- 5 posts afiliados LIVE
-- 0 drafts
+- **6 posts afiliados LIVE**
 - 2 CTAs: PASS
-- linkagem interna recíproca: PASS
+- linkagem interna: PASS
 - Arquitetura de Silos: PASS
 
 Silos:
@@ -219,26 +184,64 @@ Cuidados Pessoais
 - Aparador Kemei 6558 3 em 1
 - Aparador corporal anunciado como IPX7
 - Suporte para lâmina de barbear com fita 3M
+- Guia de higienização/secagem do aparador corporal
 ```
 
-Backups:
+## Lote diário — 18 blogs em 2026-10-30
+
+Pedido do usuário: publicar **exatamente 1 post novo em cada um dos 18 blogs da conta** e, após este lote, não publicar mais conteúdo em 2026-10-30.
+
+Resultado:
 
 ```text
-backups/blogger-content/2026-10-30/estilo-no-dia-a-dia/manifest.md
-backups/blogger-content/2026-10-30/estilo-no-dia-a-dia/posts-full.html
+18 blogs alcançados
+18 posts novos publicados
+18/18 novos títulos validados novamente como LIVE
+6 blogs canônicos passaram de 5 para 6 posts LIVE cada
+36 posts LIVE nos 6 blogs canônicos
+nenhum novo post adicional previsto para 2026-10-30
+próximo ciclo editorial: 2026-10-31, somente após nova instrução/agendamento válido
+```
+
+Blogs incluídos no lote:
+
+```text
+1. Estilo no Dia a Dia
+2. Casa em Ordem
+3. Cozinha Sem Complicação
+4. Escolha Certa Online
+5. Achados que Valem
+6. Vitrine Prática
+7. Achados para Casa
+8. Conecta Achados
+9. Guia de Achados & Ofertas
+10. Liquidificador Britânia 1400W 3L 12 Velocidades BLQ1300P
+11. Liquidificador Philips Walita RI2242
+12. Tá Na Moda | Morte Súbita Lola 450g
+13. Ventilador Mondial Super Power VSP-40-B 40cm
+14. Air Fryer Elgin Cube Fry 4,2 L
+15. Robô Aspirador WAP Robot W90
+16. Achadinhos de Beleza
+17. Radar Tech BR
+18. Moda e Ofertas
+```
+
+Backup versionado do lote:
+
+```text
+backups/blogger-content/2026-10-30/all-18-blogs-daily-post/manifest.md
 ```
 
 ## Tentativa duplicada do terceiro blog
 
 A tentativa anterior com ID `3278281423004948993` e URL `https://estilo-no-dia-a-dia.blogspot.com/` não aparece mais na lista atual da conta Blogger e não é reconhecida pelo Blogger Bridge V2. Portanto, ela está fora do estado operacional e não entra na contagem dos blogs canônicos.
 
-## Totais atuais
+## Totais canônicos atuais
 
 ```text
 6 blogs canônicos
-30 posts afiliados LIVE
-0 drafts nos lotes validados
-2 CTAs por post: PASS
+36 posts afiliados LIVE nos 6 blogs canônicos
+2 CTAs por post no padrão vigente: PASS
 linkagem interna: PASS
 Arquitetura de Silos: PASS
 backups versionados: PASS
@@ -249,7 +252,7 @@ backups versionados: PASS
 Cada novo post deve conter:
 
 - artigo rico e útil, não uma descrição curta de produto;
-- produto real vindo da Shopee Affiliate API;
+- produto real vindo da Shopee Affiliate API ou oferta afiliada previamente validada quando o blog é dedicado a um produto específico;
 - nenhuma invenção de preço, estoque, benefício ou especificação;
 - imagem real da oferta quando disponível;
 - transparência de afiliado;
@@ -259,11 +262,11 @@ Cada novo post deve conter:
 - dados comerciais apresentados como retrato da coleta quando aplicável;
 - SEO natural;
 - linkagem interna contextual;
-- Arquitetura de Silos planejada por conjunto de posts;
+- Arquitetura de Silos planejada e expandida de forma coerente;
 - âncoras internas descritivas e naturais;
 - validação final no Blogger após publicação;
 - backup versionado depois de cada lote concluído.
 
 ## Próximo estado
 
-Os seis blogs canônicos estão provisionados e com seus lotes editoriais concluídos sob o mesmo padrão vigente. Novos trabalhos devem partir deste checkpoint, sem reabrir a tentativa duplicada removida/ausente.
+O ciclo editorial de 2026-10-30 está encerrado após o lote de 18 posts. **Não publicar novos posts hoje sem nova instrução explícita do usuário.** Retomar publicações em 2026-10-31 conforme nova solicitação ou automação válida.
