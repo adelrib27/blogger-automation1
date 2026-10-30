@@ -61,6 +61,16 @@ def _open_expected_settings(page, expected_blog_id: str) -> str:
     return blog_id
 
 
+def _select_expected_page(context, expected_blog_id: str):
+    """Escolhe somente uma aba Blogger cujo Blog ID corresponde ao esperado."""
+    try:
+        return cfg.core.select_expected_blog_page(context, expected_blog_id)
+    except Exception as exc:
+        raise cfg.SettingsError(
+            f"Nenhuma aba segura do Blogger foi localizada para o Blog ID esperado {expected_blog_id}."
+        ) from exc
+
+
 def execute_settings_preflight(
     expected_blog_id: str,
     description: str,
@@ -78,7 +88,7 @@ def execute_settings_preflight(
 
     with sync_playwright() as p:
         _, context = bp.connect_official_chrome(p, safe_cdp)
-        page = bp.select_page(context)
+        page = _select_expected_page(context, blog_id)
         bp.require_blogger_session(page)
         _open_expected_settings(page, blog_id)
         current = cfg.snapshot(page)
@@ -122,7 +132,7 @@ def execute_configure_settings(
 
     with sync_playwright() as p:
         _, context = bp.connect_official_chrome(p, safe_cdp)
-        page = bp.select_page(context)
+        page = _select_expected_page(context, blog_id)
         bp.require_blogger_session(page)
         _open_expected_settings(page, blog_id)
         before = cfg.snapshot(page)
