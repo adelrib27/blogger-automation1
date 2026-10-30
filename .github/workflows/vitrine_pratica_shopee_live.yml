@@ -1,0 +1,42 @@
+name: Vitrine Pratica - Shopee Live Fetch
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - blogger-safe-ui-provisioning-v0-2
+    paths:
+      - data/vitrine_pratica/shopee_fetch_trigger.txt
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-live-products:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_CATEGORY: all
+      SHOPEE_TOP_N: "5"
+      SHOPEE_OUTPUT_DIR: data/vitrine_pratica/shopee_live
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Consultar Shopee Affiliate API e gerar ranking
+        run: python -u src/shopee_oportunidades_v23.py
+
+      - name: Publicar produtos reais como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitrine-pratica-shopee-live-${{ github.run_number }}
+          path: data/vitrine_pratica/shopee_live/
+          if-no-files-found: error
+          retention-days: 7
