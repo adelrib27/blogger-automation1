@@ -7,12 +7,57 @@
 
 Antes de qualquer operação Blogger neste projeto, leia integralmente:
 
-1. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
-2. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
-3. `infrastructure/README.md`
-4. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json`
+1. `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`
+2. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
+3. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
+4. `infrastructure/README.md`
+5. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json`
 
-Esses arquivos são a fonte persistente de continuidade entre conversas.
+Esses arquivos são a fonte persistente de continuidade entre conversas. O arquivo `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md` contém as validações mais recentes e prevalece quando houver diferença em relação aos checkpoints anteriores.
+
+## Estado mais recente validado
+
+- Runner operacional atual: **v0.6** (`local_service_v06.py`).
+- O health v0.6 foi confirmado pela própria ponte ChatGPT → Cloudflare → VPC → PC.
+- Blog de teste criado: **Laboratório Achados V20**.
+- Blog ID: `4937056944831075547`.
+- URL: `https://laboratorio-achados-v20-20261030.blogspot.com/`.
+- Configurações essenciais/SEO aplicadas e revalidadas; robots personalizados permaneceram intocados.
+- V20 instalado no laboratório.
+- Laboratório validado com **0 posts LIVE, 0 drafts e 5 páginas institucionais LIVE**.
+- Achado: `adopt_model_v20` aplica o tema, mas ainda não cria automaticamente as 5 páginas; isso deve ser incorporado ao provisionamento completo de blog novo.
+
+## TEMA MODELO V20 canônico — promovido e provado
+
+Fonte final validada do Conecta Achados:
+
+`DF6A3B40003FE64889157F60A6C00A1E05D85DC5CF02425C12091E8738D6F21D`
+
+Template canônico oficial:
+
+`themes/blogger_modelo_v20/theme.xml.tpl`
+
+SHA256 do template canônico:
+
+`D83B0E1F1750739F0801458F985DCBB3721D506140127EC30CB4EAEC2A2AF565`
+
+A promoção passou com:
+
+- `BLOGGER_MODELO_V20_CANONICAL_PROMOTED`
+- `roundtrip_exact_match = true`
+- XML válido
+- marker V20 presente
+- `__BLOG_TITLE__` presente
+- `__BLOG_URL__` presente
+- identidade/paleta renderizada ausente do template canônico
+
+Ao renderizar o template canônico para **Conecta Achados + emerald**, o resultado volta exatamente ao SHA256 validado `DF6A3B...`.
+
+Importante: o template anterior já tinha o mesmo SHA256 `D83B0E...`; portanto a promoção não mudou seus bytes. Ela formalizou e provou que o template existente já era exatamente a fonte canônica correspondente ao tema validado, além de gerar backup antes da promoção.
+
+Backup da promoção:
+
+`C:\Blogger-Automator\backups\blogger-modelo-v20-canonical\20261030T161301Z\theme.xml.tpl.before`
 
 ## Backups de infraestrutura anexos
 
@@ -33,16 +78,17 @@ Esses arquivos são a fonte persistente de continuidade entre conversas.
 
 ### Gap local explicitamente documentado
 
-`apply_theme_safe.py` e `backup_theme_safe.py` foram validados em execução no PC, mas seus bytes-fonte não estão no GitHub e não puderam ser lidos pela conexão atual. Preservar a cópia local. Ver `infrastructure/README.md` e o manifesto de backup.
+`apply_theme_safe.py` e `backup_theme_safe.py` foram validados em execução no PC, mas seus bytes-fonte não estão no GitHub. Eles não impedem o funcionamento atual: o robô local já os utilizou com sucesso. Preservar a cópia local.
 
 ## IDs que nunca podem ser confundidos
 
 - **Conecta Achados** — Blog ID `1719259388907013414` — `https://conectaachados.blogspot.com/`
+- **Laboratório Achados V20** — Blog ID `4937056944831075547` — `https://laboratorio-achados-v20-20261030.blogspot.com/`
 - **Achados para Casa** — Blog ID `1426630233929943394` — NÃO usar quando o alvo for Conecta Achados.
 
-## Estado principal validado
+## Estado principal validado do Conecta Achados
 
-- Conecta Achados: TEMA MODELO V20 instalado e publicamente validado.
+- TEMA MODELO V20 instalado e publicamente validado.
 - Paleta: `emerald` (`#0F8A5F`, `#F2FBF7`, `#12372A`).
 - Marker V20: `emporio-revisao-visual-20-modelo-final`.
 - 11 posts LIVE.
@@ -64,7 +110,12 @@ Esses arquivos são a fonte persistente de continuidade entre conversas.
 - Gateway: Cloudflare Worker `blogger-local-runner-gateway`.
 - Produção do gateway no snapshot: versão 7, version ID `0258427f-fb22-4aa8-afae-b1fe8c83c5c9`.
 - Branch do automador: `blogger-safe-ui-provisioning-v0-2`.
-- HEAD validado da branch: `6420a44e43d411d2d3837363f7564c30f4bae4a1`.
+
+## Pendências reais agora
+
+1. Fazer Chrome oficial com CDP + runner subirem automaticamente, sem comando manual.
+2. Incorporar a criação e validação das 5 páginas institucionais ao provisionamento automático de blog novo.
+3. Manter v0.6 como runner operacional até nova versão explicitamente validada.
 
 ## Regras essenciais
 
@@ -82,4 +133,4 @@ Esses arquivos são a fonte persistente de continuidade entre conversas.
 
 ## Instrução para futura conversa
 
-Se este arquivo for encontrado, NÃO recomece o diagnóstico do zero. Carregue os dois checkpoints mestre, o mapa de infraestrutura e o manifesto do backup, confirme o estado vivo e continue a partir deles. Se houver divergência entre o checkpoint e o sistema vivo, valide a divergência e atualize o checkpoint depois.
+Se este arquivo for encontrado, NÃO recomece o diagnóstico do zero. Leia primeiro `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`, depois os checkpoints mestre. Confirme o estado vivo e continue a partir deles. Se houver divergência entre checkpoint e sistema vivo, valide a divergência e atualize o checkpoint depois.
