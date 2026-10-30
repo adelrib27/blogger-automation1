@@ -28,7 +28,6 @@ def _validate_inputs(
         raise cfg.SettingsError("Blog ID esperado inválido.")
     if not (1 <= len(desc) <= 500):
         raise cfg.SettingsError("Descrição deve ter entre 1 e 500 caracteres.")
-    # O diálogo real do Blogger informou maxlength=150 no teste validado.
     if not (1 <= len(search_desc) <= 150):
         raise cfg.SettingsError("Descrição de pesquisa deve ter entre 1 e 150 caracteres.")
     if len(tz) > 180:
@@ -58,15 +57,19 @@ def _open_expected_settings(page, expected_blog_id: str) -> str:
             f"Blog errado bloqueado: atual={blog_id!r}, esperado={expected_blog_id!r}."
         )
     cfg.core.goto_settings(page, blog_id)
+    blog_id_after = bp.extract_current_blog_id(page)
+    if blog_id_after != expected_blog_id:
+        raise cfg.SettingsError(
+            f"Blog mudou ao abrir Configurações: atual={blog_id_after!r}, esperado={expected_blog_id!r}."
+        )
     return blog_id
 
 
 def _select_expected_page(context, expected_blog_id: str):
-    """Seleciona o Blog ID esperado; se a aba não existir, navega uma aba Blogger autenticada até ele.
+    """Seleciona o Blog ID esperado; se necessário, troca primeiro pela rota de Postagens.
 
-    A navegação direta é permitida apenas após validar uma sessão Blogger existente e o
-    Blog ID numérico de destino. Depois da navegação, o Blog ID é lido novamente e deve
-    coincidir exatamente antes de qualquer escrita.
+    A rota de Postagens é o ponto de entrada estável do Blogger para selecionar um blog.
+    O Blog ID é validado após a troca e novamente ao abrir Configurações, antes de escrita.
     """
     try:
         return cfg.core.select_expected_blog_page(context, expected_blog_id)
@@ -81,13 +84,13 @@ def _select_expected_page(context, expected_blog_id: str):
             f"Nenhuma aba Blogger autenticada está disponível para abrir o Blog ID esperado {expected_blog_id}."
         ) from exc
 
-    target_url = f"https://draft.blogger.com/blog/settings/{expected_blog_id}"
+    posts_url = f"https://draft.blogger.com/blog/posts/{expected_blog_id}"
     try:
-        page.goto(target_url, wait_until="domcontentloaded", timeout=15_000)
-        page.wait_for_timeout(1_200)
+        page.goto(posts_url, wait_until="domcontentloaded", timeout=15_000)
+        page.wait_for_timeout(1_500)
     except Exception as exc:
         raise cfg.SettingsError(
-            f"Não foi possível abrir com segurança as configurações do Blog ID esperado {expected_blog_id}."
+            f"Não foi possível abrir com segurança as postagens do Blog ID esperado {expected_blog_id}."
         ) from exc
 
     try:
@@ -95,16 +98,16 @@ def _select_expected_page(context, expected_blog_id: str):
         actual_blog_id = bp.extract_current_blog_id(page)
     except Exception as exc:
         raise cfg.SettingsError(
-            f"A navegação para o Blog ID esperado {expected_blog_id} não resultou em uma página Blogger validável."
+            f"A troca para o Blog ID esperado {expected_blog_id} não resultou em uma página Blogger validável."
         ) from exc
 
     if actual_blog_id != expected_blog_id:
         raise cfg.SettingsError(
-            f"Blog errado bloqueado após navegação: atual={actual_blog_id!r}, esperado={expected_blog_id!r}."
+            f"Blog errado bloqueado após troca: atual={actual_blog_id!r}, esperado={expected_blog_id!r}."
         )
-    if f"/blog/settings/{expected_blog_id}" not in bp.sanitize_url(page.url):
+    if f"/blog/posts/{expected_blog_id}" not in bp.sanitize_url(page.url):
         raise cfg.SettingsError(
-            f"A tela de configurações do Blog ID esperado {expected_blog_id} não abriu como esperado."
+            f"A tela de postagens do Blog ID esperado {expected_blog_id} não abriu como esperado."
         )
     return page
 
