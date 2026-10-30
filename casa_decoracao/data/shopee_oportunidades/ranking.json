@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1793310586,
+  "generatedAt": 1793325564,
   "method": "seller-extra-first; standard commission only as reserve; Google Autocomplete proxy; Shopee performance",
   "searchSignalWarning": "Google Autocomplete é proxy de intenção/popularidade, não volume mensal exato.",
   "priorityPolicy": {
@@ -523,15 +523,15 @@
       "productLink": "https://shopee.com.br/product/1661007426/58267485793",
       "offerLink": "https://s.shopee.com.br/7faypIkkRM",
       "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ld-mso4uf7pu0p11c",
-      "priceMin": "34.36",
-      "priceMax": "41.53",
+      "priceMin": "41.54",
+      "priceMax": "41.54",
       "priceDiscountRate": 58,
       "sales": 8380,
       "ratingStar": "4.7",
       "commissionRate": "0.18",
       "sellerCommissionRate": "0.15",
       "shopeeCommissionRate": "0.03",
-      "commission": "6.1848",
+      "commission": "7.4772",
       "shopId": 1661007426,
       "shopName": "Invention Hunters",
       "shopType": [],
@@ -1519,6 +1519,76 @@
       "selectionPass": "strict_diversity"
     },
     {
+      "itemId": 23499666463,
+      "productName": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
+      "productLink": "https://shopee.com.br/product/1365868456/23499666463",
+      "offerLink": "https://s.shopee.com.br/4fxNFm9yie",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8258v-msvmss9ziyvadf",
+      "priceMin": "64.29",
+      "priceMax": "170.18",
+      "priceDiscountRate": 34,
+      "sales": 102,
+      "ratingStar": "4.6",
+      "commissionRate": "0.33",
+      "sellerCommissionRate": "0.3",
+      "shopeeCommissionRate": "0.03",
+      "commission": "21.2157",
+      "shopId": 1365868456,
+      "shopName": "fenixpijamas1",
+      "shopType": [],
+      "periodStartTime": 1788891921,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Sala"
+      ],
+      "keywords": [
+        "tapete sala"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "tapete sala"
+      ],
+      "intentMatchedKeywords": [
+        "tapete sala"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "tapete sala": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "tapete"
+            ],
+            [
+              "sala"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 60.76,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4615,
+        "search_demand_proxy": 1.0,
+        "sales": 0.4264,
+        "rating": 0.92,
+        "discount": 0.34,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 30.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 33.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
       "itemId": 21299673093,
       "productName": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
       "productLink": "https://shopee.com.br/product/605571142/21299673093",
@@ -1587,76 +1657,6 @@
       "sellerExtraCommissionPct": 50.54,
       "shopeeCommissionPct": 3.0,
       "totalCommissionPct": 53.54,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 23499666463,
-      "productName": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
-      "productLink": "https://shopee.com.br/product/1365868456/23499666463",
-      "offerLink": "https://s.shopee.com.br/4fxNFm9yie",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8258v-msvmss9ziyvadf",
-      "priceMin": "64.29",
-      "priceMax": "170.18",
-      "priceDiscountRate": 34,
-      "sales": 102,
-      "ratingStar": "4.5",
-      "commissionRate": "0.33",
-      "sellerCommissionRate": "0.3",
-      "shopeeCommissionRate": "0.03",
-      "commission": "21.2157",
-      "shopId": 1365868456,
-      "shopName": "fenixpijamas1",
-      "shopType": [],
-      "periodStartTime": 1788891921,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Sala"
-      ],
-      "keywords": [
-        "tapete sala"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "tapete sala"
-      ],
-      "intentMatchedKeywords": [
-        "tapete sala"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "tapete sala": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "tapete"
-            ],
-            [
-              "sala"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 60.56,
-      "scoreComponents": {
-        "seller_extra_commission": 0.4615,
-        "search_demand_proxy": 1.0,
-        "sales": 0.4264,
-        "rating": 0.9,
-        "discount": 0.34,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 30.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 33.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },

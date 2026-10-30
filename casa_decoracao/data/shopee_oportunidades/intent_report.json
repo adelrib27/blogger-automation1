@@ -3,8 +3,8 @@
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
     "input": 525,
-    "accepted": 381,
-    "rejected": 144
+    "accepted": 380,
+    "rejected": 145
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -91,11 +91,11 @@
         1
       ],
       [
-        "605571142",
+        "1365868456",
         1
       ],
       [
-        "1365868456",
+        "605571142",
         1
       ],
       [
@@ -507,6 +507,19 @@
     },
     {
       "rank": 20,
+      "itemId": 23499666463,
+      "productName": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "tapete sala"
+      ],
+      "opportunityScore": 60.76,
+      "shopName": "fenixpijamas1",
+      "offerLink": "https://s.shopee.com.br/4fxNFm9yie"
+    },
+    {
+      "rank": 21,
       "itemId": 21299673093,
       "productName": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
       "priorityTier": "COMISSAO_EXTRA",
@@ -517,19 +530,6 @@
       "opportunityScore": 60.6,
       "shopName": "Smart Ultra Cat Bio",
       "offerLink": "https://s.shopee.com.br/1W0LTyVBY3"
-    },
-    {
-      "rank": 21,
-      "itemId": 23499666463,
-      "productName": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "tapete sala"
-      ],
-      "opportunityScore": 60.56,
-      "shopName": "fenixpijamas1",
-      "offerLink": "https://s.shopee.com.br/4fxNFm9yie"
     },
     {
       "rank": 22,
@@ -1547,8 +1547,8 @@
       }
     },
     {
-      "itemId": 23292649981,
-      "productName": "Estojo Case Óculos Bobino Glasses Case Turquesa com Gancho Organizador Bolsa",
+      "itemId": 23292649985,
+      "productName": "Estojo Case Óculos Bobino Glasses Case Preto com Gancho Organizador Bolsa",
       "shopName": "Criar e Organizar",
       "keywords": [
         "caixa organizadora"
@@ -1601,8 +1601,8 @@
       }
     },
     {
-      "itemId": 23292649985,
-      "productName": "Estojo Case Óculos Bobino Glasses Case Preto com Gancho Organizador Bolsa",
+      "itemId": 23292649981,
+      "productName": "Estojo Case Óculos Bobino Glasses Case Turquesa com Gancho Organizador Bolsa",
       "shopName": "Criar e Organizar",
       "keywords": [
         "caixa organizadora"
@@ -2442,6 +2442,27 @@
       }
     },
     {
+      "itemId": 7369630195,
+      "productName": "Kit com 150 Embalagens para Travesseiros 50x70 cm em PVC com Zíper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
       "itemId": 3471729214,
       "productName": "kit 10 Embalagem para travesseiros em pvc com ziper Guarda Roupa Armário",
       "shopName": "Isaplastic",
@@ -2465,27 +2486,6 @@
     {
       "itemId": 3173138856,
       "productName": "Kit com 100 Embalagens para Travesseiros 50x70 cm em PVC com Zíper  Guarda Roupa Armário",
-      "shopName": "Isaplastic",
-      "keywords": [
-        "travesseiro"
-      ],
-      "evaluations": {
-        "travesseiro": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "travesseiro"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 7369630195,
-      "productName": "Kit com 150 Embalagens para Travesseiros 50x70 cm em PVC com Zíper Guarda Roupa Armário",
       "shopName": "Isaplastic",
       "keywords": [
         "travesseiro"

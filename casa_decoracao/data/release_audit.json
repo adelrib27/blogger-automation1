@@ -3,10 +3,10 @@
   "policy_version": 3,
   "summary": {
     "total": 10,
-    "draft_ready": 0,
-    "rejected": 8,
+    "draft_ready": 1,
+    "rejected": 7,
     "not_generated": 2,
-    "published_history": 26,
+    "published_history": 27,
     "rotation_cycle": 3,
     "rotation_pending": [
       "Sala",
@@ -54,32 +54,19 @@
       "shopee_item_id": "23499666463",
       "category": "Sala",
       "product": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 173,
       "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "categoria_invalida",
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1167"
-        ],
+        "status": "DRAFT_READY",
+        "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 1167,
-          "h2_count": 6,
+          "word_count": 633,
+          "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 150,
-          "cta_count": 1
+          "seo_title_length": 48,
+          "meta_description_length": 148,
+          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
