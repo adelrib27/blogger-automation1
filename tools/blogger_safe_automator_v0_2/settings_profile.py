@@ -76,24 +76,88 @@ def _open_expected_settings(page, expected_blog_id: str) -> str:
     return expected_blog_id
 
 
+def _scroll_blog_option_container(page, mode: str) -> bool:
+    """Move o contêiner virtualizado que contém as opções do seletor de blogs."""
+    try:
+        return bool(page.evaluate(
+            """mode => {
+                const visible = el => {
+                    const r = el.getBoundingClientRect();
+                    const s = getComputedStyle(el);
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                };
+                const option = [...document.querySelectorAll('[role="option"]')].find(visible);
+                if (!option) return false;
+                let node = option.parentElement;
+                while (node && node !== document.body) {
+                    if (node.scrollHeight > node.clientHeight + 24) {
+                        const before = node.scrollTop;
+                        if (mode === 'top') {
+                            node.scrollTop = 0;
+                        } else {
+                            node.scrollTop = Math.min(
+                                node.scrollHeight,
+                                node.scrollTop + Math.max(280, node.clientHeight * 0.82)
+                            );
+                        }
+                        return Math.abs(node.scrollTop - before) > 1;
+                    }
+                    node = node.parentElement;
+                }
+                return false;
+            }""",
+            mode,
+        ))
+    except Exception:
+        return False
+
+
+def _visible_blog_options(page) -> list[tuple[str, object]]:
+    out: list[tuple[str, object]] = []
+    options = page.get_by_role("option")
+    try:
+        count = min(options.count(), 120)
+    except Exception:
+        count = 0
+    for i in range(count):
+        item = options.nth(i)
+        try:
+            if not item.is_visible():
+                continue
+            text = re.sub(r"\s+", " ", item.inner_text()).strip()
+        except Exception:
+            continue
+        if not text or bp.NEW_BLOG_RE.fullmatch(text):
+            continue
+        out.append((text, item))
+    return out
+
+
 def _collect_blog_option_labels(page) -> list[str]:
+    """Coleta a lista virtualizada inteira, começando pelos blogs recentes no topo."""
     bp.open_blog_switcher(page)
     labels: list[str] = []
     try:
-        options = page.get_by_role("option")
-        count = min(options.count(), 80)
-        for i in range(count):
-            item = options.nth(i)
-            try:
-                if not item.is_visible():
-                    continue
-                text = re.sub(r"\s+", " ", item.inner_text()).strip()
-            except Exception:
-                continue
-            if not text or bp.NEW_BLOG_RE.fullmatch(text):
-                continue
-            if text not in labels:
-                labels.append(text)
+        _scroll_blog_option_container(page, "top")
+        page.wait_for_timeout(250)
+        stagnant = 0
+        last_signature: tuple[str, ...] = ()
+        for _ in range(80):
+            current = _visible_blog_options(page)
+            signature = tuple(text for text, _ in current)
+            for text, _ in current:
+                if text not in labels:
+                    labels.append(text)
+
+            moved = _scroll_blog_option_container(page, "down")
+            page.wait_for_timeout(180)
+            if signature == last_signature and not moved:
+                stagnant += 1
+            else:
+                stagnant = 0
+            last_signature = signature
+            if stagnant >= 2:
+                break
     finally:
         try:
             page.keyboard.press("Escape")
@@ -103,36 +167,52 @@ def _collect_blog_option_labels(page) -> list[str]:
     return labels
 
 
-def _switch_via_blog_selector(page, expected_blog_id: str):
-    """Percorre apenas blogs existentes no seletor oficial até achar o Blog ID esperado.
+def _find_option_by_label(page, label: str):
+    """Abre o seletor, rola do topo até o rótulo e retorna apenas uma opção visível."""
+    bp.open_blog_switcher(page)
+    _scroll_blog_option_container(page, "top")
+    page.wait_for_timeout(220)
+    pattern = re.compile(rf"^{re.escape(label)}$", re.I)
 
-    Esta rotina só navega entre blogs; não abre criação nem executa escrita. O item
-    "Novo blog..." é explicitamente excluído. Cada troca é validada pelo Blog ID.
+    for _ in range(80):
+        matches = page.get_by_role("option", name=pattern)
+        try:
+            count = min(matches.count(), 12)
+        except Exception:
+            count = 0
+        for i in range(count):
+            item = matches.nth(i)
+            try:
+                if item.is_visible():
+                    return item
+            except Exception:
+                continue
+        moved = _scroll_blog_option_container(page, "down")
+        page.wait_for_timeout(160)
+        if not moved:
+            break
+
+    try:
+        page.keyboard.press("Escape")
+    except Exception:
+        pass
+    return None
+
+
+def _switch_via_blog_selector(page, expected_blog_id: str):
+    """Percorre blogs existentes no seletor oficial até achar o Blog ID esperado.
+
+    Somente navegação: nunca abre "Novo blog..." e nunca escreve durante a busca.
+    A lista virtualizada é percorrida do topo para baixo, incluindo Blogs recentes.
     """
     labels = _collect_blog_option_labels(page)
     attempted: list[str] = []
 
-    for label in labels[:60]:
+    for label in labels[:100]:
         try:
-            bp.open_blog_switcher(page)
-            pattern = re.compile(rf"^{re.escape(label)}$", re.I)
-            matches = page.get_by_role("option", name=pattern)
-            target = None
-            for i in range(min(matches.count(), 10)):
-                candidate = matches.nth(i)
-                try:
-                    if candidate.is_visible():
-                        target = candidate
-                        break
-                except Exception:
-                    continue
+            target = _find_option_by_label(page, label)
             if target is None:
-                try:
-                    page.keyboard.press("Escape")
-                except Exception:
-                    pass
                 continue
-
             try:
                 target.click(timeout=4_000)
             except Exception:
@@ -154,8 +234,11 @@ def _switch_via_blog_selector(page, expected_blog_id: str):
                 pass
             continue
 
-    preview = " | ".join(attempted[:12])
+    preview = " | ".join(attempted[:20])
+    collected = " | ".join(labels[:20])
     detail = f" Blogs testados: {preview}." if preview else ""
+    if collected:
+        detail += f" Blogs coletados: {collected}."
     raise cfg.SettingsError(
         f"O Blog ID esperado {expected_blog_id} não foi localizado pelo seletor oficial do Blogger.{detail}"
     )
@@ -172,7 +255,7 @@ def _select_expected_page(context, expected_blog_id: str):
 
     try:
         page = bp.select_page(context)
-        # Aqui a navegação à Home é usada somente para confirmar a sessão antes da troca.
+        # Home somente para confirmar autenticação antes de abrir o seletor oficial.
         bp.require_blogger_session(page)
     except Exception as exc:
         raise cfg.SettingsError(
