@@ -6,151 +6,128 @@ import timezone_offscreen_resilience_v07 as offscreen
 _ORIGINAL_MARK = offscreen._mark_exact_target_control
 
 
-def _gmt_tail_signature(page) -> tuple[str, ...]:
+def _mark_exact_via_playwright(page, target: str):
+    """Localiza a opção de fuso pelo texto exato e deixa o Playwright rolar o modal.
+
+    O Blogger exibe a lista inteira em um contêiner rolável. Em vez de tentar
+    manipular scrollTop/virtualização, usamos o locator de texto exato, que sabe
+    trazer o nó correspondente para a viewport antes do clique.
+    """
     try:
-        rows = page.evaluate(
-            """() => {
-                const norm = s => String(s || '').trim().replace(/\s+/g, ' ');
-                const dialogs = [...document.querySelectorAll('[role="dialog"]')];
-                const out = [];
-                for (const dialog of dialogs) {
-                    for (const el of dialog.querySelectorAll('*')) {
-                        const text = norm(el.innerText || el.textContent || '');
-                        if (!/^\(GMT[+-]\d\d:\d\d\)/i.test(text) || text.length > 180) continue;
-                        let childSame = false;
-                        for (const child of el.children || []) {
-                            const ct = norm(child.innerText || child.textContent || '');
-                            if (/^\(GMT[+-]\d\d:\d\d\)/i.test(ct) && ct.length <= 180) {
-                                childSame = true;
-                                break;
-                            }
-                        }
-                        if (childSame) continue;
-                        if (!out.includes(text)) out.push(text);
-                    }
-                }
-                return out.slice(-8);
-            }"""
-        ) or []
+        matches = page.get_by_text(target, exact=True)
+        count = min(matches.count(), 20)
     except Exception:
-        rows = []
-    return tuple(str(x) for x in rows)
+        count = 0
 
-
-def _mark_last_materialized_gmt(page) -> bool:
-    try:
-        return bool(page.evaluate(
-            """() => {
-                const ATTR = 'data-blogger-tz-virtual-tail-v07';
-                document.querySelectorAll('[' + ATTR + ']').forEach(el => el.removeAttribute(ATTR));
-                const norm = s => String(s || '').trim().replace(/\s+/g, ' ');
-                const dialogs = [...document.querySelectorAll('[role="dialog"]')];
-                let best = null;
-                for (const dialog of dialogs) {
-                    for (const el of dialog.querySelectorAll('*')) {
-                        const text = norm(el.innerText || el.textContent || '');
-                        if (!/^\(GMT[+-]\d\d:\d\d\)/i.test(text) || text.length > 180) continue;
-                        let childSame = false;
-                        for (const child of el.children || []) {
-                            const ct = norm(child.innerText || child.textContent || '');
-                            if (/^\(GMT[+-]\d\d:\d\d\)/i.test(ct) && ct.length <= 180) {
-                                childSame = true;
-                                break;
-                            }
-                        }
-                        if (childSame) continue;
-                        best = el;
-                    }
-                }
-                if (!best) return false;
-                best.setAttribute(ATTR, '1');
-                return true;
-            }"""
-        ))
-    except Exception:
-        return False
-
-
-def _advance_virtual_window(page) -> bool:
-    before = _gmt_tail_signature(page)
-    if not _mark_last_materialized_gmt(page):
-        return False
-
-    tail = page.locator('[data-blogger-tz-virtual-tail-v07="1"]').first
-    try:
-        tail.evaluate("el => el.scrollIntoView({block:'end', inline:'nearest'})")
-        page.wait_for_timeout(260)
-    except Exception:
-        pass
-
-    after = _gmt_tail_signature(page)
-    if after and after != before:
-        return True
-
-    # Avance o ancestral scrollável real da última linha materializada.
-    try:
-        moved = bool(tail.evaluate(
-            """el => {
-                let n = el.parentElement;
-                while (n && n !== document.body) {
-                    const style = getComputedStyle(n);
-                    const max = n.scrollHeight - n.clientHeight;
-                    if (max > 24 || ['auto','scroll'].includes(style.overflowY)) {
-                        const before = n.scrollTop;
-                        const target = Math.min(Math.max(0, max), before + Math.max(260, n.clientHeight * 0.88));
-                        n.scrollTop = target;
-                        n.dispatchEvent(new Event('scroll', {bubbles:true}));
-                        return Math.abs(n.scrollTop - before) > 1;
-                    }
-                    n = n.parentElement;
-                }
-                return false;
-            }"""
-        ))
-    except Exception:
-        moved = False
-
-    page.wait_for_timeout(260)
-    after = _gmt_tail_signature(page)
-    if after and after != before:
-        return True
-
-    # Último fallback: gesto físico diretamente sobre a última linha já carregada.
-    try:
-        box = tail.bounding_box()
-    except Exception:
-        box = None
-    if box:
+    for i in range(count):
+        text_el = matches.nth(i)
         try:
-            page.mouse.move(box['x'] + box['width'] * 0.5, box['y'] + box['height'] * 0.5)
-            page.mouse.wheel(0, 900)
-            page.wait_for_timeout(260)
+            in_dialog = bool(text_el.evaluate("el => !!el.closest('[role=\"dialog\"]')"))
+        except Exception:
+            in_dialog = False
+        if not in_dialog:
+            continue
+
+        try:
+            text_el.scroll_into_view_if_needed(timeout=3000)
+            page.wait_for_timeout(180)
         except Exception:
             pass
-    final = _gmt_tail_signature(page)
-    return bool(final and final != before) or moved
 
+        try:
+            meta = text_el.evaluate(
+                """(el) => {
+                    const rowAttr = 'data-blogger-tz-offscreen-row-v07';
+                    const controlAttr = 'data-blogger-tz-offscreen-control-v07';
+                    document.querySelectorAll('[' + rowAttr + ']').forEach(n => n.removeAttribute(rowAttr));
+                    document.querySelectorAll('[' + controlAttr + ']').forEach(n => n.removeAttribute(controlAttr));
 
-def _mark_with_virtual_window(page, target: str):
-    meta = _ORIGINAL_MARK(page, target)
-    if meta is not None:
-        return meta
+                    const textOf = n => String(n && (n.innerText || n.textContent) || '').trim().replace(/\\s+/g, ' ');
+                    const dialog = el.closest('[role=\"dialog\"]');
+                    if (!dialog) return null;
 
-    seen: set[tuple[str, ...]] = set()
-    for _ in range(18):
-        signature = _gmt_tail_signature(page)
-        if signature in seen:
-            if not _advance_virtual_window(page):
-                break
-        else:
-            seen.add(signature)
-            if not _advance_virtual_window(page):
-                break
-        meta = _ORIGINAL_MARK(page, target)
-        if meta is not None:
+                    let row = el;
+                    for (let depth = 0; depth < 10 && row && row !== dialog; depth++) {
+                        const radio = row.querySelector && row.querySelector(
+                            'input[type=\"radio\"], [role=\"radio\"], [role=\"option\"], [role=\"menuitemradio\"], [aria-checked], [aria-selected]'
+                        );
+                        if (radio) break;
+                        row = row.parentElement;
+                    }
+                    if (!row || row === dialog) row = el.parentElement || el;
+
+                    let control = null;
+                    if (row.querySelector) {
+                        control = row.querySelector(
+                            'input[type=\"radio\"], [role=\"radio\"], [role=\"option\"], [role=\"menuitemradio\"], [aria-checked], [aria-selected]'
+                        );
+                    }
+
+                    // Material Design às vezes põe o radio como irmão da célula de texto.
+                    if (!control) {
+                        let parent = row.parentElement;
+                        for (let depth = 0; depth < 4 && parent && dialog.contains(parent); depth++, parent = parent.parentElement) {
+                            control = parent.querySelector(
+                                'input[type=\"radio\"], [role=\"radio\"], [role=\"option\"], [role=\"menuitemradio\"], [aria-checked], [aria-selected]'
+                            );
+                            if (control) {
+                                row = parent;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Se a linha inteira é o alvo clicável, use-a como fallback.
+                    if (!control) {
+                        let n = el;
+                        for (let depth = 0; depth < 8 && n && dialog.contains(n); depth++, n = n.parentElement) {
+                            const role = n.getAttribute && (n.getAttribute('role') || '');
+                            const tabindex = n.getAttribute && (n.getAttribute('tabindex') || '');
+                            const style = n.nodeType === 1 ? getComputedStyle(n) : null;
+                            if (['radio','option','menuitemradio','button'].includes(role) ||
+                                tabindex === '0' || (style && style.cursor === 'pointer') || n.tagName === 'LABEL') {
+                                control = n;
+                                row = n;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!control) control = el;
+                    row.setAttribute(rowAttr, '1');
+                    control.setAttribute(controlAttr, '1');
+                    const r = control.getBoundingClientRect();
+                    return {
+                        text: textOf(el),
+                        controlTag: control.tagName,
+                        controlRole: control.getAttribute('role') || '',
+                        controlType: control.getAttribute('type') || '',
+                        ariaChecked: control.getAttribute('aria-checked'),
+                        ariaSelected: control.getAttribute('aria-selected'),
+                        tabindex: control.getAttribute('tabindex') || '',
+                        x: r.x, y: r.y, w: r.width, h: r.height,
+                        exactTextLocator: true
+                    };
+                }"""
+            )
+        except Exception:
+            meta = None
+
+        if meta:
             return meta
+
     return None
 
 
+def _mark_exact_target_control(page, target: str):
+    # Primeiro, o caminho determinístico revelado pela inspeção visual: texto exato.
+    meta = _mark_exact_via_playwright(page, target)
+    if meta is not None:
+        return meta
+
+    # Fail-safe: preserve o detector anterior como fallback diagnóstico.
+    return _ORIGINAL_MARK(page, target)
+
+
 def install() -> None:
-    offscreen._mark_exact_target_control = _mark_with_virtual_window
+    offscreen._mark_exact_target_control = _mark_exact_target_control
