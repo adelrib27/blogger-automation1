@@ -7,7 +7,7 @@ Checkpoint operacional atual do projeto.
 **Tema:** BLOGGER_MODELO_V20 canônico  
 **Provisionamento ponta a ponta:** validado em 2026-10-30  
 **Auto-start após reboot sem CMD manual:** PASS  
-**Fluxo editorial Shopee real:** PASS nos 3 blogs reais
+**Fluxo editorial Shopee real:** PASS nos 6 blogs canônicos
 
 Documento canônico técnico detalhado:
 
@@ -31,7 +31,7 @@ auto-start após reiniciar Windows: PASS
 ChatGPT acessando runner sem CMD manual: PASS
 ```
 
-## Blogs reais — estado editorial final em 2026-10-30
+## Blogs canônicos — estado editorial em 2026-10-30
 
 ### 1. Vitrine Prática
 
@@ -40,7 +40,6 @@ ChatGPT acessando runner sem CMD manual: PASS
 - 5 páginas institucionais LIVE
 - 5 posts afiliados LIVE
 - 0 drafts
-- produtos reais da Shopee Affiliate API
 - CTA afiliado no segundo parágrafo: PASS
 - segundo CTA perto do fim: PASS
 - linkagem interna: PASS
@@ -62,15 +61,7 @@ Conforto & Ambientes
 Backups:
 
 ```text
-# snapshot original
 backups/blogger-content/2026-10-30/vitrine-pratica/manifest.md
-backups/blogger-content/2026-10-30/vitrine-pratica/01-organizador-guarda-roupa.html
-backups/blogger-content/2026-10-30/vitrine-pratica/02-luminaria-solar.html
-backups/blogger-content/2026-10-30/vitrine-pratica/03-travesseiro-50x70.html
-backups/blogger-content/2026-10-30/vitrine-pratica/04-tapete-geometrico.html
-backups/blogger-content/2026-10-30/vitrine-pratica/05-potes-hermeticos.html
-
-# snapshot após retrofit das regras v2
 backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/manifest.md
 backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/posts-full.html
 ```
@@ -83,8 +74,7 @@ backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/posts-full.html
 - 5 posts afiliados LIVE
 - 0 drafts
 - Posicionamento editorial: oportunidades e custo-benefício
-- CTA afiliado no segundo parágrafo: PASS
-- segundo CTA perto do fim: PASS
+- 2 CTAs: PASS
 - linkagem interna: PASS
 - Arquitetura de Silos: PASS
 
@@ -101,7 +91,7 @@ Casa & Utilidades
 - Parafusadeira 25V com maleta
 ```
 
-Backup:
+Backups:
 
 ```text
 backups/blogger-content/2026-10-30/achados-que-valem/manifest.md
@@ -116,8 +106,7 @@ backups/blogger-content/2026-10-30/achados-que-valem/posts-full.html
 - 5 posts afiliados LIVE
 - 0 drafts
 - Posicionamento editorial: guias comparativos e decisão de compra
-- CTA afiliado no segundo parágrafo: PASS
-- segundo CTA perto do fim: PASS
+- 2 CTAs: PASS
 - linkagem interna: PASS
 - Arquitetura de Silos: PASS
 
@@ -134,23 +123,152 @@ Jardim & Decoração
 - Suporte de madeira para vaso
 ```
 
-Backup:
+Backups:
 
 ```text
 backups/blogger-content/2026-10-30/escolha-certa-online/manifest.md
 backups/blogger-content/2026-10-30/escolha-certa-online/posts-full.html
 ```
 
-## Totais do ciclo editorial real
+### 4. Cozinha Sem Complicação
+
+- Blog ID: `3552757910439359679`
+- URL: https://cozinha-sem-complicacao.blogspot.com/
+- nicho: cozinha prática e organização da pia
+- V20/settings/SEO/páginas institucionais: PASS
+- 5 posts afiliados LIVE
+- 0 drafts
+- 2 CTAs: PASS
+- linkagem interna recíproca: PASS
+- Arquitetura de Silos: PASS
+
+Silos:
 
 ```text
-3 blogs reais
-15 posts afiliados LIVE
-0 drafts após validação final em cada blog
-15 produtos/ofertas trabalhados no ciclo
-2 CTAs por post: PASS nos 3 blogs
-linkagem interna: PASS nos 3 blogs
-Arquitetura de Silos: PASS nos 3 blogs
+Preparo Prático
+- Fatiador KITOP para couve e repolho
+- Fatiador de legumes com corte anunciado de 2 mm
+
+Pia Organizada
+- Escorredor de louças em aço carbono TEWL
+- Escorredor de louças de 2 andares RC Dias
+- Rack escorredor em aço carbono FBFS
+```
+
+Backups:
+
+```text
+backups/blogger-content/2026-10-30/cozinha-sem-complicacao/manifest.md
+backups/blogger-content/2026-10-30/cozinha-sem-complicacao/posts-full.html
+```
+
+### 5. Casa em Ordem
+
+- Blog ID: `4177382081459143374`
+- URL: https://casa-em-ordem-pratica.blogspot.com/
+- nicho: organização doméstica, lavanderia e proteção de superfícies
+- V20/settings/SEO/páginas institucionais: PASS
+- 5 posts afiliados LIVE
+- 0 drafts
+- 2 CTAs: PASS
+- linkagem interna recíproca: PASS
+- Arquitetura de Silos: PASS
+
+Silos:
+
+```text
+Armários & Lavanderia
+- Saco organizador transparente com zíper
+- Varal de chão 3 andares
+- Varal Secalux 12 kg com abas
+
+Proteção & Banheiro
+- Protetor impermeável para colchão
+- Suporte de shampoo sem furo
+```
+
+Backups:
+
+```text
+backups/blogger-content/2026-10-30/casa-em-ordem/manifest.md
+backups/blogger-content/2026-10-30/casa-em-ordem/posts-full.html
+```
+
+### 6. Estilo no Dia a Dia — canônico
+
+- Blog ID: `4830103887652146866`
+- URL: https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/
+- nicho: moda, acessórios e cuidados pessoais
+- settings/SEO/fuso São Paulo: PASS
+- tema V20: PASS
+- 5 páginas institucionais LIVE
+- 5 posts afiliados LIVE
+- 0 drafts
+- 2 CTAs: PASS
+- linkagem interna recíproca: PASS
+- Arquitetura de Silos: PASS
+
+Silos:
+
+```text
+Moda Feminina
+- Saia midi com fenda em courino
+- Conjunto cropped + saia
+
+Cuidados Pessoais
+- Aparador Kemei 6558 3 em 1
+- Aparador corporal anunciado como IPX7
+- Suporte para lâmina de barbear com fita 3M
+```
+
+Backups:
+
+```text
+backups/blogger-content/2026-10-30/estilo-no-dia-a-dia/manifest.md
+backups/blogger-content/2026-10-30/estilo-no-dia-a-dia/posts-full.html
+```
+
+## Artefato preservado da execução interrompida
+
+Durante a automação das 19:08 houve uma tentativa anterior de criação do terceiro blog:
+
+```text
+Título: Estilo no Dia a Dia
+Blog ID: 3278281423004948993
+URL: https://estilo-no-dia-a-dia.blogspot.com/
+Estado observado: sem páginas e sem posts no momento da retomada
+```
+
+O runner não conseguiu localizar esse ID com segurança pelo seletor oficial do Blogger. Por segurança, ele NÃO foi excluído nem usado para publicação. Ele não entra na contagem dos 6 blogs canônicos. O blog canônico escolhido foi o ID `4830103887652146866`, que o runner conseguiu localizar, configurar e validar explicitamente.
+
+## Retomada da automação das 19:08
+
+A execução agendada iniciou, mas foi interrompida durante o provisionamento do terceiro blog por falha de confirmação dos toggles de otimização de imagem no Blogger UI. Na retomada manual:
+
+```text
+runner local: HEALTH PASS
+CMD/runner no momento da checagem: ativo
+settings/SEO terceiro blog: recuperados e validados
+V20 terceiro blog: PASS
+5 páginas terceiro blog: PASS
+15 novos posts: publicados
+0 drafts nos três novos blogs: PASS
+backups versionados: PASS
+```
+
+Portanto, a interrupção não foi causada por CMD fechado no momento da retomada. O bloqueio observado foi a confirmação do estado de toggles no Blogger UI; uma segunda aplicação idempotente concluiu os settings com sucesso.
+
+## Totais editoriais canônicos
+
+```text
+6 blogs canônicos reais
+30 posts afiliados LIVE
+0 drafts após validação dos lotes
+30 produtos/ofertas trabalhados nos primeiros lotes
+2 CTAs por post: PASS nos 6 blogs
+linkagem interna: PASS nos 6 blogs
+Arquitetura de Silos: PASS nos 6 blogs
+backups versionados por lote: PASS
 ```
 
 ## Padrão editorial obrigatório vigente
@@ -170,11 +288,12 @@ Cada novo post deve conter:
 - linkagem interna contextual;
 - Arquitetura de Silos planejada por conjunto de posts;
 - âncoras internas descritivas e naturais;
+- links de retorno entre conteúdos relacionados quando o conjunto já estiver publicado;
 - validação final no Blogger após publicação;
 - backup versionado depois de cada lote concluído.
 
 ## Próximo estado
 
-Os três blogs reais estão provisionados e com o primeiro lote editorial concluído sob o mesmo padrão editorial vigente. O próximo trabalho pode ser expansão de conteúdo, aprofundamento dos silos existentes, criação de novos silos ou automação contínua de novos lotes.
+Os seis blogs canônicos estão provisionados e com o primeiro lote editorial concluído sob o mesmo padrão editorial vigente. O próximo trabalho pode ser expansão dos silos existentes, criação de novos silos, melhoria contínua do fluxo ou novos lotes autônomos.
 
 Ao iniciar uma nova conversa, usar este arquivo como ponte para o checkpoint técnico completo e para o estado editorial atual. Não recomeçar o projeto a partir de documentação antiga.
