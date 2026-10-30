@@ -22,38 +22,144 @@ def _matches(text: str, target: str) -> bool:
     compact = n.replace(" ", "")
     if "gmt-03:00" not in compact and "gmt03:00" not in compact:
         return False
-    brazil_markers = (
-        "brasilia",
-        "sao paulo",
-        "fortaleza",
-        "recife",
-        "horario padrao de brasilia",
+    return any(
+        marker in n
+        for marker in (
+            "brasilia",
+            "sao paulo",
+            "fortaleza",
+            "recife",
+            "horario padrao de brasilia",
+        )
     )
-    return any(marker in n for marker in brazil_markers)
 
 
-def _visible_roots(page):
-    roots = []
-    loc = page.locator('[role="listbox"], [role="menu"], [role="dialog"]')
+def _visible_overlay_meta(page):
     try:
-        count = min(loc.count(), 100)
+        return page.evaluate(
+            """() => {
+                const visible = el => {
+                    const r = el.getBoundingClientRect();
+                    const s = getComputedStyle(el);
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                };
+                return [...document.querySelectorAll('[role="dialog"],[role="listbox"],[role="menu"],[role="combobox"]')]
+                    .filter(visible)
+                    .map(el => ({
+                        tag: el.tagName,
+                        role: el.getAttribute('role') || '',
+                        text: String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 1000),
+                        aria: el.getAttribute('aria-label') || ''
+                    }));
+            }"""
+        )
+    except Exception:
+        return []
+
+
+def _overlay_signature(page) -> tuple[str, ...]:
+    rows = _visible_overlay_meta(page)
+    return tuple(f"{r.get('role')}|{r.get('aria')}|{r.get('text')}" for r in rows)
+
+
+def _timezone_editor_open(page, baseline: tuple[str, ...]) -> bool:
+    current = _overlay_signature(page)
+    if current != baseline and current:
+        return True
+    try:
+        save = cfg.first_visible(page.get_by_text(re.compile(r"^SALVAR$", re.I), exact=True))
+        if save is not None:
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _click_timezone_row(page) -> None:
+    pattern = re.compile(r"^Fuso horário(?:\s|$)", re.I)
+    labels = page.get_by_text(pattern)
+    baseline = _overlay_signature(page)
+    candidates = []
+    try:
+        count = min(labels.count(), 30)
     except Exception:
         count = 0
+
     for i in range(count):
-        item = loc.nth(i)
+        label = labels.nth(i)
         try:
-            if item.is_visible():
-                roots.append(item)
+            if not label.is_visible():
+                continue
         except Exception:
             continue
-    return roots
+        current = label
+        for depth in range(9):
+            try:
+                meta = current.evaluate(
+                    """el => ({
+                        tag: el.tagName,
+                        role: el.getAttribute('role') || '',
+                        tabindex: el.getAttribute('tabindex') || '',
+                        cursor: getComputedStyle(el).cursor || '',
+                        text: String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 400)
+                    })"""
+                )
+            except Exception:
+                break
+            score = 0
+            if meta.get("tag") == "BUTTON":
+                score += 100
+            if meta.get("role") in ("button", "menuitem", "combobox"):
+                score += 90
+            if meta.get("tabindex") == "0":
+                score += 70
+            if meta.get("cursor") == "pointer":
+                score += 40
+            if depth == 1:
+                score += 15
+            if score > 0:
+                candidates.append((score, depth, current))
+            try:
+                current = current.locator("xpath=..").first
+            except Exception:
+                break
+
+    # Mais provável primeiro, mas sem clicar em ancestrais muito altos antes dos próximos ao label.
+    candidates.sort(key=lambda x: (-x[0], x[1]))
+    seen = set()
+    for _, _, item in candidates:
+        try:
+            key = item.evaluate("el => el.outerHTML.slice(0,500)")
+        except Exception:
+            key = None
+        if key and key in seen:
+            continue
+        if key:
+            seen.add(key)
+        try:
+            item.scroll_into_view_if_needed(timeout=1500)
+        except Exception:
+            pass
+        try:
+            item.click(timeout=2500)
+        except Exception:
+            try:
+                item.evaluate("el => el.click()")
+            except Exception:
+                continue
+        for _ in range(8):
+            page.wait_for_timeout(120)
+            if _timezone_editor_open(page, baseline):
+                return
+        # Clique não abriu editor; não assumir sucesso.
+
+    raise cfg.SettingsError('A linha "Fuso horário" foi encontrada, mas o editor não abriu.')
 
 
 def _find_candidate(page, target: str):
-    selectors = '[role="option"], [role="menuitemradio"], [role="menuitem"], [role="radio"], li'
-    candidates = page.locator(selectors)
+    candidates = page.locator('[role="option"], [role="menuitemradio"], [role="radio"], li')
     try:
-        count = min(candidates.count(), 2500)
+        count = min(candidates.count(), 3000)
     except Exception:
         count = 0
     best = None
@@ -67,8 +173,8 @@ def _find_candidate(page, target: str):
             continue
         if not text or not _matches(text, target):
             continue
-        score = 0
         n = _norm(text)
+        score = 0
         compact = n.replace(" ", "")
         if "gmt-03:00" in compact or "gmt03:00" in compact:
             score += 100
@@ -83,19 +189,49 @@ def _find_candidate(page, target: str):
     return best
 
 
-def _scroll_roots(page) -> None:
-    for root in _visible_roots(page):
+def _open_nested_selector(page) -> bool:
+    # Alguns layouts do Blogger abrem primeiro um modal e só depois um seletor interno.
+    locators = [
+        page.locator('[role="dialog"] [role="combobox"]'),
+        page.locator('[role="dialog"] [aria-haspopup="listbox"]'),
+        page.locator('[role="dialog"] [aria-haspopup="menu"]'),
+    ]
+    for loc in locators:
         try:
+            count = min(loc.count(), 20)
+        except Exception:
+            count = 0
+        for i in range(count):
+            item = loc.nth(i)
+            try:
+                if not item.is_visible():
+                    continue
+                item.click(timeout=2500)
+                page.wait_for_timeout(350)
+                return True
+            except Exception:
+                continue
+    return False
+
+
+def _scroll_roots(page) -> None:
+    roots = page.locator('[role="listbox"], [role="menu"], [role="dialog"]')
+    try:
+        count = min(roots.count(), 100)
+    except Exception:
+        count = 0
+    for i in range(count):
+        root = roots.nth(i)
+        try:
+            if not root.is_visible():
+                continue
             root.evaluate(
                 """el => {
                     const nodes = [el, ...el.querySelectorAll('*')];
                     for (const n of nodes) {
                         try {
                             if (n.scrollHeight > n.clientHeight + 24) {
-                                n.scrollTop = Math.min(
-                                    n.scrollHeight,
-                                    n.scrollTop + Math.max(300, n.clientHeight * 0.85)
-                                );
+                                n.scrollTop = Math.min(n.scrollHeight, n.scrollTop + Math.max(300, n.clientHeight * 0.85));
                             }
                         } catch (_) {}
                     }
@@ -110,31 +246,34 @@ def _diagnostic_options(page) -> list[str]:
     try:
         snap = cfg.core.overlay_snapshot(page)
     except Exception:
-        return texts
+        snap = {}
     for item in snap.get("options", []):
         text = str(item.get("text") or item.get("aria") or "").strip()
         if text and text not in texts:
             texts.append(text)
-        if len(texts) >= 20:
+        if len(texts) >= 30:
             break
     if not texts:
-        for overlay in snap.get("overlays", []):
-            text = str(overlay.get("text") or "").strip()
+        for overlay in _visible_overlay_meta(page):
+            text = str(overlay.get("text") or overlay.get("aria") or "").strip()
             if text:
-                texts.append(text[:700])
-            if len(texts) >= 5:
+                texts.append(text[:900])
+            if len(texts) >= 8:
                 break
     return texts
 
 
 def set_timezone_resilient(page, target: str) -> dict:
-    if not cfg.core.click_row_prefix(page, "Fuso horário"):
-        raise cfg.SettingsError("Fuso horário não foi localizado.")
-    page.wait_for_timeout(500)
+    _click_timezone_row(page)
+    page.wait_for_timeout(300)
+
+    match = _find_candidate(page, target)
+    if match is None:
+        _open_nested_selector(page)
 
     chosen = None
     chosen_text = ""
-    for _ in range(60):
+    for _ in range(70):
         match = _find_candidate(page, target)
         if match is not None:
             _, chosen, chosen_text = match
@@ -147,19 +286,21 @@ def set_timezone_resilient(page, target: str) -> dict:
         detail = " | ".join(options)
         if detail:
             raise cfg.SettingsError(
-                f'Fuso alvo não localizado: {target}. Opções/overlays visíveis: {detail[:1800]}'
+                f'Fuso alvo não localizado: {target}. Editor abriu; opções/overlays: {detail[:2200]}'
             )
-        raise cfg.SettingsError(f'Fuso alvo não localizado: {target}. Nenhuma opção visível foi capturada.')
+        raise cfg.SettingsError(f'Fuso alvo não localizado: {target}. Editor abriu, mas nenhuma opção foi capturada.')
 
     try:
-        chosen.scroll_into_view_if_needed(timeout=2_000)
+        chosen.scroll_into_view_if_needed(timeout=2000)
     except Exception:
         pass
     try:
-        chosen.click(timeout=5_000)
+        chosen.click(timeout=5000)
     except Exception:
         chosen.evaluate("el => el.click()")
     page.wait_for_timeout(300)
+
+    # O dropdown pode fechar e deixar o modal principal aberto.
     cfg.click_dialog_action(page, "SALVAR")
     return {"target": target, "matched_text": chosen_text, "selected_and_saved": True}
 
