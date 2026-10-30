@@ -9,8 +9,30 @@ Antes de qualquer operação Blogger neste projeto, leia integralmente:
 
 1. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
 2. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
+3. `infrastructure/README.md`
 
 Esses arquivos são a fonte persistente de continuidade entre conversas.
+
+## Backups de infraestrutura anexos
+
+### Gateway Cloudflare
+
+`infrastructure/cloudflare/blogger-local-runner-gateway/`
+
+- `worker.js` — espelho normalizado do Worker de produção v7.
+- `worker-metadata.json` — versão, ETag, bindings e rotas sem valores de secrets.
+
+### Plugin privado ChatGPT
+
+`infrastructure/chatgpt/blogger-local-runner/`
+
+- `.app.json`
+- `plugin.json`
+- `plugin-metadata.json`
+
+### Gap local explicitamente documentado
+
+`apply_theme_safe.py` e `backup_theme_safe.py` foram validados em execução no PC, mas seus bytes-fonte não estão no GitHub e não puderam ser lidos pela conexão atual. Preservar a cópia local. Ver `infrastructure/README.md`.
 
 ## IDs que nunca podem ser confundidos
 
@@ -39,6 +61,7 @@ Esses arquivos são a fonte persistente de continuidade entre conversas.
 - Runner local: `127.0.0.1:8765`.
 - Chrome CDP: `127.0.0.1:9222`.
 - Gateway: Cloudflare Worker `blogger-local-runner-gateway`.
+- Produção do gateway no snapshot: versão 7, version ID `0258427f-fb22-4aa8-afae-b1fe8c83c5c9`.
 - Branch do automador: `blogger-safe-ui-provisioning-v0-2`.
 - HEAD validado da branch: `6420a44e43d411d2d3837363f7564c30f4bae4a1`.
 
@@ -58,4 +81,4 @@ Esses arquivos são a fonte persistente de continuidade entre conversas.
 
 ## Instrução para futura conversa
 
-Se este arquivo for encontrado, NÃO recomece o diagnóstico do zero. Carregue os dois checkpoints mestre, confirme o estado vivo e continue a partir deles. Se houver divergência entre o checkpoint e o sistema vivo, valide a divergência e atualize o checkpoint depois.
+Se este arquivo for encontrado, NÃO recomece o diagnóstico do zero. Carregue os dois checkpoints mestre e o mapa de infraestrutura, confirme o estado vivo e continue a partir deles. Se houver divergência entre o checkpoint e o sistema vivo, valide a divergência e atualize o checkpoint depois.
