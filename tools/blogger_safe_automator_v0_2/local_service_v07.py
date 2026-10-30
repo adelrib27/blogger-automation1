@@ -3,10 +3,12 @@ from __future__ import annotations
 
 from http import HTTPStatus
 
+import blog_id_url_resilience_v07 as blog_id_url_resilience
 import local_service_v06 as v06
 import provision_new_blog_v20 as provision
 import timezone_resilience_v07 as timezone_resilience
 
+blog_id_url_resilience.install()
 timezone_resilience.install()
 
 
