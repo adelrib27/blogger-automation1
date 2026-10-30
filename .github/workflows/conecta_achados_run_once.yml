@@ -1,4 +1,4 @@
-name: Conecta Achados — Shopee extract once
+name: Conecta Achados — publicar um post Shopee
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  extrair-um-produto:
+  publicar-um-post:
     runs-on: ubuntu-latest
     steps:
       - name: Baixar repositório
@@ -32,43 +32,79 @@ jobs:
           pip install -r requirements.txt
           pip install requests cloudinary pillow
 
-      - name: Extrair produto Shopee e preparar imagem
+      - name: Publicar exatamente um produto selecionado
         env:
-          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
-          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
-          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+          BLOGGER_BLOG_ID: "1719259388907013414"
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
         run: |
           python - <<'PY'
           import json
+          from datetime import datetime, timezone
           from pathlib import Path
-          from conecta_achados.src.automation import load_json, choose_product, prepare_product_image, CONFIG_PATH, STATE_PATH
+          from conecta_achados.src.automation import load_json, save_json, product_html, create_blogger_post, STATE_PATH
 
-          config = load_json(CONFIG_PATH, {})
+          selection = json.loads(Path("conecta_achados/data/selected_once.json").read_text(encoding="utf-8"))
+          product = selection["product"]
+          query = selection["query"]
+          image_info = selection["prepared_image"]
+          item_id = str(product.get("itemId") or "").strip()
+          expected_item_id = "58265877578"
+          if item_id != expected_item_id:
+              raise RuntimeError(f"Item inesperado: {item_id}; esperado: {expected_item_id}")
+
           state = load_json(STATE_PATH, {"keyword_cursor": 0, "used_item_ids": [], "history": []})
-          product, query = choose_product(config, state)
-          image = prepare_product_image(product)
-          out = {
-              "product": product,
-              "query": query,
-              "prepared_image": image,
+          used = [str(x) for x in state.get("used_item_ids", [])]
+          if item_id in used:
+              raise RuntimeError("Produto já registrado como utilizado; publicação cancelada.")
+
+          copy = {
+              "title": "Fone Bluetooth 5.4 895B TWS Sem Fio para o Dia a Dia",
+              "description": "O 895B TWS é anunciado como fone Bluetooth 5.4 sem fio. Pode ser considerado por quem busca ouvir áudio sem cabos no dia a dia; confira no anúncio as especificações e condições atuais.",
+              "model": "GPT-5.6 Sol (current conversation)",
           }
-          path = Path("conecta_achados/data/selected_once.json")
-          path.parent.mkdir(parents=True, exist_ok=True)
-          path.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          content = product_html(product, copy, image_info, query["label"])
+          result = create_blogger_post(copy["title"], content, query["label"], "publish")
+
+          used.append(item_id)
+          state["used_item_ids"] = used[-500:]
+          state["keyword_cursor"] = 1
+          history = list(state.get("history", []))
+          history.append({
+              "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+              "item_id": item_id,
+              "source_product_name": product.get("productName"),
+              "seo_title": copy["title"],
+              "category": query["label"],
+              "keyword": query["keyword"],
+              "blogger_post_id": result.get("id"),
+              "blogger_status": result.get("status"),
+              "blogger_url": result.get("url"),
+              "chatgpt_model": copy["model"],
+              "image_source": image_info.get("source"),
+              "mode": "publish",
+              "batch": "single_today_2026-10-30",
+          })
+          state["history"] = history[-1000:]
+          save_json(STATE_PATH, state)
+
           print(json.dumps({
-              "itemId": product.get("itemId"),
-              "productName": product.get("productName"),
-              "category": query.get("label"),
-              "keyword": query.get("keyword"),
-              "image_source": image.get("source"),
+              "status": "SINGLE_SHOPEE_POST_PUBLISHED",
+              "item_id": item_id,
+              "title": copy["title"],
+              "category": query["label"],
+              "blogger": result,
+              "offer_link": product.get("offerLink"),
+              "image_source": image_info.get("source"),
           }, ensure_ascii=False))
           PY
 
-      - name: Salvar seleção de hoje
+      - name: Registrar produto utilizado
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+adelrib27@users.noreply.github.com"
-          git add conecta_achados/data/selected_once.json
-          git commit -m "Conecta Achados: extrair produto Shopee para post único"
+          git add conecta_achados/data/state.json
+          git commit -m "Conecta Achados: registrar post Shopee único de 2026-10-30"
           git pull --rebase origin main
           git push origin HEAD:main
