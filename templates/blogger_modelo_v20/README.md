@@ -17,6 +17,35 @@ Este pacote representa a baseline validada do blog de referência, mas **não co
   - Contato
   - Política de Privacidade
   - Termos de Uso
+- Identidade visual própria por blog, sem alterar a estrutura validada
+
+## Identidade visual por blog
+
+O modelo V20 separa **estrutura** de **identidade visual**.
+
+Por padrão, `render_modelo_v20_theme.py` usa `--palette auto` e escolhe de forma determinística uma paleta a partir do título e URL do novo blog. Assim, blogs diferentes tendem a receber cabeçalho/acento/rodapé diferentes sem exigir configuração manual.
+
+Paletas disponíveis:
+
+- `blue`
+- `emerald`
+- `plum`
+- `terracotta`
+- `teal`
+- `burgundy`
+- `indigo`
+- `amber`
+
+Também é possível escolher uma paleta explicitamente ou sobrescrever cores individuais:
+
+```text
+--palette emerald
+--primary-color "#0F8A5F"
+--header-bg "#F2FBF7"
+--footer-bg "#12372A"
+```
+
+Se nenhum parâmetro de cor for informado, o modo automático é usado.
 
 ## O que NÃO faz parte do modelo
 
@@ -24,6 +53,7 @@ Este pacote representa a baseline validada do blog de referência, mas **não co
 - Nenhum produto da Shopee
 - Nenhum preço, imagem de produto ou link de afiliado do blog de referência
 - Nenhuma URL/título fixo do blog de referência
+- Nenhuma obrigação de repetir as mesmas cores do blog de referência
 
 ## Arquivos
 
@@ -37,14 +67,15 @@ Este pacote representa a baseline validada do blog de referência, mas **não co
 2. Confirmar que o Blog ID é o alvo esperado.
 3. Confirmar que o blog novo tem **zero posts**.
 4. Configurar título, descrição, descrição de pesquisa e timezone.
-5. Renderizar `theme.xml.tpl` com o título e URL do novo blog usando `render_modelo_v20_theme.py`.
+5. Renderizar `theme.xml.tpl` com o título e URL do novo blog usando `render_modelo_v20_theme.py`; por padrão a identidade visual é escolhida automaticamente.
 6. Fazer backup do tema atual do novo blog.
 7. Aplicar o tema renderizado e validar o marcador público V20.
 8. Renderizar as páginas com `render_modelo_v20_pages.py`.
 9. Publicar as cinco páginas via Blogger API/Bridge.
 10. Validar que os cinco slugs estão live e que os links do menu/rodapé apontam para o novo blog.
 11. Validar a página Contato: campos Nome, E-mail, Mensagem e Enviar visíveis e runtime do tema carregado.
-12. Confirmar novamente que nenhum post do blog de referência foi copiado.
+12. Validar que a paleta visual escolhida foi aplicada ao cabeçalho/acento/rodapé.
+13. Confirmar novamente que nenhum post do blog de referência foi copiado.
 
 ## Regra de segurança
 
