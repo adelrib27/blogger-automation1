@@ -7,7 +7,7 @@ Checkpoint operacional atual do projeto.
 **Tema:** BLOGGER_MODELO_V20 canônico  
 **Provisionamento ponta a ponta:** validado em 2026-10-30  
 **Auto-start após reboot sem CMD manual:** PASS  
-**Fluxo editorial Shopee real:** iniciado e validado no Vitrine Prática
+**Fluxo editorial Shopee real:** PASS nos 3 blogs reais
 
 Documento canônico técnico detalhado:
 
@@ -31,45 +31,19 @@ auto-start após reiniciar Windows: PASS
 ChatGPT acessando runner sem CMD manual: PASS
 ```
 
-## Blogs reais criados
+## Blogs reais — estado editorial final em 2026-10-30
 
-1. Vitrine Prática
-   - Blog ID: 9144338307944682868
-   - URL: https://vitrine-pratica.blogspot.com/
-   - 5 páginas institucionais LIVE
-   - 5 posts afiliados LIVE
-   - 0 drafts após validação editorial
+### 1. Vitrine Prática
 
-2. Achados que Valem
-   - Blog ID: 7527651041649593600
-   - URL: https://achados-que-valem.blogspot.com/
-   - 5 páginas institucionais LIVE
-   - aguardando primeiro lote editorial
+- Blog ID: `9144338307944682868`
+- URL: https://vitrine-pratica.blogspot.com/
+- 5 páginas institucionais LIVE
+- 5 posts afiliados LIVE
+- 0 drafts
+- Primeiro lote publicado com produtos reais da Shopee Affiliate API
+- Este lote antecede a regra obrigatória do segundo CTA e da Arquitetura de Silos; não alterar retroativamente sem decisão explícita.
 
-3. Escolha Certa Online
-   - Blog ID: 5151950717041967683
-   - URL: https://escolha-certa-online.blogspot.com/
-   - 5 páginas institucionais LIVE
-   - aguardando primeiro lote editorial
-
-## Vitrine Prática — primeiro lote editorial
-
-Foram publicados 5 artigos ricos usando produtos reais obtidos pela Shopee Affiliate Open API:
-
-1. Organizador de guarda-roupa com zíper
-2. Luminária solar com sensor de movimento
-3. Travesseiro 50x70 anunciado como pluma de ganso
-4. Tapete geométrico aveludado e antiderrapante
-5. Potes herméticos de vidro com tampa de bambu
-
-Validação final:
-
-```text
-5 posts LIVE
-0 drafts
-```
-
-Backup versionado do lote:
+Backup:
 
 ```text
 backups/blogger-content/2026-10-30/vitrine-pratica/manifest.md
@@ -80,7 +54,84 @@ backups/blogger-content/2026-10-30/vitrine-pratica/04-tapete-geometrico.html
 backups/blogger-content/2026-10-30/vitrine-pratica/05-potes-hermeticos.html
 ```
 
-## Padrão editorial obrigatório a partir do próximo lote
+### 2. Achados que Valem
+
+- Blog ID: `7527651041649593600`
+- URL: https://achados-que-valem.blogspot.com/
+- 5 páginas institucionais LIVE
+- 5 posts afiliados LIVE
+- 0 drafts
+- Posicionamento editorial: oportunidades e custo-benefício
+- CTA afiliado no segundo parágrafo: PASS
+- segundo CTA perto do fim: PASS
+- linkagem interna: PASS
+- Arquitetura de Silos: PASS
+
+Silos:
+
+```text
+Tecnologia & Lazer
+- Smartwatch barato com chamadas Bluetooth
+- Caixa de som Bluetooth com 2 microfones
+
+Casa & Utilidades
+- Organizador de banheiro barato
+- Escorredor de louças de aço
+- Parafusadeira 25V com maleta
+```
+
+Backup:
+
+```text
+backups/blogger-content/2026-10-30/achados-que-valem/manifest.md
+backups/blogger-content/2026-10-30/achados-que-valem/posts-full.html
+```
+
+### 3. Escolha Certa Online
+
+- Blog ID: `5151950717041967683`
+- URL: https://escolha-certa-online.blogspot.com/
+- 5 páginas institucionais LIVE
+- 5 posts afiliados LIVE
+- 0 drafts
+- Posicionamento editorial: guias comparativos e decisão de compra
+- CTA afiliado no segundo parágrafo: PASS
+- segundo CTA perto do fim: PASS
+- linkagem interna: PASS
+- Arquitetura de Silos: PASS
+
+Silos:
+
+```text
+Cama & Banho
+- Lençol 400 fios
+- Tapete de banheiro antiderrapante
+- Kit de acessórios para banheiro em inox
+
+Jardim & Decoração
+- Pedra dolomita branca
+- Suporte de madeira para vaso
+```
+
+Backup:
+
+```text
+backups/blogger-content/2026-10-30/escolha-certa-online/manifest.md
+backups/blogger-content/2026-10-30/escolha-certa-online/posts-full.html
+```
+
+## Totais do ciclo editorial real
+
+```text
+3 blogs reais
+15 posts afiliados LIVE
+0 drafts após validação final em cada blog
+15 produtos/ofertas trabalhados no ciclo
+2 CTAs por post obrigatórios a partir do segundo blog
+linkagem interna e silos obrigatórios a partir do segundo blog
+```
+
+## Padrão editorial obrigatório vigente
 
 Cada novo post deve conter:
 
@@ -92,24 +143,16 @@ Cada novo post deve conter:
 - primeiro CTA afiliado no segundo parágrafo;
 - segundo CTA afiliado antes ou depois do penúltimo parágrafo;
 - links comerciais com `rel="nofollow sponsored noopener"`;
+- dados comerciais apresentados como retrato da coleta quando aplicável;
 - SEO natural;
 - linkagem interna contextual;
-- Arquitetura de Silos planejada no conjunto dos posts;
+- Arquitetura de Silos planejada por conjunto de posts;
 - âncoras internas descritivas e naturais;
-- validação final no Blogger após publicação.
+- validação final no Blogger após publicação;
+- backup versionado depois de cada lote concluído.
 
-Os 5 posts iniciais do Vitrine Prática foram publicados antes de o segundo CTA e a Arquitetura de Silos se tornarem regras obrigatórias. Não alterar retroativamente sem decisão explícita; aplicar obrigatoriamente nos próximos lotes.
+## Próximo estado
 
-## Próximo passo editorial
+Os três blogs reais estão provisionados e com o primeiro lote editorial concluído. O próximo trabalho pode ser expansão de conteúdo, retroaplicação opcional de segundo CTA/silos ao Vitrine Prática, criação de novos silos, ou automação contínua de novos lotes.
 
-Próximo blog da sequência:
-
-```text
-Achados que Valem
-Blog ID: 7527651041649593600
-URL: https://achados-que-valem.blogspot.com/
-```
-
-Posicionamento recomendado: oportunidades, custo-benefício, descontos e produtos com sinais fortes de demanda, evitando duplicar a proposta editorial do Vitrine Prática.
-
-Ao iniciar uma nova conversa, use este arquivo como ponte para o checkpoint técnico completo e para o estado editorial atual. Não recomeçar o projeto a partir de documentação antiga.
+Ao iniciar uma nova conversa, usar este arquivo como ponte para o checkpoint técnico completo e para o estado editorial atual. Não recomeçar o projeto a partir de documentação antiga.
