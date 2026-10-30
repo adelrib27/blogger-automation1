@@ -34,7 +34,7 @@ def _matches(text: str, target: str) -> bool:
     )
 
 
-def _visible_overlay_meta(page):
+def _visible_editor_meta(page):
     try:
         return page.evaluate(
             """() => {
@@ -43,13 +43,19 @@ def _visible_overlay_meta(page):
                     const s = getComputedStyle(el);
                     return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
                 };
-                return [...document.querySelectorAll('[role="dialog"],[role="listbox"],[role="menu"],[role="combobox"]')]
+                return [...document.querySelectorAll('[role="dialog"],[role="listbox"],[role="combobox"]')]
                     .filter(visible)
-                    .map(el => ({
+                    .map((el, index) => ({
+                        index,
                         tag: el.tagName,
                         role: el.getAttribute('role') || '',
-                        text: String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 1000),
-                        aria: el.getAttribute('aria-label') || ''
+                        aria: el.getAttribute('aria-label') || '',
+                        ariaModal: el.getAttribute('aria-modal') || '',
+                        text: String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 1200),
+                        x: Math.round(el.getBoundingClientRect().x),
+                        y: Math.round(el.getBoundingClientRect().y),
+                        w: Math.round(el.getBoundingClientRect().width),
+                        h: Math.round(el.getBoundingClientRect().height)
                     }));
             }"""
         )
@@ -57,28 +63,51 @@ def _visible_overlay_meta(page):
         return []
 
 
-def _overlay_signature(page) -> tuple[str, ...]:
-    rows = _visible_overlay_meta(page)
-    return tuple(f"{r.get('role')}|{r.get('aria')}|{r.get('text')}" for r in rows)
+def _editor_signature(page) -> tuple[str, ...]:
+    rows = _visible_editor_meta(page)
+    return tuple(
+        f"{r.get('role')}|{r.get('aria')}|{r.get('ariaModal')}|{r.get('x')}|{r.get('y')}|{r.get('w')}|{r.get('h')}|{r.get('text')}"
+        for r in rows
+    )
 
 
-def _timezone_editor_open(page, baseline: tuple[str, ...]) -> bool:
-    current = _overlay_signature(page)
-    if current != baseline and current:
-        return True
-    try:
-        save = cfg.first_visible(page.get_by_text(re.compile(r"^SALVAR$", re.I), exact=True))
-        if save is not None:
-            return True
-    except Exception:
-        pass
-    return False
+def _new_timezone_editor(page, baseline: tuple[str, ...]):
+    current = _visible_editor_meta(page)
+    current_sigs = {
+        f"{r.get('role')}|{r.get('aria')}|{r.get('ariaModal')}|{r.get('x')}|{r.get('y')}|{r.get('w')}|{r.get('h')}|{r.get('text')}"
+        for r in current
+    }
+    baseline_sigs = set(baseline)
+    fresh = [r for r in current if (
+        f"{r.get('role')}|{r.get('aria')}|{r.get('ariaModal')}|{r.get('x')}|{r.get('y')}|{r.get('w')}|{r.get('h')}|{r.get('text')}"
+    ) not in baseline_sigs]
+    if not fresh:
+        return None
+
+    # Prioriza um modal/listbox real; menu lateral não entra nesta coleta.
+    def score(r):
+        n = _norm(f"{r.get('aria','')} {r.get('text','')}")
+        s = 0
+        if r.get("role") == "dialog":
+            s += 100
+        if r.get("ariaModal") == "true":
+            s += 80
+        if r.get("role") == "listbox":
+            s += 70
+        if r.get("role") == "combobox":
+            s += 50
+        if "fuso" in n or "horario" in n or "gmt" in n:
+            s += 120
+        return s
+
+    fresh.sort(key=score, reverse=True)
+    return fresh[0]
 
 
-def _click_timezone_row(page) -> None:
+def _click_timezone_row(page) -> dict:
     pattern = re.compile(r"^Fuso horário(?:\s|$)", re.I)
     labels = page.get_by_text(pattern)
-    baseline = _overlay_signature(page)
+    baseline = _editor_signature(page)
     candidates = []
     try:
         count = min(labels.count(), 30)
@@ -101,7 +130,7 @@ def _click_timezone_row(page) -> None:
                         role: el.getAttribute('role') || '',
                         tabindex: el.getAttribute('tabindex') || '',
                         cursor: getComputedStyle(el).cursor || '',
-                        text: String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 400)
+                        text: String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 500)
                     })"""
                 )
             except Exception:
@@ -109,14 +138,14 @@ def _click_timezone_row(page) -> None:
             score = 0
             if meta.get("tag") == "BUTTON":
                 score += 100
-            if meta.get("role") in ("button", "menuitem", "combobox"):
-                score += 90
+            if meta.get("role") in ("button", "combobox"):
+                score += 95
             if meta.get("tabindex") == "0":
-                score += 70
+                score += 75
             if meta.get("cursor") == "pointer":
-                score += 40
-            if depth == 1:
-                score += 15
+                score += 45
+            # Prefere ancestrais próximos do rótulo, evitando containers grandes.
+            score -= depth * 4
             if score > 0:
                 candidates.append((score, depth, current))
             try:
@@ -124,12 +153,11 @@ def _click_timezone_row(page) -> None:
             except Exception:
                 break
 
-    # Mais provável primeiro, mas sem clicar em ancestrais muito altos antes dos próximos ao label.
     candidates.sort(key=lambda x: (-x[0], x[1]))
     seen = set()
     for _, _, item in candidates:
         try:
-            key = item.evaluate("el => el.outerHTML.slice(0,500)")
+            key = item.evaluate("el => el.outerHTML.slice(0,800)")
         except Exception:
             key = None
         if key and key in seen:
@@ -147,13 +175,13 @@ def _click_timezone_row(page) -> None:
                 item.evaluate("el => el.click()")
             except Exception:
                 continue
-        for _ in range(8):
+        for _ in range(12):
             page.wait_for_timeout(120)
-            if _timezone_editor_open(page, baseline):
-                return
-        # Clique não abriu editor; não assumir sucesso.
+            editor = _new_timezone_editor(page, baseline)
+            if editor is not None:
+                return editor
 
-    raise cfg.SettingsError('A linha "Fuso horário" foi encontrada, mas o editor não abriu.')
+    raise cfg.SettingsError('A linha "Fuso horário" foi encontrada, mas nenhum editor real de fuso abriu.')
 
 
 def _find_candidate(page, target: str):
@@ -190,7 +218,6 @@ def _find_candidate(page, target: str):
 
 
 def _open_nested_selector(page) -> bool:
-    # Alguns layouts do Blogger abrem primeiro um modal e só depois um seletor interno.
     locators = [
         page.locator('[role="dialog"] [role="combobox"]'),
         page.locator('[role="dialog"] [aria-haspopup="listbox"]'),
@@ -215,7 +242,7 @@ def _open_nested_selector(page) -> bool:
 
 
 def _scroll_roots(page) -> None:
-    roots = page.locator('[role="listbox"], [role="menu"], [role="dialog"]')
+    roots = page.locator('[role="listbox"], [role="dialog"]')
     try:
         count = min(roots.count(), 100)
     except Exception:
@@ -249,12 +276,19 @@ def _diagnostic_options(page) -> list[str]:
         snap = {}
     for item in snap.get("options", []):
         text = str(item.get("text") or item.get("aria") or "").strip()
+        n = _norm(text)
+        # Ignora explicitamente itens do menu lateral do Blogger.
+        if n in {
+            "postagens", "estatisticas", "comentarios", "ganhos", "paginas",
+            "layout", "tema", "configuracoes", "lista de leitura"
+        }:
+            continue
         if text and text not in texts:
             texts.append(text)
         if len(texts) >= 30:
             break
     if not texts:
-        for overlay in _visible_overlay_meta(page):
+        for overlay in _visible_editor_meta(page):
             text = str(overlay.get("text") or overlay.get("aria") or "").strip()
             if text:
                 texts.append(text[:900])
@@ -264,7 +298,7 @@ def _diagnostic_options(page) -> list[str]:
 
 
 def set_timezone_resilient(page, target: str) -> dict:
-    _click_timezone_row(page)
+    editor = _click_timezone_row(page)
     page.wait_for_timeout(300)
 
     match = _find_candidate(page, target)
@@ -284,11 +318,14 @@ def set_timezone_resilient(page, target: str) -> dict:
     if chosen is None:
         options = _diagnostic_options(page)
         detail = " | ".join(options)
+        editor_desc = f"role={editor.get('role')} aria={editor.get('aria')} text={editor.get('text','')[:500]}"
         if detail:
             raise cfg.SettingsError(
-                f'Fuso alvo não localizado: {target}. Editor abriu; opções/overlays: {detail[:2200]}'
+                f'Fuso alvo não localizado: {target}. Editor real: {editor_desc}. Opções: {detail[:1800]}'
             )
-        raise cfg.SettingsError(f'Fuso alvo não localizado: {target}. Editor abriu, mas nenhuma opção foi capturada.')
+        raise cfg.SettingsError(
+            f'Fuso alvo não localizado: {target}. Editor real: {editor_desc}. Nenhuma opção de fuso foi capturada.'
+        )
 
     try:
         chosen.scroll_into_view_if_needed(timeout=2000)
@@ -300,7 +337,6 @@ def set_timezone_resilient(page, target: str) -> dict:
         chosen.evaluate("el => el.click()")
     page.wait_for_timeout(300)
 
-    # O dropdown pode fechar e deixar o modal principal aberto.
     cfg.click_dialog_action(page, "SALVAR")
     return {"target": target, "matched_text": chosen_text, "selected_and_saved": True}
 
