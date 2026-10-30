@@ -10,6 +10,7 @@ Antes de qualquer operação Blogger neste projeto, leia integralmente:
 1. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
 2. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
 3. `infrastructure/README.md`
+4. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json`
 
 Esses arquivos são a fonte persistente de continuidade entre conversas.
 
@@ -32,7 +33,7 @@ Esses arquivos são a fonte persistente de continuidade entre conversas.
 
 ### Gap local explicitamente documentado
 
-`apply_theme_safe.py` e `backup_theme_safe.py` foram validados em execução no PC, mas seus bytes-fonte não estão no GitHub e não puderam ser lidos pela conexão atual. Preservar a cópia local. Ver `infrastructure/README.md`.
+`apply_theme_safe.py` e `backup_theme_safe.py` foram validados em execução no PC, mas seus bytes-fonte não estão no GitHub e não puderam ser lidos pela conexão atual. Preservar a cópia local. Ver `infrastructure/README.md` e o manifesto de backup.
 
 ## IDs que nunca podem ser confundidos
 
@@ -81,4 +82,4 @@ Esses arquivos são a fonte persistente de continuidade entre conversas.
 
 ## Instrução para futura conversa
 
-Se este arquivo for encontrado, NÃO recomece o diagnóstico do zero. Carregue os dois checkpoints mestre e o mapa de infraestrutura, confirme o estado vivo e continue a partir deles. Se houver divergência entre o checkpoint e o sistema vivo, valide a divergência e atualize o checkpoint depois.
+Se este arquivo for encontrado, NÃO recomece o diagnóstico do zero. Carregue os dois checkpoints mestre, o mapa de infraestrutura e o manifesto do backup, confirme o estado vivo e continue a partir deles. Se houver divergência entre o checkpoint e o sistema vivo, valide a divergência e atualize o checkpoint depois.
