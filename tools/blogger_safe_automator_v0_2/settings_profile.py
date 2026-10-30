@@ -62,13 +62,51 @@ def _open_expected_settings(page, expected_blog_id: str) -> str:
 
 
 def _select_expected_page(context, expected_blog_id: str):
-    """Escolhe somente uma aba Blogger cujo Blog ID corresponde ao esperado."""
+    """Seleciona o Blog ID esperado; se a aba não existir, navega uma aba Blogger autenticada até ele.
+
+    A navegação direta é permitida apenas após validar uma sessão Blogger existente e o
+    Blog ID numérico de destino. Depois da navegação, o Blog ID é lido novamente e deve
+    coincidir exatamente antes de qualquer escrita.
+    """
     try:
         return cfg.core.select_expected_blog_page(context, expected_blog_id)
+    except Exception:
+        pass
+
+    try:
+        page = bp.select_page(context)
+        bp.require_blogger_session(page)
     except Exception as exc:
         raise cfg.SettingsError(
-            f"Nenhuma aba segura do Blogger foi localizada para o Blog ID esperado {expected_blog_id}."
+            f"Nenhuma aba Blogger autenticada está disponível para abrir o Blog ID esperado {expected_blog_id}."
         ) from exc
+
+    target_url = f"https://draft.blogger.com/blog/settings/{expected_blog_id}"
+    try:
+        page.goto(target_url, wait_until="domcontentloaded", timeout=15_000)
+        page.wait_for_timeout(1_200)
+    except Exception as exc:
+        raise cfg.SettingsError(
+            f"Não foi possível abrir com segurança as configurações do Blog ID esperado {expected_blog_id}."
+        ) from exc
+
+    try:
+        bp.require_blogger_session(page)
+        actual_blog_id = bp.extract_current_blog_id(page)
+    except Exception as exc:
+        raise cfg.SettingsError(
+            f"A navegação para o Blog ID esperado {expected_blog_id} não resultou em uma página Blogger validável."
+        ) from exc
+
+    if actual_blog_id != expected_blog_id:
+        raise cfg.SettingsError(
+            f"Blog errado bloqueado após navegação: atual={actual_blog_id!r}, esperado={expected_blog_id!r}."
+        )
+    if f"/blog/settings/{expected_blog_id}" not in bp.sanitize_url(page.url):
+        raise cfg.SettingsError(
+            f"A tela de configurações do Blog ID esperado {expected_blog_id} não abriu como esperado."
+        )
+    return page
 
 
 def execute_settings_preflight(
