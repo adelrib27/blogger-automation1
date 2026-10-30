@@ -1,0 +1,64 @@
+name: Conecta Achados — Shopee run once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/conecta_achados_run_once.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: conecta-achados-shopee
+  cancel-in-progress: false
+
+jobs:
+  criar-um-rascunho:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install requests cloudinary pillow
+
+      - name: Validar sintaxe
+        run: python -m compileall -q conecta_achados/src
+
+      - name: Extrair um produto Shopee e criar rascunho
+        env:
+          BLOGGER_BLOG_ID: "1719259388907013414"
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: "chat-latest"
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+          CONECTA_PUBLISH_MODE: "draft"
+        run: python conecta_achados/src/automation.py
+
+      - name: Registrar produto utilizado
+        if: success()
+        run: |
+          if [ -n "$(git status --porcelain -- conecta_achados/data/state.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+adelrib27@users.noreply.github.com"
+            git add conecta_achados/data/state.json
+            git commit -m "Conecta Achados: registrar produto usado"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          else
+            echo "Nenhuma alteração de estado para salvar."
+          fi
