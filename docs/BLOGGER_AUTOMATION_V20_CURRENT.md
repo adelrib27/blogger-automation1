@@ -228,47 +228,20 @@ backups/blogger-content/2026-10-30/estilo-no-dia-a-dia/manifest.md
 backups/blogger-content/2026-10-30/estilo-no-dia-a-dia/posts-full.html
 ```
 
-## Artefato preservado da execução interrompida
+## Tentativa duplicada do terceiro blog
 
-Durante a automação das 19:08 houve uma tentativa anterior de criação do terceiro blog:
+A tentativa anterior com ID `3278281423004948993` e URL `https://estilo-no-dia-a-dia.blogspot.com/` não aparece mais na lista atual da conta Blogger e não é reconhecida pelo Blogger Bridge V2. Portanto, ela está fora do estado operacional e não entra na contagem dos blogs canônicos.
 
-```text
-Título: Estilo no Dia a Dia
-Blog ID: 3278281423004948993
-URL: https://estilo-no-dia-a-dia.blogspot.com/
-Estado observado: sem páginas e sem posts no momento da retomada
-```
-
-O runner não conseguiu localizar esse ID com segurança pelo seletor oficial do Blogger. Por segurança, ele NÃO foi excluído nem usado para publicação. Ele não entra na contagem dos 6 blogs canônicos. O blog canônico escolhido foi o ID `4830103887652146866`, que o runner conseguiu localizar, configurar e validar explicitamente.
-
-## Retomada da automação das 19:08
-
-A execução agendada iniciou, mas foi interrompida durante o provisionamento do terceiro blog por falha de confirmação dos toggles de otimização de imagem no Blogger UI. Na retomada manual:
+## Totais atuais
 
 ```text
-runner local: HEALTH PASS
-CMD/runner no momento da checagem: ativo
-settings/SEO terceiro blog: recuperados e validados
-V20 terceiro blog: PASS
-5 páginas terceiro blog: PASS
-15 novos posts: publicados
-0 drafts nos três novos blogs: PASS
-backups versionados: PASS
-```
-
-Portanto, a interrupção não foi causada por CMD fechado no momento da retomada. O bloqueio observado foi a confirmação do estado de toggles no Blogger UI; uma segunda aplicação idempotente concluiu os settings com sucesso.
-
-## Totais editoriais canônicos
-
-```text
-6 blogs canônicos reais
+6 blogs canônicos
 30 posts afiliados LIVE
-0 drafts após validação dos lotes
-30 produtos/ofertas trabalhados nos primeiros lotes
-2 CTAs por post: PASS nos 6 blogs
-linkagem interna: PASS nos 6 blogs
-Arquitetura de Silos: PASS nos 6 blogs
-backups versionados por lote: PASS
+0 drafts nos lotes validados
+2 CTAs por post: PASS
+linkagem interna: PASS
+Arquitetura de Silos: PASS
+backups versionados: PASS
 ```
 
 ## Padrão editorial obrigatório vigente
@@ -288,12 +261,9 @@ Cada novo post deve conter:
 - linkagem interna contextual;
 - Arquitetura de Silos planejada por conjunto de posts;
 - âncoras internas descritivas e naturais;
-- links de retorno entre conteúdos relacionados quando o conjunto já estiver publicado;
 - validação final no Blogger após publicação;
 - backup versionado depois de cada lote concluído.
 
 ## Próximo estado
 
-Os seis blogs canônicos estão provisionados e com o primeiro lote editorial concluído sob o mesmo padrão editorial vigente. O próximo trabalho pode ser expansão dos silos existentes, criação de novos silos, melhoria contínua do fluxo ou novos lotes autônomos.
-
-Ao iniciar uma nova conversa, usar este arquivo como ponte para o checkpoint técnico completo e para o estado editorial atual. Não recomeçar o projeto a partir de documentação antiga.
+Os seis blogs canônicos estão provisionados e com seus lotes editoriais concluídos sob o mesmo padrão vigente. Novos trabalhos devem partir deste checkpoint, sem reabrir a tentativa duplicada removida/ausente.
