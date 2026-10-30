@@ -43,7 +43,7 @@ jobs:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
 
-          # Opcional. Se estiver vazio, automation_rich.py usa fallback editorial local.
+          # Opcional. Se estiver vazio, o gerador usa fallback editorial local.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: "chat-latest"
 
@@ -52,7 +52,8 @@ jobs:
           # Segurança: continua criando somente RASCUNHOS neste workflow.
           CONECTA_PUBLISH_MODE: "draft"
 
-        run: python conecta_achados/src/automation_rich.py
+        # O wrapper garante CTA Shopee logo após o segundo parágrafo.
+        run: python conecta_achados/src/automation_rich_cta.py
 
       - name: Registrar produto utilizado
         if: success()
