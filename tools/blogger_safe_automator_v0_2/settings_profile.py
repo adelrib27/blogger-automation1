@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -12,6 +13,64 @@ from playwright.sync_api import sync_playwright
 
 DEFAULT_TIMEZONE = cfg.DEFAULT_TIMEZONE
 CONFIRMATION = cfg.CONFIRMATION
+
+
+def _norm(value: str) -> str:
+    value = unicodedata.normalize("NFKD", str(value or ""))
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = value.replace("–", "-").replace("—", "-").replace("−", "-")
+    return re.sub(r"\s+", " ", value).strip().lower()
+
+
+def _timezone_matches(value: str, target: str) -> bool:
+    n = _norm(value)
+    t = _norm(target)
+    if t and t in n:
+        return True
+    compact = n.replace(" ", "")
+    if "gmt-03:00" not in compact and "gmt03:00" not in compact:
+        return False
+    return any(marker in n for marker in ("brasilia", "sao paulo", "fortaleza", "recife"))
+
+
+def _read_timezone_row_value(page, target: str) -> dict:
+    """Lê o valor atual exibido na linha de fuso sem abrir modal nem alterar nada."""
+    try:
+        text = page.evaluate(
+            """() => {
+                const visible = el => {
+                    const r = el.getBoundingClientRect();
+                    const s = getComputedStyle(el);
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                };
+                const norm = s => String(s || '').trim().replace(/\s+/g, ' ');
+                const nodes = [...document.querySelectorAll('body *')].filter(visible);
+                const labels = nodes.filter(el => /^Fuso horário(?:\s|$)/i.test(norm(el.innerText || el.textContent || '')));
+                let best = '';
+                for (const label of labels) {
+                    let cur = label;
+                    for (let depth = 0; depth < 10 && cur; depth++, cur = cur.parentElement) {
+                        const txt = norm(cur.innerText || cur.textContent || '');
+                        if (!txt || txt.length > 700) continue;
+                        if (!/Fuso horário/i.test(txt) || !/GMT\s*[-+]?\d{1,2}:\d{2}/i.test(txt)) continue;
+                        if (!best || txt.length < best.length) best = txt;
+                    }
+                }
+                if (!best) return '';
+                const idx = best.toLocaleLowerCase().indexOf('fuso horário');
+                let tail = idx >= 0 ? best.slice(idx + 'Fuso horário'.length).trim() : best;
+                tail = tail.replace(/^[\s:–—-]+/, '').trim();
+                return tail || best;
+            }"""
+        )
+    except Exception:
+        text = ""
+    clean = re.sub(r"\s+", " ", str(text or "")).strip()
+    return {
+        "found": bool(clean),
+        "text": clean or None,
+        "matches_target": _timezone_matches(clean, target) if clean else False,
+    }
 
 
 def _validate_inputs(
@@ -77,7 +136,6 @@ def _open_expected_settings(page, expected_blog_id: str) -> str:
 
 
 def _scroll_blog_option_container(page, mode: str) -> bool:
-    """Move o contêiner virtualizado que contém as opções do seletor de blogs."""
     try:
         return bool(page.evaluate(
             """mode => {
@@ -92,14 +150,8 @@ def _scroll_blog_option_container(page, mode: str) -> bool:
                 while (node && node !== document.body) {
                     if (node.scrollHeight > node.clientHeight + 24) {
                         const before = node.scrollTop;
-                        if (mode === 'top') {
-                            node.scrollTop = 0;
-                        } else {
-                            node.scrollTop = Math.min(
-                                node.scrollHeight,
-                                node.scrollTop + Math.max(280, node.clientHeight * 0.82)
-                            );
-                        }
+                        if (mode === 'top') node.scrollTop = 0;
+                        else node.scrollTop = Math.min(node.scrollHeight, node.scrollTop + Math.max(280, node.clientHeight * 0.82));
                         return Math.abs(node.scrollTop - before) > 1;
                     }
                     node = node.parentElement;
@@ -134,7 +186,6 @@ def _visible_blog_options(page) -> list[tuple[str, object]]:
 
 
 def _collect_blog_option_labels(page) -> list[str]:
-    """Coleta a lista virtualizada inteira, começando pelos blogs recentes no topo."""
     bp.open_blog_switcher(page)
     labels: list[str] = []
     try:
@@ -148,7 +199,6 @@ def _collect_blog_option_labels(page) -> list[str]:
             for text, _ in current:
                 if text not in labels:
                     labels.append(text)
-
             moved = _scroll_blog_option_container(page, "down")
             page.wait_for_timeout(180)
             if signature == last_signature and not moved:
@@ -168,12 +218,10 @@ def _collect_blog_option_labels(page) -> list[str]:
 
 
 def _find_option_by_label(page, label: str):
-    """Abre o seletor, rola do topo até o rótulo e retorna apenas uma opção visível."""
     bp.open_blog_switcher(page)
     _scroll_blog_option_container(page, "top")
     page.wait_for_timeout(220)
     pattern = re.compile(rf"^{re.escape(label)}$", re.I)
-
     for _ in range(80):
         matches = page.get_by_role("option", name=pattern)
         try:
@@ -191,7 +239,6 @@ def _find_option_by_label(page, label: str):
         page.wait_for_timeout(160)
         if not moved:
             break
-
     try:
         page.keyboard.press("Escape")
     except Exception:
@@ -200,14 +247,8 @@ def _find_option_by_label(page, label: str):
 
 
 def _switch_via_blog_selector(page, expected_blog_id: str):
-    """Percorre blogs existentes no seletor oficial até achar o Blog ID esperado.
-
-    Somente navegação: nunca abre "Novo blog..." e nunca escreve durante a busca.
-    A lista virtualizada é percorrida do topo para baixo, incluindo Blogs recentes.
-    """
     labels = _collect_blog_option_labels(page)
     attempted: list[str] = []
-
     for label in labels[:100]:
         try:
             target = _find_option_by_label(page, label)
@@ -218,7 +259,6 @@ def _switch_via_blog_selector(page, expected_blog_id: str):
             except Exception:
                 target.evaluate("el => el.click()")
             page.wait_for_timeout(1_400)
-
             try:
                 actual = bp.extract_current_blog_id(page)
             except Exception:
@@ -233,7 +273,6 @@ def _switch_via_blog_selector(page, expected_blog_id: str):
             except Exception:
                 pass
             continue
-
     preview = " | ".join(attempted[:20])
     collected = " | ".join(labels[:20])
     detail = f" Blogs testados: {preview}." if preview else ""
@@ -245,23 +284,19 @@ def _switch_via_blog_selector(page, expected_blog_id: str):
 
 
 def _select_expected_page(context, expected_blog_id: str):
-    """Seleciona o Blog ID esperado sem permitir que a validação volte à Home."""
     try:
         page = cfg.core.select_expected_blog_page(context, expected_blog_id)
         _validate_current_blogger_page(page, expected_blog_id)
         return page
     except Exception:
         pass
-
     try:
         page = bp.select_page(context)
-        # Home somente para confirmar autenticação antes de abrir o seletor oficial.
         bp.require_blogger_session(page)
     except Exception as exc:
         raise cfg.SettingsError(
             f"Nenhuma aba Blogger autenticada está disponível para localizar o Blog ID esperado {expected_blog_id}."
         ) from exc
-
     return _switch_via_blog_selector(page, expected_blog_id)
 
 
@@ -275,9 +310,7 @@ def execute_settings_preflight(
     diagnostics_dir: str = "logs/browser_diagnostics",
     allow_remote_cdp: bool = False,
 ) -> dict:
-    blog_id, desc, search_desc, tz = _validate_inputs(
-        expected_blog_id, description, search_description, timezone
-    )
+    blog_id, desc, search_desc, tz = _validate_inputs(expected_blog_id, description, search_description, timezone)
     safe_cdp = bp.validate_cdp_url(cdp_url, allow_remote=allow_remote_cdp)
 
     with sync_playwright() as p:
@@ -286,6 +319,7 @@ def execute_settings_preflight(
         _validate_current_blogger_page(page, blog_id)
         _open_expected_settings(page, blog_id)
         current = cfg.snapshot(page)
+        current["timezone_current"] = _read_timezone_row_value(page, tz)
 
         result = {
             "status": "SETTINGS_PREFLIGHT_OK",
@@ -294,9 +328,7 @@ def execute_settings_preflight(
             "settings_url": bp.sanitize_url(page.url),
             "current": current,
             "planned": _planned(desc, search_desc, tz),
-            "message": (
-                f'Nenhuma configuração foi alterada. Para aplicar, confirme "{CONFIRMATION}".'
-            ),
+            "message": f'Nenhuma configuração foi alterada. Para aplicar, confirme "{CONFIRMATION}".',
         }
 
     out = Path(diagnostics_dir) / "settings_profile_preflight.json"
@@ -319,9 +351,7 @@ def execute_configure_settings(
     if str(confirm or "") != CONFIRMATION:
         raise cfg.SettingsError(f'Confirmação inválida. Use "{CONFIRMATION}".')
 
-    blog_id, desc, search_desc, tz = _validate_inputs(
-        expected_blog_id, description, search_description, timezone
-    )
+    blog_id, desc, search_desc, tz = _validate_inputs(expected_blog_id, description, search_description, timezone)
     safe_cdp = bp.validate_cdp_url(cdp_url, allow_remote=allow_remote_cdp)
 
     with sync_playwright() as p:
@@ -351,17 +381,15 @@ def execute_configure_settings(
 
         page.wait_for_timeout(800)
         after = cfg.snapshot(page)
+        after["timezone_current"] = _read_timezone_row_value(page, tz)
 
-        for key in (
-            "search_visibility",
-            "https_redirect",
-            "lazy_images",
-            "webp_images",
-            "search_description",
-        ):
+        for key in ("search_visibility", "https_redirect", "lazy_images", "webp_images", "search_description"):
             if after[key].get("aria_checked") != "true":
                 raise cfg.SettingsError(f"Validação final falhou para {key}.")
-
+        if not after["timezone_current"].get("matches_target"):
+            raise cfg.SettingsError(
+                f"Validação final falhou para timezone: {after['timezone_current'].get('text')!r}."
+            )
         if after["custom_robots_txt"].get("aria_checked") != before["custom_robots_txt"].get("aria_checked"):
             raise cfg.SettingsError("robots.txt personalizado mudou inesperadamente.")
         if after["custom_robots_headers"].get("aria_checked") != before["custom_robots_headers"].get("aria_checked"):
