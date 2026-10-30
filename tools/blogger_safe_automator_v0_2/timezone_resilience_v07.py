@@ -84,7 +84,6 @@ def _new_timezone_editor(page, baseline: tuple[str, ...]):
     if not fresh:
         return None
 
-    # Prioriza um modal/listbox real; menu lateral não entra nesta coleta.
     def score(r):
         n = _norm(f"{r.get('aria','')} {r.get('text','')}")
         s = 0
@@ -144,7 +143,6 @@ def _click_timezone_row(page) -> dict:
                 score += 75
             if meta.get("cursor") == "pointer":
                 score += 45
-            # Prefere ancestrais próximos do rótulo, evitando containers grandes.
             score -= depth * 4
             if score > 0:
                 candidates.append((score, depth, current))
@@ -185,36 +183,84 @@ def _click_timezone_row(page) -> dict:
 
 
 def _find_candidate(page, target: str):
-    candidates = page.locator('[role="option"], [role="menuitemradio"], [role="radio"], li')
-    try:
-        count = min(candidates.count(), 3000)
-    except Exception:
-        count = 0
+    # O Blogger atual renderiza as linhas de fuso como DIV/SPAN comuns em alguns layouts,
+    # sem role=option. Procuramos dentro de diálogos/listboxes visíveis e escolhemos o
+    # menor elemento clicável cujo texto normalizado corresponda ao fuso desejado.
+    roots = page.locator('[role="dialog"], [role="listbox"]')
     best = None
-    for i in range(count):
-        item = candidates.nth(i)
+    try:
+        root_count = min(roots.count(), 40)
+    except Exception:
+        root_count = 0
+
+    for rix in range(root_count):
+        root = roots.nth(rix)
         try:
-            if not item.is_visible():
+            if not root.is_visible():
                 continue
-            text = item.inner_text(timeout=250).strip()
         except Exception:
             continue
-        if not text or not _matches(text, target):
-            continue
-        n = _norm(text)
-        score = 0
-        compact = n.replace(" ", "")
-        if "gmt-03:00" in compact or "gmt03:00" in compact:
-            score += 100
-        if "brasilia" in n:
-            score += 50
-        if "sao paulo" in n:
-            score += 50
-        if "horario padrao de brasilia" in n:
-            score += 40
-        if best is None or score > best[0]:
-            best = (score, item, text)
-    return best
+
+        candidates = root.locator(
+            '[role="option"], [role="menuitemradio"], [role="radio"], '
+            '[role="button"], [tabindex="0"], li, div, span'
+        )
+        try:
+            count = min(candidates.count(), 5000)
+        except Exception:
+            count = 0
+
+        for i in range(count):
+            item = candidates.nth(i)
+            try:
+                if not item.is_visible():
+                    continue
+                text = item.inner_text(timeout=180).strip()
+                if not text or len(text) > 260 or not _matches(text, target):
+                    continue
+                meta = item.evaluate(
+                    """el => {
+                        const r = el.getBoundingClientRect();
+                        return {
+                            tag: el.tagName,
+                            role: el.getAttribute('role') || '',
+                            tabindex: el.getAttribute('tabindex') || '',
+                            cursor: getComputedStyle(el).cursor || '',
+                            area: Math.max(1, r.width * r.height)
+                        };
+                    }"""
+                )
+            except Exception:
+                continue
+
+            n = _norm(text)
+            compact = n.replace(" ", "")
+            score = 0
+            if "gmt-03:00" in compact or "gmt03:00" in compact:
+                score += 140
+            if "brasilia" in n:
+                score += 70
+            if "sao paulo" in n:
+                score += 70
+            if "horario padrao de brasilia" in n:
+                score += 50
+            if meta.get("role") in ("option", "menuitemradio", "radio", "button"):
+                score += 100
+            if meta.get("tabindex") == "0":
+                score += 70
+            if meta.get("cursor") == "pointer":
+                score += 50
+            if meta.get("tag") in ("LI", "BUTTON"):
+                score += 30
+            # Prefere o texto mais específico e o menor elemento visual.
+            rank = (score, -len(text), -float(meta.get("area") or 1))
+            if best is None or rank > best[0]:
+                best = (rank, item, text)
+
+    if best is None:
+        return None
+    _, item, text = best
+    return (best[0][0], item, text)
 
 
 def _open_nested_selector(page) -> bool:
@@ -241,59 +287,65 @@ def _open_nested_selector(page) -> bool:
     return False
 
 
-def _scroll_roots(page) -> None:
-    roots = page.locator('[role="listbox"], [role="dialog"]')
+def _scroll_roots(page) -> bool:
+    # Move prioritariamente o maior contêiner realmente scrollável do editor de fuso.
     try:
-        count = min(roots.count(), 100)
-    except Exception:
-        count = 0
-    for i in range(count):
-        root = roots.nth(i)
-        try:
-            if not root.is_visible():
-                continue
-            root.evaluate(
-                """el => {
-                    const nodes = [el, ...el.querySelectorAll('*')];
-                    for (const n of nodes) {
-                        try {
-                            if (n.scrollHeight > n.clientHeight + 24) {
-                                n.scrollTop = Math.min(n.scrollHeight, n.scrollTop + Math.max(300, n.clientHeight * 0.85));
-                            }
-                        } catch (_) {}
+        moved = page.evaluate(
+            """() => {
+                const visible = el => {
+                    const r = el.getBoundingClientRect();
+                    const s = getComputedStyle(el);
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                };
+                const roots = [...document.querySelectorAll('[role="dialog"],[role="listbox"]')].filter(visible);
+                let best = null;
+                for (const root of roots) {
+                    for (const n of [root, ...root.querySelectorAll('*')]) {
+                        if (!visible(n)) continue;
+                        const max = n.scrollHeight - n.clientHeight;
+                        if (max <= 24) continue;
+                        const score = max + n.clientHeight;
+                        if (!best || score > best.score) best = {n, score, max};
                     }
-                }"""
-            )
-        except Exception:
-            continue
+                }
+                if (!best) return false;
+                const before = best.n.scrollTop;
+                const step = Math.max(320, best.n.clientHeight * 0.82);
+                best.n.scrollTop = Math.min(best.max, before + step);
+                best.n.dispatchEvent(new Event('scroll', {bubbles:true}));
+                return Math.abs(best.n.scrollTop - before) > 1;
+            }"""
+        )
+        return bool(moved)
+    except Exception:
+        return False
 
 
 def _diagnostic_options(page) -> list[str]:
     texts: list[str] = []
     try:
-        snap = cfg.core.overlay_snapshot(page)
+        dialogs = page.locator('[role="dialog"]')
+        for rix in range(min(dialogs.count(), 20)):
+            root = dialogs.nth(rix)
+            if not root.is_visible():
+                continue
+            rows = root.locator('li, [role="option"], [role="radio"], div, span')
+            for i in range(min(rows.count(), 1200)):
+                item = rows.nth(i)
+                try:
+                    if not item.is_visible():
+                        continue
+                    text = re.sub(r"\s+", " ", item.inner_text(timeout=100)).strip()
+                except Exception:
+                    continue
+                if not text or len(text) > 180 or "gmt" not in _norm(text):
+                    continue
+                if text not in texts:
+                    texts.append(text)
+                if len(texts) >= 20:
+                    return texts
     except Exception:
-        snap = {}
-    for item in snap.get("options", []):
-        text = str(item.get("text") or item.get("aria") or "").strip()
-        n = _norm(text)
-        # Ignora explicitamente itens do menu lateral do Blogger.
-        if n in {
-            "postagens", "estatisticas", "comentarios", "ganhos", "paginas",
-            "layout", "tema", "configuracoes", "lista de leitura"
-        }:
-            continue
-        if text and text not in texts:
-            texts.append(text)
-        if len(texts) >= 30:
-            break
-    if not texts:
-        for overlay in _visible_editor_meta(page):
-            text = str(overlay.get("text") or overlay.get("aria") or "").strip()
-            if text:
-                texts.append(text[:900])
-            if len(texts) >= 8:
-                break
+        pass
     return texts
 
 
@@ -307,13 +359,20 @@ def set_timezone_resilient(page, target: str) -> dict:
 
     chosen = None
     chosen_text = ""
-    for _ in range(70):
+    stagnant = 0
+    for _ in range(90):
         match = _find_candidate(page, target)
         if match is not None:
             _, chosen, chosen_text = match
             break
-        _scroll_roots(page)
-        page.wait_for_timeout(120)
+        moved = _scroll_roots(page)
+        page.wait_for_timeout(160)
+        if moved:
+            stagnant = 0
+        else:
+            stagnant += 1
+            if stagnant >= 3:
+                break
 
     if chosen is None:
         options = _diagnostic_options(page)
@@ -321,7 +380,7 @@ def set_timezone_resilient(page, target: str) -> dict:
         editor_desc = f"role={editor.get('role')} aria={editor.get('aria')} text={editor.get('text','')[:500]}"
         if detail:
             raise cfg.SettingsError(
-                f'Fuso alvo não localizado: {target}. Editor real: {editor_desc}. Opções: {detail[:1800]}'
+                f'Fuso alvo não localizado: {target}. Editor real: {editor_desc}. Fusos visíveis finais: {detail[:1800]}'
             )
         raise cfg.SettingsError(
             f'Fuso alvo não localizado: {target}. Editor real: {editor_desc}. Nenhuma opção de fuso foi capturada.'
@@ -335,7 +394,7 @@ def set_timezone_resilient(page, target: str) -> dict:
         chosen.click(timeout=5000)
     except Exception:
         chosen.evaluate("el => el.click()")
-    page.wait_for_timeout(300)
+    page.wait_for_timeout(350)
 
     cfg.click_dialog_action(page, "SALVAR")
     return {"target": target, "matched_text": chosen_text, "selected_and_saved": True}
