@@ -1,0 +1,43 @@
+{
+  "model": "BLOGGER_MODELO_V20",
+  "version": 20,
+  "inherit_posts": false,
+  "pages": [
+    {
+      "key": "sobre",
+      "title": "Sobre",
+      "expected_slug": "sobre",
+      "publish": true,
+      "content": "<p>O <strong>{{BLOG_TITLE}}</strong> é um site independente criado para reunir informações, comparativos, dicas de compra e achados de produtos para casa, cozinha, tecnologia e dia a dia.</p><p>Nosso objetivo é ajudar o leitor a avaliar melhor cada produto antes da compra, destacando características, pontos de atenção e informações que merecem ser conferidas diretamente na oferta.</p><p>Preços, estoque, frete, condições de pagamento e especificações podem mudar sem aviso. Por isso, recomendamos sempre verificar os dados atualizados na página do vendedor antes de finalizar qualquer compra.</p><p>Alguns conteúdos podem incluir links de afiliados. Quando uma compra elegível é realizada por esses links, o site pode receber uma comissão, sem custo adicional decorrente do uso do link para o leitor.</p><p>O {{BLOG_TITLE}} é independente e não representa fabricantes, lojas ou plataformas citadas nos conteúdos.</p>"
+    },
+    {
+      "key": "afiliados",
+      "title": "Aviso de Afiliados",
+      "expected_slug": "aviso-de-afiliados",
+      "publish": true,
+      "content": "<p>O <strong>{{BLOG_TITLE}}</strong> pode participar de programas de afiliados de lojas, marketplaces e outras plataformas.</p><p>Isso significa que alguns links publicados no site podem ser links de afiliados. Quando o leitor acessa uma oferta por um desses links e realiza uma compra elegível, o site pode receber uma comissão.</p><p><strong>O uso do link de afiliado não acrescenta, por si só, um custo extra ao preço cobrado do leitor.</strong> Preço, frete, cupons, condições de pagamento e demais condições são definidos pela loja ou plataforma responsável pela venda.</p><p>A possibilidade de receber comissão não transforma o {{BLOG_TITLE}} em vendedor do produto. A compra é realizada diretamente na plataforma externa, que permanece responsável pela transação conforme suas próprias regras.</p><p>Buscamos deixar clara a presença de links comerciais e manter o conteúdo editorial separado das condições oferecidas pelos vendedores.</p>"
+    },
+    {
+      "key": "contato",
+      "title": "Contato",
+      "expected_slug": "contato",
+      "publish": true,
+      "requires_theme_contact_runtime": true,
+      "content": "<p>Quer falar com o <strong>{{BLOG_TITLE}}</strong>?</p><p>Use o formulário abaixo para enviar dúvidas, sugestões, correções ou observações sobre algum conteúdo publicado.</p><p>Para facilitar a análise, informe o título ou o link da página relacionada à sua mensagem sempre que possível.</p><div id=\"ga-contact-form-slot\"><div id=\"ContactForm1\" class=\"widget ContactForm ga-contact-explicit\"><div class=\"contact-form-widget\"><form name=\"contact-form\"><label for=\"ContactForm1_contact-form-name\"><strong>Nome</strong></label><input class=\"contact-form-name\" id=\"ContactForm1_contact-form-name\" name=\"name\" type=\"text\" value=\"\" autocomplete=\"name\"/><label for=\"ContactForm1_contact-form-email\"><strong>E-mail *</strong></label><input class=\"contact-form-email\" id=\"ContactForm1_contact-form-email\" name=\"email\" type=\"email\" value=\"\" autocomplete=\"email\" required=\"required\"/><label for=\"ContactForm1_contact-form-email-message\"><strong>Mensagem *</strong></label><textarea class=\"contact-form-email-message\" id=\"ContactForm1_contact-form-email-message\" name=\"email-message\" rows=\"7\" required=\"required\"></textarea><input class=\"contact-form-button contact-form-button-submit\" id=\"ContactForm1_contact-form-submit\" type=\"button\" value=\"Enviar\"/><div class=\"contact-form-error-message\" id=\"ContactForm1_contact-form-error-message\"></div><div class=\"contact-form-success-message\" id=\"ContactForm1_contact-form-success-message\"></div></form></div></div></div><p><small>Não somos loja, fabricante nem responsáveis pelo atendimento de pedidos realizados em plataformas de terceiros. Questões sobre pagamento, entrega, troca, garantia ou cancelamento devem ser tratadas diretamente com o vendedor ou com a plataforma onde a compra foi realizada.</small></p>"
+    },
+    {
+      "key": "privacidade",
+      "title": "Política de Privacidade",
+      "expected_slug": "politica-de-privacidade",
+      "publish": true,
+      "content": "<p>Esta Política de Privacidade explica, de forma geral, como o <strong>{{BLOG_TITLE}}</strong> pode tratar informações relacionadas à navegação e ao contato com o site.</p><h2>Dados de navegação</h2><p>O site é hospedado no Blogger, serviço do Google. Recursos da plataforma e serviços de terceiros podem utilizar cookies, registros técnicos e tecnologias semelhantes para funcionamento, segurança, medição de audiência e personalização de conteúdo.</p><h2>Links externos e afiliados</h2><p>Algumas páginas contêm links para lojas, marketplaces e outras plataformas externas. Ao acessar esses serviços, o tratamento de dados passa a seguir também as políticas da respectiva plataforma.</p><h2>Formulário de contato</h2><p>Se você enviar uma mensagem pelo formulário de contato, as informações fornecidas serão usadas para responder ou analisar a solicitação. Evite enviar dados sensíveis ou informações desnecessárias.</p><h2>Cookies</h2><p>Você pode gerenciar ou bloquear cookies pelas configurações do seu navegador. O bloqueio de determinados cookies pode afetar algumas funcionalidades do site.</p><h2>Alterações</h2><p>Esta política pode ser atualizada para refletir mudanças no site, nos serviços utilizados ou nas práticas de operação. A versão publicada nesta página será a referência vigente.</p>"
+    },
+    {
+      "key": "termos",
+      "title": "Termos de Uso",
+      "expected_slug": "termos-de-uso",
+      "publish": true,
+      "content": "<p>Ao acessar o <strong>{{BLOG_TITLE}}</strong>, você concorda em utilizar o conteúdo do site apenas para fins informativos e de pesquisa antes da compra.</p><h2>Conteúdo informativo</h2><p>As informações publicadas são preparadas com base em dados disponíveis no momento da produção do conteúdo. Preços, estoque, frete, condições comerciais, especificações e disponibilidade podem mudar sem aviso.</p><h2>Compras em terceiros</h2><p>O {{BLOG_TITLE}} não vende os produtos apresentados e não participa do processamento de pagamentos, entregas, trocas, cancelamentos ou garantias. Essas operações são de responsabilidade do vendedor e da plataforma onde a compra é realizada.</p><h2>Verificação antes da compra</h2><p>Antes de comprar, confirme diretamente na oferta todas as informações relevantes, incluindo modelo, voltagem, medidas, compatibilidade, material, prazo de entrega e política de devolução.</p><h2>Links externos</h2><p>O site pode conter links para páginas externas. Não controlamos continuamente o conteúdo, a disponibilidade ou as políticas desses sites.</p><h2>Atualizações</h2><p>Estes termos podem ser atualizados conforme o site evoluir. A versão publicada nesta página será considerada a versão vigente.</p>"
+    }
+  ]
+}
