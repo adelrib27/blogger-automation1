@@ -1,144 +1,240 @@
-# Blogger Safe Automator v0.3 — Chrome oficial via CDP
+# Blogger Safe Automator — estado validado v0.7
 
-Camada complementar ao Blogger Bridge/API para ações que a API Blogger v3 não expõe. Esta versão **não inicia o Chromium do Playwright**: conecta ao **Google Chrome oficial já autenticado** via CDP.
+Automação segura do Blogger usando **Google Chrome oficial via CDP loopback**, Blogger Local Runner e plugin privado do ChatGPT.
+
+> Checkpoint canônico completo: `docs/BLOGGER_AUTOMATION_V20_CHECKPOINT_2026-10-30.md`
+
+## Estado atual
+
+Validado em 30/10/2026:
+
+- Chrome oficial + CDP loopback;
+- auto-start do Chrome e runner no Windows;
+- Blogger Local Runner v0.7;
+- plugin privado com 8 ferramentas;
+- criação segura de blog;
+- configurações/SEO;
+- fuso GMT-03 / São Paulo;
+- TEMA MODELO V20 canônico;
+- adoção V20 em blog existente sem apagar posts;
+- provisionamento V20 de blog novo;
+- manifesto das 5 páginas institucionais;
+- publicação/validação das páginas via Blogger Bridge V2;
+- blog novo validado com 0 posts e 0 drafts.
+
+## Arquitetura
+
+```text
+ChatGPT
+  -> Blogger Local Runner plugin / MCP gateway
+    -> http://127.0.0.1:8765
+      -> Chrome oficial via CDP http://127.0.0.1:9222
+        -> painel Blogger
+
+ChatGPT
+  -> Blogger Bridge V2
+    -> posts e páginas pela API Blogger
+```
 
 ## Segurança mantida
 
-- nenhuma exclusão automática;
+- nenhuma exclusão automática de posts;
 - login/senha Google nunca são automatizados nem armazenados;
-- CDP fica em loopback por padrão (`127.0.0.1:9222`);
-- `audit` é somente leitura;
-- `create-blog` faz preflight por padrão;
-- criação real exige confirmação explícita `CREATE BLOG`;
-- seletores são fail-closed;
-- sucesso só é retornado depois de detectar um Blog ID novo e validar a URL pública com HTTP 200;
-- URLs gravadas em diagnóstico têm query/fragmento removidos;
-- ao terminar, o script **não fecha o Chrome oficial**;
-- CDP remoto é bloqueado por padrão.
+- CDP somente em loopback (`127.0.0.1:9222`);
+- runner somente em loopback (`127.0.0.1:8765`);
+- Bearer token obrigatório;
+- CDP remoto bloqueado;
+- operações de navegador serializadas;
+- confirmação literal para ações de escrita;
+- Blog ID validado antes de settings/tema;
+- seletores fail-closed;
+- robots personalizados permanecem intocados;
+- checkpoints de falha parcial;
+- sucesso somente após validação posterior.
 
-## Instalação
+## Runner v0.7
 
-```bat
-py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
-**Não execute `playwright install chromium` para autenticar Google.**
-
-## Iniciar o Chrome oficial com CDP
-
-```bat
-start "" "%ProgramFiles%\Google\Chrome\Application\chrome.exe" ^
-  --remote-debugging-port=9222 ^
-  --remote-debugging-address=127.0.0.1 ^
-  --user-data-dir="C:\Blogger-Automator\chrome-debug-profile" ^
-  "https://www.blogger.com/"
-```
-
-O perfil `chrome-debug-profile` deve continuar separado do perfil normal do Chrome.
-
-Verificação:
-
-```bat
-curl http://127.0.0.1:9222/json/version
-```
-
-## Uso direto pela CLI
-
-Auditoria:
-
-```bat
-.\.venv\Scripts\python.exe browser_provision.py audit
-```
-
-Preflight — não cria nada:
-
-```bat
-.\.venv\Scripts\python.exe browser_provision.py create-blog ^
-  --title "TESTE BLOGGER AUTOMATION" ^
-  --address "teste-blogger-automation"
-```
-
-Criação real, somente após o preflight:
-
-```bat
-.\.venv\Scripts\python.exe browser_provision.py create-blog ^
-  --title "TESTE BLOGGER AUTOMATION" ^
-  --address "teste-blogger-automation" ^
-  --apply ^
-  --confirm "CREATE BLOG"
-```
-
-## Serviço local para a futura ponte do ChatGPT
-
-`local_service.py` expõe o automador apenas no próprio PC:
+Arquivo:
 
 ```text
-http://127.0.0.1:8765
+local_service_v07.py
 ```
 
-Ele **não escuta na rede local nem na internet** e exige um Bearer token de pelo menos 32 caracteres.
+Health:
 
-No Prompt de Comando, defina um token somente para a sessão atual e inicie:
-
-```bat
-set BLOGGER_RUNNER_TOKEN=COLOQUE_AQUI_UM_TOKEN_ALEATORIO_COM_32_OU_MAIS_CARACTERES
-.\.venv\Scripts\python.exe local_service.py
+```json
+{
+  "ok": true,
+  "service": "blogger-local-runner",
+  "version": "0.7",
+  "bind": "loopback",
+  "capabilities": ["create", "settings", "v20", "provision-new-blog-v20"]
+}
 ```
 
-Endpoints atuais:
+## Ferramentas do plugin
 
-- `GET /v1/health`
-- `POST /v1/audit`
-- `POST /v1/preflight`
-- `POST /v1/create-blog`
+1. `health`
+2. `audit`
+3. `preflight_blog`
+4. `create_blog`
+5. `preflight_settings`
+6. `configure_settings`
+7. `adopt_model_v20`
+8. `provision_new_blog_v20`
 
-O endpoint de criação continua exigindo `confirm = "CREATE BLOG"`. O serviço força `allow_remote_cdp = false` e serializa operações do navegador para evitar duas escritas simultâneas.
+Confirmações:
 
-## Diagnósticos
+```text
+CREATE BLOG
+APPLY SETTINGS
+ADOPT MODEL V20
+PROVISION BLOG V20
+```
 
-Padrão:
+## Auto-start Windows
+
+Diretório:
+
+```text
+windows_autostart_v07/
+```
+
+Task Scheduler:
+
+```text
+BloggerAutomationV20
+```
+
+Log:
+
+```text
+C:\Blogger-Automator\logs\autostart\blogger_automation_v07.log
+```
+
+Bootstrap saudável:
+
+```text
+Chrome CDP OK.
+Iniciando runner v0.7.
+BOOTSTRAP_OK runner=0.7 cdp=9222
+```
+
+## Settings/SEO canônicos
+
+- visibilidade de pesquisa: ON;
+- HTTPS redirect: ON;
+- lazy images: ON;
+- WebP: ON;
+- descrição de pesquisa: ON;
+- fuso: `(GMT-03:00) Horário Padrão de Brasília – São Paulo`;
+- robots.txt personalizado: UNCHANGED;
+- headers robots personalizados: UNCHANGED.
+
+## TEMA MODELO V20
+
+Arquivos centrais:
+
+```text
+../../themes/blogger_modelo_v20/theme.xml.tpl
+../../themes/blogger_modelo_v20/pages.json
+```
+
+Marker:
+
+```text
+emporio-revisao-visual-20-modelo-final
+```
+
+O modelo não incorpora posts (`inherit_posts=false`).
+
+Paletas:
+
+```text
+auto, blue, emerald, plum, terracotta, teal, burgundy, indigo, amber
+```
+
+## Provisionamento de blog novo
+
+Arquivo:
+
+```text
+provision_new_blog_v20.py
+```
+
+Fluxo central:
+
+```text
+criar blog
+-> validar Blog ID/URL
+-> settings/SEO
+-> TEMA MODELO V20
+-> renderizar manifesto das 5 páginas
+-> checkpoint
+```
+
+Sucesso:
+
+```text
+BLOGGER_NEW_BLOG_V20_CORE_PROVISIONED
+```
+
+A publicação das páginas é concluída pelo Blogger Bridge V2. Essa arquitetura foi validada ponta a ponta.
+
+## Páginas canônicas
+
+1. Termos de Uso
+2. Política de Privacidade
+3. Contato
+4. Aviso de Afiliados
+5. Sobre
+
+## Teste final de referência
+
+```text
+Título: Laboratório Final V20
+Blog ID: 985207980854401026
+URL: https://labv20-final-1030-1629.blogspot.com/
+```
+
+Validado:
+
+```text
+settings/SEO PASS
+GMT-03 São Paulo PASS
+tema V20 PASS
+5 páginas LIVE
+0 posts LIVE
+0 drafts
+robots intocados
+```
+
+## Diagnósticos e checkpoints
 
 ```text
 logs/browser_diagnostics/
+logs/provisioning/
 ```
 
-Arquivos possíveis:
+O provisionador salva:
 
-- `visible_controls.json`
-- `blogger_panel.png`
-- `preflight_controls.json`
-- `after_create_blog.png`
-- `failure_controls.json`
-- `failure.png`
+```text
+logs/provisioning/provision-v20-YYYYMMDDTHHMMSSZ.json
+```
 
-Screenshots do painel devem ser tratados como dados privados.
-
-## Testes locais
+## Recuperação do bootstrap
 
 ```bat
-.\.venv\Scripts\python.exe -m unittest test_browser_provision.py test_local_service.py
+cd /d C:\Blogger-Automator\blogger_safe_automator_v0_3
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$c=Get-NetTCPConnection -LocalPort 9222 -State Listen -ErrorAction SilentlyContinue; if($c){Stop-Process -Id $c.OwningProcess -Force}; $p=Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'python.exe' -and $_.CommandLine -like '*local_service_v07.py*' }; $p | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }; Start-Sleep -Seconds 2; Start-ScheduledTask -TaskName 'BloggerAutomationV20'; Start-Sleep -Seconds 8; Get-Content 'C:\Blogger-Automator\logs\autostart\blogger_automation_v07.log' -Tail 12"
 ```
 
-## Escopo atual
+## Regra de manutenção
 
-Incluído:
+Não voltar a tratar o projeto como v0.3/v0.6 apenas porque nomes históricos de diretório ainda existem. O estado operacional validado é **runner v0.7 + V20 canônico**.
 
-- Chrome oficial + CDP;
-- auditoria do painel;
-- preflight fail-closed;
-- criação segura de blog;
-- proteção contra confundir o Blog ID antigo com o novo;
-- validação da URL pública;
-- serviço HTTP local autenticado e restrito ao loopback;
-- testes de regressão de segurança.
+Para detalhes, hashes, backups, histórico de promoção do tema, arquitetura do plugin e regras de retomada, consultar:
 
-Ainda não incluído:
-
-- Configurações;
-- Layout;
-- Tema;
-- exposição segura da ponte externa;
-- plugin privado do ChatGPT.
-
-Essas etapas devem usar o mesmo Chrome oficial/CDP, sem voltar ao Chromium interno do Playwright.
+```text
+docs/BLOGGER_AUTOMATION_V20_CHECKPOINT_2026-10-30.md
+```
