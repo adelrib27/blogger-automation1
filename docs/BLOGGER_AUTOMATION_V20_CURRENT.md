@@ -40,18 +40,39 @@ ChatGPT acessando runner sem CMD manual: PASS
 - 5 páginas institucionais LIVE
 - 5 posts afiliados LIVE
 - 0 drafts
-- Primeiro lote publicado com produtos reais da Shopee Affiliate API
-- Este lote antecede a regra obrigatória do segundo CTA e da Arquitetura de Silos; não alterar retroativamente sem decisão explícita.
+- produtos reais da Shopee Affiliate API
+- CTA afiliado no segundo parágrafo: PASS
+- segundo CTA perto do fim: PASS
+- linkagem interna: PASS
+- Arquitetura de Silos: PASS
 
-Backup:
+Silos:
 
 ```text
+Organização & Rotina
+- Organizador de guarda-roupa com zíper
+- Potes herméticos de vidro com tampa de bambu
+
+Conforto & Ambientes
+- Travesseiro 50x70 anunciado como pluma de ganso
+- Tapete geométrico aveludado e antiderrapante
+- Luminária solar com sensor de movimento
+```
+
+Backups:
+
+```text
+# snapshot original
 backups/blogger-content/2026-10-30/vitrine-pratica/manifest.md
 backups/blogger-content/2026-10-30/vitrine-pratica/01-organizador-guarda-roupa.html
 backups/blogger-content/2026-10-30/vitrine-pratica/02-luminaria-solar.html
 backups/blogger-content/2026-10-30/vitrine-pratica/03-travesseiro-50x70.html
 backups/blogger-content/2026-10-30/vitrine-pratica/04-tapete-geometrico.html
 backups/blogger-content/2026-10-30/vitrine-pratica/05-potes-hermeticos.html
+
+# snapshot após retrofit das regras v2
+backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/manifest.md
+backups/blogger-content/2026-10-30/vitrine-pratica-rules-v2/posts-full.html
 ```
 
 ### 2. Achados que Valem
@@ -127,8 +148,9 @@ backups/blogger-content/2026-10-30/escolha-certa-online/posts-full.html
 15 posts afiliados LIVE
 0 drafts após validação final em cada blog
 15 produtos/ofertas trabalhados no ciclo
-2 CTAs por post obrigatórios a partir do segundo blog
-linkagem interna e silos obrigatórios a partir do segundo blog
+2 CTAs por post: PASS nos 3 blogs
+linkagem interna: PASS nos 3 blogs
+Arquitetura de Silos: PASS nos 3 blogs
 ```
 
 ## Padrão editorial obrigatório vigente
@@ -153,6 +175,6 @@ Cada novo post deve conter:
 
 ## Próximo estado
 
-Os três blogs reais estão provisionados e com o primeiro lote editorial concluído. O próximo trabalho pode ser expansão de conteúdo, retroaplicação opcional de segundo CTA/silos ao Vitrine Prática, criação de novos silos, ou automação contínua de novos lotes.
+Os três blogs reais estão provisionados e com o primeiro lote editorial concluído sob o mesmo padrão editorial vigente. O próximo trabalho pode ser expansão de conteúdo, aprofundamento dos silos existentes, criação de novos silos ou automação contínua de novos lotes.
 
 Ao iniciar uma nova conversa, usar este arquivo como ponte para o checkpoint técnico completo e para o estado editorial atual. Não recomeçar o projeto a partir de documentação antiga.
