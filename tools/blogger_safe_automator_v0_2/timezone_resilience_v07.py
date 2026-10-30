@@ -73,10 +73,6 @@ def _editor_signature(page) -> tuple[str, ...]:
 
 def _new_timezone_editor(page, baseline: tuple[str, ...]):
     current = _visible_editor_meta(page)
-    current_sigs = {
-        f"{r.get('role')}|{r.get('aria')}|{r.get('ariaModal')}|{r.get('x')}|{r.get('y')}|{r.get('w')}|{r.get('h')}|{r.get('text')}"
-        for r in current
-    }
     baseline_sigs = set(baseline)
     fresh = [r for r in current if (
         f"{r.get('role')}|{r.get('aria')}|{r.get('ariaModal')}|{r.get('x')}|{r.get('y')}|{r.get('w')}|{r.get('h')}|{r.get('text')}"
@@ -183,84 +179,77 @@ def _click_timezone_row(page) -> dict:
 
 
 def _find_candidate(page, target: str):
-    # O Blogger atual renderiza as linhas de fuso como DIV/SPAN comuns em alguns layouts,
-    # sem role=option. Procuramos dentro de diálogos/listboxes visíveis e escolhemos o
-    # menor elemento clicável cujo texto normalizado corresponda ao fuso desejado.
-    roots = page.locator('[role="dialog"], [role="listbox"]')
-    best = None
+    """Busca o fuso em uma única passagem DOM e marca o melhor elemento clicável."""
     try:
-        root_count = min(roots.count(), 40)
-    except Exception:
-        root_count = 0
-
-    for rix in range(root_count):
-        root = roots.nth(rix)
-        try:
-            if not root.is_visible():
-                continue
-        except Exception:
-            continue
-
-        candidates = root.locator(
-            '[role="option"], [role="menuitemradio"], [role="radio"], '
-            '[role="button"], [tabindex="0"], li, div, span'
-        )
-        try:
-            count = min(candidates.count(), 5000)
-        except Exception:
-            count = 0
-
-        for i in range(count):
-            item = candidates.nth(i)
-            try:
-                if not item.is_visible():
-                    continue
-                text = item.inner_text(timeout=180).strip()
-                if not text or len(text) > 260 or not _matches(text, target):
-                    continue
-                meta = item.evaluate(
-                    """el => {
+        meta = page.evaluate(
+            """target => {
+                const ATTR = 'data-blogger-tz-target-v07';
+                document.querySelectorAll('[' + ATTR + ']').forEach(el => el.removeAttribute(ATTR));
+                const visible = el => {
+                    const r = el.getBoundingClientRect();
+                    const s = getComputedStyle(el);
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                };
+                const norm = value => String(value || '')
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[–—−]/g, '-').replace(/\s+/g, ' ').trim().toLowerCase();
+                const matches = text => {
+                    const n = norm(text);
+                    const t = norm(target);
+                    if (t && n.includes(t)) return true;
+                    const compact = n.replace(/\s/g, '');
+                    if (!compact.includes('gmt-03:00') && !compact.includes('gmt03:00')) return false;
+                    return ['brasilia','sao paulo','fortaleza','recife','horario padrao de brasilia']
+                        .some(marker => n.includes(marker));
+                };
+                const roots = [...document.querySelectorAll('[role="dialog"],[role="listbox"]')].filter(visible);
+                let best = null;
+                for (const root of roots) {
+                    const nodes = [root, ...root.querySelectorAll('[role="option"],[role="menuitemradio"],[role="radio"],[role="button"],[tabindex="0"],li,div,span')];
+                    for (const el of nodes) {
+                        if (!visible(el)) continue;
+                        const text = String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+                        if (!text || text.length > 260 || !matches(text)) continue;
                         const r = el.getBoundingClientRect();
-                        return {
-                            tag: el.tagName,
-                            role: el.getAttribute('role') || '',
-                            tabindex: el.getAttribute('tabindex') || '',
-                            cursor: getComputedStyle(el).cursor || '',
-                            area: Math.max(1, r.width * r.height)
-                        };
-                    }"""
-                )
-            except Exception:
-                continue
-
-            n = _norm(text)
-            compact = n.replace(" ", "")
-            score = 0
-            if "gmt-03:00" in compact or "gmt03:00" in compact:
-                score += 140
-            if "brasilia" in n:
-                score += 70
-            if "sao paulo" in n:
-                score += 70
-            if "horario padrao de brasilia" in n:
-                score += 50
-            if meta.get("role") in ("option", "menuitemradio", "radio", "button"):
-                score += 100
-            if meta.get("tabindex") == "0":
-                score += 70
-            if meta.get("cursor") == "pointer":
-                score += 50
-            if meta.get("tag") in ("LI", "BUTTON"):
-                score += 30
-            # Prefere o texto mais específico e o menor elemento visual.
-            rank = (score, -len(text), -float(meta.get("area") or 1))
-            if best is None or rank > best[0]:
-                best = (rank, item, text)
-
-    if best is None:
+                        const role = el.getAttribute('role') || '';
+                        const tabindex = el.getAttribute('tabindex') || '';
+                        const cursor = getComputedStyle(el).cursor || '';
+                        const n = norm(text);
+                        const compact = n.replace(/\s/g, '');
+                        let score = 0;
+                        if (compact.includes('gmt-03:00') || compact.includes('gmt03:00')) score += 140;
+                        if (n.includes('brasilia')) score += 70;
+                        if (n.includes('sao paulo')) score += 70;
+                        if (n.includes('horario padrao de brasilia')) score += 50;
+                        if (['option','menuitemradio','radio','button'].includes(role)) score += 100;
+                        if (tabindex === '0') score += 70;
+                        if (cursor === 'pointer') score += 50;
+                        if (el.tagName === 'LI' || el.tagName === 'BUTTON') score += 30;
+                        const rank = [score, -text.length, -(Math.max(1, r.width * r.height))];
+                        if (!best || rank[0] > best.rank[0] ||
+                            (rank[0] === best.rank[0] && rank[1] > best.rank[1]) ||
+                            (rank[0] === best.rank[0] && rank[1] === best.rank[1] && rank[2] > best.rank[2])) {
+                            best = {el, text, score, rank};
+                        }
+                    }
+                }
+                if (!best) return null;
+                best.el.setAttribute(ATTR, '1');
+                return {text: best.text, score: best.score};
+            }""",
+            target,
+        )
+    except Exception:
         return None
-    _, item, text = best
-    return (best[0][0], item, text)
+    if not meta:
+        return None
+    item = page.locator('[data-blogger-tz-target-v07="1"]').first
+    try:
+        if not item.count() or not item.is_visible():
+            return None
+    except Exception:
+        return None
+    return (int(meta.get("score") or 0), item, str(meta.get("text") or ""))
 
 
 def _open_nested_selector(page) -> bool:
@@ -288,9 +277,8 @@ def _open_nested_selector(page) -> bool:
 
 
 def _scroll_roots(page) -> bool:
-    # Move prioritariamente o maior contêiner realmente scrollável do editor de fuso.
     try:
-        moved = page.evaluate(
+        return bool(page.evaluate(
             """() => {
                 const visible = el => {
                     const r = el.getBoundingClientRect();
@@ -315,43 +303,40 @@ def _scroll_roots(page) -> bool:
                 best.n.dispatchEvent(new Event('scroll', {bubbles:true}));
                 return Math.abs(best.n.scrollTop - before) > 1;
             }"""
-        )
-        return bool(moved)
+        ))
     except Exception:
         return False
 
 
 def _diagnostic_options(page) -> list[str]:
-    texts: list[str] = []
     try:
-        dialogs = page.locator('[role="dialog"]')
-        for rix in range(min(dialogs.count(), 20)):
-            root = dialogs.nth(rix)
-            if not root.is_visible():
-                continue
-            rows = root.locator('li, [role="option"], [role="radio"], div, span')
-            for i in range(min(rows.count(), 1200)):
-                item = rows.nth(i)
-                try:
-                    if not item.is_visible():
-                        continue
-                    text = re.sub(r"\s+", " ", item.inner_text(timeout=100)).strip()
-                except Exception:
-                    continue
-                if not text or len(text) > 180 or "gmt" not in _norm(text):
-                    continue
-                if text not in texts:
-                    texts.append(text)
-                if len(texts) >= 20:
-                    return texts
+        return page.evaluate(
+            """() => {
+                const visible = el => {
+                    const r = el.getBoundingClientRect();
+                    const s = getComputedStyle(el);
+                    return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+                };
+                const out = [];
+                for (const root of [...document.querySelectorAll('[role="dialog"]')].filter(visible)) {
+                    for (const el of root.querySelectorAll('li,[role="option"],[role="radio"],div,span')) {
+                        if (!visible(el)) continue;
+                        const text = String(el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+                        if (!text || text.length > 180 || !text.toLowerCase().includes('gmt')) continue;
+                        if (!out.includes(text)) out.push(text);
+                        if (out.length >= 20) return out;
+                    }
+                }
+                return out;
+            }"""
+        ) or []
     except Exception:
-        pass
-    return texts
+        return []
 
 
 def set_timezone_resilient(page, target: str) -> dict:
     editor = _click_timezone_row(page)
-    page.wait_for_timeout(300)
+    page.wait_for_timeout(250)
 
     match = _find_candidate(page, target)
     if match is None:
@@ -360,18 +345,18 @@ def set_timezone_resilient(page, target: str) -> dict:
     chosen = None
     chosen_text = ""
     stagnant = 0
-    for _ in range(90):
+    for _ in range(24):
         match = _find_candidate(page, target)
         if match is not None:
             _, chosen, chosen_text = match
             break
         moved = _scroll_roots(page)
-        page.wait_for_timeout(160)
+        page.wait_for_timeout(120)
         if moved:
             stagnant = 0
         else:
             stagnant += 1
-            if stagnant >= 3:
+            if stagnant >= 2:
                 break
 
     if chosen is None:
@@ -387,14 +372,14 @@ def set_timezone_resilient(page, target: str) -> dict:
         )
 
     try:
-        chosen.scroll_into_view_if_needed(timeout=2000)
+        chosen.scroll_into_view_if_needed(timeout=1500)
     except Exception:
         pass
     try:
-        chosen.click(timeout=5000)
+        chosen.click(timeout=3500)
     except Exception:
         chosen.evaluate("el => el.click()")
-    page.wait_for_timeout(350)
+    page.wait_for_timeout(300)
 
     cfg.click_dialog_action(page, "SALVAR")
     return {"target": target, "matched_text": chosen_text, "selected_and_saved": True}
