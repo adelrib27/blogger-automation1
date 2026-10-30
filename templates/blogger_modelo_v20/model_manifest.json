@@ -17,7 +17,18 @@
     "public_url_is_parameter": true,
     "description_is_parameter": true,
     "search_description_is_parameter": true,
-    "reference_blog_identity_must_not_leak": true
+    "reference_blog_identity_must_not_leak": true,
+    "visual_identity_is_parameterized": true,
+    "default_palette_mode": "auto",
+    "auto_palette_is_deterministic_from_title_and_url": true,
+    "manual_color_overrides_supported": true
+  },
+  "visual_identity": {
+    "scope": ["header", "accent", "footer"],
+    "available_palettes": ["blue", "emerald", "plum", "terracotta", "teal", "burgundy", "indigo", "amber"],
+    "default_mode": "auto",
+    "render_arguments": ["--palette", "--primary-color", "--header-bg", "--footer-bg"],
+    "goal": "same validated structure with distinct visual identity per blog"
   },
   "required_pages": [
     {"key":"sobre","title":"Sobre","slug":"sobre","must_be_live":true},
@@ -38,7 +49,8 @@
     "comments_login_removed",
     "related_articles_below_post",
     "affiliate_notice_compatible",
-    "shopee_cta_compatible"
+    "shopee_cta_compatible",
+    "per_blog_visual_identity_palette"
   ],
   "install_validation": [
     "target_blog_id_matches_expected",
@@ -51,7 +63,8 @@
     "contact_fields_visible",
     "contact_fields_name_email_message_submit_present",
     "reference_blog_url_absent",
-    "reference_product_content_absent"
+    "reference_product_content_absent",
+    "visual_identity_palette_rendered"
   ],
   "reference_blog": {
     "blog_id": "1453188702831337099",
