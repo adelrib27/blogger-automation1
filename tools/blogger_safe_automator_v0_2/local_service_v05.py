@@ -75,6 +75,21 @@ def execute_model_v20_adoption(expected_blog_id: str, blog_title: str, blog_url:
 class Handler(base.Handler):
     server_version = "BloggerLocalRunner/0.5"
 
+    def do_GET(self) -> None:
+        if self.path != "/v1/health":
+            return super().do_GET()
+        if not self._require_auth():
+            return
+        self._send(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "service": "blogger-local-runner",
+                "version": "0.5",
+                "bind": "loopback",
+            },
+        )
+
     def do_POST(self) -> None:
         if self.path != "/v1/adopt-model-v20":
             return super().do_POST()
