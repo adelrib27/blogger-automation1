@@ -37,7 +37,6 @@ def _mark_exact_target_control(page, target: str):
                         const text = textOf(textEl);
                         if (!text || text.length > 300 || !matches(text)) continue;
 
-                        // Ache a menor "linha" ancestral que ainda contém exatamente este fuso.
                         let row = textEl;
                         for (let depth = 0; depth < 8 && row.parentElement && dialog.contains(row.parentElement); depth++) {
                             const parent = row.parentElement;
@@ -46,7 +45,6 @@ def _mark_exact_target_control(page, target: str):
                             row = parent;
                         }
 
-                        // Monte candidatos interativos dentro da linha e nos ancestrais imediatos.
                         const candidates = [];
                         const add = el => { if (el && el.nodeType === 1 && !candidates.includes(el)) candidates.push(el); };
                         add(textEl);
@@ -80,7 +78,6 @@ def _mark_exact_target_control(page, target: str):
                             if (style.cursor === 'pointer') score += 160;
                             if (row.contains(el)) score += 120;
                             if (textOf(el) && matches(textOf(el))) score += 100;
-                            // Evite containers gigantes do modal.
                             const area = Math.max(1, r.width * r.height);
                             score -= Math.min(100, area / 10000);
                             if (score > controlScore) {
@@ -200,6 +197,68 @@ def _is_selected(meta) -> bool:
     return False
 
 
+def _try_click_exact_text_and_ancestors(page, target: str):
+    """Aciona somente o texto exato e seus ancestrais imediatos da mesma opção."""
+    matches = page.get_by_text(target, exact=True)
+    try:
+        count = matches.count()
+    except Exception:
+        count = 0
+    for i in range(count - 1, -1, -1):
+        text_loc = matches.nth(i)
+        try:
+            text_loc.scroll_into_view_if_needed(timeout=1500)
+        except Exception:
+            pass
+        current = text_loc
+        for depth in range(5):
+            try:
+                txt = current.inner_text(timeout=500).strip()
+            except Exception:
+                txt = ""
+            if target not in txt and depth > 0:
+                break
+            try:
+                current.click(timeout=1800, force=True)
+            except Exception:
+                try:
+                    current.evaluate(
+                        """el => {
+                            el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerType:'mouse'}));
+                            el.dispatchEvent(new MouseEvent('mousedown',{bubbles:true}));
+                            el.click();
+                            el.dispatchEvent(new MouseEvent('mouseup',{bubbles:true}));
+                            el.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerType:'mouse'}));
+                        }"""
+                    )
+                except Exception:
+                    pass
+            page.wait_for_timeout(180)
+            meta = _selection_meta(page)
+            if _is_selected(meta):
+                return meta
+            try:
+                current = current.locator("xpath=..").first
+            except Exception:
+                break
+    return _selection_meta(page)
+
+
+def _try_keyboard_space(page, control):
+    try:
+        control.evaluate(
+            """el => {
+                if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','-1');
+                el.focus({preventScroll:true});
+            }"""
+        )
+        page.keyboard.press("Space")
+        page.wait_for_timeout(180)
+    except Exception:
+        pass
+    return _selection_meta(page)
+
+
 def set_timezone_offscreen_resilient(page, target: str) -> dict:
     editor = base._click_timezone_row(page)
     page.wait_for_timeout(180)
@@ -226,34 +285,26 @@ def set_timezone_offscreen_resilient(page, target: str) -> dict:
         raise cfg.SettingsError(f'Fuso alvo foi localizado, mas o controle selecionável não foi materializado: {target}. Alvo={meta}')
 
     before = _selection_meta(page)
+
     try:
-        control.click(timeout=3000, force=True)
+        control.click(timeout=2500, force=True)
     except Exception:
         try:
-            control.evaluate("el => { el.dispatchEvent(new MouseEvent('mousedown',{bubbles:true})); el.click(); el.dispatchEvent(new MouseEvent('mouseup',{bubbles:true})); }")
-        except Exception as exc:
-            raise cfg.SettingsError(f'Controle do fuso alvo não pôde ser acionado: {target}. Alvo={meta}') from exc
-    page.wait_for_timeout(260)
-
-    after = _selection_meta(page)
-    if not _is_selected(after):
-        # Segundo fallback: clique no centro da linha inteira, útil quando o controle visual é filho não interativo.
-        row = page.locator(f'[{ROW_ATTR}="1"]').first
-        try:
-            box = row.bounding_box()
+            control.evaluate("el => el.click()")
         except Exception:
-            box = None
-        if box:
-            try:
-                page.mouse.click(box["x"] + box["width"] * 0.5, box["y"] + box["height"] * 0.5)
-                page.wait_for_timeout(220)
-                after = _selection_meta(page)
-            except Exception:
-                pass
+            pass
+    page.wait_for_timeout(180)
+    after = _selection_meta(page)
+
+    if not _is_selected(after):
+        after = _try_click_exact_text_and_ancestors(page, target)
+
+    if not _is_selected(after):
+        after = _try_keyboard_space(page, control)
 
     if not _is_selected(after):
         raise cfg.SettingsError(
-            f'GMT-03 foi encontrado, mas o controle não entrou em estado selecionado. '
+            f'GMT-03 foi encontrado, mas nem o radio, o texto exato nem os ancestrais imediatos ativaram a opção. '
             f'Alvo={meta}. Antes={before}. Depois={after}.'
         )
 
@@ -263,7 +314,7 @@ def set_timezone_offscreen_resilient(page, target: str) -> dict:
         "matched_text": str(meta.get("text") or ""),
         "selected_and_saved": True,
         "selection_meta": after,
-        "navigation": "exact-offscreen-real-selectable-control",
+        "navigation": "exact-text-row-activation-with-radio-validation",
     }
 
 
