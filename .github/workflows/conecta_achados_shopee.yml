@@ -1,10 +1,7 @@
-name: Conecta Achados — Shopee + ChatGPT (Rascunho)
+name: Conecta Achados — Shopee artigo longo (Rascunho)
 
 on:
-  # Modo seguro de homologação.
-  # O schedule diário será habilitado somente depois de:
-  # 1) configurar OPENAI_API_KEY;
-  # 2) executar e validar um rascunho completo no Conecta Achados.
+  # Execução manual segura. O fluxo cria rascunho por padrão.
   workflow_dispatch:
 
 permissions:
@@ -15,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  criar-rascunho:
+  criar-rascunho-longo:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +33,7 @@ jobs:
       - name: Validar sintaxe
         run: python -m compileall -q conecta_achados/src
 
-      - name: Extrair produto, criar copy com ChatGPT e enviar rascunho
+      - name: Extrair produto Shopee e criar artigo editorial longo
         env:
           BLOGGER_BLOG_ID: "1719259388907013414"
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
@@ -46,15 +43,16 @@ jobs:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
 
+          # Opcional. Se estiver vazio, automation_rich.py usa fallback editorial local.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: "chat-latest"
 
           CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
 
-          # Segurança: esta versão cria somente RASCUNHOS.
+          # Segurança: continua criando somente RASCUNHOS neste workflow.
           CONECTA_PUBLISH_MODE: "draft"
 
-        run: python conecta_achados/src/automation.py
+        run: python conecta_achados/src/automation_rich.py
 
       - name: Registrar produto utilizado
         if: success()
@@ -63,7 +61,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+adelrib27@users.noreply.github.com"
             git add conecta_achados/data/state.json
-            git commit -m "Conecta Achados: registrar produto usado"
+            git commit -m "Conecta Achados: registrar produto usado em artigo longo"
             git pull --rebase origin main
             git push origin HEAD:main
           else
