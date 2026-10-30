@@ -1,0 +1,1877 @@
+{
+  "version": "2.3",
+  "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
+  "primarySemanticFilter": {
+    "input": 551,
+    "accepted": 432,
+    "rejected": 119
+  },
+  "reserveSemanticFilter": null,
+  "diversity": {
+    "policy": {
+      "enabled": true,
+      "max_per_shop": 3,
+      "max_per_keyword": 4,
+      "max_per_category": 8,
+      "relaxed_caps": {
+        "max_per_shop": 5,
+        "max_per_keyword": 6,
+        "max_per_category": 10
+      },
+      "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
+    },
+    "selectionPasses": {
+      "strict": 5,
+      "relaxed": 0,
+      "fallback": 0
+    },
+    "shopDistribution": [
+      [
+        "1386775107",
+        3
+      ],
+      [
+        "1242226486",
+        1
+      ],
+      [
+        "736567489",
+        1
+      ]
+    ],
+    "keywordDistribution": [
+      [
+        "oculos uv400",
+        3
+      ],
+      [
+        "organizador banheiro",
+        1
+      ],
+      [
+        "organizador cozinha",
+        1
+      ]
+    ],
+    "categoryDistribution": [
+      [
+        "Moda & Beleza",
+        3
+      ],
+      [
+        "Casa & Decoracao",
+        1
+      ],
+      [
+        "Cozinha & Utilidades",
+        1
+      ]
+    ]
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "itemId": 23193689334,
+      "productName": "Óculos de Sol Race Esportivo Feminino Baixa Pace Premium Bike Corrida Running uv400",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "oculos uv400"
+      ],
+      "opportunityScore": 78.58,
+      "shopName": "Fortuna Sunglasses",
+      "offerLink": "https://s.shopee.com.br/60SmOClNrK"
+    },
+    {
+      "rank": 2,
+      "itemId": 23598666696,
+      "productName": "Oculos de Sol Redondo Premium Flexivel Blogueira Moderno Luxo uv400 Feminino Masculino",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "oculos uv400"
+      ],
+      "opportunityScore": 78.58,
+      "shopName": "Fortuna Sunglasses",
+      "offerLink": "https://s.shopee.com.br/9KjEMKYh62"
+    },
+    {
+      "rank": 3,
+      "itemId": 22793504264,
+      "productName": "Óculos de Sol London Gatinho Premium Vintage Clássico Retrô Blogueira uv400 Feminino",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "oculos uv400"
+      ],
+      "opportunityScore": 77.46,
+      "shopName": "Fortuna Sunglasses",
+      "offerLink": "https://s.shopee.com.br/6AmCaVkkWN"
+    },
+    {
+      "rank": 4,
+      "itemId": 23498464792,
+      "productName": "Carrinho Organizador De Aço Multiuso 3 Prateleiras Premium Rodízio 360º Cozinha Sala Banheiro Livros Decoração Moderna",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador banheiro",
+        "organizador cozinha"
+      ],
+      "opportunityScore": 71.95,
+      "shopName": "VTO.VENDAS",
+      "offerLink": "https://s.shopee.com.br/3LS1DI0PJA"
+    },
+    {
+      "rank": 5,
+      "itemId": 58255557635,
+      "productName": "Porta Filtro Café 102 e 103 Suporte Moderno para Coador de Papel Organizador Decorativo Para Cozinha",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador cozinha"
+      ],
+      "opportunityScore": 69.88,
+      "shopName": "HYPERLOGIC",
+      "offerLink": "https://s.shopee.com.br/4VdybQvxwN"
+    }
+  ],
+  "rejectedSample": [
+    {
+      "itemId": 57501324139,
+      "productName": "Telão de Projeção Portátil (Matte White) - Ideal p/ Filmes e Jogos em 4K/Full HD 72''/150''",
+      "shopName": "Rei das Telas e Impressões",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23198881540,
+      "productName": "Projeção 4k Preto Wifi Android Portátil Ultra Hdmi 1080p Compatível",
+      "shopName": "Riberken",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22994394160,
+      "productName": "Telão 4k Retro Wifi Android Portátil Led Hdmi 1080p Presente Dia Das Crianças",
+      "shopName": "Riberken",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22994394157,
+      "productName": "Cinema 4k Branco Wifi Android Portátil Led Hdmi 1080p Presente Dia Das Mães",
+      "shopName": "Riberken",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23693247242,
+      "productName": "Tela para projeção - 150 POL -  Data Show, telão, cinema, casa, igreja, Bar, promoção - portátil - lona dobrável - acabamento: VELCRO",
+      "shopName": "Multipress - Shop",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23397753938,
+      "productName": "Tela para projeção -  130 pol - Data Show, telão, cinema, casa, igreja, Bar, promoção - portátil - lona dobrável - acabamento: ILHÓS",
+      "shopName": "Multipress - Shop",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21699381764,
+      "productName": "Tela para projeção -  70 pol -  Data Show, telão, cinema, casa, igreja, Bar, promoção - portátil - acabamento: VELCRO",
+      "shopName": "Multipress - Shop",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21099381776,
+      "productName": "Tela para projeção - 100 pol - Data Show, telão, cinema, casa, igreja - portátil - lona dobrável - acabamento: ILHÓS",
+      "shopName": "Multipress - Shop",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23593252309,
+      "productName": "Tela para projeção - 110 POL -  Data Show, telão, cinema, casa, igreja, Bar, promoção - portátil - lona dobrável - acabamento: VELCRO",
+      "shopName": "Multipress - Shop",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23597743985,
+      "productName": "Tela para projeção - 100   Data Show, telão, cinema, casa, igreja, Bar, promoção - portátil - lona dobrável - acabamento: VELCRO",
+      "shopName": "Multipress - Shop",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58250130339,
+      "productName": "Tela Para Projetor Portátil 100 Polegadas Dobrável Refletiva 4K Full HD Antirreflexo",
+      "shopName": "ANEBRO",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "tela para projetor"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 58216404819,
+      "productName": "AOC Tela Projeção Portátil 4K 8K 72\" Antirreflexo c/ Ganchos e Velcro, Dobrável p/ Home, Outdoor e Projetores Portáteis",
+      "shopName": "AOC PROJETOR",
+      "keywords": [
+        "projetor portatil"
+      ],
+      "evaluations": {
+        "projetor portatil": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "projetor",
+              "projector"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58208946116,
+      "productName": "Caixa caixinha de som portátil Bluetooth Modelo go Resistente À Água - Tech Otoni",
+      "shopName": "Tech Otoni",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23194486701,
+      "productName": "Kit Som Ambiente Bluetooth Amplificador 4 Canais + 4 Arandelas De Teto 6 Pol 70W Alexa Bivolt",
+      "shopName": "ELETROHALEN",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23294460546,
+      "productName": "Kit Som Ambiente Bluetooth 2 Zonas + 6 Caixas De Som Coaxial Sistema de Som Receiver Central",
+      "shopName": "ELETROHALEN",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22894483247,
+      "productName": "Kit Som Ambiente Bluetooth 2 Zonas + 8 Caixas De Som Coaxial Amplificador",
+      "shopName": "ELETROHALEN",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23893847042,
+      "productName": "Luminária Pojeção Estrelas com Caixa Som Bluetooth Branco",
+      "shopName": "tudojuntoshop",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22394528263,
+      "productName": "Caixa Som Mochila Rosa Portátil Bluetooth USB Rádio Compacta",
+      "shopName": "tudojuntoshop",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 18598350302,
+      "productName": "Alaxe5 Generation Original Speaker Immediate Shipping Best Price",
+      "shopName": "TW1 TECH LTDA",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21296971156,
+      "productName": "Lampada Musical Caixa Som Bluetooth Led Rgb Com Controle",
+      "shopName": "Teslastore",
+      "keywords": [
+        "caixa de som bluetooth"
+      ],
+      "evaluations": {
+        "caixa de som bluetooth": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa de som",
+              "speaker bluetooth",
+              "karaoke bluetooth"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22093160276,
+      "productName": "2026 Nova Série 8 Relógio T800 Ultra Smart Watch Esportivo Sem Fio À Prova D'água T800 Ultra2 MAX",
+      "shopName": "-BML-",
+      "keywords": [
+        "smartwatch"
+      ],
+      "evaluations": {
+        "smartwatch": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "smartwatch",
+              "relogio inteligente"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 18499604408,
+      "productName": "2026 Novo Watch S20 PRO Max Relógio 10 Smart Watch Homens BT Chamada Sempre Em Exibição Temperatura",
+      "shopName": "-BML-",
+      "keywords": [
+        "smartwatch"
+      ],
+      "evaluations": {
+        "smartwatch": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "smartwatch",
+              "relogio inteligente"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21098294107,
+      "productName": "Smart Watch Q11 Três em Um Original Masculino Feminino Esportivo Tela de Toque HD de 1,83 inches",
+      "shopName": "Relógios ULTRA",
+      "keywords": [
+        "smartwatch"
+      ],
+      "evaluations": {
+        "smartwatch": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "smartwatch",
+              "relogio inteligente"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58255244659,
+      "productName": "Cabo USB Para Tipo C Baseus 3.A QC3.0 Nylon Carregamento Rápido REFORCADO",
+      "shopName": "LuckStoreRj",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo usb"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22599440688,
+      "productName": "Carregador Turbo 120W Fonte e Cabo Tipo C 6A Carga Super Charger Ultra Rápida",
+      "shopName": "voltz_imports",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo tipo c"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 20799574108,
+      "productName": "Cabo de Carregador USB C 1 Metro 1 Un, Cabo de Carregamento Rápido USB 2.0",
+      "shopName": "rmbusiness",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo de carregamento"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 58255033299,
+      "productName": "Cabo Tipo C Super Resistente Nylon – Carregador Rápido Android e iPhone",
+      "shopName": "rmbusiness",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo tipo c"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22898660135,
+      "productName": "Cabo Baseus Cafule USB para Lightning 2.4A 1m Nylon Trançado Reforçado Carregamento Rápido Original",
+      "shopName": "LuckStoreRj",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "carregador",
+              "fonte de carregamento",
+              "adaptador usb",
+              "carregador turbo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58208663686,
+      "productName": "Carregador Turbo 67W Fonte e Cabo Tipo C 6A Carga Super Charger Ultra Rápida",
+      "shopName": "voltz_imports",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo tipo c"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 9339023299,
+      "productName": "Kit Cabos 2 Metros Tipo C V8 Lightning iPhone Carga Rápida",
+      "shopName": "Shop Aquarela",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "carregador",
+              "fonte de carregamento",
+              "adaptador usb",
+              "carregador turbo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 17587352345,
+      "productName": "Carregador Veicular USB Com Cabo Tipo C Incluso Ultra Rápido Turbo Inova",
+      "shopName": "Shop Aquarela",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo tipo c"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23594425198,
+      "productName": "Cabo Para IOS USB Carregamento Rápido de 1m ou 2m Lightning Iphone Ipad",
+      "shopName": "MultGo Oficial",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "carregador",
+              "fonte de carregamento",
+              "adaptador usb",
+              "carregador turbo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58256938807,
+      "productName": "Carregador Turbo 30W Original A'Gold Para iPhone 11 12 13 14 Fonte USB-C + Cabo Lightning Completo Carga Rápida",
+      "shopName": "Acessórios do MD",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo lightning"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 58259749592,
+      "productName": "Kit Carregador 67W Turbo + Cabo Tipo-C Carga Rápida Universal Xiaomi Redmi Note E Poco X7 Android",
+      "shopName": "Reis Empire",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo tipo c"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 26879149264,
+      "productName": "Cabo USB 3A LED Glow 1M-De Carregamento De Luz Fluida Luminosa Para Micro E Tipo C , Dados Rápido",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo usb"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 28835100554,
+      "productName": "Cabo De Dados De Carregamento Rápido Transparente De 100 W Para Dispositivos Apple Android Tipo C Display Digital",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "carregador",
+              "fonte de carregamento",
+              "adaptador usb",
+              "carregador turbo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23395158497,
+      "productName": "Cabo Tipo C Carregador Usb Ultra Rápido Reforçado 2 Metros Anti quebra Usb-c",
+      "shopName": "ELETROSMAY2",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo tipo c"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 58258491270,
+      "productName": "Carregador Turbo 2 Saídas Fonte 50W 2 Entradas USB e USB-C com Cabo Lightning Ultra Rápido",
+      "shopName": "ENDLESS",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "cabo lightning"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 19077759813,
+      "productName": "CABO PARA IOS USB DE CARREGAMENTO RÁPIDO DE 1M OU 2M PARA IOS COMPATÍVEL IPHONE",
+      "shopName": "LUFEE ACESSÓRIOS",
+      "keywords": [
+        "carregador rapido"
+      ],
+      "evaluations": {
+        "carregador rapido": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "carregador",
+              "fonte de carregamento",
+              "adaptador usb",
+              "carregador turbo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 13561358997,
+      "productName": "Bocal rodo De Pisos Para Aspiradores Electrolux 32mm Electrolux",
+      "shopName": "CTM E-COMMERCE",
+      "keywords": [
+        "aspirador de po"
+      ],
+      "evaluations": {
+        "aspirador de po": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "aspirador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21798473433,
+      "productName": "Motor Electrolux Flex 127v Bps1s 1000w A12556901",
+      "shopName": "CTM E-COMMERCE",
+      "keywords": [
+        "aspirador de po"
+      ],
+      "evaluations": {
+        "aspirador de po": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "aspirador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 18196902095,
+      "productName": "64502878 Motor Asp. Electrolux A10 Flex Hidrovac Bps1s 220V",
+      "shopName": "CTM E-COMMERCE",
+      "keywords": [
+        "aspirador de po"
+      ],
+      "evaluations": {
+        "aspirador de po": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "aspirador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 13561317601,
+      "productName": "Kit com 2 Filtros para Aspiradores Ergorapido - ERG26 e ERG27 Electrolux",
+      "shopName": "CTM E-COMMERCE",
+      "keywords": [
+        "aspirador de po"
+      ],
+      "evaluations": {
+        "aspirador de po": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "aspirador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22599316691,
+      "productName": "Limpador de pisos 3 em 1 aspirar lavar secar Bivolt motor de tração bateria extra grande inclui balde autolimpez",
+      "shopName": "Globilia Seleção Oficial",
+      "keywords": [
+        "aspirador de po"
+      ],
+      "evaluations": {
+        "aspirador de po": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "aspirador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22498584050,
+      "productName": "Gancho de Parede Adesivo Casa Cozinha Quarto Banheiro",
+      "shopName": "Utilidade na Web",
+      "keywords": [
+        "organizador banheiro"
+      ],
+      "evaluations": {
+        "organizador banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banheiro"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "prateleira",
+              "suporte",
+              "porta ",
+              "carrinho",
+              "cesto",
+              "dispenser",
+              "dispensador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58268939878,
+      "productName": "Motor Ventilador Ar Interno Ka Se 2015 a 2018 1.5 4cc ",
+      "shopName": "Auto Pecas Painel",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "motor ventilador"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 58219600499,
+      "productName": "Ventilador Interno Painel Ar Grand Siena 1.4 2012 a 2016  ",
+      "shopName": "Auto Pecas Painel",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "ventilador interno",
+            "painel ar",
+            "grand siena"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22698820897,
+      "productName": "Corrente de Comando Cg Titan 150 2004 2005 2006 2007 2008 Fan 150 Esi 2010 2011 2012 2013 Bros 150",
+      "shopName": "IAF MOTOPARTS",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "ventilador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22994234621,
+      "productName": "🌬️❄️ Carimbo Docinho VENTILADOR | Kit 4 Modelos | Impressão 3D | Confeitaria Criativa | Festa Verão | Doces Refrescantes",
+      "shopName": "Biscoitoteca",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "carimbo",
+            "impressao 3d",
+            "confeitaria"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23898118634,
+      "productName": "Cortador Carimbo Cookies Biscoito Massinha Ventilador verão",
+      "shopName": "Biscoitoteca",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "carimbo"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23698646565,
+      "productName": "Pedaleira Traseira Cg/today/fan/titan125/150/biz (UNITARIO)",
+      "shopName": "AFT MOTO PEÇAS",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "ventilador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22294244650,
+      "productName": "️️ Carimbo Docinho VENTILADOR | Kit 4 Modelos | Impressão 3D | Confeitaria Criativa | Festa Verão | Doces Refrescantes",
+      "shopName": "Max 3D Print",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "carimbo",
+            "impressao 3d",
+            "confeitaria"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 18897503042,
+      "productName": "8 Adesivo Premium Roda Honda Titan Fan Start 125 150 160",
+      "shopName": "PowerAdesivos",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "ventilador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21798131946,
+      "productName": "Motor Ventilador Geladeira Continental Completo 127 V",
+      "shopName": "Peças a Jato",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "motor ventilador"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23793540839,
+      "productName": "Motor Ventilador Electrolux Df51/df52 110v 70201289 Original",
+      "shopName": "Peças a Jato",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "motor ventilador"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23498057493,
+      "productName": "Motor Ventilador Electrolux 220v DF36 DF34",
+      "shopName": "Peças a Jato",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "motor ventilador"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23193556493,
+      "productName": "Motor Ventilador Electrolux 220v DF34",
+      "shopName": "Peças a Jato",
+      "keywords": [
+        "ventilador"
+      ],
+      "evaluations": {
+        "ventilador": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "motor ventilador"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22694950794,
+      "productName": "10x  Luminárias Led Spot 5W Quadrado Redondo Embutir Branco Frio Branco Quente Bivolt",
+      "shopName": "Acabay",
+      "keywords": [
+        "luminaria"
+      ],
+      "evaluations": {
+        "luminaria": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "luminaria",
+              "abajur",
+              "plafon",
+              "lampada led",
+              "luz led"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22697063003,
+      "productName": "1/2/3 Unidades Luminárias Solares Impermeáveis Prova De Chuva 100 Led Sensor Courtyard Light Promoção",
+      "shopName": "INFINITY COMERCIO DE VARIEDADES",
+      "keywords": [
+        "luminaria"
+      ],
+      "evaluations": {
+        "luminaria": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "luminaria",
+              "abajur",
+              "plafon",
+              "lampada led",
+              "luz led"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23797969162,
+      "productName": "KIT10 Luminárias Spot Led 5w Branco Embutir Direcionável Teto 6500K 3000K UNIFY",
+      "shopName": "UNIFY STORE",
+      "keywords": [
+        "luminaria"
+      ],
+      "evaluations": {
+        "luminaria": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "luminaria",
+              "abajur",
+              "plafon",
+              "lampada led",
+              "luz led"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58263453038,
+      "productName": "Formas De Silicone Assadeira Para Air Fryer Forno Microondas",
+      "shopName": "F-Tech Solutions",
+      "keywords": [
+        "air fryer"
+      ],
+      "evaluations": {
+        "air fryer": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "formas de silicone"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23598387814,
+      "productName": "Adaptador de Tomada Ultra Resistente de Porcelana para Secador Air Fryer Benjamin Bivolt 10A e 20A",
+      "shopName": "RYT WEB",
+      "keywords": [
+        "air fryer"
+      ],
+      "evaluations": {
+        "air fryer": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "adaptador de tomada"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 20599359513,
+      "productName": "Kit Cozinha Brinquedo Infantil Fogão Forno Panelinhas Xícaras Acessórios Faz de Conta",
+      "shopName": "Amoritta Kids",
+      "keywords": [
+        "air fryer"
+      ],
+      "evaluations": {
+        "air fryer": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "air fryer",
+              "airfryer",
+              "fritadeira sem oleo",
+              "fritadeira eletrica"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21198282551,
+      "productName": "Forma De Silicone 1 ou 3 peças Para Air Fryer Forno Fritadeira Assadeira Reutilizável Antiaderente Flexível",
+      "shopName": "Mix Essencial Variedades",
+      "keywords": [
+        "air fryer"
+      ],
+      "evaluations": {
+        "air fryer": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "forma de silicone"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23294180222,
+      "productName": "KIT 1 a 3 Forma De Silicone Para Air Fryer Forno Fritadeira Assadeira Reutilizável Antiaderente",
+      "shopName": "Newshop Variedades",
+      "keywords": [
+        "air fryer"
+      ],
+      "evaluations": {
+        "air fryer": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "forma de silicone"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22897562777,
+      "productName": "KIT 03 Formas de Silicone Quadrada Antiaderente Assadeira Air Fryer Forno Forma para Fritadeira Elétrica c Alça QUADRADA",
+      "shopName": "kellyspace",
+      "keywords": [
+        "air fryer"
+      ],
+      "evaluations": {
+        "air fryer": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "formas de silicone"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23692804644,
+      "productName": "Kit 2 Formas de Silicone Quadrada 20x20cm Assadeira Air Fryer e Forno Forma para Fritadeira Elétrica com Alça",
+      "shopName": "Larsul",
+      "keywords": [
+        "air fryer"
+      ],
+      "evaluations": {
+        "air fryer": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "formas de silicone"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 58201741410,
+      "productName": "Batedeira Eletrica Potente Balde 2 Litros Preto Misturador 7 velocidades Cozinha Profissional 220v",
+      "shopName": "+QueAchados",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58265805163,
+      "productName": "Espumador de Leite Misturador Elétrico Portátil Aço Inoxidável com Suporte de Apoio",
+      "shopName": "SHR ELETRONICOS",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22799016815,
+      "productName": "Misturador Mexedor Mini Batedeira Elétrica 2 Em 1 USB",
+      "shopName": "tudojuntoshop",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58201906586,
+      "productName": "Batedeira Elétrica 220V com Balde 2L - Preta",
+      "shopName": "Lelox Commerce",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58201905555,
+      "productName": "Batedeira Elétrica 127V com Balde 2L - Preta",
+      "shopName": "Lelox Commerce",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23394639718,
+      "productName": "Batedeira Elétrica Potente 127V Balde 2L 250 W 7 Velocidade Tigela Ferro Cromado Bolo Massa leve - Preta",
+      "shopName": "NILS STAR",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22196815652,
+      "productName": "Mix Misturador Cafe Bebidas Batedor De Ovos Automático Elétrico Inox",
+      "shopName": "M&D Brasil Atacadista",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22899200257,
+      "productName": "3L Picador De Alimentos COM ALÇA 110V/220V Moedor De Carne Elétrica Processador Cozinha Casa",
+      "shopName": "LAR INOVA",
+      "keywords": [
+        "mixer eletrico"
+      ],
+      "evaluations": {
+        "mixer eletrico": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "mixer"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23096074557,
+      "productName": "SECADOR DE PRATOS LUXURY BRANCO 53,5X36X12 CM - P/ 11 PRATOS",
+      "shopName": "Bazar Dona Dirce",
+      "keywords": [
+        "escorredor de loucas"
+      ],
+      "evaluations": {
+        "escorredor de loucas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "pratos"
+            ]
+          ],
+          "missing": [
+            [
+              "escorredor"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 20798104891,
+      "productName": "UTIL INOX - ESCORREDOR MASSA 24CM",
+      "shopName": "Bazar Dona Dirce",
+      "keywords": [
+        "escorredor de loucas"
+      ],
+      "evaluations": {
+        "escorredor de loucas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "escorredor massa"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 18611706767,
+      "productName": "BLACK - ESCORREDOR PRATIK",
+      "shopName": "Bazar Dona Dirce",
+      "keywords": [
+        "escorredor de loucas"
+      ],
+      "evaluations": {
+        "escorredor de loucas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "escorredor"
+            ]
+          ],
+          "missing": [
+            [
+              "louca",
+              "loucas",
+              "prato",
+              "pratos",
+              "talher",
+              "talheres",
+              "copo",
+              "copos"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19999894139,
+      "productName": "Kit 5 Suporte Porta Esponja para Pia Cozinha Aço Inox 304 Autoadesivo Sem Furo Organizador",
+      "shopName": "MIKA FASHION!",
+      "keywords": [
+        "escorredor de loucas"
+      ],
+      "evaluations": {
+        "escorredor de loucas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "escorredor"
+            ],
+            [
+              "louca",
+              "loucas",
+              "prato",
+              "pratos",
+              "talher",
+              "talheres",
+              "copo",
+              "copos"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22997330406,
+      "productName": "Suporte Organizador De Tampas Black, 6 Divisões, Plug Lar",
+      "shopName": "Larix",
+      "keywords": [
+        "escorredor de loucas"
+      ],
+      "evaluations": {
+        "escorredor de loucas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "escorredor"
+            ],
+            [
+              "louca",
+              "loucas",
+              "prato",
+              "pratos",
+              "talher",
+              "talheres",
+              "copo",
+              "copos"
+            ]
+          ]
+        }
+      }
+    }
+  ]
+}
