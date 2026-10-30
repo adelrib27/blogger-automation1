@@ -8,10 +8,12 @@ import local_service_v06 as v06
 import provision_new_blog_v20 as provision
 import timezone_resilience_v07 as timezone_resilience
 import timezone_keyboard_resilience_v07 as timezone_keyboard_resilience
+import timezone_offscreen_resilience_v07 as timezone_offscreen_resilience
 
 blog_id_url_resilience.install()
 timezone_resilience.install()
 timezone_keyboard_resilience.install()
+timezone_offscreen_resilience.install()
 
 
 class Handler(v06.Handler):
