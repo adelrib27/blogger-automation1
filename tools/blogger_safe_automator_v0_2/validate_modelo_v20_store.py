@@ -14,6 +14,7 @@ BASE_MARKER = "emporio-revisao-visual-20-modelo-final"
 STORE_MARKER = "BLOGGER_MODELO_V20_STORE_EXTENSION"
 VISIBLE_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_VISIBLE_NAV"
 FOOTER_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_FOOTER_NAV"
+STATIC_PAGE_FEED_MARKER = "BLOGGER_MODELO_V20_STATIC_PAGE_FEED_RUNTIME"
 
 
 def sha256(path: Path) -> str:
@@ -103,15 +104,18 @@ def main() -> int:
         theme = Path(td) / "theme.xml"
         theme.write_text(
             "<?xml version='1.0' encoding='UTF-8'?><html><head>"
-            f"<style>/* {BASE_MARKER} */</style></head><body>"
+            f"<style>/* {BASE_MARKER} */</style></head><body class='ga-static-page'>"
             "<nav class='ga-home-v6-nav'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></nav>"
-            "<section class='ga-home-footer'><div class='ga-home-footer-links'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></div></section>"
+            "<main><div class='main section' id='page_body'></div></main>"
+            "<section class='ga-static-footer'><div class='ga-static-footer-brand'><h3>Modelo</h3></div>"
+            "<div class='ga-static-footer-links'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></div>"
+            "<div class='ga-static-footer-bottom'><strong>Modelo</strong></div></section>"
             "</body></html>",
             encoding="utf-8",
         )
 
         run_extension(extension_path, theme, "primeira aplicação da extensão LOJA")
-        run_extension(visible_nav_path, theme, "primeira aplicação do menu visível")
+        run_extension(visible_nav_path, theme, "primeira aplicação do menu/fallback visível")
         ET.parse(theme)
         first_hash = sha256(theme)
         text = theme.read_text(encoding="utf-8")
@@ -122,6 +126,8 @@ def main() -> int:
             fail("marker do menu visível não aparece exatamente uma vez")
         if text.count(FOOTER_NAV_MARKER) < 1:
             fail("marker de navegação da LOJA no rodapé está ausente")
+        if STATIC_PAGE_FEED_MARKER not in text:
+            fail("runtime de fallback das páginas estáticas está ausente")
 
         for needle in (
             "/p/loja.html",
@@ -135,14 +141,19 @@ def main() -> int:
             "home.nextElementSibling!==store",
             "ga-store-footer-nav-v20",
             "BLOGGER_MODELO_V20_STORE_FOOTER_NAV",
-            ".ga-home-footer-links,.ga-static-footer-links",
+            ".ga-home-footer-links,.ga-post-footer-links,.ga-static-footer-links",
             "enhanceFooterGroup",
+            "BLOGGER_MODELO_V20_STATIC_PAGE_FEED_RUNTIME",
+            "/feeds/pages/default?alt=json&max-results=25",
+            "hydrateStaticPageFromFeed",
+            "syncBrandFromFeed",
+            "data-ga-static-page-feed-runtime",
         ):
             if needle not in text:
                 fail(f"extensão não contém requisito: {needle}")
 
         run_extension(extension_path, theme, "segunda aplicação/idempotência LOJA")
-        run_extension(visible_nav_path, theme, "segunda aplicação/idempotência menu visível")
+        run_extension(visible_nav_path, theme, "segunda aplicação/idempotência menu/fallback")
         second_hash = sha256(theme)
         if first_hash != second_hash:
             fail("extensões não são idempotentes")
@@ -156,12 +167,15 @@ def main() -> int:
         "store_extension_marker": STORE_MARKER,
         "store_visible_nav_marker": VISIBLE_NAV_MARKER,
         "store_footer_nav_marker": FOOTER_NAV_MARKER,
+        "static_page_feed_marker": STATIC_PAGE_FEED_MARKER,
         "store_menu_path": "/p/loja.html",
         "store_menu_position": "after-home",
         "store_menu_target": "nav.ga-home-v6-nav",
         "store_menu_highlighted": True,
         "store_footer_nav_supported": True,
         "store_footer_position": "after-home",
+        "static_page_feed_runtime_supported": True,
+        "footer_brand_feed_sync_supported": True,
         "store_max_width": 1280,
         "store_sidebar_hidden_only": True,
         "desktop_columns": 4,
