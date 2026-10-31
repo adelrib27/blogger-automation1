@@ -9,6 +9,9 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 import browser_provision as bp
+from run_with_cdp_resilience_v08 import connect_official_chrome_resilient
+
+bp.connect_official_chrome = connect_official_chrome_resilient
 
 MARKER = "emporio-revisao-visual-20-modelo-final"
 STORE_MARKER = "BLOGGER_MODELO_V20_STORE_EXTENSION"
@@ -135,10 +138,11 @@ def main() -> int:
     render = here / "render_modelo_v20_theme.py"
     extend_store = here / "extend_modelo_v20_store.py"
     extend_visible_nav = here / "extend_modelo_v20_store_visible_nav.py"
+    resilient = here / "run_with_cdp_resilience_v08.py"
     backup = here / "backup_theme_auto.py"
     apply = here / "apply_theme_auto.py"
 
-    for required in (source_theme, freeze, render, extend_store, extend_visible_nav, backup, apply):
+    for required in (source_theme, freeze, render, extend_store, extend_visible_nav, resilient, backup, apply):
         if not required.exists():
             raise SystemExit(f"Arquivo obrigatório ausente: {required}")
 
@@ -156,8 +160,8 @@ def main() -> int:
     run([python, str(extend_visible_nav), "--theme-path", str(rendered_theme)])
 
     backup_theme.parent.mkdir(parents=True, exist_ok=True)
-    run([python, str(backup), "--expected-blog-id", args.expected_blog_id, "--output", str(backup_theme)])
-    run([python, str(apply), "--expected-blog-id", args.expected_blog_id, "--theme-path", str(rendered_theme),
+    run([python, str(resilient), "backup", "--expected-blog-id", args.expected_blog_id, "--output", str(backup_theme)])
+    run([python, str(resilient), "apply", "--expected-blog-id", args.expected_blog_id, "--theme-path", str(rendered_theme),
          "--backup-path", str(backup_theme), "--public-url", args.blog_url, "--public-marker", MARKER,
          "--confirm", "APPLY THEME"])
 
