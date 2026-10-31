@@ -76,11 +76,19 @@ def _dismiss_dialog(page) -> None:
 def _editor_menu_item(module, page):
     module._open_actions(page)
     item = _first_visible(page.get_by_role("menuitem", name=EDIT_HTML_RE))
-    if item is None:
-        item = _first_visible(page.get_by_text(EDIT_HTML_RE, exact=True))
-    if item is None:
+    if item is not None:
+        return item
+    text_item = _first_visible(page.get_by_text(EDIT_HTML_RE, exact=True))
+    if text_item is None:
         raise bp.SafeAutomationError("Opção 'Editar HTML' não foi localizada no menu Tema.")
-    return item
+    try:
+        ancestor = text_item.locator("xpath=ancestor::*[@role='menuitem' or @role='button' or self::button][1]")
+        clickable = _first_visible(ancestor)
+        if clickable is not None:
+            return clickable
+    except Exception:
+        pass
+    return text_item
 
 
 def _looks_like_theme(text: str) -> bool:
@@ -236,11 +244,25 @@ def _backup_from_html_editor(module, expected_blog_id: str, output: str) -> dict
         responses: list = []
         page.on("response", lambda response: responses.append(response))
         item = _editor_menu_item(module, page)
-        try:
-            item.click(timeout=5_000)
-        except Exception:
-            _physical_click(page, item)
-        page.wait_for_timeout(6_000)
+        _physical_click(page, item)
+
+        deadline = time.time() + 12
+        editor_open = False
+        while time.time() < deadline:
+            page.wait_for_timeout(500)
+            try:
+                editor_open = bool(page.evaluate(
+                    r"""() => !!(
+                      document.querySelector('textarea,.CodeMirror,.cm-editor,.cm-content,[contenteditable="true"],.ace_editor')
+                      || /Editar HTML|Edit HTML/i.test(document.title)
+                      || /html/i.test(location.pathname.split('/').pop() || '')
+                    )"""
+                ))
+            except Exception:
+                editor_open = False
+            if editor_open:
+                break
+        page.wait_for_timeout(2_000)
 
         for frame in page.frames:
             for text in _theme_candidates_from_frame(frame):
@@ -280,8 +302,8 @@ def _backup_from_html_editor(module, expected_blog_id: str, output: str) -> dict
                 continue
 
         raise bp.SafeAutomationError(
-            "O editor HTML abriu, mas nenhum conteúdo completo de tema Blogger passou na validação estrutural. "
-            + _editor_diagnostics(page)
+            "Editar HTML foi acionado, mas o tema completo não ficou acessível para backup validado. "
+            + f"editor_open={editor_open}; " + _editor_diagnostics(page)
         )
 
 
@@ -292,6 +314,7 @@ def _is_capture_failure(message: str) -> bool:
         or "nenhum xml válido" in low
         or "fallback físico do backup" in low
         or "nenhum conteúdo completo de tema blogger" in low
+        or "tema completo não ficou acessível" in low
     )
 
 
