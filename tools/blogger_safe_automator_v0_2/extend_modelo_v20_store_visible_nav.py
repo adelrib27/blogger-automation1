@@ -17,7 +17,7 @@ CSS = r"""
 nav a.ga-store-visible-nav-v20{background:linear-gradient(135deg,var(--ga-brand-primary,#0F8A5F),#F59E0B)!important;border-radius:8px!important;box-shadow:0 4px 12px rgba(15,23,42,.10)!important;color:#fff!important;font-weight:900!important;padding:7px 12px!important;text-decoration:none!important}
 nav a.ga-store-visible-nav-v20:hover,nav a.ga-store-visible-nav-v20.ga-store-current-v20{color:#fff!important;filter:brightness(.94)!important}
 .ga-home-footer a.ga-store-footer-nav-v20,.ga-post-footer a.ga-store-footer-nav-v20,.ga-static-footer a.ga-store-footer-nav-v20{font-weight:900!important}
-.ga-static-page-feed-runtime{margin:0 auto;max-width:100%}.ga-static-page-feed-runtime .post-title{color:var(--ga-ink,#172033);font-family:Arial,Helvetica,sans-serif;font-size:clamp(28px,4vw,38px);line-height:1.15;margin:0 0 22px}.ga-static-page-feed-runtime .post-body{min-width:0}
+.ga-static-page-feed-host-v20{width:100%;min-width:0}.ga-static-page-feed-runtime{margin:0 auto;max-width:100%}.ga-static-page-feed-runtime .post-title{color:var(--ga-ink,#172033);font-family:Arial,Helvetica,sans-serif;font-size:clamp(28px,4vw,38px);line-height:1.15;margin:0 0 22px}.ga-static-page-feed-runtime .post-body{min-width:0}
 </style>
 """.strip()
 
@@ -30,6 +30,7 @@ JS = r"""
   var FOOTER_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FOOTER_NAV';
   var STATIC_PAGE_FEED_MARKER='BLOGGER_MODELO_V20_STATIC_PAGE_FEED_RUNTIME';
   var PAGE_FEED='/feeds/pages/default?alt=json&max-results=25';
+  var HOST_ID='ga-static-feed-host-v20';
   var feedState={loading:false,loaded:false,data:null};
   var INSTITUTIONAL={'/p/sobre.html':1,'/p/aviso-de-afiliados.html':1,'/p/contato.html':1,'/p/politica-de-privacidade.html':1,'/p/termos-de-uso.html':1};
 
@@ -64,12 +65,16 @@ JS = r"""
   function syncBrandFromFeed(feed){
     var title=feed&&feed.title&&feed.title.$t?String(feed.title.$t).trim():'';if(!title) return;var nodes=document.querySelectorAll('.ga-home-footer-brand h3,.ga-post-footer-brand h3,.ga-static-footer-brand h3,.ga-home-footer-bottom strong,.ga-post-footer-bottom strong,.ga-static-footer-bottom strong');for(var i=0;i<nodes.length;i++) nodes[i].textContent=title;document.documentElement.setAttribute('data-ga-brand-feed-runtime',STATIC_PAGE_FEED_MARKER);
   }
+  function stableHost(target){
+    var host=document.getElementById(HOST_ID);if(host) return host;if(!target||!target.parentNode) return null;
+    host=document.createElement('div');host.id=HOST_ID;host.className='ga-static-page-feed-host-v20';host.setAttribute('data-ga-static-page-feed-host',STATIC_PAGE_FEED_MARKER);target.parentNode.insertBefore(host,target.nextSibling);return host;
+  }
   function hydrateStaticPageFromFeed(feed){
     if(!document.body||!document.body.classList.contains('ga-static-page')) return;var target=document.getElementById('page_body');if(!target) return;
     var current=pathOf(location.href),entries=(feed&&feed.entry)||[],match=null;for(var i=0;i<entries.length;i++) if(entryPath(entries[i])===current){match=entries[i];break;}if(!match||!match.content||!match.content.$t) return;
-    var title=match.title&&match.title.$t?String(match.title.$t):'',wrapper=document.createElement('div');wrapper.className='widget Blog ga-static-page-feed-runtime';wrapper.setAttribute('data-ga-static-page-feed-runtime',STATIC_PAGE_FEED_MARKER);
+    var host=stableHost(target);if(!host) return;var title=match.title&&match.title.$t?String(match.title.$t):'',wrapper=document.createElement('div');wrapper.className='widget Blog ga-static-page-feed-runtime';wrapper.setAttribute('data-ga-static-page-feed-runtime',STATIC_PAGE_FEED_MARKER);
     var article=document.createElement('article');article.className='post-outer-container post';if(title){var h1=document.createElement('h1');h1.className='post-title entry-title';h1.textContent=title;article.appendChild(h1);}var body=document.createElement('div');body.className='post-body entry-content';body.innerHTML=String(match.content.$t);article.appendChild(body);wrapper.appendChild(article);
-    target.innerHTML='';target.appendChild(wrapper);target.setAttribute('data-ga-static-page-feed-runtime','1');document.documentElement.setAttribute('data-ga-static-page-feed-source','canonical');
+    host.innerHTML='';host.appendChild(wrapper);target.style.display='none';target.setAttribute('data-ga-static-page-feed-runtime','delegated');document.documentElement.setAttribute('data-ga-static-page-feed-source','canonical-host');
   }
   function applyFeed(feed){if(!feed) return;syncBrandFromFeed(feed);hydrateStaticPageFromFeed(feed);}
   function ensureFeedRuntime(){
@@ -99,11 +104,11 @@ def main() -> int:
     text = path.read_text(encoding="utf-8")
     if BASE_MARKER not in text: raise SystemExit(f"Tema não pertence ao V20 validado: marcador ausente {BASE_MARKER}")
     if VISIBLE_NAV_MARKER in text:
-        ET.parse(path);print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_ALREADY_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"fallback_pagelist_deduplicated":True},ensure_ascii=False,indent=2));return 0
+        ET.parse(path);print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_ALREADY_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"stable_static_page_host_supported":True,"fallback_pagelist_deduplicated":True},ensure_ascii=False,indent=2));return 0
     if "</head>" not in text or "</body>" not in text: raise SystemExit("Tema sem </head> ou </body>; nenhuma alteração feita.")
     text=text.replace("</head>",CSS+"\n</head>",1).replace("</body>",JS+"\n</body>",1);path.write_text(text,encoding="utf-8");ET.parse(path)
     if text.count(VISIBLE_NAV_MARKER)!=1: raise SystemExit("Extensão de navegação visível não foi inserida exatamente uma vez.")
-    print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"fallback_pagelist_deduplicated":True,"other_navigation_links_preserved":True},ensure_ascii=False,indent=2));return 0
+    print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"stable_static_page_host_supported":True,"fallback_pagelist_deduplicated":True,"other_navigation_links_preserved":True},ensure_ascii=False,indent=2));return 0
 
 
 if __name__ == "__main__": raise SystemExit(main())
