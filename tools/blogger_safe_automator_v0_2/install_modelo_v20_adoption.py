@@ -9,6 +9,7 @@ from pathlib import Path
 
 MARKER = "emporio-revisao-visual-20-modelo-final"
 STORE_MARKER = "BLOGGER_MODELO_V20_STORE_EXTENSION"
+VISIBLE_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_VISIBLE_NAV"
 SOURCE_TITLE = "Guia de Achados & Ofertas"
 SOURCE_URL = "https://guia-de-achados-e-ofertas.blogspot.com/"
 
@@ -36,18 +37,17 @@ def main() -> int:
 
     source_theme = root / "themes" / "blogger_emporio_v1_0" / "generated" / "theme.xml"
     template_theme = root / "themes" / "blogger_modelo_v20" / "theme.xml.tpl"
-    # apply_theme_safe.py intentionally requires the upload file to be named
-    # exactly "theme.xml". Keep each blog isolated in its own rendered folder.
     rendered_theme = root / "themes" / "blogger_modelo_v20" / "rendered" / str(args.expected_blog_id) / "theme.xml"
     backup_theme = root.parent / "backups" / "blogger" / args.expected_blog_id / "theme-before-modelo-v20-adoption.xml"
 
     freeze = here / "freeze_modelo_v20_theme.py"
     render = here / "render_modelo_v20_theme.py"
     extend_store = here / "extend_modelo_v20_store.py"
+    extend_visible_nav = here / "extend_modelo_v20_store_visible_nav.py"
     backup = here / "backup_theme_auto.py"
     apply = here / "apply_theme_auto.py"
 
-    for required in (source_theme, freeze, render, extend_store, backup, apply):
+    for required in (source_theme, freeze, render, extend_store, extend_visible_nav, backup, apply):
         if not required.exists():
             raise SystemExit(f"Arquivo obrigatório ausente: {required}")
 
@@ -73,10 +73,14 @@ def main() -> int:
         "--palette", args.palette,
     ])
 
-    # Extensão oficial da LOJA: idempotente, isolada à página /p/loja.html e
-    # aplicada antes do backup/upload para que toda adoção V20 use o padrão validado.
+    # LOJA: primeiro aplica a vitrine/escopo da página; depois garante que o
+    # menu customizado realmente visível (ga-home-v6-nav) receba LOJA após Início.
     run([
         python, str(extend_store),
+        "--theme-path", str(rendered_theme),
+    ])
+    run([
+        python, str(extend_visible_nav),
         "--theme-path", str(rendered_theme),
     ])
 
@@ -100,6 +104,8 @@ def main() -> int:
     rendered_text = rendered_theme.read_text(encoding="utf-8")
     if STORE_MARKER not in rendered_text:
         raise SystemExit("Adoção V20 terminou sem a extensão LOJA no tema renderizado.")
+    if VISIBLE_NAV_MARKER not in rendered_text:
+        raise SystemExit("Adoção V20 terminou sem a extensão do menu LOJA visível.")
 
     print(json.dumps({
         "status": "BLOGGER_MODELO_V20_ADOPTED",
@@ -112,8 +118,10 @@ def main() -> int:
         "backup_theme": str(backup_theme),
         "public_marker": MARKER,
         "store_extension_marker": STORE_MARKER,
+        "store_visible_nav_marker": VISIBLE_NAV_MARKER,
         "store_menu_path": "/p/loja.html",
         "store_menu_position": "after-home",
+        "store_menu_target": "nav.ga-home-v6-nav",
         "store_menu_highlighted": True,
         "store_layout": {"max_width": 1280, "desktop_columns": 4, "tablet_columns": 2, "mobile_columns": 2},
         "store_sidebar_hidden_only": True,
