@@ -38,6 +38,18 @@
       "expected_slug": "termos-de-uso",
       "publish": true,
       "content": "<p>Ao acessar o <strong>{{BLOG_TITLE}}</strong>, você concorda em utilizar o conteúdo do site apenas para fins informativos e de pesquisa antes da compra.</p><h2>Conteúdo informativo</h2><p>As informações publicadas são preparadas com base em dados disponíveis no momento da produção do conteúdo. Preços, estoque, frete, condições comerciais, especificações e disponibilidade podem mudar sem aviso.</p><h2>Compras em terceiros</h2><p>O {{BLOG_TITLE}} não vende os produtos apresentados e não participa do processamento de pagamentos, entregas, trocas, cancelamentos ou garantias. Essas operações são de responsabilidade do vendedor e da plataforma onde a compra é realizada.</p><h2>Verificação antes da compra</h2><p>Antes de comprar, confirme diretamente na oferta todas as informações relevantes, incluindo modelo, voltagem, medidas, compatibilidade, material, prazo de entrega e política de devolução.</p><h2>Links externos</h2><p>O site pode conter links para páginas externas. Não controlamos continuamente o conteúdo, a disponibilidade ou as políticas desses sites.</p><h2>Atualizações</h2><p>Estes termos podem ser atualizados conforme o site evoluir. A versão publicada nesta página será considerada a versão vigente.</p>"
+    },
+    {
+      "key": "loja",
+      "title": "LOJA",
+      "expected_slug": "loja",
+      "publish": true,
+      "requires_store_population": true,
+      "store_expected_products": 20,
+      "store_expected_categories": 5,
+      "store_auto_start_marker": "<!-- BLOGGER_STORE_AUTO_START -->",
+      "store_auto_end_marker": "<!-- BLOGGER_STORE_AUTO_END -->",
+      "content": "<div class=\"ga-store-v20\"><section class=\"ca-hero\" style=\"text-align:center\"><span class=\"ca-eyebrow\">🛍️ LOJA {{BLOG_TITLE}}</span><h1>Achados selecionados para você</h1><p>Uma vitrine prática com produtos reais encontrados na Shopee, organizada para você comparar opções e conferir a oferta atual diretamente na plataforma.</p><div class=\"ca-stats\"><span class=\"ca-stat\">Produtos reais</span><span class=\"ca-stat\">Categorias selecionadas</span><span class=\"ca-stat\">Atualização automática</span></div><span class=\"ca-note\"><strong>Transparência:</strong> esta página contém links de afiliado. Podemos receber comissão por compras realizadas pelos links, sem custo adicional para você. Preços e disponibilidade podem mudar após a coleta.</span></section><!-- BLOGGER_STORE_AUTO_START --><!-- BLOGGER_STORE_AUTO_END --><div class=\"ca-foot\">Seleção baseada nos dados coletados da Shopee. Confira na página do produto o preço, estoque, frete e demais condições atuais antes da compra.</div></div>"
     }
   ]
 }
