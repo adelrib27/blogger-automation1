@@ -18,8 +18,17 @@ SOURCE_URL = "https://guia-de-achados-e-ofertas.blogspot.com/"
 
 
 def run(cmd: list[str]) -> None:
-    print("\n>>> " + " ".join(f'"{x}"' if " " in x else x for x in cmd), flush=True)
-    subprocess.run(cmd, check=True)
+    shown = " ".join(f'"{x}"' if " " in x else x for x in cmd)
+    print("\n>>> " + shown, flush=True)
+    proc = subprocess.run(cmd, text=True, capture_output=True)
+    if proc.stdout:
+        print(proc.stdout.rstrip(), flush=True)
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "").strip()
+        if len(detail) > 2400:
+            detail = detail[-2400:]
+        name = Path(cmd[1]).name if len(cmd) > 1 else Path(cmd[0]).name
+        raise SystemExit(f"Etapa V20 falhou em {name}: {detail or 'sem detalhe adicional'}")
 
 
 def public_runtime_probe(blog_url: str, expected_title: str) -> dict:
