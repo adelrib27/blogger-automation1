@@ -34,6 +34,20 @@ nav a.ga-store-visible-nav-v20.ga-store-current-v20{
 .ga-static-footer a.ga-store-footer-nav-v20{
   font-weight:900!important;
 }
+.ga-static-page-feed-runtime{
+  margin:0 auto;
+  max-width:100%;
+}
+.ga-static-page-feed-runtime .post-title{
+  color:var(--ga-ink,#172033);
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:clamp(28px,4vw,38px);
+  line-height:1.15;
+  margin:0 0 22px;
+}
+.ga-static-page-feed-runtime .post-body{
+  min-width:0;
+}
 </style>
 """.strip()
 
@@ -45,6 +59,9 @@ JS = r"""
   var PRIMARY_NAV_SELECTOR='nav.ga-home-v6-nav';
   var FALLBACK_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FALLBACK_DEDUPE';
   var FOOTER_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FOOTER_NAV';
+  var STATIC_PAGE_FEED_MARKER='BLOGGER_MODELO_V20_STATIC_PAGE_FEED_RUNTIME';
+  var PAGE_FEED='/feeds/pages/default?alt=json&max-results=25';
+  var feedState={loading:false,loaded:false,data:null};
   var INSTITUTIONAL={
     '/p/sobre.html':1,
     '/p/aviso-de-afiliados.html':1,
@@ -208,6 +225,98 @@ JS = r"""
     group.setAttribute('data-ga-store-footer-enhanced','1');
   }
 
+  function entryPath(entry){
+    var links=(entry && entry.link)||[];
+    for(var i=0;i<links.length;i++){
+      if(links[i] && links[i].rel==='alternate' && links[i].href){
+        return pathOf(links[i].href);
+      }
+    }
+    return '';
+  }
+
+  function syncBrandFromFeed(feed){
+    var title=feed && feed.title && feed.title.$t ? String(feed.title.$t).trim() : '';
+    if(!title) return;
+    var nodes=document.querySelectorAll(
+      '.ga-home-footer-brand h3,.ga-post-footer-brand h3,.ga-static-footer-brand h3,'+
+      '.ga-home-footer-bottom strong,.ga-post-footer-bottom strong,.ga-static-footer-bottom strong'
+    );
+    for(var i=0;i<nodes.length;i++) nodes[i].textContent=title;
+    document.documentElement.setAttribute('data-ga-brand-feed-runtime',STATIC_PAGE_FEED_MARKER);
+  }
+
+  function hydrateStaticPageFromFeed(feed){
+    if(!document.body || !document.body.classList.contains('ga-static-page')) return;
+    var target=document.getElementById('page_body');
+    if(!target || target.getAttribute('data-ga-static-page-feed-runtime')==='1') return;
+
+    var meaningful=(target.textContent||'').replace(/\s+/g,' ').trim();
+    if(target.children.length>0 || meaningful){
+      target.setAttribute('data-ga-static-page-feed-runtime','native');
+      return;
+    }
+
+    var current=pathOf(location.href);
+    var entries=(feed && feed.entry)||[];
+    var match=null;
+    for(var i=0;i<entries.length;i++){
+      if(entryPath(entries[i])===current){match=entries[i];break;}
+    }
+    if(!match || !match.content || !match.content.$t) return;
+
+    var title=match.title && match.title.$t ? String(match.title.$t) : '';
+    var wrapper=document.createElement('div');
+    wrapper.className='widget Blog ga-static-page-feed-runtime';
+    wrapper.setAttribute('data-ga-static-page-feed-runtime',STATIC_PAGE_FEED_MARKER);
+
+    var article=document.createElement('article');
+    article.className='post-outer-container post';
+
+    if(title){
+      var h1=document.createElement('h1');
+      h1.className='post-title entry-title';
+      h1.textContent=title;
+      article.appendChild(h1);
+    }
+
+    var body=document.createElement('div');
+    body.className='post-body entry-content';
+    body.innerHTML=String(match.content.$t);
+    article.appendChild(body);
+    wrapper.appendChild(article);
+    target.appendChild(wrapper);
+    target.setAttribute('data-ga-static-page-feed-runtime','1');
+
+    if(current===STORE_PATH){
+      document.body.classList.add('ga-static-page');
+    }
+  }
+
+  function applyFeed(feed){
+    if(!feed) return;
+    syncBrandFromFeed(feed);
+    hydrateStaticPageFromFeed(feed);
+  }
+
+  function ensureFeedRuntime(){
+    if(feedState.loaded){applyFeed(feedState.data);return;}
+    if(feedState.loading || !window.fetch) return;
+    feedState.loading=true;
+    fetch(PAGE_FEED,{credentials:'same-origin'})
+      .then(function(r){if(!r.ok) throw new Error('page-feed-'+r.status); return r.json();})
+      .then(function(data){
+        feedState.loading=false;
+        feedState.loaded=true;
+        feedState.data=(data && data.feed) ? data.feed : null;
+        applyFeed(feedState.data);
+      })
+      .catch(function(){
+        feedState.loading=false;
+        document.documentElement.setAttribute('data-ga-static-page-feed-error','1');
+      });
+  }
+
   function enhance(){
     var primary=document.querySelectorAll(PRIMARY_NAV_SELECTOR);
     for(var p=0;p<primary.length;p++) enhanceVisibleNav(primary[p]);
@@ -218,8 +327,10 @@ JS = r"""
     var pageLists=document.querySelectorAll('.centered-top-container .PageList');
     for(var j=0;j<pageLists.length;j++) dedupeFallbackPageList(pageLists[j]);
 
-    var footerLinks=document.querySelectorAll('.ga-home-footer-links,.ga-static-footer-links');
+    var footerLinks=document.querySelectorAll('.ga-home-footer-links,.ga-post-footer-links,.ga-static-footer-links');
     for(var f=0;f<footerLinks.length;f++) enhanceFooterGroup(footerLinks[f]);
+
+    ensureFeedRuntime();
   }
 
   var scheduled=false;
@@ -250,7 +361,7 @@ def sha256(path: Path) -> str:
 
 def main() -> int:
     p = argparse.ArgumentParser(
-        description="Garante LOJA nos menus visiveis, cabecalhos fixos e rodapes do BLOGGER_MODELO_V20."
+        description="Garante LOJA nos menus, rodapes e fallback publico das paginas estaticas do BLOGGER_MODELO_V20."
     )
     p.add_argument("--theme-path", required=True)
     args = p.parse_args()
@@ -278,6 +389,8 @@ def main() -> int:
             "store_menu_highlighted": True,
             "store_footer_nav_supported": True,
             "store_footer_position": "after-home",
+            "static_page_feed_runtime_supported": True,
+            "footer_brand_feed_sync_supported": True,
             "fallback_pagelist_deduplicated": True,
         }, ensure_ascii=False, indent=2))
         return 0
@@ -306,6 +419,8 @@ def main() -> int:
         "store_menu_highlighted": True,
         "store_footer_nav_supported": True,
         "store_footer_position": "after-home",
+        "static_page_feed_runtime_supported": True,
+        "footer_brand_feed_sync_supported": True,
         "fallback_pagelist_deduplicated": True,
         "other_navigation_links_preserved": True,
     }, ensure_ascii=False, indent=2))
