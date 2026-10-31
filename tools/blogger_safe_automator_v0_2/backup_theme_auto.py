@@ -14,6 +14,7 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, sync_pla
 
 BACKUP_LABEL_RE = re.compile(r"^(Fazer backup|Backup|Back up)$", re.I)
 DOWNLOAD_LABEL_RE = re.compile(r"^(Fazer download|Download|Baixar|Download theme|Baixar tema)$", re.I)
+BLOGGER_THEME_MARKERS = ("<b:skin", "<b:section", "<b:widget", "<b:template-skin")
 
 
 def _first_visible(locator):
@@ -69,21 +70,51 @@ def _download_button(page):
     return None
 
 
-def _save_download(download, output: Path) -> None:
+def _validate_blogger_theme_bytes(data: bytes) -> dict:
+    if len(data) < 1024:
+        raise bp.SafeAutomationError("Backup do tema foi baixado vazio ou pequeno demais.")
+    text = data.decode("utf-8-sig", errors="replace")
+    low = text.lower()
+    if "<html" not in low:
+        raise bp.SafeAutomationError("Backup baixado não contém a raiz HTML de um tema Blogger.")
+    markers = [marker for marker in BLOGGER_THEME_MARKERS if marker in text]
+    if len(markers) < 2:
+        raise bp.SafeAutomationError(
+            "Backup baixado não contém marcadores estruturais suficientes de um tema Blogger."
+        )
+    if "blogger.com" not in low and "data:blog" not in low and "expr:" not in low:
+        raise bp.SafeAutomationError("Backup baixado não apresenta assinatura estrutural do Blogger.")
+
+    strict_xml = True
+    strict_xml_error = ""
+    try:
+        ET.fromstring(text)
+    except Exception as exc:
+        # Temas legados do Blogger podem conter prefixos históricos que o parser
+        # XML genérico considera não declarados. O próprio Blogger restaura esses
+        # arquivos; por isso usamos validação estrutural específica e preservamos
+        # os bytes originais sem reescrita/sanitização.
+        strict_xml = False
+        strict_xml_error = str(exc)[:400]
+
+    return {
+        "blogger_theme_structure_valid": True,
+        "strict_xml_well_formed": strict_xml,
+        "strict_xml_note": strict_xml_error,
+        "matched_markers": markers,
+    }
+
+
+def _save_download(download, output: Path) -> dict:
     output.parent.mkdir(parents=True, exist_ok=True)
     tmp = output.with_suffix(output.suffix + ".downloading")
     download.save_as(str(tmp))
-    if not tmp.exists() or tmp.stat().st_size < 128:
-        raise bp.SafeAutomationError("Backup do tema foi baixado vazio ou incompleto.")
-    try:
-        ET.parse(tmp)
-    except Exception as exc:
-        try:
-            tmp.unlink(missing_ok=True)
-        except Exception:
-            pass
-        raise bp.SafeAutomationError("Backup baixado não é um XML válido do tema Blogger.") from exc
+    if not tmp.exists():
+        raise bp.SafeAutomationError("Backup do tema não foi materializado no disco.")
+    data = tmp.read_bytes()
+    validation = _validate_blogger_theme_bytes(data)
     tmp.replace(output)
+    return validation
 
 
 def execute_backup(expected_blog_id: str, output: str) -> dict:
@@ -128,7 +159,7 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                     button.evaluate("el => el.click()")
             download = info.value
 
-        _save_download(download, out)
+        validation = _save_download(download, out)
         connected = browser.is_connected()
 
     return {
@@ -136,14 +167,14 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
         "blog_id": blog_id,
         "output": str(out),
         "bytes": out.stat().st_size,
-        "xml_valid": True,
         "auto_route": route,
         "browser_connected": connected,
+        **validation,
     }
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Abre a rota Tema do Blog ID e cria backup XML validado pelo Chrome oficial.")
+    p = argparse.ArgumentParser(description="Abre a rota Tema do Blog ID e cria backup Blogger validado pelo Chrome oficial.")
     p.add_argument("--expected-blog-id", required=True)
     p.add_argument("--output", required=True)
     args = p.parse_args()
