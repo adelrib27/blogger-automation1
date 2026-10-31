@@ -17,6 +17,7 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, sync_pla
 BACKUP_LABEL_RE = re.compile(r"^(Fazer backup|Backup|Back up)$", re.I)
 DOWNLOAD_LABEL_RE = re.compile(r"(download|baixar|fazer\s+o?\s*download)", re.I)
 BLOGGER_THEME_MARKERS = ("<b:skin", "<b:section", "<b:widget", "<b:template-skin")
+CONTROLLED_DOWNLOAD_DIR = Path(r"C:\Blogger-Automator\downloads")
 
 
 def _first_visible(locator):
@@ -191,7 +192,7 @@ def _save_download(download, output: Path) -> dict:
 
 
 def _download_roots() -> list[Path]:
-    roots = [Path.home() / "Downloads", Path(r"C:\Blogger-Automator\downloads")]
+    roots = [Path.home() / "Downloads", CONTROLLED_DOWNLOAD_DIR]
     out = []
     for root in roots:
         try:
@@ -200,6 +201,30 @@ def _download_roots() -> list[Path]:
         except Exception:
             pass
     return out
+
+
+def _configure_cdp_downloads(context, page) -> str:
+    CONTROLLED_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    session = context.new_cdp_session(page)
+    params = {
+        "behavior": "allow",
+        "downloadPath": str(CONTROLLED_DOWNLOAD_DIR),
+        "eventsEnabled": True,
+    }
+    try:
+        session.send("Browser.setDownloadBehavior", params)
+        return "Browser.setDownloadBehavior"
+    except Exception:
+        try:
+            session.send("Page.setDownloadBehavior", {
+                "behavior": "allow",
+                "downloadPath": str(CONTROLLED_DOWNLOAD_DIR),
+            })
+            return "Page.setDownloadBehavior"
+        except Exception as exc:
+            raise bp.SafeAutomationError(
+                "Não foi possível configurar uma pasta controlada para o backup do tema via CDP."
+            ) from exc
 
 
 def _snapshot_downloads() -> dict[str, tuple[int, int]]:
@@ -254,14 +279,7 @@ def _capture_new_download(before: dict[str, tuple[int, int]], output: Path, sinc
     return validation
 
 
-def _wait_capture_new_download(
-    page,
-    before: dict[str, tuple[int, int]],
-    output: Path,
-    since: float,
-    *,
-    timeout_ms: int = 60_000,
-) -> dict | None:
+def _wait_capture_new_download(page, before, output: Path, since: float, *, timeout_ms: int = 60_000):
     deadline = time.time() + max(1, timeout_ms) / 1000.0
     while time.time() < deadline:
         validation = _capture_new_download(before, output, since)
@@ -290,6 +308,7 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                 f"Blog ID divergente antes do backup do tema: atual={actual_id!r}, esperado={blog_id!r}."
             )
 
+        download_policy = _configure_cdp_downloads(context, page)
         before = _snapshot_downloads()
         started = time.time()
         _open_actions(page)
@@ -317,16 +336,12 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                         validation = _save_download(info.value, out)
                     except PlaywrightTimeoutError:
                         validation = _wait_capture_new_download(
-                            page,
-                            before,
-                            out,
-                            min(started, clicked_at),
-                            timeout_ms=60_000,
+                            page, before, out, min(started, clicked_at), timeout_ms=60_000
                         )
             if validation is None:
                 detail = _visible_backup_diagnostics(page)
                 raise bp.SafeAutomationError(
-                    "Fazer backup foi acionado, mas nenhum download novo e válido foi detectado após espera estendida. "
+                    "Fazer backup foi acionado, mas nenhum download novo e válido foi detectado na pasta CDP controlada. "
                     + (f"Diagnóstico: {detail}" if detail else "Sem controles visíveis adicionais.")
                 )
         connected = browser.is_connected()
@@ -338,6 +353,8 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
         "bytes": out.stat().st_size,
         "auto_route": route,
         "browser_connected": connected,
+        "cdp_download_policy": download_policy,
+        "controlled_download_dir": str(CONTROLLED_DOWNLOAD_DIR),
         **(validation or {}),
     }
 
