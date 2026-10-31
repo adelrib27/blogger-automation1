@@ -107,6 +107,14 @@ def _write_state(data: dict) -> None:
     os.replace(tmp, path)
 
 
+def _local_allowlist_ready(repo_root: Path) -> bool:
+    for rel in ALLOWED_FILES:
+        p = repo_root / rel
+        if not p.exists() or p.stat().st_size == 0:
+            return False
+    return True
+
+
 def _stage_files(root: Path, sha: str) -> None:
     raw = f"https://raw.githubusercontent.com/{REPO}/{sha}"
     for rel in ALLOWED_FILES:
@@ -184,6 +192,7 @@ def sync_v20() -> dict:
         state.get("sha") == sha
         and state.get("status") == STATUS
         and int(state.get("allowed_file_count") or 0) == len(ALLOWED_FILES)
+        and _local_allowlist_ready(repo_root)
     ):
         return {
             "status": STATUS,
