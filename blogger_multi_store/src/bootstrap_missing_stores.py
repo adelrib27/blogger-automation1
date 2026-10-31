@@ -8,10 +8,30 @@ import sys
 import time
 from pathlib import Path
 
+from googleapiclient.errors import HttpError
+
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = Path(os.getenv('BLOGGER_MULTI_STORE_BOOTSTRAP_CONFIG', ROOT / 'blogger_multi_store' / 'config' / 'bootstrap_missing_stores.json'))
 sys.path.insert(0, str(ROOT / 'src'))
 from criar_rascunho import criar_servico_blogger  # noqa: E402
+
+
+def api_call(factory, label: str):
+    delays = [0, 10, 20, 40, 80, 120]
+    for attempt, delay in enumerate(delays, start=1):
+        if delay:
+            print(f'RATE_LIMIT_BACKOFF label={label} attempt={attempt} sleep={delay}s', flush=True)
+            time.sleep(delay)
+        try:
+            return factory().execute()
+        except HttpError as exc:
+            status = int(getattr(exc.resp, 'status', 0) or 0)
+            body = str(getattr(exc, 'content', b''))
+            retryable = status == 429 or (status == 403 and 'rateLimit' in body)
+            if not retryable or attempt == len(delays):
+                raise
+            print(f'RATE_LIMIT_RETRY label={label} status={status} attempt={attempt}', flush=True)
+    raise RuntimeError(f'Falha inesperada em {label}')
 
 
 def render(store: dict) -> str:
@@ -49,11 +69,13 @@ def render(store: dict) -> str:
 
 
 def list_live_posts(blogger, blog_id: str) -> list[dict]:
-    return blogger.posts().list(blogId=blog_id, maxResults=100, status=['LIVE']).execute().get('items', []) or []
+    response = api_call(lambda: blogger.posts().list(blogId=blog_id, maxResults=100, status=['LIVE']), f'posts.list:{blog_id}')
+    return response.get('items', []) or []
 
 
 def list_live_pages(blogger, blog_id: str) -> list[dict]:
-    return blogger.pages().list(blogId=blog_id, maxResults=100, status=['LIVE']).execute().get('items', []) or []
+    response = api_call(lambda: blogger.pages().list(blogId=blog_id, maxResults=100, status=['LIVE']), f'pages.list:{blog_id}')
+    return response.get('items', []) or []
 
 
 def exact_loja(items: list[dict]) -> dict | None:
@@ -69,19 +91,18 @@ def ensure_store(blogger, store: dict) -> dict:
     post = exact_loja(list_live_posts(blogger, bid))
     created_post = False
     if not post:
-        post = blogger.posts().insert(
-            blogId=bid,
-            isDraft=False,
-            body={'title': 'Loja', 'content': render(store), 'labels': ['Loja']},
-        ).execute()
+        post = api_call(
+            lambda: blogger.posts().insert(blogId=bid, isDraft=False, body={'title': 'Loja', 'content': render(store), 'labels': ['Loja']}),
+            f'posts.insert:{slug}',
+        )
         created_post = True
-        time.sleep(1.2)
+        time.sleep(2.0)
     post_id = str(post.get('id') or '')
     post_url = str(post.get('url') or '')
     if not post_id or not post_url.startswith('http'):
         raise RuntimeError(f'{slug}: post Loja sem id/url')
 
-    verify_post = blogger.posts().get(blogId=bid, postId=post_id).execute()
+    verify_post = api_call(lambda: blogger.posts().get(blogId=bid, postId=post_id), f'posts.get:{slug}')
     if str(verify_post.get('title') or '').strip().lower() != 'loja':
         raise RuntimeError(f'{slug}: validação do post Loja falhou')
 
@@ -94,18 +115,17 @@ def ensure_store(blogger, store: dict) -> dict:
             f'<p>Abrindo a <a href="{html.escape(post_url, quote=True)}">Loja</a>…</p>'
             f'<script>window.location.replace({json.dumps(post_url)});</script>'
         )
-        page = blogger.pages().insert(
-            blogId=bid,
-            isDraft=False,
-            body={'title': 'Loja', 'content': redir},
-        ).execute()
+        page = api_call(
+            lambda: blogger.pages().insert(blogId=bid, isDraft=False, body={'title': 'Loja', 'content': redir}),
+            f'pages.insert:{slug}',
+        )
         created_page = True
-        time.sleep(1.2)
+        time.sleep(2.0)
     page_id = str(page.get('id') or '')
     page_url = str(page.get('url') or '')
     if not page_id or not page_url.startswith('http'):
         raise RuntimeError(f'{slug}: página Loja sem id/url')
-    verify_page = blogger.pages().get(blogId=bid, pageId=page_id).execute()
+    verify_page = api_call(lambda: blogger.pages().get(blogId=bid, pageId=page_id), f'pages.get:{slug}')
     if str(verify_page.get('title') or '').strip().lower() != 'loja':
         raise RuntimeError(f'{slug}: validação da página Loja falhou')
 
@@ -131,8 +151,8 @@ def main() -> int:
     for store in stores:
         result = ensure_store(blogger, store)
         results.append(result)
-        print('PASS', json.dumps(result, ensure_ascii=False))
-        time.sleep(1.0)
+        print('PASS', json.dumps(result, ensure_ascii=False), flush=True)
+        time.sleep(2.0)
     out = ROOT / 'blogger_multi_store' / 'data' / 'bootstrap_result.json'
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({'version': 1, 'results': results}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
