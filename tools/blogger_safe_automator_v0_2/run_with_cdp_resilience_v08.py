@@ -40,6 +40,23 @@ def _physical_click(page, locator) -> None:
     page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
 
 
+def _wait_enabled(page, locator, timeout_ms: int = 30_000) -> None:
+    deadline = time.time() + max(1, timeout_ms) / 1000.0
+    last_state = "unknown"
+    while time.time() < deadline:
+        try:
+            disabled_attr = locator.get_attribute("disabled")
+            aria_disabled = (locator.get_attribute("aria-disabled") or "").strip().lower()
+            enabled = locator.is_enabled()
+            last_state = f"enabled={enabled} disabled={disabled_attr!r} aria-disabled={aria_disabled!r}"
+            if enabled and disabled_attr is None and aria_disabled not in {"true", "1"}:
+                return
+        except Exception as exc:
+            last_state = type(exc).__name__
+        page.wait_for_timeout(500)
+    raise bp.SafeAutomationError("Botão de download não ficou habilitado no tempo seguro: " + last_state)
+
+
 def _configure_download_path(context, page) -> str:
     download_root = Path(r"C:\Blogger-Automator\downloads")
     download_root.mkdir(parents=True, exist_ok=True)
@@ -96,16 +113,19 @@ def _backup_with_physical_click(module, expected_blog_id: str, output: str) -> d
             page.wait_for_timeout(700)
             validation = module._capture_new_download(before, out, started)
             if validation is None:
-                button = module._wait_download_button(page, timeout_ms=10_000)
+                button = module._wait_download_button(page, timeout_ms=12_000)
                 if button is not None:
+                    _wait_enabled(page, button, timeout_ms=30_000)
                     try:
-                        with page.expect_download(timeout=20_000) as info:
+                        with page.expect_download(timeout=25_000) as info:
                             _physical_click(page, button)
                         validation = module._save_download(info.value, out)
-                        validation["interaction_mode"] = "physical-mouse-dialog-button"
+                        validation["interaction_mode"] = "physical-mouse-enabled-dialog-button"
                     except module.PlaywrightTimeoutError:
-                        page.wait_for_timeout(2_500)
-                        validation = module._capture_new_download(before, out, started)
+                        deadline = time.time() + 20
+                        while validation is None and time.time() < deadline:
+                            page.wait_for_timeout(1_000)
+                            validation = module._capture_new_download(before, out, started)
 
         if validation is None:
             detail = module._visible_backup_diagnostics(page)
