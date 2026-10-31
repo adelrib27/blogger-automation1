@@ -40,6 +40,28 @@ def _physical_click(page, locator) -> None:
     page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
 
 
+def _configure_download_path(context, page) -> str:
+    download_root = Path(r"C:\Blogger-Automator\downloads")
+    download_root.mkdir(parents=True, exist_ok=True)
+    params = {
+        "behavior": "allow",
+        "downloadPath": str(download_root),
+        "eventsEnabled": True,
+    }
+    session = context.new_cdp_session(page)
+    configured = False
+    for method in ("Browser.setDownloadBehavior", "Page.setDownloadBehavior"):
+        try:
+            session.send(method, params)
+            configured = True
+            break
+        except Exception:
+            continue
+    if not configured:
+        raise bp.SafeAutomationError("Não foi possível configurar uma pasta de download explícita via CDP.")
+    return str(download_root)
+
+
 def _backup_with_physical_click(module, expected_blog_id: str, output: str) -> dict:
     blog_id = str(expected_blog_id or "").strip()
     if not blog_id.isdigit():
@@ -58,6 +80,7 @@ def _backup_with_physical_click(module, expected_blog_id: str, output: str) -> d
                 f"Blog ID divergente no fallback físico do backup: atual={actual_id!r}, esperado={blog_id!r}."
             )
 
+        download_path = _configure_download_path(context, page)
         before = module._snapshot_downloads()
         started = time.time()
         module._open_actions(page)
@@ -81,7 +104,7 @@ def _backup_with_physical_click(module, expected_blog_id: str, output: str) -> d
                         validation = module._save_download(info.value, out)
                         validation["interaction_mode"] = "physical-mouse-dialog-button"
                     except module.PlaywrightTimeoutError:
-                        page.wait_for_timeout(1_500)
+                        page.wait_for_timeout(2_500)
                         validation = module._capture_new_download(before, out, started)
 
         if validation is None:
@@ -99,6 +122,7 @@ def _backup_with_physical_click(module, expected_blog_id: str, output: str) -> d
         "bytes": out.stat().st_size,
         "auto_route": route,
         "browser_connected": connected,
+        "download_path": download_path,
         **(validation or {}),
     }
 
