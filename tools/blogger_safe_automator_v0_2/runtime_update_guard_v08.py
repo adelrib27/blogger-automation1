@@ -21,6 +21,7 @@ STATUS = "BLOGGER_RUNTIME_SYNC_GUARD_PASS"
 
 ALLOWED_FILES = (
     "tools/blogger_safe_automator_v0_2/runtime_update_guard_v08.py",
+    "tools/blogger_safe_automator_v0_2/run_with_cdp_resilience_v08.py",
     "tools/blogger_safe_automator_v0_2/extend_modelo_v20_store.py",
     "tools/blogger_safe_automator_v0_2/extend_modelo_v20_store_visible_nav.py",
     "tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py",
@@ -179,8 +180,6 @@ def sync_v20() -> dict:
     sha = _branch_sha()
     run_id = _require_green_ci(sha)
     state = _read_state()
-    # O count faz o guardião re-sincronizar quando a allowlist crescer no mesmo
-    # commit já conhecido pelo processo anterior (bootstrap/auto-upgrade seguro).
     if (
         state.get("sha") == sha
         and state.get("status") == STATUS
