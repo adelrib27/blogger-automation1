@@ -11,7 +11,37 @@ from urllib.parse import urlparse
 import local_service as base
 
 MODEL_V20_CONFIRMATION = "ADOPT MODEL V20"
+RUNTIME_GUARD_STATUS = "BLOGGER_RUNTIME_SYNC_GUARD_PASS"
 PALETTES = {"auto", "blue", "emerald", "plum", "terracotta", "teal", "burgundy", "indigo", "amber"}
+
+
+def _run_runtime_guard() -> dict:
+    guard = Path(__file__).with_name("runtime_update_guard_v08.py")
+    if not guard.exists():
+        raise base.SafeAutomationError("Guardiao de atualizacao V20 nao encontrado no runner local.")
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(guard), "--mode", "v20"],
+            text=True,
+            capture_output=True,
+            timeout=120,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise base.SafeAutomationError("Guardiao de atualizacao V20 excedeu o tempo maximo de seguranca.") from exc
+
+    stdout = (proc.stdout or "").strip()
+    stderr = (proc.stderr or "").strip()
+    if proc.returncode != 0:
+        detail = (stderr or stdout)[-1600:]
+        raise base.SafeAutomationError("Sincronizacao segura V20 falhou antes da adocao: " + detail)
+
+    try:
+        result = json.loads(stdout[stdout.find("{"):])
+    except (ValueError, json.JSONDecodeError) as exc:
+        raise base.SafeAutomationError("Guardiao V20 retornou resposta invalida.") from exc
+    if result.get("status") != RUNTIME_GUARD_STATUS:
+        raise base.SafeAutomationError("Guardiao V20 nao confirmou sincronizacao segura.")
+    return result
 
 
 def execute_model_v20_adoption(expected_blog_id: str, blog_title: str, blog_url: str, palette: str, *, confirm: str):
@@ -33,6 +63,8 @@ def execute_model_v20_adoption(expected_blog_id: str, blog_title: str, blog_url:
     host = (parsed.hostname or "").lower()
     if parsed.scheme != "https" or not host.endswith(".blogspot.com"):
         raise base.SafeAutomationError("URL pública do Blogger inválida.")
+
+    runtime_sync = _run_runtime_guard()
 
     script = Path(__file__).with_name("install_modelo_v20_adoption.py")
     if not script.exists():
@@ -69,6 +101,7 @@ def execute_model_v20_adoption(expected_blog_id: str, blog_title: str, blog_url:
 
     if str(result.get("blog_id")) != blog_id or result.get("status") != "BLOGGER_MODELO_V20_ADOPTED":
         raise base.SafeAutomationError("Instalação V20 não confirmou o Blog ID esperado.")
+    result["runtime_sync_guard"] = runtime_sync
     return result
 
 
