@@ -9,5 +9,9 @@ from auto_blog_route import ensure_theme_page
 impl.select_expected_theme_page = ensure_theme_page
 
 
+def main() -> int:
+    return int(impl.main())
+
+
 if __name__ == "__main__":
-    raise SystemExit(impl.main())
+    raise SystemExit(main())
