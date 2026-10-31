@@ -1,0 +1,43 @@
+name: Blogger Modelo V20 Store Validation
+
+on:
+  push:
+    branches:
+      - blogger-safe-ui-provisioning-v0-2
+    paths:
+      - 'templates/blogger_modelo_v20/**'
+      - 'themes/blogger_modelo_v20/pages.json'
+      - 'tools/blogger_safe_automator_v0_2/extend_modelo_v20_store.py'
+      - 'tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py'
+      - 'tools/blogger_safe_automator_v0_2/render_modelo_v20_pages.py'
+      - 'tools/blogger_safe_automator_v0_2/provision_new_blog_v20.py'
+      - 'tools/blogger_safe_automator_v0_2/validate_modelo_v20_store.py'
+      - '.github/workflows/blogger_modelo_v20_store_validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-v20-store:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile updated Python modules
+        run: |
+          python -m py_compile \
+            tools/blogger_safe_automator_v0_2/extend_modelo_v20_store.py \
+            tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py \
+            tools/blogger_safe_automator_v0_2/render_modelo_v20_pages.py \
+            tools/blogger_safe_automator_v0_2/provision_new_blog_v20.py \
+            tools/blogger_safe_automator_v0_2/validate_modelo_v20_store.py
+
+      - name: Validate V20 store contract
+        run: python tools/blogger_safe_automator_v0_2/validate_modelo_v20_store.py
