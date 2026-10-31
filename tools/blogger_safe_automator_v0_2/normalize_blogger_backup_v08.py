@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import shutil
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -12,6 +11,9 @@ KNOWN_NAMESPACES = {
     "b": "http://www.google.com/2005/gml/b",
     "data": "http://www.google.com/2005/gml/data",
     "expr": "http://www.google.com/2005/gml/expr",
+    "macro": "http://www.google.com/2005/gml/macro",
+    "mexpr": "http://www.google.com/2005/gml/mexpr",
+    "g": "http://www.google.com/2005/gml/g",
 }
 BLOGGER_MARKERS = ("<b:skin", "<b:section", "<b:widget", "<b:template-skin")
 
@@ -54,10 +56,7 @@ def normalize(source: Path, output: Path) -> dict:
     if unknown:
         raise NormalizeError("Prefixes XML sem declaração e sem mapeamento seguro: " + ", ".join(unknown))
 
-    additions = []
-    for prefix in missing:
-        additions.append(f' xmlns:{prefix}="{KNOWN_NAMESPACES[prefix]}"')
-
+    additions = [f' xmlns:{prefix}="{KNOWN_NAMESPACES[prefix]}"' for prefix in missing]
     normalized = text
     if additions:
         replacement = root_text[:-1] + "".join(additions) + ">"
