@@ -29,6 +29,11 @@ nav a.ga-store-visible-nav-v20.ga-store-current-v20{
   color:#fff!important;
   filter:brightness(.94)!important;
 }
+.ga-home-footer a.ga-store-footer-nav-v20,
+.ga-post-footer a.ga-store-footer-nav-v20,
+.ga-static-footer a.ga-store-footer-nav-v20{
+  font-weight:900!important;
+}
 </style>
 """.strip()
 
@@ -39,6 +44,7 @@ JS = r"""
   var STORE_PATH='/p/loja.html';
   var PRIMARY_NAV_SELECTOR='nav.ga-home-v6-nav';
   var FALLBACK_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FALLBACK_DEDUPE';
+  var FOOTER_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FOOTER_NAV';
   var INSTITUTIONAL={
     '/p/sobre.html':1,
     '/p/aviso-de-afiliados.html':1,
@@ -56,7 +62,7 @@ JS = r"""
 
   function isHeaderNav(nav){
     if(!nav || !nav.querySelectorAll) return false;
-    if(nav.closest && nav.closest('footer,.ga-home-footer,.ga-post-footer')) return false;
+    if(nav.closest && nav.closest('footer,.ga-home-footer,.ga-post-footer,.ga-static-footer')) return false;
     if(nav.classList && nav.classList.contains('top-nav')) return false;
 
     var links=nav.querySelectorAll('a[href]');
@@ -163,6 +169,45 @@ JS = r"""
     }
   }
 
+  function enhanceFooterGroup(group){
+    if(!group || !group.querySelectorAll) return;
+
+    var links=group.querySelectorAll('a[href]');
+    var home=null;
+    var store=null;
+    var duplicates=[];
+
+    for(var i=0;i<links.length;i++){
+      var a=links[i];
+      var p=pathOf(a.getAttribute('href')||a.href);
+      var text=(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      if(!home && (p==='/' || text==='início' || text==='inicio')) home=a;
+      if(p===STORE_PATH){
+        if(!store) store=a;
+        else duplicates.push(a);
+      }
+    }
+
+    if(!home) return;
+
+    for(var d=0;d<duplicates.length;d++){
+      var dup=duplicates[d];
+      if(dup.parentNode) dup.parentNode.removeChild(dup);
+    }
+
+    if(!store){
+      store=document.createElement('a');
+      store.href=STORE_PATH;
+      store.textContent='LOJA';
+      store.setAttribute('aria-label','Abrir Loja');
+    }
+
+    store.classList.add('ga-store-footer-nav-v20');
+    store.setAttribute('data-ga-store-footer-nav',FOOTER_DEDUPE_MARKER);
+    if(home.nextElementSibling!==store) group.insertBefore(store,home.nextSibling);
+    group.setAttribute('data-ga-store-footer-enhanced','1');
+  }
+
   function enhance(){
     var primary=document.querySelectorAll(PRIMARY_NAV_SELECTOR);
     for(var p=0;p<primary.length;p++) enhanceVisibleNav(primary[p]);
@@ -172,6 +217,9 @@ JS = r"""
 
     var pageLists=document.querySelectorAll('.centered-top-container .PageList');
     for(var j=0;j<pageLists.length;j++) dedupeFallbackPageList(pageLists[j]);
+
+    var footerLinks=document.querySelectorAll('.ga-home-footer-links,.ga-static-footer-links');
+    for(var f=0;f<footerLinks.length;f++) enhanceFooterGroup(footerLinks[f]);
   }
 
   var scheduled=false;
@@ -202,7 +250,7 @@ def sha256(path: Path) -> str:
 
 def main() -> int:
     p = argparse.ArgumentParser(
-        description="Garante LOJA nos menus visiveis e cabecalhos fixos do BLOGGER_MODELO_V20."
+        description="Garante LOJA nos menus visiveis, cabecalhos fixos e rodapes do BLOGGER_MODELO_V20."
     )
     p.add_argument("--theme-path", required=True)
     args = p.parse_args()
@@ -228,6 +276,8 @@ def main() -> int:
             "store_menu": STORE_PATH,
             "store_menu_position": "after-home",
             "store_menu_highlighted": True,
+            "store_footer_nav_supported": True,
+            "store_footer_position": "after-home",
             "fallback_pagelist_deduplicated": True,
         }, ensure_ascii=False, indent=2))
         return 0
@@ -254,6 +304,8 @@ def main() -> int:
         "store_menu": STORE_PATH,
         "store_menu_position": "after-home",
         "store_menu_highlighted": True,
+        "store_footer_nav_supported": True,
+        "store_footer_position": "after-home",
         "fallback_pagelist_deduplicated": True,
         "other_navigation_links_preserved": True,
     }, ensure_ascii=False, indent=2))
