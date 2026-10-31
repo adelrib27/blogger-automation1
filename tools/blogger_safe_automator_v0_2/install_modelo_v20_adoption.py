@@ -134,15 +134,20 @@ def main() -> int:
     template_theme = root / "themes" / "blogger_modelo_v20" / "theme.xml.tpl"
     rendered_theme = root / "themes" / "blogger_modelo_v20" / "rendered" / str(args.expected_blog_id) / "theme.xml"
     backup_theme = root.parent / "backups" / "blogger" / args.expected_blog_id / "theme-before-modelo-v20-adoption.xml"
+    normalized_backup = backup_theme.with_name("theme-before-modelo-v20-adoption.normalized.xml")
     freeze = here / "freeze_modelo_v20_theme.py"
     render = here / "render_modelo_v20_theme.py"
     extend_store = here / "extend_modelo_v20_store.py"
     extend_visible_nav = here / "extend_modelo_v20_store_visible_nav.py"
     resilient = here / "run_with_cdp_resilience_v08.py"
     backup = here / "backup_theme_auto.py"
+    normalize_backup = here / "normalize_blogger_backup_v08.py"
     apply = here / "apply_theme_auto.py"
 
-    for required in (source_theme, freeze, render, extend_store, extend_visible_nav, resilient, backup, apply):
+    for required in (
+        source_theme, freeze, render, extend_store, extend_visible_nav,
+        resilient, backup, normalize_backup, apply,
+    ):
         if not required.exists():
             raise SystemExit(f"Arquivo obrigatório ausente: {required}")
 
@@ -161,8 +166,9 @@ def main() -> int:
 
     backup_theme.parent.mkdir(parents=True, exist_ok=True)
     run([python, str(resilient), "backup", "--expected-blog-id", args.expected_blog_id, "--output", str(backup_theme)])
+    run([python, str(normalize_backup), "--source", str(backup_theme), "--output", str(normalized_backup)])
     run([python, str(resilient), "apply", "--expected-blog-id", args.expected_blog_id, "--theme-path", str(rendered_theme),
-         "--backup-path", str(backup_theme), "--public-url", args.blog_url, "--public-marker", MARKER,
+         "--backup-path", str(normalized_backup), "--public-url", args.blog_url, "--public-marker", MARKER,
          "--confirm", "APPLY THEME"])
 
     rendered_text = rendered_theme.read_text(encoding="utf-8")
@@ -181,7 +187,8 @@ def main() -> int:
         "palette": args.palette,
         "template_theme": str(template_theme),
         "rendered_theme": str(rendered_theme),
-        "backup_theme": str(backup_theme),
+        "backup_theme_original": str(backup_theme),
+        "backup_theme_normalized": str(normalized_backup),
         "public_marker": MARKER,
         "store_extension_marker": STORE_MARKER,
         "store_visible_nav_marker": VISIBLE_NAV_MARKER,
