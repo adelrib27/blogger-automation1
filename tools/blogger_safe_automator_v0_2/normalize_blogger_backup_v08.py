@@ -23,11 +23,31 @@ class NormalizeError(RuntimeError):
 
 
 def _used_prefixes(text: str) -> set[str]:
+    """Retorna apenas prefixes usados em nomes XML reais de elemento/atributo.
+
+    Não procura genericamente por ``foo:bar`` dentro da tag, pois valores de
+    atributos Blogger podem conter textos como ``image:url``/``title:...`` que
+    não são namespaces XML.
+    """
     out: set[str] = set()
     for tag in re.findall(r"<[^>]+>", text, flags=re.S):
-        if tag.startswith("<!--") or tag.startswith("<![CDATA["):
+        stripped = tag.lstrip()
+        if stripped.startswith("<!--") or stripped.startswith("<![CDATA[") or stripped.startswith("<?"):
             continue
-        for prefix in re.findall(r"(?:<|</|\s)([A-Za-z_][\w.-]*):[A-Za-z_][\w.-]*", tag):
+
+        # Nome do elemento: <b:section ...> ou </b:section>
+        element = re.match(r"<\s*/?\s*([A-Za-z_][\w.-]*):[A-Za-z_][\w.-]*", tag)
+        if element:
+            prefix = element.group(1)
+            if prefix not in {"xml", "xmlns"}:
+                out.add(prefix)
+
+        # Nomes de atributos: expr:href="...". Exige '=' após o nome para
+        # nunca confundir conteúdo do valor do atributo com namespace.
+        for prefix in re.findall(
+            r"\s([A-Za-z_][\w.-]*):[A-Za-z_][\w.-]*\s*=",
+            tag,
+        ):
             if prefix not in {"xml", "xmlns"}:
                 out.add(prefix)
     return out
