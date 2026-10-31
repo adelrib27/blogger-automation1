@@ -5,12 +5,12 @@ param(
 $ErrorActionPreference = 'Stop'
 $Tools = Join-Path $Root 'tools\blogger_safe_automator_v0_2'
 $Python = Join-Path $Tools '.venv\Scripts\python.exe'
-$Runner = Join-Path $Tools 'local_service_v07.py'
+$Runner = Join-Path $Tools 'local_service_v08.py'
 $Profile = 'C:\Blogger-Automator\chrome-debug-profile'
 $SecretFile = 'C:\Blogger-Automator\secrets\blogger_runner_token.dpapi'
 $LogDir = 'C:\Blogger-Automator\logs\autostart'
-$LogFile = Join-Path $LogDir 'blogger_automation_v07.log'
-$ExpectedVersion = '0.7'
+$LogFile = Join-Path $LogDir 'blogger_automation_v08.log'
+$ExpectedVersion = '0.8'
 
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 function Log([string]$m) { Add-Content -Path $LogFile -Value ("{0} {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $m) }
@@ -57,7 +57,7 @@ function Stop-OldSafeRunner {
     $p = Get-CimInstance Win32_Process -Filter ("ProcessId={0}" -f $l.OwningProcess) -ErrorAction SilentlyContinue
     if (-not $p) { continue }
     $cmd = [string]$p.CommandLine
-    if ($cmd -like "*$Tools*" -and $cmd -match 'local_service_v0[3-7]\.py') {
+    if ($cmd -like "*$Tools*" -and $cmd -match 'local_service_v0[3-8]\.py') {
       Log "Encerrando runner antigo controlado PID=$($p.ProcessId)"
       Stop-Process -Id $p.ProcessId -Force
       Start-Sleep -Milliseconds 700
@@ -70,7 +70,7 @@ function Stop-OldSafeRunner {
 try {
   Log '=== bootstrap iniciado ==='
   if (-not (Test-Path $Python)) { throw "Python da venv não encontrado: $Python" }
-  if (-not (Test-Path $Runner)) { throw "Runner v0.7 não encontrado: $Runner" }
+  if (-not (Test-Path $Runner)) { throw "Runner v0.8 não encontrado: $Runner" }
   $token = Unprotect-Token
   if (-not $token -or $token.Length -lt 32) { throw 'BLOGGER_RUNNER_TOKEN inválido.' }
   $env:BLOGGER_RUNNER_TOKEN = $token
@@ -102,7 +102,7 @@ try {
     if (-not $ready) { throw "Runner v$ExpectedVersion não respondeu em 30s." }
   }
 
-  Log "BOOTSTRAP_OK runner=$($health.version) cdp=9222"
+  Log "BOOTSTRAP_OK runner=$($health.version) cdp=9222 runtime_guard=v20"
   exit 0
 } catch {
   Log ("BOOTSTRAP_FAIL " + $_.Exception.Message)
