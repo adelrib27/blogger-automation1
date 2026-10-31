@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -60,25 +62,23 @@ def _backup_item(page):
 
 
 def _looks_like_download_control(item) -> bool:
-    try:
-        text = (item.inner_text(timeout=500) or "").strip()
-    except Exception:
-        text = ""
-    try:
-        aria = (item.get_attribute("aria-label") or "").strip()
-    except Exception:
-        aria = ""
-    try:
-        title = (item.get_attribute("title") or "").strip()
-    except Exception:
-        title = ""
-    label = " ".join(x for x in (text, aria, title) if x)
-    return bool(DOWNLOAD_LABEL_RE.search(label))
+    values = []
+    for kind in ("text", "aria", "title"):
+        try:
+            if kind == "text":
+                value = item.inner_text(timeout=500) or ""
+            elif kind == "aria":
+                value = item.get_attribute("aria-label") or ""
+            else:
+                value = item.get_attribute("title") or ""
+            if value.strip():
+                values.append(value.strip())
+        except Exception:
+            pass
+    return bool(DOWNLOAD_LABEL_RE.search(" ".join(values)))
 
 
 def _download_button(page):
-    # Primeiro procura dentro de diálogos/modais, onde o Blogger costuma exibir
-    # a confirmação do backup; depois amplia para controles visíveis da página.
     scopes = []
     try:
         dialogs = page.locator('[role="dialog"]')
@@ -89,7 +89,6 @@ def _download_button(page):
     except Exception:
         pass
     scopes.append(page)
-
     for scope in scopes:
         try:
             controls = scope.locator('button,[role="button"],a[href]')
@@ -150,12 +149,9 @@ def _validate_blogger_theme_bytes(data: bytes) -> dict:
         raise bp.SafeAutomationError("Backup baixado não contém a raiz HTML de um tema Blogger.")
     markers = [marker for marker in BLOGGER_THEME_MARKERS if marker in text]
     if len(markers) < 2:
-        raise bp.SafeAutomationError(
-            "Backup baixado não contém marcadores estruturais suficientes de um tema Blogger."
-        )
+        raise bp.SafeAutomationError("Backup baixado não contém marcadores estruturais suficientes de um tema Blogger.")
     if "blogger.com" not in low and "data:blog" not in low and "expr:" not in low:
         raise bp.SafeAutomationError("Backup baixado não apresenta assinatura estrutural do Blogger.")
-
     strict_xml = True
     strict_xml_error = ""
     try:
@@ -163,7 +159,6 @@ def _validate_blogger_theme_bytes(data: bytes) -> dict:
     except Exception as exc:
         strict_xml = False
         strict_xml_error = str(exc)[:400]
-
     return {
         "blogger_theme_structure_valid": True,
         "strict_xml_well_formed": strict_xml,
@@ -181,6 +176,72 @@ def _save_download(download, output: Path) -> dict:
     data = tmp.read_bytes()
     validation = _validate_blogger_theme_bytes(data)
     tmp.replace(output)
+    validation["capture_mode"] = "playwright-download-event"
+    return validation
+
+
+def _download_roots() -> list[Path]:
+    roots = [Path.home() / "Downloads", Path(r"C:\Blogger-Automator\downloads")]
+    out = []
+    for root in roots:
+        try:
+            if root.exists() and root not in out:
+                out.append(root)
+        except Exception:
+            pass
+    return out
+
+
+def _snapshot_downloads() -> dict[str, tuple[int, int]]:
+    snap: dict[str, tuple[int, int]] = {}
+    for root in _download_roots():
+        try:
+            for p in root.iterdir():
+                if not p.is_file():
+                    continue
+                st = p.stat()
+                snap[str(p.resolve()).lower()] = (int(st.st_mtime_ns), int(st.st_size))
+        except Exception:
+            continue
+    return snap
+
+
+def _capture_new_download(before: dict[str, tuple[int, int]], output: Path, since: float) -> dict | None:
+    candidates: list[tuple[float, Path, dict]] = []
+    for root in _download_roots():
+        try:
+            files = list(root.iterdir())
+        except Exception:
+            continue
+        for p in files:
+            try:
+                if not p.is_file() or p.suffix.lower() in {".crdownload", ".tmp", ".part"}:
+                    continue
+                st = p.stat()
+                key = str(p.resolve()).lower()
+                previous = before.get(key)
+                changed = previous is None or previous != (int(st.st_mtime_ns), int(st.st_size))
+                if not changed or st.st_mtime < since - 3 or st.st_size < 1024:
+                    continue
+                data = p.read_bytes()
+                validation = _validate_blogger_theme_bytes(data)
+                candidates.append((st.st_mtime, p, validation))
+            except Exception:
+                continue
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    _, source, validation = candidates[0]
+    output.parent.mkdir(parents=True, exist_ok=True)
+    tmp = output.with_suffix(output.suffix + ".filesystem.tmp")
+    shutil.copy2(source, tmp)
+    # Revalida os bytes copiados antes da troca atômica.
+    _validate_blogger_theme_bytes(tmp.read_bytes())
+    tmp.replace(output)
+    validation.update({
+        "capture_mode": "chrome-download-directory-fallback",
+        "download_source_name": source.name,
+    })
     return validation
 
 
@@ -202,33 +263,40 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                 f"Blog ID divergente antes do backup do tema: atual={actual_id!r}, esperado={blog_id!r}."
             )
 
+        before = _snapshot_downloads()
+        started = time.time()
         _open_actions(page)
         item = _backup_item(page)
-        download = None
+        validation = None
         try:
             with page.expect_download(timeout=10_000) as info:
                 try:
                     item.click(timeout=5_000)
                 except Exception:
                     item.evaluate("el => el.click()")
-            download = info.value
+            validation = _save_download(info.value, out)
         except PlaywrightTimeoutError:
-            page.wait_for_timeout(900)
-            button = _download_button(page)
-            if button is None:
+            page.wait_for_timeout(1200)
+            validation = _capture_new_download(before, out, started)
+            if validation is None:
+                button = _download_button(page)
+                if button is not None:
+                    try:
+                        with page.expect_download(timeout=20_000) as info:
+                            try:
+                                button.click(timeout=5_000)
+                            except Exception:
+                                button.evaluate("el => el.click()")
+                        validation = _save_download(info.value, out)
+                    except PlaywrightTimeoutError:
+                        page.wait_for_timeout(1200)
+                        validation = _capture_new_download(before, out, started)
+            if validation is None:
                 detail = _visible_backup_diagnostics(page)
                 raise bp.SafeAutomationError(
-                    "A opção Fazer backup foi acionada, mas nenhum controle de download reconhecível apareceu. "
+                    "Fazer backup foi acionado, mas nenhum download novo e válido foi detectado. "
                     + (f"Diagnóstico: {detail}" if detail else "Sem controles visíveis adicionais.")
                 )
-            with page.expect_download(timeout=20_000) as info:
-                try:
-                    button.click(timeout=5_000)
-                except Exception:
-                    button.evaluate("el => el.click()")
-            download = info.value
-
-        validation = _save_download(download, out)
         connected = browser.is_connected()
 
     return {
@@ -238,7 +306,7 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
         "bytes": out.stat().st_size,
         "auto_route": route,
         "browser_connected": connected,
-        **validation,
+        **(validation or {}),
     }
 
 
