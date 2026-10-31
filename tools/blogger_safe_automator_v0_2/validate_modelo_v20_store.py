@@ -12,6 +12,7 @@ from pathlib import Path
 EXPECTED_KEYS = ["sobre", "afiliados", "contato", "privacidade", "termos", "loja"]
 BASE_MARKER = "emporio-revisao-visual-20-modelo-final"
 STORE_MARKER = "BLOGGER_MODELO_V20_STORE_EXTENSION"
+VISIBLE_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_VISIBLE_NAV"
 
 
 def sha256(path: Path) -> str:
@@ -22,6 +23,17 @@ def fail(message: str) -> None:
     raise SystemExit("VALIDATION_FAILED: " + message)
 
 
+def run_extension(script: Path, theme: Path, label: str) -> None:
+    proc = subprocess.run(
+        [sys.executable, str(script), "--theme-path", str(theme)],
+        text=True,
+        capture_output=True,
+        timeout=60,
+    )
+    if proc.returncode != 0:
+        fail(f"{label} falhou: " + (proc.stderr or proc.stdout)[-1000:])
+
+
 def main() -> int:
     here = Path(__file__).resolve().parent
     root = here.parents[1]
@@ -29,8 +41,9 @@ def main() -> int:
     template_pages_path = root / "templates" / "blogger_modelo_v20" / "pages.json"
     canonical_pages_path = root / "themes" / "blogger_modelo_v20" / "pages.json"
     extension_path = here / "extend_modelo_v20_store.py"
+    visible_nav_path = here / "extend_modelo_v20_store_visible_nav.py"
 
-    for p in (manifest_path, template_pages_path, canonical_pages_path, extension_path):
+    for p in (manifest_path, template_pages_path, canonical_pages_path, extension_path, visible_nav_path):
         if not p.exists():
             fail(f"arquivo obrigatório ausente: {p}")
 
@@ -87,18 +100,23 @@ def main() -> int:
         theme = Path(td) / "theme.xml"
         theme.write_text(
             "<?xml version='1.0' encoding='UTF-8'?><html><head>"
-            f"<style>/* {BASE_MARKER} */</style></head><body></body></html>",
+            f"<style>/* {BASE_MARKER} */</style></head><body>"
+            "<nav class='ga-home-v6-nav'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></nav>"
+            "</body></html>",
             encoding="utf-8",
         )
-        cmd = [sys.executable, str(extension_path), "--theme-path", str(theme)]
-        first = subprocess.run(cmd, text=True, capture_output=True, timeout=60)
-        if first.returncode != 0:
-            fail("primeira aplicação da extensão falhou: " + (first.stderr or first.stdout)[-1000:])
+
+        run_extension(extension_path, theme, "primeira aplicação da extensão LOJA")
+        run_extension(visible_nav_path, theme, "primeira aplicação do menu visível")
         ET.parse(theme)
         first_hash = sha256(theme)
         text = theme.read_text(encoding="utf-8")
+
         if text.count(STORE_MARKER) != 1:
-            fail("marker da extensão não aparece exatamente uma vez")
+            fail("marker da extensão LOJA não aparece exatamente uma vez")
+        if text.count(VISIBLE_NAV_MARKER) != 1:
+            fail("marker do menu visível não aparece exatamente uma vez")
+
         for needle in (
             "/p/loja.html",
             "repeat(4,minmax(0,1fr))",
@@ -106,16 +124,18 @@ def main() -> int:
             "max-width:1280px",
             ".sidebar-container",
             "ga-store-nav-v20",
+            "nav.ga-home-v6-nav",
+            "ga-store-visible-nav-v20",
+            "home.nextElementSibling!==store",
         ):
             if needle not in text:
                 fail(f"extensão não contém requisito: {needle}")
 
-        second = subprocess.run(cmd, text=True, capture_output=True, timeout=60)
-        if second.returncode != 0:
-            fail("segunda aplicação/idempotência falhou: " + (second.stderr or second.stdout)[-1000:])
+        run_extension(extension_path, theme, "segunda aplicação/idempotência LOJA")
+        run_extension(visible_nav_path, theme, "segunda aplicação/idempotência menu visível")
         second_hash = sha256(theme)
         if first_hash != second_hash:
-            fail("extensão não é idempotente")
+            fail("extensões não são idempotentes")
 
     print(json.dumps({
         "status": "BLOGGER_MODELO_V20_STORE_VALIDATION_PASS",
@@ -124,8 +144,10 @@ def main() -> int:
         "page_count": 6,
         "page_keys": EXPECTED_KEYS,
         "store_extension_marker": STORE_MARKER,
+        "store_visible_nav_marker": VISIBLE_NAV_MARKER,
         "store_menu_path": "/p/loja.html",
         "store_menu_position": "after-home",
+        "store_menu_target": "nav.ga-home-v6-nav",
         "store_menu_highlighted": True,
         "store_max_width": 1280,
         "store_sidebar_hidden_only": True,
@@ -137,7 +159,7 @@ def main() -> int:
         "fixed_products_in_scaffold": False,
         "extension_xml_valid": True,
         "extension_idempotent": True,
-        "home_changed": False,
+        "home_content_changed": False,
         "posts_changed": False,
         "other_static_pages_changed": False
     }, ensure_ascii=False, indent=2))
