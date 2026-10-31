@@ -26,6 +26,7 @@ ALLOWED_FILES = (
     "tools/blogger_safe_automator_v0_2/extend_modelo_v20_store_visible_nav.py",
     "tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py",
     "tools/blogger_safe_automator_v0_2/backup_theme_auto.py",
+    "tools/blogger_safe_automator_v0_2/apply_theme_auto.py",
     "tools/blogger_safe_automator_v0_2/validate_modelo_v20_store.py",
     "tools/blogger_safe_automator_v0_2/render_modelo_v20_pages.py",
     "tools/blogger_safe_automator_v0_2/provision_new_blog_v20.py",
