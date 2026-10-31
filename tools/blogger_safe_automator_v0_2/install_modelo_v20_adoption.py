@@ -34,6 +34,22 @@ def run(cmd: list[str]) -> None:
         raise SystemExit(f"Etapa V20 falhou em {name}: {detail or 'sem detalhe adicional'}")
 
 
+def try_normalize_existing(python: str, normalize_backup: Path, source: Path, output: Path) -> bool:
+    if not source.exists() or source.stat().st_size < 1024:
+        return False
+    proc = subprocess.run(
+        [python, str(normalize_backup), "--source", str(source), "--output", str(output)],
+        text=True,
+        capture_output=True,
+    )
+    if proc.returncode == 0 and output.exists() and output.stat().st_size >= 1024:
+        print("\n>>> backup V20 existente reutilizado após validação/normalização segura", flush=True)
+        if proc.stdout:
+            print(proc.stdout.rstrip(), flush=True)
+        return True
+    return False
+
+
 def public_runtime_probe(blog_url: str, expected_title: str) -> dict:
     cdp_url = bp.validate_cdp_url(bp.DEFAULT_CDP_URL, allow_remote=False)
     cdp = bp.probe_cdp(cdp_url)
@@ -83,11 +99,7 @@ def public_runtime_probe(blog_url: str, expected_title: str) -> dict:
         finally:
             page.close()
 
-    data.update({
-        "store_url": store_url,
-        "http_status": status,
-        "cdp_browser": cdp.get("browser"),
-    })
+    data.update({"store_url": store_url, "http_status": status, "cdp_browser": cdp.get("browser")})
     if status == 404:
         data["store_page_available"] = False
         data["validation"] = "STORE_PAGE_NOT_CREATED_YET"
@@ -104,13 +116,10 @@ def public_runtime_probe(blog_url: str, expected_title: str) -> dict:
         raise SystemExit("Validação pública V20 falhou: corpo da página não veio do feed canônico no host estável.")
     footer_brand = str(data.get("footer_brand") or "").strip()
     if footer_brand and footer_brand != expected_title:
-        raise SystemExit(
-            f"Validação pública V20 falhou: marca do rodapé esperada {expected_title!r}, obtida {footer_brand!r}."
-        )
+        raise SystemExit(f"Validação pública V20 falhou: marca do rodapé esperada {expected_title!r}, obtida {footer_brand!r}.")
     footer_nav = data.get("footer_nav") or []
-    if "Início" in footer_nav and "LOJA" in footer_nav:
-        if footer_nav.index("LOJA") != footer_nav.index("Início") + 1:
-            raise SystemExit("Validação pública V20 falhou: LOJA não está imediatamente após Início no rodapé.")
+    if "Início" in footer_nav and "LOJA" in footer_nav and footer_nav.index("LOJA") != footer_nav.index("Início") + 1:
+        raise SystemExit("Validação pública V20 falhou: LOJA não está imediatamente após Início no rodapé.")
     data["validation"] = "PUBLIC_RUNTIME_PASS"
     return data
 
@@ -144,10 +153,7 @@ def main() -> int:
     normalize_backup = here / "normalize_blogger_backup_v08.py"
     apply = here / "apply_theme_auto.py"
 
-    for required in (
-        source_theme, freeze, render, extend_store, extend_visible_nav,
-        resilient, backup, normalize_backup, apply,
-    ):
+    for required in (source_theme, freeze, render, extend_store, extend_visible_nav, resilient, backup, normalize_backup, apply):
         if not required.exists():
             raise SystemExit(f"Arquivo obrigatório ausente: {required}")
 
@@ -165,8 +171,11 @@ def main() -> int:
     run([python, str(extend_visible_nav), "--theme-path", str(rendered_theme)])
 
     backup_theme.parent.mkdir(parents=True, exist_ok=True)
-    run([python, str(resilient), "backup", "--expected-blog-id", args.expected_blog_id, "--output", str(backup_theme)])
-    run([python, str(normalize_backup), "--source", str(backup_theme), "--output", str(normalized_backup)])
+    reused_backup = try_normalize_existing(python, normalize_backup, backup_theme, normalized_backup)
+    if not reused_backup:
+        run([python, str(resilient), "backup", "--expected-blog-id", args.expected_blog_id, "--output", str(backup_theme)])
+        run([python, str(normalize_backup), "--source", str(backup_theme), "--output", str(normalized_backup)])
+
     run([python, str(resilient), "apply", "--expected-blog-id", args.expected_blog_id, "--theme-path", str(rendered_theme),
          "--backup-path", str(normalized_backup), "--public-url", args.blog_url, "--public-marker", MARKER,
          "--confirm", "APPLY THEME"])
@@ -189,6 +198,7 @@ def main() -> int:
         "rendered_theme": str(rendered_theme),
         "backup_theme_original": str(backup_theme),
         "backup_theme_normalized": str(normalized_backup),
+        "backup_reused": reused_backup,
         "public_marker": MARKER,
         "store_extension_marker": STORE_MARKER,
         "store_visible_nav_marker": VISIBLE_NAV_MARKER,
