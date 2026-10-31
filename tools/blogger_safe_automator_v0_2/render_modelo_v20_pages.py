@@ -9,7 +9,7 @@ TOKEN = "{{BLOG_TITLE}}"
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Renderiza as páginas institucionais do BLOGGER_MODELO_V20.")
+    p = argparse.ArgumentParser(description="Renderiza as páginas do BLOGGER_MODELO_V20, incluindo a LOJA automatizada.")
     p.add_argument("--pages-template", required=True)
     p.add_argument("--blog-title", required=True)
     p.add_argument("--output", required=True)
@@ -35,8 +35,23 @@ def main() -> int:
             "expected_slug": page["expected_slug"],
             "publish": bool(page.get("publish", True)),
             "requires_theme_contact_runtime": bool(page.get("requires_theme_contact_runtime", False)),
+            "requires_store_population": bool(page.get("requires_store_population", False)),
+            "store_expected_products": page.get("store_expected_products"),
+            "store_expected_categories": page.get("store_expected_categories"),
+            "store_auto_start_marker": page.get("store_auto_start_marker"),
+            "store_auto_end_marker": page.get("store_auto_end_marker"),
             "content": content,
         })
+
+    if len(rendered) != 6:
+        raise SystemExit(f"Modelo V20 precisa renderizar exatamente 6 páginas; obtido {len(rendered)}.")
+    store = next((p for p in rendered if p["key"] == "loja"), None)
+    if not store or not store["requires_store_population"]:
+        raise SystemExit("Modelo V20 inválido: página LOJA automatizada ausente.")
+    if store["store_expected_products"] != 20 or store["store_expected_categories"] != 5:
+        raise SystemExit("Contrato da LOJA inválido: esperado 20 produtos em 5 categorias.")
+    if not store["store_auto_start_marker"] or not store["store_auto_end_marker"]:
+        raise SystemExit("Contrato da LOJA inválido: marcadores automáticos ausentes.")
 
     payload = {
         "model": "BLOGGER_MODELO_V20",
@@ -54,6 +69,10 @@ def main() -> int:
         "page_keys": [p["key"] for p in rendered],
         "inherit_posts": False,
         "contact_form_included": any(p["key"] == "contato" and p["requires_theme_contact_runtime"] for p in rendered),
+        "store_scaffold_included": True,
+        "store_expected_products": 20,
+        "store_expected_categories": 5,
+        "store_layout": {"desktop_columns": 4, "tablet_columns": 2, "mobile_columns": 2},
     }, ensure_ascii=False, indent=2))
     return 0
 
