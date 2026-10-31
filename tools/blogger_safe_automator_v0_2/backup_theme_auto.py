@@ -178,6 +178,17 @@ def _validate_blogger_theme_bytes(data: bytes) -> dict:
     }
 
 
+def _write_validated_bytes(data: bytes, output: Path, capture_mode: str, **extra) -> dict:
+    validation = _validate_blogger_theme_bytes(data)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    tmp = output.with_suffix(output.suffix + ".capturing.tmp")
+    tmp.write_bytes(data)
+    _validate_blogger_theme_bytes(tmp.read_bytes())
+    tmp.replace(output)
+    validation.update({"capture_mode": capture_mode, **extra})
+    return validation
+
+
 def _save_download(download, output: Path) -> dict:
     output.parent.mkdir(parents=True, exist_ok=True)
     tmp = output.with_suffix(output.suffix + ".downloading")
@@ -290,6 +301,38 @@ def _wait_capture_new_download(page, before, output: Path, since: float, *, time
     return None
 
 
+def _capture_theme_from_responses(responses: list, output: Path) -> dict | None:
+    for response in reversed(responses[-120:]):
+        try:
+            status = int(response.status)
+            if status < 200 or status >= 400:
+                continue
+            url = str(response.url or "")
+            if "blogger" not in url.lower() and "google" not in url.lower():
+                continue
+            headers = response.headers
+            content_type = str(headers.get("content-type") or "").lower()
+            disposition = str(headers.get("content-disposition") or "").lower()
+            if not any(token in content_type for token in ("xml", "text", "octet-stream")) and "attachment" not in disposition:
+                continue
+            data = response.body()
+            if len(data) > 8_000_000:
+                continue
+            try:
+                return _write_validated_bytes(
+                    data,
+                    output,
+                    "network-response-fallback",
+                    response_url=url[:500],
+                    response_content_type=content_type[:160],
+                )
+            except bp.SafeAutomationError:
+                continue
+        except Exception:
+            continue
+    return None
+
+
 def execute_backup(expected_blog_id: str, output: str) -> dict:
     blog_id = str(expected_blog_id or "").strip()
     if not blog_id.isdigit():
@@ -308,6 +351,8 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                 f"Blog ID divergente antes do backup do tema: atual={actual_id!r}, esperado={blog_id!r}."
             )
 
+        responses: list = []
+        page.on("response", lambda response: responses.append(response))
         download_policy = _configure_cdp_downloads(context, page)
         before = _snapshot_downloads()
         started = time.time()
@@ -324,6 +369,8 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
         except PlaywrightTimeoutError:
             validation = _wait_capture_new_download(page, before, out, started, timeout_ms=5_000)
             if validation is None:
+                validation = _capture_theme_from_responses(responses, out)
+            if validation is None:
                 button = _wait_download_button(page, timeout_ms=20_000)
                 if button is not None:
                     clicked_at = time.time()
@@ -336,12 +383,14 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                         validation = _save_download(info.value, out)
                     except PlaywrightTimeoutError:
                         validation = _wait_capture_new_download(
-                            page, before, out, min(started, clicked_at), timeout_ms=60_000
+                            page, before, out, min(started, clicked_at), timeout_ms=20_000
                         )
+                        if validation is None:
+                            validation = _capture_theme_from_responses(responses, out)
             if validation is None:
                 detail = _visible_backup_diagnostics(page)
                 raise bp.SafeAutomationError(
-                    "Fazer backup foi acionado, mas nenhum download novo e válido foi detectado na pasta CDP controlada. "
+                    "Fazer backup foi acionado, mas nenhum XML válido foi capturado por download, diretório ou resposta de rede. "
                     + (f"Diagnóstico: {detail}" if detail else "Sem controles visíveis adicionais.")
                 )
         connected = browser.is_connected()
