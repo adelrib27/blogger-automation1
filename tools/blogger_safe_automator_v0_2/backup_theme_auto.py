@@ -105,7 +105,7 @@ def _download_button(page):
     return None
 
 
-def _wait_download_button(page, timeout_ms: int = 12_000):
+def _wait_download_button(page, timeout_ms: int = 20_000):
     deadline = time.time() + max(1, timeout_ms) / 1000.0
     while time.time() < deadline:
         item = _download_button(page)
@@ -254,6 +254,24 @@ def _capture_new_download(before: dict[str, tuple[int, int]], output: Path, sinc
     return validation
 
 
+def _wait_capture_new_download(
+    page,
+    before: dict[str, tuple[int, int]],
+    output: Path,
+    since: float,
+    *,
+    timeout_ms: int = 60_000,
+) -> dict | None:
+    deadline = time.time() + max(1, timeout_ms) / 1000.0
+    while time.time() < deadline:
+        validation = _capture_new_download(before, output, since)
+        if validation is not None:
+            validation["filesystem_wait_ms"] = timeout_ms
+            return validation
+        page.wait_for_timeout(750)
+    return None
+
+
 def execute_backup(expected_blog_id: str, output: str) -> dict:
     blog_id = str(expected_blog_id or "").strip()
     if not blog_id.isdigit():
@@ -278,32 +296,37 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
         item = _backup_item(page)
         validation = None
         try:
-            with page.expect_download(timeout=10_000) as info:
+            with page.expect_download(timeout=12_000) as info:
                 try:
                     item.click(timeout=5_000)
                 except Exception:
                     item.evaluate("el => el.click()")
             validation = _save_download(info.value, out)
         except PlaywrightTimeoutError:
-            page.wait_for_timeout(800)
-            validation = _capture_new_download(before, out, started)
+            validation = _wait_capture_new_download(page, before, out, started, timeout_ms=5_000)
             if validation is None:
-                button = _wait_download_button(page, timeout_ms=12_000)
+                button = _wait_download_button(page, timeout_ms=20_000)
                 if button is not None:
+                    clicked_at = time.time()
                     try:
-                        with page.expect_download(timeout=20_000) as info:
+                        with page.expect_download(timeout=30_000) as info:
                             try:
-                                button.click(timeout=5_000)
+                                button.click(timeout=8_000, force=True)
                             except Exception:
                                 button.evaluate("el => el.click()")
                         validation = _save_download(info.value, out)
                     except PlaywrightTimeoutError:
-                        page.wait_for_timeout(1500)
-                        validation = _capture_new_download(before, out, started)
+                        validation = _wait_capture_new_download(
+                            page,
+                            before,
+                            out,
+                            min(started, clicked_at),
+                            timeout_ms=60_000,
+                        )
             if validation is None:
                 detail = _visible_backup_diagnostics(page)
                 raise bp.SafeAutomationError(
-                    "Fazer backup foi acionado, mas nenhum download novo e válido foi detectado. "
+                    "Fazer backup foi acionado, mas nenhum download novo e válido foi detectado após espera estendida. "
                     + (f"Diagnóstico: {detail}" if detail else "Sem controles visíveis adicionais.")
                 )
         connected = browser.is_connected()
