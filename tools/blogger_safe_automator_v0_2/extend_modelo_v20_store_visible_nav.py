@@ -36,6 +36,7 @@ JS = r"""
 //<![CDATA[
 (function(){
   var STORE_PATH='/p/loja.html';
+  var FALLBACK_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FALLBACK_DEDUPE';
 
   function pathOf(href){
     try{
@@ -49,13 +50,22 @@ JS = r"""
     var links=nav.querySelectorAll('a[href]');
     var home=null;
     var store=null;
+    var duplicateStores=[];
 
     for(var i=0;i<links.length;i++){
       var a=links[i];
       var p=pathOf(a.getAttribute('href')||a.href);
       var text=(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
       if(!home && (p==='/' || text==='início' || text==='inicio')) home=a;
-      if(p===STORE_PATH) store=a;
+      if(p===STORE_PATH){
+        if(!store) store=a;
+        else duplicateStores.push(a);
+      }
+    }
+
+    for(var d=0;d<duplicateStores.length;d++){
+      var dup=duplicateStores[d];
+      if(dup.parentNode===nav) nav.removeChild(dup);
     }
 
     if(!store){
@@ -76,15 +86,56 @@ JS = r"""
     }
   }
 
+  function dedupeFallbackPageList(pageList){
+    if(!pageList) return;
+    var list=pageList.querySelector('ul');
+    if(!list) return;
+
+    var links=list.querySelectorAll('a[href]');
+    var homeLi=null;
+    var storeLi=null;
+    var duplicates=[];
+
+    for(var i=0;i<links.length;i++){
+      var a=links[i];
+      var p=pathOf(a.getAttribute('href')||a.href);
+      var text=(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      var li=a.closest ? a.closest('li') : a.parentNode;
+      if(!li) continue;
+      if(!homeLi && (p==='/' || text==='início' || text==='inicio')) homeLi=li;
+      if(p===STORE_PATH){
+        if(!storeLi) storeLi=li;
+        else duplicates.push(li);
+      }
+    }
+
+    for(var d=0;d<duplicates.length;d++){
+      var dup=duplicates[d];
+      if(dup.parentNode===list) list.removeChild(dup);
+    }
+
+    if(storeLi){
+      storeLi.classList.add('ga-store-nav-v20');
+      storeLi.setAttribute('data-ga-store-dedupe',FALLBACK_DEDUPE_MARKER);
+      if(homeLi && homeLi.parentNode===list && homeLi.nextElementSibling!==storeLi){
+        list.insertBefore(storeLi,homeLi.nextSibling);
+      }
+    }
+  }
+
   function enhance(){
     var navs=document.querySelectorAll('nav.ga-home-v6-nav');
     for(var i=0;i<navs.length;i++) enhanceVisibleNav(navs[i]);
+
+    var pageLists=document.querySelectorAll('.centered-top-container .PageList');
+    for(var j=0;j<pageLists.length;j++) dedupeFallbackPageList(pageLists[j]);
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',enhance,{once:true});
   else enhance();
   setTimeout(enhance,500);
   setTimeout(enhance,1500);
+  setTimeout(enhance,3000);
 })();
 //]]>
 </script>
@@ -122,6 +173,7 @@ def main() -> int:
             "store_menu": STORE_PATH,
             "store_menu_position": "after-home",
             "store_menu_highlighted": True,
+            "fallback_pagelist_deduplicated": True,
         }, ensure_ascii=False, indent=2))
         return 0
 
@@ -146,6 +198,7 @@ def main() -> int:
         "store_menu": STORE_PATH,
         "store_menu_position": "after-home",
         "store_menu_highlighted": True,
+        "fallback_pagelist_deduplicated": True,
         "other_navigation_links_preserved": True,
     }, ensure_ascii=False, indent=2))
     return 0
