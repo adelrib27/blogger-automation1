@@ -14,6 +14,7 @@ STORE_PATH = "/p/loja.html"
 CSS = r"""
 <style type='text/css'>
 /* BLOGGER_MODELO_V20_STORE_VISIBLE_NAV */
+/* alvo primario validado: nav.ga-home-v6-nav */
 nav a.ga-store-visible-nav-v20{
   background:linear-gradient(135deg,var(--ga-brand-primary,#0F8A5F),#F59E0B)!important;
   border-radius:8px!important;
@@ -36,6 +37,7 @@ JS = r"""
 //<![CDATA[
 (function(){
   var STORE_PATH='/p/loja.html';
+  var PRIMARY_NAV_SELECTOR='nav.ga-home-v6-nav';
   var FALLBACK_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FALLBACK_DEDUPE';
   var INSTITUTIONAL={
     '/p/sobre.html':1,
@@ -162,6 +164,9 @@ JS = r"""
   }
 
   function enhance(){
+    var primary=document.querySelectorAll(PRIMARY_NAV_SELECTOR);
+    for(var p=0;p<primary.length;p++) enhanceVisibleNav(primary[p]);
+
     var navs=document.querySelectorAll('nav');
     for(var i=0;i<navs.length;i++) enhanceVisibleNav(navs[i]);
 
@@ -218,7 +223,7 @@ def main() -> int:
             "sha256": sha256(path),
             "xml_valid": True,
             "visible_nav_marker": VISIBLE_NAV_MARKER,
-            "visible_nav_selector": "nav.ga-home-v6-nav + detected header navs",
+            "visible_nav_selector": "nav.ga-home-v6-nav",
             "dynamic_header_nav_supported": True,
             "store_menu": STORE_PATH,
             "store_menu_position": "after-home",
@@ -244,7 +249,7 @@ def main() -> int:
         "sha256": sha256(path),
         "xml_valid": True,
         "visible_nav_marker": VISIBLE_NAV_MARKER,
-        "visible_nav_selector": "nav.ga-home-v6-nav + detected header navs",
+        "visible_nav_selector": "nav.ga-home-v6-nav",
         "dynamic_header_nav_supported": True,
         "store_menu": STORE_PATH,
         "store_menu_position": "after-home",
