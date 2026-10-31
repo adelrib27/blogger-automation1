@@ -105,6 +105,16 @@ def _download_button(page):
     return None
 
 
+def _wait_download_button(page, timeout_ms: int = 12_000):
+    deadline = time.time() + max(1, timeout_ms) / 1000.0
+    while time.time() < deadline:
+        item = _download_button(page)
+        if item is not None:
+            return item
+        page.wait_for_timeout(350)
+    return None
+
+
 def _visible_backup_diagnostics(page) -> str:
     parts: list[str] = []
     try:
@@ -235,7 +245,6 @@ def _capture_new_download(before: dict[str, tuple[int, int]], output: Path, sinc
     output.parent.mkdir(parents=True, exist_ok=True)
     tmp = output.with_suffix(output.suffix + ".filesystem.tmp")
     shutil.copy2(source, tmp)
-    # Revalida os bytes copiados antes da troca atômica.
     _validate_blogger_theme_bytes(tmp.read_bytes())
     tmp.replace(output)
     validation.update({
@@ -276,10 +285,10 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                     item.evaluate("el => el.click()")
             validation = _save_download(info.value, out)
         except PlaywrightTimeoutError:
-            page.wait_for_timeout(1200)
+            page.wait_for_timeout(800)
             validation = _capture_new_download(before, out, started)
             if validation is None:
-                button = _download_button(page)
+                button = _wait_download_button(page, timeout_ms=12_000)
                 if button is not None:
                     try:
                         with page.expect_download(timeout=20_000) as info:
@@ -289,7 +298,7 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                                 button.evaluate("el => el.click()")
                         validation = _save_download(info.value, out)
                     except PlaywrightTimeoutError:
-                        page.wait_for_timeout(1200)
+                        page.wait_for_timeout(1500)
                         validation = _capture_new_download(before, out, started)
             if validation is None:
                 detail = _visible_backup_diagnostics(page)
