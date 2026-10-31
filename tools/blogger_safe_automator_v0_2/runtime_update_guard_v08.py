@@ -24,6 +24,7 @@ ALLOWED_FILES = (
     "tools/blogger_safe_automator_v0_2/extend_modelo_v20_store.py",
     "tools/blogger_safe_automator_v0_2/extend_modelo_v20_store_visible_nav.py",
     "tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py",
+    "tools/blogger_safe_automator_v0_2/backup_theme_auto.py",
     "tools/blogger_safe_automator_v0_2/validate_modelo_v20_store.py",
     "tools/blogger_safe_automator_v0_2/render_modelo_v20_pages.py",
     "tools/blogger_safe_automator_v0_2/provision_new_blog_v20.py",
@@ -178,7 +179,13 @@ def sync_v20() -> dict:
     sha = _branch_sha()
     run_id = _require_green_ci(sha)
     state = _read_state()
-    if state.get("sha") == sha and state.get("status") == STATUS:
+    # O count faz o guardião re-sincronizar quando a allowlist crescer no mesmo
+    # commit já conhecido pelo processo anterior (bootstrap/auto-upgrade seguro).
+    if (
+        state.get("sha") == sha
+        and state.get("status") == STATUS
+        and int(state.get("allowed_file_count") or 0) == len(ALLOWED_FILES)
+    ):
         return {
             "status": STATUS,
             "changed": False,
