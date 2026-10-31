@@ -2,10 +2,10 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 8,
+    "total": 10,
     "draft_ready": 0,
     "rejected": 6,
-    "not_generated": 2,
+    "not_generated": 4,
     "published_history": 27,
     "rotation_cycle": 3,
     "rotation_pending": [
@@ -123,6 +123,22 @@
       }
     },
     {
+      "id": 101,
+      "shopee_item_id": "23798178107",
+      "category": "Organização",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
       "id": 87,
       "shopee_item_id": "20452224775",
       "category": "Quarto",
@@ -174,11 +190,11 @@
       }
     },
     {
-      "id": 71,
-      "shopee_item_id": "21299673093",
-      "category": "Banheiro",
-      "product": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
-      "queue_status": "QUARANTINE",
+      "id": 103,
+      "shopee_item_id": "46360468172",
+      "category": "Cozinha",
+      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
         "status": "NOT_GENERATED",
@@ -258,6 +274,22 @@
           "cta_count": 1
         },
         "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 102,
+      "shopee_item_id": "23599671693",
+      "category": "Banheiro",
+      "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
       }
     }
   ]
