@@ -51,10 +51,22 @@ def _render_pages(blog_title: str) -> list[dict]:
             "expected_slug": str(raw["expected_slug"]),
             "publish": bool(raw.get("publish", True)),
             "requires_theme_contact_runtime": bool(raw.get("requires_theme_contact_runtime", False)),
+            "requires_store_population": bool(raw.get("requires_store_population", False)),
+            "store_expected_products": raw.get("store_expected_products"),
+            "store_expected_categories": raw.get("store_expected_categories"),
+            "store_auto_start_marker": raw.get("store_auto_start_marker"),
+            "store_auto_end_marker": raw.get("store_auto_end_marker"),
             "content": content,
         })
-    if len(pages) != 5:
-        raise ProvisionError(f"Modelo V20 precisa ter exatamente 5 páginas; obtido {len(pages)}.")
+    if len(pages) != 6:
+        raise ProvisionError(f"Modelo V20 precisa ter exatamente 6 páginas; obtido {len(pages)}.")
+    store = next((p for p in pages if p["key"] == "loja"), None)
+    if not store or not store["requires_store_population"]:
+        raise ProvisionError("Modelo V20 precisa incluir a página LOJA automatizada.")
+    if store["store_expected_products"] != 20 or store["store_expected_categories"] != 5:
+        raise ProvisionError("Contrato da LOJA precisa exigir exatamente 20 produtos em 5 categorias.")
+    if not store["store_auto_start_marker"] or not store["store_auto_end_marker"]:
+        raise ProvisionError("Contrato da LOJA está sem marcadores automáticos.")
     return pages
 
 
@@ -77,7 +89,6 @@ def execute_provision(
         raise ProvisionError("Paleta V20 inválida.")
 
     req = bp.CreateBlogRequest.build(title, address)
-    # Valida settings antes de qualquer escrita.
     settings._validate_inputs("0", description, search_description, timezone)
     pages = _render_pages(req.title)
     cp = _checkpoint_path()
@@ -143,13 +154,18 @@ def execute_provision(
             "robots_untouched": configured.get("robots_untouched") is True,
             "theme_adopted": adopted.get("status") == "BLOGGER_MODELO_V20_ADOPTED",
             "theme_marker": adopted.get("public_marker"),
+            "store_extension_marker": adopted.get("store_extension_marker"),
             "posts_deleted": adopted.get("posts_deleted"),
             "posts_copied_from_reference": adopted.get("posts_copied_from_reference"),
             "pages_to_publish": pages,
-            "expected_page_count": 5,
+            "expected_page_count": 6,
+            "store_population_required": True,
+            "store_expected_products": 20,
+            "store_expected_categories": 5,
+            "store_layout": {"desktop_columns": 4, "tablet_columns": 2, "mobile_columns": 2},
             "expected_new_blog_posts": 0,
             "checkpoint": str(cp),
-            "next_action": "PUBLISH_AND_VALIDATE_V20_PAGES_VIA_BLOGGER_BRIDGE",
+            "next_action": "PUBLISH_VALIDATE_6_V20_PAGES_AND_POPULATE_STORE_VIA_BLOGGER_BRIDGE",
         }
     except Exception as exc:
         state["status"] = "PROVISION_PARTIAL_FAILURE"
@@ -162,7 +178,7 @@ def execute_provision(
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Provisiona blog novo: criação + settings + V20 + manifesto das 5 páginas.")
+    p = argparse.ArgumentParser(description="Provisiona blog novo: criação + settings + V20 + manifesto das 6 páginas, incluindo LOJA.")
     p.add_argument("--title", required=True)
     p.add_argument("--address", required=True)
     p.add_argument("--description", required=True)
