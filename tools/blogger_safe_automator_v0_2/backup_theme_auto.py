@@ -9,6 +9,7 @@ from pathlib import Path
 
 import browser_provision as bp
 from auto_blog_route import ensure_theme_page
+from blogger_panel_route_guard import extract_panel_blog_id
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, sync_playwright
 
 BACKUP_LABEL_RE = re.compile(r"^(Fazer backup|Backup|Back up)$", re.I)
@@ -31,12 +32,10 @@ def _first_visible(locator):
 
 
 def _open_actions(page) -> None:
-    # Se o item de backup já estiver visível, o menu já está aberto.
     if _first_visible(page.get_by_role("menuitem", name=BACKUP_LABEL_RE)) is not None:
         return
     if _first_visible(page.get_by_text(BACKUP_LABEL_RE, exact=True)) is not None:
         return
-
     more = _first_visible(page.locator('[role="button"][aria-label="Mais ações"]'))
     if more is None:
         more = _first_visible(page.locator('[role="button"][aria-label="More actions"]'))
@@ -99,8 +98,11 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
         page = ensure_theme_page(context, blog_id)
         page.wait_for_timeout(900)
         route = bp.sanitize_url(page.url)
-        if bp.extract_current_blog_id(page) != blog_id:
-            raise bp.SafeAutomationError("Blog ID divergente antes do backup do tema.")
+        actual_id = extract_panel_blog_id(page.url)
+        if actual_id != blog_id:
+            raise bp.SafeAutomationError(
+                f"Blog ID divergente antes do backup do tema: atual={actual_id!r}, esperado={blog_id!r}."
+            )
 
         _open_actions(page)
         item = _backup_item(page)
@@ -113,7 +115,6 @@ def execute_backup(expected_blog_id: str, output: str) -> dict:
                     item.evaluate("el => el.click()")
             download = info.value
         except PlaywrightTimeoutError:
-            # Algumas versões do Blogger abrem um diálogo intermediário.
             page.wait_for_timeout(500)
             button = _download_button(page)
             if button is None:
