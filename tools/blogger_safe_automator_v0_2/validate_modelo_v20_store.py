@@ -13,6 +13,7 @@ EXPECTED_KEYS = ["sobre", "afiliados", "contato", "privacidade", "termos", "loja
 BASE_MARKER = "emporio-revisao-visual-20-modelo-final"
 STORE_MARKER = "BLOGGER_MODELO_V20_STORE_EXTENSION"
 VISIBLE_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_VISIBLE_NAV"
+FOOTER_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_FOOTER_NAV"
 
 
 def sha256(path: Path) -> str:
@@ -85,6 +86,8 @@ def main() -> int:
     store_contract = manifest.get("store_contract") or {}
     expected_contract = {
         "menu_path": "/p/loja.html",
+        "footer_menu_enabled": True,
+        "footer_menu_position": "after-home",
         "desktop_max_width_px": 1280,
         "desktop_columns": 4,
         "tablet_columns": 2,
@@ -102,6 +105,7 @@ def main() -> int:
             "<?xml version='1.0' encoding='UTF-8'?><html><head>"
             f"<style>/* {BASE_MARKER} */</style></head><body>"
             "<nav class='ga-home-v6-nav'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></nav>"
+            "<section class='ga-home-footer'><div class='ga-home-footer-links'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></div></section>"
             "</body></html>",
             encoding="utf-8",
         )
@@ -116,6 +120,8 @@ def main() -> int:
             fail("marker da extensão LOJA não aparece exatamente uma vez")
         if text.count(VISIBLE_NAV_MARKER) != 1:
             fail("marker do menu visível não aparece exatamente uma vez")
+        if text.count(FOOTER_NAV_MARKER) < 1:
+            fail("marker de navegação da LOJA no rodapé está ausente")
 
         for needle in (
             "/p/loja.html",
@@ -127,6 +133,10 @@ def main() -> int:
             "nav.ga-home-v6-nav",
             "ga-store-visible-nav-v20",
             "home.nextElementSibling!==store",
+            "ga-store-footer-nav-v20",
+            "BLOGGER_MODELO_V20_STORE_FOOTER_NAV",
+            ".ga-home-footer-links,.ga-static-footer-links",
+            "enhanceFooterGroup",
         ):
             if needle not in text:
                 fail(f"extensão não contém requisito: {needle}")
@@ -145,10 +155,13 @@ def main() -> int:
         "page_keys": EXPECTED_KEYS,
         "store_extension_marker": STORE_MARKER,
         "store_visible_nav_marker": VISIBLE_NAV_MARKER,
+        "store_footer_nav_marker": FOOTER_NAV_MARKER,
         "store_menu_path": "/p/loja.html",
         "store_menu_position": "after-home",
         "store_menu_target": "nav.ga-home-v6-nav",
         "store_menu_highlighted": True,
+        "store_footer_nav_supported": True,
+        "store_footer_position": "after-home",
         "store_max_width": 1280,
         "store_sidebar_hidden_only": True,
         "desktop_columns": 4,
