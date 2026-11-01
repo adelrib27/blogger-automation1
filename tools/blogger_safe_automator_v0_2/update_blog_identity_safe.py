@@ -21,18 +21,52 @@ def norm(value: str | None) -> str:
     return re.sub(r"\s+", " ", value or "").strip()
 
 
-def set_row_text(page, row_label: str, value: str, field_labels: tuple[str, ...]) -> dict:
-    if not core.click_row_prefix(page, row_label):
-        raise bp.SafeAutomationError(f'Configuração "{row_label}" não foi localizada.')
-    page.wait_for_timeout(400)
-    dialog = cfg.visible_dialog(page)
-    field = None
+def _find_text_field(page, field_labels: tuple[str, ...]):
+    dialogs = cfg.visible_dialog_candidates(page)
+
+    # Prefer the exact field inside a visible Blogger dialog.
+    for dialog in dialogs:
+        for aria in field_labels:
+            field = cfg.first_visible(
+                dialog.locator(
+                    f'textarea[aria-label="{aria}"],input[aria-label="{aria}"],input[type="text"][aria-label="{aria}"]'
+                )
+            )
+            if field is not None:
+                return field
+
+    # Current Blogger can render the setting editor outside the element exposed
+    # with role=dialog. Fall back only to an exact aria-label on the visible page.
     for aria in field_labels:
-        field = cfg.first_visible(dialog.locator(f'textarea[aria-label="{aria}"],input[aria-label="{aria}"],input[type="text"]'))
+        field = cfg.first_visible(
+            page.locator(
+                f'textarea[aria-label="{aria}"],input[aria-label="{aria}"],input[type="text"][aria-label="{aria}"]'
+            )
+        )
         if field is not None:
-            break
-    if field is None:
+            return field
+
+    # Last resort remains scoped to visible dialogs, never to arbitrary page inputs.
+    for dialog in dialogs:
         field = cfg.first_visible(dialog.locator('textarea,input[type="text"],input:not([type])'))
+        if field is not None:
+            return field
+    return None
+
+
+def set_row_text(page, row_label: str, value: str, field_labels: tuple[str, ...]) -> dict:
+    # A previous fail-closed attempt may have left the requested setting editor
+    # open. Reuse that exact visible field instead of blindly clicking the row again.
+    field = _find_text_field(page, field_labels)
+    if field is None:
+        if not core.click_row_prefix(page, row_label):
+            raise bp.SafeAutomationError(f'Configuração "{row_label}" não foi localizada.')
+        for _ in range(16):
+            page.wait_for_timeout(150)
+            field = _find_text_field(page, field_labels)
+            if field is not None:
+                break
+
     if field is None:
         raise bp.SafeAutomationError(f'Campo editável de "{row_label}" não foi localizado.')
 
