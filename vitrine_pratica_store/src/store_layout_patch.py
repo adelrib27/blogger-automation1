@@ -21,6 +21,9 @@ body:has(.bls-page) .post-outer-container:has(.bls-page),body:has(.bls-page) .po
 body:has(.bls-page) .post:has(.bls-page) .post-header,body:has(.bls-page) .post:has(.bls-page) .post-title,body:has(.bls-page) .post:has(.bls-page) .entry-title{{display:none!important}}
 body:has(.bls-page) .post-body:has(.bls-page){{margin:0!important;padding:0!important;overflow:visible!important}}
 .bls-page{{width:min(1440px,calc(100vw - 48px))!important;max-width:none!important;position:relative!important;left:50%!important;transform:translateX(-50%)!important;margin-top:32px!important;margin-bottom:0!important}}
+.bls-product,.blh-product{{position:relative!important;z-index:5!important;pointer-events:auto!important;cursor:pointer!important}}
+.bls-product>*,.blh-product>*{{pointer-events:none!important}}
+.bls-product-cta{{display:flex!important;align-items:center!important;justify-content:center!important;margin-top:9px!important;padding:9px 10px!important;border-radius:8px!important;background:#ee4d2d!important;color:#fff!important;font-size:11px!important;font-weight:900!important;line-height:1.15!important;text-align:center!important}}
 @media(max-width:700px){{.bls-page{{width:calc(100vw - 16px)!important;margin-top:16px!important}}}}
 </style>
 <script id="blogger-liq-header-loja-link">
@@ -59,6 +62,8 @@ def patch_store_layout() -> None:
     for marker in (START, END, "BLOGGER_LIQ_STORE_AUTO_START", "BLOGGER_LIQ_HERO_AUTO_1_START"):
         if marker not in verify_raw:
             raise RuntimeError(f"Falha na verificação do layout; ausente={marker}")
+    if "https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html" in verify_raw:
+        raise RuntimeError("Link incorreto do Liquidificador ainda presente no post Vitrine.")
     print("LAYOUT_WIDE_APPLIED")
 
 
