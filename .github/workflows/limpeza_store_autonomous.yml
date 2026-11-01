@@ -1,18 +1,15 @@
-name: Limpeza Inteligente — Loja Shopee LIVE
+name: Limpeza Inteligente — LEGACY MANUAL / RECOVERY
 
+# Writer legado preservado apenas para recuperação manual.
+# Writer canônico automático: .github/workflows/limpeza_inteligente_store_autonomous.yml
 on:
   workflow_dispatch:
-  schedule:
-    # 09:15 America/Recife (UTC-3)
-    - cron: "15 12 * * *"
-  push:
-    paths:
-      - "limpeza_store/store_live_kickoff.txt"
 
 permissions:
   contents: write
 concurrency:
-  group: limpeza-store-live
+  # Mesmo grupo do writer canônico para impedir corrida em acionamento manual.
+  group: limpeza-inteligente-store-live
   cancel-in-progress: false
 
 jobs:
