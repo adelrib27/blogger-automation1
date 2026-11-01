@@ -49,7 +49,8 @@ jobs:
             src/shopee_oportunidades_v22.py \
             src/shopee_oportunidades_v23.py \
             radar_tech_br/src/store_auto.py \
-            radar_tech_br/src/store_auto_self_test.py
+            radar_tech_br/src/store_auto_self_test.py \
+            radar_tech_br/src/refresh_blogger_offer_links.py
           PYTHONPATH=src:radar_tech_br/src python radar_tech_br/src/store_auto_self_test.py
 
       - name: Confirmar credenciais Shopee autorizadas
@@ -72,6 +73,11 @@ jobs:
       - name: Atualizar vitrine com Shopee API
         run: |
           PYTHONPATH=src:radar_tech_br/src python -u radar_tech_br/src/store_auto.py
+
+      - name: Gerar e validar links afiliados para Blogger
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src python -u radar_tech_br/src/refresh_blogger_offer_links.py
 
       - name: Verificar renderização pública
         run: |
