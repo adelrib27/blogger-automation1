@@ -31,7 +31,7 @@ def regression_checks(rules_doc):
         ("Óleo Essencial Aromaterapia", "oleo capilar finalizador", False),
         ("Secador de Cabelo 2000W 220V", "secador de cabelo", True),
         ("Difusor para Secador de Cabelo", "secador de cabelo", False),
-        ("Escova Secadora 1200W para Cabelos", "escova secadora", True),
+        ("Escova Secadora 1200W Bivolt para Cabelos", "escova secadora", True),
         ("Refil Escova Secadora", "escova secadora", False),
         ("Escova Modeladora Rotativa para Cabelos Bivolt", "escova modeladora cabelo", True),
         ("Pente Profissional para Cabelo", "pente cabelo", True),
