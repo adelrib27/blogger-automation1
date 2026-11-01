@@ -68,6 +68,22 @@ jobs:
           test -n "$BLOGGER_CLIENT_ID"
           test -n "$BLOGGER_CLIENT_SECRET"
           test -n "$BLOGGER_REFRESH_TOKEN"
+      - name: Pré-validar SAFE + Policy Guard
+        run: |
+          set -euo pipefail
+          BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_auto_post.py
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          data=json.loads(Path('air_fryers_store/data/store_last_selection.json').read_text(encoding='utf-8'))
+          products=[p for items in (data.get('categories') or {}).values() for p in items]
+          if len(products)!=20:
+              raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
+          for product in products:
+              require_product_allowed(product)
+          print('BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20 produtos permitidos')
+          PY
       - name: Atualizar vitrine no POST Loja
         run: PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_auto_post.py
       - name: Sincronizar 12 cards do hero
