@@ -1,18 +1,16 @@
-name: Ventiladores em Foco — Loja Shopee LIVE Controlada
+name: Ventiladores em Foco — LEGACY MANUAL / RECOVERY
 
+# Writer legado preservado apenas para recuperação manual.
+# Writer canônico automático: .github/workflows/ventiladores_store_autonomous.yml
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "41 11 * * *"
-  push:
-    paths:
-      - "ventiladores_em_foco_store/store_live_kickoff.txt"
 
 permissions:
   contents: write
 
 concurrency:
-  group: ventiladores-em-foco-store-live
+  # Mesmo grupo do writer canônico para impedir corrida em acionamento manual.
+  group: ventiladores-store-live
   cancel-in-progress: false
 
 jobs:
