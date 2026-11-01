@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "description": "Regras semânticas do Liquidificadores em Foco. Prioriza aparelhos completos e utensílios culinários coerentes; bloqueia peças, reposições, recipientes organizadores e falsos positivos.",
   "rules": {
     "liquidificador": {
@@ -8,11 +8,11 @@
     },
     "liquidificador potente": {
       "require_groups": [["liquidificador"], ["potente", "w", "watts", "rpm", "velocidade", "velocidades"]],
-      "block_phrases": ["processador de alimentos", "multiprocessador", "moedor de carne", "copo para", "jarra para", "lamina avulsa", "lâmina avulsa", "laminas original", "lâminas original", "cone original", "peca", "peça", "acessorio", "acessório", "motor", "acoplamento", "anel", "sobretampa", "tampa", "reposicao", "reposição"]
+      "block_phrases": ["processador de alimentos", "multiprocessador", "moedor de carne", "copo para", "copo sem laminas", "copo sem lâminas", "copo liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "laminas original", "lâminas original", "cone original", "peca", "peça", "acessorio", "acessório", "motor", "acoplamento", "anel", "sobretampa", "tampa", "reposicao", "reposição"]
     },
     "liquidificador 1400w": {
       "require_groups": [["liquidificador"], ["1400w", "1400 w", "1400 watts"]],
-      "block_phrases": ["processador de alimentos", "multiprocessador", "moedor de carne", "copo para", "jarra para", "lamina avulsa", "lâmina avulsa", "laminas original", "lâminas original", "cone original", "peca", "peça", "acessorio", "acessório", "motor", "acoplamento", "anel", "sobretampa", "tampa", "reposicao", "reposição"]
+      "block_phrases": ["processador de alimentos", "multiprocessador", "moedor de carne", "copo para", "copo sem laminas", "copo sem lâminas", "copo liquidificador", "jarra para", "lamina avulsa", "lâmina avulsa", "laminas original", "lâminas original", "cone original", "peca", "peça", "acessorio", "acessório", "motor", "acoplamento", "anel", "sobretampa", "tampa", "reposicao", "reposição"]
     },
     "mixer eletrico": {
       "require_groups": [["mixer"], ["eletrico", "elétrico", "portatil", "portátil", "mao", "mão"]],
