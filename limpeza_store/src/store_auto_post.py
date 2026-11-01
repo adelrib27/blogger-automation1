@@ -39,6 +39,7 @@ _CHEMICAL_TERMS=(
     'pesticida','inseticida','veneno','raticida','herbicida','acido muriatico','soda caustica',
     'cloro concentrado','desinfetante hospitalar','mata virus','mata bacterias','germicida',
 )
+_OUT_OF_SCOPE=('piscina','pool cleaner','pool cleaning','limpeza de piscina')
 
 
 def strict_valid_product(product):
@@ -50,6 +51,7 @@ def strict_valid_product(product):
     if any(term in title for term in _ACCESSORY_TERMS): return False
     if any(term in title for term in _TOY_TERMS): return False
     if any(term in title for term in _CHEMICAL_TERMS): return False
+    if any(term in title for term in _OUT_OF_SCOPE): return False
     return True
 
 base.valid_product=strict_valid_product
