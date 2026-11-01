@@ -5,6 +5,10 @@ on:
   push:
     paths:
       - "blogger_stores/achados_casa_kickoff.txt"
+      - ".github/workflows/achados_casa_store_safe.yml"
+      - "src/blogger_policy_guard.py"
+      - "src/blogger_policy_guard_self_test.py"
+      - "config/blogger_policy_guard.json"
   schedule:
     # America/Recife (UTC-3): 07:20 diariamente.
     - cron: "20 10 * * *"
@@ -37,17 +41,20 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Validar código
+      - name: Validar código e Policy Guard
         run: |
           set -euo pipefail
           python -m py_compile \
             src/shopee_oportunidades.py \
             src/shopee_oportunidades_v22.py \
             src/shopee_oportunidades_v23.py \
+            src/blogger_policy_guard.py \
+            src/blogger_policy_guard_self_test.py \
             radar_tech_br/src/refresh_blogger_offer_links.py \
             blogger_stores/src/achados_casa_safe_scan_v2.py \
             blogger_stores/src/achados_casa_safe_scan_v3.py \
             blogger_stores/src/achados_casa_safe_scan_v6.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
 
       - name: Confirmar AppID Shopee
         run: |
@@ -90,6 +97,22 @@ jobs:
           assert d['semanticValidation']['fritadeiraApplianceOnly'] is True
           assert all(d['gates'].values())
           print('SAFE v6 VALIDADO: 20 produtos completos, diversidade e 20/20 links resolvidos.')
+          PY
+
+      - name: Policy Guard — validar 20 produtos SAFE
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          data=json.loads(Path('blogger_stores/data/achados_casa_selection.json').read_text(encoding='utf-8'))
+          products=[p for items in (data.get('categories') or {}).values() for p in items]
+          if len(products)!=20:
+              raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
+          for product in products:
+              require_product_allowed(product)
+          print('BLOGGER_POLICY_GUARD_SAFE_PASS: 20/20 produtos permitidos')
           PY
 
       - name: Persistir seleção SAFE
