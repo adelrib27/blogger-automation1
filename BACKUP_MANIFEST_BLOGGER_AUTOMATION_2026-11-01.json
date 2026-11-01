@@ -1,0 +1,156 @@
+{
+  "schema": "blogger-automation-backup-manifest/v2",
+  "snapshot_date": "2026-11-01",
+  "repository": "adelrib27/blogger-automation1",
+  "main_head_immediately_before_manifest": "d7adc8618ed12241d690815bb325973ac264c35c",
+  "previous_backup_manifest": {
+    "path": "BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json",
+    "blob_sha": "47a891a6da6271b553b677eb32f9e427b3191f6e"
+  },
+  "checkpoint_files": [
+    {
+      "path": "CHECKPOINT_ATUAL.md",
+      "blob_sha": "51a98add6e8b05c7f5b26dc70a6e386bd63cc1a9",
+      "purpose": "Current entry point for future conversations"
+    },
+    {
+      "path": "CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md",
+      "blob_sha": "67ea1ea555cce85948461a3d054e81a3e7b5bc7e",
+      "purpose": "Validated delta for policy guard, editorial anti-repetition, cookie audit, niche stores and runner v0.8"
+    },
+    {
+      "path": "CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md",
+      "blob_sha": "232de8a76151c7204ee816facfaf3537ecd2c45a",
+      "purpose": "Historical exhaustive human-readable checkpoint"
+    },
+    {
+      "path": "CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json",
+      "blob_sha": "e61368eaad6899ce40597d93ad5501fc138ad337",
+      "purpose": "Historical structured state snapshot"
+    },
+    {
+      "path": "CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md",
+      "blob_sha": "783113f7fb6f9b3cef5162f75d17878d99eeee41",
+      "purpose": "Canonical V20 promotion and laboratory validation history"
+    }
+  ],
+  "runner_state": {
+    "version": "0.8",
+    "browser_connected": true,
+    "capabilities": [
+      "create",
+      "settings",
+      "v20",
+      "provision-new-blog-v20",
+      "v20-runtime-sync-guard"
+    ],
+    "note": "v0.8 supersedes the v0.6 operational state recorded on 2026-10-30"
+  },
+  "policy_layer": {
+    "baseline": {
+      "path": "POLICY_BASELINE_BLOGGER_GOOGLE_2026.md",
+      "blob_sha": "eaa84e0d6af0b3d3a6f5c218d051f91d987cec0f"
+    },
+    "config": {
+      "path": "config/blogger_policy_guard.json",
+      "blob_sha": "402166868ad560c0e870c850ca8e5c4765dbd17e"
+    },
+    "guard": {
+      "path": "src/blogger_policy_guard.py",
+      "blob_sha": "b56c52f263fab85753fb9dccfd9a7c26bbd5f1af"
+    },
+    "six_niche_pipelines_have_safe_and_live_guard": true,
+    "public_contract": {
+      "store_cards": 20,
+      "hero_cards": 12,
+      "persist_only_after_public_pass": true,
+      "fail_closed": true
+    }
+  },
+  "editorial_cross_blog_guard": {
+    "config": {
+      "path": "config/editorial_cross_blog_guard.json",
+      "blob_sha": "20e2131242ce46aa2ec1317991c22df92b7edbb3"
+    },
+    "guard": {
+      "path": "src/editorial_cross_blog_guard.py",
+      "blob_sha": "9184cc7f5a2399c247a15d8ea537adf2b9a39605"
+    },
+    "self_test": {
+      "path": "src/editorial_cross_blog_guard_self_test.py",
+      "blob_sha": "cc330edf872cb932009f2ac6899b15b1c2791bd1"
+    },
+    "workflow": {
+      "path": ".github/workflows/editorial_cross_blog_guard_safe.yml",
+      "blob_sha": "60bb1e3c6ca81ee8c9bc6ebd1c1b85e3e90d571c"
+    },
+    "validated_run_id": 41358905465,
+    "validated_conclusion": "success",
+    "scope": [
+      "Casa & Decoração",
+      "Oficina & Garagem",
+      "Radar Tech BR"
+    ]
+  },
+  "blogger_eu_cookie_audit": {
+    "auditor": {
+      "path": "src/blogger_eu_cookie_audit.py",
+      "blob_sha": "f25412d35583fd74d7f06245d66ca4d80882bed6"
+    },
+    "workflow": {
+      "path": ".github/workflows/blogger_eu_cookie_audit_safe.yml",
+      "blob_sha": "90042fbe6baba2283d9aa8d8d1288754fbca34d0"
+    },
+    "validated_run_id": 41359632797,
+    "validated_conclusion": "success",
+    "test_profile": {
+      "region_hint": "gl=fr",
+      "locale": "fr-FR",
+      "timezone": "Europe/Paris",
+      "browser": "Chromium/Playwright",
+      "fresh_context_per_blog": true,
+      "screenshots_before_after": true,
+      "real_dismiss_click": true
+    },
+    "results": {
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "all_http_200": true,
+      "all_banner_visible": true,
+      "all_dismiss_visible": true,
+      "all_dismiss_worked": true
+    }
+  },
+  "blogger_network": {
+    "connected_blogs": 18,
+    "niche_store_identities": [
+      "Ventiladores em Foco",
+      "Air Fryers em Foco",
+      "Limpeza Inteligente",
+      "Cabelos em Foco",
+      "Liquidificadores em Foco",
+      "Eletroportáteis na Cozinha"
+    ],
+    "identity_rule": "Do not use a single product as the primary blog identity",
+    "store_architecture_rule": "1 engine + N configs + N independent histories"
+  },
+  "validated_store_ui_state": {
+    "do_not_reapply_without_regression": [
+      "Vitrine Prática",
+      "Ventiladores em Foco"
+    ],
+    "preserved_contract": "20 cards + 12 hero",
+    "store_only_sidebar_hidden": true,
+    "store_only_popular_posts_hidden": true,
+    "main_container_full_width": true
+  },
+  "next_work_block": "Expand/implement highlighted Blogger LOJA + Shopee across the network by reusing the validated motor, policy guard, semantic filtering, independent rotation/history, 20+12 contract and public validation.",
+  "secret_values_backed_up": false,
+  "secret_binding_names_documented": true,
+  "known_unresolved_local_source_gap_from_previous_snapshot": [
+    "tools/blogger_safe_automator_v0_2/apply_theme_safe.py",
+    "tools/blogger_safe_automator_v0_2/backup_theme_safe.py"
+  ],
+  "completion_note": "This snapshot preserves the 2026-10-30 base and adds the validated 2026-11-01 policy/editorial/cookie layers. A full repository archive should be generated after this manifest commit for offline retention."
+}
