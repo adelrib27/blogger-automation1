@@ -19,7 +19,7 @@ RECENT_DAYS = max(1, min(int(os.getenv("BLOGGER_STORE_RECENT_DAYS", "1")), 30))
 DRY_RUN = os.getenv("BLOGGER_STORE_DRY_RUN", "false").strip().lower() in {"1", "true", "yes", "on"}
 CATEGORY_SPECS = [
     ("Air Fryers & Fritadeiras", "Air Fryers & Fritadeiras", "bls-air-fryers"),
-    ("Air Fryer Oven & Fornos", "Air Fryer Oven & Fornos", "bls-air-fryer-oven"),
+    ("Air Fryers Grandes & Família", "Air Fryers Grandes & Família", "bls-air-fryers-grandes"),
     ("Formas & Revestimentos", "Formas & Revestimentos", "bls-formas-revestimentos"),
     ("Grelhas & Cestos", "Grelhas & Cestos", "bls-grelhas-cestos"),
     ("Utensílios & Preparo", "Utensílios & Preparo", "bls-utensilios-preparo"),
@@ -29,7 +29,7 @@ os.environ.setdefault("SHOPEE_OPPORTUNITIES_CONFIG", str(MODULE_DIR / "config" /
 os.environ.setdefault("SHOPEE_INTENT_RULES", str(MODULE_DIR / "config" / "shopee_intent_rules.json"))
 os.environ.setdefault("SHOPEE_OUTPUT_DIR", str(SCAN_DIR))
 os.environ.setdefault("SHOPEE_CATEGORY", "all")
-os.environ.setdefault("SHOPEE_TOP_N", "60")
+os.environ.setdefault("SHOPEE_TOP_N", "70")
 
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "blogger_product_store" / "src"))
@@ -120,7 +120,7 @@ def enhance_store_block(block: str) -> str:
 def main() -> None:
     apply_runtime_patches()
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    print("Blogger — Loja automática Air Fryers em Foco v1")
+    print("Blogger — Loja automática Air Fryers em Foco v2")
     print("Modo:", "DRY-RUN" if DRY_RUN else "PUBLICAÇÃO")
     ranking = base.shopee_v23.scan_v23()
     print("Ranking Shopee recebido:", len(ranking))
