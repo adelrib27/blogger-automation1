@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Regras semânticas do Cabelos em Foco. Prioriza cosméticos e aparelhos completos para cuidados capilares; bloqueia medicamentos, alegações terapêuticas, peças, refis e falsos positivos.",
   "rules": {
     "mascara capilar": {"require_groups": [["mascara", "máscara"], ["capilar", "cabelo", "cabelos"]], "block_phrases": ["mascara facial", "máscara facial", "mascara respiratoria", "máscara respiratória", "minoxidil", "finasterida", "cetoconazol", "antiqueda", "alopecia", "medicamento"]},
@@ -12,9 +12,9 @@
     "creme pentear cabelo": {"require_groups": [["creme"], ["pentear", "finalizador", "finalizacao", "finalização"], ["cabelo", "cabelos", "capilar"]], "block_phrases": ["creme corporal", "creme facial", "minoxidil", "finasterida", "antiqueda", "alopecia", "medicamento"]},
     "oleo capilar finalizador": {"require_groups": [["oleo", "óleo", "serum", "sérum"], ["capilar", "cabelo", "cabelos", "finalizador"]], "block_phrases": ["oleo essencial", "óleo essencial", "oleo corporal", "óleo corporal", "minoxidil", "finasterida", "antiqueda", "alopecia", "suplemento", "capsula", "cápsula"]},
     "secador de cabelo": {"require_groups": [["secador"], ["cabelo", "cabelos"], ["w", "127v", "220v", "bivolt", "profissional"]], "block_phrases": ["difusor para secador", "bico para secador", "suporte para secador", "resistencia secador", "resistência secador", "motor secador", "peca secador", "peça secador", "capa secador"]},
-    "escova secadora": {"require_groups": [["escova"], ["secadora", "secador", "rotativa", "modeladora"], ["cabelo", "cabelos", "w", "bivolt", "127v", "220v"]], "block_phrases": ["refil escova", "cabeca escova", "cabeça escova", "cerdas reposicao", "cerdas reposição", "peca", "peça"]},
-    "escova modeladora cabelo": {"require_groups": [["escova"], ["modeladora", "rotativa", "alisadora"], ["cabelo", "cabelos", "bivolt", "127v", "220v"]], "block_phrases": ["refil", "cabeca", "cabeça", "cerdas reposicao", "cerdas reposição", "peca", "peça"]},
-    "pente cabelo": {"require_groups": [["pente"], ["cabelo", "cabelos", "barbearia", "cabeleireiro"]], "block_phrases": ["pente maquina", "pente máquina", "pente para aparador", "pente para pet", "pente cachorro"]},
+    "escova secadora": {"require_groups": [["escova"], ["secadora", "secador", "rotativa", "modeladora"], ["w", "bivolt", "127v", "220v", "voltagem", "eletrica", "elétrica"]], "block_phrases": ["refil escova", "cabeca escova", "cabeça escova", "cerdas reposicao", "cerdas reposição", "kit pentes", "pentes profissionais", "peca", "peça"]},
+    "escova modeladora cabelo": {"require_groups": [["escova"], ["modeladora", "rotativa", "alisadora"], ["w", "bivolt", "127v", "220v", "voltagem", "eletrica", "elétrica"]], "block_phrases": ["refil", "cabeca", "cabeça", "cerdas reposicao", "cerdas reposição", "kit pentes", "pentes profissionais", "peca", "peça"]},
+    "pente cabelo": {"require_groups": [["pente"], ["cabelo", "cabelos", "barbearia", "cabeleireiro"]], "block_phrases": ["pente maquina", "pente máquina", "pente para aparador", "pente para pet", "pente cachorro", "giz", "colorir", "pintar cabelo", "cor temporaria", "cor temporária"]},
     "escova desembaracadora": {"require_groups": [["escova"], ["desembaracadora", "desembaraçadora", "desembaracar", "desembaraçar"], ["cabelo", "cabelos"]], "block_phrases": ["escova dental", "escova limpeza", "escova pet", "escova cachorro"]},
     "touca cetim cabelo": {"require_groups": [["touca"], ["cetim", "satin"], ["cabelo", "cabelos", "dormir", "sono"]], "block_phrases": ["touca cirurgica", "touca cirúrgica", "touca descartavel", "touca descartável", "touca banho"]}
   }
