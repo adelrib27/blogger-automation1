@@ -20,6 +20,25 @@ BLOCK = f'''{START}
 <style id="blogger-liq-layout-wide-css">
 /* Loja ampla e centralizada; alterações restritas ao post que contém .bls-page. */
 .post-body{{overflow:visible!important}}
+
+/* O tema V20 reserva uma segunda coluna de 300px nos posts. Na Loja ela deve deixar de existir. */
+body.ga-post-page:has(.bls-page) .centered-bottom{{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  gap:0!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}}
+body.ga-post-page:has(.bls-page) .main-container{{
+  grid-column:1!important;
+  grid-area:1 / 1!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+}}
+body.ga-post-page:has(.bls-page) .sidebar-container,
 body:has(.bls-page) .sidebar-container,
 body:has(.bls-page) .sidebar-container-container,
 body:has(.bls-page) .main-container aside{{
@@ -60,7 +79,7 @@ body:has(.bls-page) .post-body:has(.bls-page){{
   padding:0!important;
   overflow:visible!important;
 }}
-/* Oculta Postagens mais visitadas somente na página/post da Loja. */
+/* Oculta Postagens mais visitadas somente na Loja. */
 body:has(.bls-page) .PopularPosts,
 body:has(.bls-page) .widget.PopularPosts,
 body:has(.bls-page) [id^="PopularPosts"]{{
@@ -76,6 +95,7 @@ body:has(.bls-page) [id^="PopularPosts"]{{
   margin-bottom:0!important;
 }}
 @media(max-width:700px){{
+  body.ga-post-page:has(.bls-page) .centered-bottom{{display:block!important;}}
   .bls-page{{
     width:calc(100vw - 16px)!important;
     margin-top:16px!important;
@@ -133,10 +153,7 @@ def patch_store_layout() -> None:
         print("LAYOUT_WIDE_ALREADY_OK")
         return
 
-    body = {
-        "title": post.get("title") or "Loja",
-        "content": updated,
-    }
+    body = {"title": post.get("title") or "Loja", "content": updated}
     if post.get("labels") is not None:
         body["labels"] = post.get("labels")
 
@@ -154,13 +171,13 @@ def patch_store_layout() -> None:
         raise RuntimeError("A URL adaptada da Loja Vitrine Prática não foi confirmada.")
     if '[id^="PopularPosts"]' not in verify_raw:
         raise RuntimeError("Regra para ocultar Postagens mais visitadas não foi confirmada.")
-    if "body:has(.bls-page) .sidebar-container" not in verify_raw:
-        raise RuntimeError("Regra de centralização/remoção da sidebar não foi confirmada.")
+    if "grid-template-columns:minmax(0,1fr)!important" not in verify_raw:
+        raise RuntimeError("Regra de remoção da coluna lateral fantasma não foi confirmada.")
 
     print("LAYOUT_WIDE_APPLIED")
     print("STORE_TARGET_VITRINE_PRATICA_OK")
     print("POPULAR_POSTS_HIDDEN_ON_STORE_OK")
-    print("STORE_CENTERED_OK")
+    print("STORE_VIEWPORT_CENTERED_OK")
 
 
 if __name__ == "__main__":
