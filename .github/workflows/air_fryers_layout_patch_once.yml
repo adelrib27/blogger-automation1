@@ -44,17 +44,24 @@ jobs:
           assert 'liquidificador-philips-walita-ri2242.blogspot.com' not in raw
           print('API_PATCH_PASS: 20+12, anchor, layout, domain OK')
           PY
-      - name: Validar público
+      - name: Validar público com backoff para 429
         run: |
           set -euo pipefail
-          url="https://air-fryers-em-foco.blogspot.com/2026/11/loja.html?patch_verify=${GITHUB_RUN_ID}"
-          for i in 1 2 3 4 5; do
-            curl -L -fsS --max-time 40 "$url-$i" > /tmp/loja.html || true
-            cards=$(grep -o 'data-item-id=' /tmp/loja.html | wc -l)
-            hero=$(grep -o 'data-hero-item-id=' /tmp/loja.html | wc -l)
-            if [ "$cards" -eq 20 ] && [ "$hero" -eq 12 ] && grep -q 'href="#bls-formas-revestimentos"' /tmp/loja.html; then
-              echo 'PUBLIC_PATCH_PASS: 20+12 e âncora correta'; exit 0
+          base="https://air-fryers-em-foco.blogspot.com/2026/11/loja.html?patch_verify=${GITHUB_RUN_ID}"
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -L -sS -A 'Mozilla/5.0 AirFryersPublicValidator/1.0' --max-time 40 -o /tmp/loja.html -w '%{http_code}' "${base}-${i}" || echo 000)
+            if [ "$code" = "200" ]; then
+              read cards hero anchor < <(python - <<'PY'
+          raw=open('/tmp/loja.html',encoding='utf-8',errors='ignore').read()
+          print(raw.count('data-item-id='), raw.count('data-hero-item-id='), int('href="#bls-formas-revestimentos"' in raw))
+          PY
+              )
+              if [ "$cards" -eq 20 ] && [ "$hero" -eq 12 ] && [ "$anchor" -eq 1 ]; then
+                echo "PUBLIC_PATCH_PASS: HTTP 200, 20+12 e âncora correta"; exit 0
+              fi
             fi
-            sleep 4
+            echo "Tentativa $i ainda sem PASS público (HTTP $code); aplicando backoff."
+            sleep $((i * 6))
           done
+          echo 'Validação pública não confirmou após backoff.'
           exit 1
