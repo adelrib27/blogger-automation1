@@ -1,136 +1,127 @@
 # CHECKPOINT ATUAL — BLOGGER AUTOMATION
 
-**Última atualização:** 2026-10-30  
+**Última atualização:** 2026-11-01  
 **Projeto:** Blogger Automation sem ChatGPT Work
 
 ## LEIA PRIMEIRO
 
-Antes de qualquer operação Blogger neste projeto, leia integralmente:
+Antes de qualquer operação Blogger neste projeto, leia nesta ordem:
 
-1. `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`
-2. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
-3. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
-4. `infrastructure/README.md`
-5. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json`
+1. `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md`
+2. `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`
+3. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
+4. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
+5. `infrastructure/README.md`
+6. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-11-01.json`
+7. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json`
 
-Esses arquivos são a fonte persistente de continuidade entre conversas. O arquivo `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md` contém as validações mais recentes e prevalece quando houver diferença em relação aos checkpoints anteriores.
+O checkpoint de 2026-11-01 prevalece quando houver diferença de estado operacional. Os arquivos de 2026-10-30 permanecem como histórico/base de recuperação.
 
-## Estado mais recente validado
+## Estado operacional atual validado
 
-- Runner operacional atual: **v0.6** (`local_service_v06.py`).
-- O health v0.6 foi confirmado pela própria ponte ChatGPT → Cloudflare → VPC → PC.
-- Blog de teste criado: **Laboratório Achados V20**.
-- Blog ID: `4937056944831075547`.
-- URL: `https://laboratorio-achados-v20-20261030.blogspot.com/`.
-- Configurações essenciais/SEO aplicadas e revalidadas; robots personalizados permaneceram intocados.
-- V20 instalado no laboratório.
-- Laboratório validado com **0 posts LIVE, 0 drafts e 5 páginas institucionais LIVE**.
-- Achado: `adopt_model_v20` aplica o tema, mas ainda não cria automaticamente as 5 páginas; isso deve ser incorporado ao provisionamento completo de blog novo.
+- Blogger Local Runner: **v0.8**.
+- Chrome oficial/CDP conectado e autenticado.
+- Capacidades v0.8 reportadas: `create`, `settings`, `v20`, `provision-new-blog-v20`, `v20-runtime-sync-guard`.
+- Conteúdo Blogger: `Blogger_Bridge_V2`.
+- Rede conectada: **18 blogs Blogger**.
+- TEMA MODELO V20 continua sendo a base canônica já documentada no checkpoint de 2026-10-30.
 
-## TEMA MODELO V20 canônico — promovido e provado
+## Camadas de proteção concluídas em 2026-11-01
 
-Fonte final validada do Conecta Achados:
+### Blogger Policy Guard
 
-`DF6A3B40003FE64889157F60A6C00A1E05D85DC5CF02425C12091E8738D6F21D`
+Arquivos centrais:
 
-Template canônico oficial:
+- `POLICY_BASELINE_BLOGGER_GOOGLE_2026.md`
+- `config/blogger_policy_guard.json`
+- `src/blogger_policy_guard.py`
 
-`themes/blogger_modelo_v20/theme.xml.tpl`
+Nos seis pipelines de lojas de nicho, o Policy Guard roda em SAFE e na validação pública LIVE. A persistência de rotação/histórico só ocorre depois de PASS público.
 
-SHA256 do template canônico:
+### Gate anti-repetição editorial
 
-`D83B0E1F1750739F0801458F985DCBB3721D506140127EC30CB4EAEC2A2AF565`
+Arquivos:
 
-A promoção passou com:
+- `config/editorial_cross_blog_guard.json`
+- `src/editorial_cross_blog_guard.py`
+- `src/editorial_cross_blog_guard_self_test.py`
+- `.github/workflows/editorial_cross_blog_guard_safe.yml`
 
-- `BLOGGER_MODELO_V20_CANONICAL_PROMOTED`
-- `roundtrip_exact_match = true`
-- XML válido
-- marker V20 presente
-- `__BLOG_TITLE__` presente
-- `__BLOG_URL__` presente
-- identidade/paleta renderizada ausente do template canônico
+Escopo atual: Casa & Decoração, Oficina & Garagem e Radar Tech BR.
 
-Ao renderizar o template canônico para **Conecta Achados + emerald**, o resultado volta exatamente ao SHA256 validado `DF6A3B...`.
+Validação SAFE concluída com sucesso no run ID `41358905465`.
 
-Importante: o template anterior já tinha o mesmo SHA256 `D83B0E...`; portanto a promoção não mudou seus bytes. Ela formalizou e provou que o template existente já era exatamente a fonte canônica correspondente ao tema validado, além de gerar backup antes da promoção.
+### Auditoria europeia de cookies Blogger
 
-Backup da promoção:
+Arquivos:
 
-`C:\Blogger-Automator\backups\blogger-modelo-v20-canonical\20261030T161301Z\theme.xml.tpl.before`
+- `src/blogger_eu_cookie_audit.py`
+- `.github/workflows/blogger_eu_cookie_audit_safe.yml`
 
-## Backups de infraestrutura anexos
+Validação real usando navegador Chromium/Playwright, locale `fr-FR` e `?gl=fr`:
 
-### Gateway Cloudflare
+- **18/18 blogs PASS**
+- **0 FAIL**
+- HTTP 200 em todos
+- banner francês visível em todos
+- botão de consentimento visível em todos
+- clique confirmou remoção do banner em todos
+- screenshots antes/depois + relatório JSON salvos como artifact
 
-`infrastructure/cloudflare/blogger-local-runner-gateway/`
+Run final otimizado: `41359632797` — **SUCCESS**.
 
-- `worker.js` — espelho normalizado do Worker de produção v7.
-- `worker-metadata.json` — versão, ETag, bindings e rotas sem valores de secrets.
+## Lojas Shopee de nicho — regra atual
 
-### Plugin privado ChatGPT
+As seis identidades de nicho que devem ser preservadas são:
 
-`infrastructure/chatgpt/blogger-local-runner/`
+- Ventiladores em Foco
+- Air Fryers em Foco
+- Limpeza Inteligente
+- Cabelos em Foco
+- Liquidificadores em Foco
+- Eletroportáteis na Cozinha
 
-- `.app.json`
-- `plugin.json`
-- `plugin-metadata.json`
+Arquitetura canônica:
 
-### Gap local explicitamente documentado
+`Shopee API → Blogger Policy Guard → filtro semântico → dedup/rotação → SAFE → LIVE → hero 12 → validação pública → persistência`
 
-`apply_theme_safe.py` e `backup_theme_safe.py` foram validados em execução no PC, mas seus bytes-fonte não estão no GitHub. Eles não impedem o funcionamento atual: o robô local já os utilizou com sucesso. Preservar a cópia local.
+Contrato:
 
-## IDs que nunca podem ser confundidos
+- 20 produtos
+- 12 hero
+- histórico independente por blog
+- fail-closed
+- persistência somente após validação pública
 
-- **Conecta Achados** — Blog ID `1719259388907013414` — `https://conectaachados.blogspot.com/`
-- **Laboratório Achados V20** — Blog ID `4937056944831075547` — `https://laboratorio-achados-v20-20261030.blogspot.com/`
-- **Achados para Casa** — Blog ID `1426630233929943394` — NÃO usar quando o alvo for Conecta Achados.
+Não voltar a um único histórico compartilhado entre blogs.
 
-## Estado principal validado do Conecta Achados
+## Correções que não devem ser refeitas sem regressão comprovada
 
-- TEMA MODELO V20 instalado e publicamente validado.
-- Paleta: `emerald` (`#0F8A5F`, `#F2FBF7`, `#12372A`).
-- Marker V20: `emporio-revisao-visual-20-modelo-final`.
-- 11 posts LIVE.
-- 5 páginas institucionais LIVE.
-- Todos os 11 posts estão no padrão editorial longo.
-- CTA Shopee obrigatório após o segundo parágrafo + segundo CTA mais abaixo.
-- Shopee AppID canônico fornecido pelo proprietário: `18352820579`.
-- `SHOPEE_SECRET` e demais Secrets NÃO ficam neste repositório; somente os nomes dos bindings estão documentados.
-- Workflow padrão do Conecta cria RASCUNHO (`CONECTA_PUBLISH_MODE=draft`).
-- Automação atual: `conecta_achados/src/automation_rich_cta.py`.
-- Workflow: `.github/workflows/conecta_achados_shopee.yml`.
+Vitrine Prática e Ventiladores em Foco já receberam a correção final da página Loja: largura 100%, uma coluna, sidebar e “Postagens mais visitadas” ocultos somente na Loja, `.bls-page` centralizada, 20 cards + 12 hero preservados e domínio/nome legado removido do cloner de Ventiladores em Foco.
 
-## Automação do Blogger sem Work
+## Próximo bloco de trabalho
 
-- Conteúdo: `Blogger_Bridge_V2`.
-- Criação/configuração/tema via painel: `Blogger Local Runner` no PC + Chrome oficial/CDP.
-- Runner local: `127.0.0.1:8765`.
-- Chrome CDP: `127.0.0.1:9222`.
-- Gateway: Cloudflare Worker `blogger-local-runner-gateway`.
-- Produção do gateway no snapshot: versão 7, version ID `0258427f-fb22-4aa8-afae-b1fe8c83c5c9`.
-- Branch do automador: `blogger-safe-ui-provisioning-v0-2`.
+Retomar a implantação/expansão da **página LOJA Blogger + Shopee em destaque na rede**, reutilizando a arquitetura já existente. Não reconstruir o motor do zero.
 
-## Pendências reais agora
+Objetivo final:
 
-1. Fazer Chrome oficial com CDP + runner subirem automaticamente, sem comando manual.
-2. Incorporar a criação e validação das 5 páginas institucionais ao provisionamento automático de blog novo.
-3. Manter v0.6 como runner operacional até nova versão explicitamente validada.
+`Blogger + automação local + APIs + tema/SEO + páginas institucionais + afiliados + Shopee + LOJA destacada + atualização automática`
 
 ## Regras essenciais
 
+- Não refazer validações concluídas sem sinal concreto de regressão.
+- Não pedir operação manual quando o Local Runner já oferece comando validado.
 - Confirmar Blog ID antes de escrever.
-- Backup antes de aplicar tema.
-- Arquivo de tema para upload deve se chamar exatamente `theme.xml`.
-- Nunca copiar posts do blog de referência `Guia de Achados & Ofertas`.
-- Blog novo termina o provisionamento com zero posts.
-- Adoção V20 em blog existente preserva posts/páginas.
-- Custom robots não são tocados por padrão.
-- Não inventar especificações de produtos.
-- Não publicar produto Shopee já existente em `state.json`.
-- Não depender de ChatGPT Work.
+- Preservar identidade por nicho.
+- Preservar Store 20 + 12, fail-closed e históricos independentes.
+- Preservar Policy Guard SAFE/LIVE e validação pública antes da persistência.
+- Preservar o gate anti-repetição editorial.
+- Nunca ocultar/desativar o aviso nativo de cookies do Blogger por tema/CSS.
+- Não armazenar secrets no repositório.
 - Não declarar sucesso sem validação concreta.
 
-## Instrução para futura conversa
+## Histórico e recuperação
 
-Se este arquivo for encontrado, NÃO recomece o diagnóstico do zero. Leia primeiro `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`, depois os checkpoints mestre. Confirme o estado vivo e continue a partir deles. Se houver divergência entre checkpoint e sistema vivo, valide a divergência e atualize o checkpoint depois.
+Os detalhes completos do estado de 2026-10-30 — TEMA MODELO V20, infraestrutura, Cloudflare gateway, plugin privado, laboratório V20 e gaps locais antigos — continuam preservados nos checkpoints e manifestos datados de 2026-10-30.
+
+Se este arquivo for encontrado em uma conversa futura, NÃO reiniciar o diagnóstico. Ler primeiro `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md` e continuar a partir do próximo bloco pendente.
