@@ -47,16 +47,18 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Validar código antes da publicação
+      - name: Validar código, policy guard e self-tests
         run: |
           set -euo pipefail
           python -m py_compile \
             src/criar_rascunho.py src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py \
+            src/blogger_policy_guard.py src/blogger_policy_guard_self_test.py \
             air_fryers_store/src/shopee_oportunidades_air_fryers.py \
             air_fryers_store/src/store_auto.py air_fryers_store/src/store_auto_post.py \
             air_fryers_store/src/store_layout_patch.py air_fryers_store/src/store_auto_self_test.py \
             air_fryers_store/src/store_hero_sync.py air_fryers_store/src/store_hero_sync_post.py \
             air_fryers_store/src/post_target_proxy.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
           BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:air_fryers_store/src python air_fryers_store/src/store_auto_self_test.py
       - name: Confirmar secrets obrigatórios
         run: |
@@ -70,7 +72,7 @@ jobs:
         run: PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_auto_post.py
       - name: Sincronizar 12 cards do hero
         run: PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_hero_sync_post.py
-      - name: Verificar renderização pública e política básica
+      - name: Verificar renderização pública e políticas
         run: |
           set -euo pipefail
           base="https://air-fryers-em-foco.blogspot.com/2026/11/loja.html?store_verify=${GITHUB_RUN_ID}"
@@ -91,6 +93,12 @@ jobs:
             sleep $((attempt * 6))
           done
           test "$ok" -eq 1
+          PYTHONPATH=src python - <<'PY'
+          from blogger_policy_guard import require_store_html_allowed
+          raw=open('/tmp/air-fryers-loja.html',encoding='utf-8',errors='ignore').read()
+          require_store_html_allowed(raw, expected_products=20, expected_hero=12)
+          print('BLOGGER_POLICY_GUARD_PUBLIC_PASS')
+          PY
           grep -q "Air Fryers &amp; Fritadeiras\|Air Fryers & Fritadeiras" /tmp/air-fryers-loja.html
           grep -q "Air Fryers Grandes &amp; Família\|Air Fryers Grandes & Família" /tmp/air-fryers-loja.html
           grep -q "Formas &amp; Revestimentos\|Formas & Revestimentos" /tmp/air-fryers-loja.html
@@ -99,8 +107,7 @@ jobs:
           grep -q 'href="#bls-formas-revestimentos"' /tmp/air-fryers-loja.html
           grep -q "grid-template-columns:minmax(0,1fr)!important" /tmp/air-fryers-loja.html
           grep -q '\[id\^="PopularPosts"\]' /tmp/air-fryers-loja.html
-          ! grep -qiE '>[^<]*(cerveja|whisky|vodka|cigarro|tabaco|vape|nicotina|cbd|thc|maconha|arma de fogo|munição|cassino|aposta esportiva|medicamento controlado)[^<]*<' /tmp/air-fryers-loja.html
-          echo "PUBLIC_PASS: nicho air fryers, vitrine=20, hero=12, navegação, layout e policy guard básico OK"
+          echo "PUBLIC_PASS: nicho air fryers, vitrine=20, hero=12, navegação, layout e policy guard central OK"
       - name: Persistir rotação somente após PASS público
         run: |
           set -euo pipefail
