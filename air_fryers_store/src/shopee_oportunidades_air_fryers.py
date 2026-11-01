@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
+import re
 import sys
+import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -13,6 +15,52 @@ if str(ROOT_SRC) not in sys.path:
     sys.path.insert(0, str(ROOT_SRC))
 import shopee_oportunidades_v23 as v23
 
+_ORIGINAL_EVALUATE_KEYWORD = v23.evaluate_keyword
+
+
+def _norm(value: str) -> str:
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    text = "".join(ch for ch in text if not unicodedata.combining(ch)).lower()
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _capacities_liters(title: str) -> list[float]:
+    text = _norm(title).replace(",", ".")
+    values = []
+    # Exige fronteira numérica para que 3,6 L nunca seja interpretado como 6 L.
+    for match in re.finditer(r"(?<!\d)(\d{1,2}(?:\.\d+)?)\s*(?:l\b|litro\b|litros\b)", text):
+        try:
+            value = float(match.group(1))
+        except ValueError:
+            continue
+        if 0.5 <= value <= 30:
+            values.append(value)
+    return values
+
+
+def evaluate_keyword_strict_capacity(title, keyword, rules_doc):
+    result = dict(_ORIGINAL_EVALUATE_KEYWORD(title, keyword, rules_doc))
+    if not result.get("accepted"):
+        return result
+
+    key = _norm(keyword)
+    capacities = _capacities_liters(title)
+
+    if key == "air fryer 6 litros" and not any(6.0 <= value < 7.0 for value in capacities):
+        return {"accepted": False, "score": 0.0, "reason": "capacidade_6l_nao_confirmada", "matched": [], "missing": ["6.x L"]}
+
+    if key == "air fryer 8 litros" and not any(8.0 <= value < 9.0 for value in capacities):
+        return {"accepted": False, "score": 0.0, "reason": "capacidade_8l_nao_confirmada", "matched": [], "missing": ["8.x L"]}
+
+    if key == "air fryer grande" and not any(value >= 5.0 for value in capacities):
+        return {"accepted": False, "score": 0.0, "reason": "capacidade_familia_nao_confirmada", "matched": [], "missing": [">=5 L"]}
+
+    return result
+
+
+# O scanner usa evaluate_keyword internamente; a adaptação fica restrita a este blog.
+v23.evaluate_keyword = evaluate_keyword_strict_capacity
+
 
 def regression_checks(rules_doc):
     cases = [
@@ -23,11 +71,17 @@ def regression_checks(rules_doc):
         ("Fritadeira Elétrica Air Fryer 4L 1400W", "fritadeira eletrica", True),
         ("Cesto de Reposição para Fritadeira Elétrica", "fritadeira eletrica", False),
         ("Air Fryer 6 Litros Digital 1700W", "air fryer 6 litros", True),
+        ("Air Fryer 6,5L Digital 1700W", "air fryer 6 litros", True),
+        ("Fritadeira Air fryer 3,6 Litros Telefunken EasyFryer", "air fryer 6 litros", False),
         ("Prateleira Suporte para Air Fryer 6 Litros", "air fryer 6 litros", False),
         ("Fritadeira Air Fryer 8L 1800W Família", "air fryer 8 litros", True),
+        ("Air Fryer 8,5L Digital Família", "air fryer 8 litros", True),
+        ("Air Fryer Fritadeira Grande 4,8 Litros", "air fryer 8 litros", False),
         ("Kit 2 Formas de Silicone Para AirFryer Tamanho Grande 4 - 8 Litros", "air fryer 8 litros", False),
         ("Capa para Air Fryer Fritadeira Elétrica Grande 8 Litros com Laço", "air fryer 8 litros", False),
         ("Air Fryer Grande 7L Digital", "air fryer grande", True),
+        ("Air Fryer 5L Grande Família", "air fryer grande", True),
+        ("Air Fryer 4,5L Grande Capacidade Ideal Família", "air fryer grande", False),
         ("Kit 2 Formas de Silicone Para AirFryer Fritadeira Elétrica Tamanho Grande", "air fryer grande", False),
         ("Capa para Air Fryer Fritadeira Elétrica Grande 8 Litros", "air fryer grande", False),
         ("Nicho Suporte Air Fryer Grande", "air fryer grande", False),
@@ -67,7 +121,7 @@ def regression_checks(rules_doc):
 
 def main():
     v23.run_regression_checks = regression_checks
-    print("=== AIR FRYERS EM FOCO — SHOPEE OPORTUNIDADES V4 ===")
+    print("=== AIR FRYERS EM FOCO — SHOPEE OPORTUNIDADES V5 ===")
     ranking = v23.scan_v23()
     v23.print_v23(ranking)
 
