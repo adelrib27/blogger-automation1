@@ -1,0 +1,57 @@
+name: Editorial — Gate Anti-Repetição Entre Blogs SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "src/editorial_cross_blog_guard.py"
+      - "src/editorial_cross_blog_guard_self_test.py"
+      - "config/editorial_cross_blog_guard.json"
+      - ".github/workflows/editorial_cross_blog_guard_safe.yml"
+      - ".github/workflows/casa_editorial_manual.yml"
+      - ".github/workflows/casa_editorial_publish_schedule.yml"
+      - ".github/workflows/oficina_editorial_autonomous.yml"
+      - ".github/workflows/radar_editorial_vnext_autonomous.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: editorial-cross-blog-guard-safe
+  cancel-in-progress: false
+
+jobs:
+  validate-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compilar gate
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/editorial_cross_blog_guard.py \
+            src/editorial_cross_blog_guard_self_test.py
+
+      - name: Executar autotestes
+        run: python -u src/editorial_cross_blog_guard_self_test.py
+
+      - name: Auditar estado atual sem alterar filas
+        run: python -u src/editorial_cross_blog_guard.py --all --check-only
+
+      - name: Guardar relatórios SAFE
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-cross-blog-guard-safe-${{ github.run_number }}
+          path: |
+            casa_decoracao/data/cross_blog_guard_report.json
+            oficina_garagem/data/cross_blog_guard_report.json
+            radar_tech_br/data/cross_blog_guard_report.json
+          if-no-files-found: warn
+          retention-days: 14
