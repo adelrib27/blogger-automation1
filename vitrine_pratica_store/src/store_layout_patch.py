@@ -43,6 +43,12 @@ body:has(.bls-page) .post-body:has(.bls-page){{
   padding:0!important;
   overflow:visible!important;
 }}
+/* Oculta Postagens mais visitadas somente na página/post da Loja. */
+body:has(.bls-page) .PopularPosts,
+body:has(.bls-page) .widget.PopularPosts,
+body:has(.bls-page) [id^="PopularPosts"]{{
+  display:none!important;
+}}
 .bls-page{{
   width:min(1440px,calc(100vw - 48px))!important;
   max-width:none!important;
@@ -129,9 +135,12 @@ def patch_store_layout() -> None:
         raise RuntimeError("A identificação antiga da loja ainda aparece no post; publicação interrompida.")
     if "https://vitrine-pratica.blogspot.com/p/loja.html" not in verify_raw:
         raise RuntimeError("A URL adaptada da Loja Vitrine Prática não foi confirmada.")
+    if '[id^="PopularPosts"]' not in verify_raw:
+        raise RuntimeError("Regra para ocultar Postagens mais visitadas não foi confirmada.")
 
     print("LAYOUT_WIDE_APPLIED")
     print("STORE_TARGET_VITRINE_PRATICA_OK")
+    print("POPULAR_POSTS_HIDDEN_ON_STORE_OK")
 
 
 if __name__ == "__main__":
