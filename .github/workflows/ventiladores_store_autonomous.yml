@@ -3,7 +3,8 @@ name: Ventiladores em Foco — Loja Shopee LIVE
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 12 * * *"
+    - cron: "35 9 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "ventiladores_store/store_live_kickoff.txt"
@@ -67,6 +68,22 @@ jobs:
           test -n "$BLOGGER_CLIENT_ID"
           test -n "$BLOGGER_CLIENT_SECRET"
           test -n "$BLOGGER_REFRESH_TOKEN"
+      - name: Pré-validar SAFE + Policy Guard
+        run: |
+          set -euo pipefail
+          BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:ventiladores_store/src python -u ventiladores_store/src/store_auto_post.py
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          data=json.loads(Path('ventiladores_store/data/store_last_selection.json').read_text(encoding='utf-8'))
+          products=[p for items in (data.get('categories') or {}).values() for p in items]
+          if len(products)!=20:
+              raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
+          for p in products:
+              require_product_allowed(p)
+          print('BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20 produtos permitidos')
+          PY
       - name: Atualizar vitrine no POST Loja
         run: PYTHONPATH=src:ventiladores_store/src python -u ventiladores_store/src/store_auto_post.py
       - name: Sincronizar 12 cards do hero
@@ -99,15 +116,20 @@ jobs:
           print('BLOGGER_POLICY_GUARD_PUBLIC_PASS')
           PY
           grep -q "Mesa &amp; Coluna\|Mesa & Coluna" /tmp/ventiladores-loja.html
-          grep -q "Ventiladores de Torre" /tmp/ventiladores-loja.html
-          grep -q "Ventiladores de Teto" /tmp/ventiladores-loja.html
-          grep -q "Ventiladores de Parede" /tmp/ventiladores-loja.html
+          grep -q ">Torre<" /tmp/ventiladores-loja.html
+          grep -q ">Teto<" /tmp/ventiladores-loja.html
+          grep -q ">Parede<" /tmp/ventiladores-loja.html
           grep -q "Circuladores &amp; Portáteis\|Circuladores & Portáteis" /tmp/ventiladores-loja.html
           grep -q 'href="#bls-mesa-coluna"' /tmp/ventiladores-loja.html
+          grep -q 'href="#bls-torre"' /tmp/ventiladores-loja.html
+          grep -q 'href="#bls-teto"' /tmp/ventiladores-loja.html
+          grep -q 'href="#bls-parede"' /tmp/ventiladores-loja.html
           grep -q 'href="#bls-circuladores-portateis"' /tmp/ventiladores-loja.html
+          grep -q "https://ventiladores-em-foco.blogspot.com/p/loja.html" /tmp/ventiladores-loja.html
           grep -q "grid-template-columns:minmax(0,1fr)!important" /tmp/ventiladores-loja.html
           grep -q '\[id\^="PopularPosts"\]' /tmp/ventiladores-loja.html
-          echo "PUBLIC_PASS: Ventiladores em Foco, vitrine=20, hero=12, nicho, layout e Policy Guard OK"
+          ! grep -q "ventilador-mondial-vsp-40-b.blogspot.com" /tmp/ventiladores-loja.html
+          echo "PUBLIC_PASS: Ventiladores em Foco vitrine=20 hero=12 nicho layout Policy Guard OK"
       - name: Persistir rotação somente após PASS público
         run: |
           set -euo pipefail
