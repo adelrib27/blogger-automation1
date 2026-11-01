@@ -1,11 +1,23 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+import importlib.util
 import os
 import re
 import unicodedata
+from pathlib import Path
+
 import store_auto as base
 from post_target_proxy import BloggerPostTargetProxy
-from store_layout_patch import patch_store_layout
+
+# Carrega explicitamente o patch LOCAL desta Loja para evitar colisão com
+# blogger_product_store/src/store_layout_patch.py já importado pelo motor base.
+_patch_path = Path(__file__).resolve().parent / "store_layout_patch.py"
+_patch_spec = importlib.util.spec_from_file_location("air_fryers_store_layout_patch", _patch_path)
+if _patch_spec is None or _patch_spec.loader is None:
+    raise RuntimeError("Não foi possível carregar o patch local da Loja Air Fryers.")
+_patch_mod = importlib.util.module_from_spec(_patch_spec)
+_patch_spec.loader.exec_module(_patch_mod)
+patch_store_layout = _patch_mod.patch_store_layout
 
 POST_ID = os.getenv("BLOGGER_STORE_POST_ID", "5189023277801568424").strip()
 if not POST_ID:
