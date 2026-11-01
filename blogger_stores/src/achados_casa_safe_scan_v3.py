@@ -20,7 +20,7 @@ def extra_keyword_gate(product: dict, keyword: str) -> bool:
     title = norm(product.get("productName") or "")
     key = norm(keyword)
     hard_blocks = {
-        "umidificador": ["essencia", "essencias", "refil", "filtro para umidificador"],
+        "mini umidificador usb": ["essencia", "essencias", "refil", "filtro para umidificador", "pavio avulso", "algodao avulso"],
         "mop giratorio": ["cabo para mop", "cabo mop", "refil", "reposicao"],
         "aspirador de po": ["saco para aspirador", "filtro para aspirador", "mangueira", "bico para aspirador"],
         "air fryer": ["forma de silicone", "papel para air fryer", "cesto para air fryer", "capa para air fryer"],
