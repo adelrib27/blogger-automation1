@@ -30,13 +30,31 @@ def extra_keyword_gate(product: dict, keyword: str) -> bool:
     return not any(block in title for block in hard_blocks.get(key, []))
 
 
-def choose_one_per_keyword(ranking: list[dict], config: dict, blocked_ids: set[str]) -> tuple[dict[str, list[dict]], dict[str, list[str]]]:
+def last_published_ids(history: dict) -> set[str]:
+    runs = history.get("runs") or []
+    if not runs:
+        return set()
+    last = runs[-1]
+    return {
+        str(item.get("itemId") or "").strip()
+        for item in (last.get("items") or [])
+        if str(item.get("itemId") or "").strip()
+    }
+
+
+def choose_one_per_keyword(
+    ranking: list[dict],
+    config: dict,
+    blocked_ids: set[str],
+    last_run_ids: set[str],
+) -> tuple[dict[str, list[dict]], dict[str, list[str]], list[str]]:
     categories = config.get("categories") or {}
     category_names = list(categories.keys())
     grouped = base.group_candidates(ranking, category_names)
     chosen: dict[str, list[dict]] = {}
     coverage: dict[str, list[str]] = {}
     used: set[str] = set()
+    fallback_ids: list[str] = []
 
     for category, keywords in categories.items():
         picks = []
@@ -44,6 +62,8 @@ def choose_one_per_keyword(ranking: list[dict], config: dict, blocked_ids: set[s
         pool = grouped.get(category) or []
         for keyword in keywords:
             selected = None
+
+            # Fase 1 — novidade estrita na janela de rotação.
             for p in pool:
                 item_id = str(p.get("itemId") or "").strip()
                 matched = [str(v) for v in (p.get("intentMatchedKeywords") or p.get("keywords") or [])]
@@ -55,9 +75,36 @@ def choose_one_per_keyword(ranking: list[dict], config: dict, blocked_ids: set[s
                     continue
                 selected = dict(p)
                 selected["selectedSourceKeyword"] = keyword
+                selected["rotationSelectionMode"] = "new"
                 break
+
+            # Fase 2 — fallback controlado. Só usa produto já visto em rodada
+            # mais antiga; nunca repete a última publicação e nunca ignora gates.
             if selected is None:
-                raise RuntimeError(f"SAFE v3 bloqueado: sem produto novo válido para '{keyword}' em '{category}'.")
+                for p in pool:
+                    item_id = str(p.get("itemId") or "").strip()
+                    matched = [str(v) for v in (p.get("intentMatchedKeywords") or p.get("keywords") or [])]
+                    if keyword not in matched:
+                        continue
+                    if item_id in used or item_id in last_run_ids:
+                        continue
+                    if not extra_keyword_gate(p, keyword):
+                        continue
+                    selected = dict(p)
+                    selected["selectedSourceKeyword"] = keyword
+                    selected["rotationSelectionMode"] = "fallback_older"
+                    fallback_ids.append(item_id)
+                    print(
+                        f"ROTATION_FALLBACK: categoria={category!r} keyword={keyword!r} itemId={item_id}; "
+                        "produto fora da última rodada, reutilizado por escassez de novidade."
+                    )
+                    break
+
+            if selected is None:
+                raise RuntimeError(
+                    f"SAFE v3 bloqueado: sem produto válido para '{keyword}' em '{category}', "
+                    "inclusive após fallback que proíbe repetir a última rodada."
+                )
             picks.append(selected)
             covered.append(keyword)
             used.add(str(selected.get("itemId")))
@@ -70,7 +117,7 @@ def choose_one_per_keyword(ranking: list[dict], config: dict, blocked_ids: set[s
     expected = len(category_names) * base.ITEMS_PER_CATEGORY
     if len(used) != expected:
         raise RuntimeError(f"SAFE v3 bloqueado: {len(used)} IDs únicos; esperado {expected}.")
-    return chosen, coverage
+    return chosen, coverage, fallback_ids
 
 
 def main() -> int:
@@ -86,23 +133,32 @@ def main() -> int:
 
     history = base.load_json(base.HISTORY_PATH, {"version": 1, "blogId": base.BLOG_ID, "runs": []})
     blocked = base.published_recent_ids(history)
-    print(f"Achados para Casa — SAFE v3. IDs publicados bloqueados: {len(blocked)}")
+    last_run = last_published_ids(history)
+    print(
+        f"Achados para Casa — SAFE v3. IDs bloqueados na janela: {len(blocked)}; "
+        f"IDs da última rodada: {len(last_run)}"
+    )
 
     ranking = base.shopee_v23.scan_v23()
     print(f"Ranking Shopee recebido: {len(ranking)}")
-    chosen, coverage = choose_one_per_keyword(ranking, config, blocked)
+    chosen, coverage, fallback_ids = choose_one_per_keyword(ranking, config, blocked, last_run)
     normalized, checks = base.validate_and_generate_links(chosen, app_id, secret)
 
-    # Propaga para o artefato final a palavra-chave responsável pela seleção.
     by_id = {
-        str(p.get("itemId")): str(p.get("selectedSourceKeyword") or "")
+        str(p.get("itemId")): {
+            "keyword": str(p.get("selectedSourceKeyword") or ""),
+            "mode": str(p.get("rotationSelectionMode") or "new"),
+        }
         for values in chosen.values() for p in values
     }
     for values in normalized.values():
         for item in values:
-            item["sourceKeyword"] = by_id.get(item["itemId"], "")
+            meta = by_id.get(item["itemId"], {})
+            item["sourceKeyword"] = meta.get("keyword", "")
+            item["rotationSelectionMode"] = meta.get("mode", "new")
 
     ids = [item["itemId"] for values in normalized.values() for item in values]
+    no_last_run_repeat = all(i not in last_run for i in ids)
     selection = {
         "schemaVersion": 3,
         "status": "SAFE_READY",
@@ -113,12 +169,19 @@ def main() -> int:
         "itemsPerCategory": base.ITEMS_PER_CATEGORY,
         "categoryCount": len(categories),
         "totalItems": len(ids),
-        "newItemsRequired": 20,
+        "newItemsPreferred": 20,
         "recentWindowDays": base.RECENT_DAYS,
         "blockedPublishedIdsCount": len(blocked),
+        "lastPublishedIdsCount": len(last_run),
         "uniqueItemIds": len(set(ids)),
         "categories": normalized,
         "keywordCoverage": coverage,
+        "rotationFallback": {
+            "policy": "strict_recent_window_then_older_never_last_run",
+            "used": bool(fallback_ids),
+            "count": len(fallback_ids),
+            "itemIds": fallback_ids,
+        },
         "affiliateLinkGeneration": {
             "method": "generateShortLink",
             "appId": base.EXPECTED_APP_ID,
@@ -134,7 +197,8 @@ def main() -> int:
             "fiveCategories": len(normalized) == 5,
             "fourPerCategory": all(len(v) == 4 for v in normalized.values()),
             "twentyUnique": len(ids) == 20 and len(set(ids)) == 20,
-            "allNewVsPublishedWindow": all(i not in blocked for i in ids),
+            "noRepeatLastPublishedRun": no_last_run_repeat,
+            "rotationPolicySatisfied": True,
             "allLinksResolved": len(checks) == 20,
             "semanticRulesApplied": True,
             "oneProductPerKeyword": all(len(set(v)) == 4 for v in coverage.values()),
@@ -145,7 +209,10 @@ def main() -> int:
         raise RuntimeError(f"SAFE v3 bloqueado: gates finais falharam: {selection['gates']}")
 
     base.save_atomic(base.SELECTION_PATH, selection)
-    print("ACHADOS_SAFE_V3_READY: 20 produtos; 20 palavras-chave cobertas; 20/20 links validados; Blogger não alterado.")
+    print(
+        "ACHADOS_SAFE_V3_READY: 20 produtos; 20 palavras-chave cobertas; "
+        f"20/20 links validados; fallback antigos={len(fallback_ids)}; Blogger não alterado."
+    )
     return 0
 
 
