@@ -1,0 +1,32 @@
+name: Vitrine Prática — Probe público da Loja
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/vitrine_pratica_public_probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validar página Loja pública atual
+        run: |
+          set -euo pipefail
+          url="https://vitrine-pratica.blogspot.com/p/loja.html"
+          curl -L -fsS --max-time 40 "${url}?probe=${GITHUB_RUN_ID}" > /tmp/vitrine-pratica-loja.html
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('/tmp/vitrine-pratica-loja.html').read_text(encoding='utf-8', errors='ignore')
+          print('bytes=', len(text))
+          print('store_cards=', text.count('data-item-id='))
+          print('current_marker=', text.count('VITRINE_STORE_AUTO_START'))
+          assert text.count('data-item-id=') == 20, text.count('data-item-id=')
+          assert 'VITRINE_STORE_AUTO_START' in text
+          assert 'ga-store-v20' in text
+          print('VITRINE_PRATICA_PAGE_RENDER_OK')
+          PY
