@@ -20,6 +20,26 @@ SOURCE_POST_ID = "115613719594316807"
 SOURCE_PAGE_ID = "8344701886444887322"
 TARGET_FILE = Path(os.getenv("BLOGGER_STORE_CLONE_TARGET", ROOT / "blogger_store_clone" / "target.json"))
 
+KNOWN_TARGETS = {
+    "1426630233929943394": ("Achados para Casa", "https://achadosparacasa2026.blogspot.com"),
+    "1719259388907013414": ("Conecta Achados", "https://conectaachados.blogspot.com"),
+    "2562496977098748229": ("Achadinhos de Beleza", "https://canal-attitude.blogspot.com"),
+    "7487888217273188851": ("Radar Tech BR", "https://portalradartechbr.blogspot.com"),
+    "2858597309582499028": ("Moda e Ofertas", "https://moda-ofertas.blogspot.com"),
+    "3552757910439359679": ("Cozinha Sem Complicação", "https://cozinha-sem-complicacao.blogspot.com"),
+    "7757953554206491487": ("Robô Aspirador WAP Robot W90", "https://robo-aspirador-wap-w90.blogspot.com"),
+    "9113728635217260884": ("Air Fryer Elgin Cube Fry 4,2 L", "https://airfryer-elgin-cube-fry-42l.blogspot.com"),
+    "4473989735719981382": ("Ventilador Mondial Super Power VSP-40-B 40cm", "https://ventilador-mondial-vsp-40-b.blogspot.com"),
+    "6319734511998091378": ("Tá Na Moda | Morte Súbita Lola 450g", "https://tanamoda-mascara-lola.blogspot.com"),
+    "5271798990390532475": ("Liquidificador Philips Walita RI2242", "https://liquidificador-philips-walita-ri2242.blogspot.com"),
+    "8658632621591002634": ("Liquidificador Britânia 1400W 3L 12 Velocidades BLQ1300P", "https://liquidificador-britania-blq1300p.blogspot.com"),
+    "1453188702831337099": ("Guia de Achados & Ofertas", "https://guia-de-achados-e-ofertas.blogspot.com"),
+    "7527651041649593600": ("Achados que Valem", "https://achados-que-valem.blogspot.com"),
+    "5151950717041967683": ("Escolha Certa Online", "https://escolha-certa-online.blogspot.com"),
+    "4177382081459143374": ("Casa em Ordem", "https://casa-em-ordem-pratica.blogspot.com"),
+    "4830103887652146866": ("Estilo no Dia a Dia", "https://estilo-no-dia-a-dia-0071220800-2.blogspot.com"),
+}
+
 
 def api_call(factory, label: str):
     delays = [0, 8, 16, 32, 64]
@@ -89,10 +109,15 @@ def main() -> int:
     blogger = criar_servico_blogger()
     source_post = api_call(lambda: blogger.posts().get(blogId=SOURCE_BLOG_ID, postId=SOURCE_POST_ID), "source-post")
     source_page = api_call(lambda: blogger.pages().get(blogId=SOURCE_BLOG_ID, pageId=SOURCE_PAGE_ID), "source-page")
-    target_blog = api_call(lambda: blogger.blogs().get(blogId=target_blog_id), "target-blog")
 
-    target_title = str(target_blog.get("name") or target_blog.get("title") or target_blog_id).strip()
-    target_home = str(target_blog.get("url") or "").rstrip("/")
+    known = KNOWN_TARGETS.get(target_blog_id)
+    if known:
+        target_title, target_home = known
+    else:
+        target_blog = api_call(lambda: blogger.blogs().get(blogId=target_blog_id), "target-blog")
+        target_title = str(target_blog.get("name") or target_blog.get("title") or target_blog_id).strip()
+        target_home = str(target_blog.get("url") or "").rstrip("/")
+
     if not target_home.startswith("http"):
         raise RuntimeError("Blog alvo sem URL pública válida")
     target_store_page_url = target_home + "/p/loja.html"
