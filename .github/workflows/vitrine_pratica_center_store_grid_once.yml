@@ -1,0 +1,50 @@
+name: Vitrine Prática — Corrigir centralização real da Loja
+
+on:
+  push:
+    paths:
+      - ".github/workflows/vitrine_pratica_center_store_grid_once.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLOGGER_BLOG_ID: "9144338307944682868"
+      BLOGGER_STORE_POST_ID: "115613719594316807"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Aplicar correção do grid pai sem trocar produtos
+        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_layout_patch.py
+      - name: Validar HTML público
+        run: |
+          set -euo pipefail
+          url="https://vitrine-pratica.blogspot.com/2026/11/loja.html"
+          ok=0
+          for attempt in 1 2 3 4 5 6; do
+            curl -L -fsS --max-time 40 "${url}?center_grid=${GITHUB_RUN_ID}-${attempt}" > /tmp/vitrine-loja.html || true
+            if python - <<'PY'
+          from pathlib import Path
+          t=Path('/tmp/vitrine-loja.html').read_text(encoding='utf-8',errors='ignore')
+          assert t.count('data-item-id=') == 20
+          assert t.count('data-hero-item-id=') == 12
+          assert 'body.ga-post-page:has(.bls-page) .centered-bottom' in t
+          assert 'grid-template-columns:minmax(0,1fr)!important' in t
+          assert 'body:has(.bls-page) .sidebar-container' in t
+          print('PUBLIC_PASS centered_grid=1col cards=20 hero=12')
+          PY
+            then ok=1; break; fi
+            sleep 4
+          done
+          test "$ok" -eq 1
