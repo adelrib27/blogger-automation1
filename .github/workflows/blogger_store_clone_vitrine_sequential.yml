@@ -1,0 +1,32 @@
+name: Blogger — Rollout sequencial da Loja Vitrine validada
+
+on:
+  push:
+    paths:
+      - "blogger_store_clone/target.json"
+      - "blogger_store_clone/src/clone_vitrine_store.py"
+      - ".github/workflows/blogger_store_clone_vitrine_sequential.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  aplicar-e-validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+      - name: Compilar clonador
+        run: python -m py_compile blogger_store_clone/src/clone_vitrine_store.py
+      - name: Aplicar Vitrine validada no alvo atual
+        run: PYTHONPATH=src python -u blogger_store_clone/src/clone_vitrine_store.py
