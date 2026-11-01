@@ -18,18 +18,22 @@ def regression_checks(rules_doc):
     cases = [
         ("Air Fryer Fritadeira Elétrica 5L 1500W 220V", "fritadeira eletrica", True),
         ("Kit Forma Air Fryer Silicone", "air fryer", False),
+        ("Adaptador de Tomada Bivolt para Air Fryer", "air fryer", False),
         ("Air Fryer Forno Oven 12L 1800W 127V", "air fryer forno", True),
         ("Liquidificador 1400W 15 Velocidades", "liquidificador", True),
         ("Copo para Liquidificador 3L", "liquidificador", False),
+        ("Escova de Limpeza para Liquidificador", "liquidificador", False),
         ("Mixer Elétrico 3 em 1 800W", "mixer 3 em 1", True),
         ("Haste Avulsa para Mixer", "mixer eletrico", False),
-        ("Processador de Alimentos 900W para Cozinha", "processador de alimentos", True),
+        ("Processador Elétrico de Alimentos 900W para Cozinha", "processador de alimentos", True),
+        ("Mini Processador Manual com Lâminas", "processador de alimentos", False),
         ("Lâmina Original Multiprocessador", "multiprocessador", False),
         ("Batedeira Planetária 700W 12 Velocidades", "batedeira planetaria", True),
         ("Tigela Avulsa para Batedeira", "batedeira eletrica", False),
         ("Cafeteira Elétrica 30 Xícaras 800W", "cafeteira eletrica", True),
         ("Jarra Avulsa para Cafeteira", "cafeteira eletrica", False),
         ("Sanduicheira Elétrica Grill 750W", "sanduicheira eletrica", True),
+        ("Limpa Chapa Grill Sanduicheira 750ml", "sanduicheira eletrica", False),
         ("Chaleira Elétrica 1,8L 1500W", "chaleira eletrica", True),
     ]
     failures=[]
