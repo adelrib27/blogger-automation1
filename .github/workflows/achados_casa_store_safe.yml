@@ -47,7 +47,7 @@ jobs:
             radar_tech_br/src/refresh_blogger_offer_links.py \
             blogger_stores/src/achados_casa_safe_scan_v2.py \
             blogger_stores/src/achados_casa_safe_scan_v3.py \
-            blogger_stores/src/achados_casa_safe_scan_v5.py
+            blogger_stores/src/achados_casa_safe_scan_v6.py
 
       - name: Confirmar AppID Shopee
         run: |
@@ -60,10 +60,10 @@ jobs:
           fi
           echo "AppID Shopee do Achados para Casa validado."
 
-      - name: Executar nova varredura SAFE v5
+      - name: Executar nova varredura SAFE v6
         run: |
           set -euo pipefail
-          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/achados_casa_safe_scan_v5.py
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/achados_casa_safe_scan_v6.py
 
       - name: Validar artefato SAFE
         run: |
@@ -73,7 +73,7 @@ jobs:
           from pathlib import Path
           p=Path('blogger_stores/data/achados_casa_selection.json')
           d=json.loads(p.read_text(encoding='utf-8'))
-          assert d['schemaVersion']==5
+          assert d['schemaVersion']==6
           assert d['status']=='SAFE_READY'
           assert d['publishReady'] is True
           assert d['categoryCount']==5
@@ -86,10 +86,10 @@ jobs:
           assert d['affiliateLinkGeneration']['allResolvedToShopee'] is True
           assert d['semanticValidation']['strictAccessoriesBlocked'] is True
           assert d['semanticValidation']['oneProductPerKeyword'] is True
-          assert d['semanticValidation']['homeUsePostGateVersion']==5
-          assert d['semanticValidation']['airFryerPartsBlocked'] is True
+          assert d['semanticValidation']['homeUsePostGateVersion']==6
+          assert d['semanticValidation']['fritadeiraApplianceOnly'] is True
           assert all(d['gates'].values())
-          print('SAFE v5 VALIDADO: 20 produtos completos, diversidade e 20/20 links resolvidos.')
+          print('SAFE v6 VALIDADO: 20 produtos completos, diversidade e 20/20 links resolvidos.')
           PY
 
       - name: Persistir seleção SAFE
@@ -102,7 +102,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add blogger_stores/data/achados_casa_selection.json
-          git commit -m "Atualizar SAFE v5 da Loja Achados para Casa"
+          git commit -m "Atualizar SAFE v6 da Loja Achados para Casa"
           git pull --rebase origin main
           git push origin HEAD:main
 
