@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+import importlib.util
 import os
 import re
 import unicodedata
+from pathlib import Path
+
 import store_auto as base
 from post_target_proxy import BloggerPostTargetProxy
-from store_layout_patch import patch_store_layout
+
+# Carrega explicitamente o patch deste blog. O store_auto adiciona o motor comum
+# ao sys.path, então um `from store_layout_patch import ...` simples pode resolver
+# acidentalmente para blogger_product_store/src/store_layout_patch.py.
+_LOCAL_LAYOUT = Path(__file__).resolve().with_name("store_layout_patch.py")
+_spec = importlib.util.spec_from_file_location("ventiladores_em_foco_store_layout_patch", _LOCAL_LAYOUT)
+_layout = importlib.util.module_from_spec(_spec)
+if not _spec or not _spec.loader:
+    raise RuntimeError("Não foi possível carregar o layout patch local de Ventiladores em Foco.")
+_spec.loader.exec_module(_layout)
+patch_store_layout = _layout.patch_store_layout
 
 POST_ID = os.getenv("BLOGGER_STORE_POST_ID", "1410775502611365606").strip()
 if not POST_ID:
