@@ -52,11 +52,20 @@ jobs:
             radar_tech_br/src/store_auto_self_test.py
           PYTHONPATH=src:radar_tech_br/src python radar_tech_br/src/store_auto_self_test.py
 
-      - name: Confirmar secrets obrigatórios
+      - name: Confirmar credenciais Shopee autorizadas
         run: |
           set -euo pipefail
           test -n "$SHOPEE_APP_ID"
           test -n "$SHOPEE_SECRET"
+          if [ "$SHOPEE_APP_ID" != "18352820579" ]; then
+            echo "::error::SHOPEE_APP_ID configurado não corresponde ao AppID autorizado para esta automação."
+            exit 1
+          fi
+          echo "Shopee AppID autorizado validado com sucesso."
+
+      - name: Confirmar credenciais de publicação
+        run: |
+          set -euo pipefail
           test -n "$WORDPRESS_USERNAME"
           test -n "$WORDPRESS_APP_PASSWORD"
 
