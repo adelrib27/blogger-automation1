@@ -15,8 +15,10 @@ on:
       - "cabelos_store/src/**"
       - "blogger_product_store/src/**"
       - "eletroportateis_store/src/**"
+      - "limpeza_inteligente_store/src/**"
       - "limpeza_store/src/**"
       - "ventiladores_store/src/**"
+      - "ventiladores_em_foco_store/src/**"
       - ".github/workflows/*store_safe.yml"
       - ".github/workflows/*store_autonomous.yml"
       - ".github/workflows/blogger_policy_repo_audit.yml"
@@ -45,5 +47,5 @@ jobs:
           python -m py_compile src/blogger_policy_guard.py src/blogger_policy_guard_self_test.py src/blogger_policy_repo_audit.py
       - name: Self-test Policy Guard
         run: PYTHONPATH=src python src/blogger_policy_guard_self_test.py
-      - name: Auditar workflows, cookies e identidades
+      - name: Auditar workflows, writers, cookies e identidades
         run: PYTHONPATH=src python src/blogger_policy_repo_audit.py
