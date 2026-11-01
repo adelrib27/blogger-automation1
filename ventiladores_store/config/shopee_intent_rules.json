@@ -1,30 +1,30 @@
 {
-  "version": 4,
-  "description": "Regras semânticas do Ventiladores em Foco. Prioriza ventiladores completos e bloqueia peças, bases, suportes, capas, motores, hélices, grades, capacitores, lâmpadas avulsas, exaustores, anúncios genéricos multivariantes e climatizadores/umidificadores fora do escopo.",
+  "version": 5,
+  "description": "Regras semânticas do Ventiladores em Foco. Prioriza ventiladores completos e bloqueia peças, bases/colunas avulsas, suportes, capas, motores, hélices, grades, capacitores, lâmpadas avulsas, exaustores, repelentes/espanta-moscas, anúncios genéricos multivariantes e climatizadores/umidificadores fora do escopo.",
   "rules": {
     "ventilador de mesa": {
       "require_groups": [["ventilador"], ["mesa", "30cm", "40cm", "50cm"]],
-      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor", "base ventilador", "base para ventilador", "climatizador", "umidificador", "mini ventilador", "ventilador de mão", "ventilador de mao", "recarregável", "recarregavel", "usb", "clipe", "torre"]
+      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor", "base ventilador", "base para ventilador", "coluna do ventilador", "coluna para ventilador", "climatizador", "umidificador", "mini ventilador", "ventilador de mão", "ventilador de mao", "recarregável", "recarregavel", "usb", "clipe", "torre", "espanta mosca", "espanta-mosca", "repelente"]
     },
     "ventilador de coluna": {
       "require_groups": [["ventilador"], ["coluna", "pedestal", "altura regulável", "altura regulavel"]],
-      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor", "base ventilador", "base para ventilador", "base de ventilador", "climatizador", "umidificador", "torre"]
+      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor", "base ventilador", "base para ventilador", "base de ventilador", "coluna do ventilador", "coluna para ventilador", "climatizador", "umidificador", "torre", "espanta mosca", "espanta-mosca", "repelente"]
     },
     "ventilador pedestal": {
       "require_groups": [["ventilador"], ["pedestal", "coluna"]],
-      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor", "base ventilador", "base para ventilador", "base de ventilador", "climatizador", "umidificador", "torre"]
+      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor", "base ventilador", "base para ventilador", "base de ventilador", "coluna do ventilador", "coluna para ventilador", "climatizador", "umidificador", "torre", "espanta mosca", "espanta-mosca", "repelente"]
     },
     "ventilador torre": {
       "require_groups": [["ventilador", "fan"], ["torre", "tower"]],
-      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso", "climatizador", "umidificador", "ar condicionado", "modelos teto torre mesa", "modelos torre mesa", "teto torre mesa"]
+      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso", "climatizador", "umidificador", "ar condicionado", "modelos teto torre mesa", "modelos teto torre e mesa", "modelos torre mesa", "teto torre mesa", "teto torre e mesa"]
     },
     "ventilador de torre": {
       "require_groups": [["ventilador", "fan"], ["torre", "tower"]],
-      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso", "climatizador", "umidificador", "ar condicionado", "modelos teto torre mesa", "modelos torre mesa", "teto torre mesa"]
+      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso", "climatizador", "umidificador", "ar condicionado", "modelos teto torre mesa", "modelos teto torre e mesa", "modelos torre mesa", "teto torre mesa", "teto torre e mesa"]
     },
     "tower fan": {
       "require_groups": [["tower fan", "ventilador torre", "ventilador de torre"]],
-      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso", "climatizador", "umidificador", "ar condicionado", "modelos teto torre mesa", "modelos torre mesa", "teto torre mesa"]
+      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso", "climatizador", "umidificador", "ar condicionado", "modelos teto torre mesa", "modelos teto torre e mesa", "modelos torre mesa", "teto torre mesa", "teto torre e mesa"]
     },
     "ventilador de teto": {
       "require_groups": [["ventilador"], ["teto"]],
@@ -56,11 +56,11 @@
     },
     "ventilador portatil recarregavel": {
       "require_groups": [["ventilador"], ["portátil", "portatil", "recarregável", "recarregavel", "bateria"]],
-      "block_phrases": ["hélice", "helice", "grade", "motor", "peça", "peca", "reposição", "reposicao", "somente cabo", "climatizador", "umidificador", "ar condicionado"]
+      "block_phrases": ["hélice", "helice", "grade", "motor", "peça", "peca", "reposição", "reposicao", "somente cabo", "climatizador", "umidificador", "ar condicionado", "espanta mosca", "espanta-mosca", "repelente"]
     },
     "ventilador usb de mesa": {
       "require_groups": [["ventilador"], ["usb"], ["mesa", "desktop", "portátil", "portatil"]],
-      "block_phrases": ["hélice", "helice", "grade", "motor", "peça", "peca", "reposição", "reposicao", "somente cabo", "climatizador", "umidificador", "ar condicionado"]
+      "block_phrases": ["hélice", "helice", "grade", "motor", "peça", "peca", "reposição", "reposicao", "somente cabo", "climatizador", "umidificador", "ar condicionado", "espanta mosca", "espanta-mosca", "repelente"]
     }
   }
 }
