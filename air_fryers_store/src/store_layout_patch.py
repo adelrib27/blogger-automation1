@@ -84,6 +84,16 @@ def patch_store_layout() -> None:
     raw = raw_original
     for old, new in REPLACEMENTS.items():
         raw = raw.replace(old, new)
+    # A âncora original de Tecnologia também é usada no bloco de categorias.
+    # Depois da troca de texto para Formas, corrige especificamente seu destino.
+    raw = raw.replace(
+        'href="#bls-air-fryers"><b>Formas &amp; Revestimentos</b>',
+        'href="#bls-formas-revestimentos"><b>Formas &amp; Revestimentos</b>',
+    )
+    raw = raw.replace(
+        'href="#bls-air-fryers"><b>Formas & Revestimentos</b>',
+        'href="#bls-formas-revestimentos"><b>Formas & Revestimentos</b>',
+    )
     start_count, end_count = raw.count(START), raw.count(END)
     if start_count or end_count:
         if start_count != 1 or end_count != 1:
@@ -103,7 +113,7 @@ def patch_store_layout() -> None:
     blogger.posts().update(blogId=BLOG_ID, postId=POST_ID, body=body).execute()
     verify = blogger.posts().get(blogId=BLOG_ID, postId=POST_ID).execute()
     v = str(verify.get("content") or "")
-    required = [START, END, STORE_URL, "grid-template-columns:minmax(0,1fr)!important", '[id^="PopularPosts"]', "Air Fryers &amp; Fritadeiras", "Air Fryers Grandes &amp; Família", "Formas &amp; Revestimentos", "Grelhas &amp; Cestos", "Utensílios &amp; Preparo"]
+    required = [START, END, STORE_URL, "grid-template-columns:minmax(0,1fr)!important", '[id^="PopularPosts"]', 'href="#bls-formas-revestimentos"><b>Formas &amp; Revestimentos</b>', "Air Fryers &amp; Fritadeiras", "Air Fryers Grandes &amp; Família", "Grelhas &amp; Cestos", "Utensílios &amp; Preparo"]
     missing = [x for x in required if x not in v]
     if missing:
         raise RuntimeError(f"Falha na verificação do shell Air Fryers; ausentes={missing}")
