@@ -2,6 +2,9 @@ name: Vitrine Prática — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "15 9 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "vitrine_pratica_store/store_live_kickoff.txt"
@@ -73,7 +76,7 @@ jobs:
         run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_auto_post.py
       - name: Sincronizar 12 mini-cards do hero
         run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_hero_sync_post.py
-      - name: Verificar renderização pública 20 + 12
+      - name: Verificar renderização pública 20 + 12 + links
         run: |
           set -euo pipefail
           ok=0
@@ -86,15 +89,24 @@ jobs:
             fi
             store_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
             hero_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
-            if grep -q "bls-store-grid" /tmp/vitrine-pratica-loja.html && grep -q "blh-grid" /tmp/vitrine-pratica-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/vitrine-pratica-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+            cta_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('bls-product-cta'))")
+            link_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('href=\"https://s.shopee.com.br/'))")
+            if grep -q "bls-store-grid" /tmp/vitrine-pratica-loja.html \
+              && grep -q "blh-grid" /tmp/vitrine-pratica-loja.html \
+              && grep -q "blogger-liq-layout-wide-css" /tmp/vitrine-pratica-loja.html \
+              && grep -q "pointer-events:auto!important" /tmp/vitrine-pratica-loja.html \
+              && [ "$store_count" -eq 20 ] \
+              && [ "$hero_count" -eq 12 ] \
+              && [ "$cta_count" -ge 20 ] \
+              && [ "$link_count" -ge 32 ]; then
               ok=1
               break
             fi
-            echo "Tentativa ${attempt}: vitrine=${store_count}/20 hero=${hero_count}/12; aguardando propagação."
+            echo "Tentativa ${attempt}: vitrine=${store_count}/20 hero=${hero_count}/12 cta=${cta_count}/20 links=${link_count}/32; aguardando propagação."
             sleep 5
           done
           test "$ok" -eq 1
-          echo "PUBLIC_RUNTIME_PASS: layout amplo + 20 cards + 12 hero."
+          echo "PUBLIC_RUNTIME_PASS: layout amplo + cards clicáveis + 20 cards + 12 hero + links Shopee."
       - name: Persistir rotação somente após validação pública
         run: |
           set -euo pipefail
