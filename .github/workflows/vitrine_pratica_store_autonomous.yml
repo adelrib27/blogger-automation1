@@ -2,9 +2,9 @@ name: Vitrine Prática — Loja Shopee Autônoma
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/vitrine_pratica_store_autonomous.yml"
+  schedule:
+    - cron: "15 9 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
