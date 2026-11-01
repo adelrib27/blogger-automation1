@@ -8,12 +8,14 @@
 Antes de qualquer operação Blogger neste projeto, leia nesta ordem:
 
 1. `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md`
-2. `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`
-3. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
-4. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
-5. `infrastructure/README.md`
-6. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-11-01.json`
-7. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json`
+2. `blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json`
+3. `blogger_multi_store/config/network_store_rollout_2026-11-01.json`
+4. `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`
+5. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
+6. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
+7. `infrastructure/README.md`
+8. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-11-01.json`
+9. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-10-30.json`
 
 O checkpoint de 2026-11-01 prevalece quando houver diferença de estado operacional. Os arquivos de 2026-10-30 permanecem como histórico/base de recuperação.
 
@@ -70,6 +72,44 @@ Validação real usando navegador Chromium/Playwright, locale `fr-FR` e `?gl=fr`
 
 Run final otimizado: `41359632797` — **SUCCESS**.
 
+## Lojas Blogger + Shopee — inventário vivo da rede
+
+Inventário canônico:
+
+- `blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json`
+- `blogger_multi_store/config/network_store_rollout_2026-11-01.json`
+
+Estado validado em 2026-11-01:
+
+- **18/18 blogs possuem página LIVE `/p/loja.html`**.
+- **18/18 blogs possuem post LIVE `Loja`**, que é a superfície dinâmica usada pelos motores modernos para receber a vitrine.
+- Portanto, NÃO recriar páginas Loja nem posts Loja na expansão; atualizar os alvos existentes por ID.
+- **6 blogs de nicho** já possuem pipeline Blogger automático com contrato 20 produtos + 12 hero + Policy Guard + validação pública + persistência pós-PASS.
+- **Vitrine Prática** já possui rotação Blogger automática 20 + 12 e validação pública, mas ainda deve receber o Policy Guard central para ficar no mesmo padrão dos seis nichos.
+- **11 blogs** possuem scaffold Loja LIVE, porém ainda precisam receber o motor moderno de rotação Blogger/Shopee.
+- A fila desses 11 alvos está criada como `PREPARED_NOT_DEPLOYED` e `enabled=false`; nenhum LIVE novo foi acionado nesta preparação.
+
+### Risco técnico identificado antes da expansão
+
+Há dois casos de writers agendados concorrentes apontando para o MESMO Blog ID e Store Post ID:
+
+1. **Limpeza Inteligente**
+   - `.github/workflows/limpeza_store_autonomous.yml`
+   - `.github/workflows/limpeza_inteligente_store_autonomous.yml`
+
+2. **Ventiladores em Foco**
+   - `.github/workflows/ventiladores_store_autonomous.yml`
+   - `.github/workflows/ventiladores_em_foco_store_autonomous.yml`
+
+Não desativar nem escolher um deles no chute. A consolidação deve ser uma execução própria, preservando o estado/seleção vencedor e mantendo o workflow que passar no conjunto completo de Policy Guard + 20/12 + validação pública.
+
+### Próxima ordem segura para expansão
+
+1. Consolidar os writers duplicados de Limpeza e Ventiladores.
+2. Endurecer Vitrine Prática com o Policy Guard central.
+3. Promover **Achados para Casa** primeiro entre os 11 restantes, porque já existe SAFE específico (`achados_casa_store_safe.yml`).
+4. Depois expandir o mesmo blueprint para os demais alvos da fila, sempre com perfil semântico próprio e histórico independente.
+
 ## Lojas Shopee de nicho — regra atual
 
 As seis identidades de nicho que devem ser preservadas são:
@@ -101,7 +141,9 @@ Vitrine Prática e Ventiladores em Foco já receberam a correção final da pág
 
 ## Próximo bloco de trabalho
 
-Retomar a implantação/expansão da **página LOJA Blogger + Shopee em destaque na rede**, reutilizando a arquitetura já existente. Não reconstruir o motor do zero.
+A próxima execução recomendada é **consolidar os writers duplicados de Limpeza Inteligente e Ventiladores em Foco** antes de ampliar a automação para os 11 blogs restantes.
+
+Depois disso, continuar a implantação da LOJA Blogger + Shopee em destaque na rede reutilizando a arquitetura existente, sem reconstruir o motor do zero.
 
 Objetivo final:
 
@@ -124,4 +166,4 @@ Objetivo final:
 
 Os detalhes completos do estado de 2026-10-30 — TEMA MODELO V20, infraestrutura, Cloudflare gateway, plugin privado, laboratório V20 e gaps locais antigos — continuam preservados nos checkpoints e manifestos datados de 2026-10-30.
 
-Se este arquivo for encontrado em uma conversa futura, NÃO reiniciar o diagnóstico. Ler primeiro `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md` e continuar a partir do próximo bloco pendente.
+Se este arquivo for encontrado em uma conversa futura, NÃO reiniciar o diagnóstico. Ler primeiro `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md`, depois o inventário de rede das Lojas, e continuar a partir do próximo bloco pendente.
