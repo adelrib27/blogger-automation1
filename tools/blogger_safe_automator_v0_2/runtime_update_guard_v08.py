@@ -21,6 +21,7 @@ STATUS = "BLOGGER_RUNTIME_SYNC_GUARD_PASS"
 
 ALLOWED_FILES = (
     "tools/blogger_safe_automator_v0_2/runtime_update_guard_v08.py",
+    "tools/blogger_safe_automator_v0_2/update_blog_identity_safe.py",
     "tools/blogger_safe_automator_v0_2/run_with_cdp_resilience_v08.py",
     "tools/blogger_safe_automator_v0_2/extend_modelo_v20_store.py",
     "tools/blogger_safe_automator_v0_2/extend_modelo_v20_store_visible_nav.py",
