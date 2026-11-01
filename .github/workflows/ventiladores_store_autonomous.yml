@@ -2,6 +2,8 @@ name: Ventiladores em Foco — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "30 12 * * *"
   push:
     paths:
       - "ventiladores_store/store_live_kickoff.txt"
