@@ -1,0 +1,110 @@
+name: Achados para Casa — Shopee SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "blogger_stores/achados_casa_kickoff.txt"
+  schedule:
+    # America/Recife (UTC-3): 07:20 diariamente.
+    - cron: "20 10 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: achados-casa-store-safe
+  cancel-in-progress: false
+
+jobs:
+  safe-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_TOP_N: "100"
+      ACHADOS_STORE_RECENT_DAYS: "14"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar código
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            radar_tech_br/src/refresh_blogger_offer_links.py \
+            blogger_stores/src/achados_casa_safe_scan.py
+
+      - name: Confirmar AppID Shopee
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          if [ "$SHOPEE_APP_ID" != "18352820579" ]; then
+            echo "::error::SHOPEE_APP_ID não corresponde ao AppID autorizado do Achados para Casa."
+            exit 1
+          fi
+          echo "AppID Shopee do Achados para Casa validado."
+
+      - name: Executar nova varredura SAFE
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src python -u blogger_stores/src/achados_casa_safe_scan.py
+
+      - name: Validar artefato SAFE
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('blogger_stores/data/achados_casa_selection.json')
+          d=json.loads(p.read_text(encoding='utf-8'))
+          assert d['status']=='SAFE_READY'
+          assert d['publishReady'] is True
+          assert d['categoryCount']==5
+          assert d['totalItems']==20
+          assert d['uniqueItemIds']==20
+          assert d['affiliateLinkGeneration']['appId']=='18352820579'
+          assert d['affiliateLinkGeneration']['validatedCount']==20
+          assert d['affiliateLinkGeneration']['allResolvedToShopee'] is True
+          assert all(d['gates'].values())
+          print('SAFE VALIDADO: 20 produtos novos e 20/20 links resolvidos para Shopee.')
+          PY
+
+      - name: Persistir seleção e rotação SAFE
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- blogger_stores/data/achados_casa_selection.json blogger_stores/data/achados_casa_rotation.json)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blogger_stores/data/achados_casa_selection.json blogger_stores/data/achados_casa_rotation.json
+          git commit -m "Atualizar SAFE da Loja Achados para Casa"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: achados-casa-store-safe-${{ github.run_number }}
+          path: |
+            blogger_stores/data/achados_casa_selection.json
+            blogger_stores/data/achados_casa_rotation.json
+            blogger_stores/data/achados_casa_scan/
+          if-no-files-found: warn
+          retention-days: 14
