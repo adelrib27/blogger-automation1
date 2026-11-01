@@ -47,5 +47,6 @@ base.PAGE_ID = POST_ID
 base.criar_servico_blogger = lambda: BloggerPostTargetProxy(_real_factory())
 
 if __name__ == "__main__":
-    patch_store_layout()
+    if not base.DRY_RUN:
+        patch_store_layout()
     base.main()
