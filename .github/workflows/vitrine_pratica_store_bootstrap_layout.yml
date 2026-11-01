@@ -1,0 +1,56 @@
+name: Vitrine Prática — Bootstrap Layout da Loja
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/vitrine_pratica_store_bootstrap_layout.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLOGGER_BLOG_ID: "9144338307944682868"
+      BLOGGER_STORE_PAGE_ID: "8344701886444887322"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Validar bootstrap
+        run: python -m py_compile vitrine_pratica_store/src/bootstrap_layout.py
+      - name: Aplicar layout preservando os 20 cards atuais
+        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/bootstrap_layout.py
+      - name: Validar página pública após bootstrap
+        run: |
+          set -euo pipefail
+          ok=0
+          url="https://vitrine-pratica.blogspot.com/p/loja.html"
+          for attempt in 1 2 3 4 5 6; do
+            curl -L -fsS --max-time 40 "${url}?bootstrap=${GITHUB_RUN_ID}-${attempt}" > /tmp/public.html || true
+            cards=$(python -c "print(open('/tmp/public.html',encoding='utf-8',errors='ignore').read().count('data-item-id='))" 2>/dev/null || echo 0)
+            if [ "$cards" -eq 20 ] && grep -q "bls-page" /tmp/public.html && grep -q "VP_HERO_AUTO_1_START" /tmp/public.html; then ok=1; break; fi
+            echo "Tentativa ${attempt}: cards=${cards}; aguardando propagação."
+            sleep 5
+          done
+          test "$ok" -eq 1
+          echo "BOOTSTRAP_PUBLIC_OK cards=20 hero_markers=ready"
+      - name: Guardar backup e diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitrine-pratica-bootstrap-${{ github.run_number }}
+          path: |
+            /tmp/vitrine-pratica-loja-before.html
+            /tmp/vitrine-pratica-loja-after.html
+            /tmp/public.html
+          if-no-files-found: warn
+          retention-days: 14
