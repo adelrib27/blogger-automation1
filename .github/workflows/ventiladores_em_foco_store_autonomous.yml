@@ -1,0 +1,113 @@
+name: Ventiladores em Foco — Loja Shopee LIVE Controlada
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ventiladores_em_foco_store/store_live_kickoff.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ventiladores-em-foco-store-live
+  cancel-in-progress: false
+
+jobs:
+  atualizar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "4473989735719981382"
+      BLOGGER_STORE_POST_ID: "1410775502611365606"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      BLOGGER_STORE_DRY_RUN: "false"
+      BLOGGER_STORE_ITEMS_PER_CATEGORY: "4"
+      BLOGGER_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "60"
+      SHOPEE_OPPORTUNITIES_CONFIG: ventiladores_em_foco_store/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: ventiladores_em_foco_store/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: ventiladores_em_foco_store/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validar código antes da publicação
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/criar_rascunho.py src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py \
+            ventiladores_em_foco_store/src/shopee_oportunidades_vitrine_pratica.py \
+            ventiladores_em_foco_store/src/store_auto.py ventiladores_em_foco_store/src/store_auto_post.py \
+            ventiladores_em_foco_store/src/store_layout_patch.py ventiladores_em_foco_store/src/store_auto_self_test.py \
+            ventiladores_em_foco_store/src/store_hero_sync.py ventiladores_em_foco_store/src/store_hero_sync_post.py \
+            ventiladores_em_foco_store/src/post_target_proxy.py
+          BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:ventiladores_em_foco_store/src python ventiladores_em_foco_store/src/store_auto_self_test.py
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+      - name: Atualizar vitrine no POST Loja
+        run: PYTHONPATH=src:ventiladores_em_foco_store/src python -u ventiladores_em_foco_store/src/store_auto_post.py
+      - name: Sincronizar 12 cards do hero
+        run: PYTHONPATH=src:ventiladores_em_foco_store/src python -u ventiladores_em_foco_store/src/store_hero_sync_post.py
+      - name: Verificar renderização pública
+        run: |
+          set -euo pipefail
+          ok=0
+          url="https://ventiladores-em-foco.blogspot.com/2026/11/loja.html"
+          for attempt in 1 2 3 4 5 6; do
+            curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/ventiladores-em-foco-loja.html || true
+            store_count=$(python -c "print(open('/tmp/ventiladores-em-foco-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
+            hero_count=$(python -c "print(open('/tmp/ventiladores-em-foco-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
+            if grep -q "bls-store-grid" /tmp/ventiladores-em-foco-loja.html && grep -q "blh-grid" /tmp/ventiladores-em-foco-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/ventiladores-em-foco-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+              ok=1; break
+            fi
+            sleep 5
+          done
+          test "$ok" -eq 1
+          grep -q "Ventiladores de Mesa" /tmp/ventiladores-em-foco-loja.html
+          grep -q "Ventiladores de Coluna" /tmp/ventiladores-em-foco-loja.html
+          grep -q "Ventiladores de Parede" /tmp/ventiladores-em-foco-loja.html
+          grep -q "Ventiladores de Teto" /tmp/ventiladores-em-foco-loja.html
+          grep -q "Torre &amp; Circuladores\|Torre & Circuladores" /tmp/ventiladores-em-foco-loja.html
+          echo "PUBLIC_PASS: nicho ventiladores, vitrine=20, hero=12"
+      - name: Persistir rotação somente após PASS público
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- ventiladores_em_foco_store/data/store_rotation.json ventiladores_em_foco_store/data/store_last_selection.json)" ]; then
+            echo "Sem mudanças de estado."; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ventiladores_em_foco_store/data/store_rotation.json ventiladores_em_foco_store/data/store_last_selection.json
+          git commit -m "Atualizar rotação da Loja Ventiladores em Foco"
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ventiladores-em-foco-store-live-${{ github.run_number }}
+          path: |
+            ventiladores_em_foco_store/data/store_last_selection.json
+            ventiladores_em_foco_store/data/store_shopee_scan/
+            /tmp/ventiladores-em-foco-loja.html
+          if-no-files-found: warn
+          retention-days: 14
