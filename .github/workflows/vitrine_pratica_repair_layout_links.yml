@@ -1,0 +1,184 @@
+name: Vitrine Prática — Reparar largura e links
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/vitrine_pratica_repair_layout_links.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vitrine-pratica-repair-layout-links
+  cancel-in-progress: false
+
+jobs:
+  reparar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BLOGGER_BLOG_ID: "9144338307944682868"
+      BLOGGER_STORE_PAGE_ID: "8344701886444887322"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Restaurar módulo da LIVE validada e reforçar links
+        run: |
+          set -euo pipefail
+          git checkout 498294efb8ec7ff409a7927fbc60ae6188ca0808 -- vitrine_pratica_store/src vitrine_pratica_store/config
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('vitrine_pratica_store/src/store_auto.py')
+          s = p.read_text(encoding='utf-8')
+          old = '  <small>{shop}</small>\n</a>\'\'\''
+          new = '  <small>{shop}</small>\n  <span class="bls-product-cta">Ver oferta na Shopee</span>\n</a>\'\'\''
+          if old not in s:
+              raise SystemExit('Trecho render_product não encontrado')
+          s = s.replace(old, new, 1)
+          old_css = '.bls-product{{display:block;min-width:0;text-decoration:none;color:#17212b}}'
+          new_css = '.bls-product{{display:block;min-width:0;text-decoration:none;color:#17212b;position:relative;z-index:2;pointer-events:auto!important;cursor:pointer!important}}\n.bls-product>*{{pointer-events:none!important}}\n.bls-product-cta{{display:flex;align-items:center;justify-content:center;margin-top:9px;padding:9px 10px;border-radius:8px;background:#ee4d2d;color:#fff;font-size:11px;font-weight:900;line-height:1.15;text-align:center}}'
+          if old_css not in s:
+              raise SystemExit('CSS bls-product não encontrado')
+          s = s.replace(old_css, new_css, 1)
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('vitrine_pratica_store/src/store_hero_sync.py')
+          s = p.read_text(encoding='utf-8')
+          old_css = '.blh-product{display:block;min-width:0;overflow:hidden;border:1px solid #e2e6ea;border-radius:14px;background:#fff;text-decoration:none;color:#17212b;box-shadow:0 6px 15px rgba(17,24,39,.07);transition:transform .2s ease,box-shadow .2s ease}'
+          new_css = '.blh-product{display:block;min-width:0;overflow:hidden;border:1px solid #e2e6ea;border-radius:14px;background:#fff;text-decoration:none;color:#17212b;box-shadow:0 6px 15px rgba(17,24,39,.07);transition:transform .2s ease,box-shadow .2s ease;position:relative;z-index:2;pointer-events:auto!important;cursor:pointer!important}\n.blh-product>*{pointer-events:none!important}'
+          if old_css not in s:
+              raise SystemExit('CSS blh-product não encontrado')
+          s = s.replace(old_css, new_css, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+          python -m py_compile vitrine_pratica_store/src/*.py
+          BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:vitrine_pratica_store/src python vitrine_pratica_store/src/store_auto_self_test.py
+      - name: Persistir correção do motor
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vitrine_pratica_store/src vitrine_pratica_store/config
+          if git diff --cached --quiet; then
+            echo "Motor já estava alinhado."
+          else
+            git commit -m "Corrigir motor da Loja Vitrine Prática e reforçar links"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Aplicar largura padrão e CTA na página atual
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python - <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+          from criar_rascunho import criar_servico_blogger
+
+          BLOG_ID='9144338307944682868'
+          PAGE_ID='8344701886444887322'
+          blogger=criar_servico_blogger()
+          page=blogger.pages().get(blogId=BLOG_ID,pageId=PAGE_ID).execute()
+          raw=str(page.get('content') or '')
+          Path('/tmp/vitrine-pratica-before.html').write_text(raw,encoding='utf-8')
+
+          patch='''<!-- VITRINE_LAYOUT_PATCH_START -->
+          <style id="vitrine-pratica-layout-wide-css">
+          .post-body{overflow:visible!important}
+          body:has(.bls-page) .sidebar-container,
+          body:has(.bls-page) .sidebar-container-container,
+          body:has(.bls-page) .main-container aside{display:none!important}
+          body:has(.bls-page) .main-container{display:block!important;max-width:none!important;width:100%!important}
+          body:has(.bls-page) .main-container .main,
+          body:has(.bls-page) .main,
+          body:has(.bls-page) main,
+          body:has(.bls-page) .post-outer-container:has(.bls-page),
+          body:has(.bls-page) .post-outer:has(.bls-page),
+          body:has(.bls-page) .post:has(.bls-page),
+          body:has(.bls-page) .post-body-container:has(.bls-page),
+          body:has(.bls-page) .post-body:has(.bls-page){max-width:none!important;width:100%!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;padding-left:0!important;padding-right:0!important;margin-left:auto!important;margin-right:auto!important}
+          body:has(.bls-page) .post:has(.bls-page) .post-header,
+          body:has(.bls-page) .post:has(.bls-page) .post-title,
+          body:has(.bls-page) .post:has(.bls-page) .entry-title{display:none!important}
+          .bls-page{width:min(1440px,calc(100vw - 48px))!important;max-width:none!important;position:relative!important;left:50%!important;transform:translateX(-50%)!important;margin-top:32px!important;margin-bottom:0!important}
+          .bls-product,.blh-product{position:relative!important;z-index:5!important;pointer-events:auto!important;cursor:pointer!important}
+          .bls-product>*,.blh-product>*{pointer-events:none!important}
+          .bls-product-cta{display:flex!important;align-items:center!important;justify-content:center!important;margin-top:9px!important;padding:9px 10px!important;border-radius:8px!important;background:#ee4d2d!important;color:#fff!important;font-size:11px!important;font-weight:900!important;line-height:1.15!important;text-align:center!important}
+          @media(max-width:700px){.bls-page{width:calc(100vw - 16px)!important;margin-top:16px!important}}
+          </style>
+          <!-- VITRINE_LAYOUT_PATCH_END -->'''
+
+          raw=re.sub(r'<!-- VITRINE_LAYOUT_PATCH_START -->.*?<!-- VITRINE_LAYOUT_PATCH_END -->\s*','',raw,flags=re.S)
+          raw=patch+'\n'+raw
+
+          def add_cta(m):
+              block=m.group(0)
+              if 'bls-product-cta' in block:
+                  return block
+              return block[:-4]+'\n  <span class="bls-product-cta">Ver oferta na Shopee</span>\n</a>'
+
+          raw=re.sub(r'<a class="bls-product"\b[^>]*>.*?</a>',add_cta,raw,flags=re.S)
+          if raw.count('data-item-id=') != 20:
+              raise SystemExit(f'Quantidade de cards inesperada: {raw.count("data-item-id=")}')
+          if raw.count('data-hero-item-id=') != 12:
+              raise SystemExit(f'Quantidade de hero cards inesperada: {raw.count("data-hero-item-id=")}')
+          if raw.count('bls-product-cta') < 20:
+              raise SystemExit(f'CTAs insuficientes: {raw.count("bls-product-cta")}')
+          if raw.count('href="https://s.shopee.com.br/') < 32:
+              raise SystemExit('Links Shopee insuficientes no HTML composto')
+
+          blogger.pages().update(blogId=BLOG_ID,pageId=PAGE_ID,body={'title':page.get('title') or 'LOJA','content':raw}).execute()
+          verify=blogger.pages().get(blogId=BLOG_ID,pageId=PAGE_ID).execute()
+          vr=str(verify.get('content') or '')
+          Path('/tmp/vitrine-pratica-after.html').write_text(vr,encoding='utf-8')
+          assert 'VITRINE_LAYOUT_PATCH_START' in vr
+          assert vr.count('data-item-id=') == 20
+          assert vr.count('data-hero-item-id=') == 12
+          assert vr.count('bls-product-cta') >= 20
+          assert vr.count('href="https://s.shopee.com.br/') >= 32
+          print('BLOGGER_API_OK cards=20 hero=12 ctas>=20 shopee_links>=32')
+          PY
+      - name: Validar HTML público
+        run: |
+          set -euo pipefail
+          ok=0
+          url="https://vitrine-pratica.blogspot.com/p/loja.html"
+          for attempt in 1 2 3 4 5 6; do
+            curl -L -fsS --max-time 40 "${url}?repair=${GITHUB_RUN_ID}-${attempt}" > /tmp/vitrine-pratica-public.html || true
+            python - <<'PY' && ok=1 && break || true
+          from pathlib import Path
+          t=Path('/tmp/vitrine-pratica-public.html').read_text(encoding='utf-8',errors='ignore')
+          assert 'VITRINE_LAYOUT_PATCH_START' in t
+          assert t.count('data-item-id=') == 20
+          assert t.count('data-hero-item-id=') == 12
+          assert t.count('bls-product-cta') >= 20
+          assert t.count('href="https://s.shopee.com.br/') >= 32
+          print('PUBLIC_OK cards=20 hero=12 ctas>=20 links>=32')
+          PY
+            sleep 5
+          done
+          test "$ok" -eq 1
+      - name: Guardar backup e diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitrine-pratica-repair-${{ github.run_number }}
+          path: |
+            /tmp/vitrine-pratica-before.html
+            /tmp/vitrine-pratica-after.html
+            /tmp/vitrine-pratica-public.html
+          if-no-files-found: warn
+          retention-days: 14
