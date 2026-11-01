@@ -6,6 +6,8 @@ on:
     paths:
       - "vitrine_pratica_store/config/**"
       - "vitrine_pratica_store/src/**"
+      - "!vitrine_pratica_store/src/**/__pycache__/**"
+      - "!vitrine_pratica_store/src/**/*.pyc"
       - ".github/workflows/vitrine_pratica_store_safe.yml"
 
 permissions:
