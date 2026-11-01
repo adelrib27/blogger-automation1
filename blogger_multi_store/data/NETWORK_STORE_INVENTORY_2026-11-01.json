@@ -9,7 +9,7 @@
     "modern_blogger_auto_policy_guard": 6,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 1,
     "store_scaffold_needs_auto_rotation": 11,
-    "duplicate_writer_risks": 2
+    "duplicate_writer_risks": 0
   },
   "architecture": {
     "navigation_surface": "Página Blogger LIVE /p/loja.html",
@@ -57,10 +57,10 @@
       "store_page_id": "8010344677278545283",
       "store_page_url": "https://ventiladores-em-foco.blogspot.com/p/loja.html",
       "store_post_id": "1410775502611365606",
-      "automation_status": "modern_policy_guard_20x12_with_duplicate_writer_risk",
-      "policy_audit_workflow": ".github/workflows/ventiladores_store_autonomous.yml",
-      "concurrent_workflow": ".github/workflows/ventiladores_em_foco_store_autonomous.yml",
-      "note": "Ambos possuem schedule e apontam para o mesmo Blog ID e Store Post ID. Não escolher/desativar sem execução específica de consolidação."
+      "automation_status": "modern_policy_guard_20x12",
+      "live_workflow": ".github/workflows/ventiladores_store_autonomous.yml",
+      "legacy_recovery_workflow": ".github/workflows/ventiladores_em_foco_store_autonomous.yml",
+      "note": "Consolidado em 2026-11-01: ventiladores_store é o único writer automático canônico. ventiladores_em_foco_store foi preservado somente como workflow_dispatch de recuperação e compartilha o mesmo concurrency group."
     },
     {
       "title": "Air Fryers em Foco",
@@ -80,10 +80,10 @@
       "store_page_id": "4457645831148890823",
       "store_page_url": "https://limpeza-inteligente.blogspot.com/p/loja.html",
       "store_post_id": "6383277011247909539",
-      "automation_status": "modern_policy_guard_20x12_with_duplicate_writer_risk",
-      "policy_audit_workflow": ".github/workflows/limpeza_store_autonomous.yml",
-      "concurrent_workflow": ".github/workflows/limpeza_inteligente_store_autonomous.yml",
-      "note": "Ambos possuem schedule e apontam para o mesmo Blog ID e Store Post ID. O segundo foi ativado depois, mas o auditor permanente ainda trata o primeiro como protegido; consolidar em execução própria."
+      "automation_status": "modern_policy_guard_20x12",
+      "live_workflow": ".github/workflows/limpeza_inteligente_store_autonomous.yml",
+      "legacy_recovery_workflow": ".github/workflows/limpeza_store_autonomous.yml",
+      "note": "Consolidado em 2026-11-01: limpeza_inteligente_store é o único writer automático canônico. limpeza_store foi preservado somente como workflow_dispatch de recuperação e compartilha o mesmo concurrency group."
     },
     {
       "title": "Conecta Achados",
@@ -208,24 +208,5 @@
       "live_workflow": ".github/workflows/blogger_liquidificador_store_autonomous.yml"
     }
   ],
-  "duplicate_writer_risks": [
-    {
-      "blog": "Limpeza Inteligente",
-      "blog_id": "7757953554206491487",
-      "store_post_id": "6383277011247909539",
-      "workflows": [
-        ".github/workflows/limpeza_store_autonomous.yml",
-        ".github/workflows/limpeza_inteligente_store_autonomous.yml"
-      ]
-    },
-    {
-      "blog": "Ventiladores em Foco",
-      "blog_id": "4473989735719981382",
-      "store_post_id": "1410775502611365606",
-      "workflows": [
-        ".github/workflows/ventiladores_store_autonomous.yml",
-        ".github/workflows/ventiladores_em_foco_store_autonomous.yml"
-      ]
-    }
-  ]
+  "duplicate_writer_risks": []
 }
