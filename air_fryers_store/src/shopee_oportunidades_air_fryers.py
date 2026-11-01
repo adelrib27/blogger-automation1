@@ -17,20 +17,29 @@ import shopee_oportunidades_v23 as v23
 def regression_checks(rules_doc):
     cases = [
         ("Air Fryer Digital 5L 1500W Sem Óleo", "air fryer", True),
+        ("Limpa Air Fryer Spray Desengordurante", "air fryer", False),
+        ("Adaptador Tomada para Air Fryer", "air fryer", False),
         ("Forma de Silicone para Air Fryer 20cm", "air fryer", False),
         ("Fritadeira Elétrica Air Fryer 4L 1400W", "fritadeira eletrica", True),
         ("Cesto de Reposição para Fritadeira Elétrica", "fritadeira eletrica", False),
-        ("Air Fryer Oven Forno 12L Digital", "air fryer oven", True),
-        ("Forma para Air Fryer Oven", "air fryer oven", False),
+        ("Air Fryer 6 Litros Digital 1700W", "air fryer 6 litros", True),
+        ("Prateleira Suporte para Air Fryer 6 Litros", "air fryer 6 litros", False),
+        ("Fritadeira Air Fryer 8L 1800W Família", "air fryer 8 litros", True),
+        ("Forma Silicone para Air Fryer 8L", "air fryer 8 litros", False),
+        ("Air Fryer Grande 7L Digital", "air fryer grande", True),
+        ("Nicho Suporte Air Fryer Grande", "air fryer grande", False),
         ("Forma Silicone Air Fryer Reutilizável", "forma silicone air fryer", True),
         ("Forma de Gelo Silicone", "forma silicone air fryer", False),
         ("Papel Descartável para Air Fryer 100 Unidades", "papel air fryer", True),
         ("Papel Presente Decorativo", "papel air fryer", False),
         ("Grelha Rack para Air Fryer Inox", "grelha air fryer", True),
-        ("Grade para Ventilador", "grelha air fryer", False),
-        ("Cesto Compatível com Air Fryer 5L", "cesto air fryer", True),
-        ("Cesto Organizador de Roupas", "cesto air fryer", False),
+        ("Prateleira Suporte para Air Fryer", "grelha air fryer", False),
+        ("Cesto Compatível Reposição Air Fryer 5L", "cesto compativel air fryer", True),
+        ("Cesto Organizador de Roupas", "cesto compativel air fryer", False),
+        ("Rack Grelha Air Fryer 2 Andares", "rack air fryer", True),
+        ("Rack Prateleira de Cozinha para Air Fryer", "rack air fryer", False),
         ("Pegador Pinça Silicone Cozinha 30cm", "pegador silicone cozinha", True),
+        ("Filtro de Café com Pegador de Silicone", "pegador silicone cozinha", False),
         ("Pinça para Sobrancelha", "pegador silicone cozinha", False),
         ("Pincel Silicone Culinário para Cozinha", "pincel silicone cozinha", True),
         ("Pincel de Maquiagem Silicone", "pincel silicone cozinha", False),
@@ -49,7 +58,7 @@ def regression_checks(rules_doc):
 
 def main():
     v23.run_regression_checks = regression_checks
-    print("=== AIR FRYERS EM FOCO — SHOPEE OPORTUNIDADES ===")
+    print("=== AIR FRYERS EM FOCO — SHOPEE OPORTUNIDADES V2 ===")
     ranking = v23.scan_v23()
     v23.print_v23(ranking)
 
