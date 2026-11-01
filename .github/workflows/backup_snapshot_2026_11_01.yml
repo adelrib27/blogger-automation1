@@ -1,0 +1,35 @@
+name: Backup Snapshot Completo — 2026-11-01
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/backup_snapshot_2026_11_01.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Registrar commit do snapshot
+        run: |
+          echo "SNAPSHOT_COMMIT=${GITHUB_SHA}" | tee BACKUP_SNAPSHOT_COMMIT_2026-11-01.txt
+          echo "SNAPSHOT_DATE=2026-11-01" >> BACKUP_SNAPSHOT_COMMIT_2026-11-01.txt
+          echo "REPOSITORY=${GITHUB_REPOSITORY}" >> BACKUP_SNAPSHOT_COMMIT_2026-11-01.txt
+
+      - name: Gerar artifact do repositório completo
+        uses: actions/upload-artifact@v4
+        with:
+          name: blogger-automation1-backup-2026-11-01
+          path: .
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
