@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MODULE_DIR = ROOT / "vitrine_pratica_store"
 ROOT_SRC = ROOT / "src"
+
 os.environ.setdefault("SHOPEE_OPPORTUNITIES_CONFIG", str(MODULE_DIR / "config" / "shopee_oportunidades.json"))
 os.environ.setdefault("SHOPEE_INTENT_RULES", str(MODULE_DIR / "config" / "shopee_intent_rules.json"))
 os.environ.setdefault("SHOPEE_OUTPUT_DIR", str(MODULE_DIR / "data" / "shopee_oportunidades"))
@@ -17,51 +18,50 @@ import shopee_oportunidades_v23 as v23
 
 def regression_checks(rules_doc):
     cases = [
+        ("Caixa Organizadora Grande Dobrável para Quarto e Casa", "caixa organizadora", True),
+        ("Sapateira Organizadora 5 Andares para Quarto", "sapateira organizadora", True),
+        ("Capa para Sapateira Organizadora", "sapateira organizadora", False),
+        ("Organizador de Banheiro Prateleira para Shampoo", "organizador banheiro", True),
+        ("Fritadeira Elétrica Air Fryer 5L 1500W Sem Óleo", "fritadeira eletrica", True),
+        ("Kit Forma Air Fryer + Pegador", "fritadeira eletrica", False),
+        ("Botão Air Fryer Reposição", "fritadeira eletrica", False),
+        ("Mixer Elétrico de Mão 3 em 1 500W", "mixer eletrico", True),
+        ("Haste Avulsa para Mixer", "mixer eletrico", False),
+        ("Escorredor de Louças 13 Pratos Aço", "escorredor de loucas", True),
         ("Smartwatch Relógio Inteligente AMOLED Bluetooth", "smartwatch", True),
-        ("Pulseira para Smartwatch 20mm", "smartwatch", False),
-        ("Kit Carregador para iPhone Fonte + Cabo Lightning", "carregador iphone", True),
-        ("Cabo Avulso Lightning para iPhone", "carregador iphone", False),
-        ("Caixa de Som Bluetooth Portátil", "caixa de som bluetooth", True),
-        ("Bateria para Caixa de Som Bluetooth", "caixa de som bluetooth", False),
-        ("Luminária Solar com Sensor de Movimento", "luminaria solar", True),
-        ("Painel Solar Avulso para Luminária", "luminaria solar", False),
-        ("Organizador Banheiro Prateleira Shampoo", "organizador banheiro", True),
-        ("Adesivo Avulso para Organizador de Banheiro", "organizador banheiro", False),
-        ("Tapete Decorativo para Sala e Quarto", "tapete decorativo", True),
-        ("Tapete Automotivo para Carro", "tapete decorativo", False),
-        ("Escorredor de Louças 13 Pratos", "escorredor de loucas", True),
-        ("Escorredor de Macarrão Inox", "escorredor de loucas", False),
-        ("Kit Potes Herméticos para Mantimentos", "potes hermeticos", True),
-        ("Tampa Avulsa para Pote Hermético", "potes hermeticos", False),
-        ("Organizador de Cozinha para Pia e Talheres", "organizador cozinha", True),
-        ("Gancho Avulso Adesivo para Cozinha", "organizador cozinha", False),
-        ("Cesto De Roupa Dobrável Brinquedos Organizador Cozinha Quarto", "organizador cozinha", False),
-        ("Parafusadeira Furadeira Sem Fio com Maleta", "parafusadeira furadeira", True),
-        ("Kit Brocas para Parafusadeira Furadeira", "parafusadeira furadeira", False),
-        ("Compressor de Ar Portátil Inflador para Pneus", "compressor de ar portatil", True),
-        ("Mangueira Avulsa para Compressor de Ar", "compressor de ar portatil", False),
-        ("Jogo Escovas para Furadeira Limpeza", "escova para furadeira", True),
-        ("Escova Secadora de Cabelo", "escova para furadeira", False),
-        ("Saia Midi Feminina Cintura Alta", "saia midi feminina", True),
-        ("Saia para Mesa Festa", "saia midi feminina", False),
-        ("Aparador de Pelos Masculino Barba Recarregável", "aparador de pelos masculino", True),
-        ("Lâmina Avulsa para Aparador de Pelos", "aparador de pelos masculino", False),
-        ("Conjunto Feminino Saia e Cropped", "conjunto feminino", True),
-        ("Conjunto Infantil Menina", "conjunto feminino", False),
+        ("Pulseira para Smartwatch Silicone", "smartwatch", False),
+        ("Fone Bluetooth Sem Fio TWS", "fone bluetooth", True),
+        ("Case para Fone Bluetooth", "fone bluetooth", False),
+        ("Carregador USB C Fonte 20W Tipo C", "carregador usb c", True),
+        ("Cabo USB C 2 Metros", "carregador usb c", False),
+        ("Secador de Cabelo Profissional 2000W", "secador de cabelo", True),
+        ("Difusor para Secador de Cabelo", "secador de cabelo", False),
+        ("Aparador de Pelos Barba Corpo Recarregável", "aparador de pelos", True),
+        ("Lâmina para Aparador de Pelos", "aparador de pelos", False),
+        ("Escova Secadora Modeladora 1200W", "escova secadora", True),
+        ("Refil Escova Secadora", "escova secadora", False),
+        ("Garrafa Térmica Inox 1 Litro", "garrafa termica", True),
+        ("Tampa para Garrafa Térmica", "garrafa termica", False),
+        ("Mochila Escolar Executiva Impermeável", "mochila", True),
+        ("Capa de Chuva para Mochila", "mochila", False),
+        ("Ventilador Portátil USB de Mesa Recarregável", "ventilador portatil", True),
+        ("Hélice Ventilador Portátil Reposição", "ventilador portatil", False),
     ]
-    failures=[]
-    for title,keyword,expected in cases:
-        actual=bool(v23.evaluate_keyword(title,keyword,rules_doc).get("accepted"))
+    failures = []
+    for title, keyword, expected in cases:
+        actual = bool(v23.evaluate_keyword(title, keyword, rules_doc).get("accepted"))
         if actual != expected:
-            failures.append({"title":title,"keyword":keyword,"expected":expected,"actual":actual})
+            failures.append({"title": title, "keyword": keyword, "expected": expected, "actual": actual})
     if failures:
-        raise SystemExit("Falha nos testes semânticos Vitrine Prática: "+repr(failures))
+        raise SystemExit("Falha nos testes semânticos Vitrine Prática: " + repr(failures))
     print(f"Testes semânticos Vitrine Prática: {len(cases)}/{len(cases)} OK")
 
 
 def main():
-    v23.run_regression_checks=regression_checks
-    ranking=v23.scan_v23()
+    v23.run_regression_checks = regression_checks
+    print("=== VITRINE PRÁTICA — SHOPEE OPORTUNIDADES ===")
+    print("5 categorias oficiais da vitrine automática.")
+    ranking = v23.scan_v23()
     v23.print_v23(ranking)
 
 
