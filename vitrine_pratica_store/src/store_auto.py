@@ -2,6 +2,7 @@
 from __future__ import annotations
 import importlib.util
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -96,6 +97,26 @@ def apply_runtime_patches() -> None:
     base.shopee_v23.run_regression_checks = regression_checks
 
 
+def enhance_store_block(block: str) -> str:
+    old_css = ".bls-product{display:block;min-width:0;text-decoration:none;color:#17212b}"
+    new_css = ".bls-product{display:block;min-width:0;text-decoration:none;color:#17212b;position:relative;z-index:2;pointer-events:auto!important;cursor:pointer!important}\n.bls-product>*{pointer-events:none!important}\n.bls-product-cta{display:flex;align-items:center;justify-content:center;margin-top:9px;padding:9px 10px;border-radius:8px;background:#ee4d2d;color:#fff;font-size:11px;font-weight:900;line-height:1.15;text-align:center}"
+    if old_css not in block:
+        raise RuntimeError("CSS base dos cards não encontrado; publicação preservada.")
+    block = block.replace(old_css, new_css, 1)
+
+    def add_cta(match):
+        card = match.group(0)
+        if "bls-product-cta" in card:
+            return card
+        return card[:-4] + '\n  <span class="bls-product-cta">Ver oferta na Shopee</span>\n</a>'
+
+    block, count = re.subn(r'<a class="bls-product"[^>]*>.*?</a>', add_cta, block, flags=re.S)
+    expected = len(CATEGORY_SPECS) * ITEMS_PER_CATEGORY
+    if count != expected or block.count("bls-product-cta") < expected:
+        raise RuntimeError(f"CTA dos cards inválido: encontrados={count}, esperado={expected}. Página preservada.")
+    return block
+
+
 def main() -> None:
     apply_runtime_patches()
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -104,7 +125,7 @@ def main() -> None:
     ranking = base.shopee_v23.scan_v23()
     print("Ranking Shopee recebido:", len(ranking))
     chosen = base.choose_products(ranking, base.load_history())
-    block = base.render_store_block(chosen)
+    block = enhance_store_block(base.render_store_block(chosen))
     base.validate_shape(chosen, block)
     if DRY_RUN:
         base.validate_blogger_target()
