@@ -38,13 +38,13 @@ REPLACEMENTS = {
     "https://airfryer-elgin-cube-fry-42l.blogspot.com/p/loja.html": STORE_URL,
     "Achados práticos para casa, tecnologia, beleza e dia a dia": "Air fryers e cozinha prática",
     "Descubra produtos úteis para facilitar a rotina": "Encontre a air fryer ideal para sua rotina",
-    "Uma vitrine afiliada com achados para casa, cozinha, tecnologia, beleza e dia a dia, selecionados automaticamente na Shopee.": "Uma vitrine afiliada com air fryers, fornos e acessórios selecionados automaticamente na Shopee.",
-    "Cozinha e tecnologia": "Air fryers e fornos",
-    "Soluções práticas para cozinhar, conectar e organizar melhor": "Compare formatos, capacidades e opções para cozinhar com praticidade",
-    "A seleção prioriza produtos completos e coerentes com cada categoria, bloqueando peças, refis e falsos positivos.": "A seleção prioriza aparelhos completos e acessórios coerentes, bloqueando peças e falsos positivos.",
-    "#bls-cozinha-utilidades": "#bls-air-fryer-oven",
+    "Uma vitrine afiliada com achados para casa, cozinha, tecnologia, beleza e dia a dia, selecionados automaticamente na Shopee.": "Uma vitrine afiliada com air fryers e acessórios de cozinha selecionados automaticamente na Shopee.",
+    "Cozinha e tecnologia": "Capacidade e praticidade",
+    "Soluções práticas para cozinhar, conectar e organizar melhor": "Compare modelos maiores para diferentes rotinas e tamanhos de família",
+    "A seleção prioriza produtos completos e coerentes com cada categoria, bloqueando peças, refis e falsos positivos.": "A seleção prioriza aparelhos completos e acessórios coerentes, bloqueando limpeza, peças e falsos positivos.",
+    "#bls-cozinha-utilidades": "#bls-air-fryers-grandes",
     "#bls-tecnologia": "#bls-air-fryers",
-    "Ver cozinha": "Ver fornos",
+    "Ver cozinha": "Ver modelos grandes",
     "Ver tecnologia": "Ver air fryers",
     "Beleza e praticidade": "Acessórios e preparo",
     "Achados reais para cuidados pessoais e rotina": "Acessórios úteis para preparar, proteger e aproveitar melhor",
@@ -57,15 +57,15 @@ REPLACEMENTS = {
     "Casa &amp; Organização": "Air Fryers &amp; Fritadeiras",
     "Casa & Organização": "Air Fryers & Fritadeiras",
     "organização e soluções para o lar": "aparelhos completos e fritadeiras sem óleo",
-    "Cozinha &amp; Utilidades": "Air Fryer Oven &amp; Fornos",
-    "Cozinha & Utilidades": "Air Fryer Oven & Fornos",
-    "itens úteis para a cozinha": "fornos, ovens e modelos multifuncionais",
+    "Cozinha &amp; Utilidades": "Air Fryers Grandes &amp; Família",
+    "Cozinha & Utilidades": "Air Fryers Grandes & Família",
+    "itens úteis para a cozinha": "modelos maiores para diferentes rotinas",
     "Tecnologia &amp; Acessórios": "Formas &amp; Revestimentos",
     "Tecnologia & Acessórios": "Formas & Revestimentos",
     "conectividade e eletrônicos úteis": "formas, papéis e revestimentos compatíveis",
     "Beleza &amp; Cuidados": "Grelhas &amp; Cestos",
     "Beleza & Cuidados": "Grelhas & Cestos",
-    "cuidados pessoais e beleza": "grelhas, racks e cestos para air fryer",
+    "cuidados pessoais e beleza": "grelhas, racks e cestos compatíveis",
     "Dia a Dia &amp; Praticidade": "Utensílios &amp; Preparo",
     "Dia a Dia & Praticidade": "Utensílios & Preparo",
     "produtos úteis para a rotina": "pegadores, pincéis e termômetros culinários",
@@ -103,7 +103,7 @@ def patch_store_layout() -> None:
     blogger.posts().update(blogId=BLOG_ID, postId=POST_ID, body=body).execute()
     verify = blogger.posts().get(blogId=BLOG_ID, postId=POST_ID).execute()
     v = str(verify.get("content") or "")
-    required = [START, END, STORE_URL, "grid-template-columns:minmax(0,1fr)!important", '[id^="PopularPosts"]', "Air Fryers &amp; Fritadeiras", "Air Fryer Oven &amp; Fornos", "Formas &amp; Revestimentos", "Grelhas &amp; Cestos", "Utensílios &amp; Preparo"]
+    required = [START, END, STORE_URL, "grid-template-columns:minmax(0,1fr)!important", '[id^="PopularPosts"]', "Air Fryers &amp; Fritadeiras", "Air Fryers Grandes &amp; Família", "Formas &amp; Revestimentos", "Grelhas &amp; Cestos", "Utensílios &amp; Preparo"]
     missing = [x for x in required if x not in v]
     if missing:
         raise RuntimeError(f"Falha na verificação do shell Air Fryers; ausentes={missing}")
