@@ -18,8 +18,23 @@ END = "<!-- BLOGGER_LIQ_LAYOUT_PATCH_END -->"
 
 BLOCK = f'''{START}
 <style id="blogger-liq-layout-wide-css">
-/* A Loja continua ampla, mas o cartão estreito padrão do post deixa de aparecer por trás. */
+/* Loja ampla e centralizada; alterações restritas ao post que contém .bls-page. */
 .post-body{{overflow:visible!important}}
+body:has(.bls-page) .sidebar-container,
+body:has(.bls-page) .sidebar-container-container,
+body:has(.bls-page) .main-container aside{{
+  display:none!important;
+}}
+body:has(.bls-page) .main-container,
+body:has(.bls-page) .main,
+body:has(.bls-page) .blog-posts,
+body:has(.bls-page) .post-outer-container:has(.bls-page),
+body:has(.bls-page) .post-outer:has(.bls-page),
+body:has(.bls-page) .post:has(.bls-page),
+body:has(.bls-page) .post-body-container:has(.bls-page){{
+  width:100%!important;
+  max-width:none!important;
+}}
 body:has(.bls-page) .post-outer-container:has(.bls-page),
 body:has(.bls-page) .post-outer:has(.bls-page),
 body:has(.bls-page) .post:has(.bls-page),
@@ -39,6 +54,8 @@ body:has(.bls-page) .post:has(.bls-page) .entry-title{{
   display:none!important;
 }}
 body:has(.bls-page) .post-body:has(.bls-page){{
+  width:100%!important;
+  max-width:none!important;
   margin:0!important;
   padding:0!important;
   overflow:visible!important;
@@ -137,10 +154,13 @@ def patch_store_layout() -> None:
         raise RuntimeError("A URL adaptada da Loja Vitrine Prática não foi confirmada.")
     if '[id^="PopularPosts"]' not in verify_raw:
         raise RuntimeError("Regra para ocultar Postagens mais visitadas não foi confirmada.")
+    if "body:has(.bls-page) .sidebar-container" not in verify_raw:
+        raise RuntimeError("Regra de centralização/remoção da sidebar não foi confirmada.")
 
     print("LAYOUT_WIDE_APPLIED")
     print("STORE_TARGET_VITRINE_PRATICA_OK")
     print("POPULAR_POSTS_HIDDEN_ON_STORE_OK")
+    print("STORE_CENTERED_OK")
 
 
 if __name__ == "__main__":
