@@ -1,53 +1,40 @@
 <style id="achados-store-v1-css">
-.affiliate-store{--store-primary:#5c8f16;--store-primary2:#76ad24;--store-accent:#f59e0b;--store-ink:#172033;--store-muted:#64748b;--store-line:#e5e7eb;font-family:Arial,Helvetica,sans-serif;color:var(--store-ink)}
-.affiliate-store,.affiliate-store *{box-sizing:border-box}
-.affiliate-store .store-shell{width:min(1280px,calc(100% - 32px));margin:0 auto}
-.affiliate-store .store-hero{padding:34px 28px;border:1px solid #e6eddc;border-radius:22px;background:linear-gradient(135deg,#f6faef 0%,#fff 55%,#fff7e8 100%);text-align:center;margin:0 0 24px}
-.affiliate-store .store-hero h1{font-size:clamp(28px,4vw,42px)!important;line-height:1.08!important;margin:0 0 10px!important;color:#172033!important}
-.affiliate-store .store-hero p{max-width:760px;margin:0 auto;color:#4b5563;font-size:15px;line-height:1.6}
-.affiliate-store .store-trust{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 0}
-.affiliate-store .store-trust span{background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700;color:#334155}
-.affiliate-store .store-categories-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px;justify-content:center}
-.affiliate-store .store-categories-nav a{display:inline-block;padding:8px 11px;border:1px solid #dfe8d2;border-radius:999px;background:#fff;color:#4f7c13;text-decoration:none;font-size:12px;font-weight:800}
-.affiliate-store .store-showcase{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.affiliate-store .store-panel{min-width:0;border:1px solid var(--store-line);border-radius:18px;padding:14px;background:#fff}
-.affiliate-store .store-panel-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 12px;padding:0 2px 10px;border-bottom:2px solid #edf2e7}
-.affiliate-store .store-panel-head h2{font-size:21px!important;margin:0!important;color:#1f2937!important;line-height:1.2!important}
-.affiliate-store .store-panel-head small{font-size:11px;color:#5c8f16;font-weight:800}
-.affiliate-store .store-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.affiliate-store a.store-product{display:flex;flex-direction:column;min-width:0;border:1px solid #e5e7eb;border-radius:14px;padding:9px;background:#fff;text-decoration:none!important;color:inherit!important;box-shadow:0 3px 12px rgba(15,23,42,.05);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;cursor:pointer}
-.affiliate-store a.store-product:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,23,42,.10);border-color:#cdddba}
-.affiliate-store .store-product-img{display:block;width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:#f8fafc}
-.affiliate-store .store-product-img img{display:block;width:100%;height:100%;object-fit:cover}
-.affiliate-store .store-product-name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;min-height:3.9em;margin:8px 1px 5px;font-size:13px;line-height:1.3;color:#172033;font-weight:700}
-.affiliate-store .store-product strong{display:block;margin:2px 1px;color:#111827;font-size:15px;line-height:1.25}
-.affiliate-store .store-product small{display:block;margin:3px 1px 0;color:#64748b;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.affiliate-store .store-panel-foot{margin-top:10px;color:#64748b;font-size:10.5px;line-height:1.4}
-.affiliate-store .store-disclaimer{margin:22px 0 0;padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;background:#f8fafc;color:#64748b;font-size:12px;line-height:1.6;text-align:center}
-@media(max-width:980px){.affiliate-store .store-showcase{grid-template-columns:1fr}.affiliate-store .store-shell{width:min(100% - 24px,1280px)}}
-@media(max-width:480px){.affiliate-store .store-shell{width:min(100% - 16px,1280px)}.affiliate-store .store-hero{padding:22px 14px;border-radius:16px;text-align:left}.affiliate-store .store-hero h1{font-size:26px!important}.affiliate-store .store-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.affiliate-store .store-panel{padding:9px;border-radius:13px}.affiliate-store a.store-product{padding:7px;border-radius:11px}.affiliate-store .store-product-name{font-size:11px;min-height:3.9em}.affiliate-store .store-product strong{font-size:13px}.affiliate-store .store-panel-head h2{font-size:18px!important}}
-@media screen and (min-width:981px){body.ga-static-page:has(.affiliate-store) .centered-bottom{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important;left:50%!important;margin:0!important;max-width:1280px!important;position:relative!important;transform:translateX(-50%)!important;width:min(1280px,calc(100vw - 48px))!important}body.ga-static-page:has(.affiliate-store) .main-container{grid-column:1!important;margin:0!important;max-width:none!important;min-width:0!important;width:100%!important}body.ga-static-page:has(.affiliate-store) .sidebar-container{display:none!important}}
+.achados-store{--ca-green:#5c8f16;--ca-green2:#76ad24;--ca-orange:#f59e0b;--ca-ink:#172033;--ca-muted:#64748b;--ca-line:#e5e7eb;font-family:Arial,Helvetica,sans-serif;color:var(--ca-ink)}
+.achados-store *{box-sizing:border-box}
+.achados-store .ca-hero{position:relative;overflow:hidden;padding:34px 28px;border-radius:22px;background:linear-gradient(135deg,#f6faef 0%,#fff 55%,#fff7e8 100%);border:1px solid #e6eddc;margin:0 0 26px;text-align:center}
+.achados-store .ca-hero:after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;right:-70px;top:-70px;background:rgba(118,173,36,.12)}
+.achados-store .ca-eyebrow{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid #dfe8d2;color:#4f7c13;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.achados-store .ca-hero h1{font-size:clamp(28px,4vw,42px)!important;line-height:1.08!important;margin:14px 0 10px!important;color:#172033!important}
+.achados-store .ca-hero>p{font-size:16px;line-height:1.65;color:#4b5563;max-width:720px;margin:0 auto 18px}
+.achados-store .ca-stats{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:18px 0}
+.achados-store .ca-stat{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:9px 12px;font-size:13px;font-weight:700;color:#334155;box-shadow:0 4px 14px rgba(15,23,42,.04)}
+.achados-store .ca-note{display:block;margin:16px auto 0;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.82);border:1px solid #e5e7eb;color:#64748b;font-size:12px;line-height:1.55;max-width:760px}
+.achados-store .ca-category{margin:26px 0 34px}
+.achados-store .ca-cathead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 13px;padding:0 2px 10px;border-bottom:2px solid #edf2e7}
+.achados-store .ca-cathead h2{font-size:23px!important;line-height:1.2!important;margin:0!important;color:#1f2937!important}
+.achados-store .ca-cathead h2:before{content:"";display:inline-block;width:5px;height:22px;border-radius:9px;background:linear-gradient(#76ad24,#f59e0b);margin-right:9px;vertical-align:-3px}
+.achados-store .ca-catcount{font-size:12px;font-weight:800;color:#5c8f16;background:#f1f7e9;padding:6px 9px;border-radius:999px}
+.achados-store .ca-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;margin:0 0 32px!important}
+.achados-store .ca-card{display:flex!important;flex-direction:column!important;min-width:0!important;border:1px solid #e5e7eb!important;border-radius:18px!important;padding:11px!important;background:#fff!important;box-shadow:0 4px 16px rgba(15,23,42,.06)!important}
+.achados-store .ca-card img{width:100%!important;aspect-ratio:1/1!important;object-fit:cover!important;border-radius:13px!important;background:#f8fafc!important}
+.achados-store .ca-card h3{font-size:15px!important;line-height:1.35!important;margin:11px 2px 7px!important;color:#172033!important;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:61px}
+.achados-store .ca-card p{margin:3px 2px!important;font-size:12.5px!important;line-height:1.4!important;color:#64748b!important}
+.achados-store .ca-card p strong{display:block;font-size:16px!important;line-height:1.25!important;color:#111827!important;margin-top:3px}
+.achados-store .ca-card a{margin-top:auto!important;display:block!important;text-align:center!important;padding:11px 10px!important;border-radius:11px!important;background:linear-gradient(135deg,#5c8f16,#76ad24)!important;color:#fff!important;text-decoration:none!important;font-weight:800!important;font-size:13px!important}
+.achados-store .ca-foot{margin-top:4px;padding:14px 16px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb;color:#64748b;font-size:12px;line-height:1.6;text-align:center}
+@media screen and (min-width:981px){body.ga-static-page:has(.achados-store) .centered-bottom{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important;left:50%!important;margin:0!important;max-width:1280px!important;position:relative!important;transform:translateX(-50%)!important;width:min(1280px,calc(100vw - 48px))!important}body.ga-static-page:has(.achados-store) .main-container{grid-column:1!important;margin:0!important;max-width:none!important;min-width:0!important;width:100%!important}body.ga-static-page:has(.achados-store) .sidebar-container{display:none!important}}
+@media(max-width:980px){.achados-store .ca-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.achados-store .ca-hero{padding:26px 18px}.achados-store .ca-card h3{min-height:auto}}
+@media(max-width:480px){.achados-store .ca-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.achados-store .ca-card{padding:7px!important;border-radius:12px!important}.achados-store .ca-card img{border-radius:9px!important}.achados-store .ca-card h3{font-size:12px!important;line-height:1.25!important;margin:7px 1px 5px!important;min-height:45px}.achados-store .ca-card p{font-size:10.5px!important}.achados-store .ca-card p strong{font-size:13px!important}.achados-store .ca-card a{font-size:11px!important;line-height:1.2!important;padding:9px 5px!important;border-radius:8px!important}.achados-store .ca-cathead h2{font-size:18px!important}.achados-store .ca-hero{text-align:left;padding:22px 14px;border-radius:16px}.achados-store .ca-hero h1{font-size:26px!important}}
 </style>
-<div class="affiliate-store" data-store="achados-casa-v1">
-  <div class="store-shell">
-    <section class="store-hero">
-      <h1>LOJA Achados para Casa</h1>
-      <p>Produtos para deixar sua casa mais prática, organizada e confortável. A seleção é renovada automaticamente a partir de produtos reais encontrados na Shopee.</p>
-      <div class="store-trust"><span>20 produtos reais</span><span>5 categorias</span><span>Rotação automática</span><span>Links validados</span></div>
-    </section>
-
-    <nav class="store-categories-nav" aria-label="Categorias da loja">
-      <!-- STORE_CATEGORY_NAV_AUTO_START -->
-      <!-- STORE_CATEGORY_NAV_AUTO_END -->
-    </nav>
-
-    <section class="store-showcase">
-      <!-- BLOGGER_STORE_AUTO_START -->
-      <!-- BLOGGER_STORE_AUTO_END -->
-    </section>
-
-    <section class="store-disclaimer">
-      Esta página funciona como vitrine afiliada e não processa pagamento, estoque ou entrega. Preços, frete e disponibilidade podem mudar no anúncio de destino. Confirme as condições diretamente na Shopee antes da compra. O blog pode receber comissão por compras qualificadas, sem custo adicional para você.
-    </section>
-  </div>
+<div class="achados-store">
+  <section class="ca-hero">
+    <span class="ca-eyebrow">🛍️ LOJA Achados para Casa</span>
+    <h1>Achados selecionados para você</h1>
+    <p>Uma vitrine prática com produtos reais encontrados na Shopee, organizada para você comparar opções e conferir a oferta atual diretamente na plataforma.</p>
+    <div class="ca-stats"><span class="ca-stat">20 produtos reais</span><span class="ca-stat">5 categorias selecionadas</span><span class="ca-stat">Atualização automática</span></div>
+    <span class="ca-note"><strong>Transparência:</strong> esta página contém links de afiliado. Podemos receber comissão por compras realizadas pelos links, sem custo adicional para você. Preços e disponibilidade podem mudar após a coleta.</span>
+  </section>
+  <!-- BLOGGER_STORE_AUTO_START -->
+  <!-- BLOGGER_STORE_AUTO_END -->
+  <div class="ca-foot">Seleção baseada nos dados coletados da Shopee. Confira na página do produto o preço, estoque, frete e demais condições atuais antes da compra.</div>
 </div>
