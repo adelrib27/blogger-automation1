@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "description": "Regras semânticas do Ventiladores em Foco. Prioriza ventiladores completos e bloqueia peças, capas, motores, hélices, grades, capacitores e falsos positivos.",
+  "version": 2,
+  "description": "Regras semânticas do Ventiladores em Foco. Prioriza ventiladores completos e bloqueia peças, capas, motores, hélices, grades, capacitores, lâmpadas avulsas e falsos positivos.",
   "rules": {
     "ventilador de mesa": {
       "require_groups": [["ventilador"], ["mesa", "30cm", "40cm", "50cm"]],
@@ -36,7 +36,7 @@
     },
     "ventilador teto led": {
       "require_groups": [["ventilador"], ["teto"], ["led", "luz", "luminária", "luminaria"]],
-      "block_phrases": ["lâmpada avulsa", "lampada avulsa", "controle avulso", "capacitor", "motor", "peça", "peca"]
+      "block_phrases": ["lâmpada avulsa", "lampada avulsa", "lâmpada led", "lampada led", "led avulsa", "controle avulso", "capacitor", "motor", "peça", "peca"]
     },
     "ventilador de parede": {
       "require_groups": [["ventilador"], ["parede"]],
