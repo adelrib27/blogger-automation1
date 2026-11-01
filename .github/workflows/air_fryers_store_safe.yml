@@ -1,0 +1,79 @@
+name: Air Fryers em Foco — Loja Shopee SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "air_fryers_store/config/**"
+      - "air_fryers_store/src/**"
+      - "!air_fryers_store/src/**/__pycache__/**"
+      - "!air_fryers_store/src/**/*.pyc"
+      - ".github/workflows/air_fryers_store_safe.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: air-fryers-store-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "9113728635217260884"
+      BLOGGER_STORE_POST_ID: "5189023277801568424"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      BLOGGER_STORE_DRY_RUN: "true"
+      BLOGGER_STORE_ITEMS_PER_CATEGORY: "4"
+      BLOGGER_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "60"
+      SHOPEE_OPPORTUNITIES_CONFIG: air_fryers_store/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: air_fryers_store/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: air_fryers_store/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validar código e self-test
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/criar_rascunho.py src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py \
+            air_fryers_store/src/shopee_oportunidades_air_fryers.py \
+            air_fryers_store/src/store_auto.py air_fryers_store/src/store_auto_post.py \
+            air_fryers_store/src/store_auto_self_test.py air_fryers_store/src/store_hero_sync.py \
+            air_fryers_store/src/store_hero_sync_post.py air_fryers_store/src/post_target_proxy.py \
+            air_fryers_store/src/store_layout_patch.py
+          BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:air_fryers_store/src python air_fryers_store/src/store_auto_self_test.py
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+      - name: Executar SAFE real sem publicar
+        run: PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_auto_post.py
+      - name: Guardar diagnóstico SAFE
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: air-fryers-store-safe-${{ github.run_number }}
+          path: |
+            air_fryers_store/data/store_last_selection.json
+            air_fryers_store/data/store_shopee_scan/
+          if-no-files-found: warn
+          retention-days: 14
