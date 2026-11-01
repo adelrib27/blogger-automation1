@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import re
 from pathlib import Path
 from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
 
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 
 BLOGS = [
     ("Eletroportáteis na Cozinha", "https://eletroportateis-na-cozinha.blogspot.com/"),
@@ -61,114 +62,127 @@ def slugify(text: str) -> str:
     return value.strip("-") or "blog"
 
 
-def first_visible(page, selectors: list[str]):
+async def first_visible(page, selectors: list[str]):
     for selector in selectors:
         locator = page.locator(selector).first
         try:
-            if locator.count() and locator.is_visible(timeout=1000):
+            if await locator.count() and await locator.is_visible(timeout=500):
                 return locator, selector
         except Exception:
             pass
     return None, None
 
 
-def audit_blog(browser, name: str, base_url: str, out_dir: Path) -> dict:
-    context = browser.new_context(
-        locale="fr-FR",
-        timezone_id="Europe/Paris",
-        viewport={"width": 1440, "height": 1100},
-        extra_http_headers={"Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8"},
-    )
-    page = context.new_page()
-    target = with_gl_fr(base_url)
-    slug = slugify(name)
-    before = out_dir / f"{slug}-before.png"
-    after = out_dir / f"{slug}-after.png"
+async def audit_blog(browser, semaphore: asyncio.Semaphore, name: str, base_url: str, out_dir: Path) -> dict:
+    async with semaphore:
+        context = await browser.new_context(
+            locale="fr-FR",
+            timezone_id="Europe/Paris",
+            viewport={"width": 1440, "height": 1100},
+            extra_http_headers={"Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8"},
+        )
+        page = await context.new_page()
+        page.set_default_timeout(3000)
+        page.set_default_navigation_timeout(12000)
 
-    result = {
-        "name": name,
-        "base_url": base_url,
-        "target_url": target,
-        "reachable": False,
-        "http_status": None,
-        "final_url": None,
-        "banner_visible": False,
-        "banner_selector": None,
-        "banner_text": "",
-        "dismiss_visible": False,
-        "dismiss_selector": None,
-        "dismiss_worked": False,
-        "cookie_text_detected": False,
-        "before_screenshot": str(before),
-        "after_screenshot": str(after),
-        "error": "",
-    }
+        target = with_gl_fr(base_url)
+        slug = slugify(name)
+        before = out_dir / f"{slug}-before.png"
+        after = out_dir / f"{slug}-after.png"
 
-    try:
-        response = page.goto(target, wait_until="domcontentloaded", timeout=45000)
-        result["http_status"] = response.status if response else None
-        result["reachable"] = bool(response is None or response.ok)
-        page.wait_for_timeout(3500)
-        result["final_url"] = page.url
+        result = {
+            "name": name,
+            "base_url": base_url,
+            "target_url": target,
+            "reachable": False,
+            "http_status": None,
+            "final_url": None,
+            "banner_visible": False,
+            "banner_selector": None,
+            "banner_text": "",
+            "dismiss_visible": False,
+            "dismiss_selector": None,
+            "dismiss_worked": False,
+            "cookie_text_detected": False,
+            "before_screenshot": str(before),
+            "after_screenshot": str(after),
+            "error": "",
+        }
 
-        banner, banner_selector = first_visible(page, BANNER_SELECTORS)
-        result["banner_visible"] = banner is not None
-        result["banner_selector"] = banner_selector
+        try:
+            response = await page.goto(target, wait_until="domcontentloaded", timeout=12000)
+            result["http_status"] = response.status if response else None
+            result["reachable"] = bool(response is None or response.ok)
+            await page.wait_for_timeout(1500)
+            result["final_url"] = page.url
 
-        if banner is not None:
-            try:
-                text = banner.inner_text(timeout=3000).strip()
-            except Exception:
-                text = ""
-            result["banner_text"] = re.sub(r"\s+", " ", text)[:1200]
-            result["cookie_text_detected"] = bool(COOKIE_TEXT_RE.search(result["banner_text"]))
-        else:
-            body_text = page.locator("body").inner_text(timeout=5000)
-            result["cookie_text_detected"] = bool(COOKIE_TEXT_RE.search(body_text))
+            banner, banner_selector = await first_visible(page, BANNER_SELECTORS)
+            result["banner_visible"] = banner is not None
+            result["banner_selector"] = banner_selector
 
-        page.screenshot(path=str(before), full_page=True)
-
-        dismiss, dismiss_selector = first_visible(page, DISMISS_SELECTORS)
-        result["dismiss_visible"] = dismiss is not None
-        result["dismiss_selector"] = dismiss_selector
-
-        if dismiss is None:
-            for text in ["OK", "J'ACCEPTE", "ACCEPTER", "ENTENDI", "ACEITAR"]:
-                candidate = page.get_by_text(text, exact=True).first
+            if banner is not None:
                 try:
-                    if candidate.count() and candidate.is_visible(timeout=500):
-                        dismiss = candidate
-                        result["dismiss_visible"] = True
-                        result["dismiss_selector"] = f"text={text}"
-                        break
+                    text = (await banner.inner_text(timeout=1500)).strip()
                 except Exception:
-                    pass
+                    text = ""
+                result["banner_text"] = re.sub(r"\s+", " ", text)[:1200]
+                result["cookie_text_detected"] = bool(COOKIE_TEXT_RE.search(result["banner_text"]))
+            else:
+                body_text = await page.locator("body").inner_text(timeout=2000)
+                result["cookie_text_detected"] = bool(COOKIE_TEXT_RE.search(body_text))
 
-        if dismiss is not None:
-            dismiss.click(timeout=5000)
-            page.wait_for_timeout(1000)
-            banner_after, _ = first_visible(page, BANNER_SELECTORS)
-            result["dismiss_worked"] = banner_after is None
-        else:
-            result["dismiss_worked"] = False
+            await page.screenshot(path=str(before), full_page=True)
 
-        page.screenshot(path=str(after), full_page=True)
+            dismiss, dismiss_selector = await first_visible(page, DISMISS_SELECTORS)
+            result["dismiss_visible"] = dismiss is not None
+            result["dismiss_selector"] = dismiss_selector
 
-    except PlaywrightTimeoutError as exc:
-        result["error"] = f"timeout: {exc}"
-    except Exception as exc:
-        result["error"] = f"{type(exc).__name__}: {exc}"
-    finally:
-        context.close()
+            if dismiss is None:
+                for text in ["OK", "J'ACCEPTE", "ACCEPTER", "ENTENDI", "ACEITAR"]:
+                    candidate = page.get_by_text(text, exact=True).first
+                    try:
+                        if await candidate.count() and await candidate.is_visible(timeout=300):
+                            dismiss = candidate
+                            result["dismiss_visible"] = True
+                            result["dismiss_selector"] = f"text={text}"
+                            break
+                    except Exception:
+                        pass
 
-    result["pass"] = bool(
-        result["reachable"]
-        and result["banner_visible"]
-        and result["cookie_text_detected"]
-        and result["dismiss_visible"]
-        and result["dismiss_worked"]
-    )
-    return result
+            if dismiss is not None:
+                await dismiss.click(timeout=3000)
+                await page.wait_for_timeout(500)
+                banner_after, _ = await first_visible(page, BANNER_SELECTORS)
+                result["dismiss_worked"] = banner_after is None
+
+            await page.screenshot(path=str(after), full_page=True)
+
+        except PlaywrightTimeoutError as exc:
+            result["error"] = f"timeout: {exc}"
+        except Exception as exc:
+            result["error"] = f"{type(exc).__name__}: {exc}"
+        finally:
+            await context.close()
+
+        result["pass"] = bool(
+            result["reachable"]
+            and result["banner_visible"]
+            and result["cookie_text_detected"]
+            and result["dismiss_visible"]
+            and result["dismiss_worked"]
+        )
+        return result
+
+
+async def run_audit(out_dir: Path) -> list[dict]:
+    semaphore = asyncio.Semaphore(6)
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(headless=True)
+        try:
+            tasks = [audit_blog(browser, semaphore, name, url, out_dir) for name, url in BLOGS]
+            return await asyncio.gather(*tasks)
+        finally:
+            await browser.close()
 
 
 def main() -> int:
@@ -180,33 +194,29 @@ def main() -> int:
     out_dir = Path(args.output)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    results = []
-    with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
-        try:
-            for name, url in BLOGS:
-                result = audit_blog(browser, name, url, out_dir)
-                results.append(result)
-                state = "PASS" if result["pass"] else "FAIL"
-                print(
-                    f"[{state}] {name}: http={result['http_status']} "
-                    f"banner={result['banner_visible']} dismiss={result['dismiss_visible']} "
-                    f"dismiss_worked={result['dismiss_worked']} final={result['final_url']}"
-                )
-                if result["banner_text"]:
-                    print("  banner:", result["banner_text"][:240])
-                if result["error"]:
-                    print("  erro:", result["error"])
-        finally:
-            browser.close()
+    results = asyncio.run(run_audit(out_dir))
+    results.sort(key=lambda item: item["name"].casefold())
+
+    for result in results:
+        state = "PASS" if result["pass"] else "FAIL"
+        print(
+            f"[{state}] {result['name']}: http={result['http_status']} "
+            f"banner={result['banner_visible']} dismiss={result['dismiss_visible']} "
+            f"dismiss_worked={result['dismiss_worked']} final={result['final_url']}"
+        )
+        if result["banner_text"]:
+            print("  banner:", result["banner_text"][:240])
+        if result["error"]:
+            print("  erro:", result["error"])
 
     passed = sum(1 for item in results if item["pass"])
     failed = len(results) - passed
     report = {
-        "version": 1,
+        "version": 2,
         "mode": "SAFE_READ_ONLY",
         "region_hint": "gl=fr",
         "locale": "fr-FR",
+        "concurrency": 6,
         "total": len(results),
         "passed": passed,
         "failed": failed,
