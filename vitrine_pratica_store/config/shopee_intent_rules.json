@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "description": "Regras semânticas da Loja Vitrine Prática. Bloqueia acessórios/falsos positivos e exige intenção coerente em cada consulta.",
+  "rules": {
+    "smartwatch": {"require_groups": [["smartwatch", "relogio inteligente", "relógio inteligente"]], "block_phrases": ["pulseira para smartwatch", "pelicula smartwatch", "película smartwatch", "capa smartwatch", "carregador smartwatch", "correia smartwatch"]},
+    "carregador iphone": {"require_groups": [["carregador", "fonte"], ["iphone", "lightning", "apple"]], "block_phrases": ["somente cabo", "cabo avulso", "adaptador p2", "pelicula", "película", "capa iphone"]},
+    "caixa de som bluetooth": {"require_groups": [["caixa de som", "speaker"], ["bluetooth"]], "block_phrases": ["capa para caixa", "bateria para caixa", "placa caixa de som", "alto falante avulso", "alto-falante avulso"]},
+    "luminaria solar": {"require_groups": [["luminaria", "luminária", "refletor"], ["solar"]], "block_phrases": ["placa solar avulsa", "painel solar avulso", "sensor avulso", "suporte luminaria", "suporte luminária"]},
+    "organizador banheiro": {"require_groups": [["organizador", "prateleira", "suporte"], ["banheiro", "shampoo", "box"]], "block_phrases": ["adesivo avulso", "fita dupla face", "gancho avulso", "parafuso"]},
+    "tapete decorativo": {"require_groups": [["tapete"], ["sala", "quarto", "decorativo", "decoração", "decoracao"]], "block_phrases": ["tapete automotivo", "tapete carro", "tapete moto", "mouse pad", "mousepad", "capacho automotivo"]},
+    "escorredor de loucas": {"require_groups": [["escorredor"], ["louca", "louça", "prato", "pratos"]], "block_phrases": ["escorredor de macarrao", "escorredor de macarrão", "escorredor de arroz", "ralo", "pia inox avulsa"]},
+    "potes hermeticos": {"require_groups": [["pote", "potes"], ["hermetico", "hermético"]], "block_phrases": ["tampa avulsa", "anel vedacao", "anel vedação", "borracha vedacao", "borracha vedação"]},
+    "organizador cozinha": {"require_groups": [["organizador", "prateleira", "suporte"], ["cozinha", "pia", "tempero", "talher", "talheres"]], "block_phrases": ["gancho avulso", "adesivo avulso", "parafuso", "rodizio avulso", "rodízio avulso"]},
+    "parafusadeira furadeira": {"require_groups": [["parafusadeira", "furadeira"]], "block_phrases": ["broca avulsa", "kit brocas", "mandril avulso", "bateria avulsa", "carregador avulso", "escova para furadeira"]},
+    "compressor de ar portatil": {"require_groups": [["compressor", "inflador"], ["portatil", "portátil", "pneu", "pneus"]], "block_phrases": ["mangueira avulsa", "bico avulso", "conector avulso", "pressostato", "reparo compressor"]},
+    "escova para furadeira": {"require_groups": [["escova", "escovas"], ["furadeira"]], "block_phrases": ["escova dental", "escova cabelo", "escova secadora", "escova limpeza facial"]},
+    "saia midi feminina": {"require_groups": [["saia"], ["midi", "feminina", "mulher"]], "block_phrases": ["saia para mesa", "saia cama", "saia de berco", "saia de berço", "fantasia infantil"]},
+    "aparador de pelos masculino": {"require_groups": [["aparador", "maquina de barbear", "máquina de barbear"], ["pelos", "barba", "masculino"]], "block_phrases": ["pente avulso", "lamina avulsa", "lâmina avulsa", "cabeçote avulso", "cabecote avulso", "carregador avulso"]},
+    "conjunto feminino": {"require_groups": [["conjunto"], ["feminino", "feminina", "mulher"]], "block_phrases": ["infantil", "menina infantil", "bebê", "bebe", "uniforme escolar"]}
+  }
+}
