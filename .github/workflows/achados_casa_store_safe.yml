@@ -23,7 +23,7 @@ jobs:
     env:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
-      SHOPEE_TOP_N: "100"
+      SHOPEE_TOP_N: "140"
       ACHADOS_STORE_RECENT_DAYS: "14"
 
     steps:
@@ -45,7 +45,8 @@ jobs:
             src/shopee_oportunidades_v22.py \
             src/shopee_oportunidades_v23.py \
             radar_tech_br/src/refresh_blogger_offer_links.py \
-            blogger_stores/src/achados_casa_safe_scan_v2.py
+            blogger_stores/src/achados_casa_safe_scan_v2.py \
+            blogger_stores/src/achados_casa_safe_scan_v3.py
 
       - name: Confirmar AppID Shopee
         run: |
@@ -58,10 +59,10 @@ jobs:
           fi
           echo "AppID Shopee do Achados para Casa validado."
 
-      - name: Executar nova varredura SAFE v2
+      - name: Executar nova varredura SAFE v3
         run: |
           set -euo pipefail
-          PYTHONPATH=src:radar_tech_br/src python -u blogger_stores/src/achados_casa_safe_scan_v2.py
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/achados_casa_safe_scan_v3.py
 
       - name: Validar artefato SAFE
         run: |
@@ -71,18 +72,21 @@ jobs:
           from pathlib import Path
           p=Path('blogger_stores/data/achados_casa_selection.json')
           d=json.loads(p.read_text(encoding='utf-8'))
-          assert d['schemaVersion']==2
+          assert d['schemaVersion']==3
           assert d['status']=='SAFE_READY'
           assert d['publishReady'] is True
           assert d['categoryCount']==5
           assert d['totalItems']==20
           assert d['uniqueItemIds']==20
+          assert len(d['keywordCoverage'])==5
+          assert all(len(set(v))==4 for v in d['keywordCoverage'].values())
           assert d['affiliateLinkGeneration']['appId']=='18352820579'
           assert d['affiliateLinkGeneration']['validatedCount']==20
           assert d['affiliateLinkGeneration']['allResolvedToShopee'] is True
           assert d['semanticValidation']['strictAccessoriesBlocked'] is True
+          assert d['semanticValidation']['oneProductPerKeyword'] is True
           assert all(d['gates'].values())
-          print('SAFE v2 VALIDADO: 20 produtos novos, semântica específica e 20/20 links resolvidos para Shopee.')
+          print('SAFE v3 VALIDADO: 20 produtos, 20 palavras-chave cobertas e 20/20 links resolvidos.')
           PY
 
       - name: Persistir seleção SAFE
@@ -95,7 +99,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add blogger_stores/data/achados_casa_selection.json
-          git commit -m "Atualizar SAFE v2 da Loja Achados para Casa"
+          git commit -m "Atualizar SAFE v3 da Loja Achados para Casa"
           git pull --rebase origin main
           git push origin HEAD:main
 
