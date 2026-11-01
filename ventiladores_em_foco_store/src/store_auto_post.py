@@ -10,8 +10,7 @@ import store_auto as base
 from post_target_proxy import BloggerPostTargetProxy
 
 # Carrega explicitamente o patch deste blog. O store_auto adiciona o motor comum
-# ao sys.path, então um `from store_layout_patch import ...` simples pode resolver
-# acidentalmente para blogger_product_store/src/store_layout_patch.py.
+# ao sys.path, então um import simples pode resolver para o módulo genérico.
 _LOCAL_LAYOUT = Path(__file__).resolve().with_name("store_layout_patch.py")
 _spec = importlib.util.spec_from_file_location("ventiladores_em_foco_store_layout_patch", _LOCAL_LAYOUT)
 _layout = importlib.util.module_from_spec(_spec)
@@ -33,6 +32,14 @@ def _norm(value):
 
 _original_valid_product = base.valid_product
 
+# Peças/acessórios que podem aparecer antes da palavra “ventilador” no título e
+# escapar de bloqueios por frase exata (ex.: “Hélice Ventilador...”, “Base Ventilador...”).
+_COMPONENT_PREFIXES = (
+    "helice ", "base ", "capa ", "motor ", "capacitor ", "grade ",
+    "controle ", "suporte ", "rolamento ", "eixo ", "parafuso ",
+    "carcaca ", "placa ", "botao ", "adaptador ", "peca ", "pecas ",
+)
+
 
 def strict_valid_product(product):
     if not _original_valid_product(product):
@@ -40,12 +47,19 @@ def strict_valid_product(product):
     title = _norm(product.get("productName") or "")
     if not ("ventilador" in title or "circulador" in title):
         return False
+
+    # Bloqueia títulos cujo objeto principal é claramente uma peça/acessório.
+    if title.startswith(_COMPONENT_PREFIXES):
+        return False
+
     blocked = (
-        "helice avulsa", "helice para ventilador", "motor para ventilador", "motor ventilador",
-        "capacitor", "grade para ventilador", "grade ventilador", "peca ventilador",
+        "helice avulsa", "helice para ventilador", "helice ventilador",
+        "motor para ventilador", "motor ventilador", "capacitor",
+        "grade para ventilador", "grade ventilador", "peca ventilador",
         "pecas ventilador", "reposicao", "kit reparo", "rolamento", "eixo", "parafuso",
-        "carcaca", "suporte avulso", "base avulsa", "botao ventilador", "placa ventilador",
-        "controle remoto avulso", "controle para ventilador", "capa para ventilador",
+        "carcaca", "suporte avulso", "base avulsa", "base ventilador",
+        "botao ventilador", "placa ventilador", "controle remoto avulso",
+        "controle para ventilador", "capa para ventilador", "capa ventilador",
         "adaptador para ventilador",
     )
     return not any(token in title for token in blocked)
