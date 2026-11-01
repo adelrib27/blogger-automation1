@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "projects": {
+    "casa_decoracao": {
+      "path": "casa_decoracao",
+      "generated_dir": "data/generated"
+    },
+    "oficina_garagem": {
+      "path": "oficina_garagem",
+      "generated_dir": "data/generated"
+    },
+    "radar_tech_br": {
+      "path": "radar_tech_br",
+      "generated_dir": "data/generated"
+    }
+  },
+  "min_editorial_words": 120,
+  "shingle_size": 5,
+  "thresholds": {
+    "sequence": 0.72,
+    "sequence_very_high": 0.88,
+    "cosine": 0.80,
+    "shingle_jaccard": 0.24,
+    "shingle_jaccard_high": 0.58,
+    "shingle_containment": 0.58,
+    "title_jaccard": 0.86,
+    "title_body_cosine": 0.68,
+    "title_body_containment": 0.32
+  }
+}
