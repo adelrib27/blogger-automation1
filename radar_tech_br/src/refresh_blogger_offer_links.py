@@ -55,7 +55,7 @@ def post_graphql(app_id: str, secret: str, payload_obj: dict) -> dict:
 
 def generate_short_link(app_id: str, secret: str, origin_url: str) -> str:
     query = (
-        "mutation GenerateShortLink($originUrl: String!, $subIds: [String]) { "
+        "mutation GenerateShortLink($originUrl: String!, $subIds: [String!]) { "
         "generateShortLink(input: {originUrl: $originUrl, subIds: $subIds}) { shortLink } "
         "}"
     )
