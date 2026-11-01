@@ -35,13 +35,13 @@ criar_servico_blogger = base.criar_servico_blogger
 
 def hero_sets(data: dict):
     c = data.get("categories") or {}
-    required = ["Air Fryers & Fritadeiras", "Air Fryer Oven & Fornos", "Formas & Revestimentos", "Grelhas & Cestos", "Utensílios & Preparo"]
+    required = ["Air Fryers & Fritadeiras", "Air Fryers Grandes & Família", "Formas & Revestimentos", "Grelhas & Cestos", "Utensílios & Preparo"]
     for key in required:
         if len(c.get(key) or []) != 4:
             raise RuntimeError(f"Seleção inválida para hero: {key}")
     slides = [
         [("Air Fryer", p) for p in c[required[0]]],
-        [("Oven", p) for p in c[required[1]][:2]] + [("Forma", p) for p in c[required[2]][:2]],
+        [("Grande/Família", p) for p in c[required[1]][:2]] + [("Forma", p) for p in c[required[2]][:2]],
         [("Grelha/Cesto", p) for p in c[required[3]][:2]] + [("Preparo", p) for p in c[required[4]][:2]],
     ]
     ids = [str(p.get("itemId")) for slide in slides for _, p in slide]
@@ -61,7 +61,7 @@ def main() -> None:
     slides = hero_sets(data)
     blocks = [
         base.render_region(*base.HERO_MARKERS[0], "Air fryers em destaque", slides[0], include_css=True),
-        base.render_region(*base.HERO_MARKERS[1], "Oven, fornos e formas para a rotina", slides[1]),
+        base.render_region(*base.HERO_MARKERS[1], "Modelos grandes, formas e revestimentos", slides[1]),
         base.render_region(*base.HERO_MARKERS[2], "Grelhas, cestos e utensílios úteis", slides[2]),
     ]
     blogger = base.criar_servico_blogger()
