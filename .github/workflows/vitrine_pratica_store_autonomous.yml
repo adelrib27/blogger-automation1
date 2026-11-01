@@ -1,16 +1,16 @@
-name: Vitrine Prática — Loja Shopee Autônoma
+name: Vitrine Prática — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "15 9 * * *"
-      timezone: "America/Recife"
+  push:
+    paths:
+      - "vitrine_pratica_store/store_live_kickoff.txt"
 
 permissions:
   contents: write
 
 concurrency:
-  group: vitrine-pratica-store-autonomous
+  group: vitrine-pratica-store-live
   cancel-in-progress: false
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
       BLOGGER_BLOG_ID: "9144338307944682868"
-      BLOGGER_STORE_PAGE_ID: "8344701886444887322"
+      BLOGGER_STORE_POST_ID: "115613719594316807"
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
@@ -54,8 +54,12 @@ jobs:
             src/shopee_oportunidades_v23.py \
             vitrine_pratica_store/src/shopee_oportunidades_vitrine_pratica.py \
             vitrine_pratica_store/src/store_auto.py \
+            vitrine_pratica_store/src/store_auto_post.py \
+            vitrine_pratica_store/src/store_layout_patch.py \
+            vitrine_pratica_store/src/store_auto_self_test.py \
             vitrine_pratica_store/src/store_hero_sync.py \
-            vitrine_pratica_store/src/store_auto_self_test.py
+            vitrine_pratica_store/src/store_hero_sync_post.py \
+            vitrine_pratica_store/src/post_target_proxy.py
           BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:vitrine_pratica_store/src python vitrine_pratica_store/src/store_auto_self_test.py
       - name: Confirmar secrets obrigatórios
         run: |
@@ -65,15 +69,15 @@ jobs:
           test -n "$BLOGGER_CLIENT_ID"
           test -n "$BLOGGER_CLIENT_SECRET"
           test -n "$BLOGGER_REFRESH_TOKEN"
-      - name: Atualizar vitrine na página Loja
-        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_auto.py
+      - name: Atualizar vitrine no post Loja com Shopee API
+        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_auto_post.py
       - name: Sincronizar 12 mini-cards do hero
-        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_hero_sync.py
-      - name: Verificar renderização pública
+        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_hero_sync_post.py
+      - name: Verificar renderização pública 20 + 12
         run: |
           set -euo pipefail
           ok=0
-          url="https://vitrine-pratica.blogspot.com/p/loja.html"
+          url="https://vitrine-pratica.blogspot.com/2026/11/loja.html"
           for attempt in 1 2 3 4 5 6; do
             if ! curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/vitrine-pratica-loja.html; then
               echo "Tentativa ${attempt}: curl falhou; aguardando propagação."
@@ -82,7 +86,7 @@ jobs:
             fi
             store_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
             hero_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
-            if grep -q "bls-store-grid" /tmp/vitrine-pratica-loja.html && grep -q "blh-grid" /tmp/vitrine-pratica-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+            if grep -q "bls-store-grid" /tmp/vitrine-pratica-loja.html && grep -q "blh-grid" /tmp/vitrine-pratica-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/vitrine-pratica-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
               ok=1
               break
             fi
@@ -90,7 +94,7 @@ jobs:
             sleep 5
           done
           test "$ok" -eq 1
-          echo "Renderização pública confirmada: 20 cards + 12 mini-cards."
+          echo "PUBLIC_RUNTIME_PASS: layout amplo + 20 cards + 12 hero."
       - name: Persistir rotação somente após validação pública
         run: |
           set -euo pipefail
