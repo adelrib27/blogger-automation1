@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "project": "Blogger Store - Limpeza Inteligente",
   "market": "BR",
   "currency": "BRL",
@@ -11,7 +11,7 @@
   "reserve_query_limit": 24,
   "top_n": 90,
   "weights": {"seller_extra_commission":0.4,"search_demand_proxy":0.25,"sales":0.15,"rating":0.1,"discount":0.05,"top_performance":0.05},
-  "diversity": {"enabled":true,"max_per_shop":2,"max_per_keyword":2,"max_per_category":8,"relaxed_caps":{"max_per_shop":3,"max_per_keyword":3,"max_per_category":10},"policy":"strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"},
+  "diversity": {"enabled":true,"max_per_shop":1,"max_per_keyword":2,"max_per_category":8,"relaxed_caps":{"max_per_shop":2,"max_per_keyword":3,"max_per_category":10},"policy":"strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"},
   "categories": {
     "Robôs Aspiradores": ["robo aspirador inteligente", "robo aspirador automatico", "robot vacuum aspirador"],
     "Aspiradores Verticais": ["aspirador vertical", "aspirador vertical 2 em 1", "aspirador vassoura", "aspirador vertical potente"],
