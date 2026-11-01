@@ -2,6 +2,9 @@ name: Limpeza Inteligente — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "20 9 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "limpeza_inteligente_store/store_live_kickoff.txt"
