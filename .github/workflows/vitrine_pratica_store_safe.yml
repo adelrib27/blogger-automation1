@@ -46,10 +46,12 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Validar código e self-test
+      - name: Validar código, Policy Guard e self-tests
         run: |
           set -euo pipefail
           python -m py_compile \
+            src/blogger_policy_guard.py \
+            src/blogger_policy_guard_self_test.py \
             src/criar_rascunho.py \
             src/shopee_oportunidades.py \
             src/shopee_oportunidades_v22.py \
@@ -62,6 +64,7 @@ jobs:
             vitrine_pratica_store/src/store_hero_sync_post.py \
             vitrine_pratica_store/src/post_target_proxy.py \
             vitrine_pratica_store/src/store_layout_patch.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
           BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:vitrine_pratica_store/src python vitrine_pratica_store/src/store_auto_self_test.py
       - name: Confirmar secrets obrigatórios
         run: |
@@ -73,6 +76,22 @@ jobs:
           test -n "$BLOGGER_REFRESH_TOKEN"
       - name: Executar SAFE real contra post Loja sem publicar produtos
         run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_auto_post.py
+      - name: Validar seleção SAFE com Policy Guard central
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+
+          data = json.loads(Path('vitrine_pratica_store/data/store_last_selection.json').read_text(encoding='utf-8'))
+          products = [p for items in (data.get('categories') or {}).values() for p in items]
+          if len(products) != 20:
+              raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
+          for product in products:
+              require_product_allowed(product)
+          print('BLOGGER_POLICY_GUARD_SAFE_PASS: 20/20 produtos permitidos')
+          PY
       - name: Guardar diagnóstico SAFE
         if: always()
         uses: actions/upload-artifact@v4
@@ -86,3 +105,4 @@ jobs:
 
 # Fonte de verdade: BLOGGER_STORE_SHOPEE_VALIDADA_V1
 # SAFE_FINAL_CANONICO_VITRINE_PRATICA_2026_11_01
+# POLICY_GUARD_CENTRAL_VITRINE_PRATICA_2026_11_01
