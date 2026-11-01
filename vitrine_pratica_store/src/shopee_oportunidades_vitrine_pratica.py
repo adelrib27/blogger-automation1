@@ -35,6 +35,7 @@ def regression_checks(rules_doc):
         ("Tampa Avulsa para Pote Hermético", "potes hermeticos", False),
         ("Organizador de Cozinha para Pia e Talheres", "organizador cozinha", True),
         ("Gancho Avulso Adesivo para Cozinha", "organizador cozinha", False),
+        ("Cesto De Roupa Dobrável Brinquedos Organizador Cozinha Quarto", "organizador cozinha", False),
         ("Parafusadeira Furadeira Sem Fio com Maleta", "parafusadeira furadeira", True),
         ("Kit Brocas para Parafusadeira Furadeira", "parafusadeira furadeira", False),
         ("Compressor de Ar Portátil Inflador para Pneus", "compressor de ar portatil", True),
