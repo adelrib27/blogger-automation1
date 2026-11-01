@@ -2,6 +2,9 @@ name: Eletroportáteis na Cozinha — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "5 9 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "eletroportateis_store/store_live_kickoff.txt"
@@ -111,10 +114,13 @@ jobs:
           grep -q 'href="#bls-batedeiras"' /tmp/eletroportateis-loja.html
           grep -q 'href="#bls-cafeteiras-outros"' /tmp/eletroportateis-loja.html
           grep -q "https://eletroportateis-na-cozinha.blogspot.com/p/loja.html" /tmp/eletroportateis-loja.html
+          grep -q "Vitrine de eletroportáteis para cozinha" /tmp/eletroportateis-loja.html
+          grep -q "Batedeiras, cafeteiras e outros eletros para a cozinha" /tmp/eletroportateis-loja.html
           grep -q "grid-template-columns:minmax(0,1fr)!important" /tmp/eletroportateis-loja.html
           grep -q '\[id\^="PopularPosts"\]' /tmp/eletroportateis-loja.html
           ! grep -q "liquidificadores-em-foco.blogspot.com" /tmp/eletroportateis-loja.html
           ! grep -q 'href="#bls-casa-organizacao"' /tmp/eletroportateis-loja.html
+          ! grep -q "Achados reais para cuidados pessoais e rotina" /tmp/eletroportateis-loja.html
           echo "PUBLIC_PASS: Eletroportáteis vitrine=20 hero=12 identidade layout policy guard OK"
       - name: Persistir rotação somente após PASS público
         run: |
