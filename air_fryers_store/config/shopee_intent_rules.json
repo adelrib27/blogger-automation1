@@ -1,66 +1,66 @@
 {
-  "version": 1,
-  "description": "Regras semânticas do Air Fryers em Foco. Aparelhos devem ser completos; acessórios precisam ser explicitamente relacionados à air fryer ou ao preparo culinário.",
+  "version": 2,
+  "description": "Regras semânticas do Air Fryers em Foco. Aparelhos devem ser completos; acessórios precisam ser explicitamente relacionados à air fryer ou ao preparo culinário. Bloqueia limpeza, adaptadores, suportes genéricos, peças e falsos positivos.",
   "rules": {
     "air fryer": {
-      "require_groups": [["air fryer", "fritadeira"]],
-      "block_phrases": ["forma air fryer", "forma para air fryer", "papel air fryer", "forro air fryer", "tapete air fryer", "cesto air fryer", "grelha air fryer", "rack air fryer", "resistencia", "resistência", "botao", "botão", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório", "silicone"]
+      "require_groups": [["air fryer", "fritadeira"], ["litro", "litros", " l ", "1500w", "1400w", "1700w", "1800w", "127v", "220v", "digital", "sem oleo", "sem óleo"]],
+      "block_phrases": ["spray", "limpa air fryer", "limpador", "desengordurante", "adaptador", "tomada", "plug", "conversor", "suporte", "prateleira", "nicho", "forma", "papel", "forro", "tapete", "cesto reposicao", "cesto reposição", "grelha", "rack", "resistencia", "resistência", "botao", "botão", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório", "silicone", "pote", "recipiente", "container"]
     },
     "fritadeira eletrica": {
-      "require_groups": [["fritadeira", "air fryer"], ["eletrica", "elétrica", "air fryer", "sem oleo", "sem óleo", "digital", "litros"]],
-      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha", "rack", "resistencia", "resistência", "botao", "botão", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
+      "require_groups": [["fritadeira", "air fryer"], ["eletrica", "elétrica", "air fryer", "sem oleo", "sem óleo", "digital", "litro", "litros", "127v", "220v", "w"]],
+      "block_phrases": ["spray", "limpador", "desengordurante", "adaptador", "tomada", "plug", "conversor", "suporte", "prateleira", "nicho", "forma", "papel", "forro", "tapete", "cesto reposicao", "cesto reposição", "grelha", "rack", "resistencia", "resistência", "botao", "botão", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório", "pote", "recipiente", "container"]
     },
     "fritadeira sem oleo": {
-      "require_groups": [["fritadeira", "air fryer"], ["sem oleo", "sem óleo", "air fryer", "eletrica", "elétrica"]],
-      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha", "rack", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
+      "require_groups": [["fritadeira", "air fryer"], ["sem oleo", "sem óleo", "air fryer", "eletrica", "elétrica", "litro", "litros", "127v", "220v"]],
+      "block_phrases": ["spray", "limpador", "desengordurante", "adaptador", "tomada", "plug", "conversor", "suporte", "prateleira", "nicho", "forma", "papel", "forro", "tapete", "cesto reposicao", "cesto reposição", "grelha", "rack", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório", "pote", "recipiente", "container"]
     },
-    "air fryer oven": {
-      "require_groups": [["air fryer", "fritadeira"], ["oven", "forno"]],
-      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha avulsa", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
+    "air fryer 6 litros": {
+      "require_groups": [["air fryer", "fritadeira"], ["6l", "6 l", "6 litros", "6,0l", "6.0l", "6,5l", "6.5l"]],
+      "block_phrases": ["spray", "limpador", "desengordurante", "adaptador", "tomada", "suporte", "prateleira", "nicho", "forma", "papel", "tapete", "cesto", "grelha", "rack", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
     },
-    "forno air fryer": {
-      "require_groups": [["forno", "oven"], ["air fryer", "fritadeira"]],
-      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha avulsa", "peca", "peça", "reposicao", "reposição"]
+    "air fryer 8 litros": {
+      "require_groups": [["air fryer", "fritadeira"], ["8l", "8 l", "8 litros", "8,0l", "8.0l", "8,5l", "8.5l"]],
+      "block_phrases": ["spray", "limpador", "desengordurante", "adaptador", "tomada", "suporte", "prateleira", "nicho", "forma", "papel", "tapete", "cesto", "grelha", "rack", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
     },
-    "fritadeira forno": {
-      "require_groups": [["fritadeira", "air fryer"], ["forno", "oven"]],
-      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha avulsa", "peca", "peça", "reposicao", "reposição"]
+    "air fryer grande": {
+      "require_groups": [["air fryer", "fritadeira"], ["grande", "familia", "família", "5l", "5 l", "5 litros", "6l", "6 l", "6 litros", "7l", "7 l", "7 litros", "8l", "8 l", "8 litros", "9l", "9 l", "10l", "10 l", "12l", "12 l"]],
+      "block_phrases": ["spray", "limpador", "desengordurante", "adaptador", "tomada", "suporte", "prateleira", "nicho", "forma", "papel", "tapete", "cesto reposicao", "cesto reposição", "grelha", "rack", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
     },
     "forma silicone air fryer": {
       "require_groups": [["forma"], ["silicone"], ["air fryer", "fritadeira"]],
-      "block_phrases": ["forma de gelo", "forma bolo sem air fryer"]
+      "block_phrases": ["forma de gelo", "forma bolo sem air fryer", "limpador", "spray"]
     },
     "papel air fryer": {
       "require_groups": [["papel", "forro"], ["air fryer", "fritadeira"]],
-      "block_phrases": ["papel aluminio avulso", "papel alumínio avulso", "papel presente"]
+      "block_phrases": ["papel aluminio avulso", "papel alumínio avulso", "papel presente", "adesivo", "etiqueta"]
     },
     "tapete silicone air fryer": {
       "require_groups": [["tapete", "forro"], ["silicone"], ["air fryer", "fritadeira"]],
-      "block_phrases": ["tapete banheiro", "tapete cozinha decorativo"]
+      "block_phrases": ["tapete banheiro", "tapete cozinha decorativo", "tapete pia"]
     },
     "grelha air fryer": {
       "require_groups": [["grelha", "rack"], ["air fryer", "fritadeira"]],
-      "block_phrases": ["grelha churrasqueira sem air fryer", "grade ventilador"]
+      "block_phrases": ["grelha churrasqueira sem air fryer", "grade ventilador", "suporte", "prateleira", "nicho", "estante", "air fryer completa", "fritadeira completa"]
     },
-    "cesto air fryer": {
-      "require_groups": [["cesto"], ["air fryer", "fritadeira"]],
-      "block_phrases": ["cesto roupa", "cesto organizador"]
+    "cesto compativel air fryer": {
+      "require_groups": [["cesto"], ["air fryer", "fritadeira"], ["compativel", "compatível", "reposicao", "reposição"]],
+      "block_phrases": ["cesto roupa", "cesto organizador", "cesto lixo", "air fryer completa", "fritadeira completa"]
     },
     "rack air fryer": {
-      "require_groups": [["rack", "grelha", "suporte"], ["air fryer", "fritadeira"]],
-      "block_phrases": ["rack tv", "rack sala", "suporte celular"]
+      "require_groups": [["rack", "grelha"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["rack tv", "rack sala", "suporte", "prateleira", "nicho", "estante", "air fryer completa", "fritadeira completa"]
     },
     "pegador silicone cozinha": {
       "require_groups": [["pegador", "pinca", "pinça"], ["silicone", "cozinha", "culinario", "culinário"]],
-      "block_phrases": ["pinça sobrancelha", "pinca sobrancelha", "pinça cílios", "pinca cilios"]
+      "block_phrases": ["pinça sobrancelha", "pinca sobrancelha", "pinça cílios", "pinca cilios", "filtro", "coador", "cafe", "café", "infusor"]
     },
     "pincel silicone cozinha": {
       "require_groups": [["pincel"], ["silicone"], ["cozinha", "culinario", "culinário", "churrasco", "confeitaria"]],
-      "block_phrases": ["pincel maquiagem", "pincel pintura", "pincel unha"]
+      "block_phrases": ["pincel maquiagem", "pincel pintura", "pincel unha", "pincel artístico"]
     },
     "termometro culinario": {
       "require_groups": [["termometro", "termômetro"], ["culinario", "culinário", "cozinha", "carne", "alimento", "forno"]],
-      "block_phrases": ["termometro corporal", "termômetro corporal", "termometro febre", "termômetro febre", "oximetro", "oxímetro"]
+      "block_phrases": ["termometro corporal", "termômetro corporal", "termometro febre", "termômetro febre", "oximetro", "oxímetro", "bebê", "bebe"]
     }
   }
 }
