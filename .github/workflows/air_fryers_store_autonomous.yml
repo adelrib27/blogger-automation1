@@ -1,0 +1,116 @@
+name: Air Fryers em Foco — Loja Shopee LIVE Controlada
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "air_fryers_store/store_live_kickoff.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: air-fryers-store-live
+  cancel-in-progress: false
+
+jobs:
+  atualizar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "9113728635217260884"
+      BLOGGER_STORE_POST_ID: "5189023277801568424"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      BLOGGER_STORE_DRY_RUN: "false"
+      BLOGGER_STORE_ITEMS_PER_CATEGORY: "4"
+      BLOGGER_STORE_RECENT_DAYS: "1"
+      SHOPEE_TOP_N: "70"
+      SHOPEE_OPPORTUNITIES_CONFIG: air_fryers_store/config/shopee_oportunidades.json
+      SHOPEE_INTENT_RULES: air_fryers_store/config/shopee_intent_rules.json
+      SHOPEE_OUTPUT_DIR: air_fryers_store/data/store_shopee_scan
+      SHOPEE_CATEGORY: all
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validar código antes da publicação
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/criar_rascunho.py src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py \
+            air_fryers_store/src/shopee_oportunidades_air_fryers.py \
+            air_fryers_store/src/store_auto.py air_fryers_store/src/store_auto_post.py \
+            air_fryers_store/src/store_layout_patch.py air_fryers_store/src/store_auto_self_test.py \
+            air_fryers_store/src/store_hero_sync.py air_fryers_store/src/store_hero_sync_post.py \
+            air_fryers_store/src/post_target_proxy.py
+          BLOGGER_STORE_DRY_RUN=true PYTHONPATH=src:air_fryers_store/src python air_fryers_store/src/store_auto_self_test.py
+      - name: Confirmar secrets obrigatórios
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+      - name: Atualizar vitrine no POST Loja
+        run: PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_auto_post.py
+      - name: Sincronizar 12 cards do hero
+        run: PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_hero_sync_post.py
+      - name: Verificar renderização pública e política básica
+        run: |
+          set -euo pipefail
+          ok=0
+          url="https://air-fryers-em-foco.blogspot.com/2026/11/loja.html"
+          for attempt in 1 2 3 4 5 6; do
+            curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/air-fryers-loja.html || true
+            store_count=$(python -c "print(open('/tmp/air-fryers-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
+            hero_count=$(python -c "print(open('/tmp/air-fryers-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
+            if grep -q "bls-store-grid" /tmp/air-fryers-loja.html && grep -q "blh-grid" /tmp/air-fryers-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/air-fryers-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+              ok=1; break
+            fi
+            sleep 5
+          done
+          test "$ok" -eq 1
+          grep -q "Air Fryers &amp; Fritadeiras\|Air Fryers & Fritadeiras" /tmp/air-fryers-loja.html
+          grep -q "Air Fryers Grandes &amp; Família\|Air Fryers Grandes & Família" /tmp/air-fryers-loja.html
+          grep -q "Formas &amp; Revestimentos\|Formas & Revestimentos" /tmp/air-fryers-loja.html
+          grep -q "Grelhas &amp; Cestos\|Grelhas & Cestos" /tmp/air-fryers-loja.html
+          grep -q "Utensílios &amp; Preparo\|Utensílios & Preparo" /tmp/air-fryers-loja.html
+          grep -q "grid-template-columns:minmax(0,1fr)!important" /tmp/air-fryers-loja.html
+          grep -q '\[id\^="PopularPosts"\]' /tmp/air-fryers-loja.html
+          ! grep -qiE '>[^<]*(cerveja|whisky|vodka|cigarro|tabaco|vape|nicotina|cbd|thc|maconha|arma de fogo|munição|cassino|aposta esportiva|medicamento controlado)[^<]*<' /tmp/air-fryers-loja.html
+          echo "PUBLIC_PASS: nicho air fryers, vitrine=20, hero=12, layout e policy guard básico OK"
+      - name: Persistir rotação somente após PASS público
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- air_fryers_store/data/store_rotation.json air_fryers_store/data/store_last_selection.json)" ]; then
+            echo "Sem mudanças de estado."; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add air_fryers_store/data/store_rotation.json air_fryers_store/data/store_last_selection.json
+          git commit -m "Atualizar rotação da Loja Air Fryers em Foco"
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: air-fryers-store-live-${{ github.run_number }}
+          path: |
+            air_fryers_store/data/store_last_selection.json
+            air_fryers_store/data/store_shopee_scan/
+            /tmp/air-fryers-loja.html
+          if-no-files-found: warn
+          retention-days: 14
