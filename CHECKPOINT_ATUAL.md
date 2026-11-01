@@ -37,6 +37,7 @@ Arquivos centrais:
 - `POLICY_BASELINE_BLOGGER_GOOGLE_2026.md`
 - `config/blogger_policy_guard.json`
 - `src/blogger_policy_guard.py`
+- `src/blogger_policy_guard_self_test.py`
 
 Nos seis pipelines de lojas de nicho, o Policy Guard roda em SAFE e na validação pública LIVE. A persistência de rotação/histórico só ocorre depois de PASS público.
 
@@ -89,26 +90,88 @@ Estado validado em 2026-11-01:
 - **11 blogs** possuem scaffold Loja LIVE, porém ainda precisam receber o motor moderno de rotação Blogger/Shopee.
 - A fila desses 11 alvos está criada como `PREPARED_NOT_DEPLOYED` e `enabled=false`; nenhum LIVE novo foi acionado nesta preparação.
 
-### Risco técnico identificado antes da expansão
+## Consolidação dos writers duplicados — CONCLUÍDA
 
-Há dois casos de writers agendados concorrentes apontando para o MESMO Blog ID e Store Post ID:
+O risco de writers concorrentes foi eliminado sem apagar código de recuperação e sem modificar conteúdo público do Blogger.
 
-1. **Limpeza Inteligente**
-   - `.github/workflows/limpeza_store_autonomous.yml`
-   - `.github/workflows/limpeza_inteligente_store_autonomous.yml`
+### Limpeza Inteligente
 
-2. **Ventiladores em Foco**
-   - `.github/workflows/ventiladores_store_autonomous.yml`
-   - `.github/workflows/ventiladores_em_foco_store_autonomous.yml`
+Writer automático canônico:
 
-Não desativar nem escolher um deles no chute. A consolidação deve ser uma execução própria, preservando o estado/seleção vencedor e mantendo o workflow que passar no conjunto completo de Policy Guard + 20/12 + validação pública.
+- `.github/workflows/limpeza_inteligente_store_autonomous.yml`
+- Blog ID `7757953554206491487`
+- Store Post ID `6383277011247909539`
 
-### Próxima ordem segura para expansão
+Writer legado preservado para recuperação manual:
 
-1. Consolidar os writers duplicados de Limpeza e Ventiladores.
-2. Endurecer Vitrine Prática com o Policy Guard central.
-3. Promover **Achados para Casa** primeiro entre os 11 restantes, porque já existe SAFE específico (`achados_casa_store_safe.yml`).
-4. Depois expandir o mesmo blueprint para os demais alvos da fila, sempre com perfil semântico próprio e histórico independente.
+- `.github/workflows/limpeza_store_autonomous.yml`
+- somente `workflow_dispatch`
+- sem `schedule`
+- sem `push`
+- concurrency compartilhada: `limpeza-inteligente-store-live`
+
+SAFE pós-consolidação:
+
+- run `41362247655` — **SUCCESS**
+- `blogger_policy_guard_self_test: 13/13 OK`
+- teste semântico Limpeza: **16/16 OK**
+- `DRY-RUN OK: 20 produtos únicos em 5 categorias; Blogger não alterado`
+- `BLOGGER_POLICY_GUARD_SAFE_PASS: 20/20`
+
+### Ventiladores em Foco
+
+Writer automático canônico:
+
+- `.github/workflows/ventiladores_store_autonomous.yml`
+- Blog ID `4473989735719981382`
+- Store Post ID `1410775502611365606`
+
+Writer legado preservado para recuperação manual:
+
+- `.github/workflows/ventiladores_em_foco_store_autonomous.yml`
+- somente `workflow_dispatch`
+- sem `schedule`
+- sem `push`
+- concurrency compartilhada: `ventiladores-store-live`
+
+SAFE pós-consolidação:
+
+- run `41362260056` — **SUCCESS**
+- `blogger_policy_guard_self_test: 13/13 OK`
+- teste semântico Ventiladores: **28/28 OK**
+- `DRY-RUN OK: 20 produtos únicos em 5 categorias; Blogger não alterado`
+- `BLOGGER_POLICY_GUARD_SAFE_PASS: 20/20 produtos permitidos`
+
+### Proteção permanente contra regressão
+
+`src/blogger_policy_repo_audit.py` foi atualizado para:
+
+- reconhecer os writers canônicos atuais;
+- exigir que os dois writers legados permaneçam `manual/recovery-only`;
+- falhar se `schedule:` ou `push:` voltar aos writers legados;
+- exigir concurrency compartilhada com o writer canônico;
+- continuar auditando Policy Guard, cookies e identidades legadas.
+
+Auditor permanente:
+
+- run `41362046203` — **SUCCESS**
+- `blogger_policy_guard_self_test: PASS (13 casos)`
+- `BLOGGER_POLICY_REPO_AUDIT_PASS`
+- `SAFE/LIVE 6/6 protegidos; writers legados manual-only`
+
+Auditoria disparada após o último SAFE:
+
+- run `41362260051` — **SUCCESS**
+
+Inventário atualizado:
+
+- `duplicate_writer_risks: 0`
+
+## Próxima ordem segura para expansão
+
+1. **Vitrine Prática** → adicionar o Policy Guard central ao SAFE/LIVE existente, preservando layout final já aprovado e contrato 20 + 12.
+2. **Achados para Casa** → promover o SAFE existente (`achados_casa_store_safe.yml`) para o padrão LIVE moderno, usando os IDs já inventariados e sem recriar Loja.
+3. Depois expandir o mesmo blueprint para os outros 10 alvos restantes, cada um com perfil semântico próprio e histórico independente.
 
 ## Lojas Shopee de nicho — regra atual
 
@@ -141,9 +204,9 @@ Vitrine Prática e Ventiladores em Foco já receberam a correção final da pág
 
 ## Próximo bloco de trabalho
 
-A próxima execução recomendada é **consolidar os writers duplicados de Limpeza Inteligente e Ventiladores em Foco** antes de ampliar a automação para os 11 blogs restantes.
+A próxima execução recomendada é **endurecer a Vitrine Prática com o Blogger Policy Guard central**, sem refazer o layout ou a automação 20 + 12 já aprovada.
 
-Depois disso, continuar a implantação da LOJA Blogger + Shopee em destaque na rede reutilizando a arquitetura existente, sem reconstruir o motor do zero.
+Depois disso, iniciar a promoção de **Achados para Casa** para LIVE automático moderno e então seguir pela fila dos outros 10 blogs.
 
 Objetivo final:
 
@@ -166,4 +229,4 @@ Objetivo final:
 
 Os detalhes completos do estado de 2026-10-30 — TEMA MODELO V20, infraestrutura, Cloudflare gateway, plugin privado, laboratório V20 e gaps locais antigos — continuam preservados nos checkpoints e manifestos datados de 2026-10-30.
 
-Se este arquivo for encontrado em uma conversa futura, NÃO reiniciar o diagnóstico. Ler primeiro `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md`, depois o inventário de rede das Lojas, e continuar a partir do próximo bloco pendente.
+Se este arquivo for encontrado em uma conversa futura, NÃO reiniciar o diagnóstico. Ler primeiro `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md`, depois o inventário de rede das Lojas, e continuar a partir do próximo bloco pendente: **Vitrine Prática + Policy Guard central**.
