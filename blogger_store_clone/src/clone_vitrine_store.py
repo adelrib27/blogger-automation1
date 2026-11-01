@@ -29,7 +29,7 @@ KNOWN_TARGETS = {
     "3552757910439359679": ("Cozinha Sem Complicação", "https://cozinha-sem-complicacao.blogspot.com"),
     "7757953554206491487": ("Robô Aspirador WAP Robot W90", "https://robo-aspirador-wap-w90.blogspot.com"),
     "9113728635217260884": ("Air Fryer Elgin Cube Fry 4,2 L", "https://airfryer-elgin-cube-fry-42l.blogspot.com"),
-    "4473989735719981382": ("Ventilador Mondial Super Power VSP-40-B 40cm", "https://ventilador-mondial-vsp-40-b.blogspot.com"),
+    "4473989735719981382": ("Ventiladores em Foco", "https://ventiladores-em-foco.blogspot.com"),
     "6319734511998091378": ("Tá Na Moda | Morte Súbita Lola 450g", "https://tanamoda-mascara-lola.blogspot.com"),
     "5271798990390532475": ("Liquidificador Philips Walita RI2242", "https://liquidificador-philips-walita-ri2242.blogspot.com"),
     "8658632621591002634": ("Liquidificador Britânia 1400W 3L 12 Velocidades BLQ1300P", "https://liquidificador-britania-blq1300p.blogspot.com"),
