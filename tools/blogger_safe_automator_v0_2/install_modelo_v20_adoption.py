@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 
 import browser_provision as bp
 from run_with_cdp_resilience_v08 import connect_official_chrome_resilient
@@ -33,25 +33,6 @@ def run(cmd: list[str]) -> None:
             detail = detail[-2400:]
         name = Path(cmd[1]).name if len(cmd) > 1 else Path(cmd[0]).name
         raise SystemExit(f"Etapa V20 falhou em {name}: {detail or 'sem detalhe adicional'}")
-
-
-def maybe_change_identity(python: str, here: Path, expected_blog_id: str, title: str, blog_url: str) -> None:
-    # Migração pontual autorizada: preserva o mesmo Blog ID e valida a nova URL publicamente.
-    target_id = "4473989735719981382"
-    target_title = "Ventiladores em Foco"
-    target_url = "https://ventiladores-em-foco.blogspot.com/"
-    if str(expected_blog_id) != target_id or title != target_title or blog_url.rstrip("/") + "/" != target_url:
-        return
-    identity = here / "update_blog_identity_safe.py"
-    if not identity.exists():
-        raise SystemExit("Migração de identidade bloqueada: update_blog_identity_safe.py ausente no runtime.")
-    host = (urlparse(target_url).hostname or "").lower()
-    suffix = ".blogspot.com"
-    if not host.endswith(suffix):
-        raise SystemExit("Migração de identidade bloqueada: domínio Blogspot inválido.")
-    address = host[:-len(suffix)]
-    run([python, str(identity), "--expected-blog-id", target_id, "--title", target_title,
-         "--address", address, "--confirm", "CHANGE BLOG IDENTITY"])
 
 
 def try_normalize_existing(python: str, normalize_backup: Path, source: Path, output: Path) -> bool:
@@ -170,7 +151,6 @@ def main() -> int:
     here = Path(__file__).resolve().parent
     root = here.parents[1]
     python = sys.executable
-    maybe_change_identity(python, here, args.expected_blog_id, args.blog_title, args.blog_url)
     source_theme = root / "themes" / "blogger_emporio_v1_0" / "generated" / "theme.xml"
     template_theme = root / "themes" / "blogger_modelo_v20" / "theme.xml.tpl"
     rendered_theme = root / "themes" / "blogger_modelo_v20" / "rendered" / str(args.expected_blog_id) / "theme.xml"
