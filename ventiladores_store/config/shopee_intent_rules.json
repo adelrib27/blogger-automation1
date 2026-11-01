@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "description": "Regras semânticas do Ventiladores em Foco. Prioriza ventiladores completos e bloqueia peças, capas, motores, hélices, grades, capacitores e falsos positivos.",
+  "rules": {
+    "ventilador de mesa": {
+      "require_groups": [["ventilador"], ["mesa", "30cm", "40cm", "50cm"]],
+      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor"]
+    },
+    "ventilador de coluna": {
+      "require_groups": [["ventilador"], ["coluna", "pedestal", "altura regulável", "altura regulavel"]],
+      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor"]
+    },
+    "ventilador pedestal": {
+      "require_groups": [["ventilador"], ["pedestal", "coluna"]],
+      "block_phrases": ["hélice", "helice", "grade", "motor", "capacitor", "peça", "peca", "reposição", "reposicao", "capa", "protetor"]
+    },
+    "ventilador torre": {
+      "require_groups": [["ventilador", "fan"], ["torre", "tower"]],
+      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso"]
+    },
+    "ventilador de torre": {
+      "require_groups": [["ventilador", "fan"], ["torre", "tower"]],
+      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso"]
+    },
+    "tower fan": {
+      "require_groups": [["tower fan", "ventilador torre", "ventilador de torre"]],
+      "block_phrases": ["capa", "filtro reposição", "filtro reposicao", "motor", "peça", "peca", "controle avulso"]
+    },
+    "ventilador de teto": {
+      "require_groups": [["ventilador"], ["teto"]],
+      "block_phrases": ["capacitor", "controle avulso", "controle remoto avulso", "pá avulsa", "pa avulsa", "hélice", "helice", "motor", "peça", "peca", "kit instalação", "kit instalacao"]
+    },
+    "ventilador teto controle remoto": {
+      "require_groups": [["ventilador"], ["teto"], ["controle", "remoto"]],
+      "block_phrases": ["controle remoto avulso", "capacitor", "pá avulsa", "pa avulsa", "motor", "peça", "peca"]
+    },
+    "ventilador teto led": {
+      "require_groups": [["ventilador"], ["teto"], ["led", "luz", "luminária", "luminaria"]],
+      "block_phrases": ["lâmpada avulsa", "lampada avulsa", "controle avulso", "capacitor", "motor", "peça", "peca"]
+    },
+    "ventilador de parede": {
+      "require_groups": [["ventilador"], ["parede"]],
+      "block_phrases": ["grade", "hélice", "helice", "motor", "capacitor", "suporte avulso", "peça", "peca", "reposição", "reposicao"]
+    },
+    "ventilador parede 60cm": {
+      "require_groups": [["ventilador"], ["parede"], ["60cm", "60 cm"]],
+      "block_phrases": ["grade", "hélice", "helice", "motor", "capacitor", "suporte avulso", "peça", "peca", "reposição", "reposicao"]
+    },
+    "ventilador parede industrial": {
+      "require_groups": [["ventilador"], ["parede"], ["industrial", "comercial", "potente"]],
+      "block_phrases": ["grade", "hélice", "helice", "motor", "capacitor", "suporte avulso", "peça", "peca", "reposição", "reposicao"]
+    },
+    "circulador de ar": {
+      "require_groups": [["circulador"], ["ar", "ventilação", "ventilacao"]],
+      "block_phrases": ["grade", "hélice", "helice", "motor", "capacitor", "peça", "peca", "reposição", "reposicao"]
+    },
+    "ventilador portatil recarregavel": {
+      "require_groups": [["ventilador"], ["portátil", "portatil", "recarregável", "recarregavel", "bateria"]],
+      "block_phrases": ["hélice", "helice", "grade", "motor", "peça", "peca", "reposição", "reposicao", "somente cabo"]
+    },
+    "ventilador usb de mesa": {
+      "require_groups": [["ventilador"], ["usb"], ["mesa", "desktop", "portátil", "portatil"]],
+      "block_phrases": ["hélice", "helice", "grade", "motor", "peça", "peca", "reposição", "reposicao", "somente cabo"]
+    }
+  }
+}
