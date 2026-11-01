@@ -25,18 +25,22 @@ def regression_checks(rules_doc):
         ("Air Fryer 6 Litros Digital 1700W", "air fryer 6 litros", True),
         ("Prateleira Suporte para Air Fryer 6 Litros", "air fryer 6 litros", False),
         ("Fritadeira Air Fryer 8L 1800W Família", "air fryer 8 litros", True),
-        ("Forma Silicone para Air Fryer 8L", "air fryer 8 litros", False),
+        ("Kit 2 Formas de Silicone Para AirFryer Tamanho Grande 4 - 8 Litros", "air fryer 8 litros", False),
         ("Air Fryer Grande 7L Digital", "air fryer grande", True),
+        ("Kit 2 Formas de Silicone Para AirFryer Fritadeira Elétrica Tamanho Grande", "air fryer grande", False),
         ("Nicho Suporte Air Fryer Grande", "air fryer grande", False),
         ("Forma Silicone Air Fryer Reutilizável", "forma silicone air fryer", True),
         ("Forma de Gelo Silicone", "forma silicone air fryer", False),
         ("Papel Descartável para Air Fryer 100 Unidades", "papel air fryer", True),
         ("Papel Presente Decorativo", "papel air fryer", False),
         ("Grelha Rack para Air Fryer Inox", "grelha air fryer", True),
+        ("Desengordurante Power Limpa Grelha Air Fryer 500ml", "grelha air fryer", False),
+        ("Limpador Desengordurante Grelha Air Fryer Pisos Gorduras Pesadas", "grelha air fryer", False),
         ("Prateleira Suporte para Air Fryer", "grelha air fryer", False),
         ("Cesto Compatível Reposição Air Fryer 5L", "cesto compativel air fryer", True),
         ("Cesto Organizador de Roupas", "cesto compativel air fryer", False),
         ("Rack Grelha Air Fryer 2 Andares", "rack air fryer", True),
+        ("Limpa Grelha Churras Spray Limpeza Air Fryer", "rack air fryer", False),
         ("Rack Prateleira de Cozinha para Air Fryer", "rack air fryer", False),
         ("Pegador Pinça Silicone Cozinha 30cm", "pegador silicone cozinha", True),
         ("Filtro de Café com Pegador de Silicone", "pegador silicone cozinha", False),
@@ -58,7 +62,7 @@ def regression_checks(rules_doc):
 
 def main():
     v23.run_regression_checks = regression_checks
-    print("=== AIR FRYERS EM FOCO — SHOPEE OPORTUNIDADES V2 ===")
+    print("=== AIR FRYERS EM FOCO — SHOPEE OPORTUNIDADES V3 ===")
     ranking = v23.scan_v23()
     v23.print_v23(ranking)
 
