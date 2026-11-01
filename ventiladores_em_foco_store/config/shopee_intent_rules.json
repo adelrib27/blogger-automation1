@@ -1,0 +1,680 @@
+{
+  "version": 1,
+  "description": "Regras semânticas de Ventiladores em Foco. Aceita aparelhos completos e bloqueia peças, reposições e acessórios avulsos.",
+  "rules": {
+    "ventilador de mesa": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "mesa"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador turbo mesa": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "mesa"
+        ],
+        [
+          "turbo",
+          "forte",
+          "potente"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador silencioso mesa": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "mesa"
+        ],
+        [
+          "silencioso",
+          "silencio",
+          "silêncio",
+          "quiet"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador de coluna": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "coluna",
+          "pedestal"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador pedestal": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "pedestal",
+          "coluna"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador coluna turbo": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "coluna",
+          "pedestal"
+        ],
+        [
+          "turbo",
+          "forte",
+          "potente"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador de parede": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "parede"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador industrial parede": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "parede"
+        ],
+        [
+          "industrial",
+          "50cm",
+          "60cm",
+          "70cm"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador oscilante parede": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "parede"
+        ],
+        [
+          "oscilante",
+          "oscilacao",
+          "oscilação"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador de teto": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "teto"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador teto controle remoto": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "teto"
+        ],
+        [
+          "controle remoto",
+          "controle"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador teto com luminaria": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "teto"
+        ],
+        [
+          "luminaria",
+          "luminária",
+          "lampada",
+          "lâmpada",
+          "led"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador torre": {
+      "require_groups": [
+        [
+          "ventilador"
+        ],
+        [
+          "torre",
+          "tower"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "circulador de ar": {
+      "require_groups": [
+        [
+          "circulador"
+        ],
+        [
+          "ar"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    },
+    "ventilador circulador turbo": {
+      "require_groups": [
+        [
+          "ventilador",
+          "circulador"
+        ],
+        [
+          "turbo",
+          "circulador"
+        ]
+      ],
+      "block_phrases": [
+        "helice avulsa",
+        "hélice avulsa",
+        "helice para ventilador",
+        "hélice para ventilador",
+        "motor para ventilador",
+        "motor ventilador",
+        "capacitor",
+        "grade para ventilador",
+        "grade ventilador",
+        "peca ventilador",
+        "peça ventilador",
+        "pecas ventilador",
+        "peças ventilador",
+        "reposicao",
+        "reposição",
+        "kit reparo",
+        "rolamento",
+        "eixo",
+        "parafuso",
+        "carcaca",
+        "carcaça",
+        "suporte avulso",
+        "base avulsa",
+        "botao ventilador",
+        "botão ventilador",
+        "placa ventilador",
+        "controle remoto avulso",
+        "controle para ventilador",
+        "capa para ventilador",
+        "adaptador para ventilador"
+      ]
+    }
+  }
+}
