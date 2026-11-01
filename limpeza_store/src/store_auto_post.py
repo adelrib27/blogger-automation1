@@ -28,11 +28,13 @@ _ACCESSORY_PREFIXES=(
     'saco coletor','saco para aspirador','filtro ','bico ','mangueira ','bateria ',
     'carregador ','escova lateral','escova central','motor ','tanque ','reservatorio avulso',
     'cabo avulso','cabo para mop','refil ','kit reparo','peca ','pecas ','suporte para aspirador',
+    'placa ','modulo ','sensor ',
 )
 _ACCESSORY_TERMS=(
     'reposicao','substituicao','compativel com aspirador','para extratora','para aspirador de po',
     'acessorio para aspirador','acessorio aspirador','engate rapido','conector para lavadora',
     'mangueira avulsa','bico avulso','pistola avulsa','filtro hepa reposicao',
+    'placa principal eletronica','modulo eletronico','sensor para aspirador',
 )
 _TOY_TERMS=('brinquedo','infantil','para meninas','para meninos','faxina divertida','carrinho rosa com aspirador')
 _CHEMICAL_TERMS=(
