@@ -1,21 +1,21 @@
 {
-  "version": 1,
-  "description": "Regras semânticas da Limpeza Inteligente. Aceita equipamentos e utensílios completos e bloqueia peças, filtros, sacos, escovas de reposição, baterias, cabos e acessórios avulsos.",
+  "version": 2,
+  "description": "Regras semânticas da Limpeza Inteligente. Exige equipamentos/utensílios completos e bloqueia químicos, peças, filtros, panos, tanques, suportes, cabos, refis, engates e acessórios avulsos.",
   "rules": {
-    "robo aspirador": {"require_groups":[["robô","robo"],["aspirador","varredor"]],"block_phrases":["filtro para","filtro hepa","escova lateral","escova central","bateria para","carregador para","peça","peca","reposição","reposicao","saco coletor"]},
-    "aspirador robot": {"require_groups":[["aspirador"],["robot","robô","robo"]],"block_phrases":["filtro para","filtro hepa","escova lateral","escova central","bateria para","carregador para","peça","peca","reposição","reposicao","saco coletor"]},
-    "robo varredor": {"require_groups":[["robô","robo"],["varredor","aspirador"]],"block_phrases":["filtro","escova reposição","escova reposicao","bateria para","peça","peca","reposição","reposicao"]},
-    "aspirador vertical": {"require_groups":[["aspirador"],["vertical","vassoura"]],"block_phrases":["filtro","bico avulso","mangueira","motor","bateria para","peça","peca","reposição","reposicao"]},
-    "aspirador 2 em 1": {"require_groups":[["aspirador"],["2 em 1","2em1","dois em um"]],"block_phrases":["filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao"]},
-    "aspirador vassoura": {"require_groups":[["aspirador"],["vassoura","vertical"]],"block_phrases":["filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao"]},
-    "aspirador portatil": {"require_groups":[["aspirador"],["portátil","portatil","mão","mao"]],"block_phrases":["filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao","somente cabo"]},
-    "aspirador automotivo": {"require_groups":[["aspirador"],["automotivo","carro","veicular"]],"block_phrases":["filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao"]},
-    "mini aspirador recarregavel": {"require_groups":[["aspirador"],["mini","portátil","portatil"],["recarregável","recarregavel","usb","bateria"]],"block_phrases":["filtro","bico avulso","motor","peça","peca","reposição","reposicao","somente cabo"]},
-    "mop giratorio": {"require_groups":[["mop"],["giratório","giratorio","centrífuga","centrifuga"]],"block_phrases":["refil","cabo avulso","balde avulso","esfregão avulso","esfregao avulso","peça","peca"]},
-    "mop spray": {"require_groups":[["mop"],["spray","reservatório","reservatorio"]],"block_phrases":["refil","cabo avulso","reservatório avulso","reservatorio avulso","peça","peca"]},
-    "rodo mop": {"require_groups":[["mop","rodo"],["limpeza","piso","chão","chao"]],"block_phrases":["refil","cabo avulso","peça","peca"]},
-    "lavadora alta pressao": {"require_groups":[["lavadora"],["alta pressão","alta pressao","pressão","pressao"]],"block_phrases":["mangueira avulsa","bico avulso","pistola avulsa","adaptador","peça","peca","reposição","reposicao"]},
-    "extratora limpeza": {"require_groups":[["extratora"],["limpeza","estofado","carpete","sofá","sofa"]],"block_phrases":["bico avulso","mangueira","filtro","peça","peca","reposição","reposicao","produto químico","produto quimico"]},
-    "limpador a vapor": {"require_groups":[["limpador","vaporizador"],["vapor"]],"block_phrases":["pano reposição","pano reposicao","bico avulso","mangueira","peça","peca","reposição","reposicao"]}
+    "robo aspirador inteligente": {"require_groups":[["robô","robo"],["aspirador","varredor"]],"block_phrases":["desinfetante","produto limpeza","produto de limpeza","pano","almofada","mop para","tanque","substituição","substituicao","filtro","escova lateral","escova central","bateria para","carregador para","acessório","acessorio","peça","peca","reposição","reposicao","saco coletor"]},
+    "robo aspirador automatico": {"require_groups":[["robô","robo"],["aspirador","varredor"],["automático","automatico","inteligente"]],"block_phrases":["desinfetante","produto limpeza","pano","almofada","mop para","tanque","substituição","substituicao","filtro","escova","bateria para","carregador para","acessório","acessorio","peça","peca","reposição","reposicao"]},
+    "robot vacuum aspirador": {"require_groups":[["robot","robô","robo"],["vacuum","aspirador"]],"block_phrases":["desinfetante","pano","almofada","mop para","tanque","substituição","substituicao","filtro","escova","bateria","carregador","acessório","acessorio","peça","peca","reposição","reposicao"]},
+    "aspirador vertical completo": {"require_groups":[["aspirador"],["vertical","vassoura"]],"block_phrases":["suporte de parede","suporte para aspirador","organizador aspirador","filtro","bico avulso","mangueira","motor","bateria para","peça","peca","reposição","reposicao"]},
+    "aspirador 2 em 1 vertical": {"require_groups":[["aspirador"],["2 em 1","2em1","dois em um"],["vertical","portátil","portatil"]],"block_phrases":["suporte de parede","suporte para aspirador","filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao"]},
+    "aspirador vassoura completo": {"require_groups":[["aspirador"],["vassoura","vertical"]],"block_phrases":["suporte","filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao"]},
+    "aspirador portatil recarregavel": {"require_groups":[["aspirador"],["portátil","portatil","mão","mao"],["recarregável","recarregavel","sem fio","bateria"]],"block_phrases":["filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao","somente cabo"]},
+    "aspirador automotivo completo": {"require_groups":[["aspirador"],["automotivo","carro","veicular"]],"block_phrases":["filtro","bico avulso","mangueira","motor","peça","peca","reposição","reposicao"]},
+    "mini aspirador sem fio": {"require_groups":[["aspirador"],["mini","portátil","portatil"],["sem fio","recarregável","recarregavel","usb","bateria"]],"block_phrases":["filtro","bico avulso","motor","peça","peca","reposição","reposicao","somente cabo"]},
+    "mop giratorio com balde": {"require_groups":[["mop"],["giratório","giratorio","centrífuga","centrifuga"],["balde"]],"block_phrases":["refil","cabo mop","cabo para mop","cabo avulso","balde avulso","esfregão avulso","esfregao avulso","peça","peca"]},
+    "mop spray completo": {"require_groups":[["mop"],["spray","reservatório","reservatorio"]],"block_phrases":["refil","cabo mop","cabo para mop","cabo avulso","reservatório avulso","reservatorio avulso","peça","peca"]},
+    "rodo mop com reservatorio": {"require_groups":[["mop","rodo"],["reservatório","reservatorio","spray"],["limpeza","piso","chão","chao"]],"block_phrases":["refil","cabo mop","cabo para mop","cabo avulso","peça","peca"]},
+    "lavadora alta pressao completa": {"require_groups":[["lavadora"],["alta pressão","alta pressao","pressão","pressao"]],"block_phrases":["engate","espigão","espigao","conector","mangueira avulsa","bico avulso","pistola avulsa","adaptador","peça","peca","reposição","reposicao"]},
+    "extratora limpeza estofado": {"require_groups":[["extratora"],["limpeza","estofado","carpete","sofá","sofa"]],"block_phrases":["bico avulso","mangueira","filtro","peça","peca","reposição","reposicao","produto químico","produto quimico","detergente","shampoo"]},
+    "limpador a vapor portatil": {"require_groups":[["limpador","vaporizador"],["vapor"],["portátil","portatil","multiuso"]],"block_phrases":["pano reposição","pano reposicao","bico avulso","mangueira","peça","peca","reposição","reposicao"]}
   }
 }
