@@ -23,12 +23,13 @@ jobs:
         run: |
           echo "SNAPSHOT_COMMIT=${GITHUB_SHA}" | tee BACKUP_SNAPSHOT_COMMIT_2026-11-01.txt
           echo "SNAPSHOT_DATE=2026-11-01" >> BACKUP_SNAPSHOT_COMMIT_2026-11-01.txt
+          echo "SNAPSHOT_REVISION=R2" >> BACKUP_SNAPSHOT_COMMIT_2026-11-01.txt
           echo "REPOSITORY=${GITHUB_REPOSITORY}" >> BACKUP_SNAPSHOT_COMMIT_2026-11-01.txt
 
       - name: Gerar artifact do repositório completo
         uses: actions/upload-artifact@v4
         with:
-          name: blogger-automation1-backup-2026-11-01
+          name: blogger-automation1-backup-2026-11-01-r2
           path: .
           include-hidden-files: true
           if-no-files-found: error
