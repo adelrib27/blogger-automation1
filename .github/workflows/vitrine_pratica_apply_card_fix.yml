@@ -1,0 +1,112 @@
+name: Vitrine Prática — Aplicar correção final dos cards
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/vitrine_pratica_apply_card_fix.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BLOGGER_BLOG_ID: "9144338307944682868"
+      BLOGGER_STORE_POST_ID: "115613719594316807"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+      - name: Aplicar patch de largura e clique
+        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_layout_patch.py
+      - name: Inserir CTA nos 20 cards atuais
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python - <<'PY'
+          import re
+          from pathlib import Path
+          from criar_rascunho import criar_servico_blogger
+
+          BLOG_ID='9144338307944682868'
+          POST_ID='115613719594316807'
+          blogger=criar_servico_blogger()
+          post=blogger.posts().get(blogId=BLOG_ID,postId=POST_ID).execute()
+          raw=str(post.get('content') or '')
+          Path('/tmp/vitrine-before.html').write_text(raw,encoding='utf-8')
+
+          def add_cta(m):
+              card=m.group(0)
+              if 'bls-product-cta' in card:
+                  return card
+              return card[:-4]+'\n  <span class="bls-product-cta">Ver oferta na Shopee</span>\n</a>'
+
+          raw,count=re.subn(r'<a class="bls-product"[^>]*>.*?</a>',add_cta,raw,flags=re.S)
+          if count != 20:
+              raise SystemExit(f'Quantidade de cards principais inesperada: {count}/20')
+          if raw.count('bls-product-cta') < 20:
+              raise SystemExit('CTAs insuficientes')
+          if raw.count('href="https://s.shopee.com.br/') < 32:
+              raise SystemExit('Links Shopee insuficientes')
+          if 'https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html' in raw:
+              raise SystemExit('Link incorreto do Liquidificador detectado')
+          if 'https://vitrine-pratica.blogspot.com/p/loja.html' not in raw:
+              raise SystemExit('Link correto da Loja Vitrine não encontrado')
+
+          body={'title':post.get('title') or 'Loja','content':raw}
+          if post.get('labels') is not None:
+              body['labels']=post.get('labels')
+          blogger.posts().update(blogId=BLOG_ID,postId=POST_ID,body=body).execute()
+          verify=blogger.posts().get(blogId=BLOG_ID,postId=POST_ID).execute()
+          vr=str(verify.get('content') or '')
+          Path('/tmp/vitrine-after.html').write_text(vr,encoding='utf-8')
+          assert vr.count('data-item-id=') == 20
+          assert vr.count('data-hero-item-id=') == 12
+          assert vr.count('bls-product-cta') >= 20
+          assert vr.count('href="https://s.shopee.com.br/') >= 32
+          assert 'blogger-liq-layout-wide-css' in vr
+          assert 'pointer-events:auto!important' in vr
+          print('BLOGGER_API_PASS cards=20 hero=12 cta=20 links>=32 wide=ok click=ok')
+          PY
+      - name: Validar post público
+        run: |
+          set -euo pipefail
+          ok=0
+          url="https://vitrine-pratica.blogspot.com/2026/11/loja.html"
+          for attempt in 1 2 3 4 5 6; do
+            curl -L -fsS --max-time 40 "${url}?final_fix=${GITHUB_RUN_ID}-${attempt}" > /tmp/vitrine-public.html || true
+            if python - <<'PY'
+          from pathlib import Path
+          t=Path('/tmp/vitrine-public.html').read_text(encoding='utf-8',errors='ignore')
+          assert t.count('data-item-id=') == 20
+          assert t.count('data-hero-item-id=') == 12
+          assert t.count('bls-product-cta') >= 20
+          assert t.count('href="https://s.shopee.com.br/') >= 32
+          assert 'blogger-liq-layout-wide-css' in t
+          assert 'pointer-events:auto!important' in t
+          assert 'https://liquidificador-philips-walita-ri2242.blogspot.com/p/loja.html' not in t
+          print('PUBLIC_PASS cards=20 hero=12 cta=20 links>=32 wide=ok click=ok')
+          PY
+            then ok=1; break; fi
+            sleep 5
+          done
+          test "$ok" -eq 1
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitrine-pratica-final-card-fix-${{ github.run_number }}
+          path: |
+            /tmp/vitrine-before.html
+            /tmp/vitrine-after.html
+            /tmp/vitrine-public.html
+          if-no-files-found: warn
+          retention-days: 14
