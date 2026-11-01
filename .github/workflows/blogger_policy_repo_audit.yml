@@ -1,0 +1,49 @@
+name: Blogger — Auditoria de Políticas
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "src/blogger_policy_guard.py"
+      - "src/blogger_policy_guard_self_test.py"
+      - "src/blogger_policy_repo_audit.py"
+      - "config/blogger_policy_guard.json"
+      - "POLICY_BASELINE_BLOGGER_GOOGLE_2026.md"
+      - "blogger_themes/**"
+      - "blogger_store_clone/**"
+      - "air_fryers_store/src/**"
+      - "cabelos_store/src/**"
+      - "blogger_product_store/src/**"
+      - "eletroportateis_store/src/**"
+      - "limpeza_store/src/**"
+      - "ventiladores_store/src/**"
+      - ".github/workflows/*store_safe.yml"
+      - ".github/workflows/*store_autonomous.yml"
+      - ".github/workflows/blogger_policy_repo_audit.yml"
+  schedule:
+    - cron: "20 11 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blogger-policy-repo-audit
+  cancel-in-progress: true
+
+jobs:
+  auditar-politicas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compilar Policy Guard
+        run: |
+          set -euo pipefail
+          python -m py_compile src/blogger_policy_guard.py src/blogger_policy_guard_self_test.py src/blogger_policy_repo_audit.py
+      - name: Self-test Policy Guard
+        run: PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+      - name: Auditar workflows, cookies e identidades
+        run: PYTHONPATH=src python src/blogger_policy_repo_audit.py
