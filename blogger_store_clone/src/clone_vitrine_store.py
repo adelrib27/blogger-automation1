@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -53,10 +54,30 @@ def exact_lojas(items: list[dict]) -> list[dict]:
 
 
 def public_fetch(url: str) -> tuple[str, str]:
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 StoreCloneValidator/1.0"})
-    with urllib.request.urlopen(req, timeout=40) as response:
-        body = response.read().decode("utf-8", errors="ignore")
-        return response.geturl(), body
+    delays = [0, 5, 10, 20, 40]
+    last_error: Exception | None = None
+    for attempt, delay in enumerate(delays, start=1):
+        if delay:
+            print(f"PUBLIC_BACKOFF attempt={attempt} sleep={delay}s", flush=True)
+            time.sleep(delay)
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 StoreCloneValidator/1.0"})
+        try:
+            with urllib.request.urlopen(req, timeout=40) as response:
+                body = response.read().decode("utf-8", errors="ignore")
+                return response.geturl(), body
+        except urllib.error.HTTPError as exc:
+            last_error = exc
+            if exc.code not in (429, 503) or attempt == len(delays):
+                raise
+            print(f"PUBLIC_RETRY status={exc.code} attempt={attempt}", flush=True)
+        except urllib.error.URLError as exc:
+            last_error = exc
+            if attempt == len(delays):
+                raise
+            print(f"PUBLIC_RETRY network_error attempt={attempt}", flush=True)
+    if last_error:
+        raise last_error
+    raise RuntimeError("Falha inesperada na validação pública")
 
 
 def main() -> int:
