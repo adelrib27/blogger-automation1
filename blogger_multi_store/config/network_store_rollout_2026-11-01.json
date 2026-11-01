@@ -17,10 +17,13 @@
     }
   },
   "pre_rollout_blockers": [
-    "Consolidar os dois writers agendados de Limpeza Inteligente sem perder o estado vencedor.",
-    "Consolidar os dois writers agendados de Ventiladores em Foco sem perder o estado vencedor.",
     "Atualizar Vitrine Prática para o Policy Guard central antes de usá-la como referência de produção.",
     "Definir perfil semântico/categorias por blog antes de habilitar qualquer novo LIVE."
+  ],
+  "completed_prerequisites": [
+    "Writers duplicados de Limpeza Inteligente consolidados: limpeza_inteligente_store automático; limpeza_store manual/recovery-only.",
+    "Writers duplicados de Ventiladores em Foco consolidados: ventiladores_store automático; ventiladores_em_foco_store manual/recovery-only.",
+    "Auditor permanente bloqueia reintrodução de schedule/push nos writers legados e exige concurrency compartilhada com o canônico."
   ],
   "targets": [
     {
