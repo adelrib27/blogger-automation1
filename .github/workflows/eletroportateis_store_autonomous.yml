@@ -76,7 +76,7 @@ jobs:
         run: PYTHONPATH=src:eletroportateis_store/src python -u eletroportateis_store/src/store_auto_post.py
       - name: Sincronizar 12 cards do hero
         run: PYTHONPATH=src:eletroportateis_store/src python -u eletroportateis_store/src/store_hero_sync_post.py
-      - name: Verificar renderização pública e políticas
+      - name: Verificar renderização pública, identidade e políticas
         run: |
           set -euo pipefail
           base="https://eletroportateis-na-cozinha.blogspot.com/2026/11/loja.html?store_verify=${GITHUB_RUN_ID}"
@@ -105,9 +105,17 @@ jobs:
           grep -q "Processadores" /tmp/eletroportateis-loja.html
           grep -q "Batedeiras" /tmp/eletroportateis-loja.html
           grep -q "Cafeteiras &amp; Outros Eletros\|Cafeteiras & Outros Eletros" /tmp/eletroportateis-loja.html
+          grep -q 'href="#bls-air-fryers"' /tmp/eletroportateis-loja.html
+          grep -q 'href="#bls-liquidificadores-mixers"' /tmp/eletroportateis-loja.html
+          grep -q 'href="#bls-processadores"' /tmp/eletroportateis-loja.html
+          grep -q 'href="#bls-batedeiras"' /tmp/eletroportateis-loja.html
+          grep -q 'href="#bls-cafeteiras-outros"' /tmp/eletroportateis-loja.html
+          grep -q "https://eletroportateis-na-cozinha.blogspot.com/p/loja.html" /tmp/eletroportateis-loja.html
           grep -q "grid-template-columns:minmax(0,1fr)!important" /tmp/eletroportateis-loja.html
           grep -q '\[id\^="PopularPosts"\]' /tmp/eletroportateis-loja.html
-          echo "PUBLIC_PASS: Eletroportáteis na Cozinha vitrine=20 hero=12 layout e policy guard OK"
+          ! grep -q "liquidificadores-em-foco.blogspot.com" /tmp/eletroportateis-loja.html
+          ! grep -q 'href="#bls-casa-organizacao"' /tmp/eletroportateis-loja.html
+          echo "PUBLIC_PASS: Eletroportáteis vitrine=20 hero=12 identidade layout policy guard OK"
       - name: Persistir rotação somente após PASS público
         run: |
           set -euo pipefail
