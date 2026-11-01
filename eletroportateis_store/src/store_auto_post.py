@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+import importlib.util
 import os
+from pathlib import Path
 import store_auto as base
 from blogger_policy_guard import product_policy_check
 from post_target_proxy import BloggerPostTargetProxy
-from store_layout_patch import patch_store_layout
+
+_patch_path=Path(__file__).resolve().parent/'store_layout_patch.py'
+_spec=importlib.util.spec_from_file_location('eletroportateis_store_layout_patch',_patch_path)
+_layout=importlib.util.module_from_spec(_spec)
+assert _spec and _spec.loader
+_spec.loader.exec_module(_layout)
+patch_store_layout=_layout.patch_store_layout
 
 POST_ID=os.getenv('BLOGGER_STORE_POST_ID','2599179962359747947').strip()
 if not POST_ID:
