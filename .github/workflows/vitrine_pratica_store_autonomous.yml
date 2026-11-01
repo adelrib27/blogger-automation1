@@ -2,6 +2,9 @@ name: Vitrine Prática — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "35 8 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "vitrine_pratica_store/store_live_kickoff.txt"
