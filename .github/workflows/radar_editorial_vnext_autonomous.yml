@@ -104,10 +104,13 @@ jobs:
             src/shopee_oportunidades_v22.py \
             src/shopee_oportunidades_v23.py \
             src/fase3_fila_radar.py \
+            src/editorial_cross_blog_guard.py \
+            src/editorial_cross_blog_guard_self_test.py \
             radar_tech_br/src/*.py
           PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/self_test.py
           PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/cta_card_self_test.py
           PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/semantic_self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
 
       - name: Validar fila atual e detectar slot já publicado
         run: |
@@ -160,6 +163,10 @@ jobs:
       - name: Gerar artigo com Qwen3
         if: env.RADAR_SKIP != 'true'
         run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/generate_articles.py
+
+      - name: Gate anti-repetição entre blogs
+        if: env.RADAR_SKIP != 'true'
+        run: python -u src/editorial_cross_blog_guard.py --project radar_tech_br
 
       - name: Publicar somente após gates e imagem destacada
         if: env.RADAR_SKIP != 'true'
