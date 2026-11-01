@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "description": "Regras semânticas do Air Fryers em Foco. Aparelhos devem ser completos; acessórios precisam ser explicitamente relacionados à air fryer ou ao preparo culinário.",
+  "rules": {
+    "air fryer": {
+      "require_groups": [["air fryer", "fritadeira"]],
+      "block_phrases": ["forma air fryer", "forma para air fryer", "papel air fryer", "forro air fryer", "tapete air fryer", "cesto air fryer", "grelha air fryer", "rack air fryer", "resistencia", "resistência", "botao", "botão", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório", "silicone"]
+    },
+    "fritadeira eletrica": {
+      "require_groups": [["fritadeira", "air fryer"], ["eletrica", "elétrica", "air fryer", "sem oleo", "sem óleo", "digital", "litros"]],
+      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha", "rack", "resistencia", "resistência", "botao", "botão", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
+    },
+    "fritadeira sem oleo": {
+      "require_groups": [["fritadeira", "air fryer"], ["sem oleo", "sem óleo", "air fryer", "eletrica", "elétrica"]],
+      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha", "rack", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
+    },
+    "air fryer oven": {
+      "require_groups": [["air fryer", "fritadeira"], ["oven", "forno"]],
+      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha avulsa", "peca", "peça", "reposicao", "reposição", "acessorio", "acessório"]
+    },
+    "forno air fryer": {
+      "require_groups": [["forno", "oven"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha avulsa", "peca", "peça", "reposicao", "reposição"]
+    },
+    "fritadeira forno": {
+      "require_groups": [["fritadeira", "air fryer"], ["forno", "oven"]],
+      "block_phrases": ["forma", "papel", "forro", "tapete", "cesto", "grelha avulsa", "peca", "peça", "reposicao", "reposição"]
+    },
+    "forma silicone air fryer": {
+      "require_groups": [["forma"], ["silicone"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["forma de gelo", "forma bolo sem air fryer"]
+    },
+    "papel air fryer": {
+      "require_groups": [["papel", "forro"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["papel aluminio avulso", "papel alumínio avulso", "papel presente"]
+    },
+    "tapete silicone air fryer": {
+      "require_groups": [["tapete", "forro"], ["silicone"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["tapete banheiro", "tapete cozinha decorativo"]
+    },
+    "grelha air fryer": {
+      "require_groups": [["grelha", "rack"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["grelha churrasqueira sem air fryer", "grade ventilador"]
+    },
+    "cesto air fryer": {
+      "require_groups": [["cesto"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["cesto roupa", "cesto organizador"]
+    },
+    "rack air fryer": {
+      "require_groups": [["rack", "grelha", "suporte"], ["air fryer", "fritadeira"]],
+      "block_phrases": ["rack tv", "rack sala", "suporte celular"]
+    },
+    "pegador silicone cozinha": {
+      "require_groups": [["pegador", "pinca", "pinça"], ["silicone", "cozinha", "culinario", "culinário"]],
+      "block_phrases": ["pinça sobrancelha", "pinca sobrancelha", "pinça cílios", "pinca cilios"]
+    },
+    "pincel silicone cozinha": {
+      "require_groups": [["pincel"], ["silicone"], ["cozinha", "culinario", "culinário", "churrasco", "confeitaria"]],
+      "block_phrases": ["pincel maquiagem", "pincel pintura", "pincel unha"]
+    },
+    "termometro culinario": {
+      "require_groups": [["termometro", "termômetro"], ["culinario", "culinário", "cozinha", "carne", "alimento", "forno"]],
+      "block_phrases": ["termometro corporal", "termômetro corporal", "termometro febre", "termômetro febre", "oximetro", "oxímetro"]
+    }
+  }
+}
