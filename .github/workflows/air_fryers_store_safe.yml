@@ -72,6 +72,21 @@ jobs:
           test -n "$BLOGGER_REFRESH_TOKEN"
       - name: Executar SAFE real sem publicar
         run: PYTHONPATH=src:air_fryers_store/src python -u air_fryers_store/src/store_auto_post.py
+      - name: Policy Guard — validar os 20 produtos SAFE
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          data=json.loads(Path('air_fryers_store/data/store_last_selection.json').read_text(encoding='utf-8'))
+          products=[p for items in (data.get('categories') or {}).values() for p in items]
+          if len(products)!=20:
+              raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
+          for product in products:
+              require_product_allowed(product)
+          print('BLOGGER_POLICY_GUARD_SAFE_PASS: 20/20 produtos permitidos')
+          PY
       - name: Guardar diagnóstico SAFE
         if: always()
         uses: actions/upload-artifact@v4
