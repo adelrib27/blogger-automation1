@@ -15,7 +15,7 @@ permissions:
 
 concurrency:
   group: air-fryers-store-safe
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   validar-loja:
@@ -32,7 +32,7 @@ jobs:
       BLOGGER_STORE_DRY_RUN: "true"
       BLOGGER_STORE_ITEMS_PER_CATEGORY: "4"
       BLOGGER_STORE_RECENT_DAYS: "1"
-      SHOPEE_TOP_N: "60"
+      SHOPEE_TOP_N: "70"
       SHOPEE_OPPORTUNITIES_CONFIG: air_fryers_store/config/shopee_oportunidades.json
       SHOPEE_INTENT_RULES: air_fryers_store/config/shopee_intent_rules.json
       SHOPEE_OUTPUT_DIR: air_fryers_store/data/store_shopee_scan
