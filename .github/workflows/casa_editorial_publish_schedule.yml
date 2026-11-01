@@ -37,6 +37,9 @@ jobs:
           python casa_decoracao/src/category_rotation.py
           python casa_decoracao/src/self_test.py
           python casa_decoracao/src/cta_card_self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
+      - name: Gate anti-repetição entre blogs
+        run: python -u src/editorial_cross_blog_guard.py --project casa_decoracao
       - name: Publicar apenas itens já gerados e aprovados
         run: python -u casa_decoracao/src/publish_generated.py
       - name: Auditar
