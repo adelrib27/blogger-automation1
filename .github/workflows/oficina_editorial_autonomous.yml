@@ -60,10 +60,11 @@ jobs:
 
       - name: Validar sintaxe e gates universais
         run: |
-          python -m py_compile src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py
+          python -m py_compile src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py src/editorial_cross_blog_guard.py src/editorial_cross_blog_guard_self_test.py
           python -m py_compile oficina_garagem/src/shopee_oportunidades_oficina.py oficina_garagem/src/build_editorial_queue.py oficina_garagem/src/quality_gate.py oficina_garagem/src/cta_context.py oficina_garagem/src/editorial_normalizer.py oficina_garagem/src/generate_articles.py oficina_garagem/src/publish_generated.py oficina_garagem/src/self_test.py oficina_garagem/src/cta_card_self_test.py
           python oficina_garagem/src/self_test.py
           python oficina_garagem/src/cta_card_self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
 
       - name: Validar autenticação WordPress do Oficina
         run: |
@@ -85,6 +86,9 @@ jobs:
 
       - name: Gerar um artigo com Qwen3 e gates
         run: python -u oficina_garagem/src/generate_articles.py
+
+      - name: Gate anti-repetição entre blogs
+        run: python -u src/editorial_cross_blog_guard.py --project oficina_garagem
 
       - name: Publicar somente candidato DRAFT_READY
         run: python -u oficina_garagem/src/publish_generated.py
