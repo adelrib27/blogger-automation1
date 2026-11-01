@@ -58,12 +58,16 @@ jobs:
           python casa_decoracao/src/category_rotation.py
           python casa_decoracao/src/self_test.py
           python casa_decoracao/src/cta_card_self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
       - name: Descobrir Shopee
         run: python -u casa_decoracao/src/shopee_oportunidades_casa.py
       - name: Montar fila
         run: python -u casa_decoracao/src/build_editorial_queue.py
       - name: Gerar
         run: python -u casa_decoracao/src/generate_articles.py
+      - name: Gate anti-repetição entre blogs
+        if: ${{ inputs.publish_after_generation }}
+        run: python -u src/editorial_cross_blog_guard.py --project casa_decoracao
       - name: Publicar se autorizado nesta execução
         if: ${{ inputs.publish_after_generation }}
         run: python -u casa_decoracao/src/publish_generated.py
