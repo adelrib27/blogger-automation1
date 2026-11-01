@@ -27,7 +27,7 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Aplicar patch de identidade/layout
         run: PYTHONPATH=src python -u eletroportateis_store/src/store_layout_patch.py
-      - name: Validar POST salvo
+      - name: Validar POST salvo e copy nichada
         run: |
           PYTHONPATH=src python - <<'PY'
           import os
@@ -44,7 +44,10 @@ jobs:
           assert 'href="#bls-processadores"' in h
           assert 'href="#bls-batedeiras"' in h
           assert 'href="#bls-cafeteiras-outros"' in h
+          assert 'Vitrine de eletroportáteis para cozinha' in h
+          assert 'Batedeiras, cafeteiras e outros eletros para a cozinha' in h
           assert 'liquidificadores-em-foco.blogspot.com' not in h
           assert 'href="#bls-casa-organizacao"' not in h
-          print('ELETROPORTATEIS_LAYOUT_IDENTITY_PASS')
+          assert 'Achados reais para cuidados pessoais e rotina' not in h
+          print('ELETROPORTATEIS_LAYOUT_COPY_PASS')
           PY
