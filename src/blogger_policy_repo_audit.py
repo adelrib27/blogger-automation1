@@ -104,13 +104,20 @@ def audit_cookie_safety() -> None:
 
 
 def audit_legacy_identity() -> None:
-    # Bloqueia referências antigas apenas nos seis pipelines ativos de nicho.
+    # Bloqueia referências antigas executáveis nos pipelines ativos.
+    # Linhas de assert negativo (ex.: ! grep -q "dominio-antigo") são permitidas,
+    # pois servem justamente para provar que a saída pública não contém o legado.
     active = SAFE_WORKFLOWS + LIVE_WORKFLOWS
     for rel in active:
         text = read(rel)
-        for domain in LEGACY_DOMAINS:
-            if domain in text:
-                fail(f"domínio legado em workflow ativo: {rel}: {domain}")
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            stripped = line.strip()
+            negative_assert = stripped.startswith("! grep") or stripped.startswith("!grep")
+            if negative_assert:
+                continue
+            for domain in LEGACY_DOMAINS:
+                if domain in line:
+                    fail(f"domínio legado em workflow ativo: {rel}:{lineno}: {domain}")
 
 
 def main() -> None:
