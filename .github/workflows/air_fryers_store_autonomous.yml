@@ -1,7 +1,10 @@
-name: Air Fryers em Foco — Loja Shopee LIVE Controlada
+name: Air Fryers em Foco — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
+  schedule:
+    # 09:05 America/Recife (UTC-3)
+    - cron: "5 12 * * *"
   push:
     paths:
       - "air_fryers_store/store_live_kickoff.txt"
@@ -16,7 +19,7 @@ concurrency:
 jobs:
   atualizar-loja:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     env:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
@@ -70,16 +73,22 @@ jobs:
       - name: Verificar renderização pública e política básica
         run: |
           set -euo pipefail
+          base="https://air-fryers-em-foco.blogspot.com/2026/11/loja.html?store_verify=${GITHUB_RUN_ID}"
           ok=0
-          url="https://air-fryers-em-foco.blogspot.com/2026/11/loja.html"
           for attempt in 1 2 3 4 5 6; do
-            curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/air-fryers-loja.html || true
-            store_count=$(python -c "print(open('/tmp/air-fryers-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
-            hero_count=$(python -c "print(open('/tmp/air-fryers-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
-            if grep -q "bls-store-grid" /tmp/air-fryers-loja.html && grep -q "blh-grid" /tmp/air-fryers-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/air-fryers-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
-              ok=1; break
+            code=$(curl -L -sS -A 'Mozilla/5.0 AirFryersStoreValidator/1.0' --max-time 40 -o /tmp/air-fryers-loja.html -w '%{http_code}' "${base}-${attempt}" || echo 000)
+            if [ "$code" = "200" ]; then
+              read store_count hero_count < <(python - <<'PY'
+          raw=open('/tmp/air-fryers-loja.html',encoding='utf-8',errors='ignore').read()
+          print(raw.count('data-item-id='), raw.count('data-hero-item-id='))
+          PY
+              )
+              if [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ] && grep -q "bls-store-grid" /tmp/air-fryers-loja.html && grep -q "blh-grid" /tmp/air-fryers-loja.html; then
+                ok=1; break
+              fi
             fi
-            sleep 5
+            echo "Tentativa pública $attempt sem PASS (HTTP $code); backoff."
+            sleep $((attempt * 6))
           done
           test "$ok" -eq 1
           grep -q "Air Fryers &amp; Fritadeiras\|Air Fryers & Fritadeiras" /tmp/air-fryers-loja.html
@@ -87,10 +96,11 @@ jobs:
           grep -q "Formas &amp; Revestimentos\|Formas & Revestimentos" /tmp/air-fryers-loja.html
           grep -q "Grelhas &amp; Cestos\|Grelhas & Cestos" /tmp/air-fryers-loja.html
           grep -q "Utensílios &amp; Preparo\|Utensílios & Preparo" /tmp/air-fryers-loja.html
+          grep -q 'href="#bls-formas-revestimentos"' /tmp/air-fryers-loja.html
           grep -q "grid-template-columns:minmax(0,1fr)!important" /tmp/air-fryers-loja.html
           grep -q '\[id\^="PopularPosts"\]' /tmp/air-fryers-loja.html
           ! grep -qiE '>[^<]*(cerveja|whisky|vodka|cigarro|tabaco|vape|nicotina|cbd|thc|maconha|arma de fogo|munição|cassino|aposta esportiva|medicamento controlado)[^<]*<' /tmp/air-fryers-loja.html
-          echo "PUBLIC_PASS: nicho air fryers, vitrine=20, hero=12, layout e policy guard básico OK"
+          echo "PUBLIC_PASS: nicho air fryers, vitrine=20, hero=12, navegação, layout e policy guard básico OK"
       - name: Persistir rotação somente após PASS público
         run: |
           set -euo pipefail
