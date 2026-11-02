@@ -208,13 +208,14 @@ def audit_moda_schedule() -> None:
         fail("Moda e Ofertas voltou a ter gatilho push após promoção final")
 
 
-def audit_achadinhos_controlled_live() -> None:
+def audit_achadinhos_schedule() -> None:
     rel = ".github/workflows/achadinhos_beleza_store_autonomous.yml"
     text = read(rel)
     required = [
         "workflow_dispatch:",
-        "blogger_stores/achadinhos_beleza_live_kickoff.txt",
-        "CONTROLLED_LIVE_BEFORE_SCHEDULE_2026_11_02",
+        'cron: "35 10 * * *"',
+        'timezone: "America/Recife"',
+        "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Cuidados Pessoais</h3>',
         'href="#bls-skincare">Ver skincare</a>',
         'href="#bls-maquiagem">Ver maquiagem</a>',
@@ -226,9 +227,9 @@ def audit_achadinhos_controlled_live() -> None:
     ]
     missing = [x for x in required if x not in text]
     if missing:
-        fail(f"Achadinhos de Beleza LIVE controlado sem gates obrigatórios: {missing}")
-    if re.search(r"(?m)^\s*schedule\s*:", text):
-        fail("Achadinhos de Beleza recebeu schedule antes da validação LIVE pública")
+        fail(f"Achadinhos de Beleza sem schedule/gate visual/semântico canônico: {missing}")
+    if re.search(r"(?m)^\s*push\s*:", text):
+        fail("Achadinhos de Beleza voltou a ter gatilho push após promoção final")
 
 
 def audit_legacy_writers_manual_only() -> None:
@@ -298,12 +299,12 @@ def main() -> None:
     audit_achados_que_valem_schedule()
     audit_guia_schedule()
     audit_moda_schedule()
-    audit_achadinhos_controlled_live()
+    audit_achadinhos_schedule()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 16/16 protegidos; Achadinhos de Beleza em LIVE controlado sem schedule; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 16/16 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50, Guia de Achados & Ofertas 10:05, Moda e Ofertas 10:20 e Achadinhos de Beleza 10:35 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
