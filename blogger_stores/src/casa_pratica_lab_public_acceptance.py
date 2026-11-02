@@ -86,13 +86,28 @@ def validate_store_page() -> None:
         "bls-iluminacao-decoracao",
         "bls-clima-conforto",
         "bls-utilidades-rotina",
+        "BLOGGER_STORE_SHARE_CARD_START",
+        "BLOGGER_STORE_SHARE_CARD_END",
+        'id="blogger-store-share-card"',
+        'data-blogger-store-share-card="1"',
+        'id="blogger-store-share-button"',
+        'aria-label="Compartilhar"',
+        'id="blogger-store-share-card-css"',
+        'id="blogger-store-share-card-js"',
+        "navigator.share",
+        "navigator.clipboard",
+        "#729c0b",
     ]
     missing = [token for token in required if token not in raw]
     if missing:
         raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
+    if raw.count('id="blogger-store-share-card"') != 1:
+        raise RuntimeError("Cartão de compartilhamento ausente ou duplicado.")
+    if raw.find('id="blogger-store-share-card"') > raw.find('<div class="bls-page">'):
+        raise RuntimeError("Cartão de compartilhamento precisa aparecer antes da vitrine.")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Controlador legado do carousel reapareceu na Page pública.")
-    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel delegado + Policy Guard.")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel + share card + Policy Guard.")
 
 
 def validate_home_and_articles() -> None:
