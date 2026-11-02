@@ -10,21 +10,25 @@ from urllib.parse import urlparse
 from googleapiclient.errors import HttpError
 
 from blogger_policy_guard import require_store_html_allowed
+from blogger_store_share_card import inject_share_card, verify_share_card
 from criar_rascunho import criar_servico_blogger
 
 PAGE_COMPAT_START = "<!-- BLOGGER_STORE_AUTO_START -->"
 PAGE_COMPAT_END = "<!-- BLOGGER_STORE_AUTO_END -->"
 
 PAGE_SURFACE_FIX = r'''<style id="blogger-new-store-page-surface-fix">
-body:has(.bls-page) .centered-bottom{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:0!important;margin-left:auto!important;margin-right:auto!important}
-body:has(.bls-page) .main-container{grid-column:1!important;grid-area:1 / 1!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important}
+body:has(.bls-page) .bg-photo-container{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
+body:has(.bls-page) .bg-photo{display:none!important;background:none!important;height:0!important;min-height:0!important}
+body:has(.bls-page) .centered{width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+body:has(.bls-page) .centered-bottom{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:0!important;margin:0 auto!important;padding-top:0!important}
+body:has(.bls-page) .main-container{grid-column:1!important;grid-area:1 / 1!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;padding-top:0!important}
 body:has(.bls-page) .sidebar-container,body:has(.bls-page) .sidebar-container-container,body:has(.bls-page) .main-container aside,body:has(.bls-page) .PopularPosts,body:has(.bls-page) .widget.PopularPosts,body:has(.bls-page) [id^="PopularPosts"]{display:none!important}
 body:has(.bls-page) .main-container,body:has(.bls-page) .main,body:has(.bls-page) .blog-posts,body:has(.bls-page) .post-outer-container,body:has(.bls-page) .post-outer,body:has(.bls-page) .post,body:has(.bls-page) .post-body-container,body:has(.bls-page) .post-body{width:100%!important;max-width:none!important}
 body:has(.bls-page) .post-outer-container,body:has(.bls-page) .post-outer,body:has(.bls-page) .post,body:has(.bls-page) .post-body-container{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;padding-top:0!important;padding-bottom:0!important;margin-top:0!important;margin-bottom:0!important}
 body:has(.bls-page) .post-title-container,body:has(.bls-page) .post-title,body:has(.bls-page) .entry-title,body:has(.bls-page) .post-header{display:none!important}
 body:has(.bls-page) .post-body{margin:0!important;padding:0!important;overflow:visible!important}
-body:has(.bls-page) .bls-page{width:min(1440px,calc(100vw - 48px))!important;max-width:none!important;position:relative!important;left:50%!important;transform:translateX(-50%)!important;margin-top:32px!important;margin-bottom:0!important}
-@media(max-width:700px){body:has(.bls-page) .centered-bottom{display:block!important}body:has(.bls-page) .bls-page{width:calc(100vw - 16px)!important;margin-top:16px!important}}
+body:has(.bls-page) .bls-page{width:min(1440px,calc(100vw - 48px))!important;max-width:none!important;position:relative!important;left:50%!important;transform:translateX(-50%)!important;margin-top:12px!important;margin-bottom:0!important}
+@media(max-width:700px){body:has(.bls-page) .centered-bottom{display:block!important}body:has(.bls-page) .bls-page{width:calc(100vw - 16px)!important;margin-top:8px!important}}
 </style>'''
 
 # O Blogger pode recriar a Page depois de um clique. O índice é global e reaplicado
@@ -150,8 +154,11 @@ def strip_legacy_carousel(raw: str) -> str:
     return cleaned
 
 
-def pageify_store_html(raw: str) -> str:
-    return PAGE_SURFACE_FIX + "\n" + strip_legacy_carousel(raw) + "\n" + PAGE_CAROUSEL_FIX
+def pageify_store_html(raw: str, page_url: str) -> str:
+    page_raw = PAGE_SURFACE_FIX + "\n" + strip_legacy_carousel(raw) + "\n" + PAGE_CAROUSEL_FIX
+    page_raw = inject_share_card(page_raw, page_url)
+    verify_share_card(page_raw, page_url)
+    return page_raw
 
 
 def verify_page_contract(raw: str, page_url: str) -> None:
@@ -159,6 +166,9 @@ def verify_page_contract(raw: str, page_url: str) -> None:
         raise RuntimeError("Page LOJA perdeu BLOGGER_STORE_AUTO_START/END.")
     required = [
         'id="blogger-new-store-page-surface-fix"',
+        '.bg-photo-container{display:none!important',
+        '.bg-photo{display:none!important',
+        'margin-top:12px!important',
         'id="blogger-new-store-page-carousel-fix"',
         "let currentIndex=0",
         "document.addEventListener('click'",
@@ -171,10 +181,11 @@ def verify_page_contract(raw: str, page_url: str) -> None:
     ]
     missing = [token for token in required if token not in raw]
     if missing:
-        raise RuntimeError(f"Controlador delegado sincronizado incompleto: {missing}")
+        raise RuntimeError(f"Controlador delegado/superfície visual incompleto: {missing}")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Page LOJA contém o controlador legado do carousel.")
     verify_store_html(raw, page_url)
+    verify_share_card(raw, page_url)
 
 
 def load_targets(require_post: bool = True):
@@ -195,10 +206,10 @@ def sync_page(dry_run: bool = False) -> int:
     service, post, page, blog_id, page_id, _, page_url = load_targets()
     raw = str((post or {}).get("content") or "")
     verify_store_html(raw, page_url)
-    page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw) + "\n" + PAGE_COMPAT_END
+    page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw, page_url) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + carousel delegado com estado sincronizado; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + fundo decorativo removido + carousel + share compacto; Blogger não alterado.")
         return 0
     service.pages().update(
         blogId=blog_id,
@@ -207,7 +218,7 @@ def sync_page(dry_run: bool = False) -> int:
     ).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + layout amplo + carousel delegado sincronizado.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + fundo limpo + carousel + share compacto.")
     return 0
 
 
@@ -225,7 +236,7 @@ def ensure_store_post_draft() -> int:
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, layout amplo e carousel sincronizado.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, fundo limpo, carousel e share compacto.")
     return 0
 
 
