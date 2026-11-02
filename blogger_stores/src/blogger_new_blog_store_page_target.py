@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 from urllib.parse import urlparse
 
@@ -136,6 +137,11 @@ PAGE_CAROUSEL_FIX = """<script id="blogger-new-store-page-carousel-fix">
 })();
 </script>"""
 
+LEGACY_CAROUSEL_RE = re.compile(
+    r"<script>\s*document\.addEventListener\('DOMContentLoaded',function\(\)\{const root=document\.getElementById\('blsSlider'\).*?</script>",
+    re.S,
+)
+
 
 def required_env(name: str) -> str:
     value = os.getenv(name, "").strip()
@@ -207,8 +213,18 @@ def verify_store_html(raw: str, page_url: str) -> None:
         raise RuntimeError(f"Page-target perdeu contrato visual maduro: {missing}")
 
 
+def strip_legacy_carousel(raw: str) -> str:
+    cleaned, count = LEGACY_CAROUSEL_RE.subn("", raw)
+    if count != 1:
+        raise RuntimeError(f"Esperado remover exatamente 1 controlador legado do carousel; removidos={count}.")
+    if "document.getElementById('blsSlider')" in cleaned:
+        raise RuntimeError("Controlador legado do carousel ainda presente após limpeza.")
+    return cleaned
+
+
 def pageify_store_html(raw: str) -> str:
-    return PAGE_SURFACE_FIX + "\n" + raw + "\n" + PAGE_CAROUSEL_FIX
+    cleaned = strip_legacy_carousel(raw)
+    return PAGE_SURFACE_FIX + "\n" + cleaned + "\n" + PAGE_CAROUSEL_FIX
 
 
 def verify_page_contract(raw: str, page_url: str) -> None:
@@ -220,6 +236,8 @@ def verify_page_contract(raw: str, page_url: str) -> None:
         raise RuntimeError("Page LOJA perdeu o fix do carousel para DOM duplicado do Blogger.")
     if "new WeakSet()" not in raw or "new MutationObserver" not in raw:
         raise RuntimeError("Page LOJA perdeu a proteção dinâmica contra duplicação tardia do DOM.")
+    if "document.getElementById('blsSlider')" in raw:
+        raise RuntimeError("Page LOJA contém dois controladores de carousel; legado deve ser removido.")
     verify_store_html(raw, page_url)
 
 
@@ -244,13 +262,13 @@ def sync_page(dry_run: bool = False) -> int:
     page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: staging 20+12 + carousel + superfície Page + MutationObserver validados; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: staging 20+12 + controlador único + MutationObserver validados; Blogger não alterado.")
         return 0
     body = {"title": page.get("title") or "LOJA", "content": page_raw}
     service.pages().update(blogId=blog_id, pageId=page_id, body=body).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + carousel funcional + layout amplo + DOM observer.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + controlador único + layout amplo + DOM observer.")
     return 0
 
 
@@ -270,7 +288,7 @@ def ensure_store_post_draft() -> int:
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, carousel funcional e superfície ampla.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, controlador único e superfície ampla.")
     return 0
 
 
