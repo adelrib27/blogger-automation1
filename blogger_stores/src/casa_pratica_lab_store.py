@@ -326,8 +326,24 @@ def store_write(dry_run: bool) -> int:
 
 
 def hero_write(dry_run: bool) -> int:
-    rc = base.write_hero(dry_run)
-    print("CASA_PRATICA_LAB_HERO_DRY_RUN_PASS" if dry_run else "CASA_PRATICA_LAB_HERO_PASS: 12 mini-cards únicos sincronizados.")
+    # Primeira publicação de um blog zerado: o hero DRY-RUN precisa validar o
+    # estado combinado que existirá após Store LIVE (20) + Hero LIVE (12).
+    # Não reduzimos o gate de base.verify_hero: ele continua exigindo 32 rels.
+    if dry_run:
+        data = base.load_json(SELECTION_PATH, {})
+        base.validate_selection(data)
+        slides = build_hero(data)
+        _, post = base.get_service_post()
+        raw = str(post.get("content") or "")
+        new_raw = base.replace_region(raw, base.STORE_START, base.STORE_END, render_store(data))
+        for (start, end), slide in zip(base.HERO_MARKERS, slides):
+            new_raw = base.replace_region(new_raw, start, end, slide)
+        base.verify_store_html(new_raw, data)
+        base.verify_hero(new_raw, slides)
+        print("CASA_PRATICA_LAB_FIRST_PUBLISH_COMBINED_DRY_RUN_PASS: Store 20 + Hero 12 simulados em memória; gate 32 rels preservado; Blogger não alterado.")
+        return 0
+    rc = base.write_hero(False)
+    print("CASA_PRATICA_LAB_HERO_PASS: 12 mini-cards únicos sincronizados.")
     return rc
 
 
