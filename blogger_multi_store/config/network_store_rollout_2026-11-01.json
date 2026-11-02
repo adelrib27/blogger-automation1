@@ -23,21 +23,12 @@
     "Writers duplicados de Limpeza Inteligente consolidados: limpeza_inteligente_store automático; limpeza_store manual/recovery-only.",
     "Writers duplicados de Ventiladores em Foco consolidados: ventiladores_store automático; ventiladores_em_foco_store manual/recovery-only.",
     "Auditor permanente bloqueia reintrodução de schedule/push nos writers legados e exige concurrency compartilhada com o canônico.",
-    "Vitrine Prática integrada ao Policy Guard central: SAFE 41364558522 PASS; auditor 7/7 41367352735 PASS; LIVE controlado 41367361852 PASS; 20 produtos + 12 hero + identidade pública correta."
+    "Vitrine Prática integrada ao Policy Guard central: SAFE 41364558522 PASS; auditor 7/7 41367352735 PASS; LIVE controlado 41367361852 PASS; 20 produtos + 12 hero + identidade pública correta.",
+    "Achados para Casa integrado ao padrão moderno: SAFE final 41370322415 PASS; LIVE corrigido 41370529825 PASS; auditor permanente 8/8 41370840393 PASS; 20 produtos + 12 hero; perfil Clima corrigido e validado por leitura independente; persistência somente pós-PASS; schedule diário 07:20 America/Recife habilitado após validação completa."
   ],
   "targets": [
     {
       "priority": 1,
-      "title": "Achados para Casa",
-      "blog_id": "1426630233929943394",
-      "store_page_id": "3841238517239710135",
-      "store_post_id": "854861801599328533",
-      "current_state": "SAFE_EXISTS_LIVE_AUTO_MISSING",
-      "existing_safe_workflow": ".github/workflows/achados_casa_store_safe.yml",
-      "profile_status": "review_existing_safe_profile_before_live"
-    },
-    {
-      "priority": 2,
       "title": "Conecta Achados",
       "blog_id": "1719259388907013414",
       "store_page_id": "2386698852540729057",
@@ -46,7 +37,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 3,
+      "priority": 2,
       "title": "Estilo no Dia a Dia",
       "blog_id": "4830103887652146866",
       "store_page_id": "4843501559117111153",
@@ -55,7 +46,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 4,
+      "priority": 3,
       "title": "Casa em Ordem",
       "blog_id": "4177382081459143374",
       "store_page_id": "4031853959690608178",
@@ -64,7 +55,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 5,
+      "priority": 4,
       "title": "Escolha Certa Online",
       "blog_id": "5151950717041967683",
       "store_page_id": "3334029815604129982",
@@ -73,7 +64,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 6,
+      "priority": 5,
       "title": "Achados que Valem",
       "blog_id": "7527651041649593600",
       "store_page_id": "2615453333851618808",
@@ -82,7 +73,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 7,
+      "priority": 6,
       "title": "Guia de Achados & Ofertas",
       "blog_id": "1453188702831337099",
       "store_page_id": "9156313162825773745",
@@ -91,7 +82,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 8,
+      "priority": 7,
       "title": "Moda e Ofertas",
       "blog_id": "2858597309582499028",
       "store_page_id": "1341310014099438949",
@@ -100,7 +91,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 9,
+      "priority": 8,
       "title": "Achadinhos de Beleza",
       "blog_id": "2562496977098748229",
       "store_page_id": "455853998448723529",
@@ -109,7 +100,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 10,
+      "priority": 9,
       "title": "Radar Tech BR",
       "blog_id": "7487888217273188851",
       "store_page_id": "6887385207246667244",
@@ -118,7 +109,7 @@
       "note": "Não confundir com radar_store_autonomous.yml, que é a automação da loja WordPress."
     },
     {
-      "priority": 11,
+      "priority": 10,
       "title": "Cozinha Sem Complicação",
       "blog_id": "3552757910439359679",
       "store_page_id": "6913756651435112886",
