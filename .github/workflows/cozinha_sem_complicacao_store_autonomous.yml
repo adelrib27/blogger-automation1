@@ -1,10 +1,10 @@
-name: Cozinha Sem Complicação — Loja Shopee LIVE controlado
+name: Cozinha Sem Complicação — Loja Shopee diária
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/cozinha_sem_complicacao_live_kickoff.txt"
+  schedule:
+    - cron: "5 11 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -242,6 +242,6 @@ jobs:
           retention-days: 14
 
 # POLICY_GUARD_CENTRAL_COZINHA_SEM_COMPLICACAO_2026_11_02
-# CONTROLLED_LIVE_NO_SCHEDULE_2026_11_02
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
 # PUBLIC_HTML_ENTITY_NORMALIZATION_2026_11_02
