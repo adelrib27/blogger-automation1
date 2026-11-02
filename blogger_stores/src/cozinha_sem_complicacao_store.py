@@ -254,13 +254,18 @@ def run_semantic_regression() -> None:
     print(f"COZINHA_SEM_COMPLICACAO_SEMANTIC_REGRESSION_PASS: {len(cases)}/{len(cases)}")
 
 
+def _run_kitchen_regression_for_base(_rules_doc: dict) -> None:
+    run_semantic_regression()
+
+
 def safe_scan() -> int:
     run_semantic_regression()
+    base.run_conecta_regression_checks = _run_kitchen_regression_for_base
     rc = base.safe_scan()
     data = base.load_json(SELECTION_PATH, {})
     semantic = dict(data.get("semanticValidation") or {})
     semantic["rulesFile"] = "config/shopee_cozinha_sem_complicacao_intent_rules.json"
-    semantic["profileVersion"] = 1
+    semantic["profileVersion"] = 2
     semantic["profileName"] = "Cozinha Sem Complicação"
     data["semanticValidation"] = semantic
     base.save_atomic(SELECTION_PATH, data)
