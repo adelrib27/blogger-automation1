@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 8,
+    "modern_blogger_auto_policy_guard": 9,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 10,
+    "store_scaffold_needs_auto_rotation": 9,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -95,7 +95,10 @@
       "store_page_url": "https://conectaachados.blogspot.com/p/loja.html",
       "store_post_id": "259394788951394758",
       "store_post_url": "https://conectaachados.blogspot.com/2026/11/loja.html",
-      "automation_status": "store_scaffold_needs_auto_rotation"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/conecta_achados_store_safe.yml",
+      "live_workflow": ".github/workflows/conecta_achados_store_autonomous.yml",
+      "note": "Concluído em 2026-11-02: SAFE final 41430553714 PASS após inspeção manual do artifact e endurecimento semântico v3; auditor 9/9 41430916398 PASS antes do LIVE; primeiro LIVE 41430973587 publicou 20+12 mas falhou fail-closed no gate público por HTTP 429 e não persistiu; workflow recebeu retry público resiliente a 429; LIVE final 41431642751 PASS com HTTP público 429,429,200, store=20, hero=12, Policy Guard público e persistência pós-PASS commit 7fae90ff6b235171f37d2b77475ffcda254a3527. Artifact LIVE ID 13135215258 SHA-256 c16a16107cb7b2b7a6219d3e652024999d39093e112aab9fc5624b51ebc8d352. Leitura independente do Blogger confirmou identidade e seleção sem falsos positivos críticos. Schedule diário 07:35 America/Recife habilitado; auditor pós-schedule 41432136126 PASS 9/9."
     },
     {
       "title": "Estilo no Dia a Dia",
