@@ -182,6 +182,30 @@ def audit_guia_schedule() -> None:
         fail("Guia de Achados & Ofertas voltou a ter gatilho push após promoção final")
 
 
+def audit_moda_schedule() -> None:
+    rel = ".github/workflows/moda_ofertas_store_autonomous.yml"
+    text = read(rel)
+    required = [
+        "workflow_dispatch:",
+        'cron: "20 10 * * *"',
+        'timezone: "America/Recife"',
+        "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
+        '<h3>Beleza &amp; Cuidados</h3>',
+        'href="#bls-moda-feminina">Ver moda feminina</a>',
+        'href="#bls-acessorios">Ver acessórios</a>',
+        'href="#bls-beleza-cuidados">Ver beleza</a>',
+        'href="#bls-moda-masculina">Ver moda masculina</a>',
+        "Suporte De Parede Multifuncional",
+        "SHOTH FEMININO ALFAIATARIA",
+        "Bolsa Feminina Kit Sacola Bag + Mini Tote + Carteira + Necessaire",
+    ]
+    missing = [x for x in required if x not in text]
+    if missing:
+        fail(f"Moda e Ofertas sem schedule/gate visual/semântico canônico: {missing}")
+    if re.search(r"(?m)^\s*push\s*:", text):
+        fail("Moda e Ofertas voltou a ter gatilho push após promoção final")
+
+
 def audit_legacy_writers_manual_only() -> None:
     for rel, canonical_group in LEGACY_MANUAL_WORKFLOWS.items():
         text = read(rel)
@@ -248,11 +272,12 @@ def main() -> None:
     audit_escolha_schedule()
     audit_achados_que_valem_schedule()
     audit_guia_schedule()
+    audit_moda_schedule()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 15/15 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50 e Guia de Achados & Ofertas 10:05 protegidos; Moda e Ofertas LIVE permanece manual até o primeiro PASS público; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 15/15 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50, Guia de Achados & Ofertas 10:05 e Moda e Ofertas 10:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
