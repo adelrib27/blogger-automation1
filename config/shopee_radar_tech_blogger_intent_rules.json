@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "description": "Regras semânticas específicas do Radar Tech BR no Blogger para impedir acessórios, peças e falsos positivos na vitrine Shopee, preservando o perfil público atual de tecnologia e produtos práticos.",
   "rules": {
     "carrinho organizador": {"require_groups": [["carrinho"], ["organizador", "multiuso", "prateleira"]], "block_phrases": ["brinquedo", "miniatura", "carrinho de bebe", "carrinho controle remoto"]},
@@ -9,12 +9,12 @@
 
     "fritadeira eletrica": {"require_groups": [["fritadeira", "air fryer", "airfryer"], ["eletrica", "sem oleo", "air fryer", "airfryer"]], "block_phrases": ["forma de silicone", "papel para air fryer", "cesto para air fryer", "capa para air fryer", "grade para air fryer", "resistencia", "puxador", "botao", "acessorio"]},
     "escorredor de loucas": {"require_groups": [["escorredor"], ["louca", "loucas", "prato", "pratos", "talher", "talheres", "copo", "copos"]], "block_phrases": ["tapete escorredor", "peca para escorredor", "escorredor massa", "escorredor macarrao", "escorredor arroz", "escorredor legumes"]},
-    "mixer eletrico": {"require_groups": [["mixer"]], "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer", "peca para mixer"]},
-    "organizador cozinha": {"require_groups": [["organizador", "prateleira", "suporte", "porta ", "carrinho", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"], ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "cafe", "talher", "geladeira", "pia"]], "block_phrases": ["cesto de roupa", "cesto de roupas", "brinquedos", "organizador de maquiagem"]},
+    "mixer eletrico": {"require_groups": [["mixer"]], "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer", "peca para mixer", "processador picador", "picador de alimentos", "moedor de carne", "processador de alimentos"]},
+    "organizador cozinha": {"require_groups": [["organizador", "prateleira", "suporte", "porta ", "carrinho", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"], ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "cafe", "talher", "geladeira", "pia"]], "block_phrases": ["cesto de roupa", "cesto de roupas", "brinquedos", "organizador de maquiagem", "organizador de vassoura", "suporte organizador de vassoura", "vassoura rodo mop", "rodo mop"]},
 
     "fone bluetooth": {"require_groups": [["fone", "headphone", "earbuds"], ["bluetooth", "sem fio", "wireless"]], "block_phrases": ["capa silicone", "capa protetora", "capa para fone", "case para fone", "estojo para fone", "almofada para fone", "cabo para fone", "lightning", "entrada lightning", "com fio", "conector p2"]},
     "smartwatch": {"require_groups": [["smartwatch", "relogio inteligente"]], "block_phrases": ["pulseira para smartwatch", "pelicula para smartwatch", "carregador para smartwatch", "capa para smartwatch", "bracelete"]},
-    "carregador usb c": {"require_groups": [["carregador", "fonte"], ["usb c", "type c", "pd", "power delivery"]], "block_phrases": ["cabo", "adaptador de cabo", "conector avulso"]},
+    "carregador usb c": {"require_groups": [["carregador", "fonte"], ["usb c", "type c", "pd", "power delivery"]], "block_phrases": ["cabo", "adaptador de cabo", "conector avulso", "tomada de parede", "tomada embutir", "tomada dupla"]},
     "caixa de som bluetooth": {"require_groups": [["caixa de som", "speaker"], ["bluetooth", "sem fio", "wireless"]], "block_phrases": ["capa para caixa de som", "suporte para caixa de som", "placa para caixa de som", "bateria para caixa de som"]},
 
     "aparador de pelos": {"require_groups": [["aparador de pelos", "aparador pelos", "maquina de barbear", "barbeador eletrico"]], "block_phrases": ["papa bolinhas", "tira pelos de roupas", "removedor de pelos de roupas", "removedor de pelo de roupa", "lamina de reposicao"]},
