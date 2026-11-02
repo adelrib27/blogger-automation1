@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 9,
+    "modern_blogger_auto_policy_guard": 10,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 9,
+    "store_scaffold_needs_auto_rotation": 8,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -108,7 +108,10 @@
       "store_page_url": "https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/p/loja.html",
       "store_post_id": "3362829797679236320",
       "store_post_url": "https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/2026/11/loja.html",
-      "automation_status": "store_scaffold_needs_auto_rotation"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/estilo_dia_a_dia_store_safe.yml",
+      "live_workflow": ".github/workflows/estilo_dia_a_dia_store_autonomous.yml",
+      "note": "Concluído em 2026-11-02 como 10ª loja moderna. SAFE final 41434538973 PASS após três rodadas e inspeção manual do artifact; regras v3 bloquearam necessaire no lugar de bolsa e roupas vendidas com cinto no lugar de cinto. Auditor pré-LIVE 41434985540 PASS 10/10. LIVE controlado 41435064769 PASS com gate público 429,200, store=20, hero=12, Policy Guard público e identidade moda/beleza correta; persistência somente pós-PASS no commit d5e32b4f7e6487f63cf1316225a2696ef51f6c69. Artifact LIVE ID 13136406819 SHA-256 2bb6fd0784d4531242bb4352e0bb4bfc53c0c8abcb0ffb8d2d2b134b081db89d. Leitura independente do Blogger confirmou seleção limpa e cinco categorias próprias. Correção pontual de navegação Ver moda -> Moda Feminina validada no run 41435662722 e workflow de correção deixado manual/recovery-only. Schedule diário 07:50 America/Recife habilitado; auditor pós-schedule 41435835886 PASS com 13/13 e SAFE/LIVE 10/10."
     },
     {
       "title": "Casa em Ordem",
