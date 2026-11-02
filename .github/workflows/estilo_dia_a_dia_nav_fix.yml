@@ -1,9 +1,7 @@
-name: Estilo no Dia a Dia — Correção pontual navegação Loja
+name: Estilo no Dia a Dia — Correção pontual navegação Loja (manual recovery)
 
 on:
-  push:
-    paths:
-      - "blogger_stores/estilo_dia_a_dia_nav_fix_kickoff.txt"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -67,3 +65,5 @@ jobs:
               raise SystemExit('ESTILO_NAV_FIX_FAIL: contrato 20+12 alterado')
           print('ESTILO_NAV_FIX_PASS: Ver moda -> Moda Feminina; 20+12 preservado')
           PY
+
+# MANUAL_RECOVERY_ONLY_AFTER_ONE_TIME_FIX_2026_11_02
