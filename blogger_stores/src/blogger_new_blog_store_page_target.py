@@ -9,6 +9,9 @@ from urllib.parse import urlparse
 from blogger_policy_guard import require_store_html_allowed
 from criar_rascunho import criar_servico_blogger
 
+PAGE_COMPAT_START = "<!-- BLOGGER_STORE_AUTO_START -->"
+PAGE_COMPAT_END = "<!-- BLOGGER_STORE_AUTO_END -->"
+
 
 def required_env(name: str) -> str:
     value = os.getenv(name, "").strip()
@@ -42,6 +45,12 @@ def verify_store_html(raw: str, page_url: str) -> None:
         raise RuntimeError("Page-target inválida: URL canônica da LOJA não está presente no HTML.")
 
 
+def verify_page_contract(raw: str, page_url: str) -> None:
+    if raw.count(PAGE_COMPAT_START) != 1 or raw.count(PAGE_COMPAT_END) != 1:
+        raise RuntimeError("Page LOJA perdeu marcadores canônicos BLOGGER_STORE_AUTO_START/END.")
+    verify_store_html(raw, page_url)
+
+
 def load_targets():
     blog_id, page_id, post_id, page_url = env_target()
     service = criar_servico_blogger()
@@ -60,14 +69,16 @@ def sync_page(dry_run: bool = False) -> int:
     service, post, page, blog_id, page_id, _, page_url = load_targets()
     raw = str(post.get("content") or "")
     verify_store_html(raw, page_url)
+    page_raw = PAGE_COMPAT_START + "\n" + raw + "\n" + PAGE_COMPAT_END
+    verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_DRY_RUN_PASS: Store Post staging 20+12 validado; Page não alterada.")
+        print("BLOGGER_NEW_STORE_PAGE_DRY_RUN_PASS: staging 20+12 e contrato da Page validados; Blogger não alterado.")
         return 0
-    body = {"title": page.get("title") or "LOJA", "content": raw}
+    body = {"title": page.get("title") or "LOJA", "content": page_raw}
     service.pages().update(blogId=blog_id, pageId=page_id, body=body).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
-    verify_store_html(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_SYNC_PASS: /p/loja.html sincronizada com Store 20 + Hero 12.")
+    verify_page_contract(str(verify.get("content") or ""), page_url)
+    print("BLOGGER_NEW_STORE_PAGE_SYNC_PASS: /p/loja.html sincronizada com Store 20 + Hero 12 e marcadores V20 preservados.")
     return 0
 
 
@@ -86,8 +97,8 @@ def ensure_store_post_draft() -> int:
 
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets()
-    verify_store_html(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_VERIFY_PASS: Page LOJA contém 20 Store + 12 Hero.")
+    verify_page_contract(str(page.get("content") or ""), page_url)
+    print("BLOGGER_NEW_STORE_PAGE_VERIFY_PASS: Page LOJA contém 20 Store + 12 Hero e marcadores canônicos.")
     return 0
 
 
