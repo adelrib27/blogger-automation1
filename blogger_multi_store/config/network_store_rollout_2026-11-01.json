@@ -29,20 +29,12 @@
     "Estilo no Dia a Dia integrado ao padrão moderno em 2026-11-02: SAFE final 41434538973 PASS após três rodadas e inspeção manual do artifact; falsos positivos de necessaire/bolsa e roupa/cinto foram bloqueados nas regras v3; auditor pré-LIVE 41434985540 PASS 10/10; LIVE controlado 41435064769 PASS com gate público 429,200, 20 produtos + 12 hero, Policy Guard público, identidade moda/beleza e persistência somente pós-PASS no commit d5e32b4f7e6487f63cf1316225a2696ef51f6c69; leitura independente do Blogger confirmou a seleção; correção pontual de navegação validada no run 41435662722 e deixada manual/recovery-only; schedule diário 07:50 America/Recife; auditor pós-schedule 41435835886 PASS 10/10.",
     "Casa em Ordem integrado ao padrão moderno em 2026-11-02: SAFE final 41439295948 PASS após endurecimento semântico v3 e inspeção manual dos 20 produtos; auditor pré-LIVE 41439709960 PASS 11/11; LIVE 41439797912 PASS com HTTP público 429,200, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit 909382b375afc9dae578d7965873d9ece3736f9c; artifact LIVE 13138591112 SHA-256 782b0bb47371bdc67d53a7e14e424152f65a2df45a4154fdde6f51f0e1d19cb9; correção de 4 âncoras do hero validada no run 41440262021; schedule diário 08:05 America/Recife commit c77915f81c004774992b54487c31afd32ab06efd; auditor pós-schedule 41440836794 PASS 11/11.",
     "Escolha Certa Online integrado ao padrão moderno em 2026-11-02: SAFE final 41444290462 PASS com 40/40 regressões, 20/20 Policy Guard e artifact 13140694375 SHA-256 99c68b44800270edf7e03e4a9c664e0bff3a88d8be295e0da67e250c0291c586 revisado manualmente; auditor pré-LIVE 41445104053 PASS 12/12; primeiro LIVE 41445195745 falhou antes da escrita por Shopee System Error 10000; segundo LIVE 41445486532 comprovou fail-closed ao não persistir após 12x HTTP 429; LIVE final 41446386899 PASS com HTTP 429,429,429,429,200, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit 4acc7ef5fbfb343bf3fd47cfc07b1b1f57d47ca9; artifact LIVE 13142278325 SHA-256 321e646e4b60a636c50199c407b3885b0c18e7231d9379fe5c2639bc18c6f5a9; leitura independente do Blogger confirmou a saída; schedule diário 08:20 America/Recife commit 92a6497a30aa5b365fefddf8ad31b1ca53781ab8 sem push; auditor pós-schedule 41447386251 PASS 12/12, commit 2d3c536dc499a7b193a9eb20fec97dda2c1263b8.",
-    "Achados que Valem integrado ao padrão moderno em 2026-11-02: SAFE final 41451588897 PASS com 40/40 regressões, 20/20 Policy Guard e artifact 13144498675 SHA-256 1709ac651dc41c0787dbbb5d2af6b48b572587160ce24c733ab54abcc24ad861 revisado manualmente após endurecimento v2; auditor pré-LIVE 41452182786 PASS 13/13; LIVE 41452673413 PASS com HTTP público 200 no primeiro intento, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit f0d673e240e92740a77d8e7f7f74bc663807ec14; artifact LIVE 13145975986 SHA-256 3b6ee78f1a1db70bb80a4ad3b6ccaac93d0c9ff7f601c8886fbb8de7307b7e4b; leitura independente do Blogger confirmou a saída; schedule diário 09:50 America/Recife commit fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc sem push; auditor pós-schedule 41453525922 PASS 13/13, job 125304377780."
+    "Achados que Valem integrado ao padrão moderno em 2026-11-02: SAFE final 41451588897 PASS com 40/40 regressões, 20/20 Policy Guard e artifact 13144498675 SHA-256 1709ac651dc41c0787dbbb5d2af6b48b572587160ce24c733ab54abcc24ad861 revisado manualmente após endurecimento v2; auditor pré-LIVE 41452182786 PASS 13/13; LIVE 41452673413 PASS com HTTP público 200 no primeiro intento, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit f0d673e240e92740a77d8e7f7f74bc663807ec14; artifact LIVE 13145975986 SHA-256 3b6ee78f1a1db70bb80a4ad3b6ccaac93d0c9ff7f601c8886fbb8de7307b7e4b; leitura independente do Blogger confirmou a saída; schedule diário 09:50 America/Recife commit fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc sem push; auditor pós-schedule 41453525922 PASS 13/13, job 125304377780.",
+    "Guia de Achados & Ofertas integrado ao padrão moderno em 2026-11-02: SAFE final 41456616916 PASS após duas correções semânticas e inspeção manual 20/20; artifact SAFE 13147022213 SHA-256 5931db8b28bfbd1fd30490a7f7714aa87d0bf3a8612874d10ca1cdf123633362; auditor pré-LIVE 41457241687 PASS 14/14; LIVE 41457315455 PASS com HTTP público 429,429,429,200, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit 4311a7bd2810db4e5216aecbeb292e944313a453; artifact LIVE 13146989690 SHA-256 0b65847255880df65b3ab43935c7b901508cefd1a373592f5c02fb1fa5de3620; leitura independente do Blogger confirmou a saída; schedule diário 10:05 America/Recife commit 7bb9aab95ef4bc1941f0cd714b9156e77da165a6 sem push; auditor pós-schedule 41458378091 PASS 14/14, job 125320811307."
   ],
   "targets": [
     {
       "priority": 1,
-      "title": "Guia de Achados & Ofertas",
-      "blog_id": "1453188702831337099",
-      "store_page_id": "9156313162825773745",
-      "store_post_id": "3858461075334539445",
-      "current_state": "STORE_SCAFFOLD_LIVE_AUTO_MISSING",
-      "profile_status": "semantic_profile_required"
-    },
-    {
-      "priority": 2,
       "title": "Moda e Ofertas",
       "blog_id": "2858597309582499028",
       "store_page_id": "1341310014099438949",
@@ -51,7 +43,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 3,
+      "priority": 2,
       "title": "Achadinhos de Beleza",
       "blog_id": "2562496977098748229",
       "store_page_id": "455853998448723529",
@@ -60,7 +52,7 @@
       "profile_status": "semantic_profile_required"
     },
     {
-      "priority": 4,
+      "priority": 3,
       "title": "Radar Tech BR",
       "blog_id": "7487888217273188851",
       "store_page_id": "6887385207246667244",
@@ -69,7 +61,7 @@
       "note": "Não confundir com radar_store_autonomous.yml, que é a automação da loja WordPress."
     },
     {
-      "priority": 5,
+      "priority": 4,
       "title": "Cozinha Sem Complicação",
       "blog_id": "3552757910439359679",
       "store_page_id": "6913756651435112886",

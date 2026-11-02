@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 13,
+    "modern_blogger_auto_policy_guard": 14,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 5,
+    "store_scaffold_needs_auto_rotation": 4,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -160,7 +160,10 @@
       "store_page_url": "https://guia-de-achados-e-ofertas.blogspot.com/p/loja.html",
       "store_post_id": "3858461075334539445",
       "store_post_url": "https://guia-de-achados-e-ofertas.blogspot.com/2026/11/loja.html",
-      "automation_status": "store_scaffold_needs_auto_rotation"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/guia_achados_ofertas_store_safe.yml",
+      "live_workflow": ".github/workflows/guia_achados_ofertas_store_autonomous.yml",
+      "note": "Concluído em 2026-11-02 como 14ª loja moderna. SAFE inicial 41455863415 falhou corretamente na regressão antes de consultar produtos por formas de reposição não bloqueadas. SAFE 41456132980 ficou técnico verde, mas inspeção manual rejeitou porta-controle no lugar de ventilador de parede, mini ventilador de mão no lugar de ventilador de mesa e mini pseudo-climatizador. Perfil v2 endurecido; SAFE final 41456616916 PASS, job 125314795846, 40/40 regressões, 20/20 Policy Guard, fallback=0/carry=0 e artifact 13147022213 SHA-256 5931db8b28bfbd1fd30490a7f7714aa87d0bf3a8612874d10ca1cdf123633362 revisado manualmente 20/20. Auditor pré-LIVE 41457241687 PASS 14/14. LIVE 41457315455 PASS, job 125317174246, HTTP público 429,429,429,200, store=20, hero=12, Policy Guard público e identidade correta; persistência somente pós-PASS no commit 4311a7bd2810db4e5216aecbeb292e944313a453. Artifact LIVE 13146989690 SHA-256 0b65847255880df65b3ab43935c7b901508cefd1a373592f5c02fb1fa5de3620. Leitura independente do Blogger confirmou 20+12, cinco categorias, quatro âncoras, disclosure e links patrocinados. Schedule diário 10:05 America/Recife habilitado no commit 7bb9aab95ef4bc1941f0cd714b9156e77da165a6 sem push; auditor pós-schedule 41458378091 PASS 14/14, job 125320811307, proteção permanente no commit 64c0a78da0515c315d88b24dba324064567a35d4."
     },
     {
       "title": "Vitrine Prática",
