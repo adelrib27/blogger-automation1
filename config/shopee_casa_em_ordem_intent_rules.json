@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "description": "Regras semânticas específicas do Casa em Ordem para manter a vitrine em organização doméstica, roupa de cama, banheiro, lavanderia, limpeza e decoração, bloqueando peças, refis, itens automotivos, pets e falsos positivos.",
+  "rules": {
+    "caixa organizadora": {"require_groups": [["caixa"], ["organizadora", "organizador"]], "block_phrases": ["caixa de som", "caixa amplificada", "caixa eletrica", "caixa elétrica", "caixa de ferramenta", "caixa ferramenta", "automotivo", "pet", "cachorro", "gato"]},
+    "cesto organizador": {"require_groups": [["cesto"], ["organizador", "organizadora", "organizacao", "organização"]], "block_phrases": ["bicicleta", "moto", "automotivo", "fritadeira", "air fryer", "pet", "cachorro", "gato"]},
+    "sapateira organizadora": {"require_groups": [["sapateira"], ["organizadora", "organizador", "multiuso", "prateleira"]], "block_phrases": ["infantil", "boneca", "miniatura", "pet", "cachorro", "gato"]},
+    "carrinho organizador": {"require_groups": [["carrinho"], ["organizador", "organizadora", "multiuso"]], "block_phrases": ["bebe", "bebê", "brinquedo", "controle remoto", "hot wheels", "maquiagem profissional com rodinha", "ferramenta", "oficina", "pet"]},
+
+    "protetor colchao impermeavel": {"require_groups": [["protetor"], ["colchao", "colchão"], ["impermeavel", "impermeável"]], "block_phrases": ["pet", "cachorro", "gato", "sofa", "sofá", "travesseiro"]},
+    "capa colchao elastico": {"require_groups": [["capa"], ["colchao", "colchão"], ["elastico", "elástico"]], "block_phrases": ["pet", "cachorro", "gato", "sofa", "sofá", "travesseiro"]},
+    "saco organizador edredom": {"require_groups": [["saco"], ["organizador", "organizadora"], ["edredom", "edredons", "cobertor", "cobertores", "roupa de cama"]], "block_phrases": ["a vacuo para alimento", "a vácuo para alimento", "lixo", "entulho", "pet"]},
+    "colmeia organizadora guarda roupa": {"require_groups": [["colmeia"], ["organizadora", "organizador"], ["guarda roupa", "guarda-roupa", "gaveta", "roupas"]], "block_phrases": ["abelha", "apicultura", "mel", "pet"]},
+
+    "suporte shampoo sem furo": {"require_groups": [["suporte"], ["shampoo", "xampu"], ["sem furo", "adesivo", "adesiva", "ventosa"]], "block_phrases": ["suporte para celular", "suporte automotivo", "carro", "moto", "refil", "pet"]},
+    "prateleira banheiro sem furo": {"require_groups": [["prateleira"], ["banheiro"], ["sem furo", "adesiva", "adesivo", "ventosa"]], "block_phrases": ["miniatura", "casa de boneca", "pet"]},
+    "porta papel higienico": {"require_groups": [["porta"], ["papel higienico", "papel higiênico"]], "block_phrases": ["refil", "papel higienico avulso", "papel higiênico avulso", "pet"]},
+    "tapete banheiro antiderrapante": {"require_groups": [["tapete"], ["banheiro"], ["antiderrapante", "anti derrapante"]], "block_phrases": ["pet", "cachorro", "gato", "automotivo", "carro"]},
+
+    "varal de chao": {"require_groups": [["varal"], ["chao", "chão"]], "block_phrases": ["miniatura", "brinquedo", "casa de boneca", "pet"]},
+    "cesto roupa suja": {"require_groups": [["cesto"], ["roupa suja", "roupas sujas", "lavanderia"]], "block_phrases": ["bicicleta", "moto", "pet", "cachorro", "gato"]},
+    "mop spray": {"require_groups": [["mop"], ["spray", "reservatorio", "reservatório"]], "block_phrases": ["refil", "pano avulso", "cabo avulso", "peca", "peça", "brinquedo", "miniatura"]},
+    "rodo limpeza": {"require_groups": [["rodo"], ["limpeza", "limpar", "piso", "chao", "chão"]], "block_phrases": ["automotivo", "carro", "para-brisa", "parabrisa", "vidro automotivo", "refil", "borracha avulsa", "pet"]},
+
+    "cortina blackout": {"require_groups": [["cortina"], ["blackout", "blecaute"]], "block_phrases": ["tecido por metro", "tecido metro", "amostra", "miniatura", "casa de boneca", "pet"]},
+    "tapete sala": {"require_groups": [["tapete"], ["sala", "sala de estar"]], "block_phrases": ["automotivo", "carro", "banheiro", "pet", "cachorro", "gato", "miniatura"]},
+    "capa almofada decorativa": {"require_groups": [["capa"], ["almofada"], ["decorativa", "decorativo", "decoracao", "decoração"]], "block_phrases": ["enchimento", "almofada completa", "pet", "cachorro", "gato"]},
+    "manta sofa": {"require_groups": [["manta"], ["sofa", "sofá"]], "block_phrases": ["pet", "cachorro", "gato", "manta termica", "manta térmica", "manta asfaltica", "manta asfáltica"]}
+  }
+}
