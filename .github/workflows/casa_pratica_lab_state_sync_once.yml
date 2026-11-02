@@ -43,7 +43,7 @@ jobs:
       - name: Aceitação pública
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
 
-      - name: Chrome — confirmar 0 para 1 e persistência após recriação
+      - name: Chrome — confirmar 0 para 1 sem interferência da rotação automática
         run: |
           set -euo pipefail
           pip install selenium
@@ -55,15 +55,16 @@ jobs:
           opts=Options(); opts.add_argument('--headless=new'); opts.add_argument('--no-sandbox'); opts.add_argument('--disable-dev-shm-usage'); opts.add_argument('--window-size=1440,1200')
           d=webdriver.Chrome(options=opts)
           try:
-              d.get('https://casa-pratica-lab-20261102.blogspot.com/p/loja.html?state_sync_final=1'); time.sleep(5)
+              d.execute_cdp_cmd('Emulation.setEmulatedMedia', {'features':[{'name':'prefers-reduced-motion','value':'reduce'}]})
+              d.get('https://casa-pratica-lab-20261102.blogspot.com/p/loja.html?state_sync_final=2'); time.sleep(5)
               js_state=r'''
                 const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
                 const p=pages[0],s=p&&p.querySelector('.bls-slider'),ss=s?[...s.querySelectorAll('.bls-slide')]:[];
                 const vis=x=>{const c=getComputedStyle(x),r=x.getBoundingClientRect();return c.display!=='none'&&c.visibility!=='hidden'&&r.width>0&&r.height>0};
-                return {width:p?p.getBoundingClientRect().width:0,viewport:innerWidth,pages:pages.length,active:ss.findIndex(x=>x.classList.contains('is-active')),visible:ss.filter(vis).length,slides:ss.length,dots:s?s.querySelectorAll('#blsDots button').length:0,delegated:s?s.dataset.pageCarouselDelegated||'':'',state:s?s.dataset.pageCarouselActive||'':'',legacy:document.documentElement.innerHTML.includes("document.getElementById('blsSlider')"),synced:document.documentElement.innerHTML.includes('let currentIndex=0')};
+                return {width:p?p.getBoundingClientRect().width:0,viewport:innerWidth,pages:pages.length,active:ss.findIndex(x=>x.classList.contains('is-active')),visible:ss.filter(vis).length,slides:ss.length,dots:s?s.querySelectorAll('#blsDots button').length:0,delegated:s?s.dataset.pageCarouselDelegated||'':'',state:s?s.dataset.pageCarouselActive||'':'',legacy:document.documentElement.innerHTML.includes("document.getElementById('blsSlider')"),synced:document.documentElement.innerHTML.includes('let currentIndex=0'),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches};
               '''
               before=d.execute_script(js_state); print('BEFORE=',before)
-              if before['width']<1200 or before['slides']!=3 or before['visible']!=1 or before['dots']!=3 or before['delegated']!='1' or before['legacy'] or not before['synced']:
+              if before['width']<1200 or before['slides']!=3 or before['visible']!=1 or before['dots']!=3 or before['delegated']!='1' or before['legacy'] or not before['synced'] or not before['reduced']:
                   raise SystemExit(f'Estado inicial inválido: {before}')
               immediate=d.execute_script(r'''
                 const p=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width)[0];
@@ -77,9 +78,10 @@ jobs:
               later=d.execute_script(js_state); print('AFTER_2S=',later)
               if immediate['after']!=1 or after['active']!=1 or later['active']!=1 or after['visible']!=1 or later['visible']!=1:
                   raise SystemExit(f'Índice não persistiu: immediate={immediate} after={after} later={later}')
-              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={before['width']:.0f}/{before['viewport']}; pages={before['pages']}; slides=3 visible=1; dots=3; next=0->1; persisted_2s=PASS; delegated_state_sync=PASS")
+              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={before['width']:.0f}/{before['viewport']}; pages={before['pages']}; slides=3 visible=1; dots=3; next=0->1; persisted_2s=PASS; delegated_state_sync=PASS; auto_rotation_isolated=PASS")
           finally:
               d.quit()
           PY
 
 # DELETE_AFTER_PASS
+# RETRY_WITH_REDUCED_MOTION_TO_ISOLATE_MANUAL_CLICK
