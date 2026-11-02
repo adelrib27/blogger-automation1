@@ -19,6 +19,7 @@ SAFE_WORKFLOWS = [
     ".github/workflows/estilo_dia_a_dia_store_safe.yml",
     ".github/workflows/casa_em_ordem_store_safe.yml",
     ".github/workflows/escolha_certa_online_store_safe.yml",
+    ".github/workflows/achados_que_valem_store_safe.yml",
 ]
 LIVE_WORKFLOWS = [
     ".github/workflows/air_fryers_store_autonomous.yml",
@@ -33,6 +34,7 @@ LIVE_WORKFLOWS = [
     ".github/workflows/estilo_dia_a_dia_store_autonomous.yml",
     ".github/workflows/casa_em_ordem_store_autonomous.yml",
     ".github/workflows/escolha_certa_online_store_autonomous.yml",
+    ".github/workflows/achados_que_valem_store_autonomous.yml",
 ]
 
 # Fluxos preservados para recuperação, mas proibidos de voltar a escrever
@@ -204,7 +206,7 @@ def main() -> None:
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 12/12 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 13/13 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
