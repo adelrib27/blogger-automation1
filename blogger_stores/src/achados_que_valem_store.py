@@ -70,7 +70,7 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "carrinho organizador": ["bebe", "brinquedo", "controle remoto", "hot wheels", "ferramenta", "oficina", "para pet"],
         "sapateira organizadora": ["infantil", "boneca", "miniatura", "para pet", "cachorro", "gato"],
         "escorredor loucas aco": ["peca", "reposicao", "miniatura", "brinquedo", "para pet"],
-        "mixer eletrico": ["lamina avulsa", "copo avulso", "haste avulsa", "peca reposicao", "acessorio", "brinquedo", "miniatura"],
+        "mixer eletrico portatil": ["lamina avulsa", "copo avulso", "haste avulsa", "peca reposicao", "acessorio", "brinquedo", "miniatura", "processador", "picador", "moedor", "3l", "3 litros"],
         "garrafa termica 500ml": ["tampa reposicao", "tampa avulsa", "vedacao", "borracha", "canudo avulso", "capa", "suporte"],
         "balanca cozinha digital": ["bateria avulsa", "bandeja avulsa", "suporte", "peca reposicao", "brinquedo", "miniatura"],
         "smartwatch chamadas bluetooth": ["pulseira avulsa", "pulseira para", "pelicula", "capa", "case", "carregador avulso", "cabo carregador"],
@@ -78,8 +78,8 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "fone bluetooth sem fio": ["cabo", "lightning", "p2", "com fio", "case", "capa", "estojo avulso", "almofada reposicao"],
         "hub usb c": ["cabo avulso", "case", "capa", "suporte", "placa avulsa", "conector avulso"],
         "caixa som bluetooth microfone": ["capa", "case", "suporte", "bateria avulsa", "placa reposicao", "miniatura", "brinquedo"],
-        "microfone sem fio karaoke": ["cabo", "suporte", "espuma", "capa", "case", "receptor avulso", "placa reposicao", "brinquedo"],
-        "mini projetor": ["suporte", "tela", "cabo", "controle remoto avulso", "lampada reposicao", "peca reposicao", "brinquedo"],
+        "microfone sem fio karaoke": ["cabo", "suporte", "espuma", "capa", "case", "receptor avulso", "placa reposicao", "brinquedo", "caixa de som", "caixa som", "speaker", "karaoke bluetooth com 2 microfones"],
+        "mini projetor wifi": ["suporte", "tela", "cabo", "controle remoto avulso", "lampada reposicao", "peca reposicao", "brinquedo", "luz noturna", "ondas oceanicas", "lampada dinamica", "decoracao", "abajur"],
         "gamepad bluetooth": ["suporte", "capa", "case", "botao avulso", "analogico avulso", "peca reposicao"],
     }
     if any(term in title for term in blocks.get(key, [])):
@@ -95,7 +95,7 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "carrinho organizador": lambda: "carrinho" in title and any(x in title for x in ["organizador", "organizadora", "multiuso"]),
         "sapateira organizadora": lambda: "sapateira" in title and any(x in title for x in ["organizadora", "organizador", "multiuso", "prateleira"]),
         "escorredor loucas aco": lambda: "escorredor" in title and any(x in title for x in ["louca", "pratos"]) and any(x in title for x in ["aco", "inox", "carbono"]),
-        "mixer eletrico": lambda: "mixer" in title and "eletric" in title,
+        "mixer eletrico portatil": lambda: "mixer" in title and "eletric" in title and any(x in title for x in ["portatil", "mao"]),
         "garrafa termica 500ml": lambda: "garrafa" in title and "termica" in title and any(x in title for x in ["500ml", "500 ml", "0,5l", "0.5l"]),
         "balanca cozinha digital": lambda: "balanca" in title and "cozinha" in title and "digital" in title,
         "smartwatch chamadas bluetooth": lambda: any(x in title for x in ["smartwatch", "relogio inteligente"]) and "bluetooth" in title and any(x in title for x in ["chamada", "ligacao", "atender"]),
@@ -103,8 +103,8 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "fone bluetooth sem fio": lambda: any(x in title for x in ["fone", "earbuds", "headset"]) and "bluetooth" in title and any(x in title for x in ["sem fio", "wireless", "tws"]),
         "hub usb c": lambda: "hub" in title and any(x in title for x in ["usb-c", "usb c", "type-c", "type c"]),
         "caixa som bluetooth microfone": lambda: any(x in title for x in ["caixa de som", "caixa som", "speaker"]) and "bluetooth" in title and "microfone" in title,
-        "microfone sem fio karaoke": lambda: "microfone" in title and any(x in title for x in ["sem fio", "wireless"]),
-        "mini projetor": lambda: "projetor" in title and any(x in title for x in ["mini", "portatil"]),
+        "microfone sem fio karaoke": lambda: "microfone" in title and any(x in title for x in ["sem fio", "wireless"]) and not any(x in title for x in ["caixa de som", "caixa som", "speaker"]),
+        "mini projetor wifi": lambda: "projetor" in title and any(x in title for x in ["mini", "portatil"]) and any(x in title for x in ["wifi", "wi-fi", "hdmi", "android", "full hd", "1080p"]),
         "gamepad bluetooth": lambda: any(x in title for x in ["gamepad", "controle", "joystick"]) and "bluetooth" in title,
     }
     return positive[key]() if key in positive else False
@@ -130,8 +130,8 @@ def run_achados_que_valem_regression_checks(rules_doc: dict) -> None:
         ("Sapateira Organizadora Multiuso 5 Prateleiras", "sapateira organizadora", True),
         ("Peça de Reposição para Escorredor", "escorredor loucas aco", False),
         ("Escorredor de Louças em Aço Carbono 13 Pratos", "escorredor loucas aco", True),
-        ("Lâmina Avulsa para Mixer Elétrico", "mixer eletrico", False),
-        ("Mixer Elétrico Portátil 2 em 1", "mixer eletrico", True),
+        ("Processador Picador 3L Mixer Elétrico", "mixer eletrico portatil", False),
+        ("Mixer Elétrico Portátil de Mão 2 em 1", "mixer eletrico portatil", True),
         ("Tampa Reposição Garrafa Térmica 500ml", "garrafa termica 500ml", False),
         ("Garrafa Térmica Inox 500ml", "garrafa termica 500ml", True),
         ("Bandeja Avulsa para Balança", "balanca cozinha digital", False),
@@ -148,8 +148,8 @@ def run_achados_que_valem_regression_checks(rules_doc: dict) -> None:
         ("Caixa de Som Bluetooth com 2 Microfones", "caixa som bluetooth microfone", True),
         ("Suporte para Microfone Sem Fio", "microfone sem fio karaoke", False),
         ("Microfone Sem Fio Wireless para Karaoke", "microfone sem fio karaoke", True),
-        ("Tela para Mini Projetor", "mini projetor", False),
-        ("Mini Projetor Portátil Full HD", "mini projetor", True),
+        ("Mini Projetor de Luz Noturna WiFi Ondas Oceânicas", "mini projetor wifi", False),
+        ("Mini Projetor Portátil WiFi Full HD HDMI", "mini projetor wifi", True),
         ("Capa para Gamepad Bluetooth", "gamepad bluetooth", False),
         ("Gamepad Bluetooth Controle para Celular", "gamepad bluetooth", True),
     ]
@@ -299,7 +299,7 @@ def safe_scan() -> int:
     data = base.load_json(SELECTION_PATH, {})
     semantic = dict(data.get("semanticValidation") or {})
     semantic["rulesFile"] = "config/shopee_achados_que_valem_intent_rules.json"
-    semantic["profileVersion"] = 1
+    semantic["profileVersion"] = 2
     semantic["profileName"] = "Achados que Valem"
     data["semanticValidation"] = semantic
     base.save_atomic(SELECTION_PATH, data)
