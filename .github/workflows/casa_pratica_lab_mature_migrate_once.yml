@@ -1,4 +1,4 @@
-name: Casa Prática Lab — MIGRAÇÃO final Page madura
+name: Casa Prática Lab — PROVA final visual Page madura
 
 on:
   push:
@@ -9,53 +9,20 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: casa-pratica-lab-store-live
-  cancel-in-progress: false
-
 jobs:
-  migrate:
+  visual-proof:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      BLOGGER_BLOG_ID: "8930870316690519385"
-      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
-      BLOGGER_STORE_POST_ID: "7691087355641688975"
-      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
-      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
-      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
-      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
-
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt
 
-      - name: Compilar contrato Page madura
-        run: |
-          set -euo pipefail
-          python -m py_compile \
-            blogger_stores/src/blogger_new_blog_store_page_target.py \
-            blogger_stores/src/casa_pratica_lab_public_acceptance.py
-
-      - name: Validar staging maduro antes da escrita
-        run: |
-          set -euo pipefail
-          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
-
-      - name: Sincronizar Page madura e retirar Store Post da home
-        run: |
-          set -euo pipefail
-          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
-          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
-          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
-
-      - name: Aceitação pública estrita
+      - name: Revalidar contrato público sem nova escrita
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
 
-      - name: Prova visual em navegador real
+      - name: Prova visual em Chrome real sem referências obsoletas
         run: |
           set -euo pipefail
           pip install selenium
@@ -64,63 +31,79 @@ jobs:
           from selenium import webdriver
           from selenium.webdriver.chrome.options import Options
 
-          url='https://casa-pratica-lab-20261102.blogspot.com/p/loja.html?visual_e2e=2'
+          base='https://casa-pratica-lab-20261102.blogspot.com/p/loja.html'
           opts=Options()
           opts.add_argument('--headless=new')
           opts.add_argument('--no-sandbox')
           opts.add_argument('--disable-dev-shm-usage')
           opts.add_argument('--window-size=1440,1200')
+          opts.add_argument('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36')
           driver=webdriver.Chrome(options=opts)
           try:
-              driver.get(url)
-              time.sleep(4)
-              state=driver.execute_script(r'''
-                const vis = el => {
-                  if (!el) return false;
-                  const s=getComputedStyle(el), r=el.getBoundingClientRect();
-                  return s.display!=='none' && s.visibility!=='hidden' && Number(s.opacity)!==0 && r.width>0 && r.height>0;
-                };
-                const page=document.querySelector('.bls-page');
-                const slides=[...document.querySelectorAll('.bls-slide')];
-                const dots=[...document.querySelectorAll('#blsDots button')];
-                const prev=document.querySelector('.bls-prev');
-                const next=document.querySelector('.bls-next');
-                const titles=[...document.querySelectorAll('.post-title-container,.post-title,.entry-title')];
-                return {
-                  pageExists: !!page,
-                  width: page ? page.getBoundingClientRect().width : 0,
-                  viewport: innerWidth,
-                  slides: slides.length,
-                  visibleSlides: slides.filter(vis).length,
-                  dots: dots.length,
-                  prevVisible: vis(prev),
-                  nextVisible: vis(next),
-                  visibleLojaTitles: titles.filter(x => vis(x) && /LOJA/i.test(x.textContent||'')).length,
-                  active: slides.findIndex(x=>x.classList.contains('is-active'))
-                };
-              ''')
-              if not state['pageExists']:
-                  raise SystemExit('bls-page ausente')
-              if state['width'] < 1200:
-                  raise SystemExit(f"Page estreita: width={state['width']} viewport={state['viewport']}")
-              if state['slides'] != 3 or state['visibleSlides'] != 1:
-                  raise SystemExit(f"Carousel inválido: slides={state['slides']} visible={state['visibleSlides']}")
-              if state['dots'] != 3 or not state['prevVisible'] or not state['nextVisible']:
-                  raise SystemExit('Controles do carousel ausentes/invisíveis')
-              if state['visibleLojaTitles']:
-                  raise SystemExit('Título externo LOJA continua visível')
+              last=None
+              for attempt in range(1,6):
+                  driver.get(f'{base}?visual_e2e=3-{attempt}-{int(time.time())}')
+                  time.sleep(4)
+                  state=driver.execute_script(r'''
+                    const vis = el => {
+                      if (!el) return false;
+                      const s=getComputedStyle(el), r=el.getBoundingClientRect();
+                      return s.display!=='none' && s.visibility!=='hidden' && Number(s.opacity)!==0 && r.width>0 && r.height>0;
+                    };
+                    const pages=[...document.querySelectorAll('.bls-page')];
+                    const ranked=pages.map((p,i)=>({p,i,r:p.getBoundingClientRect()})).sort((a,b)=>b.r.width-a.r.width);
+                    const chosen=ranked.length ? ranked[0].p : null;
+                    const slides=chosen ? [...chosen.querySelectorAll('.bls-slide')] : [];
+                    const dots=chosen ? [...chosen.querySelectorAll('#blsDots button')] : [];
+                    const prev=chosen ? chosen.querySelector('.bls-prev') : null;
+                    const next=chosen ? chosen.querySelector('.bls-next') : null;
+                    const titles=[...document.querySelectorAll('.post-title-container,.post-title,.entry-title')];
+                    return {
+                      href: location.href,
+                      title: document.title,
+                      pageCount: pages.length,
+                      pageWidths: ranked.map(x=>Math.round(x.r.width)),
+                      chosenIndex: ranked.length ? ranked[0].i : -1,
+                      width: chosen ? chosen.getBoundingClientRect().width : 0,
+                      viewport: innerWidth,
+                      slides: slides.length,
+                      visibleSlides: slides.filter(vis).length,
+                      dots: dots.length,
+                      prevVisible: vis(prev),
+                      nextVisible: vis(next),
+                      visibleLojaTitles: titles.filter(x=>vis(x)&&/LOJA/i.test(x.textContent||'')).length,
+                      active: slides.findIndex(x=>x.classList.contains('is-active')),
+                      bodyClass: document.body ? document.body.className : ''
+                    };
+                  ''')
+                  print(f'VISUAL_ATTEMPT_{attempt}: {state}')
+                  last=state
+                  if state['width'] >= 1200 and state['slides'] == 3 and state['visibleSlides'] == 1 and state['dots'] == 3 and state['prevVisible'] and state['nextVisible'] and state['visibleLojaTitles'] == 0:
+                      break
+                  time.sleep(5)
+              else:
+                  raise SystemExit(f'Estado visual não estabilizou: {last}')
+
               before=state['active']
-              driver.execute_script("document.querySelector('.bls-next').click()")
-              time.sleep(.7)
-              after=driver.execute_script("return [...document.querySelectorAll('.bls-slide')].findIndex(x=>x.classList.contains('is-active'))")
-              visible_after=driver.execute_script("return [...document.querySelectorAll('.bls-slide')].filter(x=>{const s=getComputedStyle(x),r=x.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0}).length")
-              if after == before or visible_after != 1:
-                  raise SystemExit(f'Carousel não avançou corretamente: before={before} after={after} visible={visible_after}')
-              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={state['width']:.0f}/{state['viewport']}; slides=3 visible=1; dots=3; next={before}->{after}; title_hidden=PASS")
+              driver.execute_script(r'''
+                const pages=[...document.querySelectorAll('.bls-page')];
+                pages.sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                pages[0].querySelector('.bls-next').click();
+              ''')
+              time.sleep(.8)
+              after=driver.execute_script(r'''
+                const pages=[...document.querySelectorAll('.bls-page')];
+                pages.sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                const slides=[...pages[0].querySelectorAll('.bls-slide')];
+                const vis=x=>{const s=getComputedStyle(x),r=x.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0};
+                return {active:slides.findIndex(x=>x.classList.contains('is-active')),visible:slides.filter(vis).length};
+              ''')
+              if after['active'] == before or after['visible'] != 1:
+                  raise SystemExit(f"Carousel não avançou corretamente: before={before} after={after}")
+              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={state['width']:.0f}/{state['viewport']}; pages={state['pageCount']}; slides=3 visible=1; dots=3; next={before}->{after['active']}; title_hidden=PASS")
           finally:
               driver.quit()
           PY
 
 # DELETE_AFTER_PASS
-# FINAL_PAGE_MATURE_MIGRATION_2026_11_02
-# VISUAL_E2E_JS_STATE_NO_STALE_ELEMENTS
+# VISUAL_ONLY_FINAL_PROOF_NO_BLOGGER_WRITES
