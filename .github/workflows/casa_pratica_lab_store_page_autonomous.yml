@@ -1,4 +1,4 @@
-name: Casa Prática Lab — Loja Store Post madura 20+12
+name: Casa Prática Lab — Loja Page madura 20+12
 
 on:
   workflow_dispatch:
@@ -52,7 +52,6 @@ jobs:
             blogger_stores/src/casa_pratica_lab_store.py \
             blogger_stores/src/casa_pratica_lab_store_page.py \
             blogger_stores/src/blogger_new_blog_store_page_target.py \
-            blogger_stores/src/casa_pratica_lab_store_post_contract.py \
             blogger_stores/src/casa_pratica_lab_public_acceptance.py
           PYTHONPATH=src python src/blogger_policy_guard_self_test.py
           test -n "$SHOPEE_APP_ID" && test -n "$SHOPEE_SECRET"
@@ -78,16 +77,23 @@ jobs:
           print('BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20')
           PY
 
-      - name: Dry-run visual maduro fail-closed
+      - name: Dry-runs staging + Page madura
         run: |
           set -euo pipefail
-          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_post_contract.py dry-run
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py identity-dry-run
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py store-dry-run
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py hero-dry-run
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
 
-      - name: Publicar Store Post maduro e restaurar Page bridge
+      - name: Atualizar staging DRAFT e sincronizar Page pública
         run: |
           set -euo pipefail
-          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_post_contract.py apply-live
-          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_post_contract.py verify
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py store-live
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py hero-live
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py identity-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
 
       - name: Aceitação pública visual + home + artigos
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
@@ -103,7 +109,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add blogger_stores/data/casa_pratica_lab_selection.json blogger_stores/data/casa_pratica_lab_rotation.json
-          git commit -m "Atualizar rotação Store Post maduro Casa Prática Lab"
+          git commit -m "Atualizar rotação Page madura Casa Prática Lab"
           git pull --rebase origin main
           git push origin HEAD:main
 
@@ -111,7 +117,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: casa-pratica-lab-store-post-maduro-${{ github.run_number }}
+          name: casa-pratica-lab-page-madura-${{ github.run_number }}
           path: |
             blogger_stores/data/casa_pratica_lab_selection.json
             blogger_stores/data/casa_pratica_lab_rotation.json
@@ -119,7 +125,8 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-# CASA_PRATICA_LAB_MATURE_STORE_POST_CANONICAL_2026_11_02
-# PAGE_BRIDGE_TO_STORE_POST_LIVE_20X12_CAROUSEL
+# CASA_PRATICA_LAB_MATURE_PAGE_CANONICAL_2026_11_02
+# PUBLIC_PAGE_20X12_CAROUSEL_WITH_WIDE_SURFACE_PATCH
+# STORE_POST_TECHNICAL_STAGING_MUST_REMAIN_DRAFT
 # PUBLIC_ACCEPTANCE_REQUIRES_VISUAL_CONTRACT_AND_HOME_CLEAN
 # SCHEDULE_VALIDATED_10_20_AMERICA_RECIFE
