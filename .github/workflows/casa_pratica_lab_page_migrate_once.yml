@@ -1,0 +1,67 @@
+name: Casa Prática Lab — MIGRAÇÃO ÚNICA Page-target
+
+on:
+  push:
+    paths:
+      - ".github/workflows/casa_pratica_lab_page_migrate_once.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: casa-pratica-lab-store-live
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLOGGER_BLOG_ID: "8930870316690519385"
+      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
+      BLOGGER_STORE_POST_ID: "7691087355641688975"
+      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Validar adapter
+        run: python -m py_compile blogger_stores/src/blogger_new_blog_store_page_target.py
+      - name: Migrar Page LOJA 20+12 e retirar Store Post da home
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
+      - name: Validar Page pública e home editorial
+        run: |
+          set -euo pipefail
+          ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
+          ok=0
+          for attempt in $(seq 1 8); do
+            code=$(curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/page.html -w "%{http_code}" "${BLOGGER_STORE_PAGE_URL}?m=1&migration=${GITHUB_RUN_ID}-${attempt}" || true)
+            echo "MIGRATION_PAGE_HTTP_${attempt}: ${code}"
+            if [ "$code" = "429" ]; then sleep 15; continue; fi
+            if [ "$code" != "200" ]; then sleep 8; continue; fi
+            store=$(python -c "print(open('/tmp/page.html',encoding='utf-8',errors='ignore').read().count('data-item-id='))")
+            hero=$(python -c "print(open('/tmp/page.html',encoding='utf-8',errors='ignore').read().count('data-hero-item-id='))")
+            echo "MIGRATION_PAGE_COUNTS: store=${store} hero=${hero}"
+            if [ "$store" -eq 20 ] && [ "$hero" -eq 12 ]; then ok=1; break; fi
+          done
+          test "$ok" -eq 1
+          curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/home.html "https://casa-pratica-lab-20261102.blogspot.com/?m=1&migration_home=${GITHUB_RUN_ID}"
+          ! grep -q '/2026/11/loja.html' /tmp/home.html
+          grep -q '/2026/11/como-organizar-uma-cozinha-pequena-sem.html' /tmp/home.html
+          grep -q '/2026/11/air-fryer-7-pontos-para-conferir-antes.html' /tmp/home.html
+          grep -q '/2026/11/ventilador-ou-climatizador-qual-faz.html' /tmp/home.html
+          echo 'CASA_PRATICA_LAB_PAGE_MIGRATION_PUBLIC_PASS'
+
+# DELETE_AFTER_PASS
