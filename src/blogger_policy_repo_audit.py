@@ -22,6 +22,7 @@ SAFE_WORKFLOWS = [
     ".github/workflows/achados_que_valem_store_safe.yml",
     ".github/workflows/guia_achados_ofertas_store_safe.yml",
     ".github/workflows/moda_ofertas_store_safe.yml",
+    ".github/workflows/achadinhos_beleza_store_safe.yml",
 ]
 LIVE_WORKFLOWS = [
     ".github/workflows/air_fryers_store_autonomous.yml",
@@ -39,6 +40,7 @@ LIVE_WORKFLOWS = [
     ".github/workflows/achados_que_valem_store_autonomous.yml",
     ".github/workflows/guia_achados_ofertas_store_autonomous.yml",
     ".github/workflows/moda_ofertas_store_autonomous.yml",
+    ".github/workflows/achadinhos_beleza_store_autonomous.yml",
 ]
 
 # Fluxos preservados para recuperação, mas proibidos de voltar a escrever
@@ -206,6 +208,29 @@ def audit_moda_schedule() -> None:
         fail("Moda e Ofertas voltou a ter gatilho push após promoção final")
 
 
+def audit_achadinhos_controlled_live() -> None:
+    rel = ".github/workflows/achadinhos_beleza_store_autonomous.yml"
+    text = read(rel)
+    required = [
+        "workflow_dispatch:",
+        "blogger_stores/achadinhos_beleza_live_kickoff.txt",
+        "CONTROLLED_LIVE_BEFORE_SCHEDULE_2026_11_02",
+        '<h3>Cuidados Pessoais</h3>',
+        'href="#bls-skincare">Ver skincare</a>',
+        'href="#bls-maquiagem">Ver maquiagem</a>',
+        'href="#bls-cabelos">Ver cabelos</a>',
+        'href="#bls-cuidados-pessoais">Ver cuidados pessoais</a>',
+        "Cortador de Biscoitis / Massinha / Biscuit",
+        "Kit Pancake Branco + Batom  Preto Halloween",
+        "Capa Térmica para Chapinha",
+    ]
+    missing = [x for x in required if x not in text]
+    if missing:
+        fail(f"Achadinhos de Beleza LIVE controlado sem gates obrigatórios: {missing}")
+    if re.search(r"(?m)^\s*schedule\s*:", text):
+        fail("Achadinhos de Beleza recebeu schedule antes da validação LIVE pública")
+
+
 def audit_legacy_writers_manual_only() -> None:
     for rel, canonical_group in LEGACY_MANUAL_WORKFLOWS.items():
         text = read(rel)
@@ -273,11 +298,12 @@ def main() -> None:
     audit_achados_que_valem_schedule()
     audit_guia_schedule()
     audit_moda_schedule()
+    audit_achadinhos_controlled_live()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 15/15 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50, Guia de Achados & Ofertas 10:05 e Moda e Ofertas 10:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 16/16 protegidos; Achadinhos de Beleza em LIVE controlado sem schedule; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
