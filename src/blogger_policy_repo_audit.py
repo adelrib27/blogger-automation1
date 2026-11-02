@@ -138,6 +138,26 @@ def audit_escolha_schedule() -> None:
         fail("Escolha Certa Online voltou a ter gatilho push após promoção final")
 
 
+
+def audit_achados_que_valem_schedule() -> None:
+    rel = ".github/workflows/achados_que_valem_store_autonomous.yml"
+    text = read(rel)
+    required = [
+        "workflow_dispatch:",
+        'cron: "50 9 * * *"',
+        'timezone: "America/Recife"',
+        "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
+        '<a class="bls-btn bls-btn-main" href="#bls-cozinha-utilidades">Ver cozinha</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-ferramentas">Ver ferramentas</a>',
+        '<a class="bls-btn bls-btn-main" href="#bls-tecnologia-conectividade">Ver tecnologia</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-audio-lazer">Ver áudio</a>',
+    ]
+    missing = [x for x in required if x not in text]
+    if missing:
+        fail(f"Achados que Valem sem schedule/gate de navegação canônico: {missing}")
+    if re.search(r"(?m)^\s*push\s*:", text):
+        fail("Achados que Valem voltou a ter gatilho push após promoção final")
+
 def audit_legacy_writers_manual_only() -> None:
     for rel, canonical_group in LEGACY_MANUAL_WORKFLOWS.items():
         text = read(rel)
@@ -202,11 +222,12 @@ def main() -> None:
     audit_workflows()
     audit_casa_schedule()
     audit_escolha_schedule()
+    audit_achados_que_valem_schedule()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 13/13 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
