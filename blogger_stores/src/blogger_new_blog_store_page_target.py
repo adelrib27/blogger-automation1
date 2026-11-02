@@ -6,6 +6,7 @@ import os
 import sys
 from urllib.parse import urlparse
 
+from googleapiclient.errors import HttpError
 from blogger_policy_guard import require_store_html_allowed
 from criar_rascunho import criar_servico_blogger
 
@@ -33,6 +34,31 @@ def env_target() -> tuple[str, str, str, str]:
     return blog_id, page_id, post_id, page_url
 
 
+def _list_posts(service, blog_id: str, status: str) -> list[dict]:
+    kwargs = {"blogId": blog_id, "status": status, "fetchBodies": True, "maxResults": 100}
+    items: list[dict] = []
+    while True:
+        response = service.posts().list(**kwargs).execute()
+        items.extend(response.get("items") or [])
+        token = response.get("nextPageToken")
+        if not token:
+            return items
+        kwargs["pageToken"] = token
+
+
+def get_post_any_status(service, blog_id: str, post_id: str) -> dict:
+    try:
+        return service.posts().get(blogId=blog_id, postId=post_id).execute()
+    except HttpError as exc:
+        if getattr(exc, "resp", None) is None or int(exc.resp.status) != 404:
+            raise
+    for status in ("DRAFT", "SCHEDULED", "LIVE"):
+        for item in _list_posts(service, blog_id, status):
+            if str(item.get("id") or "") == post_id:
+                return item
+    raise RuntimeError(f"Store Post {post_id} não encontrado em LIVE/DRAFT/SCHEDULED.")
+
+
 def verify_store_html(raw: str, page_url: str) -> None:
     require_store_html_allowed(raw, expected_products=20, expected_hero=12)
     if raw.count("data-item-id=") != 20:
@@ -51,12 +77,12 @@ def verify_page_contract(raw: str, page_url: str) -> None:
     verify_store_html(raw, page_url)
 
 
-def load_targets():
+def load_targets(require_post: bool = True):
     blog_id, page_id, post_id, page_url = env_target()
     service = criar_servico_blogger()
-    post = service.posts().get(blogId=blog_id, postId=post_id).execute()
+    post = get_post_any_status(service, blog_id, post_id) if require_post else None
     page = service.pages().get(blogId=blog_id, pageId=page_id).execute()
-    if str(post.get("title") or "").strip().casefold() != "loja":
+    if post is not None and str(post.get("title") or "").strip().casefold() != "loja":
         raise RuntimeError(f"Store Post inesperado: {post.get('title')!r}")
     if str(page.get("title") or "").strip().casefold() != "loja":
         raise RuntimeError(f"Page LOJA inesperada: {page.get('title')!r}")
@@ -67,7 +93,7 @@ def load_targets():
 
 def sync_page(dry_run: bool = False) -> int:
     service, post, page, blog_id, page_id, _, page_url = load_targets()
-    raw = str(post.get("content") or "")
+    raw = str((post or {}).get("content") or "")
     verify_store_html(raw, page_url)
     page_raw = PAGE_COMPAT_START + "\n" + raw + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
@@ -84,19 +110,19 @@ def sync_page(dry_run: bool = False) -> int:
 
 def ensure_store_post_draft() -> int:
     service, post, _, blog_id, _, post_id, _ = load_targets()
-    status = str(post.get("status") or "").strip().lower()
+    status = str((post or {}).get("status") or "").strip().lower()
     if status != "draft":
         service.posts().revert(blogId=blog_id, postId=post_id).execute()
-    verify = service.posts().get(blogId=blog_id, postId=post_id).execute()
+    verify = get_post_any_status(service, blog_id, post_id)
     final_status = str(verify.get("status") or "").strip().lower()
-    if final_status and final_status != "draft":
-        raise RuntimeError(f"Store Post técnico continua publicado: status={final_status}")
+    if final_status != "draft":
+        raise RuntimeError(f"Store Post técnico continua publicado: status={final_status!r}")
     print("BLOGGER_NEW_STORE_POST_STAGING_PASS: Store Post técnico preservado fora da home (draft).")
     return 0
 
 
 def verify_page() -> int:
-    _, _, page, _, _, _, page_url = load_targets()
+    _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
     print("BLOGGER_NEW_STORE_PAGE_VERIFY_PASS: Page LOJA contém 20 Store + 12 Hero e marcadores canônicos.")
     return 0
