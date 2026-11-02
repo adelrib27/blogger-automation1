@@ -153,13 +153,13 @@ jobs:
               continue
             fi
             if PYTHONPATH=src python - <<'PY'
+          import html
           from blogger_policy_guard import require_store_html_allowed
           raw=open('/tmp/radar-tech-blogger-loja.html', encoding='utf-8', errors='ignore').read()
           require_store_html_allowed(raw, expected_products=20, expected_hero=12)
-          required=[
+          normalized=html.unescape(raw)
+          required_raw=[
               'https://portalradartechbr.blogspot.com/p/loja.html',
-              'Radar Tech BR — tecnologia e achados práticos para a rotina',
-              'Tecnologia e produtos úteis selecionados para facilitar o dia a dia',
               'bls-casa-organizacao',
               'bls-cozinha-utilidades',
               'bls-tecnologia',
@@ -171,7 +171,12 @@ jobs:
               '<h3>Beleza &amp; Cuidados</h3>',
               '<h3>Dia a Dia &amp; Praticidade</h3>',
           ]
-          missing=[x for x in required if x not in raw]
+          required_text=[
+              'Radar Tech BR — tecnologia e achados práticos para a rotina',
+              'Tecnologia e produtos úteis selecionados para facilitar o dia a dia',
+          ]
+          missing=[x for x in required_raw if x not in raw]
+          missing += [x for x in required_text if x not in normalized]
           if missing:
               raise SystemExit(f'Radar Tech BR identity: marcadores ausentes {missing}')
           forbidden=[
@@ -185,7 +190,7 @@ jobs:
               'Tomada De Parede Dupla USB E USB-C Carregador Rápido',
               'Capa Térmica para Chapinha',
           ]
-          bad=[x for x in forbidden if x.lower() in raw.lower()]
+          bad=[x for x in forbidden if x.lower() in normalized.lower()]
           if bad:
               raise SystemExit(f'Radar Tech BR: conteúdo proibido detectado {bad}')
           print('BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero')
@@ -230,3 +235,4 @@ jobs:
 # POLICY_GUARD_CENTRAL_RADAR_TECH_BLOGGER_2026_11_02
 # CONTROLLED_LIVE_BEFORE_SCHEDULE_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
+# PUBLIC_HTML_ENTITY_NORMALIZATION_2026_11_02
