@@ -1,111 +1,66 @@
-name: Portal Radar Tech — Consolidar nome canônico
+name: Portal Radar Tech — Auditar nome canônico
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/portal_radar_tech_canonical_rename_kickoff.txt"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: portal-radar-tech-canonical-rename
-  cancel-in-progress: false
+  group: portal-radar-tech-canonical-audit
+  cancel-in-progress: true
 
 jobs:
-  consolidar:
+  auditar:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Atualizar somente referências canônicas do Blogger
+      - name: Validar referências canônicas sem escrever
         run: |
+          set -euo pipefail
           python - <<'PY'
+          import json
           from pathlib import Path
 
-          def replace_exact(path, old, new, expected=1):
-              p=Path(path)
-              text=p.read_text(encoding='utf-8')
-              count=text.count(old)
-              if count != expected:
-                  raise SystemExit(f'{path}: esperado {expected} ocorrência(s), encontrado {count}: {old[:120]!r}')
-              p.write_text(text.replace(old,new), encoding='utf-8')
+          inv_path=Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json')
+          inv=json.loads(inv_path.read_text(encoding='utf-8'))
+          target=[b for b in inv.get('blogs',[]) if str(b.get('blog_id')) == '7487888217273188851']
+          if len(target) != 1:
+              raise SystemExit(f'Inventário: esperado 1 alvo, encontrado {len(target)}')
+          blog=target[0]
+          if blog.get('title') != 'Portal Radar Tech':
+              raise SystemExit(f"Inventário: título inesperado {blog.get('title')!r}")
+          if blog.get('renamed_from') != 'Radar Tech BR':
+              raise SystemExit('Inventário: renamed_from ausente/incorreto')
+          if blog.get('url') != 'https://portalradartechbr.blogspot.com/':
+              raise SystemExit('Inventário: URL Blogger alterada')
 
-          inv='blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json'
-          replace_exact(inv,
-              '      "title": "Radar Tech BR",\n      "blog_id": "7487888217273188851",',
-              '      "title": "Portal Radar Tech",\n      "renamed_from": "Radar Tech BR",\n      "blog_id": "7487888217273188851",')
-          replace_exact(inv,
-              '      "note": "Concluído em 2026-11-02 como 17ª loja moderna Blogger. Writer Blogger isolado do workflow WordPress radar_store_autonomous.yml. SAFE final 12/12; LIVE final publicou 20 produtos + 12 hero, obteve HTTP público 200 e Policy Guard público PASS; gate público normaliza entidades HTML antes de validar a identidade; rotação persistida somente após PASS. Leitura independente via Blogger_Bridge_V2 confirmou Post ID original LIVE e identidade Radar. Schedule diário 10:50 America/Recife protegido pelo auditor central."',
-              '      "note": "Concluído em 2026-11-02 como 17ª loja moderna Blogger e renomeado no mesmo dia de Radar Tech BR para Portal Radar Tech, preservando Blog/Page/Post IDs e a URL portalradartechbr.blogspot.com. Título e descrições foram validados ao vivo; Store Post sincronizado no run 41537695402 com 20 produtos + 12 hero preservados. Writer Blogger permanece isolado. Radar Tech BR identifica o sistema WordPress separado, fora deste projeto Blogger. Schedule diário 10:50 America/Recife protegido pelo auditor central."')
-
-          cp='CHECKPOINT_ATUAL.md'
-          replacements=[
-            ('**Estado canônico:** 2026-11-02 — após conclusão de Radar Tech BR Blogger', '**Estado canônico:** 2026-11-02 — após rename canônico para Portal Radar Tech'),
-            ('17. **Radar Tech BR Blogger**', '17. **Portal Radar Tech**'),
-            ('- **Radar Tech BR Blogger — 10:50**', '- **Portal Radar Tech Blogger — 10:50**'),
-            ('# 6. RADAR TECH BR BLOGGER — 17ª LOJA MODERNA — CONCLUÍDA', '# 6. PORTAL RADAR TECH BLOGGER — 17ª LOJA MODERNA — CONCLUÍDA'),
-            ('## Separação obrigatória Blogger × WordPress', '## Separação obrigatória Portal Radar Tech (Blogger) × Radar Tech BR (WordPress)'),
-            ('O workflow existente `.github/workflows/radar_store_autonomous.yml` continua sendo da loja WordPress `radartechbr.com.br` e **não** é o writer Blogger.', 'O workflow existente `.github/workflows/radar_store_autonomous.yml` pertence ao sistema WordPress **Radar Tech BR** (`radartechbr.com.br`), que é separado e **não faz parte deste projeto Blogger**. O Blogger deste projeto chama-se **Portal Radar Tech**.'),
-            ('- URL/identidade Radar;', '- URL e identidade pré-rename do Blogger;'),
-            ('- identidade `Radar Tech BR — tecnologia e achados práticos para a rotina`;', '- identidade pré-rename `Radar Tech BR — tecnologia e achados práticos para a rotina`, posteriormente substituída por Portal Radar Tech;'),
-            ('**Radar Tech BR Blogger não deve ser reaberto sem sinal concreto de regressão.**', '**Portal Radar Tech não deve ser reaberto sem sinal concreto de regressão.**'),
-            ('- nunca confundir automação WordPress Radar com writer Blogger;', '- **Radar Tech BR** identifica o WordPress separado e fora deste projeto; **Portal Radar Tech** identifica o Blogger deste projeto; nunca misturar writers, estado ou identidade entre eles;'),
-            ('**Último concluído:** Radar Tech BR Blogger.', '**Último concluído:** Portal Radar Tech.'),
-            ('**SAFE final Radar:** `41531081733` — PASS, 12/12, Policy Guard 20/20.', '**SAFE final Portal Radar Tech:** `41531081733` — PASS, 12/12, Policy Guard 20/20; SAFE pós-rename `41536850550` — PASS.'),
-            ('**LIVE final Radar:** `41532748296` — PASS, HTTP 200, 20+12 e público validado.', '**LIVE final Portal Radar Tech (antes do rename):** `41532748296` — PASS, HTTP 200, 20+12; sincronização de identidade pós-rename `41537695402` — PASS, 20+12 preservados.'),
-            ('**Schedule Radar Blogger:** 10:50 America/Recife.', '**Schedule Portal Radar Tech Blogger:** 10:50 America/Recife.'),
+          checkpoint=Path('CHECKPOINT_ATUAL.md').read_text(encoding='utf-8')
+          required_checkpoint=[
+              'Portal Radar Tech',
+              'Rename canônico — Radar Tech BR → Portal Radar Tech',
+              'Radar Tech BR** passa a designar exclusivamente o sistema WordPress separado',
+              'Cozinha Sem Complicação',
           ]
-          for old,new in replacements:
-              replace_exact(cp,old,new)
+          missing=[x for x in required_checkpoint if x not in checkpoint]
+          if missing:
+              raise SystemExit(f'Checkpoint: referências canônicas ausentes: {missing}')
 
-          rename_section='''## Rename canônico — Radar Tech BR → Portal Radar Tech\n\nEm 2026-11-02, antes de prosseguir para o último blog pendente, o Blogger foi renomeado para eliminar a ambiguidade com o sistema WordPress externo ao projeto.\n\nEstado validado após o rename:\n\n- nome real do Blogger: **Portal Radar Tech**;\n- Blog ID preservado: `7487888217273188851`;\n- URL preservada: `https://portalradartechbr.blogspot.com/`;\n- Page LOJA ID preservada: `6887385207246667244`;\n- Store Post ID preservado: `906894044295273477`;\n- descrição e descrição de pesquisa: `Portal Radar Tech — tecnologia, produtos e achados práticos para o dia a dia.`;\n- nenhuma alteração de tema, páginas, posts ou endereço durante o rename do título;\n- Blogger_Bridge_V2 confirmou título e descrição novos no mesmo Blog ID;\n- SAFE pós-rename `41536850550` — **SUCCESS**;\n- sincronização exclusiva de identidade do Store Post `41537695402` — **SUCCESS**;\n- validação pública dessa sincronização preservou **20 Store + 12 hero** e confirmou ausência dos textos públicos antigos;\n- `.github/workflows/portal_radar_tech_identity_sync.yml` ficou **manual-only** após a validação;\n- namespaces técnicos `radar_tech_blogger_*` permanecem por compatibilidade e não representam a marca pública;\n- **Radar Tech BR** passa a designar exclusivamente o sistema WordPress separado, que não integra este projeto Blogger.\n\n'''
-          marker='## Schedule final\n'
-          replace_exact(cp, marker, rename_section+marker)
+          rollout=json.loads(Path('blogger_multi_store/config/network_store_rollout_2026-11-01.json').read_text(encoding='utf-8'))
+          rt=[t for t in rollout.get('targets',[]) if str(t.get('blog_id')) == '7487888217273188851']
+          if len(rt) != 1 or rt[0].get('title') != 'Portal Radar Tech' or rt[0].get('renamed_from') != 'Radar Tech BR':
+              raise SystemExit('Rollout: identidade canônica Portal Radar Tech não consolidada')
 
-          rollout='blogger_multi_store/config/network_store_rollout_2026-11-01.json'
-          replace_exact(rollout,
-              '      "title": "Radar Tech BR",\n      "blog_id": "7487888217273188851",',
-              '      "title": "Portal Radar Tech",\n      "renamed_from": "Radar Tech BR",\n      "blog_id": "7487888217273188851",')
-          replace_exact(rollout,
-              '      "note": "Não confundir com radar_store_autonomous.yml, que é a automação da loja WordPress."',
-              '      "note": "Portal Radar Tech é o Blogger deste projeto. Radar Tech BR e radar_store_autonomous.yml pertencem ao sistema WordPress separado e fora deste projeto Blogger."')
-
-          print('PORTAL_RADAR_TECH_CANONICAL_RENAME_FILES_PASS')
+          print('PORTAL_RADAR_TECH_CANONICAL_AUDIT_PASS')
+          print('Blogger=Portal Radar Tech; WordPress Radar Tech BR=separado/fora deste projeto; nenhum arquivo alterado.')
           PY
 
-      - name: Validar JSON e escopo do diff
-        run: |
-          set -euo pipefail
-          python -m json.tool blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json >/dev/null
-          python -m json.tool blogger_multi_store/config/network_store_rollout_2026-11-01.json >/dev/null
-          files=$(git diff --name-only)
-          echo "$files"
-          test "$(echo "$files" | wc -l)" -eq 3
-          echo "$files" | grep -Fx 'CHECKPOINT_ATUAL.md'
-          echo "$files" | grep -Fx 'blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json'
-          echo "$files" | grep -Fx 'blogger_multi_store/config/network_store_rollout_2026-11-01.json'
-          grep -q 'Portal Radar Tech' CHECKPOINT_ATUAL.md
-          grep -q '"title": "Portal Radar Tech"' blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json
-          grep -q '"renamed_from": "Radar Tech BR"' blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json
-
-      - name: Persistir consolidação canônica
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add CHECKPOINT_ATUAL.md blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json blogger_multi_store/config/network_store_rollout_2026-11-01.json
-          git commit -m "Consolidar rename Blogger para Portal Radar Tech"
-          git pull --rebase origin main
-          git push origin HEAD:main
-
+# MANUAL_READ_ONLY_AFTER_VALIDATED_RENAME_2026_11_02
 # EXACT_BLOG_ID_7487888217273188851
 # WORDPRESS_RADAR_TECH_BR_OUTSIDE_BLOGGER_PROJECT
