@@ -133,6 +133,9 @@ def verify_identity(raw: str) -> None:
     if missing:
         raise RuntimeError(f"Identidade Portal Radar Tech Blogger incompleta: {missing}")
     forbidden = [
+        "Radar Tech BR — tecnologia e achados práticos para a rotina",
+        "Uma vitrine afiliada do Radar Tech BR",
+        "Vitrine Radar Tech BR:",
         "https://conectaachados.blogspot.com/p/loja.html",
         "https://achadosparacasa2026.blogspot.com/p/loja.html",
         "https://vitrine-pratica.blogspot.com/p/loja.html",
@@ -141,7 +144,7 @@ def verify_identity(raw: str) -> None:
     ]
     bad = [token for token in forbidden if token in raw]
     if bad:
-        raise RuntimeError(f"Referência de outro blog no Portal Radar Tech: {bad}")
+        raise RuntimeError(f"Referência antiga ou de outro blog no Portal Radar Tech: {bad}")
 
 
 def write_identity(dry_run: bool) -> int:
@@ -248,7 +251,7 @@ def main() -> int:
         "identity-dry-run": lambda: write_identity(True),
         "identity-live": lambda: write_identity(False),
         "identity": identity_check,
-        "store-dry-run": lambda: store_write(False) if False else store_write(True),
+        "store-dry-run": lambda: store_write(True),
         "store-live": lambda: store_write(False),
         "hero-dry-run": lambda: hero_write(True),
         "hero-live": lambda: hero_write(False),
