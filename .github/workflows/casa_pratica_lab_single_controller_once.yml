@@ -1,0 +1,77 @@
+name: Casa Prática Lab — prova controlador único final
+
+on:
+  push:
+    paths:
+      - ".github/workflows/casa_pratica_lab_single_controller_once.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: casa-pratica-lab-store-live
+  cancel-in-progress: false
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BLOGGER_BLOG_ID: "8930870316690519385"
+      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
+      BLOGGER_STORE_POST_ID: "7691087355641688975"
+      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+
+      - name: Sincronizar controlador único
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
+
+      - name: Aceitação pública
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
+
+      - name: Prova funcional Chrome
+        run: |
+          set -euo pipefail
+          pip install selenium
+          python - <<'PY'
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          opts=Options(); opts.add_argument('--headless=new'); opts.add_argument('--no-sandbox'); opts.add_argument('--disable-dev-shm-usage'); opts.add_argument('--window-size=1440,1200')
+          d=webdriver.Chrome(options=opts)
+          try:
+              d.get('https://casa-pratica-lab-20261102.blogspot.com/p/loja.html?single_controller_final=1'); time.sleep(5)
+              before=d.execute_script(r'''
+                const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width); const p=pages[0]; const s=p.querySelector('.bls-slider'); const slides=[...s.querySelectorAll('.bls-slide')]; const vis=x=>{const c=getComputedStyle(x),r=x.getBoundingClientRect();return c.display!=='none'&&c.visibility!=='hidden'&&r.width>0&&r.height>0};
+                return {width:p.getBoundingClientRect().width,viewport:innerWidth,pages:pages.length,slides:slides.length,visible:slides.filter(vis).length,dots:s.querySelectorAll('#blsDots button').length,bound:s.dataset.pageCarouselBound||'',active:slides.findIndex(x=>x.classList.contains('is-active')),legacy:document.documentElement.innerHTML.includes("document.getElementById('blsSlider')"),mutation:document.documentElement.innerHTML.includes('new MutationObserver'),weak:document.documentElement.innerHTML.includes('new WeakSet()')};
+              ''')
+              print('BEFORE=',before)
+              if before['width']<1200 or before['slides']!=3 or before['visible']!=1 or before['dots']!=3 or before['bound']!='1' or before['legacy'] or not before['mutation'] or not before['weak']:
+                  raise SystemExit(f'Estado inicial inválido: {before}')
+              d.execute_script("const p=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width)[0];p.querySelector('.bls-next').click();")
+              time.sleep(.5)
+              after=d.execute_script(r'''
+                const p=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width)[0]; const slides=[...p.querySelectorAll('.bls-slide')]; const vis=x=>{const c=getComputedStyle(x),r=x.getBoundingClientRect();return c.display!=='none'&&c.visibility!=='hidden'&&r.width>0&&r.height>0}; return {active:slides.findIndex(x=>x.classList.contains('is-active')),visible:slides.filter(vis).length};
+              ''')
+              print('AFTER=',after)
+              if after['active']==before['active'] or after['visible']!=1: raise SystemExit(f'Carousel não avançou: {before} -> {after}')
+              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={before['width']:.0f}/{before['viewport']}; pages={before['pages']}; slides=3 visible=1; dots=3; next={before['active']}->{after['active']}; single_controller=PASS; MutationObserver=PASS")
+          finally:
+              d.quit()
+          PY
+
+# DELETE_AFTER_PASS
