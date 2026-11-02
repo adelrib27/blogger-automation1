@@ -19,6 +19,7 @@ PAGE_ID = "7110845449177208439"
 POST_ID = "7691087355641688975"
 PAGE_URL = "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
 POST_URL = "https://casa-pratica-lab-20261102.blogspot.com/2026/11/loja.html"
+STORE_PUBLISHED_ANCHOR = "2026-11-02T10:00:00-03:00"
 
 base = lab.base
 
@@ -130,23 +131,33 @@ def dry_run() -> int:
     page = bridge_html()
     if POST_URL not in page or "window.location.replace" not in page:
         raise RuntimeError("Bridge da Page inválida.")
-    print("CASA_PRATICA_LAB_MATURE_DRY_RUN_PASS: layout maduro + carousel + 20+12 + bridge.")
+    print("CASA_PRATICA_LAB_MATURE_DRY_RUN_PASS: layout maduro + carousel + 20+12 + bridge + published anchor.")
     return 0
 
 
 def apply_live() -> int:
     require_target()
     service = criar_servico_blogger()
-    post, page = load_targets(service)
+    _, page = load_targets(service)
     mature = build_mature_html(service)
+    was_live = get_live_post(service) is not None
     service.posts().update(
         blogId=BLOG_ID,
         postId=POST_ID,
-        body={"title": "Loja", "content": mature, "labels": ["Loja"]},
+        body={
+            "title": "Loja",
+            "content": mature,
+            "labels": ["Loja"],
+            "published": STORE_PUBLISHED_ANCHOR,
+        },
     ).execute()
 
-    if get_live_post(service) is None:
-        service.posts().publish(blogId=BLOG_ID, postId=POST_ID).execute()
+    if not was_live:
+        service.posts().publish(
+            blogId=BLOG_ID,
+            postId=POST_ID,
+            publishDate=STORE_PUBLISHED_ANCHOR,
+        ).execute()
 
     service.pages().update(
         blogId=BLOG_ID,
@@ -165,13 +176,16 @@ def verify_api() -> int:
         raise RuntimeError("Store Post não aparece na lista LIVE.")
     if "loja" not in [str(x).casefold() for x in (post.get("labels") or [])]:
         raise RuntimeError(f"Store Post sem label Loja: {post.get('labels')!r}")
+    published = str(post.get("published") or "")
+    if not published.startswith("2026-11-02T10:00:00"):
+        raise RuntimeError(f"Store Post com published inseguro para FeaturedPost1: {published!r}")
     verify_visual_contract(str(post.get("content") or ""))
     page_raw = str(page.get("content") or "")
     if POST_URL not in page_raw or "window.location.replace" not in page_raw:
         raise RuntimeError("Page LOJA não redireciona para o Store Post.")
     if "data-item-id=" in page_raw or "data-hero-item-id=" in page_raw:
         raise RuntimeError("Page LOJA ainda contém a vitrine em vez da bridge.")
-    print("CASA_PRATICA_LAB_MATURE_API_PASS: Store Post LIVE + label Loja + carousel; Page redirect.")
+    print("CASA_PRATICA_LAB_MATURE_API_PASS: Store Post LIVE + published anchor + label Loja + carousel; Page redirect.")
     return 0
 
 
