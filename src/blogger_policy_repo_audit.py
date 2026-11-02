@@ -160,6 +160,26 @@ def audit_achados_que_valem_schedule() -> None:
         fail("Achados que Valem voltou a ter gatilho push após promoção final")
 
 
+def audit_guia_schedule() -> None:
+    rel = ".github/workflows/guia_achados_ofertas_store_autonomous.yml"
+    text = read(rel)
+    required = [
+        "workflow_dispatch:",
+        'cron: "5 10 * * *"',
+        'timezone: "America/Recife"',
+        "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
+        '<a class="bls-btn bls-btn-main" href="#bls-cozinha-eletroportateis">Ver cozinha</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-iluminacao-decoracao">Ver iluminação</a>',
+        '<a class="bls-btn bls-btn-main" href="#bls-clima-conforto">Ver clima</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-utilidades-rotina">Ver utilidades</a>',
+    ]
+    missing = [x for x in required if x not in text]
+    if missing:
+        fail(f"Guia de Achados & Ofertas sem schedule/gate de navegação canônico: {missing}")
+    if re.search(r"(?m)^\s*push\s*:", text):
+        fail("Guia de Achados & Ofertas voltou a ter gatilho push após promoção final")
+
+
 def audit_legacy_writers_manual_only() -> None:
     for rel, canonical_group in LEGACY_MANUAL_WORKFLOWS.items():
         text = read(rel)
@@ -225,11 +245,12 @@ def main() -> None:
     audit_casa_schedule()
     audit_escolha_schedule()
     audit_achados_que_valem_schedule()
+    audit_guia_schedule()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 14/14 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 14/14 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50 e Guia de Achados & Ofertas 10:05 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
