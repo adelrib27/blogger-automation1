@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 16,
+    "modern_blogger_auto_policy_guard": 17,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 2,
+    "store_scaffold_needs_auto_rotation": 1,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -214,8 +214,16 @@
       "store_page_url": "https://portalradartechbr.blogspot.com/p/loja.html",
       "store_post_id": "906894044295273477",
       "store_post_url": "https://portalradartechbr.blogspot.com/2026/10/loja.html",
-      "automation_status": "store_scaffold_needs_blogger_auto_rotation",
-      "note": "O workflow radar_store_autonomous.yml é da loja WordPress/Radar e não equivale a um motor Blogger 20x12 para este post."
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/radar_tech_blogger_store_safe.yml",
+      "live_workflow": ".github/workflows/radar_tech_blogger_store_autonomous.yml",
+      "schedule": "50 10 * * *",
+      "timezone": "America/Recife",
+      "semantic_regression": "12/12",
+      "safe_final_run": 41531081733,
+      "live_final_run": 41532748296,
+      "audit_final_run": 41533505042,
+      "note": "Concluído em 2026-11-02 como 17ª loja moderna Blogger. Writer Blogger isolado do workflow WordPress radar_store_autonomous.yml. SAFE final 12/12; LIVE final publicou 20 produtos + 12 hero, obteve HTTP público 200 e Policy Guard público PASS; gate público normaliza entidades HTML antes de validar a identidade; rotação persistida somente após PASS. Leitura independente via Blogger_Bridge_V2 confirmou Post ID original LIVE e identidade Radar. Schedule diário 10:50 America/Recife protegido pelo auditor central."
     },
     {
       "title": "Cozinha Sem Complicação",
@@ -239,7 +247,6 @@
     }
   ],
   "remaining_queue": [
-    "Radar Tech BR",
     "Cozinha Sem Complicação"
   ],
   "duplicate_writer_risks": []
