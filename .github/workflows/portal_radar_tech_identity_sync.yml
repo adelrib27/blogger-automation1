@@ -1,0 +1,107 @@
+name: Portal Radar Tech Blogger — Sincronizar identidade
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "blogger_stores/portal_radar_tech_identity_sync_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portal-radar-tech-blogger-identity
+  cancel-in-progress: false
+
+jobs:
+  sincronizar-identidade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLOGGER_BLOG_ID: "7487888217273188851"
+      BLOGGER_STORE_POST_ID: "906894044295273477"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compilar e confirmar alvo exato
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/radar_tech_blogger_store.py
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+          test "$BLOGGER_BLOG_ID" = "7487888217273188851"
+          test "$BLOGGER_STORE_POST_ID" = "906894044295273477"
+
+      - name: Dry-run da identidade
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/radar_tech_blogger_store.py identity-dry-run
+
+      - name: Aplicar somente identidade no Store Post original
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/radar_tech_blogger_store.py identity-live
+
+      - name: Confirmar identidade autenticada
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/radar_tech_blogger_store.py identity
+
+      - name: Validar saída pública sem alterar produtos ou rotação
+        run: |
+          set -euo pipefail
+          url="https://portalradartechbr.blogspot.com/2026/10/loja.html"
+          ok=0
+          for attempt in $(seq 1 10); do
+            code=$(curl -L -sS --max-time 40 \
+              -A "Mozilla/5.0 PortalRadarTechIdentityValidator/1.0" \
+              -H "Cache-Control: no-cache" \
+              -o /tmp/portal-radar-tech-loja.html \
+              -w "%{http_code}" \
+              "${url}?m=1&identity_verify=${GITHUB_RUN_ID}-${attempt}" || true)
+            echo "PUBLIC_HTTP_ATTEMPT_${attempt}: ${code}"
+            if [ "$code" = "429" ]; then sleep 12; continue; fi
+            if [ "$code" != "200" ]; then sleep 8; continue; fi
+            if PYTHONPATH=src python - <<'PY'
+          import html
+          raw=open('/tmp/portal-radar-tech-loja.html', encoding='utf-8', errors='ignore').read()
+          normalized=html.unescape(raw)
+          store=raw.count('data-item-id=')
+          hero=raw.count('data-hero-item-id=')
+          if store != 20 or hero != 12:
+              raise SystemExit(f'Contagem alterada: store={store} hero={hero}')
+          required=[
+              'Portal Radar Tech — tecnologia e achados práticos para a rotina',
+              'Uma vitrine afiliada do Portal Radar Tech',
+              'Vitrine Portal Radar Tech: tecnologia e produtos práticos para o dia a dia',
+          ]
+          missing=[x for x in required if x not in normalized]
+          if missing:
+              raise SystemExit(f'Identidade Portal ausente: {missing}')
+          forbidden=[
+              'Radar Tech BR — tecnologia e achados práticos para a rotina',
+              'Uma vitrine afiliada do Radar Tech BR',
+              'Vitrine Radar Tech BR:',
+          ]
+          bad=[x for x in forbidden if x in normalized]
+          if bad:
+              raise SystemExit(f'Identidade antiga ainda presente: {bad}')
+          print('PORTAL_RADAR_TECH_IDENTITY_PUBLIC_PASS: 20 Store + 12 hero preservados; identidade antiga ausente')
+          PY
+            then ok=1; break; fi
+            sleep 8
+          done
+          test "$ok" -eq 1
+
+# IDENTITY_ONLY_NO_PRODUCT_ROTATION_2026_11_02
+# BLOG_ID_7487888217273188851_POST_ID_906894044295273477
