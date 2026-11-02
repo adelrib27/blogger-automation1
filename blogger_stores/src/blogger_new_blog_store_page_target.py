@@ -12,6 +12,84 @@ from criar_rascunho import criar_servico_blogger
 
 PAGE_COMPAT_START = "<!-- BLOGGER_STORE_AUTO_START -->"
 PAGE_COMPAT_END = "<!-- BLOGGER_STORE_AUTO_END -->"
+PAGE_SURFACE_FIX = """<style id="blogger-new-store-page-surface-fix">
+/* Page LOJA deve ocupar a mesma superfície ampla do Store Post maduro. */
+body:has(.bls-page) .centered-bottom{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  gap:0!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+body:has(.bls-page) .main-container{
+  grid-column:1!important;
+  grid-area:1 / 1!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+}
+body:has(.bls-page) .sidebar-container,
+body:has(.bls-page) .sidebar-container-container,
+body:has(.bls-page) .main-container aside,
+body:has(.bls-page) .PopularPosts,
+body:has(.bls-page) .widget.PopularPosts,
+body:has(.bls-page) [id^="PopularPosts"]{
+  display:none!important;
+}
+body:has(.bls-page) .main-container,
+body:has(.bls-page) .main,
+body:has(.bls-page) .blog-posts,
+body:has(.bls-page) .post-outer-container,
+body:has(.bls-page) .post-outer,
+body:has(.bls-page) .post,
+body:has(.bls-page) .post-body-container,
+body:has(.bls-page) .post-body{
+  width:100%!important;
+  max-width:none!important;
+}
+body:has(.bls-page) .post-outer-container,
+body:has(.bls-page) .post-outer,
+body:has(.bls-page) .post,
+body:has(.bls-page) .post-body-container{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+body:has(.bls-page) .post-title-container,
+body:has(.bls-page) .post-title,
+body:has(.bls-page) .entry-title,
+body:has(.bls-page) .post-header{
+  display:none!important;
+}
+body:has(.bls-page) .post-body{
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+body:has(.bls-page) .bls-page{
+  width:min(1440px,calc(100vw - 48px))!important;
+  max-width:none!important;
+  position:relative!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  margin-top:32px!important;
+  margin-bottom:0!important;
+}
+@media(max-width:700px){
+  body:has(.bls-page) .centered-bottom{display:block!important;}
+  body:has(.bls-page) .bls-page{
+    width:calc(100vw - 16px)!important;
+    margin-top:16px!important;
+  }
+}
+</style>"""
 
 
 def required_env(name: str) -> str:
@@ -69,11 +147,30 @@ def verify_store_html(raw: str, page_url: str) -> None:
         raise RuntimeError("Page-target inválida: links afiliados incompletos.")
     if page_url not in raw:
         raise RuntimeError("Page-target inválida: URL canônica da LOJA não está presente no HTML.")
+    visual = [
+        'id="blsSlider"',
+        'class="bls-slide is-active"',
+        ".bls-slide{display:none",
+        ".bls-slide.is-active{display:grid",
+        'class="bls-nav bls-prev"',
+        'class="bls-nav bls-next"',
+        'id="blsDots"',
+        "setInterval(()=>show(i+1),6000)",
+    ]
+    missing = [token for token in visual if token not in raw]
+    if missing:
+        raise RuntimeError(f"Page-target perdeu contrato visual maduro: {missing}")
+
+
+def pageify_store_html(raw: str) -> str:
+    return PAGE_SURFACE_FIX + "\n" + raw
 
 
 def verify_page_contract(raw: str, page_url: str) -> None:
     if raw.count(PAGE_COMPAT_START) != 1 or raw.count(PAGE_COMPAT_END) != 1:
         raise RuntimeError("Page LOJA perdeu marcadores canônicos BLOGGER_STORE_AUTO_START/END.")
+    if 'id="blogger-new-store-page-surface-fix"' not in raw:
+        raise RuntimeError("Page LOJA perdeu o patch de superfície ampla.")
     verify_store_html(raw, page_url)
 
 
@@ -95,16 +192,16 @@ def sync_page(dry_run: bool = False) -> int:
     service, post, page, blog_id, page_id, _, page_url = load_targets()
     raw = str((post or {}).get("content") or "")
     verify_store_html(raw, page_url)
-    page_raw = PAGE_COMPAT_START + "\n" + raw + "\n" + PAGE_COMPAT_END
+    page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_DRY_RUN_PASS: staging 20+12 e contrato da Page validados; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: staging 20+12 + carousel + superfície Page validados; Blogger não alterado.")
         return 0
     body = {"title": page.get("title") or "LOJA", "content": page_raw}
     service.pages().update(blogId=blog_id, pageId=page_id, body=body).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_SYNC_PASS: /p/loja.html sincronizada com Store 20 + Hero 12 e marcadores V20 preservados.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + carousel + layout amplo.")
     return 0
 
 
@@ -124,7 +221,7 @@ def ensure_store_post_draft() -> int:
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_VERIFY_PASS: Page LOJA contém 20 Store + 12 Hero e marcadores canônicos.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, carousel e superfície ampla.")
     return 0
 
 
