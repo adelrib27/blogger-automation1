@@ -1,6 +1,6 @@
 # CHECKPOINT ATUAL — BLOGGER AUTOMATION
 
-**Estado canônico:** 2026-11-02 — após conclusão de Radar Tech BR Blogger  
+**Estado canônico:** 2026-11-02 — após rename canônico para Portal Radar Tech  
 **Projeto:** Blogger Automation sem ChatGPT Work  
 **Progresso:** **17/18 lojas Blogger modernas concluídas**
 
@@ -51,7 +51,7 @@ Este arquivo prevalece para o estado operacional. Checkpoints anteriores são hi
 14. Guia de Achados & Ofertas
 15. Moda e Ofertas
 16. Achadinhos de Beleza
-17. **Radar Tech BR Blogger**
+17. **Portal Radar Tech**
 
 Inventário atual:
 
@@ -124,7 +124,7 @@ Schedules explicitamente protegidos neste estágio:
 - Guia de Achados & Ofertas — 10:05
 - Moda e Ofertas — 10:20
 - Achadinhos de Beleza — 10:35
-- **Radar Tech BR Blogger — 10:50**
+- **Portal Radar Tech Blogger — 10:50**
 
 Prova do fechamento mais recente:
 
@@ -193,7 +193,7 @@ Evidência final:
 
 ---
 
-# 6. RADAR TECH BR BLOGGER — 17ª LOJA MODERNA — CONCLUÍDA
+# 6. PORTAL RADAR TECH BLOGGER — 17ª LOJA MODERNA — CONCLUÍDA
 
 ## Alvo preservado
 
@@ -206,9 +206,9 @@ Evidência final:
 
 Nenhuma Page ou Store Post foi recriada.
 
-## Separação obrigatória Blogger × WordPress
+## Separação obrigatória Portal Radar Tech (Blogger) × Radar Tech BR (WordPress)
 
-O workflow existente `.github/workflows/radar_store_autonomous.yml` continua sendo da loja WordPress `radartechbr.com.br` e **não** é o writer Blogger.
+O workflow existente `.github/workflows/radar_store_autonomous.yml` pertence ao sistema WordPress **Radar Tech BR** (`radartechbr.com.br`), que é separado e **não faz parte deste projeto Blogger**. O Blogger deste projeto chama-se **Portal Radar Tech**.
 
 O Blogger recebeu arquitetura própria e isolada:
 
@@ -268,7 +268,7 @@ A correção normalizou entidades HTML antes dos checks textuais, preservando in
 - contagem 20 Store + 12 hero;
 - Policy Guard público;
 - cinco categorias e âncoras;
-- URL/identidade Radar;
+- URL e identidade pré-rename do Blogger;
 - bloqueio de referências de outros blogs;
 - bloqueio dos falsos positivos conhecidos.
 
@@ -293,11 +293,32 @@ LIVE final:
 Leitura independente direta via Blogger_Bridge_V2 confirmou no Post ID original:
 
 - status LIVE;
-- identidade `Radar Tech BR — tecnologia e achados práticos para a rotina`;
+- identidade pré-rename `Radar Tech BR — tecnologia e achados práticos para a rotina`, posteriormente substituída por Portal Radar Tech;
 - cinco categorias corretas;
 - 20 produtos e hero 12 sincronizados;
 - seleção corrigida, incluindo mixer real, organizador de cozinha coerente e carregador USB-C PD;
 - falsos positivos conhecidos ausentes.
+
+## Rename canônico — Radar Tech BR → Portal Radar Tech
+
+Em 2026-11-02, antes de prosseguir para o último blog pendente, o Blogger foi renomeado para eliminar a ambiguidade com o sistema WordPress externo ao projeto.
+
+Estado validado após o rename:
+
+- nome real do Blogger: **Portal Radar Tech**;
+- Blog ID preservado: `7487888217273188851`;
+- URL preservada: `https://portalradartechbr.blogspot.com/`;
+- Page LOJA ID preservada: `6887385207246667244`;
+- Store Post ID preservado: `906894044295273477`;
+- descrição e descrição de pesquisa: `Portal Radar Tech — tecnologia, produtos e achados práticos para o dia a dia.`;
+- nenhuma alteração de tema, páginas, posts ou endereço durante o rename do título;
+- Blogger_Bridge_V2 confirmou título e descrição novos no mesmo Blog ID;
+- SAFE pós-rename `41536850550` — **SUCCESS**;
+- sincronização exclusiva de identidade do Store Post `41537695402` — **SUCCESS**;
+- validação pública dessa sincronização preservou **20 Store + 12 hero** e confirmou ausência dos textos públicos antigos;
+- `.github/workflows/portal_radar_tech_identity_sync.yml` ficou **manual-only** após a validação;
+- namespaces técnicos `radar_tech_blogger_*` permanecem por compatibilidade e não representam a marca pública;
+- **Radar Tech BR** passa a designar exclusivamente o sistema WordPress separado, que não integra este projeto Blogger.
 
 ## Schedule final
 
@@ -308,7 +329,7 @@ Leitura independente direta via Blogger_Bridge_V2 confirmou no Post ID original:
 - auditor central protege horário, identidade, normalização de entidades HTML e falsos positivos;
 - auditor final `41533505042` — **SUCCESS**, 17/17 protegidos.
 
-**Radar Tech BR Blogger não deve ser reaberto sem sinal concreto de regressão.**
+**Portal Radar Tech não deve ser reaberto sem sinal concreto de regressão.**
 
 ---
 
@@ -354,7 +375,7 @@ Somente quando o usuário disser novamente **“continue”**, retomar por Cozin
 - nunca reintroduzir `push` em writer já promovido para schedule final;
 - nunca ocultar/desativar aviso nativo de cookies;
 - nunca compartilhar arquivo de estado/rotação entre blogs;
-- nunca confundir automação WordPress Radar com writer Blogger;
+- **Radar Tech BR** identifica o WordPress separado e fora deste projeto; **Portal Radar Tech** identifica o Blogger deste projeto; nunca misturar writers, estado ou identidade entre eles;
 - nunca expandir globalmente sem validação blog a blog;
 - sempre manter `src/blogger_policy_repo_audit.py` sincronizado com novos SAFE/LIVE/schedules.
 
@@ -363,12 +384,12 @@ Somente quando o usuário disser novamente **“continue”**, retomar por Cozin
 # 10. RESUMO PARA RETOMADA RÁPIDA
 
 **Estado:** 17/18 concluídos.  
-**Último concluído:** Radar Tech BR Blogger.  
-**SAFE final Radar:** `41531081733` — PASS, 12/12, Policy Guard 20/20.  
+**Último concluído:** Portal Radar Tech.  
+**SAFE final Portal Radar Tech:** `41531081733` — PASS, 12/12, Policy Guard 20/20; SAFE pós-rename `41536850550` — PASS.  
 **Primeiro LIVE controlado:** `41531852901` — fail-closed por entidade HTML; rotação não persistida.  
-**LIVE final Radar:** `41532748296` — PASS, HTTP 200, 20+12 e público validado.  
+**LIVE final Portal Radar Tech (antes do rename):** `41532748296` — PASS, HTTP 200, 20+12; sincronização de identidade pós-rename `41537695402` — PASS, 20+12 preservados.  
 **Commit de rotação:** `d30af368cb7c4223696903f72002e4599c202aac`.  
 **Auditor pós-schedule:** `41533505042` — PASS, 17/17.  
-**Schedule Radar Blogger:** 10:50 America/Recife.  
+**Schedule Portal Radar Tech Blogger:** 10:50 America/Recife.  
 **Resta:** somente Cozinha Sem Complicação.  
 **Próximo somente após novo comando do usuário:** Cozinha Sem Complicação.
