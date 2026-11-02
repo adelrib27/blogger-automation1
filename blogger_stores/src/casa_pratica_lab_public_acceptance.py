@@ -12,8 +12,6 @@ from blogger_policy_guard import require_store_html_allowed
 BASE = "https://casa-pratica-lab-20261102.blogspot.com"
 STORE_PAGE = f"{BASE}/p/loja.html"
 STORE_POST_ID = "7691087355641688975"
-STORE_POST_PATH = "/2026/11/loja.html"
-STORE_POST = f"{BASE}{STORE_POST_PATH}"
 ARTICLES = [
     "como-organizar-uma-cozinha-pequena-sem",
     "air-fryer-7-pontos-para-conferir-antes",
@@ -55,24 +53,18 @@ def fetch_200(url: str, probe: str, attempts: int = 10) -> str:
     raise RuntimeError(f"{probe}: não obteve HTTP 200 após {attempts} tentativas ({last}).")
 
 
-def validate_page_bridge() -> None:
+def validate_store_page() -> None:
     raw = fetch_200(STORE_PAGE, "LAB_PAGE")
-    if STORE_POST not in raw or "window.location.replace" not in raw:
-        raise RuntimeError("Page LOJA não é bridge/redirecionamento para o Store Post.")
-    if "data-item-id=" in raw or "data-hero-item-id=" in raw:
-        raise RuntimeError("Page LOJA ainda contém a vitrine diretamente.")
-    print("CASA_PRATICA_LAB_PAGE_BRIDGE_PASS")
-
-
-def validate_store_post() -> None:
-    raw = fetch_200(STORE_POST, "LAB_STORE")
     require_store_html_allowed(raw, expected_products=20, expected_hero=12)
     store = raw.count("data-item-id=")
     hero = raw.count("data-hero-item-id=")
     rels = raw.count('rel="nofollow sponsored noopener"')
     if (store, hero) != (20, 12) or rels < 32:
-        raise RuntimeError(f"Store Post inválido: store={store} hero={hero} rels={rels}")
+        raise RuntimeError(f"Page LOJA inválida: store={store} hero={hero} rels={rels}")
     required = [
+        "BLOGGER_STORE_AUTO_START",
+        "BLOGGER_STORE_AUTO_END",
+        'id="blogger-new-store-page-surface-fix"',
         "BLOGGER_LIQ_LAYOUT_PATCH_START",
         "BLOGGER_LIQ_LAYOUT_PATCH_END",
         'id="blsSlider"',
@@ -91,8 +83,8 @@ def validate_store_post() -> None:
     ]
     missing = [token for token in required if token not in raw]
     if missing:
-        raise RuntimeError(f"Contrato visual público incompleto: {missing}")
-    print("CASA_PRATICA_LAB_PUBLIC_STORE_VISUAL_PASS: 20+12 + layout amplo + carousel.")
+        raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel + Policy Guard.")
 
 
 def validate_home_and_articles() -> None:
@@ -100,9 +92,9 @@ def validate_home_and_articles() -> None:
     hero_signature = f"post-wrapper hero post-{STORE_POST_ID}"
     feed_signature = f"post-wrapper not-hero post-{STORE_POST_ID}"
     if hero_signature in home:
-        raise RuntimeError("Store Post Loja continua ocupando o FeaturedPost1 da home.")
+        raise RuntimeError("Store Post técnico continua ocupando o FeaturedPost1 da home.")
     if feed_signature in home:
-        raise RuntimeError("Store Post Loja continua renderizado na grade editorial da home.")
+        raise RuntimeError("Store Post técnico continua renderizado na grade editorial da home.")
     for slug in ARTICLES:
         path = f"/2026/11/{slug}.html"
         if path not in home:
@@ -110,14 +102,13 @@ def validate_home_and_articles() -> None:
         raw = fetch_200(f"{BASE}{path}", f"LAB_ARTICLE_{slug[:16].upper().replace('-', '_')}")
         if "post-hero" not in raw:
             raise RuntimeError(f"Artigo sem imagem editorial post-hero: {path}")
-    print("CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: FeaturedPost editorial; Loja fora da grade; 3/3 artigos presentes e com imagem.")
+    print("CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: Store técnico fora da home; 3/3 artigos presentes e com imagem.")
 
 
 def main() -> int:
-    validate_page_bridge()
-    validate_store_post()
+    validate_store_page()
     validate_home_and_articles()
-    print("CASA_PRATICA_LAB_PUBLIC_E2E_MATURE_PASS")
+    print("CASA_PRATICA_LAB_PUBLIC_E2E_PAGE_MATURE_PASS")
     return 0
 
 
