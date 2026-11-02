@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 7,
+    "modern_blogger_auto_policy_guard": 8,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 11,
+    "store_scaffold_needs_auto_rotation": 10,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -47,8 +47,10 @@
       "store_page_url": "https://achadosparacasa2026.blogspot.com/p/loja.html",
       "store_post_id": "854861801599328533",
       "store_post_url": "https://achadosparacasa2026.blogspot.com/2026/10/loja.html",
-      "automation_status": "safe_only_needs_live_auto_rotation",
-      "safe_workflow": ".github/workflows/achados_casa_store_safe.yml"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/achados_casa_store_safe.yml",
+      "live_workflow": ".github/workflows/achados_casa_store_autonomous.yml",
+      "note": "Concluído em 2026-11-01: SAFE final 41370322415 PASS; auditor permanente 8/8 41370840393 PASS; LIVE corrigido 41370529825 PASS com 20 produtos + 12 hero, identidade pública correta e persistência somente pós-PASS. Leitura independente do Blogger confirmou perfil Clima & Bem-estar sem falsos positivos: ventilador de teto, mini umidificador USB, climatizador e ventilador de mesa. Schedule diário 07:20 America/Recife habilitado somente após validação completa."
     },
     {
       "title": "Ventiladores em Foco",
