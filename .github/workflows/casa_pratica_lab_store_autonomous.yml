@@ -2,9 +2,9 @@ name: Casa Prática Lab — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/casa_pratica_lab_live_kickoff.txt"
+  schedule:
+    - cron: "20 10 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -206,4 +206,4 @@ jobs:
           retention-days: 14
 
 # CASA_PRATICA_LAB_LIVE_CONTROLLED_2026_11_02
-# NO_SCHEDULE_BEFORE_PUBLIC_PASS
+# SCHEDULE_VALIDATED_10_20_AMERICA_RECIFE
