@@ -1,4 +1,4 @@
-name: Radar Tech BR Blogger — Loja Shopee 10:50
+name: Portal Radar Tech Blogger — Loja Shopee 10:50
 
 on:
   workflow_dispatch:
@@ -172,13 +172,13 @@ jobs:
               '<h3>Dia a Dia &amp; Praticidade</h3>',
           ]
           required_text=[
-              'Radar Tech BR — tecnologia e achados práticos para a rotina',
+              'Portal Radar Tech — tecnologia e achados práticos para a rotina',
               'Tecnologia e produtos úteis selecionados para facilitar o dia a dia',
           ]
           missing=[x for x in required_raw if x not in raw]
           missing += [x for x in required_text if x not in normalized]
           if missing:
-              raise SystemExit(f'Radar Tech BR identity: marcadores ausentes {missing}')
+              raise SystemExit(f'Portal Radar Tech identity: marcadores ausentes {missing}')
           forbidden=[
               'https://conectaachados.blogspot.com/p/loja.html',
               'https://achadosparacasa2026.blogspot.com/p/loja.html',
@@ -192,9 +192,9 @@ jobs:
           ]
           bad=[x for x in forbidden if x.lower() in normalized.lower()]
           if bad:
-              raise SystemExit(f'Radar Tech BR: conteúdo proibido detectado {bad}')
+              raise SystemExit(f'Portal Radar Tech: conteúdo proibido detectado {bad}')
           print('BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero')
-          print('RADAR_TECH_BLOGGER_IDENTITY_PUBLIC_PASS: domínio, Page Loja, cinco categorias e identidade Radar corretos')
+          print('RADAR_TECH_BLOGGER_IDENTITY_PUBLIC_PASS: domínio, Page Loja, cinco categorias e identidade Portal Radar Tech corretos')
           PY
             then
               ok=1
@@ -215,7 +215,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add blogger_stores/data/radar_tech_blogger_selection.json blogger_stores/data/radar_tech_blogger_rotation.json
-          git commit -m "Atualizar rotação automática da Loja Radar Tech BR Blogger"
+          git commit -m "Atualizar rotação automática da Loja Portal Radar Tech Blogger"
           git pull --rebase origin main
           git push origin HEAD:main
 
