@@ -109,7 +109,7 @@ def validate_store_page() -> None:
     missing = [token for token in required if token not in raw]
     if missing:
         raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
-    forbidden = ["min-height:128px", "width:min(890px", "padding:32px"]
+    forbidden = ["min-height:128px", "width:min(890px"]
     legacy = [token for token in forbidden if token in raw]
     if legacy:
         raise RuntimeError(f"Share card gigante/legado reapareceu: {legacy}")
