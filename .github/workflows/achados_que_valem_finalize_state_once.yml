@@ -1,0 +1,164 @@
+name: Achados que Valem — Consolidar estado final — uso único
+
+on:
+  push:
+    paths:
+      - ".github/workflows/achados_que_valem_finalize_state_once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Consolidar inventário, rollout e checkpoint com asserts
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          invp=Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json')
+          rollp=Path('blogger_multi_store/config/network_store_rollout_2026-11-01.json')
+          cpp=Path('CHECKPOINT_ATUAL.md')
+
+          inv=json.loads(invp.read_text(encoding='utf-8'))
+          sm=inv['summary']
+          assert sm['blogs_total']==18
+          assert sm['modern_blogger_auto_policy_guard']==12
+          assert sm['store_scaffold_needs_auto_rotation']==6
+          assert sm['modern_blogger_auto_20x12_needs_policy_guard_upgrade']==0
+          assert sm['duplicate_writer_risks']==0
+          aqv=next(b for b in inv['blogs'] if b['title']=='Achados que Valem')
+          assert aqv['blog_id']=='7527651041649593600'
+          assert aqv['store_page_id']=='2615453333851618808'
+          assert aqv['store_post_id']=='953731363427123084'
+          assert aqv['automation_status']=='store_scaffold_needs_auto_rotation'
+          sm['modern_blogger_auto_policy_guard']=13
+          sm['store_scaffold_needs_auto_rotation']=5
+          aqv['automation_status']='modern_policy_guard_20x12'
+          aqv['safe_workflow']='.github/workflows/achados_que_valem_store_safe.yml'
+          aqv['live_workflow']='.github/workflows/achados_que_valem_store_autonomous.yml'
+          aqv['note']=('Concluído em 2026-11-02 como 13ª loja moderna. SAFE final 41451588897 PASS, job 125297842640, '
+                       '40/40 regressões, 20/20 Policy Guard, fallback=0/carry=0 e artifact 13144498675 SHA-256 '
+                       '1709ac651dc41c0787dbbb5d2af6b48b572587160ce24c733ab54abcc24ad861 revisado manualmente; v2 bloqueou '
+                       'processador/moedor no lugar de mixer portátil, caixa de som no lugar de microfone standalone e luz decorativa no lugar de mini projetor. '
+                       'Auditor pré-LIVE 41452182786 PASS 13/13. LIVE 41452673413 PASS, job 125301467321, HTTP público 200 no primeiro intento, '
+                       'store=20, hero=12, Policy Guard público e identidade correta; persistência somente pós-PASS no commit '
+                       'f0d673e240e92740a77d8e7f7f74bc663807ec14. Artifact LIVE 13145975986 SHA-256 '
+                       '3b6ee78f1a1db70bb80a4ad3b6ccaac93d0c9ff7f601c8886fbb8de7307b7e4b. Leitura independente do Blogger confirmou '
+                       '20+12, cinco categorias, quatro âncoras, disclosure e links patrocinados. Schedule diário 09:50 America/Recife habilitado no commit '
+                       'fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc sem push; auditor pós-schedule 41453525922 PASS 13/13, job 125304377780, '
+                       'com proteção permanente do horário/navegação no commit cb848ecdee3c607daabb024adf96de75e2f654b8.')
+          invp.write_text(json.dumps(inv,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          roll=json.loads(rollp.read_text(encoding='utf-8'))
+          assert roll['enabled'] is False
+          assert roll['mode']=='PREPARED_NOT_DEPLOYED'
+          assert len(roll['targets'])==6
+          assert roll['targets'][0]['title']=='Achados que Valem'
+          roll['completed_prerequisites'].append(
+              'Achados que Valem integrado ao padrão moderno em 2026-11-02: SAFE final 41451588897 PASS com 40/40 regressões, 20/20 Policy Guard e artifact 13144498675 SHA-256 1709ac651dc41c0787dbbb5d2af6b48b572587160ce24c733ab54abcc24ad861 revisado manualmente após endurecimento v2; auditor pré-LIVE 41452182786 PASS 13/13; LIVE 41452673413 PASS com HTTP público 200 no primeiro intento, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit f0d673e240e92740a77d8e7f7f74bc663807ec14; artifact LIVE 13145975986 SHA-256 3b6ee78f1a1db70bb80a4ad3b6ccaac93d0c9ff7f601c8886fbb8de7307b7e4b; leitura independente do Blogger confirmou a saída; schedule diário 09:50 America/Recife commit fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc sem push; auditor pós-schedule 41453525922 PASS 13/13, job 125304377780.'
+          )
+          roll['targets']=[t for t in roll['targets'] if t['title']!='Achados que Valem']
+          assert len(roll['targets'])==5
+          for i,t in enumerate(roll['targets'],1): t['priority']=i
+          assert roll['targets'][0]['title']=='Guia de Achados & Ofertas'
+          rollp.write_text(json.dumps(roll,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          cp=cpp.read_text(encoding='utf-8')
+          required=[
+              'O Blogger Policy Guard está integrado em **12 pipelines modernos**',
+              '12. **Escolha Certa Online**',
+              '`modern_blogger_auto_policy_guard: 12`',
+              '`store_scaffold_needs_auto_rotation: 6`',
+              'O auditor cobre os **12 SAFE/LIVE modernos**',
+              '# 11. FILA RESTANTE — 6 BLOGS',
+              '# 12. PRÓXIMO BLOCO PERMITIDO — ACHADOS QUE VALEM, NÃO INICIADO',
+              'auditor permanente = **12/12**;',
+              'inventário = **12 modernas / 6 restantes**;',
+          ]
+          missing=[x for x in required if x not in cp]
+          if missing: raise SystemExit('AQV_FINALIZE_FAIL checkpoint precondições: '+repr(missing))
+
+          now=datetime.now(ZoneInfo('America/Recife')).strftime('%Y-%m-%d %H:%M America/Recife')
+          import re
+          cp=re.sub(r'\*\*Última atualização:\*\* .*?  \n', f'**Última atualização:** {now}  \n', cp, count=1)
+          oldnote='> O backup R4 de 2026-11-02 captura o estado consolidado após Conecta Achados, Estilo no Dia a Dia, Casa em Ordem e Escolha Certa Online: 12/18 pipelines modernos protegidos, 6 alvos restantes e Achados que Valem como próximo bloco permitido.'
+          newnote='> O backup R4 de 2026-11-02 captura o estado até Escolha Certa Online. Achados que Valem foi concluído depois desse snapshot; para o estado atual de 13/18, este checkpoint + inventário + rollout prevalecem.'
+          if oldnote not in cp: raise SystemExit('AQV_FINALIZE_FAIL nota R4 esperada ausente')
+          cp=cp.replace(oldnote,newnote,1)
+          cp=cp.replace('O Blogger Policy Guard está integrado em **12 pipelines modernos**','O Blogger Policy Guard está integrado em **13 pipelines modernos**',1)
+          cp=cp.replace('12. **Escolha Certa Online**','12. **Escolha Certa Online**\n13. **Achados que Valem**',1)
+          cp=cp.replace('`modern_blogger_auto_policy_guard: 12`','`modern_blogger_auto_policy_guard: 13`',1)
+          cp=cp.replace('`store_scaffold_needs_auto_rotation: 6`','`store_scaffold_needs_auto_rotation: 5`',1)
+
+          oldaudit='''O auditor cobre os **12 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e os schedules/navegações finais de Casa em Ordem e Escolha Certa Online.\n\nÚltima validação, após habilitar o schedule do Escolha Certa Online:\n\n- commit do schedule `92a6497a30aa5b365fefddf8ad31b1ca53781ab8`\n- commit do reforço permanente do auditor `2d3c536dc499a7b193a9eb20fec97dda2c1263b8`\n- run `41447386251` — **SUCCESS**\n- job `125283757493`\n- `blogger_policy_guard_self_test: 13/13 OK`\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`\n- `SAFE/LIVE 12/12 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`'''
+          newaudit='''O auditor cobre os **13 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e os schedules/navegações finais de Casa em Ordem, Escolha Certa Online e Achados que Valem.\n\nÚltima validação, após habilitar o schedule do Achados que Valem:\n\n- commit do schedule `fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc`\n- commit do reforço permanente do auditor `cb848ecdee3c607daabb024adf96de75e2f654b8`\n- run `41453525922` — **SUCCESS**\n- job `125304377780`\n- `blogger_policy_guard_self_test: 13/13 OK`\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`\n- `SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`'''
+          if oldaudit not in cp: raise SystemExit('AQV_FINALIZE_FAIL bloco auditor antigo ausente')
+          cp=cp.replace(oldaudit,newaudit,1)
+
+          for old,new in [
+              ('# 14. BACKUP / RECUPERAÇÃO','# 15. BACKUP / RECUPERAÇÃO'),
+              ('# 13. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES','# 14. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES'),
+              ('# 12. PRÓXIMO BLOCO PERMITIDO — ACHADOS QUE VALEM, NÃO INICIADO','# 13. PRÓXIMO BLOCO PERMITIDO — GUIA DE ACHADOS & OFERTAS, NÃO INICIADO'),
+              ('# 11. FILA RESTANTE — 6 BLOGS','# 12. FILA RESTANTE — 5 BLOGS'),
+              ('# 10. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS','# 11. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS'),
+          ]:
+              cp=cp.replace(old,new,1)
+
+          anchor='# 11. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS\n'
+          if anchor not in cp: raise SystemExit('AQV_FINALIZE_FAIL anchor seção 11 ausente')
+          section='''# 10. ACHADOS QUE VALEM — CONCLUÍDO COMO 13ª LOJA MODERNA\n\nAlvo:\n\n- Blog ID `7527651041649593600`\n- Page LOJA ID `2615453333851618808`\n- Store Post ID `953731363427123084`\n- Page `https://achados-que-valem.blogspot.com/p/loja.html`\n- Post `https://achados-que-valem.blogspot.com/2026/11/loja.html`\n- SAFE `.github/workflows/achados_que_valem_store_safe.yml`\n- LIVE `.github/workflows/achados_que_valem_store_autonomous.yml`\n- motor `blogger_stores/src/achados_que_valem_store.py`\n- histórico independente `blogger_stores/data/achados_que_valem_rotation.json`\n\nPerfil final: Casa & Organização; Cozinha & Utilidades; Ferramentas & Reparos; Tecnologia & Conectividade; Áudio & Lazer — 5 categorias x 4 intenções, alinhadas aos posts reais de comparativos e achados úteis.\n\n## 10.1 SAFE e revisão semântica\n\n- SAFE v1 `41450668985` ficou tecnicamente verde, mas foi rejeitado após inspeção manual: processador/moedor em `mixer`, caixa de som em `microfone sem fio` e luz decorativa em `mini projetor`;\n- regras v2 endurecidas sem afrouxar gates;\n- primeira tentativa v2 `41451310185` falhou fail-closed por `Shopee System Error 10000` em `caixa organizadora`; nenhuma escrita Blogger era possível;\n- SAFE final `41451588897` — **SUCCESS**;\n- job `125297842640`;\n- regressão semântica `40/40`;\n- 20 produtos / 20 intenções; Policy Guard 20/20; fallback 0 / carry 0;\n- artifact SAFE `13144498675`;\n- SHA-256 `1709ac651dc41c0787dbbb5d2af6b48b572587160ce24c733ab54abcc24ad861`;\n- revisão manual final 20/20 coerente, incluindo mixer portátil, microfone standalone e mini projetor de vídeo real.\n\n## 10.2 Auditor pré-LIVE\n\n- run `41452182786` — **SUCCESS**;\n- job `125299828174`;\n- Policy Guard 13/13;\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`;\n- `SAFE/LIVE 13/13 protegidos`.\n\n## 10.3 LIVE final\n\n- kickoff/head `c96b6c473783e37998176ebdb2ad4db7786563ae`;\n- run `41452673413` — **SUCCESS**;\n- job `125301467321`;\n- SAFE fresco v2 40/40 e Policy Guard pré-LIVE 20/20;\n- identidade, Store e hero DRY-RUN PASS;\n- Store 20 + hero 12 publicados;\n- gate público `HTTP 200` no primeiro intento;\n- `PUBLIC_COUNTS_ATTEMPT_1: store=20 hero=12`;\n- `BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero`;\n- identidade pública PASS;\n- persistência somente depois do PASS público;\n- commit automático `f0d673e240e92740a77d8e7f7f74bc663807ec14`;\n- artifact LIVE `13145975986`;\n- SHA-256 `3b6ee78f1a1db70bb80a4ad3b6ccaac93d0c9ff7f601c8886fbb8de7307b7e4b`.\n\n## 10.4 Leitura independente e schedule\n\nLeitura direta do Blogger confirmou status LIVE, IDs existentes preservados, 20 Store cards, 12 hero, cinco categorias próprias, quatro botões/âncoras corretos, disclosure e links `rel="nofollow sponsored noopener"`.\n\nApós leitura direta dos schedules modernos, `09:50 America/Recife` estava livre.\n\n- `cron: "50 9 * * *"`;\n- `timezone: "America/Recife"`;\n- gatilho `push` removido; workflow final usa somente `workflow_dispatch + schedule`;\n- commit do schedule `fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc`;\n- commit da proteção permanente do auditor `cb848ecdee3c607daabb024adf96de75e2f654b8`;\n- auditor pós-schedule `41453525922` — **SUCCESS**;\n- job `125304377780`;\n- `SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos`.\n\nAchados que Valem está **CONCLUÍDO** como `modern_policy_guard_20x12`. Não reabrir sem evidência concreta de regressão.\n\n---\n\n'''
+          cp=cp.replace(anchor,section+anchor,1)
+
+          oldqueue='''Ordem atual:\n\n1. **Achados que Valem**\n2. Guia de Achados & Ofertas\n3. Moda e Ofertas\n4. Achadinhos de Beleza\n5. Radar Tech BR Blogger\n6. Cozinha Sem Complicação'''
+          newqueue='''Ordem atual:\n\n1. **Guia de Achados & Ofertas**\n2. Moda e Ofertas\n3. Achadinhos de Beleza\n4. Radar Tech BR Blogger\n5. Cozinha Sem Complicação'''
+          if oldqueue not in cp: raise SystemExit('AQV_FINALIZE_FAIL fila antiga ausente')
+          cp=cp.replace(oldqueue,newqueue,1)
+
+          oldnext='''Alvo inventariado:\n\n- Blog ID `7527651041649593600`\n- Page LOJA ID `2615453333851618808`\n- Store Post ID `953731363427123084`\n- Page `https://achados-que-valem.blogspot.com/p/loja.html`\n- Post `https://achados-que-valem.blogspot.com/2026/11/loja.html`\n- estado atual `store_scaffold_needs_auto_rotation`\n- perfil semântico ainda precisa ser definido e validado\n\n**Não iniciar Achados que Valem automaticamente. Aguardar novo `continue` do usuário.**'''
+          newnext='''Alvo inventariado:\n\n- Blog ID `1453188702831337099`\n- Page LOJA ID `9156313162825773745`\n- Store Post ID `3858461075334539445`\n- estado atual `STORE_SCAFFOLD_LIVE_AUTO_MISSING`\n- perfil semântico ainda precisa ser definido e validado\n\n**Não iniciar Guia de Achados & Ofertas automaticamente. Aguardar novo `continue` do usuário.**'''
+          if oldnext not in cp: raise SystemExit('AQV_FINALIZE_FAIL próximo bloco antigo ausente')
+          cp=cp.replace(oldnext,newnext,1)
+          cp=cp.replace('Não reiniciar diagnóstico de Vitrine, Achados para Casa, Conecta, Estilo, Casa em Ordem ou Escolha Certa Online sem evidência concreta de regressão.',
+                        'Não reiniciar diagnóstico de Vitrine, Achados para Casa, Conecta, Estilo, Casa em Ordem, Escolha Certa Online ou Achados que Valem sem evidência concreta de regressão.',1)
+
+          oldbackup='''Último backup completo criado antes de Conecta/Estilo:\n\n- R3 `blogger-automation1-backup-2026-11-02-r3`\n- run `41428226665` — SUCCESS\n- artifact ID `13132752660`\n- SHA-256 `65a76eecb33d126e00ffe80e657adbdf488ad93766fda1dd971beece2208b863`\n- commit capturado `0e41104ffcadc37aedfd644875a1d42ebde8ee4f`\n\nComo o R3 é anterior às conclusões de Conecta, Estilo, Casa em Ordem e Escolha Certa Online, um próximo backup completo deverá incluir os commits desses quatro blocos.'''
+          newbackup='''Último backup completo disponível antes da conclusão do Achados que Valem:\n\n- R4 `blogger-automation1-backup-2026-11-02-r4`\n- run `41449646303` — SUCCESS\n- artifact ID `13144586595`\n- SHA-256 `1d0298454c39c1d6c15b623bb532f21d551c7bd251dcb71874d0edc24544e096`\n- commit capturado `2ccf32fac4f7ad92bd3756efbce54b37ba6916f3`\n\nO R4 captura o estado até Escolha Certa Online. A conclusão do Achados que Valem está registrada neste checkpoint, no inventário e no rollout posteriores ao snapshot.'''
+          if oldbackup not in cp: raise SystemExit('AQV_FINALIZE_FAIL bloco backup R3 ausente')
+          cp=cp.replace(oldbackup,newbackup,1)
+
+          oldfuture='''- Escolha Certa Online = 12ª loja moderna concluída;\n- auditor permanente = **12/12**;\n- inventário = **12 modernas / 6 restantes**;\n- próximo bloco permitido = **Achados que Valem**, somente após comando explícito do usuário.'''
+          newfuture='''- Escolha Certa Online = 12ª loja moderna concluída;\n- Achados que Valem = 13ª loja moderna concluída;\n- auditor permanente = **13/13**;\n- inventário = **13 modernas / 5 restantes**;\n- próximo bloco permitido = **Guia de Achados & Ofertas**, somente após comando explícito do usuário.'''
+          if oldfuture not in cp: raise SystemExit('AQV_FINALIZE_FAIL resumo futuro antigo ausente')
+          cp=cp.replace(oldfuture,newfuture,1)
+          cpp.write_text(cp,encoding='utf-8',newline='\n')
+
+          # asserts pós-escrita
+          inv2=json.loads(invp.read_text(encoding='utf-8'))
+          roll2=json.loads(rollp.read_text(encoding='utf-8'))
+          cp2=cpp.read_text(encoding='utf-8')
+          assert inv2['summary']['modern_blogger_auto_policy_guard']==13
+          assert inv2['summary']['store_scaffold_needs_auto_rotation']==5
+          assert next(b for b in inv2['blogs'] if b['title']=='Achados que Valem')['automation_status']=='modern_policy_guard_20x12'
+          assert roll2['enabled'] is False and roll2['mode']=='PREPARED_NOT_DEPLOYED'
+          assert len(roll2['targets'])==5 and roll2['targets'][0]['title']=='Guia de Achados & Ofertas'
+          assert 'O Blogger Policy Guard está integrado em **13 pipelines modernos**' in cp2
+          assert '# 10. ACHADOS QUE VALEM — CONCLUÍDO COMO 13ª LOJA MODERNA' in cp2
+          assert '# 12. FILA RESTANTE — 5 BLOGS' in cp2
+          assert '# 13. PRÓXIMO BLOCO PERMITIDO — GUIA DE ACHADOS & OFERTAS, NÃO INICIADO' in cp2
+          assert 'auditor permanente = **13/13**' in cp2
+          print('ACHADOS_QUE_VALEM_FINALIZE_STATE_PASS: inventory=13/5 achados=modern rollout=disabled targets=5 next=Guia de Achados & Ofertas checkpoint=updated')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHECKPOINT_ATUAL.md blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json blogger_multi_store/config/network_store_rollout_2026-11-01.json
+          git commit -m "checkpoint: concluir Achados que Valem como pipeline 13 de 13"
+          git pull --rebase origin main
+          git push origin HEAD:main
