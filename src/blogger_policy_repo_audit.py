@@ -15,6 +15,7 @@ SAFE_WORKFLOWS = [
     ".github/workflows/ventiladores_store_safe.yml",
     ".github/workflows/vitrine_pratica_store_safe.yml",
     ".github/workflows/achados_casa_store_safe.yml",
+    ".github/workflows/conecta_achados_store_safe.yml",
 ]
 LIVE_WORKFLOWS = [
     ".github/workflows/air_fryers_store_autonomous.yml",
@@ -25,6 +26,7 @@ LIVE_WORKFLOWS = [
     ".github/workflows/ventiladores_store_autonomous.yml",
     ".github/workflows/vitrine_pratica_store_autonomous.yml",
     ".github/workflows/achados_casa_store_autonomous.yml",
+    ".github/workflows/conecta_achados_store_autonomous.yml",
 ]
 
 # Fluxos preservados para recuperação, mas proibidos de voltar a escrever
@@ -157,7 +159,7 @@ def main() -> None:
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 8/8 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 9/9 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
