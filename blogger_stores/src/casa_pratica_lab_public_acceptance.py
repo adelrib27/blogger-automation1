@@ -4,7 +4,7 @@ from __future__ import annotations
 import sys
 import time
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 from blogger_policy_guard import require_store_html_allowed
@@ -75,7 +75,12 @@ def validate_store_page() -> None:
         'class="bls-nav bls-prev"',
         'class="bls-nav bls-next"',
         'id="blsDots"',
-        "setInterval(()=>show(i+1),6000)",
+        "document.addEventListener('click'",
+        "closest('.bls-next')",
+        "closest('.bls-prev')",
+        "event.stopImmediatePropagation()",
+        "new MutationObserver",
+        "pageCarouselDelegated",
         "bls-casa-organizacao",
         "bls-cozinha-eletroportateis",
         "bls-iluminacao-decoracao",
@@ -85,16 +90,16 @@ def validate_store_page() -> None:
     missing = [token for token in required if token not in raw]
     if missing:
         raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
-    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel funcional + Policy Guard.")
+    if "document.getElementById('blsSlider')" in raw:
+        raise RuntimeError("Controlador legado do carousel reapareceu na Page pública.")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel delegado + Policy Guard.")
 
 
 def validate_home_and_articles() -> None:
     home = fetch_200(f"{BASE}/?m=1", "LAB_HOME")
-    hero_signature = f"post-wrapper hero post-{STORE_POST_ID}"
-    feed_signature = f"post-wrapper not-hero post-{STORE_POST_ID}"
-    if hero_signature in home:
+    if f"post-wrapper hero post-{STORE_POST_ID}" in home:
         raise RuntimeError("Store Post técnico continua ocupando o FeaturedPost1 da home.")
-    if feed_signature in home:
+    if f"post-wrapper not-hero post-{STORE_POST_ID}" in home:
         raise RuntimeError("Store Post técnico continua renderizado na grade editorial da home.")
     for slug in ARTICLES:
         path = f"/2026/11/{slug}.html"
