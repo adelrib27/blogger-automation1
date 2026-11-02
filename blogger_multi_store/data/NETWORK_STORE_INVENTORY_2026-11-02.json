@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 17,
+    "modern_blogger_auto_policy_guard": 18,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 1,
+    "store_scaffold_needs_auto_rotation": 0,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -234,7 +234,16 @@
       "store_page_url": "https://cozinha-sem-complicacao.blogspot.com/p/loja.html",
       "store_post_id": "7888042807715084117",
       "store_post_url": "https://cozinha-sem-complicacao.blogspot.com/2026/10/loja.html",
-      "automation_status": "store_scaffold_needs_auto_rotation"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/cozinha_sem_complicacao_store_safe.yml",
+      "live_workflow": ".github/workflows/cozinha_sem_complicacao_store_autonomous.yml",
+      "schedule": "5 11 * * *",
+      "timezone": "America/Recife",
+      "semantic_regression": "44/44",
+      "safe_final_run": 41541945212,
+      "live_final_run": 41543311729,
+      "audit_final_run": 41544208159,
+      "note": "Concluído em 2026-11-02 como 18ª e última loja moderna da rede Blogger. SAFE final 44/44 e seleção 20/20; LIVE final publicou no Store Post original 20 produtos + 12 hero, passou dry-runs, Policy Guard pré-LIVE e validação pública, persistindo rotação somente após PASS. Leitura independente via Blogger_Bridge_V2 confirmou Post ID original LIVE, 20 cards, 12 hero, cinco categorias coerentes, disclosure e rel nofollow sponsored noopener, sem falsos positivos evidentes. Schedule diário 11:05 America/Recife; writer final sem push e protegido pelo auditor central 18/18."
     },
     {
       "title": "Liquidificadores em Foco",
@@ -247,8 +256,6 @@
       "live_workflow": ".github/workflows/blogger_liquidificador_store_autonomous.yml"
     }
   ],
-  "remaining_queue": [
-    "Cozinha Sem Complicação"
-  ],
+  "remaining_queue": [],
   "duplicate_writer_risks": []
 }
