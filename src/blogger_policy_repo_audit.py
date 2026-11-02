@@ -21,6 +21,7 @@ SAFE_WORKFLOWS = [
     ".github/workflows/escolha_certa_online_store_safe.yml",
     ".github/workflows/achados_que_valem_store_safe.yml",
     ".github/workflows/guia_achados_ofertas_store_safe.yml",
+    ".github/workflows/moda_ofertas_store_safe.yml",
 ]
 LIVE_WORKFLOWS = [
     ".github/workflows/air_fryers_store_autonomous.yml",
@@ -37,6 +38,7 @@ LIVE_WORKFLOWS = [
     ".github/workflows/escolha_certa_online_store_autonomous.yml",
     ".github/workflows/achados_que_valem_store_autonomous.yml",
     ".github/workflows/guia_achados_ofertas_store_autonomous.yml",
+    ".github/workflows/moda_ofertas_store_autonomous.yml",
 ]
 
 # Fluxos preservados para recuperação, mas proibidos de voltar a escrever
@@ -250,7 +252,7 @@ def main() -> None:
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 14/14 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50 e Guia de Achados & Ofertas 10:05 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 15/15 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50 e Guia de Achados & Ofertas 10:05 protegidos; Moda e Ofertas LIVE permanece manual até o primeiro PASS público; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
