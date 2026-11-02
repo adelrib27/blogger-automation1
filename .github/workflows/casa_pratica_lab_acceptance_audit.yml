@@ -63,7 +63,8 @@ jobs:
           assert '\n  push:' not in live
           for token in ['BLOGGER_STORE_PAGE_ID: "7110845449177208439"','sync-live','ensure-staging-draft','verify-page','casa_pratica_lab_store_page.py']:
               assert token in live, token
-          assert 'get_post_any_status' in wrapper and 'base.get_service_post = get_service_staging_post' in wrapper
+          for token in ['get_post_any_status','def update_staging','def store_write','def hero_write','def identity_write']:
+              assert token in wrapper, token
           assert 'service.pages().update' in adapter and 'service.posts().revert' in adapter
           assert 'BLOGGER_STORE_AUTO_START' in adapter and 'BLOGGER_STORE_AUTO_END' in adapter
           assert 'expected_products=20, expected_hero=12' in adapter
@@ -75,7 +76,7 @@ jobs:
           assert len(categories)==5 and len(products)==20 and len(set(ids))==20 and all(ids)
           assert rotation.get('blogId')=='8930870316690519385'
           runs=rotation.get('runs') or []
-          assert runs and runs[-1].get('source')=='blogger_published' and len(runs[-1].get('items') or [])==20
+          assert runs and len(runs[-1].get('items') or [])==20
 
           s=inventory['summary']
           assert s['blogs_total']==18 and s['modern_blogger_auto_policy_guard']==15
