@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 10,
+    "modern_blogger_auto_policy_guard": 11,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 8,
+    "store_scaffold_needs_auto_rotation": 7,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -121,7 +121,10 @@
       "store_page_url": "https://casa-em-ordem-pratica.blogspot.com/p/loja.html",
       "store_post_id": "5566188787681469799",
       "store_post_url": "https://casa-em-ordem-pratica.blogspot.com/2026/11/loja.html",
-      "automation_status": "store_scaffold_needs_auto_rotation"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/casa_em_ordem_store_safe.yml",
+      "live_workflow": ".github/workflows/casa_em_ordem_store_autonomous.yml",
+      "note": "Concluído em 2026-11-02 como 11ª loja moderna. Primeiro SAFE 41438524634 falhou corretamente antes de qualquer escrita por falso positivo do bloqueio pet dentro de tapete; SAFE técnico 41438830523 ficou verde, mas inspeção manual do artifact detectou caixa organizadora selecionando cesto e prateleira de banheiro selecionando porta-papel. Perfil semântico v3 endurecido; SAFE final 41439295948 PASS, 40/40 regressões e artifact revisado manualmente com 20/20 intenções coerentes. Auditor pré-LIVE 41439709960 PASS 11/11. LIVE 41439797912 PASS com HTTP público 429,200, 20 produtos + 12 hero, Policy Guard público e persistência somente pós-PASS no commit 909382b375afc9dae578d7965873d9ece3736f9c. Artifact LIVE ID 13138591112 SHA-256 782b0bb47371bdc67d53a7e14e424152f65a2df45a4154fdde6f51f0e1d19cb9. Leitura independente detectou quatro âncoras deslocadas no hero; correção permanente commit d37e91fb922541f46770a759064e1016552d67b7 e run 41440262021 PASS, 4/4 âncoras corretas e 20+12 preservado. Schedule diário 08:05 America/Recife habilitado no commit c77915f81c004774992b54487c31afd32ab06efd; auditor pós-schedule 41440836794 PASS 11/11 com proteção permanente do horário e navegação."
     },
     {
       "title": "Escolha Certa Online",

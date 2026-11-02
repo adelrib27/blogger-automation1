@@ -1,6 +1,6 @@
 # CHECKPOINT ATUAL — BLOGGER AUTOMATION
 
-**Última atualização:** 2026-11-02 08:20 America/Recife  
+**Última atualização:** 2026-11-02 09:00 America/Recife  
 **Projeto:** Blogger Automation sem ChatGPT Work
 
 ## LEIA PRIMEIRO
@@ -19,7 +19,7 @@ Antes de qualquer operação Blogger neste projeto, leia nesta ordem:
 
 Este arquivo prevalece quando houver diferença de estado operacional. Os checkpoints anteriores permanecem válidos como histórico/base de recuperação.
 
-> O backup R3 de 2026-11-02 foi criado antes das conclusões de Conecta Achados e Estilo no Dia a Dia. Para o estado posterior ao R3, este checkpoint + inventário + rollout são a fonte operacional mais recente.
+> O backup R3 de 2026-11-02 foi criado antes das conclusões de Conecta Achados, Estilo no Dia a Dia e Casa em Ordem. Para o estado posterior ao R3, este checkpoint + inventário + rollout são a fonte operacional mais recente.
 
 ---
 
@@ -35,7 +35,7 @@ Este arquivo prevalece quando houver diferença de estado operacional. Os checkp
 
 ## Lojas modernas protegidas
 
-O Blogger Policy Guard está integrado em **10 pipelines modernos** com:
+O Blogger Policy Guard está integrado em **11 pipelines modernos** com:
 
 - SAFE;
 - Policy Guard pré-LIVE;
@@ -59,13 +59,14 @@ Lojas modernas:
 7. Vitrine Prática
 8. Achados para Casa
 9. Conecta Achados
-10. **Estilo no Dia a Dia**
+10. Estilo no Dia a Dia
+11. **Casa em Ordem**
 
 Estado do inventário:
 
-- `modern_blogger_auto_policy_guard: 10`
+- `modern_blogger_auto_policy_guard: 11`
 - `modern_blogger_auto_20x12_needs_policy_guard_upgrade: 0`
-- `store_scaffold_needs_auto_rotation: 8`
+- `store_scaffold_needs_auto_rotation: 7`
 - `duplicate_writer_risks: 0`
 
 Rollout global continua:
@@ -138,16 +139,17 @@ Arquivos centrais:
 - `src/blogger_policy_repo_audit.py`
 - `.github/workflows/blogger_policy_repo_audit.yml`
 
-O auditor cobre os 10 SAFE/LIVE modernos, `blogger_stores/src/**`, writers legados duplicados e proteção do aviso nativo de cookies.
+O auditor cobre os **11 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e o schedule/navegação final do Casa em Ordem.
 
-Última validação, após habilitar o schedule do Estilo no Dia a Dia:
+Última validação, após habilitar o schedule do Casa em Ordem:
 
-- commit do schedule `821fb4e6a7ef16348c7432a7094065ba56b418b2`
-- run `41435835886` — **SUCCESS**
-- job `125245260514`
+- commit do schedule `c77915f81c004774992b54487c31afd32ab06efd`
+- commit do reforço permanente do auditor `d7e6c29cd519360ec1a2421986813ccc6263c729`
+- run `41440836794` — **SUCCESS**
+- job `125261986171`
 - `blogger_policy_guard_self_test: 13/13 OK`
 - `BLOGGER_POLICY_REPO_AUDIT_PASS`
-- `SAFE/LIVE 10/10 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`
+- `SAFE/LIVE 11/11 protegidos; Casa em Ordem schedule 08:05 protegido; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`
 
 ---
 
@@ -467,7 +469,83 @@ Não reabrir o diagnóstico sem evidência concreta de regressão.
 
 ---
 
-# 8. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS
+# 8. CASA EM ORDEM — CONCLUÍDO COMO 11ª LOJA MODERNA
+
+Alvo:
+
+- Blog ID `4177382081459143374`
+- Page LOJA ID `4031853959690608178`
+- Store Post ID `5566188787681469799`
+- Page `https://casa-em-ordem-pratica.blogspot.com/p/loja.html`
+- Post `https://casa-em-ordem-pratica.blogspot.com/2026/11/loja.html`
+- SAFE `.github/workflows/casa_em_ordem_store_safe.yml`
+- LIVE `.github/workflows/casa_em_ordem_store_autonomous.yml`
+- motor `blogger_stores/src/casa_em_ordem_store.py`
+- histórico independente `blogger_stores/data/casa_em_ordem_rotation.json`
+
+Perfil final: Organização & Armazenamento; Quarto & Roupa de Cama; Banheiro & Organização; Lavanderia & Limpeza; Decoração & Conforto — 5 categorias x 4 intenções.
+
+## 8.1 SAFE e revisão semântica
+
+- primeiro SAFE `41438524634` falhou corretamente antes de qualquer escrita: o bloqueio `pet` casava dentro de `tapete`;
+- SAFE técnico `41438830523` ficou verde, mas não foi aceito: inspeção manual encontrou cesto em `caixa organizadora` e porta-papel em `prateleira banheiro`;
+- perfil v3 endurecido;
+- SAFE final `41439295948` — **SUCCESS**;
+- 40/40 regressões semânticas;
+- 20 produtos / 20 intenções / links 20/20;
+- fallback 0 / carry 0;
+- artifact SAFE final `13136984336`;
+- SHA-256 `6d5a9c16eee3e3184a22ed399e3d65cbd69ae46d2a0daf2016d2fe9e377e06eb`;
+- revisão manual final 20/20 coerente.
+
+## 8.2 Auditor pré-LIVE
+
+- run `41439709960` — **SUCCESS**;
+- job `125258208273`;
+- Policy Guard 13/13;
+- `BLOGGER_POLICY_REPO_AUDIT_PASS`;
+- `SAFE/LIVE 11/11 protegidos`.
+
+## 8.3 LIVE final
+
+- run `41439797912` — **SUCCESS**;
+- job `125258499502`;
+- Store 20 + hero 12;
+- gate público HTTP `429 → 200`;
+- `BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero`;
+- persistência somente depois do PASS público;
+- commit automático `909382b375afc9dae578d7965873d9ece3736f9c`;
+- artifact LIVE ID `13138591112`;
+- SHA-256 `782b0bb47371bdc67d53a7e14e424152f65a2df45a4154fdde6f51f0e1d19cb9`.
+
+## 8.4 Leitura independente e navegação
+
+A leitura direta do Blogger confirmou a seleção e detectou quatro botões do hero com rótulo correto e âncora deslocada. A correção ocorreu sem nova rotação de produtos.
+
+- commit do motor `d37e91fb922541f46770a759064e1016552d67b7`;
+- run `41440262021` — **SUCCESS**;
+- job `125260056522`;
+- `CASA_ORDEM_NAV_FIX_PASS: 4/4 âncoras corretas; 20+12 preservado`;
+- segunda leitura independente confirmou os quatro destinos e os 20 produtos inalterados.
+
+## 8.5 Schedule final
+
+- `cron: "5 8 * * *"`;
+- `timezone: "America/Recife"`;
+- commit `c77915f81c004774992b54487c31afd32ab06efd`;
+- auditor reforçado para proteger horário e quatro âncoras;
+- commit do auditor `d7e6c29cd519360ec1a2421986813ccc6263c729`;
+- auditor pós-schedule `41440836794` — **SUCCESS**;
+- job `125261986171`;
+- Policy Guard 13/13;
+- `BLOGGER_POLICY_REPO_AUDIT_PASS`;
+- `SAFE/LIVE 11/11 protegidos; Casa em Ordem schedule 08:05 protegido`.
+
+Casa em Ordem está **CONCLUÍDO** como `modern_policy_guard_20x12`. Não reabrir sem regressão concreta.
+
+---
+
+# 9. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS
 
 ## Gate anti-repetição editorial
 
@@ -506,42 +584,41 @@ Não reintroduzir `schedule` nem `push` nos writers legados.
 
 ---
 
-# 9. FILA RESTANTE — 8 BLOGS
+# 10. FILA RESTANTE — 7 BLOGS
 
 Ordem atual:
 
-1. **Casa em Ordem**
-2. Escolha Certa Online
-3. Achados que Valem
-4. Guia de Achados & Ofertas
-5. Moda e Ofertas
-6. Achadinhos de Beleza
-7. Radar Tech BR Blogger
-8. Cozinha Sem Complicação
+1. **Escolha Certa Online**
+2. Achados que Valem
+3. Guia de Achados & Ofertas
+4. Moda e Ofertas
+5. Achadinhos de Beleza
+6. Radar Tech BR Blogger
+7. Cozinha Sem Complicação
 
 Cada alvo exige perfil semântico próprio antes do LIVE.
 
 ---
 
-# 10. PRÓXIMO BLOCO PERMITIDO — CASA EM ORDEM, NÃO INICIADO
+# 11. PRÓXIMO BLOCO PERMITIDO — ESCOLHA CERTA ONLINE, NÃO INICIADO
 
 Alvo inventariado:
 
-- Blog ID `4177382081459143374`
-- Page LOJA ID `4031853959690608178`
-- Store Post ID `5566188787681469799`
-- Page `https://casa-em-ordem-pratica.blogspot.com/p/loja.html`
-- Post `https://casa-em-ordem-pratica.blogspot.com/2026/11/loja.html`
+- Blog ID `5151950717041967683`
+- Page LOJA ID `3334029815604129982`
+- Store Post ID `5474604520207119855`
+- Page `https://escolha-certa-online.blogspot.com/p/loja.html`
+- Post `https://escolha-certa-online.blogspot.com/2026/11/loja.html`
 - estado atual `store_scaffold_needs_auto_rotation`
 - perfil semântico ainda precisa ser definido e validado
 
-**Não iniciar Casa em Ordem automaticamente. Aguardar novo `continue` do usuário.**
+**Não iniciar Escolha Certa Online automaticamente. Aguardar novo `continue` do usuário.**
 
 ---
 
-# 11. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES
+# 12. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES
 
-- Não reiniciar diagnóstico de Vitrine, Achados, Conecta ou Estilo sem evidência concreta de regressão.
+- Não reiniciar diagnóstico de Vitrine, Achados, Conecta, Estilo ou Casa em Ordem sem evidência concreta de regressão.
 - Não pedir operação manual quando ferramentas conectadas já executam a ação.
 - Confirmar Blog ID e Store Post ID antes de escrever.
 - Não recriar Page/Post Loja.
@@ -562,7 +639,7 @@ Alvo inventariado:
 
 ---
 
-# 12. BACKUP / RECUPERAÇÃO
+# 13. BACKUP / RECUPERAÇÃO
 
 Último backup completo criado antes de Conecta/Estilo:
 
@@ -572,7 +649,7 @@ Alvo inventariado:
 - SHA-256 `65a76eecb33d126e00ffe80e657adbdf488ad93766fda1dd971beece2208b863`
 - commit capturado `0e41104ffcadc37aedfd644875a1d42ebde8ee4f`
 
-Como o R3 é anterior às conclusões de Conecta e Estilo, um próximo backup completo deverá incluir os commits desses dois blocos.
+Como o R3 é anterior às conclusões de Conecta, Estilo e Casa em Ordem, um próximo backup completo deverá incluir os commits desses três blocos.
 
 Se este arquivo for encontrado em uma conversa futura:
 
@@ -580,6 +657,7 @@ Se este arquivo for encontrado em uma conversa futura:
 - Achados para Casa = 8ª loja moderna concluída;
 - Conecta Achados = 9ª loja moderna concluída;
 - Estilo no Dia a Dia = 10ª loja moderna concluída;
-- auditor permanente = **10/10**;
-- inventário = **10 modernas / 8 restantes**;
-- próximo bloco permitido = **Casa em Ordem**, somente após comando explícito do usuário.
+- Casa em Ordem = 11ª loja moderna concluída;
+- auditor permanente = **11/11**;
+- inventário = **11 modernas / 7 restantes**;
+- próximo bloco permitido = **Escolha Certa Online**, somente após comando explícito do usuário.
