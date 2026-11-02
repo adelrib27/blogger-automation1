@@ -1,0 +1,53 @@
+name: Casa Prática Lab — MIGRAÇÃO visual Store Post madura
+
+on:
+  push:
+    paths:
+      - ".github/workflows/casa_pratica_lab_mature_migrate_once.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: casa-pratica-lab-store-live
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BLOGGER_BLOG_ID: "8930870316690519385"
+      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
+      BLOGGER_STORE_POST_ID: "7691087355641688975"
+      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+
+      - name: Compilar e dry-run do contrato visual
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            blogger_stores/src/casa_pratica_lab_store_post_contract.py \
+            blogger_stores/src/casa_pratica_lab_public_acceptance.py
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_post_contract.py dry-run
+
+      - name: Aplicar contrato Store Post maduro
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_post_contract.py apply-live
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_post_contract.py verify
+
+      - name: Aceitação pública estrita
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
+
+# DELETE_AFTER_PASS
