@@ -2,6 +2,9 @@ name: Estilo no Dia a Dia — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "50 7 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "blogger_stores/estilo_dia_a_dia_live_kickoff.txt"
@@ -219,4 +222,4 @@ jobs:
 
 # POLICY_GUARD_CENTRAL_ESTILO_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
-# SCHEDULE_DISABLED_UNTIL_VALIDATION
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
