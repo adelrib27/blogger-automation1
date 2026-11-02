@@ -10,6 +10,7 @@ on:
       - "blogger_stores/src/casa_pratica_lab_store.py"
       - "blogger_stores/src/casa_pratica_lab_store_page.py"
       - "blogger_stores/src/blogger_new_blog_store_page_target.py"
+      - "blogger_stores/src/casa_pratica_lab_public_acceptance.py"
       - "blogger_stores/data/casa_pratica_lab_selection.json"
       - "blogger_stores/data/casa_pratica_lab_rotation.json"
       - "config/shopee_casa_pratica_lab.json"
@@ -36,6 +37,7 @@ jobs:
             blogger_stores/src/casa_pratica_lab_store.py \
             blogger_stores/src/casa_pratica_lab_store_page.py \
             blogger_stores/src/blogger_new_blog_store_page_target.py \
+            blogger_stores/src/casa_pratica_lab_public_acceptance.py \
             src/blogger_policy_guard.py \
             src/blogger_policy_guard_self_test.py
           PYTHONPATH=src python src/blogger_policy_guard_self_test.py
@@ -50,17 +52,16 @@ jobs:
           engine=Path('blogger_stores/src/casa_pratica_lab_store.py').read_text(encoding='utf-8')
           wrapper=Path('blogger_stores/src/casa_pratica_lab_store_page.py').read_text(encoding='utf-8')
           adapter=Path('blogger_stores/src/blogger_new_blog_store_page_target.py').read_text(encoding='utf-8')
-          contract=Path('NEW_BLOG_E2E_CONTRACT_2026-11-02.md')
+          public=Path('blogger_stores/src/casa_pratica_lab_public_acceptance.py').read_text(encoding='utf-8')
           selection=json.loads(Path('blogger_stores/data/casa_pratica_lab_selection.json').read_text(encoding='utf-8'))
           rotation=json.loads(Path('blogger_stores/data/casa_pratica_lab_rotation.json').read_text(encoding='utf-8'))
           inventory=json.loads(Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json').read_text(encoding='utf-8'))
           rollout=json.loads(Path('blogger_multi_store/config/network_store_rollout_2026-11-01.json').read_text(encoding='utf-8'))
 
-          assert contract.exists()
+          assert Path('NEW_BLOG_E2E_CONTRACT_2026-11-02.md').exists()
           assert 'workflow_dispatch:' in legacy and '\n  schedule:' not in legacy and '\n  push:' not in legacy
           assert 'LEGACY_RECOVERY_ONLY' in legacy
-          assert 'cron: "20 10 * * *"' in live and 'timezone: "America/Recife"' in live
-          assert '\n  push:' not in live
+          assert 'cron: "20 10 * * *"' in live and 'timezone: "America/Recife"' in live and '\n  push:' not in live
           for token in ['BLOGGER_STORE_PAGE_ID: "7110845449177208439"','sync-live','ensure-staging-draft','verify-page','casa_pratica_lab_store_page.py']:
               assert token in live, token
           for token in ['get_post_any_status','def update_staging','def store_write','def hero_write','def identity_write']:
@@ -69,6 +70,7 @@ jobs:
           assert 'BLOGGER_STORE_AUTO_START' in adapter and 'BLOGGER_STORE_AUTO_END' in adapter
           assert 'expected_products=20, expected_hero=12' in adapter
           assert 'CASA_PRATICA_LAB_FIRST_PUBLISH_COMBINED_DRY_RUN_PASS' in engine
+          assert 'def fetch_200' in public and 'CASA_PRATICA_LAB_PUBLIC_E2E_PASS' in public
 
           categories=selection.get('categories') or {}
           products=[p for values in categories.values() for p in values]
@@ -87,45 +89,7 @@ jobs:
           print('CASA_PRATICA_LAB_REPO_AUDIT_PASS: Page-target 20+12; staging DRAFT; writer único; rede 15/18 preservada.')
           PY
 
-      - name: Auditar Page LOJA pública 20+12
-        run: |
-          set -euo pipefail
-          url="https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
-          ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
-          ok=0
-          for attempt in $(seq 1 8); do
-            code=$(curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/lab-page.html -w "%{http_code}" "${url}?m=1&e2e=${GITHUB_RUN_ID}-${attempt}" || true)
-            echo "LAB_PAGE_HTTP_${attempt}: ${code}"
-            if [ "$code" = "429" ]; then sleep 15; continue; fi
-            if [ "$code" != "200" ]; then sleep 8; continue; fi
-            store=$(python -c "print(open('/tmp/lab-page.html',encoding='utf-8',errors='ignore').read().count('data-item-id='))")
-            hero=$(python -c "print(open('/tmp/lab-page.html',encoding='utf-8',errors='ignore').read().count('data-hero-item-id='))")
-            rels=$(python -c "print(open('/tmp/lab-page.html',encoding='utf-8',errors='ignore').read().count('rel=\"nofollow sponsored noopener\"'))")
-            echo "LAB_PAGE_COUNTS: store=${store} hero=${hero} rels=${rels}"
-            if [ "$store" -eq 20 ] && [ "$hero" -eq 12 ] && [ "$rels" -ge 32 ]; then ok=1; break; fi
-          done
-          test "$ok" -eq 1
-          PYTHONPATH=src python - <<'PY'
-          from blogger_policy_guard import require_store_html_allowed
-          raw=open('/tmp/lab-page.html',encoding='utf-8',errors='ignore').read()
-          require_store_html_allowed(raw,expected_products=20,expected_hero=12)
-          required=['bls-casa-organizacao','bls-cozinha-eletroportateis','bls-iluminacao-decoracao','bls-clima-conforto','bls-utilidades-rotina']
-          missing=[x for x in required if x not in raw]
-          if missing: raise SystemExit(missing)
-          print('CASA_PRATICA_LAB_PUBLIC_PAGE_AUDIT_PASS: /p/loja.html 20+12 + Policy Guard.')
-          PY
-
-      - name: Auditar home editorial e imagens
-        run: |
-          set -euo pipefail
-          ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
-          curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/lab-home.html "https://casa-pratica-lab-20261102.blogspot.com/?m=1&e2e_home=${GITHUB_RUN_ID}"
-          ! grep -q '/2026/11/loja.html' /tmp/lab-home.html
-          for slug in como-organizar-uma-cozinha-pequena-sem air-fryer-7-pontos-para-conferir-antes ventilador-ou-climatizador-qual-faz; do
-            grep -q "/2026/11/${slug}.html" /tmp/lab-home.html
-            curl -L -sS --max-time 40 -A "$ua" -o "/tmp/${slug}.html" "https://casa-pratica-lab-20261102.blogspot.com/2026/11/${slug}.html?e2e_img=${GITHUB_RUN_ID}"
-            grep -q 'post-hero' "/tmp/${slug}.html"
-          done
-          echo 'CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: staging fora da home; 3/3 artigos com imagem.'
+      - name: Auditar estado público completo com retry
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
 
 # CASA_PRATICA_LAB_E2E_PAGE_TARGET_ACCEPTANCE_2026_11_02
