@@ -27,25 +27,28 @@ body:has(.bls-page) .bls-page{width:min(1440px,calc(100vw - 48px))!important;max
 @media(max-width:700px){body:has(.bls-page) .centered-bottom{display:block!important}body:has(.bls-page) .bls-page{width:calc(100vw - 16px)!important;margin-top:16px!important}}
 </style>'''
 
-# A Page do Blogger pode clonar/substituir o conteúdo depois que scripts inline já rodaram.
-# Por isso o controlador é delegado no document e não fica preso a um nó específico.
+# O Blogger pode recriar a Page depois de um clique. O índice é global e reaplicado
+# a todas as cópias do carousel, de modo que nenhum clone volte sozinho ao slide 0.
 PAGE_CAROUSEL_FIX = r'''<script id="blogger-new-store-page-carousel-fix">
 (function(){
-  function getRoot(node){return node&&node.closest?node.closest('.bls-slider'):null;}
-  function getSlides(root){return root?[...root.querySelectorAll('.bls-slide')]:[];}
-  function getDots(root){return root?[...root.querySelectorAll('#blsDots button')]:[];}
-  function activeIndex(root){const slides=getSlides(root);const i=slides.findIndex(s=>s.classList.contains('is-active'));return i<0?0:i;}
-  function show(root,n){
-    const slides=getSlides(root),dots=getDots(root);
-    if(slides.length!==3||dots.length!==3)return false;
-    const i=(n+slides.length)%slides.length;
-    slides.forEach((s,j)=>s.classList.toggle('is-active',j===i));
-    dots.forEach((d,j)=>d.classList.toggle('is-active',j===i));
-    root.dataset.pageCarouselActive=String(i);
-    return true;
+  let currentIndex=0;
+  function roots(){return [...document.querySelectorAll('.bls-slider')];}
+  function slides(root){return root?[...root.querySelectorAll('.bls-slide')]:[];}
+  function dots(root){return root?[...root.querySelectorAll('#blsDots button')]:[];}
+  function valid(root){return slides(root).length===3&&dots(root).length===3;}
+  function paint(root,index){
+    const ss=slides(root),ds=dots(root);
+    if(ss.length!==3||ds.length!==3)return;
+    ss.forEach((s,j)=>s.classList.toggle('is-active',j===index));
+    ds.forEach((d,j)=>d.classList.toggle('is-active',j===index));
+    root.dataset.pageCarouselDelegated='1';
+    root.dataset.pageCarouselActive=String(index);
   }
-  function move(root,delta){return show(root,activeIndex(root)+delta);}
-  function init(){document.querySelectorAll('.bls-slider').forEach(root=>{if(getSlides(root).length===3&&getDots(root).length===3){show(root,activeIndex(root));root.dataset.pageCarouselDelegated='1';}});}
+  function apply(index){
+    currentIndex=((index%3)+3)%3;
+    roots().filter(valid).forEach(root=>paint(root,currentIndex));
+  }
+  function init(){apply(currentIndex);}
   document.addEventListener('click',function(event){
     const target=event.target instanceof Element?event.target:null;
     if(!target)return;
@@ -53,18 +56,17 @@ PAGE_CAROUSEL_FIX = r'''<script id="blogger-new-store-page-carousel-fix">
     const prev=target.closest('.bls-prev');
     const dot=target.closest('#blsDots button');
     const control=next||prev||dot;
-    if(!control)return;
-    const root=getRoot(control);
-    if(!root)return;
+    if(!control||!control.closest('.bls-slider'))return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    if(next){move(root,1);return;}
-    if(prev){move(root,-1);return;}
-    const dots=getDots(root);show(root,dots.indexOf(dot));
+    if(next){apply(currentIndex+1);return;}
+    if(prev){apply(currentIndex-1);return;}
+    const root=control.closest('.bls-slider');
+    apply(dots(root).indexOf(dot));
   },true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
   const observer=new MutationObserver(init);observer.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),15000);
-  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){setInterval(()=>{document.querySelectorAll('.bls-slider').forEach(root=>{const r=root.getBoundingClientRect();if(r.width>0&&r.height>0)move(root,1);});},6000);}
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){setInterval(()=>{if(roots().some(root=>{const r=root.getBoundingClientRect();return r.width>0&&r.height>0;}))apply(currentIndex+1);},6000);}
 })();
 </script>'''
 
@@ -158,16 +160,18 @@ def verify_page_contract(raw: str, page_url: str) -> None:
     required = [
         'id="blogger-new-store-page-surface-fix"',
         'id="blogger-new-store-page-carousel-fix"',
+        "let currentIndex=0",
         "document.addEventListener('click'",
         "closest('.bls-next')",
         "closest('.bls-prev')",
         "event.stopImmediatePropagation()",
         "new MutationObserver",
         "pageCarouselDelegated",
+        "apply(currentIndex+1)",
     ]
     missing = [token for token in required if token not in raw]
     if missing:
-        raise RuntimeError(f"Controlador delegado incompleto: {missing}")
+        raise RuntimeError(f"Controlador delegado sincronizado incompleto: {missing}")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Page LOJA contém o controlador legado do carousel.")
     verify_store_html(raw, page_url)
@@ -194,7 +198,7 @@ def sync_page(dry_run: bool = False) -> int:
     page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + controlador delegado clone-safe; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + carousel delegado com estado sincronizado; Blogger não alterado.")
         return 0
     service.pages().update(
         blogId=blog_id,
@@ -203,7 +207,7 @@ def sync_page(dry_run: bool = False) -> int:
     ).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + layout amplo + carousel delegado clone-safe.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + layout amplo + carousel delegado sincronizado.")
     return 0
 
 
@@ -221,7 +225,7 @@ def ensure_store_post_draft() -> int:
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, layout amplo e carousel delegado.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, layout amplo e carousel sincronizado.")
     return 0
 
 
