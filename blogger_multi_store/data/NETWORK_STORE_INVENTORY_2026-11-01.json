@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 12,
+    "modern_blogger_auto_policy_guard": 13,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 6,
+    "store_scaffold_needs_auto_rotation": 5,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -147,7 +147,10 @@
       "store_page_url": "https://achados-que-valem.blogspot.com/p/loja.html",
       "store_post_id": "953731363427123084",
       "store_post_url": "https://achados-que-valem.blogspot.com/2026/11/loja.html",
-      "automation_status": "store_scaffold_needs_auto_rotation"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/achados_que_valem_store_safe.yml",
+      "live_workflow": ".github/workflows/achados_que_valem_store_autonomous.yml",
+      "note": "Concluído em 2026-11-02 como 13ª loja moderna. SAFE final 41451588897 PASS, job 125297842640, 40/40 regressões, 20/20 Policy Guard, fallback=0/carry=0 e artifact 13144498675 SHA-256 1709ac651dc41c0787dbbb5d2af6b48b572587160ce24c733ab54abcc24ad861 revisado manualmente; v2 bloqueou processador/moedor no lugar de mixer portátil, caixa de som no lugar de microfone standalone e luz decorativa no lugar de mini projetor. Auditor pré-LIVE 41452182786 PASS 13/13. LIVE 41452673413 PASS, job 125301467321, HTTP público 200 no primeiro intento, store=20, hero=12, Policy Guard público e identidade correta; persistência somente pós-PASS no commit f0d673e240e92740a77d8e7f7f74bc663807ec14. Artifact LIVE 13145975986 SHA-256 3b6ee78f1a1db70bb80a4ad3b6ccaac93d0c9ff7f601c8886fbb8de7307b7e4b. Leitura independente do Blogger confirmou 20+12, cinco categorias, quatro âncoras, disclosure e links patrocinados. Schedule diário 09:50 America/Recife habilitado no commit fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc sem push; auditor pós-schedule 41453525922 PASS 13/13, job 125304377780, com proteção permanente do horário/navegação no commit cb848ecdee3c607daabb024adf96de75e2f654b8."
     },
     {
       "title": "Guia de Achados & Ofertas",

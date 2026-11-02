@@ -1,6 +1,6 @@
 # CHECKPOINT ATUAL — BLOGGER AUTOMATION
 
-**Última atualização:** 2026-11-02 09:49 America/Recife  
+**Última atualização:** 2026-11-02 10:34 America/Recife  
 **Projeto:** Blogger Automation sem ChatGPT Work
 
 ## LEIA PRIMEIRO
@@ -19,7 +19,7 @@ Antes de qualquer operação Blogger neste projeto, leia nesta ordem:
 
 Este arquivo prevalece quando houver diferença de estado operacional. Os checkpoints anteriores permanecem válidos como histórico/base de recuperação.
 
-> O backup R4 de 2026-11-02 captura o estado consolidado após Conecta Achados, Estilo no Dia a Dia, Casa em Ordem e Escolha Certa Online: 12/18 pipelines modernos protegidos, 6 alvos restantes e Achados que Valem como próximo bloco permitido.
+> O backup R4 de 2026-11-02 captura o estado até Escolha Certa Online. Achados que Valem foi concluído depois desse snapshot; para o estado atual de 13/18, este checkpoint + inventário + rollout prevalecem.
 
 ---
 
@@ -35,7 +35,7 @@ Este arquivo prevalece quando houver diferença de estado operacional. Os checkp
 
 ## Lojas modernas protegidas
 
-O Blogger Policy Guard está integrado em **12 pipelines modernos** com:
+O Blogger Policy Guard está integrado em **13 pipelines modernos** com:
 
 - SAFE;
 - Policy Guard pré-LIVE;
@@ -62,12 +62,13 @@ Lojas modernas:
 10. Estilo no Dia a Dia
 11. Casa em Ordem
 12. **Escolha Certa Online**
+13. **Achados que Valem**
 
 Estado do inventário:
 
-- `modern_blogger_auto_policy_guard: 12`
+- `modern_blogger_auto_policy_guard: 13`
 - `modern_blogger_auto_20x12_needs_policy_guard_upgrade: 0`
-- `store_scaffold_needs_auto_rotation: 6`
+- `store_scaffold_needs_auto_rotation: 5`
 - `duplicate_writer_risks: 0`
 
 Rollout global continua:
@@ -140,17 +141,17 @@ Arquivos centrais:
 - `src/blogger_policy_repo_audit.py`
 - `.github/workflows/blogger_policy_repo_audit.yml`
 
-O auditor cobre os **12 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e os schedules/navegações finais de Casa em Ordem e Escolha Certa Online.
+O auditor cobre os **13 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e os schedules/navegações finais de Casa em Ordem, Escolha Certa Online e Achados que Valem.
 
-Última validação, após habilitar o schedule do Escolha Certa Online:
+Última validação, após habilitar o schedule do Achados que Valem:
 
-- commit do schedule `92a6497a30aa5b365fefddf8ad31b1ca53781ab8`
-- commit do reforço permanente do auditor `2d3c536dc499a7b193a9eb20fec97dda2c1263b8`
-- run `41447386251` — **SUCCESS**
-- job `125283757493`
+- commit do schedule `fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc`
+- commit do reforço permanente do auditor `cb848ecdee3c607daabb024adf96de75e2f654b8`
+- run `41453525922` — **SUCCESS**
+- job `125304377780`
 - `blogger_policy_guard_self_test: 13/13 OK`
 - `BLOGGER_POLICY_REPO_AUDIT_PASS`
-- `SAFE/LIVE 12/12 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`
+- `SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`
 
 ---
 
@@ -660,7 +661,80 @@ Escolha Certa Online está **CONCLUÍDO** como `modern_policy_guard_20x12`. Não
 
 ---
 
-# 10. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS
+# 10. ACHADOS QUE VALEM — CONCLUÍDO COMO 13ª LOJA MODERNA
+
+Alvo:
+
+- Blog ID `7527651041649593600`
+- Page LOJA ID `2615453333851618808`
+- Store Post ID `953731363427123084`
+- Page `https://achados-que-valem.blogspot.com/p/loja.html`
+- Post `https://achados-que-valem.blogspot.com/2026/11/loja.html`
+- SAFE `.github/workflows/achados_que_valem_store_safe.yml`
+- LIVE `.github/workflows/achados_que_valem_store_autonomous.yml`
+- motor `blogger_stores/src/achados_que_valem_store.py`
+- histórico independente `blogger_stores/data/achados_que_valem_rotation.json`
+
+Perfil final: Casa & Organização; Cozinha & Utilidades; Ferramentas & Reparos; Tecnologia & Conectividade; Áudio & Lazer — 5 categorias x 4 intenções, alinhadas aos posts reais de comparativos e achados úteis.
+
+## 10.1 SAFE e revisão semântica
+
+- SAFE v1 `41450668985` ficou tecnicamente verde, mas foi rejeitado após inspeção manual: processador/moedor em `mixer`, caixa de som em `microfone sem fio` e luz decorativa em `mini projetor`;
+- regras v2 endurecidas sem afrouxar gates;
+- primeira tentativa v2 `41451310185` falhou fail-closed por `Shopee System Error 10000` em `caixa organizadora`; nenhuma escrita Blogger era possível;
+- SAFE final `41451588897` — **SUCCESS**;
+- job `125297842640`;
+- regressão semântica `40/40`;
+- 20 produtos / 20 intenções; Policy Guard 20/20; fallback 0 / carry 0;
+- artifact SAFE `13144498675`;
+- SHA-256 `1709ac651dc41c0787dbbb5d2af6b48b572587160ce24c733ab54abcc24ad861`;
+- revisão manual final 20/20 coerente, incluindo mixer portátil, microfone standalone e mini projetor de vídeo real.
+
+## 10.2 Auditor pré-LIVE
+
+- run `41452182786` — **SUCCESS**;
+- job `125299828174`;
+- Policy Guard 13/13;
+- `BLOGGER_POLICY_REPO_AUDIT_PASS`;
+- `SAFE/LIVE 13/13 protegidos`.
+
+## 10.3 LIVE final
+
+- kickoff/head `c96b6c473783e37998176ebdb2ad4db7786563ae`;
+- run `41452673413` — **SUCCESS**;
+- job `125301467321`;
+- SAFE fresco v2 40/40 e Policy Guard pré-LIVE 20/20;
+- identidade, Store e hero DRY-RUN PASS;
+- Store 20 + hero 12 publicados;
+- gate público `HTTP 200` no primeiro intento;
+- `PUBLIC_COUNTS_ATTEMPT_1: store=20 hero=12`;
+- `BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero`;
+- identidade pública PASS;
+- persistência somente depois do PASS público;
+- commit automático `f0d673e240e92740a77d8e7f7f74bc663807ec14`;
+- artifact LIVE `13145975986`;
+- SHA-256 `3b6ee78f1a1db70bb80a4ad3b6ccaac93d0c9ff7f601c8886fbb8de7307b7e4b`.
+
+## 10.4 Leitura independente e schedule
+
+Leitura direta do Blogger confirmou status LIVE, IDs existentes preservados, 20 Store cards, 12 hero, cinco categorias próprias, quatro botões/âncoras corretos, disclosure e links `rel="nofollow sponsored noopener"`.
+
+Após leitura direta dos schedules modernos, `09:50 America/Recife` estava livre.
+
+- `cron: "50 9 * * *"`;
+- `timezone: "America/Recife"`;
+- gatilho `push` removido; workflow final usa somente `workflow_dispatch + schedule`;
+- commit do schedule `fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc`;
+- commit da proteção permanente do auditor `cb848ecdee3c607daabb024adf96de75e2f654b8`;
+- auditor pós-schedule `41453525922` — **SUCCESS**;
+- job `125304377780`;
+- `SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos`.
+
+Achados que Valem está **CONCLUÍDO** como `modern_policy_guard_20x12`. Não reabrir sem evidência concreta de regressão.
+
+---
+
+# 11. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS
 
 ## Gate anti-repetição editorial
 
@@ -699,40 +773,37 @@ Não reintroduzir `schedule` nem `push` nos writers legados.
 
 ---
 
-# 11. FILA RESTANTE — 6 BLOGS
+# 12. FILA RESTANTE — 5 BLOGS
 
 Ordem atual:
 
-1. **Achados que Valem**
-2. Guia de Achados & Ofertas
-3. Moda e Ofertas
-4. Achadinhos de Beleza
-5. Radar Tech BR Blogger
-6. Cozinha Sem Complicação
+1. **Guia de Achados & Ofertas**
+2. Moda e Ofertas
+3. Achadinhos de Beleza
+4. Radar Tech BR Blogger
+5. Cozinha Sem Complicação
 
 Cada alvo exige perfil semântico próprio antes do LIVE.
 
 ---
 
-# 12. PRÓXIMO BLOCO PERMITIDO — ACHADOS QUE VALEM, NÃO INICIADO
+# 13. PRÓXIMO BLOCO PERMITIDO — GUIA DE ACHADOS & OFERTAS, NÃO INICIADO
 
 Alvo inventariado:
 
-- Blog ID `7527651041649593600`
-- Page LOJA ID `2615453333851618808`
-- Store Post ID `953731363427123084`
-- Page `https://achados-que-valem.blogspot.com/p/loja.html`
-- Post `https://achados-que-valem.blogspot.com/2026/11/loja.html`
-- estado atual `store_scaffold_needs_auto_rotation`
+- Blog ID `1453188702831337099`
+- Page LOJA ID `9156313162825773745`
+- Store Post ID `3858461075334539445`
+- estado atual `STORE_SCAFFOLD_LIVE_AUTO_MISSING`
 - perfil semântico ainda precisa ser definido e validado
 
-**Não iniciar Achados que Valem automaticamente. Aguardar novo `continue` do usuário.**
+**Não iniciar Guia de Achados & Ofertas automaticamente. Aguardar novo `continue` do usuário.**
 
 ---
 
-# 13. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES
+# 14. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES
 
-- Não reiniciar diagnóstico de Vitrine, Achados para Casa, Conecta, Estilo, Casa em Ordem ou Escolha Certa Online sem evidência concreta de regressão.
+- Não reiniciar diagnóstico de Vitrine, Achados para Casa, Conecta, Estilo, Casa em Ordem, Escolha Certa Online ou Achados que Valem sem evidência concreta de regressão.
 - Não pedir operação manual quando ferramentas conectadas já executam a ação.
 - Confirmar Blog ID e Store Post ID antes de escrever.
 - Não recriar Page/Post Loja.
@@ -753,17 +824,17 @@ Alvo inventariado:
 
 ---
 
-# 14. BACKUP / RECUPERAÇÃO
+# 15. BACKUP / RECUPERAÇÃO
 
-Último backup completo criado antes de Conecta/Estilo:
+Último backup completo disponível antes da conclusão do Achados que Valem:
 
-- R3 `blogger-automation1-backup-2026-11-02-r3`
-- run `41428226665` — SUCCESS
-- artifact ID `13132752660`
-- SHA-256 `65a76eecb33d126e00ffe80e657adbdf488ad93766fda1dd971beece2208b863`
-- commit capturado `0e41104ffcadc37aedfd644875a1d42ebde8ee4f`
+- R4 `blogger-automation1-backup-2026-11-02-r4`
+- run `41449646303` — SUCCESS
+- artifact ID `13144586595`
+- SHA-256 `1d0298454c39c1d6c15b623bb532f21d551c7bd251dcb71874d0edc24544e096`
+- commit capturado `2ccf32fac4f7ad92bd3756efbce54b37ba6916f3`
 
-Como o R3 é anterior às conclusões de Conecta, Estilo, Casa em Ordem e Escolha Certa Online, um próximo backup completo deverá incluir os commits desses quatro blocos.
+O R4 captura o estado até Escolha Certa Online. A conclusão do Achados que Valem está registrada neste checkpoint, no inventário e no rollout posteriores ao snapshot.
 
 Se este arquivo for encontrado em uma conversa futura:
 
@@ -773,6 +844,7 @@ Se este arquivo for encontrado em uma conversa futura:
 - Estilo no Dia a Dia = 10ª loja moderna concluída;
 - Casa em Ordem = 11ª loja moderna concluída;
 - Escolha Certa Online = 12ª loja moderna concluída;
-- auditor permanente = **12/12**;
-- inventário = **12 modernas / 6 restantes**;
-- próximo bloco permitido = **Achados que Valem**, somente após comando explícito do usuário.
+- Achados que Valem = 13ª loja moderna concluída;
+- auditor permanente = **13/13**;
+- inventário = **13 modernas / 5 restantes**;
+- próximo bloco permitido = **Guia de Achados & Ofertas**, somente após comando explícito do usuário.
