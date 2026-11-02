@@ -11,7 +11,7 @@ Antes de qualquer operação Blogger neste projeto, leia nesta ordem:
 2. `blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json`
 3. `blogger_multi_store/config/network_store_rollout_2026-11-01.json`
 4. `CHECKPOINT_UPDATE_2026-11-01_POLICY_EDITORIAL_COOKIES.md`
-5. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-11-02_R3.json`
+5. `BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-11-02_R4.json`
 6. `CHECKPOINT_UPDATE_2026-10-30_LAB_CANONICAL_V20.md`
 7. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
 8. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
@@ -19,7 +19,7 @@ Antes de qualquer operação Blogger neste projeto, leia nesta ordem:
 
 Este arquivo prevalece quando houver diferença de estado operacional. Os checkpoints anteriores permanecem válidos como histórico/base de recuperação.
 
-> O backup R3 de 2026-11-02 foi criado antes das conclusões de Conecta Achados, Estilo no Dia a Dia, Casa em Ordem e Escolha Certa Online. Para o estado posterior ao R3, este checkpoint + inventário + rollout são a fonte operacional mais recente.
+> O backup R4 de 2026-11-02 captura o estado consolidado após Conecta Achados, Estilo no Dia a Dia, Casa em Ordem e Escolha Certa Online: 12/18 pipelines modernos protegidos, 6 alvos restantes e Achados que Valem como próximo bloco permitido.
 
 ---
 
