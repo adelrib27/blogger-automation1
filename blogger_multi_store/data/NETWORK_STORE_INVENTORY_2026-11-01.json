@@ -6,8 +6,8 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 6,
-    "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 1,
+    "modern_blogger_auto_policy_guard": 7,
+    "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
     "store_scaffold_needs_auto_rotation": 11,
     "duplicate_writer_risks": 0
   },
@@ -153,8 +153,10 @@
       "store_page_url": "https://vitrine-pratica.blogspot.com/p/loja.html",
       "store_post_id": "115613719594316807",
       "store_post_url": "https://vitrine-pratica.blogspot.com/2026/11/loja.html",
-      "automation_status": "modern_20x12_needs_central_policy_guard_upgrade",
-      "live_workflow": ".github/workflows/vitrine_pratica_store_autonomous.yml"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/vitrine_pratica_store_safe.yml",
+      "live_workflow": ".github/workflows/vitrine_pratica_store_autonomous.yml",
+      "note": "Policy Guard central concluído em 2026-11-01: SAFE 41364558522 PASS; auditor 7/7 41367352735 PASS; LIVE controlado 41367361852 PASS com 20 produtos + 12 hero e identidade pública Vitrine validada."
     },
     {
       "title": "Moda e Ofertas",
