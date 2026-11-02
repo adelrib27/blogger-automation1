@@ -112,7 +112,7 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "oculos de sol feminino": ["estojo para oculos", "capa para oculos", "cordao para oculos", "corrente para oculos", "chaveiro", "miniatura", "infantil", "menina", "bebe", "pet"],
         "relogio feminino": ["pulseira avulsa", "pulseira para relogio", "capa para relogio", "pelicula", "carregador", "infantil", "menina", "bebe", "chaveiro", "miniatura", "pet"],
         "escova secadora": ["refil", "capa para escova", "suporte para escova", "peca para escova"],
-        "secador de cabelo": ["difusor", "bico para secador", "suporte para secador", "resistencia para secador", "cabo para secador", "peca para secador"],
+        "secador de cabelo": ["difusor", "bico para secador", "suporte", "resistencia para secador", "cabo para secador", "peca para secador", "adaptador", "acessorio"],
         "barbeador eletrico": ["lamina de reposicao", "cabeca de reposicao", "capa para barbeador", "suporte para barbeador", "pet"],
         "depilador eletrico": ["cera", "linha depilatoria", "pinca", "creme depilatorio", "refil", "lamina de reposicao"],
     }
@@ -183,6 +183,7 @@ def run_moda_regression_checks(rules_doc: dict) -> None:
         ("Refil para Escova Secadora", "escova secadora", False),
         ("Escova Secadora de Cabelo 1200W", "escova secadora", True),
         ("Difusor Universal para Secador de Cabelo", "secador de cabelo", False),
+        ("Suporte De Parede Multifuncional Chapinha Babyliss Secador De Cabelo Organizador", "secador de cabelo", False),
         ("Secador de Cabelo Profissional 2000W", "secador de cabelo", True),
         ("Lâmina de Reposição para Barbeador Elétrico", "barbeador eletrico", False),
         ("Barbeador Elétrico Recarregável USB", "barbeador eletrico", True),
