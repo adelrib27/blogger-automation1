@@ -91,6 +91,52 @@ body:has(.bls-page) .bls-page{
 }
 </style>"""
 
+PAGE_CAROUSEL_FIX = """<script id="blogger-new-store-page-carousel-fix">
+(function(){
+  function visible(el){
+    if(!el)return false;
+    const s=getComputedStyle(el),r=el.getBoundingClientRect();
+    return s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity)!==0&&r.width>0&&r.height>0;
+  }
+  function bind(root){
+    if(!root||root.dataset.pageCarouselBound==='1')return;
+    const slides=[...root.querySelectorAll('.bls-slide')];
+    const dots=[...root.querySelectorAll('#blsDots button')];
+    const prev=root.querySelector('.bls-prev');
+    const next=root.querySelector('.bls-next');
+    if(slides.length!==3||dots.length!==3||!prev||!next)return;
+    root.dataset.pageCarouselBound='1';
+    let i=slides.findIndex(s=>s.classList.contains('is-active'));
+    if(i<0)i=0;
+    let timer;
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function show(n){
+      i=(n+slides.length)%slides.length;
+      slides.forEach((s,j)=>s.classList.toggle('is-active',j===i));
+      dots.forEach((d,j)=>d.classList.toggle('is-active',j===i));
+    }
+    function auto(){
+      if(reduced)return;
+      clearInterval(timer);
+      timer=setInterval(()=>show(i+1),6000);
+    }
+    prev.addEventListener('click',()=>{show(i-1);auto();});
+    next.addEventListener('click',()=>{show(i+1);auto();});
+    dots.forEach((d,j)=>d.addEventListener('click',()=>{show(j);auto();}));
+    show(i);auto();
+  }
+  function init(){
+    [...document.querySelectorAll('.bls-slider')].filter(visible).forEach(bind);
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>{requestAnimationFrame(init);setTimeout(init,500);});
+  }else{
+    requestAnimationFrame(init);setTimeout(init,500);
+  }
+  window.addEventListener('resize',()=>setTimeout(init,120));
+})();
+</script>"""
+
 
 def required_env(name: str) -> str:
     value = os.getenv(name, "").strip()
@@ -163,7 +209,7 @@ def verify_store_html(raw: str, page_url: str) -> None:
 
 
 def pageify_store_html(raw: str) -> str:
-    return PAGE_SURFACE_FIX + "\n" + raw
+    return PAGE_SURFACE_FIX + "\n" + raw + "\n" + PAGE_CAROUSEL_FIX
 
 
 def verify_page_contract(raw: str, page_url: str) -> None:
@@ -171,6 +217,8 @@ def verify_page_contract(raw: str, page_url: str) -> None:
         raise RuntimeError("Page LOJA perdeu marcadores canônicos BLOGGER_STORE_AUTO_START/END.")
     if 'id="blogger-new-store-page-surface-fix"' not in raw:
         raise RuntimeError("Page LOJA perdeu o patch de superfície ampla.")
+    if 'id="blogger-new-store-page-carousel-fix"' not in raw:
+        raise RuntimeError("Page LOJA perdeu o fix do carousel para DOM duplicado do Blogger.")
     verify_store_html(raw, page_url)
 
 
@@ -195,13 +243,13 @@ def sync_page(dry_run: bool = False) -> int:
     page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: staging 20+12 + carousel + superfície Page validados; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: staging 20+12 + carousel + superfície Page + fix DOM duplicado validados; Blogger não alterado.")
         return 0
     body = {"title": page.get("title") or "LOJA", "content": page_raw}
     service.pages().update(blogId=blog_id, pageId=page_id, body=body).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + carousel + layout amplo.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + carousel funcional + layout amplo.")
     return 0
 
 
@@ -221,7 +269,7 @@ def ensure_store_post_draft() -> int:
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, carousel e superfície ampla.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, carousel funcional e superfície ampla.")
     return 0
 
 
