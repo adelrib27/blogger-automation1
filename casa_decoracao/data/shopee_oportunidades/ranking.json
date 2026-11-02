@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1793656014,
+  "generatedAt": 1793663658,
   "method": "seller-extra-first; standard commission only as reserve; Google Autocomplete proxy; Shopee performance",
   "searchSignalWarning": "Google Autocomplete é proxy de intenção/popularidade, não volume mensal exato.",
   "priorityPolicy": {
@@ -1031,6 +1031,7 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
+        "caixa organizadora",
         "organizador armario",
         "organizador guarda roupa"
       ],
@@ -1041,6 +1042,23 @@
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
+        "caixa organizadora": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "caixa",
+              "cesto",
+              "cesta"
+            ]
+          ]
+        },
         "organizador armario": {
           "accepted": true,
           "score": 1.0,
@@ -2024,6 +2042,76 @@
       "selectionPass": "strict_diversity"
     },
     {
+      "itemId": 52207212755,
+      "productName": "1 Planta Artificial Hera Ivy Pendente + Vaso Vime Trançado BRANCO Arranjo Decorativo Completo Suspenso PT11BRANCO",
+      "productLink": "https://shopee.com.br/product/1178127148/52207212755",
+      "offerLink": "https://s.shopee.com.br/1BNbgbKpDQ",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ln-mlteewjffbpgb3",
+      "priceMin": "12.5",
+      "priceMax": "12.5",
+      "priceDiscountRate": 58,
+      "sales": 3796,
+      "ratingStar": "4.6",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "1.625",
+      "shopId": 1178127148,
+      "shopName": "Sato Importacoes",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Decoracao"
+      ],
+      "keywords": [
+        "vaso decorativo"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "vaso decorativo"
+      ],
+      "intentMatchedKeywords": [
+        "vaso decorativo"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "vaso decorativo": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "vaso"
+            ],
+            [
+              "decorativo"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 59.61,
+      "scoreComponents": {
+        "seller_extra_commission": 0.1538,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7574,
+        "rating": 0.92,
+        "discount": 0.58,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
       "itemId": 11674191849,
       "productName": "Fatiador De Legumes Kitop Corta Couve Repolho Fino Prático",
       "productLink": "https://shopee.com.br/product/386191827/11674191849",
@@ -2165,76 +2253,76 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 22998007959,
-      "productName": "Jogo de Toalha 4 Peças Karsten 100% Algodão Felpuda Macia Excelente Absorção Banho e Rosto",
-      "productLink": "https://shopee.com.br/product/322387387/22998007959",
-      "offerLink": "https://s.shopee.com.br/2VszH7eSlQ",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820mh-mnbjhkltjf2815",
-      "priceMin": "129.9",
-      "priceMax": "129.9",
-      "priceDiscountRate": 28,
-      "sales": 1941,
+      "itemId": 58257090824,
+      "productName": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
+      "productLink": "https://shopee.com.br/product/1366028631/58257090824",
+      "offerLink": "https://s.shopee.com.br/6fiYEiHUDg",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m9-mmm1sfjpscna7b",
+      "priceMin": "31.99",
+      "priceMax": "39.66",
+      "priceDiscountRate": 60,
+      "sales": 3845,
       "ratingStar": "4.9",
-      "commissionRate": "0.18",
-      "sellerCommissionRate": "0.15",
+      "commissionRate": "0.11",
+      "sellerCommissionRate": "0.08",
       "shopeeCommissionRate": "0.03",
-      "commission": "23.382",
-      "shopId": 322387387,
-      "shopName": "MG Enxovais",
+      "commission": "3.5189",
+      "shopId": 1366028631,
+      "shopName": "VISIO DECORE ",
       "shopType": [
         2
       ],
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
-        "Cama Mesa Banho"
+        "Decoracao"
       ],
       "keywords": [
-        "jogo de toalhas"
+        "almofada decorativa"
       ],
       "sourceModes": [
         "top_performance"
       ],
       "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 0.9251736111111112,
+      "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "jogo de toalhas"
+        "almofada decorativa"
       ],
       "intentMatchedKeywords": [
-        "jogo de toalhas"
+        "almofada decorativa"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "jogo de toalhas": {
+        "almofada decorativa": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "toalha"
+              "almofada"
             ],
             [
-              "banho",
-              "rosto",
-              "algodao"
+              "decorativa",
+              "sala",
+              "sofa"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 59.0,
+      "opportunityScore": 59.1,
       "scoreComponents": {
-        "seller_extra_commission": 0.2308,
-        "search_demand_proxy": 0.9252,
-        "sales": 0.6957,
+        "seller_extra_commission": 0.1231,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7585,
         "rating": 0.98,
-        "discount": 0.28,
+        "discount": 0.6,
         "top_performance": 1.0
       },
-      "sellerExtraCommissionPct": 15.0,
+      "sellerExtraCommissionPct": 8.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 18.0,
+      "totalCommissionPct": 11.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -2311,32 +2399,30 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 22598002731,
-      "productName": "Caminho Trilho De Mesa 1,40m X 0,45m Decorativo Jacquard Diversas Cores",
-      "productLink": "https://shopee.com.br/product/596608608/22598002731",
-      "offerLink": "https://s.shopee.com.br/8KqmDlX3vd",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m1zo5nd0qov30e",
-      "priceMin": "17.99",
-      "priceMax": "17.99",
-      "priceDiscountRate": 68,
-      "sales": 3,
-      "ratingStar": "5",
-      "commissionRate": "0.33",
-      "sellerCommissionRate": "0.3",
+      "itemId": 58205899287,
+      "productName": "COFRE BOX CAIXA ORGANIZADORA TAMANHO 20X14 CM MDF WOODBOX - TEMAS DIVERSOS",
+      "productLink": "https://shopee.com.br/product/523872942/58205899287",
+      "offerLink": "https://s.shopee.com.br/4LKdR2LVk2",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lj-ml6nlbjv4sg4ac",
+      "priceMin": "80",
+      "priceMax": "80",
+      "priceDiscountRate": 0,
+      "sales": 0,
+      "ratingStar": "0",
+      "commissionRate": "0.58",
+      "sellerCommissionRate": "0.55",
       "shopeeCommissionRate": "0.03",
-      "commission": "5.9367",
-      "shopId": 596608608,
-      "shopName": "Cor Elegante",
-      "shopType": [
-        2
-      ],
+      "commission": "46.4",
+      "shopId": 523872942,
+      "shopName": "Gloss Box",
+      "shopType": [],
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
-        "Decoracao"
+        "Organizacao"
       ],
       "keywords": [
-        "caminho de mesa"
+        "caixa organizadora"
       ],
       "sourceModes": [
         "extra_commission"
@@ -2344,114 +2430,41 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "caminho de mesa"
+        "caixa organizadora"
       ],
       "intentMatchedKeywords": [
-        "caminho de mesa"
+        "caixa organizadora"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "caminho de mesa": {
+        "caixa organizadora": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "trilho de mesa"
+              "caixa"
+            ],
+            [
+              "organizadora"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 58.77,
+      "opportunityScore": 58.85,
       "scoreComponents": {
-        "seller_extra_commission": 0.4615,
+        "seller_extra_commission": 0.8462,
         "search_demand_proxy": 1.0,
-        "sales": 0.1274,
-        "rating": 1.0,
-        "discount": 0.68,
+        "sales": 0.0,
+        "rating": 0.0,
+        "discount": 0.0,
         "top_performance": 0.0
       },
-      "sellerExtraCommissionPct": 30.0,
+      "sellerExtraCommissionPct": 55.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 33.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 23892379350,
-      "productName": "100 Leds Luminária Parede Solar Com Sensor Jardim Externa Prova D'água",
-      "productLink": "https://shopee.com.br/product/1008802369/23892379350",
-      "offerLink": "https://s.shopee.com.br/6fiYElXjdu",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-lnutbp7mwv5597",
-      "priceMin": "20.88",
-      "priceMax": "61.99",
-      "priceDiscountRate": 53,
-      "sales": 551,
-      "ratingStar": "4.8",
-      "commissionRate": "0.15",
-      "sellerCommissionRate": "0.12",
-      "shopeeCommissionRate": "0.03",
-      "commission": "3.132",
-      "shopId": 1008802369,
-      "shopName": "LOJA DA WEB",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Area Externa"
-      ],
-      "keywords": [
-        "luminaria solar jardim"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "luminaria solar jardim"
-      ],
-      "intentMatchedKeywords": [
-        "luminaria solar jardim"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "luminaria solar jardim": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "luminaria"
-            ],
-            [
-              "solar"
-            ],
-            [
-              "jardim",
-              "externa"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 58.34,
-      "scoreComponents": {
-        "seller_extra_commission": 0.1846,
-        "search_demand_proxy": 1.0,
-        "sales": 0.5802,
-        "rating": 0.96,
-        "discount": 0.53,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 12.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 15.0,
+      "totalCommissionPct": 58.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     }
