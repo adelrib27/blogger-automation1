@@ -2,6 +2,9 @@ name: Casa em Ordem — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "5 8 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "blogger_stores/casa_em_ordem_live_kickoff.txt"
@@ -172,6 +175,10 @@ jobs:
               'bls-lavanderia',
               'bls-decoracao',
               'Organização, limpeza e conforto para uma casa em ordem',
+              '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
+              '<a class="bls-btn bls-btn-soft" href="#bls-quarto">Ver quarto</a>',
+              '<a class="bls-btn bls-btn-main" href="#bls-banheiro">Ver banheiro</a>',
+              '<a class="bls-btn bls-btn-soft" href="#bls-lavanderia">Ver lavanderia</a>',
           ]
           missing=[x for x in required if x not in raw]
           if missing:
@@ -219,4 +226,4 @@ jobs:
 
 # POLICY_GUARD_CENTRAL_CASA_EM_ORDEM_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
-# SCHEDULE_DISABLED_UNTIL_VALIDATION
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
