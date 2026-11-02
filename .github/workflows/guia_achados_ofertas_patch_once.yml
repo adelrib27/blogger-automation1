@@ -1,0 +1,52 @@
+name: Guia de Achados & Ofertas — Patch semântico pontual — uso único
+
+on:
+  push:
+    paths:
+      - ".github/workflows/guia_achados_ofertas_patch_once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Corrigir frases de reposição sem afrouxar gates
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('blogger_stores/src/guia_achados_ofertas_store.py')
+          s=p.read_text(encoding='utf-8')
+          old='"cafeteira eletrica": ["jarra avulsa", "jarra reposicao", "filtro avulso", "filtro reposicao", "capsula",'
+          new='"cafeteira eletrica": ["jarra avulsa", "jarra reposicao", "jarra de reposicao", "filtro avulso", "filtro reposicao", "filtro de reposicao", "capsula",'
+          if old not in s: raise SystemExit('GUIA_PATCH_FAIL: bloco cafeteira ausente')
+          s=s.replace(old,new,1)
+          old='"climatizador ar": ["filtro avulso", "filtro reposicao", "refil",'
+          new='"climatizador ar": ["filtro avulso", "filtro reposicao", "filtro de reposicao", "refil",'
+          if old not in s: raise SystemExit('GUIA_PATCH_FAIL: bloco climatizador ausente')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8',newline='\n')
+
+          p=Path('config/shopee_guia_achados_ofertas_intent_rules.json')
+          s=p.read_text(encoding='utf-8')
+          old='"jarra avulsa", "jarra reposicao", "jarra reposição", "filtro avulso", "filtro reposicao", "filtro reposição",'
+          new='"jarra avulsa", "jarra reposicao", "jarra reposição", "jarra de reposicao", "jarra de reposição", "filtro avulso", "filtro reposicao", "filtro reposição", "filtro de reposicao", "filtro de reposição",'
+          if old not in s: raise SystemExit('GUIA_PATCH_FAIL: regras cafeteira ausentes')
+          s=s.replace(old,new,1)
+          old='"filtro avulso", "filtro reposicao", "filtro reposição", "refil",'
+          new='"filtro avulso", "filtro reposicao", "filtro reposição", "filtro de reposicao", "filtro de reposição", "refil",'
+          if old not in s: raise SystemExit('GUIA_PATCH_FAIL: regras climatizador ausentes')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8',newline='\n')
+          print('GUIA_SEMANTIC_PATCH_REPOSICAO_PASS')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blogger_stores/src/guia_achados_ofertas_store.py config/shopee_guia_achados_ofertas_intent_rules.json
+          git commit -m "guia: endurecer reposicao em cafeteira e climatizador"
+          git pull --rebase origin main
+          git push origin HEAD:main
