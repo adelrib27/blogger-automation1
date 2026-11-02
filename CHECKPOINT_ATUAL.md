@@ -1,6 +1,6 @@
 # CHECKPOINT ATUAL — BLOGGER AUTOMATION
 
-**Última atualização:** 2026-11-02 07:52 America/Recife  
+**Última atualização:** 2026-11-02 08:20 America/Recife  
 **Projeto:** Blogger Automation sem ChatGPT Work
 
 ## LEIA PRIMEIRO
@@ -17,9 +17,9 @@ Antes de qualquer operação Blogger neste projeto, leia nesta ordem:
 8. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.json`
 9. `infrastructure/README.md`
 
-Este arquivo prevalece quando houver diferença de estado operacional. Os checkpoints anteriores permanecem como histórico/base de recuperação.
+Este arquivo prevalece quando houver diferença de estado operacional. Os checkpoints anteriores permanecem válidos como histórico/base de recuperação.
 
-> O backup R3 de 2026-11-02 foi criado **antes** da conclusão do Conecta Achados. Portanto, para o estado posterior ao R3, este checkpoint + inventário + rollout são a fonte operacional mais recente.
+> O backup R3 de 2026-11-02 foi criado antes das conclusões de Conecta Achados e Estilo no Dia a Dia. Para o estado posterior ao R3, este checkpoint + inventário + rollout são a fonte operacional mais recente.
 
 ---
 
@@ -31,11 +31,11 @@ Este arquivo prevalece quando houver diferença de estado operacional. Os checkp
 - TEMA MODELO V20 permanece como base canônica.
 - **18/18** blogs possuem Page LIVE `/p/loja.html`.
 - **18/18** blogs possuem Store Post LIVE `Loja`.
-- Não recriar Page/Post Loja durante a expansão; usar IDs existentes.
+- Não recriar Page/Post Loja durante a expansão; usar os IDs existentes.
 
 ## Lojas modernas protegidas
 
-O Blogger Policy Guard está integrado em **9 pipelines modernos** com:
+O Blogger Policy Guard está integrado em **10 pipelines modernos** com:
 
 - SAFE;
 - Policy Guard pré-LIVE;
@@ -58,13 +58,14 @@ Lojas modernas:
 6. Liquidificadores em Foco
 7. Vitrine Prática
 8. Achados para Casa
-9. **Conecta Achados**
+9. Conecta Achados
+10. **Estilo no Dia a Dia**
 
 Estado do inventário:
 
-- `modern_blogger_auto_policy_guard: 9`
+- `modern_blogger_auto_policy_guard: 10`
 - `modern_blogger_auto_20x12_needs_policy_guard_upgrade: 0`
-- `store_scaffold_needs_auto_rotation: 9`
+- `store_scaffold_needs_auto_rotation: 8`
 - `duplicate_writer_risks: 0`
 
 Rollout global continua:
@@ -107,6 +108,7 @@ Contrato obrigatório:
 - nenhum pagamento processado pelo blog;
 - persistência somente depois de PASS público;
 - histórico/config independente por blog;
+- nunca compartilhar `store_last_selection.json` genérico entre blogs;
 - nunca forçar item semanticamente inválido para completar 20 cards.
 
 Regra de rotação:
@@ -115,6 +117,13 @@ Regra de rotação:
 2. se não houver, permitir produto antigo fora da última rodada;
 3. somente sem alternativa válida, permitir carry-forward da última publicação;
 4. todos os gates semânticos permanecem obrigatórios.
+
+Regra de validação pública:
+
+- HTTP público 200 continua obrigatório;
+- HTTP 429 deve ser tratado com retry e espera, nunca ignorado;
+- leitura autenticada do Blogger ajuda no diagnóstico, mas não substitui o gate público exigido pelo workflow;
+- persistência somente ocorre depois de `20 + 12 + Policy Guard público + identidade` passarem.
 
 ---
 
@@ -129,20 +138,20 @@ Arquivos centrais:
 - `src/blogger_policy_repo_audit.py`
 - `.github/workflows/blogger_policy_repo_audit.yml`
 
-O auditor cobre também `blogger_stores/src/**`, SAFE/LIVE do Achados e SAFE/LIVE do Conecta.
+O auditor cobre os 10 SAFE/LIVE modernos, `blogger_stores/src/**`, writers legados duplicados e proteção do aviso nativo de cookies.
 
-Última validação após habilitar schedule do Conecta:
+Última validação, após habilitar o schedule do Estilo no Dia a Dia:
 
-- commit `15ccd4f6e1c508675423948f543a71e4f7f472d7`
-- run `41432136126` — **SUCCESS**
-- job `125233038467`
+- commit do schedule `821fb4e6a7ef16348c7432a7094065ba56b418b2`
+- run `41435835886` — **SUCCESS**
+- job `125245260514`
 - `blogger_policy_guard_self_test: 13/13 OK`
 - `BLOGGER_POLICY_REPO_AUDIT_PASS`
-- `SAFE/LIVE 9/9 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`
+- `SAFE/LIVE 10/10 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`
 
 ---
 
-# 4. VITRINE PRÁTICA — CONCLUÍDA COMO 7ª LOJA MODERNA
+# 4. VITRINE PRÁTICA — 7ª LOJA MODERNA
 
 Alvo:
 
@@ -166,7 +175,7 @@ Não reabrir esse diagnóstico sem sinal concreto de regressão.
 
 ---
 
-# 5. ACHADOS PARA CASA — CONCLUÍDO COMO 8ª LOJA MODERNA
+# 5. ACHADOS PARA CASA — 8ª LOJA MODERNA
 
 Alvo:
 
@@ -182,11 +191,8 @@ Provas finais:
 - SAFE `41370322415` — SUCCESS
 - job `125039197072`
 - Policy Guard 13/13
-- semântica 10/10
 - 20 produtos / 20 intenções / 20 links
 - LIVE `41370529825` — SUCCESS
-- job `125039829532`
-- Policy Guard pré-LIVE PASS
 - Store 20 + hero 12
 - identidade pública correta
 - persistência somente pós-PASS
@@ -195,20 +201,15 @@ Provas finais:
 - schedule `07:20 America/Recife`
 - auditor pós-schedule `41370840393` — SUCCESS 8/8
 
-Lição permanente desta implantação: um Action verde não basta quando houver dúvida semântica. A leitura independente detectou falsos positivos em Clima & Bem-estar e levou à especialização final:
-
-1. ventilador de teto
-2. mini umidificador USB
-3. climatizador
-4. ventilador de mesa
+Lição permanente: um Action verde não basta quando houver dúvida semântica. A leitura independente encontrou falsos positivos em Clima & Bem-estar e levou ao perfil final: ventilador de teto, mini umidificador USB, climatizador e ventilador de mesa.
 
 Não reabrir sem regressão concreta.
 
 ---
 
-# 6. CONECTA ACHADOS — CONCLUÍDO COMO 9ª LOJA MODERNA
+# 6. CONECTA ACHADOS — 9ª LOJA MODERNA
 
-## 6.1 Alvo e arquivos
+## Alvo
 
 - Blog ID `1719259388907013414`
 - Page LOJA ID `2386698852540729057`
@@ -217,13 +218,12 @@ Não reabrir sem regressão concreta.
 - Post `https://conectaachados.blogspot.com/2026/11/loja.html`
 - SAFE `.github/workflows/conecta_achados_store_safe.yml`
 - LIVE `.github/workflows/conecta_achados_store_autonomous.yml`
-- motor independente `blogger_stores/src/conecta_achados_store.py`
+- motor `blogger_stores/src/conecta_achados_store.py`
 - config `config/shopee_conecta_achados.json`
 - regras `config/shopee_conecta_achados_intent_rules.json`
 - histórico independente `blogger_stores/data/conecta_achados_rotation.json`
-- seleção `blogger_stores/data/conecta_achados_selection.json`
 
-Categorias aprovadas:
+Categorias:
 
 1. Casa & Organização
 2. Cozinha & Utilidades
@@ -231,205 +231,243 @@ Categorias aprovadas:
 4. Beleza & Cuidados
 5. Dia a Dia & Praticidade
 
+## Provas principais
+
+- SAFE final `41430553714` — SUCCESS após endurecimento e inspeção manual do artifact
+- auditor pré-LIVE `41430916398` — SUCCESS 9/9
+- primeiro LIVE `41430973587` comprovou fail-closed: publicação ocorreu, gate público recebeu 429 e persistência foi pulada
+- gate público foi reforçado com retries sem substituir HTTP 200 por leitura autenticada
+- LIVE final `41431642751` — SUCCESS
+- gate público: `429 → 429 → 200`
+- `store=20 hero=12`
+- Policy Guard público PASS
+- identidade pública PASS
+- persistência commit `7fae90ff6b235171f37d2b77475ffcda254a3527`
+- artifact LIVE ID `13135215258`
+- SHA-256 `c16a16107cb7b2b7a6219d3e652024999d39093e112aab9fc5624b51ebc8d352`
+- leitura independente do Blogger confirmou fone sem fio, carregador USB-C real e lanterna tática USB
+- schedule `07:35 America/Recife`
+- auditor pós-schedule `41432136126` — SUCCESS 9/9
+
+Não reabrir sem regressão concreta.
+
+---
+
+# 7. ESTILO NO DIA A DIA — CONCLUÍDO COMO 10ª LOJA MODERNA
+
+## 7.1 Alvo
+
+- Blog ID `4830103887652146866`
+- Page LOJA ID `4843501559117111153`
+- Store Post ID `3362829797679236320`
+- Page `https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/p/loja.html`
+- Post `https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/2026/11/loja.html`
+- SAFE `.github/workflows/estilo_dia_a_dia_store_safe.yml`
+- LIVE `.github/workflows/estilo_dia_a_dia_store_autonomous.yml`
+- motor `blogger_stores/src/estilo_dia_a_dia_store.py`
+- config `config/shopee_estilo_dia_a_dia.json`
+- regras `config/shopee_estilo_dia_a_dia_intent_rules.json`
+- histórico independente `blogger_stores/data/estilo_dia_a_dia_rotation.json`
+- seleção `blogger_stores/data/estilo_dia_a_dia_selection.json`
+
+A descrição oficial do blog confirmou o nicho de estilo, moda, beleza e acessórios. O scaffold genérico anterior não foi mantido como identidade final.
+
+Categorias finais:
+
+1. Moda Feminina
+2. Calçados & Conforto
+3. Bolsas & Acessórios
+4. Cabelo & Styling
+5. Cuidados Pessoais
+
 Cada categoria possui 4 intenções: total 20.
 
-## 6.2 SAFE e endurecimento semântico
+## 7.2 SAFE — três rodadas e inspeção semântica independente
 
-Primeiro SAFE:
+### SAFE 1
 
-- run `41429777047`
-- job `125225155175`
-- **FAILED corretamente antes de qualquer escrita**
-- regressão detectou acessórios escapando: capa de fone e tampa de garrafa térmica.
-
-Segundo SAFE:
-
-- run `41429916904`
-- job `125225624811`
+- run `41433616186`
+- job `125237991848`
 - SUCCESS técnico
-- artifact `conecta-achados-store-safe-2`
-- artifact ID `13134430186`
-- SHA-256 `7bf5c8b83ab6ac78d2f692708623843e337a0f8a607cee8e10ababc926d24f5a`
+- artifact ID `13135881271`
+- SHA-256 `6a1376ec1f056817e5cdd933f17bca04fe69df85d5a346fe5e9224a293b2fd3d`
 
-Esse SUCCESS **não foi aceito como conclusão**. A inspeção manual do artifact encontrou:
+Não foi aceito como conclusão porque a inspeção manual encontrou:
 
-- intenção `carregador usb c` selecionando cabo;
-- intenção `fone bluetooth` selecionando item Lightning ambíguo;
-- intenção `lanterna recarregavel` selecionando rádio/caixa de som com lanterna secundária.
+- `bolsa feminina` selecionando necessaire;
+- `cinto feminino` selecionando short com cinto.
 
-As regras foram endurecidas, sem afrouxar o contrato:
+### SAFE 2
 
-- fone Bluetooth bloqueia Lightning/com fio/P2 e acessórios;
-- carregador USB-C bloqueia qualquer cabo e exige fonte/carregador;
-- lanterna recarregável bloqueia rádio/caixa de som/Bluetooth e acessórios.
+- run `41434023538`
+- job `125239310362`
+- SUCCESS técnico
+- artifact ID `13134669360`
+- SHA-256 `c3e0c6834c01f28d360844b56ada2dd542b947a6753c3208c99a0a9fbd353f04`
 
-SAFE final v3:
+Bolsa foi corrigida, mas `cinto feminino` ainda selecionou roupa com cinto. O SAFE técnico novamente não foi aceito como conclusão.
 
-- run `41430553714` — **SUCCESS**
-- job `125227806104`
-- head `6b48bb2e4f3b29dfa8afc446a0905955d455814d`
-- `blogger_policy_guard_self_test: 13/13 OK`
-- `CONECTA_SEMANTIC_REGRESSION_PASS: 16/16`
-- ranking 180
-- 20 produtos
-- 20 intenções
-- 20/20 links afiliados resolvidos
-- fallback=0
-- carry-forward=0
-- `BLOGGER_POLICY_GUARD_SAFE_PASS`
-- `CONECTA_SAFE_READ_ONLY_PASS`
+### SAFE 3 FINAL
 
-Artifact final SAFE:
+Regras foram endurecidas para v3, bloqueando:
 
-- `conecta-achados-store-safe-6`
-- artifact ID `13133308250`
-- SHA-256 `dd2519c93c3514fa25f26358805faa079df6a2c95e960c063f5aac12bd63e7ca`
+- necessaire/porta-maquiagem/estojo no intent de bolsa;
+- kits e usos secundários no intent de carteira;
+- short, shorts, calça, saia, vestido, macacão e conjunto no intent de cinto;
+- acessórios/refis/peças nos intents de cabelo e cuidados;
+- infantis/pets/miniaturas/acessórios nos intents de moda/calçados.
 
-A inspeção manual do artifact final confirmou produtos coerentes com as 20 intenções.
+Run final:
 
-## 6.3 Auditor pré-LIVE
+- run `41434538973` — **SUCCESS**
+- job `125240966066`
+- artifact `estilo-dia-a-dia-store-safe-3`
+- artifact ID `13136077291`
+- SHA-256 `8dfa07de49edf795275e07cd5c692bdc5aefc335788e17a8557672a88ad38211`
 
-Após instalar SAFE + LIVE, o auditor foi promovido para 9/9:
+A inspeção manual confirmou os 20 títulos coerentes. Em especial, o item de cinto final é **Cinto Feminino de Elástico com Fivela Metalizada**, não uma roupa com cinto incluso.
 
-- commit `6d48acac7d70d73dcec9f8f9984034fdef62baee`
-- run `41430916398` — SUCCESS
-- job `125228969403`
+## 7.3 Auditor pré-LIVE
+
+SAFE + LIVE foram instalados antes de qualquer kickoff público. O LIVE ficou sem schedule nesta fase.
+
+Auditor:
+
+- run `41434985540` — **SUCCESS**
+- job `125242447480`
 - Policy Guard 13/13
 - `BLOGGER_POLICY_REPO_AUDIT_PASS`
-- `SAFE/LIVE 9/9 protegidos`
+- `SAFE/LIVE 10/10 protegidos`
 
-## 6.4 Primeiro LIVE e prova do fail-closed
+Somente depois desse PASS foi criado o kickoff LIVE.
 
-Primeiro LIVE controlado:
+## 7.4 LIVE controlado comprovado
 
-- run `41430973587`
-- job `125229161822`
+Kickoff commit:
 
-A execução passou:
-
-- SAFE fresco
-- Policy Guard pré-LIVE
-- identidade
-- DRY-RUN Store/hero
-- publicação Store 20
-- hero 12
-
-Mas o gate público recebeu HTTP **429** em todas as tentativas.
-
-Resultado correto:
-
-- run terminou FAIL;
-- **persistência foi pulada**;
-- Blogger tinha conteúdo novo, mas o histórico não foi gravado sem PASS público.
-
-Artifact:
-
-- `conecta-achados-store-live-1`
-- artifact ID `13134067910`
-- SHA-256 `ec7c3b4e0f746a2eaa6e7ca2a5e01ae78263e6befd73fcb3fc17d185ff57108e`
-
-A leitura autenticada do Blogger mostrou que o HTML estava correto, mas ela **não foi usada como substituto do PASS público**.
-
-## 6.5 Gate público resiliente a 429
-
-O workflow foi corrigido sem enfraquecer a validação:
-
-- mantém exigência de HTTP público 200;
-- browser User-Agent;
-- `Accept-Language`;
-- `Cache-Control: no-cache`;
-- até 12 tentativas;
-- 429 espera e tenta novamente;
-- ainda exige 20 Store + 12 hero + identidade + Policy Guard público;
-- persistência continua depois do PASS.
-
-Commit da correção:
-
-- `0191879806183f65cf4e9def2c51a7265cd5521f`
-
-## 6.6 LIVE final comprovado
-
-Kickoff final head:
-
-- `d6b9cbb111e7cc994485da68f92d1ddbd1744867`
+- `093e1907f21f636d0c5d03511a089dabfe0aec59`
 
 Run/job:
 
-- run `41431642751` — **SUCCESS**
-- job `125231384106`
+- run `41435064769` — **SUCCESS**
+- job `125242704344`
 
-Marcadores comprovados:
+Marcadores relevantes:
 
 - Policy Guard self-test 13/13
-- `CONECTA_SEMANTIC_REGRESSION_PASS: 16/16`
-- SAFE fresco: 20 produtos / 20 intenções / 20 links
+- `ESTILO_SEMANTIC_REGRESSION_PASS: 20/20`
+- ranking Shopee 180
+- 20/20 produtos semânticos e links validados
+- `ESTILO_SAFE_READY`
+- `ESTILO_SELECTION_VALID_PASS: 20/20`
 - `BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20 produtos permitidos`
-- `CONECTA_SEMANTIC_PRELIVE_PASS`
-- `CONECTA_IDENTITY_PASS`
-- `CONECTA_STORE_DRY_RUN_PASS`
-- `CONECTA_HERO_DRY_RUN_PASS`
-- `CONECTA_POST_PUBLISH_PASS: 20 produtos`
-- `CONECTA_HERO_PASS: 12 mini-cards únicos sincronizados`
+- `ESTILO_SEMANTIC_PRELIVE_PASS: 5 categorias x 4 intenções`
+- `ESTILO_IDENTITY_DRY_RUN_PASS`
+- `ESTILO_STORE_DRY_RUN_PASS`
+- `ESTILO_HERO_DRY_RUN_PASS`
+- `ESTILO_POST_PUBLISH_PASS: 20 produtos`
+- `ESTILO_HERO_PASS: 12 mini-cards únicos`
+- `ESTILO_IDENTITY_PASS`
 
 Gate público:
 
 - tentativa 1: HTTP 429
-- tentativa 2: HTTP 429
-- tentativa 3: **HTTP 200**
-- `PUBLIC_COUNTS_ATTEMPT_3: store=20 hero=12`
+- tentativa 2: **HTTP 200**
+- `store=20 hero=12`
 - `BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero`
-- `CONECTA_IDENTITY_PUBLIC_PASS`
+- `ESTILO_IDENTITY_PUBLIC_PASS`
 
-Somente depois disso:
+Somente após o PASS público ocorreu a persistência:
 
-- `CONECTA_ROTATION_PERSIST_PASS`
-- commit automático `7fae90ff6b235171f37d2b77475ffcda254a3527` — `Atualizar rotação automática da Loja Conecta Achados`
+- commit automático `d5e32b4f7e6487f63cf1316225a2696ef51f6c69`
+- mensagem `Atualizar rotação automática da Loja Estilo no Dia a Dia`
 
-Artifact LIVE final:
+Artifact LIVE:
 
-- `conecta-achados-store-live-2`
-- artifact ID `13135215258`
-- SHA-256 `c16a16107cb7b2b7a6219d3e652024999d39093e112aab9fc5624b51ebc8d352`
+- `estilo-dia-a-dia-store-live-1`
+- artifact ID `13136406819`
+- SHA-256 `2bb6fd0784d4531242bb4352e0bb4bfc53c0c8abcb0ffb8d2d2b134b081db89d`
 
-## 6.7 Leitura independente final
+## 7.5 Leitura independente do Blogger
 
 `Blogger_Bridge_V2.get_post` confirmou diretamente no Store Post LIVE:
 
 - status LIVE;
-- Page Loja correta `https://conectaachados.blogspot.com/p/loja.html`;
+- Page Loja correta;
 - layout amplo preservado;
 - sidebar/PopularPosts ocultos apenas na Loja;
-- 5 categorias corretas;
+- texto final focado em moda, beleza e acessórios;
+- 5 categorias próprias;
 - 20 Store cards;
 - 12 hero;
-- disclosure afiliado;
-- links com `rel="nofollow sponsored noopener"`;
-- nenhuma referência executável à Vitrine Prática, Achados para Casa ou Liquidificadores;
-- fone = sem fio Bluetooth 5.3;
-- carregador USB-C = tomada/fonte USB + USB-C, não cabo;
-- lanterna = lanterna tática recarregável USB, não rádio.
+- disclosure de afiliado;
+- links `rel="nofollow sponsored noopener"`;
+- produtos coerentes com o SAFE final.
 
-## 6.8 Schedule final
+A identidade pública agora contém:
 
-O schedule foi habilitado somente depois de SAFE + LIVE + PASS público + leitura independente limpa.
+- `Moda, beleza e acessórios para o dia a dia`
+- `Estilo prático para vestir, cuidar e combinar melhor`
 
-- workflow `.github/workflows/conecta_achados_store_autonomous.yml`
-- `cron: "35 7 * * *"`
+## 7.6 Correção pontual da navegação
+
+A leitura independente detectou um detalhe de UX: o botão **Ver moda** do segundo slide apontava para Calçados em vez de Moda Feminina.
+
+Foi executada uma correção exata, sem alterar produtos:
+
+- workflow `.github/workflows/estilo_dia_a_dia_nav_fix.yml`
+- kickoff commit `8802c27653c8f6ba1d669b9af9566a1553d111e1`
+- run `41435662722` — **SUCCESS**
+- job `125244679783`
+- marcador `ESTILO_NAV_FIX_PASS: Ver moda -> Moda Feminina; 20+12 preservado`
+
+Depois da correção, esse workflow foi rebaixado para **manual/recovery-only**:
+
+- commit `1f9968973f0e2d710424ab8fc20f3550f884f8d3`
+- apenas `workflow_dispatch`
+- concurrency compartilhada `estilo-dia-a-dia-store-live`
+- sem schedule/push automático.
+
+## 7.7 Schedule final e auditor pós-schedule
+
+O schedule foi habilitado somente depois de:
+
+1. SAFE final limpo;
+2. auditor 10/10 pré-LIVE;
+3. LIVE 20+12;
+4. PASS público;
+5. persistência pós-PASS;
+6. leitura independente limpa;
+7. correção de navegação validada.
+
+Workflow:
+
+- `.github/workflows/estilo_dia_a_dia_store_autonomous.yml`
+
+Agenda:
+
+- `cron: "50 7 * * *"`
 - `timezone: "America/Recife"`
-- commit `15ccd4f6e1c508675423948f543a71e4f7f472d7`
+
+Commit:
+
+- `821fb4e6a7ef16348c7432a7094065ba56b418b2`
 
 Auditor pós-schedule:
 
-- run `41432136126` — SUCCESS
-- job `125233038467`
+- run `41435835886` — **SUCCESS**
+- job `125245260514`
+- `blogger_policy_guard_self_test: 13/13 OK`
 - `BLOGGER_POLICY_REPO_AUDIT_PASS`
-- `SAFE/LIVE 9/9 protegidos`
+- `SAFE/LIVE 10/10 protegidos`
 
-Conecta Achados está **CONCLUÍDO** como `modern_policy_guard_20x12`.
+Estilo no Dia a Dia está **CONCLUÍDO** como `modern_policy_guard_20x12`.
+
+Não reabrir o diagnóstico sem evidência concreta de regressão.
 
 ---
 
-# 7. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS
+# 8. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS
 
 ## Gate anti-repetição editorial
 
@@ -452,13 +490,13 @@ Regra permanente: nunca ocultar/desativar o aviso nativo de cookies do Blogger p
 
 ## Writers duplicados consolidados
 
-Limpeza Inteligente:
+### Limpeza Inteligente
 
 - canônico `.github/workflows/limpeza_inteligente_store_autonomous.yml`
 - legado `.github/workflows/limpeza_store_autonomous.yml` recovery-only
 - concurrency `limpeza-inteligente-store-live`
 
-Ventiladores em Foco:
+### Ventiladores em Foco
 
 - canônico `.github/workflows/ventiladores_store_autonomous.yml`
 - legado `.github/workflows/ventiladores_em_foco_store_autonomous.yml` recovery-only
@@ -468,41 +506,42 @@ Não reintroduzir `schedule` nem `push` nos writers legados.
 
 ---
 
-# 8. FILA RESTANTE — 9 BLOGS
+# 9. FILA RESTANTE — 8 BLOGS
 
 Ordem atual:
 
-1. **Estilo no Dia a Dia**
-2. Casa em Ordem
-3. Escolha Certa Online
-4. Achados que Valem
-5. Guia de Achados & Ofertas
-6. Moda e Ofertas
-7. Achadinhos de Beleza
-8. Radar Tech BR Blogger
-9. Cozinha Sem Complicação
+1. **Casa em Ordem**
+2. Escolha Certa Online
+3. Achados que Valem
+4. Guia de Achados & Ofertas
+5. Moda e Ofertas
+6. Achadinhos de Beleza
+7. Radar Tech BR Blogger
+8. Cozinha Sem Complicação
 
 Cada alvo exige perfil semântico próprio antes do LIVE.
 
 ---
 
-# 9. PRÓXIMO BLOCO PERMITIDO — ESTILO NO DIA A DIA, NÃO INICIADO
+# 10. PRÓXIMO BLOCO PERMITIDO — CASA EM ORDEM, NÃO INICIADO
 
-- Blog ID `4830103887652146866`
-- Page LOJA ID `4843501559117111153`
-- Store Post ID `3362829797679236320`
-- Page `https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/p/loja.html`
-- Post `https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/2026/11/loja.html`
+Alvo inventariado:
+
+- Blog ID `4177382081459143374`
+- Page LOJA ID `4031853959690608178`
+- Store Post ID `5566188787681469799`
+- Page `https://casa-em-ordem-pratica.blogspot.com/p/loja.html`
+- Post `https://casa-em-ordem-pratica.blogspot.com/2026/11/loja.html`
 - estado atual `store_scaffold_needs_auto_rotation`
 - perfil semântico ainda precisa ser definido e validado
 
-**Não iniciar Estilo no Dia a Dia automaticamente. Aguardar novo `continue` do usuário.**
+**Não iniciar Casa em Ordem automaticamente. Aguardar novo `continue` do usuário.**
 
 ---
 
-# 10. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES
+# 11. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES
 
-- Não reiniciar diagnóstico de Vitrine, Achados ou Conecta sem evidência concreta de regressão.
+- Não reiniciar diagnóstico de Vitrine, Achados, Conecta ou Estilo sem evidência concreta de regressão.
 - Não pedir operação manual quando ferramentas conectadas já executam a ação.
 - Confirmar Blog ID e Store Post ID antes de escrever.
 - Não recriar Page/Post Loja.
@@ -512,8 +551,8 @@ Cada alvo exige perfil semântico próprio antes do LIVE.
 - Preservar históricos independentes.
 - Policy Guard deve existir em SAFE, pré-LIVE e HTML público.
 - Persistir somente depois do PASS público.
-- HTTP 429 no gate público deve ser tratado com retry, nunca ignorado.
-- Leitura autenticada do Blogger ajuda no diagnóstico, mas não substitui o gate público exigido pelo workflow.
+- HTTP 429 no gate público deve usar retry, nunca bypass.
+- Leitura autenticada ajuda no diagnóstico, mas não substitui PASS público.
 - Não forçar produto semanticamente errado para preencher categoria.
 - Um Action verde não substitui inspeção de artifact/HTML quando houver dúvida semântica.
 - Preservar gate editorial anti-repetição.
@@ -523,9 +562,9 @@ Cada alvo exige perfil semântico próprio antes do LIVE.
 
 ---
 
-# 11. BACKUP / RECUPERAÇÃO
+# 12. BACKUP / RECUPERAÇÃO
 
-Último backup completo criado antes deste bloco:
+Último backup completo criado antes de Conecta/Estilo:
 
 - R3 `blogger-automation1-backup-2026-11-02-r3`
 - run `41428226665` — SUCCESS
@@ -533,13 +572,14 @@ Cada alvo exige perfil semântico próprio antes do LIVE.
 - SHA-256 `65a76eecb33d126e00ffe80e657adbdf488ad93766fda1dd971beece2208b863`
 - commit capturado `0e41104ffcadc37aedfd644875a1d42ebde8ee4f`
 
-Como o R3 é anterior à conclusão do Conecta, um próximo backup deverá incluir os commits deste bloco.
+Como o R3 é anterior às conclusões de Conecta e Estilo, um próximo backup completo deverá incluir os commits desses dois blocos.
 
-Se este arquivo for encontrado numa conversa futura:
+Se este arquivo for encontrado em uma conversa futura:
 
 - Vitrine Prática = 7ª loja moderna concluída;
 - Achados para Casa = 8ª loja moderna concluída;
 - Conecta Achados = 9ª loja moderna concluída;
-- auditor permanente = **9/9**;
-- restam **9 blogs**;
-- próximo bloco permitido = **Estilo no Dia a Dia**, somente após comando explícito do usuário.
+- Estilo no Dia a Dia = 10ª loja moderna concluída;
+- auditor permanente = **10/10**;
+- inventário = **10 modernas / 8 restantes**;
+- próximo bloco permitido = **Casa em Ordem**, somente após comando explícito do usuário.
