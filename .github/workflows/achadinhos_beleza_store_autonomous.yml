@@ -1,10 +1,10 @@
-name: Achadinhos de Beleza — Loja Shopee LIVE controlado
+name: Achadinhos de Beleza — Loja Shopee 10:35
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/achadinhos_beleza_live_kickoff.txt"
+  schedule:
+    - cron: "35 10 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -225,5 +225,5 @@ jobs:
           retention-days: 14
 
 # POLICY_GUARD_CENTRAL_ACHADINHOS_BELEZA_2026_11_02
-# CONTROLLED_LIVE_BEFORE_SCHEDULE_2026_11_02
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
