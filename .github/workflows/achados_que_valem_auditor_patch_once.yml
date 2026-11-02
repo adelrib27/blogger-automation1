@@ -1,0 +1,44 @@
+name: Achados que Valem — Promover auditor para 13/13 — uso único
+
+on:
+  push:
+    paths:
+      - ".github/workflows/achados_que_valem_auditor_patch_once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Adicionar Achados que Valem ao auditor permanente
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/blogger_policy_repo_audit.py')
+          s=p.read_text(encoding='utf-8')
+          safe='    ".github/workflows/escolha_certa_online_store_safe.yml",\n'
+          live='    ".github/workflows/escolha_certa_online_store_autonomous.yml",\n'
+          if '.github/workflows/achados_que_valem_store_safe.yml' not in s:
+              if safe not in s: raise SystemExit('AUDIT_PATCH_FAIL: SAFE anchor ausente')
+              s=s.replace(safe, safe+'    ".github/workflows/achados_que_valem_store_safe.yml",\n',1)
+          if '.github/workflows/achados_que_valem_store_autonomous.yml' not in s:
+              if live not in s: raise SystemExit('AUDIT_PATCH_FAIL: LIVE anchor ausente')
+              s=s.replace(live, live+'    ".github/workflows/achados_que_valem_store_autonomous.yml",\n',1)
+          old='SAFE/LIVE 12/12 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.'
+          new='SAFE/LIVE 13/13 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.'
+          if old not in s: raise SystemExit('AUDIT_PATCH_FAIL: summary 12/12 ausente')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8',newline='\n')
+          print('ACHADOS_QUE_VALEM_AUDITOR_13_13_PATCH_PASS')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/blogger_policy_repo_audit.py
+          git commit -m "auditor: proteger Achados que Valem como pipeline 13 de 13"
+          git pull --rebase origin main
+          git push origin HEAD:main
