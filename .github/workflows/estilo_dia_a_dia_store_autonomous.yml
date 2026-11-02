@@ -1,0 +1,222 @@
+name: Estilo no Dia a Dia — Loja Shopee LIVE Controlada
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "blogger_stores/estilo_dia_a_dia_live_kickoff.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: estilo-dia-a-dia-store-live
+  cancel-in-progress: false
+
+jobs:
+  atualizar-loja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "4830103887652146866"
+      BLOGGER_STORE_POST_ID: "3362829797679236320"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      SHOPEE_TOP_N: "180"
+      ESTILO_STORE_RECENT_DAYS: "14"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validar código e Policy Guard
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            src/blogger_policy_guard.py \
+            src/blogger_policy_guard_self_test.py \
+            src/criar_rascunho.py \
+            radar_tech_br/src/refresh_blogger_offer_links.py \
+            blogger_stores/src/conecta_achados_store.py \
+            blogger_stores/src/estilo_dia_a_dia_store.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+
+      - name: Confirmar secrets e alvo
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+          test "$SHOPEE_APP_ID" = "18352820579"
+          test "$BLOGGER_BLOG_ID" = "4830103887652146866"
+          test "$BLOGGER_STORE_POST_ID" = "3362829797679236320"
+
+      - name: Gerar seleção SAFE fresca
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py safe
+
+      - name: Validar Policy Guard pré-LIVE
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py validate
+          PYTHONPATH=src:blogger_stores/src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          data=json.loads(Path('blogger_stores/data/estilo_dia_a_dia_selection.json').read_text(encoding='utf-8'))
+          products=[p for values in (data.get('categories') or {}).values() for p in values]
+          if len(products) != 20:
+              raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
+          for product in products:
+              require_product_allowed(product)
+          print('BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20 produtos permitidos')
+          print('ESTILO_SEMANTIC_PRELIVE_PASS: 5 categorias x 4 intenções')
+          PY
+
+      - name: Simular identidade antes da escrita
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py identity-dry-run
+
+      - name: Simular Store e hero antes da publicação
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py store-dry-run
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py hero-dry-run
+
+      - name: Atualizar vitrine no Store Post
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py store-live
+
+      - name: Sincronizar 12 mini-cards do hero
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py hero-live
+
+      - name: Aplicar identidade Estilo no scaffold existente
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py identity-live
+
+      - name: Confirmar identidade depois da escrita
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py identity
+
+      - name: Verificar renderização pública + Policy Guard central
+        run: |
+          set -euo pipefail
+          ok=0
+          url="https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/2026/11/loja.html"
+          ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
+          for attempt in $(seq 1 12); do
+            code=$(curl -L -sS --max-time 40 \
+              -A "$ua" \
+              -H "Accept-Language: pt-BR,pt;q=0.9,en;q=0.7" \
+              -H "Cache-Control: no-cache" \
+              -o /tmp/estilo-dia-a-dia-loja.html \
+              -w "%{http_code}" \
+              "${url}?m=1&store_verify=${GITHUB_RUN_ID}-${attempt}" || true)
+            echo "PUBLIC_HTTP_ATTEMPT_${attempt}: ${code}"
+            if [ "$code" = "429" ]; then
+              sleep 15
+              continue
+            fi
+            if [ "$code" != "200" ]; then
+              sleep 10
+              continue
+            fi
+            store_count=$(python -c "print(open('/tmp/estilo-dia-a-dia-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
+            hero_count=$(python -c "print(open('/tmp/estilo-dia-a-dia-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
+            echo "PUBLIC_COUNTS_ATTEMPT_${attempt}: store=${store_count} hero=${hero_count}"
+            if grep -q "bls-store-grid" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "blh-grid" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "blogger-liq-layout-wide-css" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/p/loja.html" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "bls-moda-feminina" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "bls-calcados" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "bls-bolsas-acessorios" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "bls-cabelo" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "bls-cuidados" /tmp/estilo-dia-a-dia-loja.html \
+              && grep -q "Moda, beleza e acessórios para o dia a dia" /tmp/estilo-dia-a-dia-loja.html \
+              && ! grep -q "https://conectaachados.blogspot.com/p/loja.html" /tmp/estilo-dia-a-dia-loja.html \
+              && ! grep -q "https://achadosparacasa2026.blogspot.com/p/loja.html" /tmp/estilo-dia-a-dia-loja.html \
+              && ! grep -q "https://vitrine-pratica.blogspot.com/p/loja.html" /tmp/estilo-dia-a-dia-loja.html \
+              && ! grep -q "https://liquidificadores-em-foco.blogspot.com/p/loja.html" /tmp/estilo-dia-a-dia-loja.html \
+              && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$ok" -eq 1
+          PYTHONPATH=src python - <<'PY'
+          from blogger_policy_guard import require_store_html_allowed
+          raw=open('/tmp/estilo-dia-a-dia-loja.html', encoding='utf-8', errors='ignore').read()
+          require_store_html_allowed(raw, expected_products=20, expected_hero=12)
+          required=[
+              'https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/p/loja.html',
+              'bls-moda-feminina',
+              'bls-calcados',
+              'bls-bolsas-acessorios',
+              'bls-cabelo',
+              'bls-cuidados',
+              'Moda, beleza e acessórios para o dia a dia',
+          ]
+          missing=[x for x in required if x not in raw]
+          if missing:
+              raise SystemExit(f'Estilo identity: marcadores ausentes {missing}')
+          forbidden=[
+              'https://conectaachados.blogspot.com/p/loja.html',
+              'https://achadosparacasa2026.blogspot.com/p/loja.html',
+              'https://vitrine-pratica.blogspot.com/p/loja.html',
+              'https://liquidificadores-em-foco.blogspot.com/p/loja.html',
+          ]
+          bad=[x for x in forbidden if x in raw]
+          if bad:
+              raise SystemExit(f'Estilo identity: referências indevidas {bad}')
+          print('BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero')
+          print('ESTILO_IDENTITY_PUBLIC_PASS: domínio, Page LOJA e cinco categorias de moda/beleza corretos')
+          PY
+
+      - name: Persistir rotação somente após PASS público
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py persist
+          if [ -z "$(git status --porcelain -- blogger_stores/data/estilo_dia_a_dia_selection.json blogger_stores/data/estilo_dia_a_dia_rotation.json)" ]; then
+            echo "Sem mudanças de estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blogger_stores/data/estilo_dia_a_dia_selection.json blogger_stores/data/estilo_dia_a_dia_rotation.json
+          git commit -m "Atualizar rotação automática da Loja Estilo no Dia a Dia"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Guardar diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: estilo-dia-a-dia-store-live-${{ github.run_number }}
+          path: |
+            blogger_stores/data/estilo_dia_a_dia_selection.json
+            blogger_stores/data/estilo_dia_a_dia_rotation.json
+            blogger_stores/data/estilo_dia_a_dia_scan/
+            /tmp/estilo-dia-a-dia-loja.html
+          if-no-files-found: warn
+          retention-days: 14
+
+# POLICY_GUARD_CENTRAL_ESTILO_2026_11_02
+# PUBLIC_RATE_LIMIT_RETRY_2026_11_02
+# SCHEDULE_DISABLED_UNTIL_VALIDATION
