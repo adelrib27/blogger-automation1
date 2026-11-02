@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -20,6 +21,7 @@ POST_ID = "4871366557503134389"
 STORE_PAGE = "https://moda-ofertas.blogspot.com/p/loja.html"
 STORE_POST_URL = "https://moda-ofertas.blogspot.com/2026/10/loja.html"
 RECENT_DAYS = max(1, min(int(os.getenv("MODA_OFERTAS_STORE_RECENT_DAYS", "14")), 90))
+SYSTEM_ERROR_RETRIES = max(2, min(int(os.getenv("MODA_OFERTAS_SHOPEE_SYSTEM_RETRIES", "4")), 6))
 
 CATEGORY_META = {
     "Moda Feminina": ("Moda Feminina", "bls-moda-feminina", "Moda feminina"),
@@ -60,6 +62,33 @@ base.RECENT_DAYS = RECENT_DAYS
 base.CATEGORY_META = CATEGORY_META
 base.shopee_v23 = shopee_v23
 
+# A API Shopee vem apresentando o erro transitório 10000 em consultas isoladas.
+# O motor-base não repete esse código; neste perfil fazemos retry limitado e
+# fail-closed. Nenhum filtro semântico, comissão ou Policy Guard é relaxado.
+_orig_post_graphql = shopee_v23.base.post_graphql
+
+
+def resilient_post_graphql(app_id: str, secret: str, query: str, retries: int = 3) -> dict:
+    last_response: dict = {}
+    for attempt in range(1, SYSTEM_ERROR_RETRIES + 1):
+        response = _orig_post_graphql(app_id, secret, query, retries=retries)
+        last_response = response
+        errors = response.get("errors") or []
+        codes = {str((error.get("extensions") or {}).get("code")) for error in errors}
+        if "10000" not in codes:
+            return response
+        if attempt < SYSTEM_ERROR_RETRIES:
+            delay = min(3 * attempt, 9)
+            print(
+                f"  retry Shopee System Error 10000: tentativa {attempt + 1}/"
+                f"{SYSTEM_ERROR_RETRIES} em {delay}s"
+            )
+            time.sleep(delay)
+    return last_response
+
+
+shopee_v23.base.post_graphql = resilient_post_graphql
+
 
 def final_keyword_gate(product: dict, keyword: str) -> bool:
     title = base.norm(product.get("productName") or "")
@@ -83,7 +112,7 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "oculos de sol feminino": ["estojo para oculos", "capa para oculos", "cordao para oculos", "corrente para oculos", "chaveiro", "miniatura", "infantil", "menina", "bebe", "pet"],
         "relogio feminino": ["pulseira avulsa", "pulseira para relogio", "capa para relogio", "pelicula", "carregador", "infantil", "menina", "bebe", "chaveiro", "miniatura", "pet"],
         "escova secadora": ["refil", "capa para escova", "suporte para escova", "peca para escova"],
-        "secador de cabelo": ["difusor para secador", "bico para secador", "suporte para secador", "resistencia para secador", "cabo para secador", "peca para secador"],
+        "secador de cabelo": ["difusor", "bico para secador", "suporte para secador", "resistencia para secador", "cabo para secador", "peca para secador"],
         "barbeador eletrico": ["lamina de reposicao", "cabeca de reposicao", "capa para barbeador", "suporte para barbeador", "pet"],
         "depilador eletrico": ["cera", "linha depilatoria", "pinca", "creme depilatorio", "refil", "lamina de reposicao"],
     }
@@ -314,6 +343,7 @@ def safe_scan() -> int:
     semantic["rulesFile"] = "config/shopee_moda_ofertas_intent_rules.json"
     semantic["profileVersion"] = 1
     semantic["profileName"] = "Moda e Ofertas"
+    semantic["shopeeSystemErrorRetries"] = SYSTEM_ERROR_RETRIES
     data["semanticValidation"] = semantic
     base.save_atomic(SELECTION_PATH, data)
     base.validate_selection(data)
