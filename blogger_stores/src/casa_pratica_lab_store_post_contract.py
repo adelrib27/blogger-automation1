@@ -100,6 +100,19 @@ def verify_visual_contract(raw: str) -> None:
         raise RuntimeError(f"Contrato visual maduro incompleto: {missing}")
 
 
+def get_live_post(service) -> dict | None:
+    kwargs = {"blogId": BLOG_ID, "status": "LIVE", "fetchBodies": True, "maxResults": 100}
+    while True:
+        response = service.posts().list(**kwargs).execute()
+        for item in response.get("items") or []:
+            if str(item.get("id") or "") == POST_ID:
+                return item
+        token = response.get("nextPageToken")
+        if not token:
+            return None
+        kwargs["pageToken"] = token
+
+
 def load_targets(service):
     post = get_post_any_status(service, BLOG_ID, POST_ID)
     page = service.pages().get(blogId=BLOG_ID, pageId=PAGE_ID).execute()
@@ -132,8 +145,7 @@ def apply_live() -> int:
         body={"title": "Loja", "content": mature, "labels": ["Loja"]},
     ).execute()
 
-    post = get_post_any_status(service, BLOG_ID, POST_ID)
-    if str(post.get("status") or "").upper() != "LIVE":
+    if get_live_post(service) is None:
         service.posts().publish(blogId=BLOG_ID, postId=POST_ID).execute()
 
     service.pages().update(
@@ -147,9 +159,10 @@ def apply_live() -> int:
 def verify_api() -> int:
     require_target()
     service = criar_servico_blogger()
-    post, page = load_targets(service)
-    if str(post.get("status") or "").upper() != "LIVE":
-        raise RuntimeError(f"Store Post não está LIVE: {post.get('status')!r}")
+    _, page = load_targets(service)
+    post = get_live_post(service)
+    if post is None:
+        raise RuntimeError("Store Post não aparece na lista LIVE.")
     if "loja" not in [str(x).casefold() for x in (post.get("labels") or [])]:
         raise RuntimeError(f"Store Post sem label Loja: {post.get('labels')!r}")
     verify_visual_contract(str(post.get("content") or ""))
