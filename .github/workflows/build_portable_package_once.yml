@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout main atualizado
         uses: actions/checkout@v4
@@ -40,6 +40,34 @@ jobs:
             --output-dir dist
           ls -lh dist
           cat dist/Blogger_Automation_Unificado_2026-11-02_FINAL.zip.sha256.txt
+      - name: Instalar requirements e testar imports/runtime sem credenciais
+        run: |
+          set -euo pipefail
+          PKG="$GITHUB_WORKSPACE/dist/Blogger_Automation_Unificado_2026-11-02_FINAL"
+          python -m pip install --upgrade pip
+          pip install -r "$PKG/requirements.txt"
+          cd "$PKG"
+          python - <<'PY'
+          import importlib
+          for name in (
+              'googleapiclient', 'google.auth', 'google_auth_oauthlib', 'google.genai',
+              'requests', 'cloudinary', 'PIL', 'playwright'
+          ):
+              importlib.import_module(name)
+              print('IMPORT_OK', name)
+          PY
+          python run.py policy-test
+          python run.py doctor
+          cd "$PKG/local_runner"
+          python - <<'PY'
+          import importlib
+          for name in (
+              'apply_theme_safe', 'apply_theme_auto', 'backup_theme_auto',
+              'run_with_cdp_resilience_v08', 'provision_new_blog_v20', 'local_service_v08'
+          ):
+              importlib.import_module(name)
+              print('RUNNER_IMPORT_OK', name)
+          PY
       - name: Upload pacote final
         uses: actions/upload-artifact@v4
         with:
