@@ -1,0 +1,103 @@
+name: Estilo no Dia a Dia — Shopee SAFE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "blogger_stores/estilo_dia_a_dia_kickoff.txt"
+      - "blogger_stores/src/estilo_dia_a_dia_store.py"
+      - "blogger_stores/src/conecta_achados_store.py"
+      - "config/shopee_estilo_dia_a_dia.json"
+      - "config/shopee_estilo_dia_a_dia_intent_rules.json"
+      - ".github/workflows/estilo_dia_a_dia_store_safe.yml"
+      - "src/blogger_policy_guard.py"
+      - "src/blogger_policy_guard_self_test.py"
+      - "config/blogger_policy_guard.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: estilo-dia-a-dia-store-safe
+  cancel-in-progress: false
+
+jobs:
+  safe-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_TOP_N: "180"
+      ESTILO_STORE_RECENT_DAYS: "14"
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validar código e Policy Guard
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py \
+            src/shopee_oportunidades_v22.py \
+            src/shopee_oportunidades_v23.py \
+            src/blogger_policy_guard.py \
+            src/blogger_policy_guard_self_test.py \
+            radar_tech_br/src/refresh_blogger_offer_links.py \
+            blogger_stores/src/conecta_achados_store.py \
+            blogger_stores/src/estilo_dia_a_dia_store.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+
+      - name: Confirmar AppID Shopee
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test "$SHOPEE_APP_ID" = "18352820579"
+          echo "AppID Shopee do projeto validado."
+
+      - name: Executar varredura SAFE do Estilo
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py safe
+
+      - name: Validar seleção SAFE + Policy Guard central
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/estilo_dia_a_dia_store.py validate
+          PYTHONPATH=src:blogger_stores/src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          data=json.loads(Path('blogger_stores/data/estilo_dia_a_dia_selection.json').read_text(encoding='utf-8'))
+          products=[p for values in (data.get('categories') or {}).values() for p in values]
+          if len(products) != 20:
+              raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
+          for product in products:
+              require_product_allowed(product)
+          print('BLOGGER_POLICY_GUARD_SAFE_PASS: 20/20 produtos permitidos')
+          print('ESTILO_SAFE_READ_ONLY_PASS: nenhum writer Blogger executado')
+          PY
+
+      - name: Guardar diagnóstico SAFE
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: estilo-dia-a-dia-store-safe-${{ github.run_number }}
+          path: |
+            blogger_stores/data/estilo_dia_a_dia_selection.json
+            blogger_stores/data/estilo_dia_a_dia_rotation.json
+            blogger_stores/data/estilo_dia_a_dia_scan/
+          if-no-files-found: warn
+          retention-days: 14
+
+# ESTILO_DIA_A_DIA_SAFE_POLICY_GUARD_2026_11_02
