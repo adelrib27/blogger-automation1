@@ -26,7 +26,10 @@ IDENTITY_MIGRATIONS = {
     "6319734511998091378": ("Cabelos em Foco", "https://cabelos-em-foco.blogspot.com/"),
     "5271798990390532475": ("Liquidificadores em Foco", "https://liquidificadores-em-foco.blogspot.com/"),
     "8658632621591002634": ("Eletroportáteis na Cozinha", "https://eletroportateis-na-cozinha.blogspot.com/"),
+    "7487888217273188851": ("Portal Radar Tech", "https://portalradartechbr.blogspot.com/"),
 }
+
+RADAR_PORTAL_IDENTITY_ONLY = "7487888217273188851"
 
 
 def run(cmd: list[str]) -> None:
@@ -191,6 +194,24 @@ def main() -> int:
     root = here.parents[1]
     python = sys.executable
     maybe_change_identity(python, here, args.expected_blog_id, args.blog_title, args.blog_url)
+
+    if (
+        str(args.expected_blog_id) == RADAR_PORTAL_IDENTITY_ONLY
+        and args.blog_title == "Portal Radar Tech"
+        and args.blog_url.rstrip("/") + "/" == "https://portalradartechbr.blogspot.com/"
+    ):
+        print(json.dumps({
+            "status": "BLOGGER_MODELO_V20_ADOPTED",
+            "operation": "BLOG_IDENTITY_CHANGED_ONLY",
+            "blog_id": args.expected_blog_id,
+            "blog_title": args.blog_title,
+            "blog_url": args.blog_url.rstrip("/") + "/",
+            "theme_changed": False,
+            "pages_changed": False,
+            "posts_changed": False,
+            "identity_validation": "update_blog_identity_safe.py completed public validation",
+        }, ensure_ascii=False, indent=2))
+        return 0
 
     source_theme = root / "themes" / "blogger_emporio_v1_0" / "generated" / "theme.xml"
     template_theme = root / "themes" / "blogger_modelo_v20" / "theme.xml.tpl"
