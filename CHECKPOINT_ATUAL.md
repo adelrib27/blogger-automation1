@@ -922,3 +922,51 @@ Se este arquivo for encontrado em uma conversa futura:
 - auditor permanente = **14/14**;
 - inventário = **14 modernas / 4 restantes**;
 - próximo bloco permitido = **Moda e Ofertas**, somente após comando explícito do usuário.
+
+---
+# LAB E2E VALIDATION — CASA PRÁTICA LAB — 2026-11-02
+
+Validação isolada de ponta a ponta do sistema **Automatizar Blogger com Python**, sem incorporar o Lab ao rollout dos 18 blogs de produção.
+
+## Alvo e provisionamento do zero
+- Blog **Casa Prática Lab** — Blog ID `8930870316690519385`
+- URL `https://casa-pratica-lab-20261102.blogspot.com/`
+- Runner `v0.8`; provisionamento `BLOGGER_NEW_BLOG_V20_CORE_PROVISIONED`
+- TEMA MODELO V20 `emporio-revisao-visual-20-modelo-final`
+- robots personalizados intocados; nenhum post copiado/apagado
+- Page LOJA `7110845449177208439`
+- Store Post `7691087355641688975`
+
+Páginas LIVE: Sobre `2953880269565413439`; Afiliados `9150297995502671273`; Contato `3162172576294581859`; Privacidade `7130634486552763768`; Termos `3078099834727991563`; LOJA `7110845449177208439`.
+
+Posts editoriais LIVE: `7732798999877296654`, `5391626968548073797`, `1671345332688351619`.
+
+## SAFE / fail-closed / primeira publicação
+- SAFE `41462328876` — SUCCESS; job `125334256177`; regressão 40/40; 20 produtos / 20 intenções / 5 categorias; Guard 20/20; fallback 0; carry 0; `CASA_PRATICA_LAB_SAFE_READ_ONLY_PASS`.
+- artifact SAFE `13149856748`; SHA-256 `d48208df5d4891b7548c199a4a65243951f416357355e05e45a3abc07ccefc41`; revisão manual 20/20 aprovada.
+- LIVE `41462823574` falhou no SAFE fresco por `Shopee System Error 10000`; nenhum writer/persistência.
+- LIVE `41463144957` falhou no hero DRY-RUN antes dos writers porque o blog zerado ainda não tinha Store 20 para formar os 32 links exigidos.
+- correção limitada ao Lab: hero DRY-RUN simula em memória Store 20 + Hero 12 e preserva `base.verify_store_html` + `base.verify_hero` e o gate de 32 `rel="nofollow sponsored noopener"`.
+
+## LIVE final
+- run `41463863556` — SUCCESS; job `125339498343`; head `118eb748570051339fdbd15a19e36791b56847bf`.
+- SAFE fresco 40/40; Guard pré-LIVE 20/20; identidade/Store/hero DRY-RUN PASS.
+- Store 20 + Hero 12 publicados.
+- gate público `429 → 429 → 200`; `PUBLIC_COUNTS_ATTEMPT_3: store=20 hero=12`; Policy Guard e identidade pública PASS.
+- persistência somente pós-PASS: commit `3e8e588229c12bf35d61f357ad01ab37fc7db68d`.
+- artifact LIVE `13150368713`; SHA-256 `4244066cb60f918db7abef6cd98819458af68459e59a583b663cde6694f3c00c`.
+- leitura independente Blogger Bridge confirmou HTML LIVE 20+12, categorias, Page Loja, disclosure e links afiliados.
+
+## Schedule / auditoria / isolamento
+- schedule Lab `10:20 America/Recife`, commit `918549ecf3acd19c11e046acd0d08be6237520cc`; LIVE final usa `workflow_dispatch + schedule`, sem `push`.
+- auditor de produção pós-Lab `41464708926`, job `125342444082`, SUCCESS e continua `SAFE/LIVE 14/14`.
+- auditor E2E Lab `41464822482`, job `125342835507`, SUCCESS.
+- `CASA_PRATICA_LAB_REPO_AUDIT_PASS`.
+- auditor público `429 → 200`; `LAB_AUDIT_COUNTS: store=20 hero=12 rels=32`; `CASA_PRATICA_LAB_PUBLIC_AUDIT_PASS`.
+- inventário de produção continua `blogs_total=18`, modernas `14`; Lab ausente de inventário/rollout; rollout `enabled=false / PREPARED_NOT_DEPLOYED`.
+
+## Conclusão
+O cenário Casa Prática Lab validou o fluxo implementado desde Blogger inexistente até blog V20 completo e loja Python/Shopee automatizada com SAFE, Guard, fail-closed, 20+12, validação pública, persistência e schedule. SAFE/Guard continuam obrigatórios para blogs futuros diante de diferenças de nicho e mudanças externas.
+
+**Produção permanece 14/18. Próximo bloco de produção: Moda e Ofertas, ainda não iniciado.**
+
