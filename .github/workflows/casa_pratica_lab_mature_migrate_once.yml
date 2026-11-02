@@ -1,4 +1,4 @@
-name: Casa Prática Lab — PROVA final visual Page madura
+name: Casa Prática Lab — SINCRONIZAR fix final do carousel
 
 on:
   push:
@@ -9,20 +9,43 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: casa-pratica-lab-store-live
+  cancel-in-progress: false
+
 jobs:
-  visual-proof:
+  final-fix:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+    env:
+      BLOGGER_BLOG_ID: "8930870316690519385"
+      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
+      BLOGGER_STORE_POST_ID: "7691087355641688975"
+      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: pip install -r requirements.txt
 
-      - name: Revalidar contrato público sem nova escrita
+      - name: Sincronizar fix do carousel na Page viva
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/blogger_new_blog_store_page_target.py blogger_stores/src/casa_pratica_lab_public_acceptance.py
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
+
+      - name: Aceitação pública estrita
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
 
-      - name: Prova visual em Chrome real sem referências obsoletas
+      - name: Prova visual funcional em Chrome real
         run: |
           set -euo pipefail
           pip install selenium
@@ -40,70 +63,59 @@ jobs:
           opts.add_argument('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36')
           driver=webdriver.Chrome(options=opts)
           try:
-              last=None
+              state=None
               for attempt in range(1,6):
-                  driver.get(f'{base}?visual_e2e=3-{attempt}-{int(time.time())}')
+                  driver.get(f'{base}?visual_final={attempt}-{int(time.time())}')
                   time.sleep(4)
                   state=driver.execute_script(r'''
-                    const vis = el => {
-                      if (!el) return false;
-                      const s=getComputedStyle(el), r=el.getBoundingClientRect();
-                      return s.display!=='none' && s.visibility!=='hidden' && Number(s.opacity)!==0 && r.width>0 && r.height>0;
-                    };
-                    const pages=[...document.querySelectorAll('.bls-page')];
-                    const ranked=pages.map((p,i)=>({p,i,r:p.getBoundingClientRect()})).sort((a,b)=>b.r.width-a.r.width);
-                    const chosen=ranked.length ? ranked[0].p : null;
-                    const slides=chosen ? [...chosen.querySelectorAll('.bls-slide')] : [];
-                    const dots=chosen ? [...chosen.querySelectorAll('#blsDots button')] : [];
-                    const prev=chosen ? chosen.querySelector('.bls-prev') : null;
-                    const next=chosen ? chosen.querySelector('.bls-next') : null;
+                    const vis=el=>{if(!el)return false;const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity)!==0&&r.width>0&&r.height>0};
+                    const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                    const page=pages[0]||null;
+                    const slider=page?page.querySelector('.bls-slider'):null;
+                    const slides=slider?[...slider.querySelectorAll('.bls-slide')]:[];
+                    const dots=slider?[...slider.querySelectorAll('#blsDots button')]:[];
                     const titles=[...document.querySelectorAll('.post-title-container,.post-title,.entry-title')];
                     return {
-                      href: location.href,
-                      title: document.title,
-                      pageCount: pages.length,
-                      pageWidths: ranked.map(x=>Math.round(x.r.width)),
-                      chosenIndex: ranked.length ? ranked[0].i : -1,
-                      width: chosen ? chosen.getBoundingClientRect().width : 0,
-                      viewport: innerWidth,
-                      slides: slides.length,
-                      visibleSlides: slides.filter(vis).length,
-                      dots: dots.length,
-                      prevVisible: vis(prev),
-                      nextVisible: vis(next),
-                      visibleLojaTitles: titles.filter(x=>vis(x)&&/LOJA/i.test(x.textContent||'')).length,
-                      active: slides.findIndex(x=>x.classList.contains('is-active')),
-                      bodyClass: document.body ? document.body.className : ''
+                      width:page?page.getBoundingClientRect().width:0,
+                      viewport:innerWidth,
+                      pageCount:pages.length,
+                      pageWidths:pages.map(x=>Math.round(x.getBoundingClientRect().width)),
+                      slides:slides.length,
+                      visible:slides.filter(vis).length,
+                      dots:dots.length,
+                      prev:vis(slider&&slider.querySelector('.bls-prev')),
+                      next:vis(slider&&slider.querySelector('.bls-next')),
+                      titleVisible:titles.filter(x=>vis(x)&&/LOJA/i.test(x.textContent||'')).length,
+                      active:slides.findIndex(x=>x.classList.contains('is-active')),
+                      bound:slider?slider.dataset.pageCarouselBound||'': '',
+                      fix:!!document.querySelector('#blogger-new-store-page-carousel-fix')
                     };
                   ''')
-                  print(f'VISUAL_ATTEMPT_{attempt}: {state}')
-                  last=state
-                  if state['width'] >= 1200 and state['slides'] == 3 and state['visibleSlides'] == 1 and state['dots'] == 3 and state['prevVisible'] and state['nextVisible'] and state['visibleLojaTitles'] == 0:
+                  print(f'FINAL_VISUAL_ATTEMPT_{attempt}: {state}')
+                  if state['width']>=1200 and state['slides']==3 and state['visible']==1 and state['dots']==3 and state['prev'] and state['next'] and state['titleVisible']==0 and state['fix'] and state['bound']=='1':
                       break
                   time.sleep(5)
               else:
-                  raise SystemExit(f'Estado visual não estabilizou: {last}')
+                  raise SystemExit(f'Estado visual não estabilizou: {state}')
 
               before=state['active']
               driver.execute_script(r'''
-                const pages=[...document.querySelectorAll('.bls-page')];
-                pages.sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
                 pages[0].querySelector('.bls-next').click();
               ''')
               time.sleep(.8)
               after=driver.execute_script(r'''
-                const pages=[...document.querySelectorAll('.bls-page')];
-                pages.sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
                 const slides=[...pages[0].querySelectorAll('.bls-slide')];
                 const vis=x=>{const s=getComputedStyle(x),r=x.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0};
                 return {active:slides.findIndex(x=>x.classList.contains('is-active')),visible:slides.filter(vis).length};
               ''')
-              if after['active'] == before or after['visible'] != 1:
-                  raise SystemExit(f"Carousel não avançou corretamente: before={before} after={after}")
-              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={state['width']:.0f}/{state['viewport']}; pages={state['pageCount']}; slides=3 visible=1; dots=3; next={before}->{after['active']}; title_hidden=PASS")
+              if after['active']==before or after['visible']!=1:
+                  raise SystemExit(f'Carousel não avançou: before={before} after={after}')
+              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={state['width']:.0f}/{state['viewport']}; pages={state['pageCount']}; slides=3 visible=1; dots=3; bound=1; next={before}->{after['active']}; title_hidden=PASS")
           finally:
               driver.quit()
           PY
 
 # DELETE_AFTER_PASS
-# VISUAL_ONLY_FINAL_PROOF_NO_BLOGGER_WRITES
+# FINAL_CAROUSEL_DOM_DUPLICATE_FIX_SYNC
