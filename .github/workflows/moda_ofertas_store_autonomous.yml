@@ -2,6 +2,9 @@ name: Moda e Ofertas — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "blogger_stores/moda_ofertas_live_kickoff.txt"
 
 permissions:
   contents: write
@@ -218,5 +221,5 @@ jobs:
           retention-days: 14
 
 # POLICY_GUARD_CENTRAL_MODA_OFERTAS_2026_11_02
-# MANUAL_ONLY_BEFORE_FIRST_LIVE_2026_11_02
+# TEMP_FIRST_LIVE_KICKOFF_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
