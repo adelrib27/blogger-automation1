@@ -1,0 +1,127 @@
+name: Casa Prática Lab — VALIDAÇÃO ÚNICA E2E Page-target fresca
+
+on:
+  push:
+    paths:
+      - ".github/workflows/casa_pratica_lab_full_e2e_once.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: casa-pratica-lab-store-live
+  cancel-in-progress: false
+
+jobs:
+  full-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "8930870316690519385"
+      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
+      BLOGGER_STORE_POST_ID: "7691087355641688975"
+      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      SHOPEE_TOP_N: "180"
+      CASA_PRATICA_LAB_STORE_RECENT_DAYS: "14"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compilar, validar Policy Guard e alvo
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/shopee_oportunidades.py src/shopee_oportunidades_v22.py src/shopee_oportunidades_v23.py \
+            src/blogger_policy_guard.py src/blogger_policy_guard_self_test.py src/criar_rascunho.py \
+            radar_tech_br/src/refresh_blogger_offer_links.py \
+            blogger_stores/src/conecta_achados_store.py \
+            blogger_stores/src/casa_pratica_lab_store.py \
+            blogger_stores/src/casa_pratica_lab_store_page.py \
+            blogger_stores/src/blogger_new_blog_store_page_target.py \
+            blogger_stores/src/casa_pratica_lab_public_acceptance.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+          test "$SHOPEE_APP_ID" = "18352820579"
+          test "$BLOGGER_BLOG_ID" = "8930870316690519385"
+          test "$BLOGGER_STORE_PAGE_ID" = "7110845449177208439"
+          test "$BLOGGER_STORE_POST_ID" = "7691087355641688975"
+
+      - name: SAFE Shopee fresco
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py safe
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py validate
+          PYTHONPATH=src:blogger_stores/src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          data=json.loads(Path('blogger_stores/data/casa_pratica_lab_selection.json').read_text(encoding='utf-8'))
+          products=[p for values in (data.get('categories') or {}).values() for p in values]
+          if len(products) != 20: raise SystemExit(f'Quantidade SAFE inválida: {len(products)}/20')
+          for p in products: require_product_allowed(p)
+          print('CASA_PRATICA_LAB_FRESH_SAFE_POLICY_PASS: 20/20')
+          PY
+
+      - name: Dry-runs completos
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py identity-dry-run
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py store-dry-run
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py hero-dry-run
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
+
+      - name: LIVE Page-target controlado
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py store-live
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py hero-live
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py identity-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
+
+      - name: Aceitação pública completa
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
+
+      - name: Persistir somente após PASS público
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py persist
+          if [ -z "$(git status --porcelain -- blogger_stores/data/casa_pratica_lab_selection.json blogger_stores/data/casa_pratica_lab_rotation.json)" ]; then
+            echo "CASA_PRATICA_LAB_FRESH_E2E_NO_STATE_CHANGE"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blogger_stores/data/casa_pratica_lab_selection.json blogger_stores/data/casa_pratica_lab_rotation.json
+          git commit -m "Validar E2E fresco Page-target Casa Prática Lab"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "CASA_PRATICA_LAB_FRESH_E2E_PERSIST_PASS"
+
+      - name: Artifact SAFE fresco
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-pratica-lab-full-e2e-once-${{ github.run_number }}
+          path: |
+            blogger_stores/data/casa_pratica_lab_selection.json
+            blogger_stores/data/casa_pratica_lab_rotation.json
+            blogger_stores/data/casa_pratica_lab_scan/
+          if-no-files-found: warn
+          retention-days: 14
+
+# DELETE_AFTER_SUCCESS
