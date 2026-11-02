@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "description": "Regras semânticas específicas do Radar Tech BR no Blogger para impedir acessórios, peças e falsos positivos na vitrine Shopee, preservando o perfil público atual de tecnologia e produtos práticos.",
   "rules": {
     "carrinho organizador": {"require_groups": [["carrinho"], ["organizador", "multiuso", "prateleira"]], "block_phrases": ["brinquedo", "miniatura", "carrinho de bebe", "carrinho controle remoto"]},
@@ -20,7 +20,7 @@
     "aparador de pelos": {"require_groups": [["aparador de pelos", "aparador pelos", "maquina de barbear", "barbeador eletrico"]], "block_phrases": ["papa bolinhas", "tira pelos de roupas", "removedor de pelos de roupas", "removedor de pelo de roupa", "lamina de reposicao"]},
     "escova secadora": {"require_groups": [["escova"], ["secadora", "secador", "hot air", "ar quente"]], "block_phrases": ["refil", "capa para escova", "suporte para escova", "peca para escova"]},
     "secador de cabelo": {"require_groups": [["secador"], ["cabelo", "cabelos"]], "block_phrases": ["difusor para secador", "bico para secador", "suporte para secador", "resistencia para secador", "cabo para secador"]},
-    "chapinha cabelo": {"require_groups": [["chapinha", "prancha"], ["cabelo", "cabelos", "alisadora", "alisador"]], "block_phrases": ["capa para chapinha", "suporte para chapinha", "bolsa para chapinha"]},
+    "chapinha cabelo": {"require_groups": [["chapinha", "prancha"], ["cabelo", "cabelos", "alisadora", "alisador"]], "block_phrases": ["capa para chapinha", "capa termica", "estojo para chapinha", "suporte para chapinha", "bolsa para chapinha"]},
 
     "mochila notebook": {"require_groups": [["mochila"], ["notebook", "laptop", "executiva", "trabalho"]], "block_phrases": ["capa para notebook", "bolsa apenas para notebook", "adesivo para mochila"]},
     "garrafa termica": {"require_groups": [["garrafa"], ["termica", "térmica"]], "block_phrases": ["tampa reposicao", "tampa de reposicao", "tampa avulsa", "vedacao para garrafa", "anel de vedacao", "canudo avulso"]},
