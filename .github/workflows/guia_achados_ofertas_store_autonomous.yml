@@ -2,9 +2,9 @@ name: Guia de Achados & Ofertas — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/guia_achados_ofertas_live_kickoff.txt"
+  schedule:
+    - cron: "5 10 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -232,3 +232,4 @@ jobs:
 
 # POLICY_GUARD_CENTRAL_GUIA_ACHADOS_OFERTAS_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
