@@ -1,10 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Regras semânticas específicas do Achadinhos de Beleza para manter a vitrine focada em cabelos, skincare, maquiagem, unhas e cuidados pessoais, bloqueando acessórios, peças, refis e falsos positivos.",
   "rules": {
     "escova secadora": {"require_groups": [["escova"],["secadora","secador","ar quente","hot air"]],"block_phrases": ["refil","capa para escova","suporte para escova","peca para escova","peça para escova"]},
     "secador de cabelo": {"require_groups": [["secador"],["cabelo","cabelos"]],"block_phrases": ["difusor","bico para secador","suporte","resistencia","resistência","cabo para secador","peca","peça","adaptador","acessorio","acessório"]},
-    "chapinha cabelo": {"require_groups": [["chapinha","prancha"],["cabelo","cabelos","alisadora","alisador"]],"block_phrases": ["capa para chapinha","suporte para chapinha","bolsa para chapinha","peca","peça"]},
+    "chapinha cabelo": {"require_groups": [["chapinha","prancha"],["cabelo","cabelos","alisadora","alisador"]],"block_phrases": ["capa","estojo","suporte","bolsa","peca","peça","protetor termico","protetor térmico"]},
     "modelador de cachos": {"require_groups": [["modelador","babyliss","ondulador"],["cacho","cachos","cabelo","cabelos"]],"block_phrases": ["suporte","capa","bolsa","peca","peça"]},
     "protetor solar facial": {"require_groups": [["protetor solar","filtro solar"],["facial","rosto","face"]],"block_phrases": ["corporal","infantil","kids","labial","cabelo","capilar","pet"]},
     "hidratante facial": {"require_groups": [["hidratante"],["facial","rosto","face"]],"block_phrases": ["corporal","mao","mão","pes","pés","cabelo","capilar","pet"]},
