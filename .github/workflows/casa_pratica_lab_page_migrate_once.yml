@@ -32,16 +32,31 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - name: Validar adapter
-        run: python -m py_compile blogger_stores/src/blogger_new_blog_store_page_target.py
-      - name: Migrar Page LOJA 20+12 e retirar Store Post da home
+
+      - name: Validar código Page-target
+        run: |
+          python -m py_compile \
+            blogger_stores/src/blogger_new_blog_store_page_target.py \
+            blogger_stores/src/casa_pratica_lab_store.py \
+            blogger_stores/src/casa_pratica_lab_store_page.py
+
+      - name: Provar leitura/escrita do staging DRAFT
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py identity
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py identity-live
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py store-dry-run
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py hero-dry-run
+
+      - name: Sincronizar Page LOJA 20+12 e confirmar staging DRAFT
         run: |
           set -euo pipefail
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
-      - name: Validar Page pública e home editorial
+
+      - name: Validar Page pública, home e imagens editoriais
         run: |
           set -euo pipefail
           ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
@@ -59,9 +74,11 @@ jobs:
           test "$ok" -eq 1
           curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/home.html "https://casa-pratica-lab-20261102.blogspot.com/?m=1&migration_home=${GITHUB_RUN_ID}"
           ! grep -q '/2026/11/loja.html' /tmp/home.html
-          grep -q '/2026/11/como-organizar-uma-cozinha-pequena-sem.html' /tmp/home.html
-          grep -q '/2026/11/air-fryer-7-pontos-para-conferir-antes.html' /tmp/home.html
-          grep -q '/2026/11/ventilador-ou-climatizador-qual-faz.html' /tmp/home.html
-          echo 'CASA_PRATICA_LAB_PAGE_MIGRATION_PUBLIC_PASS'
+          for slug in como-organizar-uma-cozinha-pequena-sem air-fryer-7-pontos-para-conferir-antes ventilador-ou-climatizador-qual-faz; do
+            grep -q "/2026/11/${slug}.html" /tmp/home.html
+            curl -L -sS --max-time 40 -A "$ua" -o "/tmp/${slug}.html" "https://casa-pratica-lab-20261102.blogspot.com/2026/11/${slug}.html?img=${GITHUB_RUN_ID}"
+            grep -q 'post-hero' "/tmp/${slug}.html"
+          done
+          echo 'CASA_PRATICA_LAB_PAGE_MIGRATION_PUBLIC_PASS: Page 20+12; staging fora da home; 3/3 artigos com imagem.'
 
 # DELETE_AFTER_PASS
