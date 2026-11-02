@@ -75,7 +75,7 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "fita led usb": ["controlador avulso", "controle avulso", "conector", "fonte avulsa", "cabo avulso", "perfil aluminio", "suporte", "peca"],
         "ventilador parede": ["helice avulsa", "grade avulsa", "capacitor", "suporte avulso", "controle remoto avulso", "motor avulso", "peca", "miniatura", "brinquedo", "limpeza ventilador", "escova ventilador"],
         "ventilador mesa": ["helice avulsa", "grade avulsa", "capacitor", "suporte avulso", "controle remoto avulso", "motor avulso", "peca", "miniatura", "brinquedo", "limpeza ventilador", "escova ventilador"],
-        "climatizador ar": ["filtro avulso", "filtro reposicao", "filtro de reposicao", "refil", "peca", "acessorio", "automotivo", "limpeza", "higienizador"],
+        "climatizador ar": ["filtro avulso", "filtro reposicao", "filtro de reposicao", "refil", "peca", "acessorio", "automotivo", "limpeza", "higienizador", "mini refrigerador", "mini ventilador", "usb", "ar condicionado"],
         "umidificador usb": ["filtro avulso", "refil", "cotonete", "pavio", "peca", "acessorio", "brinquedo", "miniatura"],
         "garrafa termica 500ml": ["tampa reposicao", "tampa avulsa", "vedacao", "borracha", "canudo avulso", "capa", "suporte"],
         "mochila notebook impermeavel": ["capa para mochila", "capa chuva", "capa de chuva", "alca avulsa", "bolsa termica", "miniatura", "brinquedo"],
@@ -98,8 +98,8 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "abajur led toque": lambda: "abajur" in title and "led" in title and any(x in title for x in ["toque", "touch"]),
         "luminaria led sensor movimento": lambda: "luminaria" in title and "led" in title and "sensor" in title and "movimento" in title,
         "fita led usb": lambda: "fita" in title and "led" in title and "usb" in title,
-        "ventilador parede": lambda: "ventilador" in title and "parede" in title,
-        "ventilador mesa": lambda: "ventilador" in title and "mesa" in title,
+        "ventilador parede": lambda: any(x in title for x in ["ventilador de parede", "ventilador parede"]),
+        "ventilador mesa": lambda: any(x in title for x in ["ventilador de mesa", "ventilador mesa"]),
         "climatizador ar": lambda: "climatizador" in title and "ar" in title,
         "umidificador usb": lambda: "umidificador" in title and "usb" in title,
         "garrafa termica 500ml": lambda: "garrafa" in title and "termica" in title and any(x in title for x in ["500ml", "500 ml", "0,5l", "0.5l"]),
@@ -136,11 +136,11 @@ def run_guia_regression_checks(rules_doc: dict) -> None:
         ("Luminária LED com Sensor de Movimento", "luminaria led sensor movimento", True),
         ("Controlador Avulso para Fita LED USB", "fita led usb", False),
         ("Fita LED RGB USB 5 Metros", "fita led usb", True),
-        ("Hélice Avulsa para Ventilador de Parede", "ventilador parede", False),
+        ("Suporte De Parede Porta Controle Remoto Ar Ventilador", "ventilador parede", False),
         ("Ventilador de Parede Oscilante 60cm", "ventilador parede", True),
-        ("Grade Avulsa para Ventilador de Mesa", "ventilador mesa", False),
+        ("Ventilador Mini Portátil USB de Mão Suporte Mesa", "ventilador mesa", False),
         ("Ventilador de Mesa 40cm 6 Pás", "ventilador mesa", True),
-        ("Filtro de Reposição para Climatizador de Ar", "climatizador ar", False),
+        ("MINI Refrigerador De Ar Ventilador Umidificador Climatizador Ar USB", "climatizador ar", False),
         ("Climatizador de Ar 16 Litros Frio", "climatizador ar", True),
         ("Refil Filtro para Umidificador USB", "umidificador usb", False),
         ("Mini Umidificador USB Portátil", "umidificador usb", True),
@@ -304,7 +304,7 @@ def safe_scan() -> int:
     data = base.load_json(SELECTION_PATH, {})
     semantic = dict(data.get("semanticValidation") or {})
     semantic["rulesFile"] = "config/shopee_guia_achados_ofertas_intent_rules.json"
-    semantic["profileVersion"] = 1
+    semantic["profileVersion"] = 2
     semantic["profileName"] = "Guia de Achados & Ofertas"
     data["semanticValidation"] = semantic
     base.save_atomic(SELECTION_PATH, data)
