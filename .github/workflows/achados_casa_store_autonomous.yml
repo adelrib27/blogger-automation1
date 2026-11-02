@@ -2,6 +2,9 @@ name: Achados para Casa — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "20 7 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "blogger_stores/achados_casa_live_kickoff.txt"
@@ -197,3 +200,4 @@ jobs:
           retention-days: 14
 
 # POLICY_GUARD_CENTRAL_ACHADOS_CASA_2026_11_01
+# SCHEDULE_VALIDATED_ACHADOS_CASA_2026_11_01
