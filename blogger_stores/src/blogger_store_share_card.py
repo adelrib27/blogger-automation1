@@ -43,16 +43,18 @@ def share_card_html(page_url: str) -> str:
     js_url = json.dumps(page_url, ensure_ascii=False)
     return f'''{SHARE_START}
 <style id="blogger-store-share-card-css">
-#blogger-store-share-card{{box-sizing:border-box;width:min(890px,calc(100vw - 48px));min-height:128px;margin:0 auto 32px;padding:32px;background:#fff;border:1px solid #dce4ee;border-radius:22px;box-shadow:0 18px 55px rgba(23,32,51,.07);display:flex;align-items:flex-start;position:relative;z-index:4}}
-#blogger-store-share-button{{appearance:none;-webkit-appearance:none;border:0;background:transparent;margin:0;padding:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;line-height:0;color:#729c0b}}
-#blogger-store-share-button:hover,#blogger-store-share-button:focus-visible{{background:rgba(114,156,11,.10);outline:none}}
-#blogger-store-share-button svg{{display:block;width:24px;height:24px;fill:currentColor}}
-#blogger-store-share-feedback{{align-self:center;margin-left:10px;color:#64748b;font:600 12px/1.4 Arial,Helvetica,sans-serif;min-height:17px}}
-@media(max-width:700px){{#blogger-store-share-card{{width:calc(100vw - 32px);min-height:96px;margin-bottom:16px;padding:22px;border-radius:18px}}}}
+#blogger-store-share-card{{box-sizing:border-box;width:min(1440px,calc(100vw - 48px));margin:16px auto 8px;display:flex;align-items:center;gap:10px;position:relative;z-index:4}}
+#blogger-store-share-button{{appearance:none;-webkit-appearance:none;border:1px solid #dce4ee;background:#fff;margin:0;padding:10px 14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;cursor:pointer;line-height:1;color:#729c0b;box-shadow:0 8px 24px rgba(23,32,51,.06);font:600 13px/1.2 Arial,Helvetica,sans-serif;white-space:nowrap}}
+#blogger-store-share-button:hover,#blogger-store-share-button:focus-visible{{background:#f8faf7;border-color:#cbd8b4;outline:none;box-shadow:0 10px 28px rgba(23,32,51,.09)}}
+#blogger-store-share-button svg{{display:block;width:20px;height:20px;fill:currentColor;flex:0 0 auto}}
+#blogger-store-share-button .blogger-store-share-label{{color:#334155;line-height:1.2}}
+#blogger-store-share-feedback{{color:#64748b;font:600 12px/1.4 Arial,Helvetica,sans-serif;min-height:17px}}
+@media(max-width:700px){{#blogger-store-share-card{{width:calc(100vw - 16px);margin:10px auto 6px}}#blogger-store-share-button{{padding:9px 12px;border-radius:12px;font-size:12px}}#blogger-store-share-button svg{{width:19px;height:19px}}}}
 </style>
-<section id="blogger-store-share-card" aria-label="Compartilhar esta loja" data-blogger-store-share-card="1">
+<section id="blogger-store-share-card" aria-label="Compartilhar esta loja" data-blogger-store-share-card="1" data-share-compact="1">
   <button id="blogger-store-share-button" type="button" aria-label="Compartilhar" title="Compartilhar esta loja" data-share-url="{canonical}">
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 16.08c-.76 0-1.44.30-1.96.77L8.91 12.7a3.27 3.27 0 0 0 0-1.39l7.05-4.11A2.99 2.99 0 1 0 15 5c0 .23.03.45.08.66L8.03 9.77A3 3 0 1 0 8.03 14.23l7.12 4.16c-.04.20-.07.41-.07.61a2.92 2.92 0 1 0 2.92-2.92Z"/></svg>
+    <span class="blogger-store-share-label">Compartilhar esta loja</span>
   </button>
   <span id="blogger-store-share-feedback" role="status" aria-live="polite"></span>
 </section>
@@ -94,18 +96,27 @@ def verify_share_card(raw: str, page_url: str) -> None:
         SHARE_END,
         'id="blogger-store-share-card"',
         'data-blogger-store-share-card="1"',
+        'data-share-compact="1"',
         'id="blogger-store-share-button"',
         'aria-label="Compartilhar"',
+        'class="blogger-store-share-label"',
+        "Compartilhar esta loja",
         'id="blogger-store-share-card-css"',
         'id="blogger-store-share-card-js"',
         "navigator.share",
         "navigator.clipboard",
+        "width:min(1440px,calc(100vw - 48px))",
+        "padding:10px 14px",
         "#729c0b",
         page_url,
     ]
     missing = [token for token in required if token not in raw]
     if missing:
-        raise RuntimeError(f"Cartão de compartilhamento incompleto: {missing}")
+        raise RuntimeError(f"Cartão de compartilhamento compacto incompleto: {missing}")
+    forbidden = ["min-height:128px", "width:min(890px", "padding:32px"]
+    present = [token for token in forbidden if token in raw]
+    if present:
+        raise RuntimeError(f"Estilo legado gigante do share card reapareceu: {present}")
     if raw.count('id="blogger-store-share-card"') != 1:
         raise RuntimeError("Cartão de compartilhamento duplicado.")
     if raw.find('id="blogger-store-share-card"') > raw.find('<div class="bls-page">'):
@@ -129,7 +140,7 @@ def apply(dry_run: bool) -> int:
     new_raw = inject_share_card(raw, page_url)
     verify_share_card(new_raw, page_url)
     if dry_run:
-        print("BLOGGER_STORE_SHARE_CARD_DRY_RUN_PASS: cartão branco + share verde validado em memória.")
+        print("BLOGGER_STORE_SHARE_CARD_DRY_RUN_PASS: share compacto branco + ícone verde validado em memória.")
         return 0
     service.pages().update(
         blogId=blog_id,
@@ -138,7 +149,7 @@ def apply(dry_run: bool) -> int:
     ).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_share_card(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_STORE_SHARE_CARD_LIVE_PASS: cartão de compartilhamento aplicado e relido na Page LOJA.")
+    print("BLOGGER_STORE_SHARE_CARD_LIVE_PASS: share compacto aplicado e relido na Page LOJA.")
     return 0
 
 
