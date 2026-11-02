@@ -239,9 +239,19 @@ IDENTITY_REPLACEMENTS = [
 ]
 
 
+NAV_REPLACEMENTS = [
+    ('<a class="bls-btn bls-btn-main" href="#bls-quarto">Ver organização</a>', '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>'),
+    ('<a class="bls-btn bls-btn-soft" href="#bls-banheiro">Ver quarto</a>', '<a class="bls-btn bls-btn-soft" href="#bls-quarto">Ver quarto</a>'),
+    ('<a class="bls-btn bls-btn-main" href="#bls-lavanderia">Ver banheiro</a>', '<a class="bls-btn bls-btn-main" href="#bls-banheiro">Ver banheiro</a>'),
+    ('<a class="bls-btn bls-btn-soft" href="#bls-decoracao">Ver lavanderia</a>', '<a class="bls-btn bls-btn-soft" href="#bls-lavanderia">Ver lavanderia</a>'),
+]
+
+
 def transform_identity(raw: str) -> str:
     out = raw
     for old, new in IDENTITY_REPLACEMENTS:
+        out = out.replace(old, new)
+    for old, new in NAV_REPLACEMENTS:
         out = out.replace(old, new)
     return out
 
@@ -262,6 +272,10 @@ def verify_identity(raw: str) -> None:
         '#bls-lavanderia',
         '#bls-decoracao',
         "blogger-liq-layout-wide-css",
+        '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-quarto">Ver quarto</a>',
+        '<a class="bls-btn bls-btn-main" href="#bls-banheiro">Ver banheiro</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-lavanderia">Ver lavanderia</a>',
     ]
     missing = [token for token in required if token not in raw]
     if missing:
