@@ -1,16 +1,16 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Regras semânticas específicas do Blogger Cozinha Sem Complicação para impedir peças, acessórios e falsos positivos na vitrine Shopee.",
   "rules": {
     "fritadeira eletrica": {"require_groups": [["fritadeira", "air fryer", "airfryer"], ["eletrica", "sem oleo", "air fryer", "airfryer"]], "block_phrases": ["forma de silicone", "papel para air fryer", "cesto para air fryer", "capa para air fryer", "grade para air fryer", "resistencia", "puxador", "botao", "acessorio"]},
-    "liquidificador": {"require_groups": [["liquidificador"]], "block_phrases": ["copo para liquidificador", "copo liquidificador", "tampa para liquidificador", "lamina para liquidificador", "lamina liquidificador", "base para liquidificador", "anel de vedacao", "peca para liquidificador", "acessorio para liquidificador"]},
+    "liquidificador": {"require_groups": [["liquidificador"]], "block_phrases": ["copo para liquidificador", "copo liquidificador", "tampa para liquidificador", "lamina para liquidificador", "lamina liquidificador", "base para liquidificador", "anel de vedacao", "peca para liquidificador", "acessorio para liquidificador", "escova de limpeza", "escova limpeza", "limpeza para liquidificador"]},
     "mixer eletrico": {"require_groups": [["mixer"]], "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer", "peca para mixer", "processador picador", "picador de alimentos", "moedor de carne", "processador de alimentos"]},
     "processador alimentos": {"require_groups": [["processador"], ["alimento", "alimentos", "cozinha"]], "block_phrases": ["lamina para processador", "copo para processador", "tampa para processador", "engrenagem", "peca para processador", "acessorio para processador", "mini processador manual", "processador manual"]},
 
     "panela de pressao": {"require_groups": [["panela"], ["pressao", "pressão"]], "block_phrases": ["borracha para panela", "anel de vedacao", "valvula para panela", "valvula de pressao", "tampa para panela", "cabo para panela", "peca para panela", "kit reparo"]},
     "jogo de panelas": {"require_groups": [["jogo", "kit", "conjunto"], ["panela", "panelas"]], "block_phrases": ["protetor de panela", "protetor para panela", "tampa avulsa", "cabo avulso", "descanso de panela", "miniatura"]},
     "frigideira antiaderente": {"require_groups": [["frigideira"], ["antiaderente", "anti aderente"]], "block_phrases": ["tampa para frigideira", "cabo para frigideira", "protetor de frigideira", "descanso de panela", "miniatura"]},
-    "grill eletrico": {"require_groups": [["grill"], ["eletrico", "elétrico"]], "block_phrases": ["chapa para grill", "placa para grill", "resistencia para grill", "bandeja para grill", "peca para grill", "acessorio para grill"]},
+    "grill eletrico": {"require_groups": [["grill"], ["eletrico", "elétrico"]], "block_phrases": ["chapa para grill", "placa para grill", "resistencia para grill", "bandeja para grill", "peca para grill", "acessorio para grill", "interruptor", "termostato", "botao", "botão", "chave seletora"]},
 
     "escorredor de loucas": {"require_groups": [["escorredor"], ["louca", "loucas", "prato", "pratos", "talher", "talheres", "copo", "copos"]], "block_phrases": ["tapete escorredor", "peca para escorredor", "escorredor massa", "escorredor macarrao", "escorredor arroz", "escorredor legumes"]},
     "organizador cozinha": {"require_groups": [["organizador", "prateleira", "suporte", "porta ", "carrinho", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"], ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "cafe", "talher", "geladeira", "pia"]], "block_phrases": ["cesto de roupa", "cesto de roupas", "brinquedos", "organizador de maquiagem", "organizador de vassoura", "suporte organizador de vassoura", "vassoura rodo mop", "rodo mop"]},
@@ -19,11 +19,11 @@
 
     "cafeteira eletrica": {"require_groups": [["cafeteira", "maquina de cafe", "máquina de café"], ["eletrica", "elétrica", "expresso", "espresso", "capsula", "cápsula"]], "block_phrases": ["filtro para cafeteira", "jarra para cafeteira", "jarra cafeteira", "cabo para cafeteira", "placa para cafeteira", "capsula de cafe", "cápsula de café", "porta capsula", "peca para cafeteira", "acessorio para cafeteira"]},
     "chaleira eletrica": {"require_groups": [["chaleira"], ["eletrica", "elétrica"]], "block_phrases": ["base para chaleira", "resistencia para chaleira", "tampa para chaleira", "filtro para chaleira", "peca para chaleira"]},
-    "espumador de leite": {"require_groups": [["espumador"], ["leite", "cafe", "café"]], "block_phrases": ["refil", "haste avulsa", "mola avulsa", "peca para espumador"]},
+    "espumador de leite": {"require_groups": [["espumador"], ["leite", "cafe", "café"]], "block_phrases": ["refil", "haste avulsa", "mola avulsa", "peca para espumador", "prensa francesa", "cafeteira de prensa", "cafeteira francesa"]},
     "garrafa termica": {"require_groups": [["garrafa"], ["termica", "térmica"]], "block_phrases": ["tampa reposicao", "tampa de reposicao", "tampa avulsa", "vedacao para garrafa", "anel de vedacao", "canudo avulso"]},
 
     "faca chef": {"require_groups": [["faca"], ["chef", "cozinha", "culinaria", "culinária"]], "block_phrases": ["afiador de faca", "afiador para faca", "bainha para faca", "capa para faca", "suporte para faca", "porta faca", "miniatura", "brinquedo"]},
-    "tabua de corte": {"require_groups": [["tabua", "tábua"], ["corte", "cozinha", "carne", "legumes"]], "block_phrases": ["adesivo", "miniatura", "brinquedo", "tabua decorativa", "placa decorativa"]},
+    "tabua de corte": {"require_groups": [["tabua", "tábua"], ["corte", "cozinha", "carne", "legumes"]], "block_phrases": ["adesivo", "miniatura", "brinquedo", "tabua decorativa", "placa decorativa", "oleo mineral", "óleo mineral", "oleo para tabua", "óleo para tábua", "hidratar tabua", "hidratar tábua"]},
     "balanca cozinha": {"require_groups": [["balanca", "balança"], ["cozinha", "culinaria", "culinária", "alimento", "alimentos", "digital"]], "block_phrases": ["balanca corporal", "balança corporal", "balanca banheiro", "balança banheiro", "balanca bioimpedancia", "balança bioimpedância", "industrial", "gancho"]},
     "espatula silicone": {"require_groups": [["espatula", "espátula"], ["silicone"]], "block_phrases": ["maquiagem", "depilacao", "depilação", "celular", "smartphone", "ferramenta abertura"]}
   }
