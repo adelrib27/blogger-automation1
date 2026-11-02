@@ -1,0 +1,79 @@
+{
+  "schema": "blogger-automation-backup-manifest/v4",
+  "snapshot_date": "2026-11-02",
+  "revision": "R3",
+  "repository": "adelrib27/blogger-automation1",
+  "main_head_before_manifest": "eeda343c7346a2480826b2047c894b81235b5cbd",
+  "reason": "Atualização do backup após conclusão da Vitrine Prática como 7ª loja protegida e do Achados para Casa como 8ª loja protegida, incluindo correções semânticas, LIVE validado, schedule e checkpoint atualizado.",
+  "checkpoint": {
+    "path": "CHECKPOINT_ATUAL.md",
+    "state": "8 pipelines modernos protegidos; Achados para Casa concluído; Conecta Achados é o próximo bloco permitido"
+  },
+  "network_store_inventory": {
+    "path": "blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json",
+    "blogs_total": 18,
+    "live_store_pages": 18,
+    "live_store_posts": 18,
+    "modern_policy_guard_20x12": 8,
+    "modern_20x12_needs_policy_guard_upgrade": 0,
+    "store_scaffold_needs_auto_rotation": 10,
+    "duplicate_writer_risks": 0
+  },
+  "vitrine_pratica": {
+    "status": "modern_policy_guard_20x12",
+    "safe_run_id": 41364558522,
+    "audit_run_id": 41367352735,
+    "live_run_id": 41367361852,
+    "contract": "20 products + 12 hero",
+    "public_identity_validated": true
+  },
+  "achados_para_casa": {
+    "status": "modern_policy_guard_20x12",
+    "safe_run_id": 41370322415,
+    "live_run_id": 41370529825,
+    "audit_run_id": 41370840393,
+    "contract": "20 products + 12 hero",
+    "semantic_profile_version": 5,
+    "semantic_rules_version": 4,
+    "clima_profile": [
+      "ventilador de teto",
+      "mini umidificador usb",
+      "climatizador",
+      "ventilador de mesa"
+    ],
+    "public_semantic_validation": true,
+    "rotation_persist_only_after_public_pass": true,
+    "daily_schedule": "07:20 America/Recife"
+  },
+  "validated_global_layers": {
+    "policy_repo_audit": "SAFE/LIVE 8/8 protegidos",
+    "editorial_cross_blog_guard_run": 41358905465,
+    "eu_cookie_audit_run": 41359632797,
+    "eu_cookie_audit_result": "18/18 PASS",
+    "blogger_local_runner": "v0.8"
+  },
+  "store_contract": {
+    "products": 20,
+    "hero": 12,
+    "fail_closed": true,
+    "independent_history_per_blog": true,
+    "persist_only_after_public_validation": true,
+    "policy_guard_safe_and_live": true,
+    "semantic_validation_per_blog": true
+  },
+  "rollout": {
+    "enabled": false,
+    "mode": "PREPARED_NOT_DEPLOYED",
+    "remaining_targets": 10,
+    "next_target": "Conecta Achados"
+  },
+  "previous_full_backup": {
+    "revision": "R2",
+    "artifact_name": "blogger-automation1-backup-2026-11-01-r2",
+    "artifact_id": 13106087029,
+    "sha256": "be013d9b922d7ce778f43cea42360845f8baa828496c0d37d8254b01601cab43"
+  },
+  "next_work_block": "Conecta Achados: definir e validar perfil semântico próprio, depois implantar SAFE/LIVE moderno 20+12 com Policy Guard, validação pública, histórico independente e schedule somente após PASS.",
+  "secret_values_backed_up": false,
+  "completion_note": "Este manifest R3 deve ser acompanhado pelo artifact completo R3 gerado após a atualização do workflow de snapshot, capturando o estado atual do repositório sem valores secretos."
+}
