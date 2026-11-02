@@ -2,6 +2,9 @@ name: Conecta Achados — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "35 7 * * *"
+      timezone: "America/Recife"
   push:
     paths:
       - "blogger_stores/conecta_achados_live_kickoff.txt"
@@ -211,3 +214,4 @@ jobs:
 
 # POLICY_GUARD_CENTRAL_CONECTA_ACHADOS_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
