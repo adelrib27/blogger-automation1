@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import sys
+import time
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
+from urllib.request import Request, urlopen
+
+from blogger_policy_guard import require_store_html_allowed
+
+BASE = "https://casa-pratica-lab-20261102.blogspot.com"
+STORE_PAGE = f"{BASE}/p/loja.html"
+STORE_POST_PATH = "/2026/11/loja.html"
+ARTICLES = [
+    "como-organizar-uma-cozinha-pequena-sem",
+    "air-fryer-7-pontos-para-conferir-antes",
+    "ventilador-ou-climatizador-qual-faz",
+]
+UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
+
+
+def with_probe(url: str, probe: str, attempt: int) -> str:
+    parts = urlsplit(url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query["e2e_probe"] = f"{probe}-{int(time.time())}-{attempt}"
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
+def fetch_200(url: str, probe: str, attempts: int = 10) -> str:
+    last = ""
+    for attempt in range(1, attempts + 1):
+        target = with_probe(url, probe, attempt)
+        req = Request(target, headers={"User-Agent": UA, "Cache-Control": "no-cache", "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.7"})
+        try:
+            with urlopen(req, timeout=40) as response:
+                code = int(response.status)
+                raw = response.read().decode("utf-8", errors="ignore")
+            print(f"{probe}_HTTP_{attempt}: {code}")
+            if code == 200:
+                return raw
+            last = f"HTTP {code}"
+        except HTTPError as exc:
+            last = f"HTTP {exc.code}"
+            print(f"{probe}_HTTP_{attempt}: {exc.code}")
+            if exc.code not in (429, 500, 502, 503, 504):
+                raise
+        except URLError as exc:
+            last = f"URL error {exc.reason}"
+            print(f"{probe}_URL_ERROR_{attempt}: {exc.reason}")
+        if attempt < attempts:
+            time.sleep(12 if "429" in last else 5)
+    raise RuntimeError(f"{probe}: não obteve HTTP 200 após {attempts} tentativas ({last}).")
+
+
+def validate_store_page() -> None:
+    raw = fetch_200(STORE_PAGE, "LAB_PAGE")
+    require_store_html_allowed(raw, expected_products=20, expected_hero=12)
+    store = raw.count("data-item-id=")
+    hero = raw.count("data-hero-item-id=")
+    rels = raw.count('rel="nofollow sponsored noopener"')
+    if (store, hero) != (20, 12) or rels < 32:
+        raise RuntimeError(f"Page LOJA inválida: store={store} hero={hero} rels={rels}")
+    required = [
+        "bls-casa-organizacao",
+        "bls-cozinha-eletroportateis",
+        "bls-iluminacao-decoracao",
+        "bls-clima-conforto",
+        "bls-utilidades-rotina",
+        "BLOGGER_STORE_AUTO_START",
+        "BLOGGER_STORE_AUTO_END",
+    ]
+    missing = [token for token in required if token not in raw]
+    if missing:
+        raise RuntimeError(f"Page LOJA incompleta: {missing}")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_AUDIT_PASS: /p/loja.html 20+12 + Policy Guard + markers.")
+
+
+def validate_home_and_articles() -> None:
+    home = fetch_200(f"{BASE}/?m=1", "LAB_HOME")
+    if STORE_POST_PATH in home:
+        raise RuntimeError("Store Post técnico continua visível/referenciado na home.")
+    for slug in ARTICLES:
+        path = f"/2026/11/{slug}.html"
+        if path not in home:
+            raise RuntimeError(f"Artigo ausente da home: {path}")
+        raw = fetch_200(f"{BASE}{path}", f"LAB_ARTICLE_{slug[:16].upper().replace('-', '_')}")
+        if "post-hero" not in raw:
+            raise RuntimeError(f"Artigo sem imagem editorial post-hero: {path}")
+    print("CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: staging fora da home; 3/3 artigos presentes e com imagem.")
+
+
+def main() -> int:
+    validate_store_page()
+    validate_home_and_articles()
+    print("CASA_PRATICA_LAB_PUBLIC_E2E_PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except Exception as exc:
+        print(f"CASA_PRATICA_LAB_PUBLIC_E2E_FAILED: {exc}", file=sys.stderr)
+        raise
