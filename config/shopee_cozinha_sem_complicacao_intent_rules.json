@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Regras semânticas específicas do Blogger Cozinha Sem Complicação para impedir peças, acessórios e falsos positivos na vitrine Shopee.",
   "rules": {
     "fritadeira eletrica": {"require_groups": [["fritadeira", "air fryer", "airfryer"], ["eletrica", "sem oleo", "air fryer", "airfryer"]], "block_phrases": ["forma de silicone", "papel para air fryer", "cesto para air fryer", "capa para air fryer", "grade para air fryer", "resistencia", "puxador", "botao", "acessorio"]},
@@ -14,8 +14,8 @@
 
     "escorredor de loucas": {"require_groups": [["escorredor"], ["louca", "loucas", "prato", "pratos", "talher", "talheres", "copo", "copos"]], "block_phrases": ["tapete escorredor", "peca para escorredor", "escorredor massa", "escorredor macarrao", "escorredor arroz", "escorredor legumes"]},
     "organizador cozinha": {"require_groups": [["organizador", "prateleira", "suporte", "porta ", "carrinho", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"], ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "cafe", "talher", "geladeira", "pia"]], "block_phrases": ["cesto de roupa", "cesto de roupas", "brinquedos", "organizador de maquiagem", "organizador de vassoura", "suporte organizador de vassoura", "vassoura rodo mop", "rodo mop"]},
-    "pote hermetico": {"require_groups": [["pote", "potes"], ["hermetico", "hermético", "hermetica", "hermética"]], "block_phrases": ["tampa avulsa", "tampa de reposicao", "vedacao avulsa", "anel de vedacao", "adesivo para pote"]},
-    "porta temperos": {"require_groups": [["porta tempero", "porta-tempero", "porta condimento", "organizador de tempero", "organizador tempero", "tempero"], ["porta", "organizador", "suporte", "kit", "conjunto"]], "block_phrases": ["tempero pronto", "condimento", "adesivo", "etiqueta", "rotulo", "refil"]},
+    "pote hermetico": {"require_groups": [["pote", "potes"], ["hermetico", "hermeticos", "hermético", "herméticos", "hermetica", "hermeticas", "hermética", "herméticas"]], "block_phrases": ["tampa avulsa", "tampa de reposicao", "vedacao avulsa", "anel de vedacao", "adesivo para pote"]},
+    "porta temperos": {"require_groups": [["porta tempero", "porta temperos", "porta-tempero", "porta-temperos", "porta condimento", "porta condimentos", "organizador de tempero", "organizador de temperos", "organizador tempero", "organizador temperos", "tempero", "temperos"], ["porta", "organizador", "suporte", "kit", "conjunto"]], "block_phrases": ["tempero pronto", "adesivo", "etiqueta", "rotulo", "rótulo", "refil"]},
 
     "cafeteira eletrica": {"require_groups": [["cafeteira", "maquina de cafe", "máquina de café"], ["eletrica", "elétrica", "expresso", "espresso", "capsula", "cápsula"]], "block_phrases": ["filtro para cafeteira", "jarra para cafeteira", "jarra cafeteira", "cabo para cafeteira", "placa para cafeteira", "capsula de cafe", "cápsula de café", "porta capsula", "peca para cafeteira", "acessorio para cafeteira"]},
     "chaleira eletrica": {"require_groups": [["chaleira"], ["eletrica", "elétrica"]], "block_phrases": ["base para chaleira", "resistencia para chaleira", "tampa para chaleira", "filtro para chaleira", "peca para chaleira"]},
@@ -25,6 +25,6 @@
     "faca chef": {"require_groups": [["faca"], ["chef", "cozinha", "culinaria", "culinária"]], "block_phrases": ["afiador de faca", "afiador para faca", "bainha para faca", "capa para faca", "suporte para faca", "porta faca", "miniatura", "brinquedo"]},
     "tabua de corte": {"require_groups": [["tabua", "tábua"], ["corte", "cozinha", "carne", "legumes"]], "block_phrases": ["adesivo", "miniatura", "brinquedo", "tabua decorativa", "placa decorativa"]},
     "balanca cozinha": {"require_groups": [["balanca", "balança"], ["cozinha", "culinaria", "culinária", "alimento", "alimentos", "digital"]], "block_phrases": ["balanca corporal", "balança corporal", "balanca banheiro", "balança banheiro", "balanca bioimpedancia", "balança bioimpedância", "industrial", "gancho"]},
-    "espatula silicone": {"require_groups": [["espatula", "espátula"], ["silicone"]], "block_phrases": ["espatula maquiagem", "espátula maquiagem", "espatula depilacao", "espátula depilação", "espatula celular", "espátula celular", "ferramenta abertura celular"]}
+    "espatula silicone": {"require_groups": [["espatula", "espátula"], ["silicone"]], "block_phrases": ["maquiagem", "depilacao", "depilação", "celular", "smartphone", "ferramenta abertura"]}
   }
 }
