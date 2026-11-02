@@ -20,6 +20,7 @@ SAFE_WORKFLOWS = [
     ".github/workflows/casa_em_ordem_store_safe.yml",
     ".github/workflows/escolha_certa_online_store_safe.yml",
     ".github/workflows/achados_que_valem_store_safe.yml",
+    ".github/workflows/guia_achados_ofertas_store_safe.yml",
 ]
 LIVE_WORKFLOWS = [
     ".github/workflows/air_fryers_store_autonomous.yml",
@@ -35,6 +36,7 @@ LIVE_WORKFLOWS = [
     ".github/workflows/casa_em_ordem_store_autonomous.yml",
     ".github/workflows/escolha_certa_online_store_autonomous.yml",
     ".github/workflows/achados_que_valem_store_autonomous.yml",
+    ".github/workflows/guia_achados_ofertas_store_autonomous.yml",
 ]
 
 # Fluxos preservados para recuperação, mas proibidos de voltar a escrever
@@ -138,7 +140,6 @@ def audit_escolha_schedule() -> None:
         fail("Escolha Certa Online voltou a ter gatilho push após promoção final")
 
 
-
 def audit_achados_que_valem_schedule() -> None:
     rel = ".github/workflows/achados_que_valem_store_autonomous.yml"
     text = read(rel)
@@ -157,6 +158,7 @@ def audit_achados_que_valem_schedule() -> None:
         fail(f"Achados que Valem sem schedule/gate de navegação canônico: {missing}")
     if re.search(r"(?m)^\s*push\s*:", text):
         fail("Achados que Valem voltou a ter gatilho push após promoção final")
+
 
 def audit_legacy_writers_manual_only() -> None:
     for rel, canonical_group in LEGACY_MANUAL_WORKFLOWS.items():
@@ -227,7 +229,7 @@ def main() -> None:
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 14/14 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
