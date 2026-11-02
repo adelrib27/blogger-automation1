@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "description": "Regras semânticas específicas do Achadinhos de Beleza para manter a vitrine focada em cabelos, skincare, maquiagem, unhas e cuidados pessoais, bloqueando acessórios, peças, refis e falsos positivos.",
   "rules": {
     "escova secadora": {"require_groups": [["escova"],["secadora","secador","ar quente","hot air"]],"block_phrases": ["refil","capa para escova","suporte para escova","peca para escova","peça para escova"]},
@@ -12,7 +12,7 @@
     "serum facial": {"require_groups": [["serum","sérum"],["facial","rosto","face"]],"block_phrases": ["capilar","cabelo","unhas","pet"]},
     "base maquiagem": {"require_groups": [["base"],["maquiagem","liquida","líquida","facial","rosto"]],"block_phrases": ["base para unha","base de unha","esmalte","construcao","construção","gel uv","suporte","organizador"]},
     "mascara de cilios": {"require_groups": [["mascara de cilios","máscara de cílios","rimel","rímel"]],"block_phrases": ["aplicador","escova avulsa","curvex","cola","cilios posticos","cílios postiços"]},
-    "batom": {"require_groups": [["batom","lip tint","lipstick"]],"block_phrases": ["porta batom","organizador","adesivo","chaveiro","miniatura","cortador","biscuit","biscoito","massinha","molde","cookie cutter"]},
+    "batom": {"require_groups": [["batom","lip tint","lipstick"]],"block_phrases": ["porta batom","organizador","adesivo","chaveiro","miniatura","cortador","biscuit","biscoito","massinha","molde","cookie cutter","halloween","fantasia","pancake","maquiagem artistica","maquiagem artística"]},
     "paleta de sombras": {"require_groups": [["paleta"],["sombra","sombras"]],"block_phrases": ["paleta de pintura","aquarela","artesanal","infantil","brinquedo"]},
     "esmalte gel": {"require_groups": [["esmalte"],["gel","unha","unhas"]],"block_phrases": ["removedor","acetona","porta esmalte","organizador","adesivo"]},
     "kit manicure": {"require_groups": [["kit"],["manicure","unha","unhas"]],"block_phrases": ["adesivo","decoracao","decoração","brinquedo","infantil"]},
