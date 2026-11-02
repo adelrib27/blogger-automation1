@@ -264,8 +264,7 @@ IDENTITY_REPLACEMENTS = [
     ("itens úteis para a cozinha", "camisetas, polos, bermudas e calças"),
     ("Tecnologia &amp; Acessórios", "Calçados &amp; Bolsas"),
     ("conectividade e eletrônicos úteis", "tênis, sandálias, bolsas e mochilas"),
-    ("Beleza &amp; Cuidados", "Acessórios"),
-    ("cuidados pessoais e beleza", "carteiras, cintos, óculos e relógios"),
+    ('<a class="bls-cat" href="#bls-acessorios"><b>Beleza &amp; Cuidados</b><small>cuidados pessoais e beleza</small></a>', '<a class="bls-cat" href="#bls-acessorios"><b>Acessórios</b><small>carteiras, cintos, óculos e relógios</small></a>'),
     ("Dia a Dia &amp; Praticidade", "Beleza &amp; Cuidados"),
     ("produtos úteis para a rotina", "cabelo, barbear e cuidados pessoais"),
     ("Vitrine de achados práticos para casa, tecnologia, beleza e dia a dia", "Vitrine de moda, acessórios e beleza com ofertas para o dia a dia"),
@@ -276,6 +275,29 @@ def transform_identity(raw: str) -> str:
     out = raw
     for old, new in IDENTITY_REPLACEMENTS:
         out = out.replace(old, new)
+
+    # Normalizações idempotentes: preservam a categoria final de beleza e
+    # mantêm texto/âncora dos CTAs do hero semanticamente alinhados.
+    out = out.replace(
+        '<article class="bls-panel" id="bls-beleza-cuidados"><div class="bls-panel-head"><span>Seleção da categoria</span><h3>Acessórios</h3>',
+        '<article class="bls-panel" id="bls-beleza-cuidados"><div class="bls-panel-head"><span>Seleção da categoria</span><h3>Beleza &amp; Cuidados</h3>',
+    )
+    out = out.replace(
+        '<a class="bls-btn bls-btn-main" href="#bls-moda-masculina">Ver moda feminina</a>',
+        '<a class="bls-btn bls-btn-main" href="#bls-moda-feminina">Ver moda feminina</a>',
+    )
+    out = out.replace(
+        '<a class="bls-btn bls-btn-soft" href="#bls-calcados-bolsas">Ver acessórios</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-acessorios">Ver acessórios</a>',
+    )
+    out = out.replace(
+        '<a class="bls-btn bls-btn-main" href="#bls-acessorios">Ver beleza</a>',
+        '<a class="bls-btn bls-btn-main" href="#bls-beleza-cuidados">Ver beleza</a>',
+    )
+    out = out.replace(
+        '<a class="bls-btn bls-btn-soft" href="#bls-beleza-cuidados">Ver moda masculina</a>',
+        '<a class="bls-btn bls-btn-soft" href="#bls-moda-masculina">Ver moda masculina</a>',
+    )
     return out
 
 
@@ -295,6 +317,11 @@ def verify_identity(raw: str) -> None:
         "#bls-acessorios",
         "#bls-beleza-cuidados",
         "blogger-liq-layout-wide-css",
+    '<h3>Beleza &amp; Cuidados</h3>',
+    'href="#bls-moda-feminina">Ver moda feminina</a>',
+    'href="#bls-acessorios">Ver acessórios</a>',
+    'href="#bls-beleza-cuidados">Ver beleza</a>',
+    'href="#bls-moda-masculina">Ver moda masculina</a>',
     ]
     missing = [token for token in required if token not in raw]
     if missing:
