@@ -2,9 +2,6 @@ name: Portal Radar Tech Blogger — Sincronizar identidade
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/portal_radar_tech_identity_sync_kickoff.txt"
 
 permissions:
   contents: read
@@ -104,4 +101,5 @@ jobs:
           test "$ok" -eq 1
 
 # IDENTITY_ONLY_NO_PRODUCT_ROTATION_2026_11_02
+# MANUAL_ONLY_AFTER_VALIDATED_RENAME_2026_11_02
 # BLOG_ID_7487888217273188851_POST_ID_906894044295273477
