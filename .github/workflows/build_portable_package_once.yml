@@ -1,0 +1,53 @@
+name: BUILD PORTABLE BLOGGER AUTOMATION FINAL
+
+on:
+  push:
+    paths:
+      - ".github/workflows/build_portable_package_once.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout main atualizado
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-src
+          fetch-depth: 1
+      - name: Checkout runner validado
+        uses: actions/checkout@v4
+        with:
+          ref: blogger-safe-ui-provisioning-v0-2
+          path: runner-src
+          fetch-depth: 1
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build portátil + compileall + secret scan
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python main-src/portable/build_portable_package.py \
+            --main-root main-src \
+            --runner-root runner-src \
+            --output-dir dist
+          ls -lh dist
+          cat dist/Blogger_Automation_Unificado_2026-11-02_FINAL.zip.sha256.txt
+      - name: Upload pacote final
+        uses: actions/upload-artifact@v4
+        with:
+          name: Blogger_Automation_Unificado_2026-11-02_FINAL
+          path: |
+            dist/Blogger_Automation_Unificado_2026-11-02_FINAL.zip
+            dist/Blogger_Automation_Unificado_2026-11-02_FINAL.zip.sha256.txt
+          if-no-files-found: error
+          retention-days: 30
+
+# DELETE_AFTER_ARTIFACT_DOWNLOAD
