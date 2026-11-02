@@ -6,9 +6,9 @@
     "blogs_total": 18,
     "live_store_pages": 18,
     "live_store_posts": 18,
-    "modern_blogger_auto_policy_guard": 15,
+    "modern_blogger_auto_policy_guard": 16,
     "modern_blogger_auto_20x12_needs_policy_guard_upgrade": 0,
-    "store_scaffold_needs_auto_rotation": 3,
+    "store_scaffold_needs_auto_rotation": 2,
     "duplicate_writer_risks": 0
   },
   "architecture": {
@@ -195,7 +195,16 @@
       "store_page_url": "https://canal-attitude.blogspot.com/p/loja.html",
       "store_post_id": "7650631557624373238",
       "store_post_url": "https://canal-attitude.blogspot.com/2026/10/loja.html",
-      "automation_status": "store_scaffold_needs_auto_rotation"
+      "automation_status": "modern_policy_guard_20x12",
+      "safe_workflow": ".github/workflows/achadinhos_beleza_store_safe.yml",
+      "live_workflow": ".github/workflows/achadinhos_beleza_store_autonomous.yml",
+      "schedule": "35 10 * * *",
+      "timezone": "America/Recife",
+      "semantic_regression": "40/40",
+      "safe_final_run": 41526176212,
+      "live_final_run": 41527164226,
+      "audit_final_run": 41528127151,
+      "note": "Concluído em 2026-11-02 como 16ª loja moderna. SAFE final 40/40 e Policy Guard 20/20; LIVE final publicou 20 produtos + 12 hero, passou validação pública após retry 429->200 e persistiu rotação apenas após PASS. Leitura independente do Blogger_Bridge_V2 confirmou Post ID original LIVE, identidade, CTAs e seleção corrigidos. Schedule diário 10:35 America/Recife protegido pelo auditor central."
     },
     {
       "title": "Radar Tech BR",
@@ -230,7 +239,6 @@
     }
   ],
   "remaining_queue": [
-    "Achadinhos de Beleza",
     "Radar Tech BR",
     "Cozinha Sem Complicação"
   ],
