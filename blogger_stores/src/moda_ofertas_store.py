@@ -253,11 +253,11 @@ IDENTITY_REPLACEMENTS = [
     ("Achados reais para cuidados pessoais e rotina", "Achados para cabelo, barbear e cuidados pessoais"),
     ("Ver beleza", "Ver beleza"),
     ("Ver dia a dia", "Ver moda masculina"),
-    ("#bls-casa-organizacao", "#bls-moda-feminina"),
-    ("#bls-cozinha-utilidades", "#bls-moda-masculina"),
-    ("#bls-tecnologia", "#bls-calcados-bolsas"),
-    ("#bls-beleza", "#bls-acessorios"),
-    ("#bls-dia-a-dia", "#bls-beleza-cuidados"),
+    ('href="#bls-casa-organizacao"', 'href="#bls-moda-feminina"'),
+    ('href="#bls-cozinha-utilidades"', 'href="#bls-moda-masculina"'),
+    ('href="#bls-tecnologia"', 'href="#bls-calcados-bolsas"'),
+    ('href="#bls-beleza"', 'href="#bls-acessorios"'),
+    ('href="#bls-dia-a-dia"', 'href="#bls-beleza-cuidados"'),
     ("Casa &amp; Organização", "Moda Feminina"),
     ("organização e soluções para o lar", "vestidos, conjuntos, saias e blusas"),
     ("Cozinha &amp; Utilidades", "Moda Masculina"),
@@ -278,6 +278,9 @@ def transform_identity(raw: str) -> str:
 
     # Normalizações idempotentes: preservam a categoria final de beleza e
     # mantêm texto/âncora dos CTAs do hero semanticamente alinhados.
+    # Recupera qualquer valor composto gerado por uma versão antiga que usava
+    # substituição por prefixo em #bls-beleza.
+    out = out.replace('#bls-acessorios-cuidados', '#bls-beleza-cuidados')
     out = out.replace(
         '<article class="bls-panel" id="bls-beleza-cuidados"><div class="bls-panel-head"><span>Seleção da categoria</span><h3>Acessórios</h3>',
         '<article class="bls-panel" id="bls-beleza-cuidados"><div class="bls-panel-head"><span>Seleção da categoria</span><h3>Beleza &amp; Cuidados</h3>',
