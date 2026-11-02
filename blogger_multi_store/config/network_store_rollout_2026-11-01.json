@@ -17,13 +17,13 @@
     }
   },
   "pre_rollout_blockers": [
-    "Atualizar Vitrine Prática para o Policy Guard central antes de usá-la como referência de produção.",
     "Definir perfil semântico/categorias por blog antes de habilitar qualquer novo LIVE."
   ],
   "completed_prerequisites": [
     "Writers duplicados de Limpeza Inteligente consolidados: limpeza_inteligente_store automático; limpeza_store manual/recovery-only.",
     "Writers duplicados de Ventiladores em Foco consolidados: ventiladores_store automático; ventiladores_em_foco_store manual/recovery-only.",
-    "Auditor permanente bloqueia reintrodução de schedule/push nos writers legados e exige concurrency compartilhada com o canônico."
+    "Auditor permanente bloqueia reintrodução de schedule/push nos writers legados e exige concurrency compartilhada com o canônico.",
+    "Vitrine Prática integrada ao Policy Guard central: SAFE 41364558522 PASS; auditor 7/7 41367352735 PASS; LIVE controlado 41367361852 PASS; 20 produtos + 12 hero + identidade pública correta."
   ],
   "targets": [
     {
