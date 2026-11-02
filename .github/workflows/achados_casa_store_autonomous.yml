@@ -1,0 +1,66 @@
+name: Achados para Casa — Loja Shopee LIVE Controlada
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "blogger_stores/achados_casa_live_kickoff.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: achados-casa-store-live
+  cancel-in-progress: false
+
+jobs:
+  validar-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_BLOG_ID: "1426630233929943394"
+      BLOGGER_STORE_POST_ID: "854861801599328533"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      ACHADOS_STORE_DRY_RUN: "true"
+      ACHADOS_STORE_RECENT_DAYS: "14"
+      SHOPEE_TOP_N: "180"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validar código e Policy Guard
+        run: |
+          set -euo pipefail
+          python -m py_compile src/blogger_policy_guard.py src/blogger_policy_guard_self_test.py src/criar_rascunho.py blogger_stores/src/achados_casa_safe_scan_v2.py blogger_stores/src/achados_casa_safe_scan_v3.py blogger_stores/src/achados_casa_safe_scan_v6.py blogger_stores/src/achados_casa_publish_post.py blogger_stores/src/achados_casa_hero_sync_post.py blogger_stores/src/achados_casa_layout_patch.py blogger_stores/src/achados_casa_persist_rotation.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+      - name: Gerar seleção SAFE v6
+        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/achados_casa_safe_scan_v6.py
+      - name: Validar Policy Guard pré-LIVE
+        run: |
+          PYTHONPATH=src:blogger_stores/src python - <<'PY'
+          import json
+          from pathlib import Path
+          from blogger_policy_guard import require_product_allowed
+          from achados_casa_publish_post import validate_selection
+          data=json.loads(Path('blogger_stores/data/achados_casa_selection.json').read_text(encoding='utf-8'))
+          products=validate_selection(data)
+          for product in products:
+              require_product_allowed(product)
+          print('BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20 produtos permitidos')
+          PY
+      - name: DRY-RUN contra Store Post existente
+        run: |
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/achados_casa_publish_post.py
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/achados_casa_hero_sync_post.py
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/achados_casa_layout_patch.py
+
+# ACHADOS_CASA_LIVE_STAGE1_2026_11_01
