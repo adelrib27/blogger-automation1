@@ -2,9 +2,9 @@ name: Achados que Valem — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/achados_que_valem_live_kickoff.txt"
+  schedule:
+    - cron: "50 9 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -229,3 +229,4 @@ jobs:
 
 # POLICY_GUARD_CENTRAL_ACHADOS_QUE_VALEM_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
