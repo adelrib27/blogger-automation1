@@ -95,10 +95,13 @@ base.render_store = render_store
 base.hero_css = hero_css
 
 IDENTITY_REPLACEMENTS = [
-    ("Achados práticos para casa, tecnologia, beleza e dia a dia", "Radar Tech BR — tecnologia e achados práticos para a rotina"),
+    ("Achados práticos para casa, tecnologia, beleza e dia a dia", "Portal Radar Tech — tecnologia e achados práticos para a rotina"),
+    ("Radar Tech BR — tecnologia e achados práticos para a rotina", "Portal Radar Tech — tecnologia e achados práticos para a rotina"),
     ("Descubra produtos úteis para facilitar a rotina", "Tecnologia e produtos úteis selecionados para facilitar o dia a dia"),
-    ("Uma vitrine afiliada com achados para casa, cozinha, tecnologia, beleza e dia a dia, selecionados automaticamente na Shopee.", "Uma vitrine afiliada do Radar Tech BR com tecnologia, casa, cozinha, cuidados e praticidade, selecionados automaticamente na Shopee."),
-    ("Vitrine de achados práticos para casa, tecnologia, beleza e dia a dia", "Vitrine Radar Tech BR: tecnologia e produtos práticos para o dia a dia"),
+    ("Uma vitrine afiliada com achados para casa, cozinha, tecnologia, beleza e dia a dia, selecionados automaticamente na Shopee.", "Uma vitrine afiliada do Portal Radar Tech com tecnologia, casa, cozinha, cuidados e praticidade, selecionados automaticamente na Shopee."),
+    ("Uma vitrine afiliada do Radar Tech BR com tecnologia, casa, cozinha, cuidados e praticidade, selecionados automaticamente na Shopee.", "Uma vitrine afiliada do Portal Radar Tech com tecnologia, casa, cozinha, cuidados e praticidade, selecionados automaticamente na Shopee."),
+    ("Vitrine de achados práticos para casa, tecnologia, beleza e dia a dia", "Vitrine Portal Radar Tech: tecnologia e produtos práticos para o dia a dia"),
+    ("Vitrine Radar Tech BR: tecnologia e produtos práticos para o dia a dia", "Vitrine Portal Radar Tech: tecnologia e produtos práticos para o dia a dia"),
 ]
 
 
@@ -112,7 +115,7 @@ def transform_identity(raw: str) -> str:
 def verify_identity(raw: str) -> None:
     required = [
         STORE_PAGE,
-        "Radar Tech BR — tecnologia e achados práticos para a rotina",
+        "Portal Radar Tech — tecnologia e achados práticos para a rotina",
         "Tecnologia e produtos úteis selecionados para facilitar o dia a dia",
         "Casa &amp; Organização",
         "Cozinha &amp; Utilidades",
@@ -128,7 +131,7 @@ def verify_identity(raw: str) -> None:
     ]
     missing = [token for token in required if token not in raw]
     if missing:
-        raise RuntimeError(f"Identidade Radar Tech BR Blogger incompleta: {missing}")
+        raise RuntimeError(f"Identidade Portal Radar Tech Blogger incompleta: {missing}")
     forbidden = [
         "https://conectaachados.blogspot.com/p/loja.html",
         "https://achadosparacasa2026.blogspot.com/p/loja.html",
@@ -138,7 +141,7 @@ def verify_identity(raw: str) -> None:
     ]
     bad = [token for token in forbidden if token in raw]
     if bad:
-        raise RuntimeError(f"Referência de outro blog no Radar Tech BR: {bad}")
+        raise RuntimeError(f"Referência de outro blog no Portal Radar Tech: {bad}")
 
 
 def write_identity(dry_run: bool) -> int:
@@ -147,7 +150,7 @@ def write_identity(dry_run: bool) -> int:
     new_raw = transform_identity(raw)
     verify_identity(new_raw)
     if dry_run:
-        print("RADAR_TECH_BLOGGER_IDENTITY_DRY_RUN_PASS: identidade validada em memória; Blogger não alterado.")
+        print("RADAR_TECH_BLOGGER_IDENTITY_DRY_RUN_PASS: identidade Portal Radar Tech validada em memória; Blogger não alterado.")
         return 0
     body = {"title": post.get("title") or "Loja", "content": new_raw}
     if post.get("labels") is not None:
@@ -155,14 +158,14 @@ def write_identity(dry_run: bool) -> int:
     service.posts().update(blogId=BLOG_ID, postId=POST_ID, body=body).execute()
     verify = service.posts().get(blogId=BLOG_ID, postId=POST_ID).execute()
     verify_identity(str(verify.get("content") or ""))
-    print("RADAR_TECH_BLOGGER_IDENTITY_PASS: domínio, Page Loja, layout e identidade próprios confirmados.")
+    print("RADAR_TECH_BLOGGER_IDENTITY_PASS: domínio, Page Loja, layout e identidade Portal Radar Tech confirmados.")
     return 0
 
 
 def identity_check() -> int:
     _, post = base.get_service_post()
     verify_identity(str(post.get("content") or ""))
-    print("RADAR_TECH_BLOGGER_IDENTITY_PASS: domínio, Page Loja, layout e identidade próprios confirmados.")
+    print("RADAR_TECH_BLOGGER_IDENTITY_PASS: domínio, Page Loja, layout e identidade Portal Radar Tech confirmados.")
     return 0
 
 
@@ -198,8 +201,8 @@ def safe_scan() -> int:
     data = base.load_json(SELECTION_PATH, {})
     semantic = dict(data.get("semanticValidation") or {})
     semantic["rulesFile"] = "config/shopee_radar_tech_blogger_intent_rules.json"
-    semantic["profileVersion"] = 4
-    semantic["profileName"] = "Radar Tech BR Blogger"
+    semantic["profileVersion"] = 5
+    semantic["profileName"] = "Portal Radar Tech Blogger"
     data["semanticValidation"] = semantic
     base.save_atomic(SELECTION_PATH, data)
     base.validate_selection(data)
@@ -245,7 +248,7 @@ def main() -> int:
         "identity-dry-run": lambda: write_identity(True),
         "identity-live": lambda: write_identity(False),
         "identity": identity_check,
-        "store-dry-run": lambda: store_write(True),
+        "store-dry-run": lambda: store_write(False) if False else store_write(True),
         "store-live": lambda: store_write(False),
         "hero-dry-run": lambda: hero_write(True),
         "hero-live": lambda: hero_write(False),
