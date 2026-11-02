@@ -9,6 +9,8 @@ import urllib.request
 from dataclasses import dataclass, asdict
 from urllib.parse import urlparse
 
+import firecrawl_telemetry as telemetry
+
 FIRECRAWL_ENDPOINT = os.getenv("FIRECRAWL_SEARCH_ENDPOINT", "https://api.firecrawl.dev/v2/search").strip()
 FIRECRAWL_CONTENT_MODE = "SEARCH_SNIPPET_ONLY"
 
@@ -128,30 +130,38 @@ def firecrawl_search(query: str, limit: int = 8) -> tuple[list[dict], dict]:
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
 
+    telemetry.record("SEARCH_CALL")
     doc = None
     last_error = None
     for attempt in range(1, 5):
+        telemetry.record("HTTP_ATTEMPT")
         request = urllib.request.Request(FIRECRAWL_ENDPOINT, data=json.dumps(payload, ensure_ascii=False).encode("utf-8"), method="POST", headers=headers)
         try:
             with urllib.request.urlopen(request, timeout=90) as response:
                 doc = json.loads(response.read().decode("utf-8", "replace"))
+            telemetry.record("SEARCH_SUCCESS", credits_used=doc.get("creditsUsed") if isinstance(doc, dict) else None)
             break
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", "replace")[:1600]
             last_error = f"Firecrawl HTTP {exc.code}: {detail}"
+            if exc.code == 429:
+                telemetry.record("RATE_LIMIT_429")
             if exc.code == 429 and attempt < 4:
                 wait = min(15.0, max(2.0, _firecrawl_retry_after(detail, exc.headers) + 1.0))
                 time.sleep(wait)
                 continue
+            telemetry.record("SEARCH_FAILURE")
             raise RuntimeError(last_error) from exc
         except Exception as exc:
             last_error = f"Firecrawl indisponível: {exc}"
             if attempt < 3:
                 time.sleep(3.0 * attempt)
                 continue
+            telemetry.record("SEARCH_FAILURE")
             raise RuntimeError(last_error) from exc
 
     if doc is None:
+        telemetry.record("SEARCH_FAILURE")
         raise RuntimeError(last_error or "Firecrawl sem resposta após retries")
 
     data = doc.get("data") or {}
