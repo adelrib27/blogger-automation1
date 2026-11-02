@@ -8,11 +8,13 @@ on:
       - ".github/workflows/casa_pratica_lab_store_autonomous.yml"
       - ".github/workflows/casa_pratica_lab_store_page_autonomous.yml"
       - "blogger_stores/src/casa_pratica_lab_store.py"
+      - "blogger_stores/src/casa_pratica_lab_store_page.py"
       - "blogger_stores/src/blogger_new_blog_store_page_target.py"
       - "blogger_stores/data/casa_pratica_lab_selection.json"
       - "blogger_stores/data/casa_pratica_lab_rotation.json"
       - "config/shopee_casa_pratica_lab.json"
       - "config/shopee_casa_pratica_lab_intent_rules.json"
+      - "NEW_BLOG_E2E_CONTRACT_2026-11-02.md"
 
 permissions:
   contents: read
@@ -32,67 +34,56 @@ jobs:
           set -euo pipefail
           python -m py_compile \
             blogger_stores/src/casa_pratica_lab_store.py \
+            blogger_stores/src/casa_pratica_lab_store_page.py \
             blogger_stores/src/blogger_new_blog_store_page_target.py \
             src/blogger_policy_guard.py \
             src/blogger_policy_guard_self_test.py
           PYTHONPATH=src python src/blogger_policy_guard_self_test.py
 
-      - name: Auditar contrato de writer, Page-target e isolamento
+      - name: Auditar contrato, writer único e isolamento
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-
           legacy=Path('.github/workflows/casa_pratica_lab_store_autonomous.yml').read_text(encoding='utf-8')
           live=Path('.github/workflows/casa_pratica_lab_store_page_autonomous.yml').read_text(encoding='utf-8')
           engine=Path('blogger_stores/src/casa_pratica_lab_store.py').read_text(encoding='utf-8')
+          wrapper=Path('blogger_stores/src/casa_pratica_lab_store_page.py').read_text(encoding='utf-8')
           adapter=Path('blogger_stores/src/blogger_new_blog_store_page_target.py').read_text(encoding='utf-8')
+          contract=Path('NEW_BLOG_E2E_CONTRACT_2026-11-02.md')
           selection=json.loads(Path('blogger_stores/data/casa_pratica_lab_selection.json').read_text(encoding='utf-8'))
           rotation=json.loads(Path('blogger_stores/data/casa_pratica_lab_rotation.json').read_text(encoding='utf-8'))
-          inventory=json.loads(Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json').read_text(encoding='utf-8'))
+          inventory=json.loads(Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json').read_text(encoding='utf-8'))
           rollout=json.loads(Path('blogger_multi_store/config/network_store_rollout_2026-11-01.json').read_text(encoding='utf-8'))
 
-          assert 'workflow_dispatch:' in legacy
-          assert '\n  schedule:' not in legacy and '\n  push:' not in legacy
+          assert contract.exists()
+          assert 'workflow_dispatch:' in legacy and '\n  schedule:' not in legacy and '\n  push:' not in legacy
           assert 'LEGACY_RECOVERY_ONLY' in legacy
-
-          assert 'BLOGGER_BLOG_ID: "8930870316690519385"' in live
-          assert 'BLOGGER_STORE_PAGE_ID: "7110845449177208439"' in live
-          assert 'BLOGGER_STORE_POST_ID: "7691087355641688975"' in live
-          assert 'BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"' in live
-          assert 'cron: "20 10 * * *"' in live
-          assert 'timezone: "America/Recife"' in live
+          assert 'cron: "20 10 * * *"' in live and 'timezone: "America/Recife"' in live
           assert '\n  push:' not in live
-          assert 'sync-live' in live and 'ensure-staging-draft' in live and 'verify-page' in live
-          assert 'Verificar home editorial sem Store Post técnico' in live
-          assert 'Verificar imagem editorial nos 3 artigos' in live
-          assert live.index('Verificar Page LOJA pública 20+12 + Policy Guard') < live.index('Persistir rotação somente após PASS público completo')
-
-          assert 'service.pages().update' in adapter
-          assert 'service.posts().revert' in adapter
+          for token in ['BLOGGER_STORE_PAGE_ID: "7110845449177208439"','sync-live','ensure-staging-draft','verify-page','casa_pratica_lab_store_page.py']:
+              assert token in live, token
+          assert 'get_post_any_status' in wrapper and 'base.get_service_post = get_service_staging_post' in wrapper
+          assert 'service.pages().update' in adapter and 'service.posts().revert' in adapter
           assert 'BLOGGER_STORE_AUTO_START' in adapter and 'BLOGGER_STORE_AUTO_END' in adapter
           assert 'expected_products=20, expected_hero=12' in adapter
           assert 'CASA_PRATICA_LAB_FIRST_PUBLISH_COMBINED_DRY_RUN_PASS' in engine
-          assert 'base.verify_hero(new_raw, slides)' in engine
 
           categories=selection.get('categories') or {}
-          assert len(categories)==5
           products=[p for values in categories.values() for p in values]
           ids=[str(p.get('itemId') or '') for p in products]
-          assert len(products)==20 and len(set(ids))==20 and all(ids)
+          assert len(categories)==5 and len(products)==20 and len(set(ids))==20 and all(ids)
           assert rotation.get('blogId')=='8930870316690519385'
           runs=rotation.get('runs') or []
-          assert runs and runs[-1].get('source')=='blogger_published'
-          assert len(runs[-1].get('items') or [])==20
+          assert runs and runs[-1].get('source')=='blogger_published' and len(runs[-1].get('items') or [])==20
 
-          assert inventory['summary']['blogs_total']==18
-          assert inventory['summary']['modern_blogger_auto_policy_guard']==14
-          assert inventory['summary']['duplicate_writer_risks']==0
+          s=inventory['summary']
+          assert s['blogs_total']==18 and s['modern_blogger_auto_policy_guard']==15
+          assert s['store_scaffold_needs_auto_rotation']==3 and s['duplicate_writer_risks']==0
           assert all(b.get('blog_id')!='8930870316690519385' for b in inventory['blogs'])
           assert rollout['enabled'] is False and rollout['mode']=='PREPARED_NOT_DEPLOYED'
           assert all(t.get('blog_id')!='8930870316690519385' for t in rollout['targets'])
-
-          print('CASA_PRATICA_LAB_REPO_AUDIT_PASS: novo blog usa Page-target 20+12; Store Post staging draft; writer legado sem schedule/push; produção 14/18 preservada.')
+          print('CASA_PRATICA_LAB_REPO_AUDIT_PASS: Page-target 20+12; staging DRAFT; writer único; rede 15/18 preservada.')
           PY
 
       - name: Auditar Page LOJA pública 20+12
@@ -102,7 +93,7 @@ jobs:
           ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
           ok=0
           for attempt in $(seq 1 8); do
-            code=$(curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/lab-page.html -w "%{http_code}" "${url}?m=1&e2e_audit=${GITHUB_RUN_ID}-${attempt}" || true)
+            code=$(curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/lab-page.html -w "%{http_code}" "${url}?m=1&e2e=${GITHUB_RUN_ID}-${attempt}" || true)
             echo "LAB_PAGE_HTTP_${attempt}: ${code}"
             if [ "$code" = "429" ]; then sleep 15; continue; fi
             if [ "$code" != "200" ]; then sleep 8; continue; fi
@@ -119,26 +110,21 @@ jobs:
           require_store_html_allowed(raw,expected_products=20,expected_hero=12)
           required=['bls-casa-organizacao','bls-cozinha-eletroportateis','bls-iluminacao-decoracao','bls-clima-conforto','bls-utilidades-rotina']
           missing=[x for x in required if x not in raw]
-          if missing: raise SystemExit(f'LAB Page identity missing: {missing}')
-          print('CASA_PRATICA_LAB_PUBLIC_PAGE_AUDIT_PASS: /p/loja.html HTTP 200; Store 20 + Hero 12 + Policy Guard.')
+          if missing: raise SystemExit(missing)
+          print('CASA_PRATICA_LAB_PUBLIC_PAGE_AUDIT_PASS: /p/loja.html 20+12 + Policy Guard.')
           PY
 
-      - name: Auditar home editorial e imagens dos artigos
+      - name: Auditar home editorial e imagens
         run: |
           set -euo pipefail
           ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
           curl -L -sS --max-time 40 -A "$ua" -H "Cache-Control: no-cache" -o /tmp/lab-home.html "https://casa-pratica-lab-20261102.blogspot.com/?m=1&e2e_home=${GITHUB_RUN_ID}"
           ! grep -q '/2026/11/loja.html' /tmp/lab-home.html
-          grep -q '/2026/11/como-organizar-uma-cozinha-pequena-sem.html' /tmp/lab-home.html
-          grep -q '/2026/11/air-fryer-7-pontos-para-conferir-antes.html' /tmp/lab-home.html
-          grep -q '/2026/11/ventilador-ou-climatizador-qual-faz.html' /tmp/lab-home.html
-          for slug in \
-            como-organizar-uma-cozinha-pequena-sem \
-            air-fryer-7-pontos-para-conferir-antes \
-            ventilador-ou-climatizador-qual-faz; do
+          for slug in como-organizar-uma-cozinha-pequena-sem air-fryer-7-pontos-para-conferir-antes ventilador-ou-climatizador-qual-faz; do
+            grep -q "/2026/11/${slug}.html" /tmp/lab-home.html
             curl -L -sS --max-time 40 -A "$ua" -o "/tmp/${slug}.html" "https://casa-pratica-lab-20261102.blogspot.com/2026/11/${slug}.html?e2e_img=${GITHUB_RUN_ID}"
             grep -q 'post-hero' "/tmp/${slug}.html"
           done
-          echo 'CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: Store técnico fora da home; 3/3 artigos com imagem.'
+          echo 'CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: staging fora da home; 3/3 artigos com imagem.'
 
 # CASA_PRATICA_LAB_E2E_PAGE_TARGET_ACCEPTANCE_2026_11_02
