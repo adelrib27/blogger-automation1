@@ -27,16 +27,17 @@ def final_product_gate(product: dict, keyword: str) -> bool:
             "helice avulsa", "motor para ventilador", "capacitor", "controle para ventilador",
             "suporte para ventilador", "peca para ventilador", "cabo para ventilador"
         ],
+        "aquecedor eletrico": [
+            "resistencia para aquecedor", "controle para aquecedor", "cabo para aquecedor",
+            "suporte para aquecedor", "peca para aquecedor", "capa para aquecedor",
+            "aquecedor de mamadeira", "aquecedor de cera", "aquecedor de caneca",
+            "aquecedor de comida", "aquecedor automotivo"
+        ],
         "mixer eletrico": ["peca para mixer", "haste para mixer", "copo para mixer", "lamina para mixer"],
         "mop giratorio": ["cabo para mop", "cabo mop", "refil", "reposicao"],
         "aspirador de po": ["saco para aspirador", "filtro para aspirador", "mangueira", "bico para aspirador"],
         "umidificador": ["essencia", "essencias", "refil", "filtro para umidificador"],
         "cortina blackout": ["tecido para cortina", "varao para cortina", "gancho para cortina"],
-        "ar condicionado portatil": [
-            "tubo para ar condicionado", "mangueira para ar condicionado", "controle para ar condicionado",
-            "suporte para ar condicionado", "ventilador umidificador", "climatizador", "mini ventilador",
-            "umidificador de ar condicionado"
-        ],
     }
     if any(term in title for term in blocks.get(key, [])):
         return False
@@ -48,20 +49,19 @@ def final_product_gate(product: dict, keyword: str) -> bool:
             return False
 
     if key == "ventilador":
-        # Exige o aparelho completo. A palavra "ventilador" sozinha aparece
-        # em escovas, capas, pecas e outros acessórios.
         if "ventilador" not in title:
             return False
         if any(term in title for term in ["escova", "limpador", "espanador", "peca", "acessorio"]):
             return False
 
-    if key == "ar condicionado portatil":
-        # Evita mini ventiladores/climatizadores que usam "ar condicionado"
-        # apenas como termo de marketing. Um aparelho real deve indicar o
-        # equipamento e algum sinal típico de capacidade/refrigeração.
-        if "ar condicionado" not in title or "portatil" not in title:
+    if key == "aquecedor eletrico":
+        # A vaga deve ser ocupada pelo aparelho de aquecimento de ambiente,
+        # nunca por resistência, peça ou aquecedor destinado a outro uso.
+        if not any(term in title for term in ["aquecedor", "termoventilador"]):
             return False
-        if not any(term in title for term in ["btu", "btus", "refrigeracao", "refrigera", "compressor", "frio"]):
+        if not any(term in title for term in ["eletrico", "ceramico", "portatil", "1500w", "2000w", "ambiente"]):
+            return False
+        if any(term in title for term in ["mamadeira", "cera", "caneca", "comida", "automotivo"]):
             return False
 
     return True
@@ -76,14 +76,14 @@ def main() -> int:
     semantic["homeUsePostGateVersion"] = 6
     semantic["fritadeiraApplianceOnly"] = True
     semantic["ventiladorApplianceOnly"] = True
-    semantic["portableAcApplianceOnly"] = True
+    semantic["heaterApplianceOnly"] = True
     gates = data.setdefault("gates", {})
     gates["homeUsePostGate"] = True
     gates["fritadeiraApplianceOnly"] = True
     gates["ventiladorApplianceOnly"] = True
-    gates["portableAcApplianceOnly"] = True
+    gates["heaterApplianceOnly"] = True
     v3.base.save_atomic(v3.base.SELECTION_PATH, data)
-    print("ACHADOS_SAFE_V6_READY: aparelhos completos obrigatórios para fritadeira, ventilador e ar condicionado portátil; diversidade e 20/20 links validados; Blogger não alterado.")
+    print("ACHADOS_SAFE_V6_READY: aparelhos completos obrigatórios para fritadeira, ventilador e aquecedor elétrico; diversidade e 20/20 links validados; Blogger não alterado.")
     return result
 
 
