@@ -1,10 +1,10 @@
-name: Moda e Ofertas — Loja Shopee LIVE Controlada
+name: Moda e Ofertas — Loja Shopee 10:20
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/moda_ofertas_live_kickoff.txt"
+  schedule:
+    - cron: "20 10 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -93,26 +93,24 @@ jobs:
           print('MODA_OFERTAS_SEMANTIC_PRELIVE_PASS: 5 categorias x 4 intenções')
           PY
 
-      - name: Simular identidade antes da escrita
-        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py identity-dry-run
-
-      - name: Simular Store e hero antes da publicação
+      - name: Dry-run de identidade, Store e hero
         run: |
           set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py identity-dry-run
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py store-dry-run
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py hero-dry-run
 
-      - name: Atualizar vitrine no Store Post
+      - name: Atualizar Store Post 20/20
         run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py store-live
 
-      - name: Sincronizar 12 mini-cards do hero
+      - name: Sincronizar hero 12/12
         run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py hero-live
 
-      - name: Aplicar identidade Moda e Ofertas no scaffold existente
-        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py identity-live
-
-      - name: Confirmar identidade depois da escrita
-        run: PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py identity
+      - name: Aplicar e confirmar identidade
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py identity-live
+          PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/moda_ofertas_store.py identity
 
       - name: Verificar renderização pública + Policy Guard central
         run: |
@@ -140,29 +138,11 @@ jobs:
             store_count=$(python -c "print(open('/tmp/moda-ofertas-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
             hero_count=$(python -c "print(open('/tmp/moda-ofertas-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
             echo "PUBLIC_COUNTS_ATTEMPT_${attempt}: store=${store_count} hero=${hero_count}"
-            if grep -q "bls-store-grid" /tmp/moda-ofertas-loja.html \
-              && grep -q "blh-grid" /tmp/moda-ofertas-loja.html \
-              && grep -q "blogger-liq-layout-wide-css" /tmp/moda-ofertas-loja.html \
-              && grep -q "https://moda-ofertas.blogspot.com/p/loja.html" /tmp/moda-ofertas-loja.html \
-              && grep -q "bls-moda-feminina" /tmp/moda-ofertas-loja.html \
-              && grep -q "bls-moda-masculina" /tmp/moda-ofertas-loja.html \
-              && grep -q "bls-calcados-bolsas" /tmp/moda-ofertas-loja.html \
-              && grep -q "bls-acessorios" /tmp/moda-ofertas-loja.html \
-              && grep -q "bls-beleza-cuidados" /tmp/moda-ofertas-loja.html \
-              && grep -q "Moda, beleza e ofertas para renovar o dia a dia" /tmp/moda-ofertas-loja.html \
-              && ! grep -q "https://conectaachados.blogspot.com/p/loja.html" /tmp/moda-ofertas-loja.html \
-              && ! grep -q "https://achadosparacasa2026.blogspot.com/p/loja.html" /tmp/moda-ofertas-loja.html \
-              && ! grep -q "https://vitrine-pratica.blogspot.com/p/loja.html" /tmp/moda-ofertas-loja.html \
-              && ! grep -q "https://liquidificadores-em-foco.blogspot.com/p/loja.html" /tmp/moda-ofertas-loja.html \
-              && ! grep -q "https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/p/loja.html" /tmp/moda-ofertas-loja.html \
-              && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
-              ok=1
-              break
+            if [ "$store_count" -ne 20 ] || [ "$hero_count" -ne 12 ]; then
+              sleep 10
+              continue
             fi
-            sleep 10
-          done
-          test "$ok" -eq 1
-          PYTHONPATH=src python - <<'PY'
+            if PYTHONPATH=src python - <<'PY'
           from blogger_policy_guard import require_store_html_allowed
           raw=open('/tmp/moda-ofertas-loja.html', encoding='utf-8', errors='ignore').read()
           require_store_html_allowed(raw, expected_products=20, expected_hero=12)
@@ -174,6 +154,11 @@ jobs:
               'bls-acessorios',
               'bls-beleza-cuidados',
               'Moda, beleza e ofertas para renovar o dia a dia',
+              '<h3>Beleza &amp; Cuidados</h3>',
+              'href="#bls-moda-feminina">Ver moda feminina</a>',
+              'href="#bls-acessorios">Ver acessórios</a>',
+              'href="#bls-beleza-cuidados">Ver beleza</a>',
+              'href="#bls-moda-masculina">Ver moda masculina</a>',
           ]
           missing=[x for x in required if x not in raw]
           if missing:
@@ -184,13 +169,23 @@ jobs:
               'https://vitrine-pratica.blogspot.com/p/loja.html',
               'https://liquidificadores-em-foco.blogspot.com/p/loja.html',
               'https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/p/loja.html',
+              'Suporte De Parede Multifuncional',
+              'SHOTH FEMININO ALFAIATARIA',
+              'Bolsa Feminina Kit Sacola Bag + Mini Tote + Carteira + Necessaire',
           ]
           bad=[x for x in forbidden if x in raw]
           if bad:
-              raise SystemExit(f'Moda e Ofertas identity: referências indevidas {bad}')
+              raise SystemExit(f'Moda e Ofertas: conteúdo proibido detectado {bad}')
           print('BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero')
-          print('MODA_OFERTAS_IDENTITY_PUBLIC_PASS: domínio, Page LOJA e cinco categorias de moda/beleza corretos')
+          print('MODA_OFERTAS_IDENTITY_PUBLIC_PASS: domínio, Page LOJA, cinco categorias e CTAs corretos')
           PY
+            then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$ok" -eq 1
 
       - name: Persistir rotação somente após PASS público
         run: |
@@ -221,5 +216,5 @@ jobs:
           retention-days: 14
 
 # POLICY_GUARD_CENTRAL_MODA_OFERTAS_2026_11_02
-# TEMP_FIRST_LIVE_KICKOFF_2026_11_02
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
 # PUBLIC_RATE_LIMIT_RETRY_2026_11_02
