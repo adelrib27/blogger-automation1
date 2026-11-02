@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Regras semânticas específicas do Achados para Casa para impedir acessórios, refis e falsos positivos na vitrine Shopee.",
   "rules": {
     "caixa organizadora": {"require_groups": [["caixa"], ["organizadora", "organizador", "organizacao"]], "block_phrases": ["caixa de som", "caixa acustica", "caixa para ferramenta"]},
@@ -18,10 +18,10 @@
     "cortina blackout": {"require_groups": [["cortina"], ["blackout", "blecaute"]], "block_phrases": ["tecido para cortina", "varao para cortina", "gancho para cortina"]},
     "tapete sala": {"require_groups": [["tapete"], ["sala", "quarto", "corredor", "passadeira"]], "block_phrases": ["mouse pad", "tapete para carro", "tapete automotivo"]},
     "jogo de cama": {"require_groups": [["jogo de cama", "lencol", "lençol"], ["casal", "queen", "king", "solteiro", "berco", "berço"]], "block_phrases": ["cama pet", "roupa de boneca"]},
-    "ventilador": {"require_groups": [["ventilador"]], "block_phrases": ["carimbo", "impressao 3d", "confeitaria", "molde ventilador", "chaveiro ventilador", "adesivo ventilador", "topper ventilador", "ventilador interno", "painel ar", "painel do carro", "automotivo", "radiador", "ventoinha", "motor ventilador", "resistencia ventilador"]},
+    "ventilador": {"require_groups": [["ventilador"]], "block_phrases": ["carimbo", "impressao 3d", "confeitaria", "molde ventilador", "chaveiro ventilador", "adesivo ventilador", "topper ventilador", "ventilador interno", "painel ar", "painel do carro", "automotivo", "radiador", "ventoinha", "motor ventilador", "resistencia ventilador", "escova", "limpador", "espanador", "capa para ventilador", "grade para ventilador", "helice avulsa", "capacitor", "controle para ventilador", "suporte para ventilador", "peca para ventilador", "cabo para ventilador"]},
     "mini umidificador usb": {"require_groups": [["umidificador", "humidificador"], ["usb", "mini", "portatil", "portátil", "recarregavel", "recarregável"]], "block_phrases": ["essencia", "essência", "essencias", "essências", "kit essencias", "kit de essencias", "oleo essencial", "óleo essencial", "refil", "filtro", "pavio avulso", "algodao avulso", "algodão avulso"]},
     "climatizador": {"require_groups": [["climatizador", "refrigerador de ar", "mini ar condicionado"]], "block_phrases": ["filtro para climatizador", "peca para climatizador", "peça para climatizador", "controle para climatizador"]},
-    "ar condicionado portatil": {"require_groups": [["ar condicionado portatil", "ar condicionado portátil", "mini ar condicionado", "refrigerador de ar"]], "block_phrases": ["tubo para ar condicionado", "mangueira para ar condicionado", "controle para ar condicionado", "suporte para ar condicionado"]},
+    "aquecedor eletrico": {"require_groups": [["aquecedor", "termoventilador"], ["eletrico", "elétrico", "ceramico", "cerâmico", "portatil", "portátil", "1500w", "2000w"]], "block_phrases": ["resistencia para aquecedor", "resistência para aquecedor", "controle para aquecedor", "cabo para aquecedor", "suporte para aquecedor", "peca para aquecedor", "peça para aquecedor", "capa para aquecedor", "aquecedor de mamadeira", "aquecedor de cera", "aquecedor de caneca", "aquecedor de comida", "aquecedor automotivo"]},
     "aparador de pelos": {"require_groups": [["aparador de pelos", "aparador pelos", "maquina de barbear", "barbeador eletrico"]], "block_phrases": ["papa bolinhas", "tira pelos de roupas", "removedor de pelos de roupas", "removedor de pelo de roupa"]},
     "oculos uv400": {"require_groups": [["oculos"], ["uv400", "protecao uv"]], "block_phrases": ["estojo para oculos", "cordao para oculos", "lente avulsa", "armacao sem lente"]}
   }
