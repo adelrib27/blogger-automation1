@@ -1,0 +1,153 @@
+name: Casa em Ordem — Consolidar estado final
+
+on:
+  push:
+    paths:
+      - "blogger_stores/casa_em_ordem_finalize_state_once.txt"
+
+permissions:
+  contents: write
+
+jobs:
+  consolidar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Atualizar inventário, rollout e checkpoint com asserts
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          inv_path=Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json')
+          roll_path=Path('blogger_multi_store/config/network_store_rollout_2026-11-01.json')
+          cp_path=Path('CHECKPOINT_ATUAL.md')
+
+          inv=json.loads(inv_path.read_text(encoding='utf-8'))
+          s=inv['summary']
+          if s.get('modern_blogger_auto_policy_guard') != 10 or s.get('store_scaffold_needs_auto_rotation') != 8:
+              raise SystemExit(f'CASA_FINALIZE_FAIL inventory precondition: {s}')
+          if s.get('duplicate_writer_risks') != 0:
+              raise SystemExit('CASA_FINALIZE_FAIL duplicate_writer_risks != 0')
+          casa=next((b for b in inv['blogs'] if b.get('blog_id')=='4177382081459143374'),None)
+          if not casa or casa.get('title')!='Casa em Ordem':
+              raise SystemExit('CASA_FINALIZE_FAIL Casa inventário ausente')
+          if casa.get('automation_status')!='store_scaffold_needs_auto_rotation':
+              raise SystemExit(f"CASA_FINALIZE_FAIL Casa status inesperado: {casa.get('automation_status')}")
+          s['modern_blogger_auto_policy_guard']=11
+          s['store_scaffold_needs_auto_rotation']=7
+          casa['automation_status']='modern_policy_guard_20x12'
+          casa['safe_workflow']='.github/workflows/casa_em_ordem_store_safe.yml'
+          casa['live_workflow']='.github/workflows/casa_em_ordem_store_autonomous.yml'
+          casa['note']=(
+              'Concluído em 2026-11-02 como 11ª loja moderna. Primeiro SAFE 41438524634 falhou corretamente antes de qualquer escrita por falso positivo do bloqueio pet dentro de tapete; '
+              'SAFE técnico seguinte 41438830523 ficou verde, mas inspeção manual do artifact detectou caixa organizadora selecionando cesto e prateleira de banheiro selecionando porta-papel. '
+              'Perfil semântico v3 endurecido; SAFE final 41439295948 PASS e artifact manualmente revisado com 20/20 intenções coerentes. '
+              'Auditor pré-LIVE 41439709960 PASS 11/11. LIVE controlado 41439797912 PASS: HTTP público 429,200, store=20, hero=12, Policy Guard público, identidade Casa em Ordem e persistência somente pós-PASS no commit 909382b375afc9dae578d7965873d9ece3736f9c. '
+              'Artifact LIVE ID 13138591112 SHA-256 782b0bb47371bdc67d53a7e14e424152f65a2df45a4154fdde6f51f0e1d19cb9. '
+              'Leitura independente do Blogger encontrou quatro âncoras deslocadas nos botões do hero; correção permanente do motor commit d37e91fb922541f46770a759064e1016552d67b7 e run 41440262021 PASS com CASA_ORDEM_NAV_FIX_PASS 4/4 e 20+12 preservado. '
+              'Schedule diário 08:05 America/Recife habilitado no commit c77915f81c004774992b54487c31afd32ab06efd; auditor pós-schedule 41440836794 PASS 11/11 com proteção permanente do horário e das quatro âncoras.'
+          )
+          inv_path.write_text(json.dumps(inv,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          roll=json.loads(roll_path.read_text(encoding='utf-8'))
+          if roll.get('enabled') is not False or roll.get('mode')!='PREPARED_NOT_DEPLOYED':
+              raise SystemExit('CASA_FINALIZE_FAIL rollout global foi habilitado')
+          targets=roll.get('targets') or []
+          casa_targets=[t for t in targets if t.get('blog_id')=='4177382081459143374']
+          if len(casa_targets)!=1 or casa_targets[0].get('priority')!=1:
+              raise SystemExit('CASA_FINALIZE_FAIL Casa não é alvo prioridade 1 esperado')
+          done=(
+              'Casa em Ordem integrado ao padrão moderno em 2026-11-02: SAFE final 41439295948 PASS após endurecimento semântico v3 e inspeção manual dos 20 produtos; auditor pré-LIVE 41439709960 PASS 11/11; '
+              'LIVE 41439797912 PASS com HTTP público 429,200, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit 909382b375afc9dae578d7965873d9ece3736f9c; '
+              'artifact LIVE 13138591112 SHA-256 782b0bb47371bdc67d53a7e14e424152f65a2df45a4154fdde6f51f0e1d19cb9; leitura independente detectou e levou à correção de 4 âncoras do hero, validada no run 41440262021; '
+              'schedule diário 08:05 America/Recife commit c77915f81c004774992b54487c31afd32ab06efd; auditor pós-schedule 41440836794 PASS 11/11.'
+          )
+          if not any(x.startswith('Casa em Ordem integrado ao padrão moderno') for x in roll['completed_prerequisites']):
+              roll['completed_prerequisites'].append(done)
+          roll['targets']=[t for t in targets if t.get('blog_id')!='4177382081459143374']
+          for i,t in enumerate(roll['targets'],1):
+              t['priority']=i
+          if not roll['targets'] or roll['targets'][0].get('title')!='Escolha Certa Online':
+              raise SystemExit('CASA_FINALIZE_FAIL próximo alvo não é Escolha Certa Online')
+          roll_path.write_text(json.dumps(roll,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          cp=cp_path.read_text(encoding='utf-8')
+          required_old=[
+              '**Última atualização:** 2026-11-02 08:20 America/Recife',
+              'O Blogger Policy Guard está integrado em **10 pipelines modernos**',
+              '- `modern_blogger_auto_policy_guard: 10`',
+              '- `store_scaffold_needs_auto_rotation: 8`',
+              'O auditor cobre os 10 SAFE/LIVE modernos',
+              '# 9. FILA RESTANTE — 8 BLOGS',
+              '# 10. PRÓXIMO BLOCO PERMITIDO — CASA EM ORDEM, NÃO INICIADO',
+          ]
+          missing=[x for x in required_old if x not in cp]
+          if missing:
+              raise SystemExit(f'CASA_FINALIZE_FAIL checkpoint preconditions: {missing}')
+
+          cp=cp.replace('**Última atualização:** 2026-11-02 08:20 America/Recife','**Última atualização:** 2026-11-02 08:58 America/Recife',1)
+          cp=cp.replace('antes das conclusões de Conecta Achados e Estilo no Dia a Dia','antes das conclusões de Conecta Achados, Estilo no Dia a Dia e Casa em Ordem',1)
+          cp=cp.replace('O Blogger Policy Guard está integrado em **10 pipelines modernos**','O Blogger Policy Guard está integrado em **11 pipelines modernos**',1)
+          cp=cp.replace('10. **Estilo no Dia a Dia**','10. Estilo no Dia a Dia\n11. **Casa em Ordem**',1)
+          cp=cp.replace('- `modern_blogger_auto_policy_guard: 10`','- `modern_blogger_auto_policy_guard: 11`',1)
+          cp=cp.replace('- `store_scaffold_needs_auto_rotation: 8`','- `store_scaffold_needs_auto_rotation: 7`',1)
+
+          old_audit='''O auditor cobre os 10 SAFE/LIVE modernos, `blogger_stores/src/**`, writers legados duplicados e proteção do aviso nativo de cookies.\n\nÚltima validação, após habilitar o schedule do Estilo no Dia a Dia:\n\n- commit do schedule `821fb4e6a7ef16348c7432a7094065ba56b418b2`\n- run `41435835886` — **SUCCESS**\n- job `125245260514`\n- `blogger_policy_guard_self_test: 13/13 OK`\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`\n- `SAFE/LIVE 10/10 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`'''
+          new_audit='''O auditor cobre os **11 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e o schedule/navegação final do Casa em Ordem.\n\nÚltima validação, após habilitar o schedule do Casa em Ordem:\n\n- commit do schedule `c77915f81c004774992b54487c31afd32ab06efd`\n- commit do reforço permanente do auditor `d7e6c29cd519360ec1a2421986813ccc6263c729`\n- run `41440836794` — **SUCCESS**\n- job `125261986171`\n- `blogger_policy_guard_self_test: 13/13 OK`\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`\n- `SAFE/LIVE 11/11 protegidos; Casa em Ordem schedule 08:05 protegido; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`'''
+          if old_audit not in cp:
+              raise SystemExit('CASA_FINALIZE_FAIL bloco auditor antigo não encontrado')
+          cp=cp.replace(old_audit,new_audit,1)
+
+          casa_section='''# 8. CASA EM ORDEM — CONCLUÍDO COMO 11ª LOJA MODERNA\n\nAlvo:\n\n- Blog ID `4177382081459143374`\n- Page LOJA ID `4031853959690608178`\n- Store Post ID `5566188787681469799`\n- Page `https://casa-em-ordem-pratica.blogspot.com/p/loja.html`\n- Post `https://casa-em-ordem-pratica.blogspot.com/2026/11/loja.html`\n- SAFE `.github/workflows/casa_em_ordem_store_safe.yml`\n- LIVE `.github/workflows/casa_em_ordem_store_autonomous.yml`\n- motor `blogger_stores/src/casa_em_ordem_store.py`\n- histórico independente `blogger_stores/data/casa_em_ordem_rotation.json`\n\nPerfil final: Organização & Armazenamento; Quarto & Roupa de Cama; Banheiro & Organização; Lavanderia & Limpeza; Decoração & Conforto — 5 categorias x 4 intenções.\n\n## 8.1 SAFE e revisão semântica\n\n- primeiro SAFE `41438524634` falhou corretamente antes de qualquer escrita: o bloqueio `pet` casava dentro de `tapete`;\n- SAFE técnico `41438830523` ficou verde, mas **não foi aceito** porque a inspeção manual do artifact encontrou dois falsos positivos: cesto em `caixa organizadora` e porta-papel em `prateleira banheiro`;\n- regras endurecidas para v3;\n- SAFE final `41439295948` — **SUCCESS**;\n- 40/40 regressões semânticas;\n- 20 produtos / 20 intenções / links 20/20;\n- fallback 0 / carry 0;\n- artifact SAFE final `13136984336`;\n- SHA-256 `6d5a9c16eee3e3184a22ed399e3d65cbd69ae46d2a0daf2016d2fe9e377e06eb`;\n- revisão manual final: 20/20 títulos coerentes.\n\n## 8.2 Auditor pré-LIVE\n\n- run `41439709960` — **SUCCESS**;\n- job `125258208273`;\n- Policy Guard `13/13`;\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`;\n- `SAFE/LIVE 11/11 protegidos`.\n\n## 8.3 LIVE final\n\n- run `41439797912` — **SUCCESS**;\n- job `125258499502`;\n- SAFE fresco e Policy Guard pré-LIVE PASS;\n- identidade DRY-RUN PASS;\n- Store/hero DRY-RUN PASS;\n- Store 20 + hero 12;\n- tentativa pública 1: HTTP 429;\n- tentativa pública 2: HTTP 200;\n- `BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero`;\n- persistência somente depois do PASS público;\n- commit automático `909382b375afc9dae578d7965873d9ece3736f9c`;\n- artifact LIVE ID `13138591112`;\n- SHA-256 `782b0bb47371bdc67d53a7e14e424152f65a2df45a4154fdde6f51f0e1d19cb9`.\n\n## 8.4 Leitura independente e correção de navegação\n\nA leitura direta do Store Post confirmou a seleção e encontrou um problema que o gate estrutural não detectava: quatro botões do hero tinham rótulo correto, porém apontavam para a categoria seguinte. A correção foi feita sem nova rotação de produtos.\n\n- commit permanente do motor `d37e91fb922541f46770a759064e1016552d67b7`;\n- run de correção `41440262021` — **SUCCESS**;\n- job `125260056522`;\n- `CASA_ORDEM_NAV_FIX_PASS: 4/4 âncoras corretas; 20+12 preservado`;\n- segunda leitura independente confirmou os quatro destinos corretos e os 20 produtos inalterados.\n\n## 8.5 Schedule final e auditor pós-schedule\n\n- workflow `.github/workflows/casa_em_ordem_store_autonomous.yml`;\n- `cron: "5 8 * * *"`;\n- `timezone: "America/Recife"`;\n- commit do schedule `c77915f81c004774992b54487c31afd32ab06efd`;\n- auditor reforçado permanentemente para bloquear regressão do horário e das quatro âncoras;\n- commit do auditor `d7e6c29cd519360ec1a2421986813ccc6263c729`;\n- run pós-schedule `41440836794` — **SUCCESS**;\n- job `125261986171`;\n- `blogger_policy_guard_self_test: 13/13 OK`;\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`;\n- `SAFE/LIVE 11/11 protegidos; Casa em Ordem schedule 08:05 protegido`.\n\nCasa em Ordem está **CONCLUÍDO** como `modern_policy_guard_20x12`. Não reabrir sem evidência concreta de regressão.\n\n---\n\n'''
+          marker='# 8. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS'
+          if marker not in cp:
+              raise SystemExit('CASA_FINALIZE_FAIL marcador seção 8 ausente')
+          cp=cp.replace(marker,casa_section+'# 9. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS',1)
+          cp=cp.replace('# 9. FILA RESTANTE — 8 BLOGS','# 10. FILA RESTANTE — 7 BLOGS',1)
+          old_queue='''1. **Casa em Ordem**\n2. Escolha Certa Online\n3. Achados que Valem\n4. Guia de Achados & Ofertas\n5. Moda e Ofertas\n6. Achadinhos de Beleza\n7. Radar Tech BR Blogger\n8. Cozinha Sem Complicação'''
+          new_queue='''1. **Escolha Certa Online**\n2. Achados que Valem\n3. Guia de Achados & Ofertas\n4. Moda e Ofertas\n5. Achadinhos de Beleza\n6. Radar Tech BR Blogger\n7. Cozinha Sem Complicação'''
+          if old_queue not in cp:
+              raise SystemExit('CASA_FINALIZE_FAIL fila antiga ausente')
+          cp=cp.replace(old_queue,new_queue,1)
+          cp=cp.replace('# 10. PRÓXIMO BLOCO PERMITIDO — CASA EM ORDEM, NÃO INICIADO','# 11. PRÓXIMO BLOCO PERMITIDO — ESCOLHA CERTA ONLINE, NÃO INICIADO',1)
+          old_next='''Alvo inventariado:\n\n- Blog ID `4177382081459143374`\n- Page LOJA ID `4031853959690608178`\n- Store Post ID `5566188787681469799`\n- Page `https://casa-em-ordem-pratica.blogspot.com/p/loja.html`\n- Post `https://casa-em-ordem-pratica.blogspot.com/2026/11/loja.html`\n- estado atual `store_scaffold_needs_auto_rotation`\n- perfil semântico ainda precisa ser definido e validado\n\n**Não iniciar Casa em Ordem automaticamente. Aguardar novo `continue` do usuário.**'''
+          new_next='''Alvo inventariado:\n\n- Blog ID `5151950717041967683`\n- Page LOJA ID `3334029815604129982`\n- Store Post ID `5474604520207119855`\n- Page `https://escolha-certa-online.blogspot.com/p/loja.html`\n- Post `https://escolha-certa-online.blogspot.com/2026/11/loja.html`\n- estado atual `store_scaffold_needs_auto_rotation`\n- perfil semântico ainda precisa ser definido e validado\n\n**Não iniciar Escolha Certa Online automaticamente. Aguardar novo `continue` do usuário.**'''
+          if old_next not in cp:
+              raise SystemExit('CASA_FINALIZE_FAIL próximo bloco antigo ausente')
+          cp=cp.replace(old_next,new_next,1)
+          cp=cp.replace('# 11. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES','# 12. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES',1)
+          cp=cp.replace('Não reiniciar diagnóstico de Vitrine, Achados, Conecta ou Estilo sem evidência concreta de regressão.','Não reiniciar diagnóstico de Vitrine, Achados, Conecta, Estilo ou Casa em Ordem sem evidência concreta de regressão.',1)
+          cp=cp.replace('# 12. BACKUP / RECUPERAÇÃO','# 13. BACKUP / RECUPERAÇÃO',1)
+          cp=cp.replace('Como o R3 é anterior às conclusões de Conecta e Estilo, um próximo backup completo deverá incluir os commits desses dois blocos.','Como o R3 é anterior às conclusões de Conecta, Estilo e Casa em Ordem, um próximo backup completo deverá incluir os commits desses três blocos.',1)
+          cp=cp.replace('- Estilo no Dia a Dia = 10ª loja moderna concluída;\n- auditor permanente = **10/10**;\n- inventário = **10 modernas / 8 restantes**;\n- próximo bloco permitido = **Casa em Ordem**, somente após comando explícito do usuário.','- Estilo no Dia a Dia = 10ª loja moderna concluída;\n- Casa em Ordem = 11ª loja moderna concluída;\n- auditor permanente = **11/11**;\n- inventário = **11 modernas / 7 restantes**;\n- próximo bloco permitido = **Escolha Certa Online**, somente após comando explícito do usuário.',1)
+          cp_path.write_text(cp,encoding='utf-8')
+
+          # Validação pós-escrita local.
+          inv2=json.loads(inv_path.read_text(encoding='utf-8'))
+          roll2=json.loads(roll_path.read_text(encoding='utf-8'))
+          cp2=cp_path.read_text(encoding='utf-8')
+          assert inv2['summary']['modern_blogger_auto_policy_guard']==11
+          assert inv2['summary']['store_scaffold_needs_auto_rotation']==7
+          assert next(b for b in inv2['blogs'] if b['blog_id']=='4177382081459143374')['automation_status']=='modern_policy_guard_20x12'
+          assert roll2['enabled'] is False and roll2['mode']=='PREPARED_NOT_DEPLOYED'
+          assert len(roll2['targets'])==7 and roll2['targets'][0]['title']=='Escolha Certa Online'
+          assert 'Casa em Ordem — CONCLUÍDO COMO 11ª LOJA MODERNA' in cp2
+          assert 'PRÓXIMO BLOCO PERMITIDO — ESCOLHA CERTA ONLINE' in cp2
+          print('CASA_FINALIZE_STATE_PASS: inventory=11/7 rollout=7 next=Escolha Certa Online checkpoint=updated')
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json \
+            blogger_multi_store/config/network_store_rollout_2026-11-01.json \
+            CHECKPOINT_ATUAL.md
+          git commit -m "checkpoint: concluir Casa em Ordem como pipeline 11 de 11"
+          git pull --rebase origin main
+          git push origin HEAD:main
