@@ -114,13 +114,27 @@ jobs:
           set -euo pipefail
           ok=0
           url="https://conectaachados.blogspot.com/2026/11/loja.html"
-          for attempt in 1 2 3 4 5 6; do
-            if ! curl -L -fsS --max-time 40 "${url}?store_verify=${GITHUB_RUN_ID}-${attempt}" > /tmp/conecta-achados-loja.html; then
-              sleep 5
+          ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
+          for attempt in $(seq 1 12); do
+            code=$(curl -L -sS --max-time 40 \
+              -A "$ua" \
+              -H "Accept-Language: pt-BR,pt;q=0.9,en;q=0.7" \
+              -H "Cache-Control: no-cache" \
+              -o /tmp/conecta-achados-loja.html \
+              -w "%{http_code}" \
+              "${url}?m=1&store_verify=${GITHUB_RUN_ID}-${attempt}" || true)
+            echo "PUBLIC_HTTP_ATTEMPT_${attempt}: ${code}"
+            if [ "$code" = "429" ]; then
+              sleep 15
+              continue
+            fi
+            if [ "$code" != "200" ]; then
+              sleep 10
               continue
             fi
             store_count=$(python -c "print(open('/tmp/conecta-achados-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
             hero_count=$(python -c "print(open('/tmp/conecta-achados-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
+            echo "PUBLIC_COUNTS_ATTEMPT_${attempt}: store=${store_count} hero=${hero_count}"
             if grep -q "bls-store-grid" /tmp/conecta-achados-loja.html \
               && grep -q "blh-grid" /tmp/conecta-achados-loja.html \
               && grep -q "blogger-liq-layout-wide-css" /tmp/conecta-achados-loja.html \
@@ -137,7 +151,7 @@ jobs:
               ok=1
               break
             fi
-            sleep 5
+            sleep 10
           done
           test "$ok" -eq 1
           PYTHONPATH=src python - <<'PY'
@@ -196,3 +210,4 @@ jobs:
           retention-days: 14
 
 # POLICY_GUARD_CENTRAL_CONECTA_ACHADOS_2026_11_02
+# PUBLIC_RATE_LIMIT_RETRY_2026_11_02
