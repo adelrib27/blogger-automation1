@@ -1,0 +1,40 @@
+name: Moda e Ofertas Schedule Finalize Once
+
+on:
+  push:
+    paths:
+      - blogger_stores/moda_ofertas_schedule_finalize_kickoff.txt
+
+permissions:
+  contents: write
+
+jobs:
+  finalizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Aplicar schedule, reforcar auditor e limpar rollout temporario
+        run: python scripts/finalize_moda_ofertas_schedule.py
+
+      - name: Validar arquivos finais no working tree
+        run: |
+          set -euo pipefail
+          python -m py_compile src/blogger_policy_repo_audit.py
+          grep -q 'cron: "20 10 \* \* \*"' .github/workflows/moda_ofertas_store_autonomous.yml
+          grep -q 'timezone: "America/Recife"' .github/workflows/moda_ofertas_store_autonomous.yml
+          grep -q 'SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02' .github/workflows/moda_ofertas_store_autonomous.yml
+          ! grep -q '^  push:' .github/workflows/moda_ofertas_store_autonomous.yml
+          PYTHONPATH=src python src/blogger_policy_repo_audit.py
+
+      - name: Commitar promocao final
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "moda ofertas: promover schedule 10h20 e limpar rollout temporario"
+          git pull --rebase origin main
+          git push origin HEAD:main
