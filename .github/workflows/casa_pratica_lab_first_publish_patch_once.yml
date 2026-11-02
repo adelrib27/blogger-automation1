@@ -1,0 +1,39 @@
+name: Casa Prática Lab — Patch primeira publicação 20x12 — uso único
+
+on:
+  push:
+    paths:
+      - ".github/workflows/casa_pratica_lab_first_publish_patch_once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fazer hero DRY-RUN simular Store 20 antes do Hero 12
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('blogger_stores/src/casa_pratica_lab_store.py')
+          s=p.read_text(encoding='utf-8')
+          old='''def hero_write(dry_run: bool) -> int:\n    rc = base.write_hero(dry_run)\n    print("CASA_PRATICA_LAB_HERO_DRY_RUN_PASS" if dry_run else "CASA_PRATICA_LAB_HERO_PASS: 12 mini-cards únicos sincronizados.")\n    return rc\n'''
+          new='''def hero_write(dry_run: bool) -> int:\n    # Primeira publicação de um blog zerado: o hero DRY-RUN precisa validar o\n    # estado combinado que existirá após Store LIVE (20) + Hero LIVE (12).\n    # Não reduzimos o gate de base.verify_hero: ele continua exigindo 32 rels.\n    if dry_run:\n        data = base.load_json(SELECTION_PATH, {})\n        base.validate_selection(data)\n        slides = build_hero(data)\n        _, post = base.get_service_post()\n        raw = str(post.get("content") or "")\n        new_raw = base.replace_region(raw, base.STORE_START, base.STORE_END, render_store(data))\n        for (start, end), slide in zip(base.HERO_MARKERS, slides):\n            new_raw = base.replace_region(new_raw, start, end, slide)\n        base.verify_store_html(new_raw, data)\n        base.verify_hero(new_raw, slides)\n        print("CASA_PRATICA_LAB_FIRST_PUBLISH_COMBINED_DRY_RUN_PASS: Store 20 + Hero 12 simulados em memória; gate 32 rels preservado; Blogger não alterado.")\n        return 0\n    rc = base.write_hero(False)\n    print("CASA_PRATICA_LAB_HERO_PASS: 12 mini-cards únicos sincronizados.")\n    return rc\n'''
+          if old not in s:
+              raise SystemExit('PATCH_FAIL: bloco hero_write esperado não encontrado')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          print('CASA_PRATICA_LAB_FIRST_PUBLISH_PATCH_PASS')
+          PY
+          python -m py_compile blogger_stores/src/casa_pratica_lab_store.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blogger_stores/src/casa_pratica_lab_store.py
+          git commit -m "lab: suportar DRY-RUN zero para primeira publicacao 20x12"
+          git pull --rebase origin main
+          git push origin HEAD:main
