@@ -93,18 +93,15 @@ body:has(.bls-page) .bls-page{
 
 PAGE_CAROUSEL_FIX = """<script id="blogger-new-store-page-carousel-fix">
 (function(){
-  function visible(el){
-    if(!el)return false;
-    const s=getComputedStyle(el),r=el.getBoundingClientRect();
-    return s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity)!==0&&r.width>0&&r.height>0;
-  }
+  const bound=new WeakSet();
   function bind(root){
-    if(!root||root.dataset.pageCarouselBound==='1')return;
+    if(!root||bound.has(root))return;
     const slides=[...root.querySelectorAll('.bls-slide')];
     const dots=[...root.querySelectorAll('#blsDots button')];
     const prev=root.querySelector('.bls-prev');
     const next=root.querySelector('.bls-next');
     if(slides.length!==3||dots.length!==3||!prev||!next)return;
+    bound.add(root);
     root.dataset.pageCarouselBound='1';
     let i=slides.findIndex(s=>s.classList.contains('is-active'));
     if(i<0)i=0;
@@ -126,14 +123,16 @@ PAGE_CAROUSEL_FIX = """<script id="blogger-new-store-page-carousel-fix">
     show(i);auto();
   }
   function init(){
-    [...document.querySelectorAll('.bls-slider')].filter(visible).forEach(bind);
+    document.querySelectorAll('.bls-slider').forEach(bind);
   }
+  const observer=new MutationObserver(()=>init());
+  observer.observe(document.documentElement,{childList:true,subtree:true});
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',()=>{requestAnimationFrame(init);setTimeout(init,500);});
+    document.addEventListener('DOMContentLoaded',()=>{init();requestAnimationFrame(init);setTimeout(init,500);});
   }else{
-    requestAnimationFrame(init);setTimeout(init,500);
+    init();requestAnimationFrame(init);setTimeout(init,500);
   }
-  window.addEventListener('resize',()=>setTimeout(init,120));
+  setTimeout(()=>observer.disconnect(),15000);
 })();
 </script>"""
 
@@ -219,6 +218,8 @@ def verify_page_contract(raw: str, page_url: str) -> None:
         raise RuntimeError("Page LOJA perdeu o patch de superfície ampla.")
     if 'id="blogger-new-store-page-carousel-fix"' not in raw:
         raise RuntimeError("Page LOJA perdeu o fix do carousel para DOM duplicado do Blogger.")
+    if "new WeakSet()" not in raw or "new MutationObserver" not in raw:
+        raise RuntimeError("Page LOJA perdeu a proteção dinâmica contra duplicação tardia do DOM.")
     verify_store_html(raw, page_url)
 
 
@@ -243,13 +244,13 @@ def sync_page(dry_run: bool = False) -> int:
     page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: staging 20+12 + carousel + superfície Page + fix DOM duplicado validados; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: staging 20+12 + carousel + superfície Page + MutationObserver validados; Blogger não alterado.")
         return 0
     body = {"title": page.get("title") or "LOJA", "content": page_raw}
     service.pages().update(blogId=blog_id, pageId=page_id, body=body).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + carousel funcional + layout amplo.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + carousel funcional + layout amplo + DOM observer.")
     return 0
 
 
