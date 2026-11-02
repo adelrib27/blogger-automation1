@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "description": "Regras semânticas específicas do Achadinhos de Beleza para manter a vitrine focada em cabelos, skincare, maquiagem, unhas e cuidados pessoais, bloqueando acessórios, peças, refis e falsos positivos.",
+  "rules": {
+    "escova secadora": {"require_groups": [["escova"],["secadora","secador","ar quente","hot air"]],"block_phrases": ["refil","capa para escova","suporte para escova","peca para escova","peça para escova"]},
+    "secador de cabelo": {"require_groups": [["secador"],["cabelo","cabelos"]],"block_phrases": ["difusor","bico para secador","suporte","resistencia","resistência","cabo para secador","peca","peça","adaptador","acessorio","acessório"]},
+    "chapinha cabelo": {"require_groups": [["chapinha","prancha"],["cabelo","cabelos","alisadora","alisador"]],"block_phrases": ["capa para chapinha","suporte para chapinha","bolsa para chapinha","peca","peça"]},
+    "modelador de cachos": {"require_groups": [["modelador","babyliss","ondulador"],["cacho","cachos","cabelo","cabelos"]],"block_phrases": ["suporte","capa","bolsa","peca","peça"]},
+    "protetor solar facial": {"require_groups": [["protetor solar","filtro solar"],["facial","rosto","face"]],"block_phrases": ["corporal","infantil","kids","labial","cabelo","capilar","pet"]},
+    "hidratante facial": {"require_groups": [["hidratante"],["facial","rosto","face"]],"block_phrases": ["corporal","mao","mão","pes","pés","cabelo","capilar","pet"]},
+    "sabonete facial": {"require_groups": [["sabonete","gel de limpeza"],["facial","rosto","face"]],"block_phrases": ["corporal","intimo","íntimo","roupa","pet"]},
+    "serum facial": {"require_groups": [["serum","sérum"],["facial","rosto","face"]],"block_phrases": ["capilar","cabelo","unhas","pet"]},
+    "base maquiagem": {"require_groups": [["base"],["maquiagem","liquida","líquida","facial","rosto"]],"block_phrases": ["base para unha","base de unha","esmalte","construcao","construção","gel uv","suporte","organizador"]},
+    "mascara de cilios": {"require_groups": [["mascara de cilios","máscara de cílios","rimel","rímel"]],"block_phrases": ["aplicador","escova avulsa","curvex","cola","cilios posticos","cílios postiços"]},
+    "batom": {"require_groups": [["batom","lip tint","lipstick"]],"block_phrases": ["porta batom","organizador","adesivo","chaveiro","miniatura"]},
+    "paleta de sombras": {"require_groups": [["paleta"],["sombra","sombras"]],"block_phrases": ["paleta de pintura","aquarela","artesanal","infantil","brinquedo"]},
+    "esmalte gel": {"require_groups": [["esmalte"],["gel","unha","unhas"]],"block_phrases": ["removedor","acetona","porta esmalte","organizador","adesivo"]},
+    "kit manicure": {"require_groups": [["kit"],["manicure","unha","unhas"]],"block_phrases": ["adesivo","decoracao","decoração","brinquedo","infantil"]},
+    "cabine uv unhas": {"require_groups": [["cabine","secador"],["uv","led"],["unha","unhas"]],"block_phrases": ["miniatura","suporte","peca","peça","lampada avulsa","lâmpada avulsa"]},
+    "lixa eletrica unhas": {"require_groups": [["lixa"],["eletrica","elétrica","motor","broca"],["unha","unhas","manicure"]],"block_phrases": ["refil","broca avulsa","lixa avulsa","pedicure manual"]},
+    "barbeador eletrico": {"require_groups": [["barbeador","maquina de barbear","máquina de barbear"],["eletrico","elétrico","recarregavel","recarregável","usb"]],"block_phrases": ["lamina de reposicao","lâmina de reposição","cabeca de reposicao","cabeça de reposição","capa para barbeador","suporte para barbeador","pet"]},
+    "depilador eletrico": {"require_groups": [["depilador"],["eletrico","elétrico","recarregavel","recarregável","usb"]],"block_phrases": ["cera","linha depilatoria","linha depilatória","pinca","pinça","creme depilatorio","creme depilatório","refil","lamina de reposicao","lâmina de reposição"]},
+    "escova limpeza facial": {"require_groups": [["escova"],["facial","rosto","face","limpeza"]],"block_phrases": ["cabelo","capilar","dental","dente","roupa","pet"]},
+    "massageador facial": {"require_groups": [["massageador"],["facial","rosto","face"]],"block_phrases": ["corporal","pes","pés","costas","pescoco","pescoço","pet"]}
+  }
+}
