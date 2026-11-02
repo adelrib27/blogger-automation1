@@ -5,16 +5,16 @@ on:
   push:
     paths:
       - "blogger_stores/achados_casa_kickoff.txt"
+      - "blogger_stores/src/achados_casa_*.py"
+      - "config/shopee_achados_casa.json"
+      - "config/shopee_achados_casa_intent_rules.json"
       - ".github/workflows/achados_casa_store_safe.yml"
       - "src/blogger_policy_guard.py"
       - "src/blogger_policy_guard_self_test.py"
       - "config/blogger_policy_guard.json"
-  schedule:
-    # America/Recife (UTC-3): 07:20 diariamente.
-    - cron: "20 10 * * *"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: achados-casa-store-safe
@@ -33,13 +33,16 @@ jobs:
     steps:
       - name: Baixar repositório
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Validar código e Policy Guard
         run: |
@@ -53,7 +56,11 @@ jobs:
             radar_tech_br/src/refresh_blogger_offer_links.py \
             blogger_stores/src/achados_casa_safe_scan_v2.py \
             blogger_stores/src/achados_casa_safe_scan_v3.py \
-            blogger_stores/src/achados_casa_safe_scan_v6.py
+            blogger_stores/src/achados_casa_safe_scan_v6.py \
+            blogger_stores/src/achados_casa_publish_post.py \
+            blogger_stores/src/achados_casa_hero_sync_post.py \
+            blogger_stores/src/achados_casa_layout_patch.py \
+            blogger_stores/src/achados_casa_persist_rotation.py
           PYTHONPATH=src python src/blogger_policy_guard_self_test.py
 
       - name: Confirmar AppID Shopee
@@ -67,69 +74,32 @@ jobs:
           fi
           echo "AppID Shopee do Achados para Casa validado."
 
-      - name: Executar nova varredura SAFE v6
+      - name: Executar varredura SAFE v6
         run: |
           set -euo pipefail
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/achados_casa_safe_scan_v6.py
 
-      - name: Validar artefato SAFE
+      - name: Validar seleção SAFE + Policy Guard central
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          p=Path('blogger_stores/data/achados_casa_selection.json')
-          d=json.loads(p.read_text(encoding='utf-8'))
-          assert d['schemaVersion']==6
-          assert d['status']=='SAFE_READY'
-          assert d['publishReady'] is True
-          assert d['categoryCount']==5
-          assert d['totalItems']==20
-          assert d['uniqueItemIds']==20
-          assert len(d['keywordCoverage'])==5
-          assert all(len(set(v))==4 for v in d['keywordCoverage'].values())
-          assert d['affiliateLinkGeneration']['appId']=='18352820579'
-          assert d['affiliateLinkGeneration']['validatedCount']==20
-          assert d['affiliateLinkGeneration']['allResolvedToShopee'] is True
-          assert d['semanticValidation']['strictAccessoriesBlocked'] is True
-          assert d['semanticValidation']['oneProductPerKeyword'] is True
-          assert d['semanticValidation']['homeUsePostGateVersion']==6
-          assert d['semanticValidation']['fritadeiraApplianceOnly'] is True
-          assert all(d['gates'].values())
-          print('SAFE v6 VALIDADO: 20 produtos completos, diversidade e 20/20 links resolvidos.')
-          PY
-
-      - name: Policy Guard — validar 20 produtos SAFE
-        run: |
-          set -euo pipefail
-          PYTHONPATH=src python - <<'PY'
+          PYTHONPATH=src:blogger_stores/src python - <<'PY'
           import json
           from pathlib import Path
           from blogger_policy_guard import require_product_allowed
+          from achados_casa_publish_post import validate_selection
+
           data=json.loads(Path('blogger_stores/data/achados_casa_selection.json').read_text(encoding='utf-8'))
-          products=[p for items in (data.get('categories') or {}).values() for p in items]
+          products=validate_selection(data)
           if len(products)!=20:
               raise SystemExit(f'Policy Guard: quantidade inválida {len(products)}/20')
           for product in products:
               require_product_allowed(product)
+          print('ACHADOS_SAFE_V6_VALIDADO: 5 categorias x 4 produtos; diversidade semântica e 20/20 links resolvidos.')
           print('BLOGGER_POLICY_GUARD_SAFE_PASS: 20/20 produtos permitidos')
+          print('ACHADOS_SAFE_READ_ONLY_PASS: nenhum writer Blogger executado')
           PY
 
-      - name: Persistir seleção SAFE
-        run: |
-          set -euo pipefail
-          if [ -z "$(git status --porcelain -- blogger_stores/data/achados_casa_selection.json)" ]; then
-            echo "Sem mudanças na seleção SAFE."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add blogger_stores/data/achados_casa_selection.json
-          git commit -m "Atualizar SAFE v6 da Loja Achados para Casa"
-          git pull --rebase origin main
-          git push origin HEAD:main
-
-      - name: Guardar diagnóstico
+      - name: Guardar diagnóstico SAFE
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -140,3 +110,5 @@ jobs:
             blogger_stores/data/achados_casa_scan/
           if-no-files-found: warn
           retention-days: 14
+
+# ACHADOS_CASA_SAFE_POLICY_GUARD_CANONICO_2026_11_01
