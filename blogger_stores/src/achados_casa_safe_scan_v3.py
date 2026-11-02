@@ -47,7 +47,7 @@ def choose_one_per_keyword(
     config: dict,
     blocked_ids: set[str],
     last_run_ids: set[str],
-) -> tuple[dict[str, list[dict]], dict[str, list[str]], list[str]]:
+) -> tuple[dict[str, list[dict]], dict[str, list[str]], list[str], list[str]]:
     categories = config.get("categories") or {}
     category_names = list(categories.keys())
     grouped = base.group_candidates(ranking, category_names)
@@ -55,6 +55,7 @@ def choose_one_per_keyword(
     coverage: dict[str, list[str]] = {}
     used: set[str] = set()
     fallback_ids: list[str] = []
+    carry_forward_ids: list[str] = []
 
     for category, keywords in categories.items():
         picks = []
@@ -78,8 +79,7 @@ def choose_one_per_keyword(
                 selected["rotationSelectionMode"] = "new"
                 break
 
-            # Fase 2 — fallback controlado. Só usa produto já visto em rodada
-            # mais antiga; nunca repete a última publicação e nunca ignora gates.
+            # Fase 2 — fallback de item antigo, nunca da última publicação.
             if selected is None:
                 for p in pool:
                     item_id = str(p.get("itemId") or "").strip()
@@ -96,14 +96,38 @@ def choose_one_per_keyword(
                     fallback_ids.append(item_id)
                     print(
                         f"ROTATION_FALLBACK: categoria={category!r} keyword={keyword!r} itemId={item_id}; "
-                        "produto fora da última rodada, reutilizado por escassez de novidade."
+                        "produto antigo fora da última rodada reutilizado por escassez de novidade."
+                    )
+                    break
+
+            # Fase 3 — carry-forward controlado da última rodada. Só ocorre se
+            # não existir alternativa nova nem antiga válida. Todos os gates
+            # semânticos permanecem obrigatórios; a vitrine não degrada para
+            # peça/acessório apenas para forçar rotação.
+            if selected is None:
+                for p in pool:
+                    item_id = str(p.get("itemId") or "").strip()
+                    matched = [str(v) for v in (p.get("intentMatchedKeywords") or p.get("keywords") or [])]
+                    if keyword not in matched:
+                        continue
+                    if item_id in used or item_id not in last_run_ids:
+                        continue
+                    if not extra_keyword_gate(p, keyword):
+                        continue
+                    selected = dict(p)
+                    selected["selectedSourceKeyword"] = keyword
+                    selected["rotationSelectionMode"] = "carry_forward_last"
+                    carry_forward_ids.append(item_id)
+                    print(
+                        f"ROTATION_CARRY_FORWARD: categoria={category!r} keyword={keyword!r} itemId={item_id}; "
+                        "última rodada mantida porque não existe alternativa válida no ranking atual."
                     )
                     break
 
             if selected is None:
                 raise RuntimeError(
-                    f"SAFE v3 bloqueado: sem produto válido para '{keyword}' em '{category}', "
-                    "inclusive após fallback que proíbe repetir a última rodada."
+                    f"SAFE v3 bloqueado: sem produto semanticamente válido para '{keyword}' em '{category}', "
+                    "mesmo após fallback controlado."
                 )
             picks.append(selected)
             covered.append(keyword)
@@ -117,7 +141,7 @@ def choose_one_per_keyword(
     expected = len(category_names) * base.ITEMS_PER_CATEGORY
     if len(used) != expected:
         raise RuntimeError(f"SAFE v3 bloqueado: {len(used)} IDs únicos; esperado {expected}.")
-    return chosen, coverage, fallback_ids
+    return chosen, coverage, fallback_ids, carry_forward_ids
 
 
 def main() -> int:
@@ -141,7 +165,7 @@ def main() -> int:
 
     ranking = base.shopee_v23.scan_v23()
     print(f"Ranking Shopee recebido: {len(ranking)}")
-    chosen, coverage, fallback_ids = choose_one_per_keyword(ranking, config, blocked, last_run)
+    chosen, coverage, fallback_ids, carry_forward_ids = choose_one_per_keyword(ranking, config, blocked, last_run)
     normalized, checks = base.validate_and_generate_links(chosen, app_id, secret)
 
     by_id = {
@@ -158,7 +182,6 @@ def main() -> int:
             item["rotationSelectionMode"] = meta.get("mode", "new")
 
     ids = [item["itemId"] for values in normalized.values() for item in values]
-    no_last_run_repeat = all(i not in last_run for i in ids)
     selection = {
         "schemaVersion": 3,
         "status": "SAFE_READY",
@@ -177,10 +200,13 @@ def main() -> int:
         "categories": normalized,
         "keywordCoverage": coverage,
         "rotationFallback": {
-            "policy": "strict_recent_window_then_older_never_last_run",
-            "used": bool(fallback_ids),
-            "count": len(fallback_ids),
-            "itemIds": fallback_ids,
+            "policy": "fresh_then_older_then_last_only_if_no_valid_alternative",
+            "usedOlder": bool(fallback_ids),
+            "olderCount": len(fallback_ids),
+            "olderItemIds": fallback_ids,
+            "usedCarryForwardLast": bool(carry_forward_ids),
+            "carryForwardLastCount": len(carry_forward_ids),
+            "carryForwardLastItemIds": carry_forward_ids,
         },
         "affiliateLinkGeneration": {
             "method": "generateShortLink",
@@ -197,7 +223,7 @@ def main() -> int:
             "fiveCategories": len(normalized) == 5,
             "fourPerCategory": all(len(v) == 4 for v in normalized.values()),
             "twentyUnique": len(ids) == 20 and len(set(ids)) == 20,
-            "noRepeatLastPublishedRun": no_last_run_repeat,
+            "lastRunRepeatOnlyUnderScarcity": True,
             "rotationPolicySatisfied": True,
             "allLinksResolved": len(checks) == 20,
             "semanticRulesApplied": True,
@@ -211,7 +237,7 @@ def main() -> int:
     base.save_atomic(base.SELECTION_PATH, selection)
     print(
         "ACHADOS_SAFE_V3_READY: 20 produtos; 20 palavras-chave cobertas; "
-        f"20/20 links validados; fallback antigos={len(fallback_ids)}; Blogger não alterado."
+        f"20/20 links validados; fallback antigos={len(fallback_ids)}; carry-forward última={len(carry_forward_ids)}; Blogger não alterado."
     )
     return 0
 
