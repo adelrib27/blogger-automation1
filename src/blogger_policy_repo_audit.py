@@ -219,13 +219,15 @@ def audit_achadinhos_schedule() -> None:
         fail("Achadinhos de Beleza voltou a ter gatilho push após promoção final")
 
 
-def audit_radar_controlled_live() -> None:
+def audit_radar_schedule() -> None:
     rel = ".github/workflows/radar_tech_blogger_store_autonomous.yml"
     text = read(rel)
     required = [
         "workflow_dispatch:",
-        "blogger_stores/radar_tech_blogger_live_kickoff.txt",
-        "CONTROLLED_LIVE_BEFORE_SCHEDULE_2026_11_02",
+        'cron: "50 10 * * *"',
+        'timezone: "America/Recife"',
+        "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
+        "PUBLIC_HTML_ENTITY_NORMALIZATION_2026_11_02",
         "Radar Tech BR — tecnologia e achados práticos para a rotina",
         '<h3>Casa &amp; Organização</h3>',
         '<h3>Cozinha &amp; Utilidades</h3>',
@@ -239,9 +241,9 @@ def audit_radar_controlled_live() -> None:
     ]
     missing = [x for x in required if x not in text]
     if missing:
-        fail(f"Radar Tech BR Blogger LIVE controlado sem gates obrigatórios: {missing}")
-    if re.search(r"(?m)^\s*schedule\s*:", text):
-        fail("Radar Tech BR Blogger recebeu schedule antes da validação LIVE pública")
+        fail(f"Radar Tech BR Blogger sem schedule/gates finais obrigatórios: {missing}")
+    if re.search(r"(?m)^\s*push\s*:", text):
+        fail("Radar Tech BR Blogger voltou a ter gatilho push após promoção final")
 
 
 def audit_legacy_writers_manual_only() -> None:
@@ -309,12 +311,12 @@ def main() -> None:
     audit_guia_schedule()
     audit_moda_schedule()
     audit_achadinhos_schedule()
-    audit_radar_controlled_live()
+    audit_radar_schedule()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 17/17 protegidos; Radar Tech BR Blogger em LIVE controlado sem schedule; schedules validados até Achadinhos de Beleza 10:35; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 17/17 protegidos; schedules validados até Radar Tech BR Blogger 10:50 America/Recife; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
