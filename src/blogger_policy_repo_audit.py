@@ -23,6 +23,7 @@ SAFE_WORKFLOWS = [
     ".github/workflows/guia_achados_ofertas_store_safe.yml",
     ".github/workflows/moda_ofertas_store_safe.yml",
     ".github/workflows/achadinhos_beleza_store_safe.yml",
+    ".github/workflows/radar_tech_blogger_store_safe.yml",
 ]
 LIVE_WORKFLOWS = [
     ".github/workflows/air_fryers_store_autonomous.yml",
@@ -41,10 +42,9 @@ LIVE_WORKFLOWS = [
     ".github/workflows/guia_achados_ofertas_store_autonomous.yml",
     ".github/workflows/moda_ofertas_store_autonomous.yml",
     ".github/workflows/achadinhos_beleza_store_autonomous.yml",
+    ".github/workflows/radar_tech_blogger_store_autonomous.yml",
 ]
 
-# Fluxos preservados para recuperação, mas proibidos de voltar a escrever
-# automaticamente no mesmo Store Post dos writers canônicos.
 LEGACY_MANUAL_WORKFLOWS = {
     ".github/workflows/limpeza_store_autonomous.yml": "limpeza-inteligente-store-live",
     ".github/workflows/ventiladores_em_foco_store_autonomous.yml": "ventiladores-store-live",
@@ -111,8 +111,7 @@ def audit_casa_schedule() -> None:
     rel = ".github/workflows/casa_em_ordem_store_autonomous.yml"
     text = read(rel)
     required = [
-        'cron: "5 8 * * *"',
-        'timezone: "America/Recife"',
+        'cron: "5 8 * * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-quarto">Ver quarto</a>',
@@ -128,9 +127,7 @@ def audit_escolha_schedule() -> None:
     rel = ".github/workflows/escolha_certa_online_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:",
-        'cron: "20 8 * * *"',
-        'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "20 8 * * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-limpeza">Ver limpeza</a>',
@@ -148,9 +145,7 @@ def audit_achados_que_valem_schedule() -> None:
     rel = ".github/workflows/achados_que_valem_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:",
-        'cron: "50 9 * * *"',
-        'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "50 9 * * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-utilidades">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-ferramentas">Ver ferramentas</a>',
@@ -168,9 +163,7 @@ def audit_guia_schedule() -> None:
     rel = ".github/workflows/guia_achados_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:",
-        'cron: "5 10 * * *"',
-        'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "5 10 * * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-eletroportateis">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-iluminacao-decoracao">Ver iluminação</a>',
@@ -188,17 +181,14 @@ def audit_moda_schedule() -> None:
     rel = ".github/workflows/moda_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:",
-        'cron: "20 10 * * *"',
-        'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "20 10 * * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Beleza &amp; Cuidados</h3>',
         'href="#bls-moda-feminina">Ver moda feminina</a>',
         'href="#bls-acessorios">Ver acessórios</a>',
         'href="#bls-beleza-cuidados">Ver beleza</a>',
         'href="#bls-moda-masculina">Ver moda masculina</a>',
-        "Suporte De Parede Multifuncional",
-        "SHOTH FEMININO ALFAIATARIA",
+        "Suporte De Parede Multifuncional", "SHOTH FEMININO ALFAIATARIA",
         "Bolsa Feminina Kit Sacola Bag + Mini Tote + Carteira + Necessaire",
     ]
     missing = [x for x in required if x not in text]
@@ -212,9 +202,7 @@ def audit_achadinhos_schedule() -> None:
     rel = ".github/workflows/achadinhos_beleza_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:",
-        'cron: "35 10 * * *"',
-        'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "35 10 * * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Cuidados Pessoais</h3>',
         'href="#bls-skincare">Ver skincare</a>',
@@ -222,14 +210,38 @@ def audit_achadinhos_schedule() -> None:
         'href="#bls-cabelos">Ver cabelos</a>',
         'href="#bls-cuidados-pessoais">Ver cuidados pessoais</a>',
         "Cortador de Biscoitis / Massinha / Biscuit",
-        "Kit Pancake Branco + Batom  Preto Halloween",
-        "Capa Térmica para Chapinha",
+        "Kit Pancake Branco + Batom  Preto Halloween", "Capa Térmica para Chapinha",
     ]
     missing = [x for x in required if x not in text]
     if missing:
         fail(f"Achadinhos de Beleza sem schedule/gate visual/semântico canônico: {missing}")
     if re.search(r"(?m)^\s*push\s*:", text):
         fail("Achadinhos de Beleza voltou a ter gatilho push após promoção final")
+
+
+def audit_radar_controlled_live() -> None:
+    rel = ".github/workflows/radar_tech_blogger_store_autonomous.yml"
+    text = read(rel)
+    required = [
+        "workflow_dispatch:",
+        "blogger_stores/radar_tech_blogger_live_kickoff.txt",
+        "CONTROLLED_LIVE_BEFORE_SCHEDULE_2026_11_02",
+        "Radar Tech BR — tecnologia e achados práticos para a rotina",
+        '<h3>Casa &amp; Organização</h3>',
+        '<h3>Cozinha &amp; Utilidades</h3>',
+        '<h3>Tecnologia &amp; Acessórios</h3>',
+        '<h3>Beleza &amp; Cuidados</h3>',
+        '<h3>Dia a Dia &amp; Praticidade</h3>',
+        "Processador Picador De Alimentos Alça 3L Moedor De Carne Mixer Elétrico",
+        "Kit 5 Suporte Organizador de Vassoura Rodo Mop",
+        "Tomada De Parede Dupla USB E USB-C Carregador Rápido",
+        "Capa Térmica para Chapinha",
+    ]
+    missing = [x for x in required if x not in text]
+    if missing:
+        fail(f"Radar Tech BR Blogger LIVE controlado sem gates obrigatórios: {missing}")
+    if re.search(r"(?m)^\s*schedule\s*:", text):
+        fail("Radar Tech BR Blogger recebeu schedule antes da validação LIVE pública")
 
 
 def audit_legacy_writers_manual_only() -> None:
@@ -276,9 +288,6 @@ def audit_cookie_safety() -> None:
 
 
 def audit_legacy_identity() -> None:
-    # Bloqueia referências antigas executáveis nos pipelines ativos.
-    # Linhas de assert negativo (ex.: ! grep -q "dominio-antigo") são permitidas,
-    # pois servem justamente para provar que a saída pública não contém o legado.
     active = SAFE_WORKFLOWS + LIVE_WORKFLOWS
     for rel in active:
         text = read(rel)
@@ -300,11 +309,12 @@ def main() -> None:
     audit_guia_schedule()
     audit_moda_schedule()
     audit_achadinhos_schedule()
+    audit_radar_controlled_live()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 16/16 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50, Guia de Achados & Ofertas 10:05, Moda e Ofertas 10:20 e Achadinhos de Beleza 10:35 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 17/17 protegidos; Radar Tech BR Blogger em LIVE controlado sem schedule; schedules validados até Achadinhos de Beleza 10:35; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
