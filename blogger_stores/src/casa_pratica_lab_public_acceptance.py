@@ -65,6 +65,7 @@ def validate_store_page() -> None:
         "BLOGGER_STORE_AUTO_START",
         "BLOGGER_STORE_AUTO_END",
         'id="blogger-new-store-page-surface-fix"',
+        'id="blogger-new-store-page-carousel-fix"',
         "BLOGGER_LIQ_LAYOUT_PATCH_START",
         "BLOGGER_LIQ_LAYOUT_PATCH_END",
         'id="blsSlider"',
@@ -84,7 +85,7 @@ def validate_store_page() -> None:
     missing = [token for token in required if token not in raw]
     if missing:
         raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
-    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel + Policy Guard.")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel funcional + Policy Guard.")
 
 
 def validate_home_and_articles() -> None:
