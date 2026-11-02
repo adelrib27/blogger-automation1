@@ -1,4 +1,4 @@
-name: Achados que Valem — Promover auditor para 13/13 — uso único
+name: Achados que Valem — Proteger schedule final no auditor — uso único
 
 on:
   push:
@@ -15,30 +15,33 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Adicionar Achados que Valem ao auditor permanente
+      - name: Proteger schedule e navegação do Achados que Valem
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('src/blogger_policy_repo_audit.py')
           s=p.read_text(encoding='utf-8')
-          safe='    ".github/workflows/escolha_certa_online_store_safe.yml",\n'
-          live='    ".github/workflows/escolha_certa_online_store_autonomous.yml",\n'
-          if '.github/workflows/achados_que_valem_store_safe.yml' not in s:
-              if safe not in s: raise SystemExit('AUDIT_PATCH_FAIL: SAFE anchor ausente')
-              s=s.replace(safe, safe+'    ".github/workflows/achados_que_valem_store_safe.yml",\n',1)
-          if '.github/workflows/achados_que_valem_store_autonomous.yml' not in s:
-              if live not in s: raise SystemExit('AUDIT_PATCH_FAIL: LIVE anchor ausente')
-              s=s.replace(live, live+'    ".github/workflows/achados_que_valem_store_autonomous.yml",\n',1)
-          old='SAFE/LIVE 12/12 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.'
-          new='SAFE/LIVE 13/13 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.'
-          if old not in s: raise SystemExit('AUDIT_PATCH_FAIL: summary 12/12 ausente')
-          s=s.replace(old,new,1)
+          if 'def audit_achados_que_valem_schedule()' not in s:
+              anchor='\ndef audit_legacy_writers_manual_only() -> None:\n'
+              fn='''\ndef audit_achados_que_valem_schedule() -> None:\n    rel = ".github/workflows/achados_que_valem_store_autonomous.yml"\n    text = read(rel)\n    required = [\n        "workflow_dispatch:",\n        'cron: "50 9 * * *"',\n        'timezone: "America/Recife"',\n        "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",\n        '<a class="bls-btn bls-btn-main" href="#bls-cozinha-utilidades">Ver cozinha</a>',\n        '<a class="bls-btn bls-btn-soft" href="#bls-ferramentas">Ver ferramentas</a>',\n        '<a class="bls-btn bls-btn-main" href="#bls-tecnologia-conectividade">Ver tecnologia</a>',\n        '<a class="bls-btn bls-btn-soft" href="#bls-audio-lazer">Ver áudio</a>',\n    ]\n    missing = [x for x in required if x not in text]\n    if missing:\n        fail(f"Achados que Valem sem schedule/gate de navegação canônico: {missing}")\n    if re.search(r"(?m)^\\s*push\\s*:", text):\n        fail("Achados que Valem voltou a ter gatilho push após promoção final")\n\n'''
+              if anchor not in s: raise SystemExit('AQV_AUDIT_FINAL_FAIL: anchor função legado ausente')
+              s=s.replace(anchor,'\n'+fn+'def audit_legacy_writers_manual_only() -> None:\n',1)
+          if '    audit_achados_que_valem_schedule()\n' not in s:
+              anchor='    audit_escolha_schedule()\n'
+              if anchor not in s: raise SystemExit('AQV_AUDIT_FINAL_FAIL: chamada escolha ausente')
+              s=s.replace(anchor,anchor+'    audit_achados_que_valem_schedule()\n',1)
+          old='SAFE/LIVE 13/13 protegidos; Casa em Ordem schedule 08:05 e Escolha Certa Online schedule 08:20 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.'
+          new='SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.'
+          if old in s:
+              s=s.replace(old,new,1)
+          elif new not in s:
+              raise SystemExit('AQV_AUDIT_FINAL_FAIL: summary esperado ausente')
           p.write_text(s,encoding='utf-8',newline='\n')
-          print('ACHADOS_QUE_VALEM_AUDITOR_13_13_PATCH_PASS')
+          print('ACHADOS_QUE_VALEM_AUDITOR_SCHEDULE_PASS')
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/blogger_policy_repo_audit.py
-          git commit -m "auditor: proteger Achados que Valem como pipeline 13 de 13"
+          git commit -m "auditor: proteger schedule 09:50 do Achados que Valem"
           git pull --rebase origin main
           git push origin HEAD:main
