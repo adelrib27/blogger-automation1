@@ -1,0 +1,95 @@
+name: Casa Prática Lab — prova MutationObserver final
+
+on:
+  push:
+    paths:
+      - ".github/workflows/casa_pratica_lab_mutation_observer_once.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: casa-pratica-lab-store-live
+  cancel-in-progress: false
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BLOGGER_BLOG_ID: "8930870316690519385"
+      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
+      BLOGGER_STORE_POST_ID: "7691087355641688975"
+      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+
+      - name: Sincronizar MutationObserver na Page
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/blogger_new_blog_store_page_target.py blogger_stores/src/casa_pratica_lab_public_acceptance.py
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
+
+      - name: Aceitação pública
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
+
+      - name: Provar carousel funcional no Chrome
+        run: |
+          set -euo pipefail
+          pip install selenium
+          python - <<'PY'
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+
+          opts=Options()
+          opts.add_argument('--headless=new')
+          opts.add_argument('--no-sandbox')
+          opts.add_argument('--disable-dev-shm-usage')
+          opts.add_argument('--window-size=1440,1200')
+          driver=webdriver.Chrome(options=opts)
+          try:
+              driver.get('https://casa-pratica-lab-20261102.blogspot.com/p/loja.html?mutation_observer_final=1')
+              time.sleep(5)
+              before=driver.execute_script(r'''
+                const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                const page=pages[0]; const slider=page&&page.querySelector('.bls-slider');
+                const slides=slider?[...slider.querySelectorAll('.bls-slide')]:[];
+                const vis=x=>{const s=getComputedStyle(x),r=x.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0};
+                return {width:page?page.getBoundingClientRect().width:0,viewport:innerWidth,pages:pages.length,slides:slides.length,visible:slides.filter(vis).length,dots:slider?slider.querySelectorAll('#blsDots button').length:0,bound:slider?slider.dataset.pageCarouselBound||'':'',active:slides.findIndex(x=>x.classList.contains('is-active')),titleVisible:[...document.querySelectorAll('.post-title-container,.post-title,.entry-title')].filter(x=>vis(x)&&/LOJA/i.test(x.textContent||'')).length,mutation:document.documentElement.innerHTML.includes('new MutationObserver'),weakSet:document.documentElement.innerHTML.includes('new WeakSet()')};
+              ''')
+              print('BEFORE=',before)
+              if not (before['width']>=1200 and before['slides']==3 and before['visible']==1 and before['dots']==3 and before['bound']=='1' and before['titleVisible']==0 and before['mutation'] and before['weakSet']):
+                  raise SystemExit(f'Estado inicial inválido: {before}')
+              driver.execute_script(r'''
+                const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                pages[0].querySelector('.bls-next').click();
+              ''')
+              time.sleep(.8)
+              after=driver.execute_script(r'''
+                const pages=[...document.querySelectorAll('.bls-page')].sort((a,b)=>b.getBoundingClientRect().width-a.getBoundingClientRect().width);
+                const slides=[...pages[0].querySelectorAll('.bls-slide')];
+                const vis=x=>{const s=getComputedStyle(x),r=x.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0};
+                return {active:slides.findIndex(x=>x.classList.contains('is-active')),visible:slides.filter(vis).length};
+              ''')
+              print('AFTER=',after)
+              if after['active']==before['active'] or after['visible']!=1:
+                  raise SystemExit(f'Clique não avançou: before={before} after={after}')
+              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={before['width']:.0f}/{before['viewport']}; pages={before['pages']}; slides=3 visible=1; dots=3; bound=1; next={before['active']}->{after['active']}; title_hidden=PASS; MutationObserver=PASS; WeakSet=PASS")
+          finally:
+              driver.quit()
+          PY
+
+# DELETE_AFTER_PASS
