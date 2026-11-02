@@ -1,8 +1,8 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Regras semânticas específicas do Casa em Ordem para manter a vitrine em organização doméstica, roupa de cama, banheiro, lavanderia, limpeza e decoração, bloqueando peças, refis, itens automotivos, pets e falsos positivos.",
   "rules": {
-    "caixa organizadora": {"require_groups": [["caixa"], ["organizadora", "organizador"]], "block_phrases": ["caixa de som", "caixa amplificada", "caixa eletrica", "caixa elétrica", "caixa de ferramenta", "caixa ferramenta", "automotivo", "para pet", "cachorro", "gato"]},
+    "caixa organizadora": {"require_groups": [["caixa"], ["organizadora", "organizador"]], "block_phrases": ["caixa de som", "caixa amplificada", "caixa eletrica", "caixa elétrica", "caixa de ferramenta", "caixa ferramenta", "automotivo", "cesto", "para pet", "cachorro", "gato"]},
     "cesto organizador": {"require_groups": [["cesto"], ["organizador", "organizadora", "organizacao", "organização"]], "block_phrases": ["bicicleta", "moto", "automotivo", "fritadeira", "air fryer", "para pet", "cachorro", "gato"]},
     "sapateira organizadora": {"require_groups": [["sapateira"], ["organizadora", "organizador", "multiuso", "prateleira"]], "block_phrases": ["infantil", "boneca", "miniatura", "para pet", "cachorro", "gato"]},
     "carrinho organizador": {"require_groups": [["carrinho"], ["organizador", "organizadora", "multiuso"]], "block_phrases": ["bebe", "bebê", "brinquedo", "controle remoto", "hot wheels", "maquiagem profissional com rodinha", "ferramenta", "oficina", "para pet"]},
@@ -13,7 +13,7 @@
     "colmeia organizadora guarda roupa": {"require_groups": [["colmeia"], ["organizadora", "organizador"], ["guarda roupa", "guarda-roupa", "gaveta", "roupas"]], "block_phrases": ["abelha", "apicultura", "mel", "para pet"]},
 
     "suporte shampoo sem furo": {"require_groups": [["suporte"], ["shampoo", "xampu"], ["sem furo", "adesivo", "adesiva", "ventosa"]], "block_phrases": ["suporte para celular", "suporte automotivo", "carro", "moto", "refil", "para pet"]},
-    "prateleira banheiro sem furo": {"require_groups": [["prateleira"], ["banheiro"], ["sem furo", "adesiva", "adesivo", "ventosa"]], "block_phrases": ["miniatura", "casa de boneca", "para pet"]},
+    "prateleira banheiro sem furo": {"require_groups": [["prateleira"], ["banheiro"], ["sem furo", "adesiva", "adesivo", "ventosa"]], "block_phrases": ["miniatura", "casa de boneca", "porta papel", "papel higienico", "suporte shampoo", "para pet"]},
     "porta papel higienico": {"require_groups": [["porta"], ["papel higienico", "papel higiênico"]], "block_phrases": ["refil", "papel higienico avulso", "papel higiênico avulso", "para pet"]},
     "tapete banheiro antiderrapante": {"require_groups": [["tapete"], ["banheiro"], ["antiderrapante", "anti derrapante"]], "block_phrases": ["para pet", "cachorro", "gato", "automotivo", "carro"]},
 

@@ -64,7 +64,7 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
     title = base.norm(product.get("productName") or "")
     key = base.norm(keyword)
     blocks = {
-        "caixa organizadora": ["caixa de som", "caixa amplificada", "caixa eletrica", "ferramenta", "automotivo", "pet", "cachorro", "gato"],
+        "caixa organizadora": ["caixa de som", "caixa amplificada", "caixa eletrica", "ferramenta", "automotivo", "cesto", "para pet", "cachorro", "gato"],
         "cesto organizador": ["bicicleta", "moto", "automotivo", "air fryer", "fritadeira", "pet", "cachorro", "gato"],
         "sapateira organizadora": ["infantil", "boneca", "miniatura", "pet", "cachorro", "gato"],
         "carrinho organizador": ["bebe", "brinquedo", "controle remoto", "hot wheels", "ferramenta", "oficina", "pet"],
@@ -73,7 +73,7 @@ def final_keyword_gate(product: dict, keyword: str) -> bool:
         "saco organizador edredom": ["alimento", "lixo", "entulho", "pet"],
         "colmeia organizadora guarda roupa": ["abelha", "apicultura", "mel", "pet"],
         "suporte shampoo sem furo": ["celular", "automotivo", "carro", "moto", "refil", "pet"],
-        "prateleira banheiro sem furo": ["miniatura", "boneca", "pet"],
+        "prateleira banheiro sem furo": ["miniatura", "boneca", "porta papel", "papel higienico", "suporte shampoo", "para pet"],
         "porta papel higienico": ["refil", "papel higienico avulso", "pet"],
         "tapete banheiro antiderrapante": ["automotivo", "carro", "para pet", "cachorro", "gato"],
         "varal de chao": ["miniatura", "brinquedo", "boneca", "pet"],
