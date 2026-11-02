@@ -1,0 +1,30 @@
+{
+  "version": 3,
+  "description": "Regras semânticas específicas do Moda e Ofertas para manter a vitrine em moda feminina e masculina, calçados, bolsas, acessórios e beleza, bloqueando peças, refis, itens infantis, pets e falsos positivos.",
+  "rules": {
+    "vestido feminino": {"require_groups": [["vestido"], ["feminino", "feminina", "mulher", "mulheres"]], "block_phrases": ["infantil", "menina", "bebe", "bebê", "pet", "cachorro", "boneca", "fantasia"]},
+    "conjunto feminino": {"require_groups": [["conjunto"], ["feminino", "feminina", "mulher", "mulheres"]], "block_phrases": ["infantil", "menina", "bebe", "bebê", "pet", "cachorro", "boneca"]},
+    "saia midi": {"require_groups": [["saia"], ["midi"]], "block_phrases": ["infantil", "menina", "bebe", "bebê", "pet", "cachorro", "boneca", "fantasia"]},
+    "blusa feminina": {"require_groups": [["blusa"], ["feminina", "feminino", "mulher", "mulheres"]], "block_phrases": ["infantil", "menina", "bebe", "bebê", "pet", "cachorro", "boneca"]},
+
+    "camiseta masculina": {"require_groups": [["camiseta"], ["masculino", "masculina", "homem", "homens"]], "block_phrases": ["infantil", "menino", "bebe", "bebê", "pet", "cachorro", "boneco"]},
+    "camisa polo masculina": {"require_groups": [["polo"], ["masculino", "masculina", "homem", "homens"]], "block_phrases": ["infantil", "menino", "bebe", "bebê", "pet", "cachorro", "boneco"]},
+    "bermuda masculina": {"require_groups": [["bermuda"], ["masculino", "masculina", "homem", "homens"]], "block_phrases": ["infantil", "menino", "bebe", "bebê", "pet", "cachorro", "boneco"]},
+    "calca masculina": {"require_groups": [["calca", "calça"], ["masculino", "masculina", "homem", "homens"]], "block_phrases": ["infantil", "menino", "bebe", "bebê", "pet", "cachorro", "boneco"]},
+
+    "tenis feminino": {"require_groups": [["tenis", "tênis"], ["feminino", "feminina", "mulher", "mulheres"]], "block_phrases": ["infantil", "menina", "bebe", "bebê", "cadarco", "cadarço", "palmilha", "chaveiro", "miniatura", "pet"]},
+    "sandalia feminina": {"require_groups": [["sandalia", "sandália"], ["feminina", "feminino", "mulher", "mulheres"]], "block_phrases": ["infantil", "menina", "bebe", "bebê", "tira de reposicao", "tira reposicao", "chaveiro", "miniatura", "pet"]},
+    "bolsa feminina": {"require_groups": [["bolsa"], ["feminina", "feminino", "mulher", "mulheres"]], "block_phrases": ["bolsa termica", "bolsa térmica", "necessaire", "porta maquiagem", "estojo", "ferramenta", "primeiros socorros", "remedio", "remédio", "pet", "cachorro"]},
+    "mochila feminina": {"require_groups": [["mochila"], ["feminina", "feminino", "mulher", "mulheres"]], "block_phrases": ["infantil", "menina", "bebe", "bebê", "pet", "cachorro", "mochila de hidratacao", "mochila de hidratação"]},
+
+    "carteira feminina": {"require_groups": [["carteira"], ["feminina", "feminino", "mulher", "mulheres"]], "block_phrases": ["kit bolsa", "kit 2 bolsa", "kit com bolsa", "bolsa + carteira", "carteira de trabalho", "carteira profissional", "documento", "chaveiro", "miniatura", "pet"]},
+    "cinto feminino": {"require_groups": [["cinto"], ["feminino", "feminina", "mulher", "mulheres"]], "block_phrases": ["short", "shorts", "calca", "calça", "saia", "vestido", "macacao", "macacão", "conjunto", "cinto de seguranca", "cinto segurança", "automotivo", "ferramenta", "academia", "lombar", "pet", "cachorro"]},
+    "oculos de sol feminino": {"require_groups": [["oculos de sol", "óculos de sol"], ["feminino", "feminina", "mulher", "mulheres"]], "block_phrases": ["estojo para oculos", "estojo para óculos", "capa para oculos", "capa para óculos", "cordao para oculos", "cordão para óculos", "corrente para oculos", "corrente para óculos", "chaveiro", "miniatura", "infantil", "menina", "bebe", "bebê", "pet"]},
+    "relogio feminino": {"require_groups": [["relogio", "relógio", "smartwatch"], ["feminino", "feminina", "mulher", "mulheres"]], "block_phrases": ["pulseira avulsa", "pulseira para relogio", "pulseira para relógio", "capa para relogio", "capa para relógio", "pelicula", "película", "carregador", "infantil", "menina", "bebe", "bebê", "chaveiro", "miniatura", "pet"]},
+
+    "escova secadora": {"require_groups": [["escova"], ["secadora", "secador", "ar quente", "hot air"]], "block_phrases": ["refil", "capa para escova", "suporte para escova", "peca para escova", "peça para escova"]},
+    "secador de cabelo": {"require_groups": [["secador"], ["cabelo", "cabelos"]], "block_phrases": ["difusor para secador", "bico para secador", "suporte para secador", "resistencia para secador", "resistência para secador", "cabo para secador", "peca para secador", "peça para secador"]},
+    "barbeador eletrico": {"require_groups": [["barbeador", "maquina de barbear", "máquina de barbear"], ["eletrico", "elétrico", "recarregavel", "recarregável", "usb"]], "block_phrases": ["lamina de reposicao", "lâmina de reposição", "cabeca de reposicao", "cabeça de reposição", "capa para barbeador", "suporte para barbeador", "pet"]},
+    "depilador eletrico": {"require_groups": [["depilador"], ["eletrico", "elétrico", "recarregavel", "recarregável", "usb"]], "block_phrases": ["cera", "linha depilatoria", "linha depilatória", "pinca", "pinça", "creme depilatorio", "creme depilatório", "refil", "lamina de reposicao", "lâmina de reposição"]}
+  }
+}
