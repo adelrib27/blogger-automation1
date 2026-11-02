@@ -99,6 +99,8 @@ jobs:
         run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_auto_post.py
       - name: Sincronizar mini-cards do carrossel no post Loja
         run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_hero_sync_post.py
+      - name: Aplicar correção final de layout e link LOJA
+        run: PYTHONPATH=src:vitrine_pratica_store/src python -u vitrine_pratica_store/src/store_layout_patch.py
       - name: Verificar renderização pública + Policy Guard central
         run: |
           set -euo pipefail
@@ -112,11 +114,11 @@ jobs:
             fi
             store_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('data-item-id='))")
             hero_count=$(python -c "print(open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read().count('data-hero-item-id='))")
-            if grep -q "bls-store-grid" /tmp/vitrine-pratica-loja.html && grep -q "blh-grid" /tmp/vitrine-pratica-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/vitrine-pratica-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
+            if grep -q "bls-store-grid" /tmp/vitrine-pratica-loja.html && grep -q "blh-grid" /tmp/vitrine-pratica-loja.html && grep -q "blogger-liq-layout-wide-css" /tmp/vitrine-pratica-loja.html && grep -q "https://vitrine-pratica.blogspot.com/p/loja.html" /tmp/vitrine-pratica-loja.html && ! grep -q "liquidificadores-em-foco.blogspot.com/p/loja.html" /tmp/vitrine-pratica-loja.html && [ "$store_count" -eq 20 ] && [ "$hero_count" -eq 12 ]; then
               ok=1
               break
             fi
-            echo "Tentativa ${attempt}: vitrine=${store_count}/20 hero=${hero_count}/12; aguardando propagação."
+            echo "Tentativa ${attempt}: vitrine=${store_count}/20 hero=${hero_count}/12; aguardando propagação/identidade."
             sleep 5
           done
           test "$ok" -eq 1
@@ -125,9 +127,14 @@ jobs:
 
           raw = open('/tmp/vitrine-pratica-loja.html', encoding='utf-8', errors='ignore').read()
           require_store_html_allowed(raw, expected_products=20, expected_hero=12)
-          print('BLOGGER_POLICY_GUARD_PUBLIC_PASS')
+          if 'https://vitrine-pratica.blogspot.com/p/loja.html' not in raw:
+              raise SystemExit('Vitrine identity: URL /p/loja.html correta ausente')
+          if 'liquidificadores-em-foco.blogspot.com/p/loja.html' in raw:
+              raise SystemExit('Vitrine identity: domínio legado de Liquidificadores ainda presente')
+          print('BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero')
+          print('VITRINE_IDENTITY_PUBLIC_PASS: domínio e link LOJA corretos')
           PY
-          echo "Renderização pública confirmada: layout amplo + 20 cards da vitrine + 12 mini-cards no carrossel + Policy Guard central."
+          echo "Renderização pública confirmada: layout amplo + 20 cards da vitrine + 12 mini-cards no carrossel + Policy Guard central + identidade Vitrine correta."
       - name: Persistir estado da rotação somente após validação pública
         run: |
           set -euo pipefail
