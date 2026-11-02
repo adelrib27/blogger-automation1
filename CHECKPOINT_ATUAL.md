@@ -1,8 +1,8 @@
 # CHECKPOINT ATUAL — BLOGGER AUTOMATION
 
-**Estado canônico:** 2026-11-02 — após rename canônico para Portal Radar Tech  
+**Estado canônico:** 2026-11-02 — rede Blogger legada concluída 18/18  
 **Projeto:** Blogger Automation sem ChatGPT Work  
-**Progresso:** **17/18 lojas Blogger modernas concluídas**
+**Progresso:** **18/18 lojas Blogger modernas concluídas**
 
 ## LEIA PRIMEIRO
 
@@ -17,7 +17,7 @@ Antes de qualquer nova operação Blogger neste projeto, leia nesta ordem:
 7. `CHECKPOINT_BLOGGER_AUTOMATION_MASTER_2026-10-30.md`
 8. `infrastructure/README.md`
 
-Este arquivo prevalece para o estado operacional. Checkpoints anteriores são histórico/base de recuperação.
+Este arquivo prevalece para o estado operacional. Checkpoints anteriores são histórico/base de recuperação e não substituem validação ao vivo.
 
 ---
 
@@ -26,14 +26,17 @@ Este arquivo prevalece para o estado operacional. Checkpoints anteriores são hi
 - Rede: **18 blogs Blogger**.
 - **18/18** possuem Page LIVE `/p/loja.html`.
 - **18/18** possuem Store Post LIVE `Loja`.
-- **17/18** possuem automação moderna protegida pelo Blogger Policy Guard.
-- **1/18** permanece com scaffold e ainda precisa de automação Blogger 20x12.
+- **18/18** possuem automação moderna protegida pelo Blogger Policy Guard.
+- `modern_blogger_auto_20x12_needs_policy_guard_upgrade: 0`.
+- `store_scaffold_needs_auto_rotation: 0`.
+- `duplicate_writer_risks: 0`.
+- Fila legada restante: **vazia**.
 - Não recriar Page/Post Loja; preservar sempre os IDs existentes.
 - TEMA MODELO V20 permanece como base canônica.
 - Blogger Local Runner v0.8 e Blogger_Bridge_V2 continuam válidos.
-- Rollout global permanece desabilitado. Trabalhar **um blog por vez**.
+- Rollout global permanece desabilitado; qualquer evolução futura continua blog a blog e fail-closed.
 
-## Lojas modernas concluídas — 17/18
+## Lojas modernas concluídas — 18/18
 
 1. Eletroportáteis na Cozinha
 2. Cabelos em Foco
@@ -51,33 +54,27 @@ Este arquivo prevalece para o estado operacional. Checkpoints anteriores são hi
 14. Guia de Achados & Ofertas
 15. Moda e Ofertas
 16. Achadinhos de Beleza
-17. **Portal Radar Tech**
+17. Portal Radar Tech
+18. **Cozinha Sem Complicação**
 
-Inventário atual:
-
-- `modern_blogger_auto_policy_guard: 17`
-- `modern_blogger_auto_20x12_needs_policy_guard_upgrade: 0`
-- `store_scaffold_needs_auto_rotation: 1`
-- `duplicate_writer_risks: 0`
-
-Fonte atual: `blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json`.
+Fonte canônica do inventário: `blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json`.
 
 ---
 
-# 2. ARQUITETURA CANÔNICA
+# 2. ARQUITETURA CANÔNICA DA REDE LEGADA
 
 ```text
 Shopee API
-→ Policy Guard
+→ Blogger Policy Guard
 → filtro semântico específico do blog
 → deduplicação / rotação
-→ SAFE
+→ SAFE read-only
 → Policy Guard pré-LIVE
 → dry-runs de identidade / Store / hero
 → LIVE no Store Post existente
 → hero 12
 → identidade/layout
-→ validação pública HTTP 200
+→ validação pública HTTP
 → contrato público 20 produtos + 12 hero
 → Policy Guard no HTML público
 → persistência de estado somente após PASS
@@ -88,18 +85,21 @@ Contrato obrigatório:
 
 - 20 produtos;
 - 12 mini-cards no hero;
-- Page Loja existente preservada;
-- Store Post existente preservado;
+- Page Loja existente preservada como superfície de navegação;
+- Store Post existente preservado como superfície dinâmica;
 - filtros semânticos específicos por blog;
 - links afiliados com `rel="nofollow sponsored noopener"`;
 - disclosure de afiliado;
 - fail-closed;
 - nenhum item semanticamente inválido usado apenas para completar quantidade;
-- HTTP público 200 obrigatório; 429 deve receber retry;
-- serialização HTML pública pode transformar caracteres em entidades; gates textuais devem normalizar entidades sem relaxar os demais requisitos;
-- persistência somente após PASS público;
+- HTTP público 200 obrigatório; 429 deve receber retry e falhar se não chegar a 200;
+- serialização HTML pode transformar caracteres em entidades; normalizar apenas comparação textual sem relaxar os demais gates;
+- persistência de seleção/rotação somente depois do PASS público;
 - config, seleção e histórico de rotação independentes por blog;
-- writer automático único por blog.
+- writer automático único por blog;
+- writer final em schedule não deve ter gatilho `push`.
+
+A arquitetura de novos blogs V20 pode usar contrato mais novo com Page canônica e Post de staging; **isso não migra automaticamente os 18 blogs legados já validados**.
 
 ---
 
@@ -114,9 +114,9 @@ Arquivos centrais:
 - `src/blogger_policy_repo_audit.py`
 - `.github/workflows/blogger_policy_repo_audit.yml`
 
-O auditor cobre **17 SAFE/LIVE modernos**, writers legados, proteção de cookies e schedules finais.
+O auditor central cobre os **18 SAFE/LIVE modernos**, writers legados, proteção de cookies e schedules finais.
 
-Schedules explicitamente protegidos neste estágio:
+Schedules finais mais recentes explicitamente protegidos:
 
 - Casa em Ordem — 08:05
 - Escolha Certa Online — 08:20
@@ -124,272 +124,186 @@ Schedules explicitamente protegidos neste estágio:
 - Guia de Achados & Ofertas — 10:05
 - Moda e Ofertas — 10:20
 - Achadinhos de Beleza — 10:35
-- **Portal Radar Tech Blogger — 10:50**
+- Portal Radar Tech Blogger — 10:50
+- **Cozinha Sem Complicação — 11:05**
 
-Prova do fechamento mais recente:
+Auditor central final da rede:
 
-- commit do writer com schedule Radar: `9359e8b816cd0061bbc09e88e235d3a0ee1b14ee`
-- commit do auditor final: `dc320f7b3cc34f11b32e3ff7116209ac7896e53f`
-- auditor final run `41533505042` — **SUCCESS**
+- run `41544208159` — **SUCCESS**
+- disparado como fechamento **18/18**
 - `BLOGGER_POLICY_REPO_AUDIT_PASS`
-- `SAFE/LIVE 17/17 protegidos`
-
-O writer Blogger do Radar não possui gatilho `push`; fica em `workflow_dispatch` + schedule diário `50 10 * * *`, timezone `America/Recife`.
-
-Observação de segurança: o auditor run `41533265581` falhou logo após a primeira ativação do schedule porque ainda aplicava deliberadamente a regra anterior de LIVE controlado sem schedule. O auditor foi então promovido para a política final 10:50 e o run `41533505042` passou. Não houve writer duplicado nem relaxamento de gates.
 
 ---
 
-# 4. MODA E OFERTAS — 15ª LOJA MODERNA — CONCLUÍDA
-
-## Alvo preservado
+# 4. MODA E OFERTAS — 15ª LOJA — FECHADA
 
 - Blog ID `2858597309582499028`
-- Blog `https://moda-ofertas.blogspot.com/`
-- Page LOJA ID `1341310014099438949`
-- Page `https://moda-ofertas.blogspot.com/p/loja.html`
-- Store Post ID `4871366557503134389`
-- Store Post `https://moda-ofertas.blogspot.com/2026/10/loja.html`
+- SAFE `41475489511` — SUCCESS, regressão 43/43, Policy Guard 20/20
+- LIVE `41476423839` — SUCCESS, Store 20 + hero 12, validação pública PASS
+- auditor `41477761596` — SUCCESS
+- schedule final **10:20 America/Recife**
+- IDs originais preservados
 
-Evidência final:
-
-- SAFE `41475489511` — **SUCCESS**, regressão 43/43, Policy Guard 20/20;
-- LIVE `41476423839` — **SUCCESS**, Store 20/20 + hero 12/12 + HTTP público 200 + Policy Guard público;
-- rotação persistida apenas após PASS público;
-- auditor `41477761596` — **SUCCESS**;
-- schedule final **10:20 America/Recife**;
-- leitura independente Blogger_Bridge_V2 confirmou identidade, CTAs e falsos positivos conhecidos ausentes.
-
-**Moda e Ofertas não deve ser reaberto sem sinal concreto de regressão.**
+Não reabrir sem evidência concreta de regressão.
 
 ---
 
-# 5. ACHADINHOS DE BELEZA — 16ª LOJA MODERNA — CONCLUÍDA
-
-## Alvo preservado
+# 5. ACHADINHOS DE BELEZA — 16ª LOJA — FECHADA
 
 - Blog ID `2562496977098748229`
-- Blog `https://canal-attitude.blogspot.com/`
 - Page LOJA ID `455853998448723529`
-- Page `https://canal-attitude.blogspot.com/p/loja.html`
 - Store Post ID `7650631557624373238`
-- Store Post `https://canal-attitude.blogspot.com/2026/10/loja.html`
+- SAFE `41526176212` — SUCCESS, regressão 40/40, Policy Guard 20/20
+- LIVE `41527164226` — SUCCESS, Store 20 + hero 12
+- validação pública fez retry 429→200 sem relaxar gates
+- Blogger_Bridge_V2 confirmou identidade, categorias e Post ID original
+- schedule final **10:35 America/Recife**
+- auditor `41528127151` — SUCCESS
 
-Nenhuma Page ou Store Post foi recriada.
-
-Evidência final:
-
-- SAFE `41526176212` — **SUCCESS**, regressão 40/40, Policy Guard 20/20;
-- LIVE `41527164226` — **SUCCESS**, Store 20/20 + hero 12/12;
-- validação pública fez retry 429→200 sem relaxar gates;
-- Policy Guard público PASS;
-- rotação persistida somente depois do PASS público;
-- commit de rotação `4f9fa4c77f572dc1b6c729586b0543f96a1d5e33`;
-- Blogger_Bridge_V2 confirmou Post ID original LIVE, identidade e categorias;
-- schedule final **10:35 America/Recife**;
-- auditor final `41528127151` — **SUCCESS**, 16/16 protegidos.
-
-**Achadinhos de Beleza não deve ser reaberto sem sinal concreto de regressão.**
+Não reabrir sem evidência concreta de regressão.
 
 ---
 
-# 6. PORTAL RADAR TECH BLOGGER — 17ª LOJA MODERNA — CONCLUÍDA
+# 6. PORTAL RADAR TECH BLOGGER — 17ª LOJA — FECHADA
+
+## Separação obrigatória
+
+- **Portal Radar Tech** = Blogger deste projeto.
+- **Radar Tech BR** = sistema WordPress separado e fora deste projeto Blogger.
+- Nunca misturar writers, rotação, histórico ou identidade entre os dois.
+
+Alvo Blogger preservado:
+
+- Blog ID `7487888217273188851`
+- URL `https://portalradartechbr.blogspot.com/`
+- Page LOJA ID `6887385207246667244`
+- Store Post ID `906894044295273477`
+
+Evidência principal:
+
+- SAFE final `41531081733` — SUCCESS, regressão 12/12, seleção 20/20
+- LIVE final pré-rename `41532748296` — SUCCESS, público 20+12
+- rename canônico de `Radar Tech BR` para `Portal Radar Tech` preservou Blog/Page/Post IDs e URL
+- SAFE pós-rename `41536850550` — SUCCESS
+- sincronização de identidade `41537695402` — SUCCESS, 20+12 preservados
+- Blogger_Bridge_V2 confirmou título `Portal Radar Tech` e descrição nova no mesmo Blog ID
+- schedule final **10:50 America/Recife**
+- namespaces técnicos `radar_tech_blogger_*` permanecem por compatibilidade, não como marca pública
+
+Não reabrir sem evidência concreta de regressão.
+
+---
+
+# 7. COZINHA SEM COMPLICAÇÃO — 18ª E ÚLTIMA LOJA — CONCLUÍDA
 
 ## Alvo preservado
 
-- Blog ID `7487888217273188851`
-- Blog `https://portalradartechbr.blogspot.com/`
-- Page LOJA ID `6887385207246667244`
-- Page `https://portalradartechbr.blogspot.com/p/loja.html`
-- Store Post ID `906894044295273477`
-- Store Post `https://portalradartechbr.blogspot.com/2026/10/loja.html`
+- Blog: `https://cozinha-sem-complicacao.blogspot.com/`
+- Blog ID `3552757910439359679`
+- Page LOJA ID `6913756651435112886`
+- Page `https://cozinha-sem-complicacao.blogspot.com/p/loja.html`
+- Store Post ID `7888042807715084117`
+- Store Post `https://cozinha-sem-complicacao.blogspot.com/2026/10/loja.html`
 
 Nenhuma Page ou Store Post foi recriada.
 
-## Separação obrigatória Portal Radar Tech (Blogger) × Radar Tech BR (WordPress)
+## Arquivos dedicados
 
-O workflow existente `.github/workflows/radar_store_autonomous.yml` pertence ao sistema WordPress **Radar Tech BR** (`radartechbr.com.br`), que é separado e **não faz parte deste projeto Blogger**. O Blogger deste projeto chama-se **Portal Radar Tech**.
+- SAFE `.github/workflows/cozinha_sem_complicacao_store_safe.yml`
+- LIVE `.github/workflows/cozinha_sem_complicacao_store_autonomous.yml`
+- motor `blogger_stores/src/cozinha_sem_complicacao_store.py`
+- config `config/shopee_cozinha_sem_complicacao.json`
+- regras `config/shopee_cozinha_sem_complicacao_intent_rules.json`
+- seleção `blogger_stores/data/cozinha_sem_complicacao_selection.json`
+- rotação `blogger_stores/data/cozinha_sem_complicacao_rotation.json`
 
-O Blogger recebeu arquitetura própria e isolada:
+## SAFE final
 
-- SAFE `.github/workflows/radar_tech_blogger_store_safe.yml`
-- LIVE `.github/workflows/radar_tech_blogger_store_autonomous.yml`
-- motor `blogger_stores/src/radar_tech_blogger_store.py`
-- config `config/shopee_radar_tech_blogger.json`
-- regras `config/shopee_radar_tech_blogger_intent_rules.json`
-- seleção `blogger_stores/data/radar_tech_blogger_selection.json`
-- rotação `blogger_stores/data/radar_tech_blogger_rotation.json`
-
-Não compartilhar estado, rotação ou writer com a automação WordPress.
-
-## Categorias finais
-
-1. Casa & Organização
-2. Cozinha & Utilidades
-3. Tecnologia & Acessórios
-4. Beleza & Cuidados
-5. Dia a Dia & Praticidade
-
-Cada categoria possui quatro intenções; total de 20 produtos.
-
-## SAFE e endurecimento semântico
-
-A primeira seleção SAFE passou estruturalmente, porém a revisão humana detectou três candidatos inadequados:
-
-- processador/picador/moedor 3L contendo “mixer” no título;
-- suporte de vassoura/rodo/mop passando como organizador de cozinha;
-- tomada de parede USB/USB-C passando como carregador USB-C convencional.
-
-Foram adicionados bloqueios permanentes e regressões reais. A rodada seguinte falhou corretamente no novo teste por uma variante de **capa térmica para chapinha**, comprovando o fail-closed. O gate foi ampliado para a família semântica e repetido.
-
-SAFE final:
-
-- run `41531081733` — **SUCCESS**
-- regressão semântica **12/12**
+- run `41541945212` — **SUCCESS**
+- regressão semântica **44/44**
 - seleção **20/20**
 - cinco categorias × quatro intenções
-- Policy Guard **20/20**
-- Blogger permaneceu read-only durante SAFE
-- seleção final revisada título a título.
+- execução SAFE sem writer Blogger
 
-## LIVE e gate público
+Categorias/intents da seleção final:
 
-Primeiro LIVE controlado:
+1. Fritura sem Óleo — fritadeira air fryer, air fryer oven, forma silicone air fryer, acessórios air fryer
+2. Preparo Rápido — liquidificador, mixer de mão, processador de alimentos, mini processador
+3. Café e Bebidas — cafeteira elétrica, chaleira elétrica, espumador de leite, moedor de café
+4. Panelas e Cocção — panela de pressão, panela elétrica arroz, frigideira antiaderente, panela antiaderente
+5. Organização — organizador de temperos, porta temperos, escorredor de louça, organizador de cozinha
 
-- run `41531852901` — terminou **FAIL** somente no gate público textual;
-- SAFE fresco, Policy Guard, dry-runs, Store 20/20, hero 12/12 e identidade autenticada já haviam passado;
-- o HTML público do Blogger serializou o travessão `—` como `&#8212;`;
-- a verificação textual exata rejeitou a página;
-- **a rotação não foi persistida**, como exigido pelo fail-closed.
+## LIVE e correção fail-closed
 
-A correção normalizou entidades HTML antes dos checks textuais, preservando integralmente:
-
-- HTTP 200;
-- contagem 20 Store + 12 hero;
-- Policy Guard público;
-- cinco categorias e âncoras;
-- URL e identidade pré-rename do Blogger;
-- bloqueio de referências de outros blogs;
-- bloqueio dos falsos positivos conhecidos.
+O primeiro LIVE controlado (`41542798956`) falhou antes do fechamento final. A correção específica do hero foi aplicada e validada no run `41543115000` — SUCCESS. O LIVE foi então repetido integralmente.
 
 LIVE final:
 
-- run `41532748296` — **SUCCESS**
-- job `125576842674`
-- regressão 12/12
-- SAFE fresco 20/20
-- Policy Guard pré-LIVE 20/20
+- run `41543311729` — **SUCCESS**
+- job `125612588211`
+- compile + Policy Guard PASS
+- target/secrets presence checks PASS
+- SAFE fresco 20/20 PASS
+- Policy Guard pré-LIVE + regressões PASS
 - identity/store/hero dry-runs PASS
-- Store Post original **20/20**
-- hero **12/12**
-- identidade autenticada PASS
-- primeira tentativa pública: **HTTP 200**
-- contagem pública: **20 Store + 12 hero**
-- `BLOGGER_POLICY_GUARD_PUBLIC_PASS`
-- `RADAR_TECH_BLOGGER_IDENTITY_PUBLIC_PASS`
+- Store Post original publicado com **20/20**
+- hero publicado com **12/12**
+- identidade LIVE PASS
+- validação pública + Policy Guard + identidade PASS
 - rotação persistida somente depois do PASS público
-- commit de rotação `d30af368cb7c4223696903f72002e4599c202aac`.
 
-Leitura independente direta via Blogger_Bridge_V2 confirmou no Post ID original:
+Leitura independente posterior via Blogger_Bridge_V2 confirmou no mesmo Store Post ID:
 
-- status LIVE;
-- identidade pré-rename `Radar Tech BR — tecnologia e achados práticos para a rotina`, posteriormente substituída por Portal Radar Tech;
-- cinco categorias corretas;
-- 20 produtos e hero 12 sincronizados;
-- seleção corrigida, incluindo mixer real, organizador de cozinha coerente e carregador USB-C PD;
-- falsos positivos conhecidos ausentes.
-
-## Rename canônico — Radar Tech BR → Portal Radar Tech
-
-Em 2026-11-02, antes de prosseguir para o último blog pendente, o Blogger foi renomeado para eliminar a ambiguidade com o sistema WordPress externo ao projeto.
-
-Estado validado após o rename:
-
-- nome real do Blogger: **Portal Radar Tech**;
-- Blog ID preservado: `7487888217273188851`;
-- URL preservada: `https://portalradartechbr.blogspot.com/`;
-- Page LOJA ID preservada: `6887385207246667244`;
-- Store Post ID preservado: `906894044295273477`;
-- descrição e descrição de pesquisa: `Portal Radar Tech — tecnologia, produtos e achados práticos para o dia a dia.`;
-- nenhuma alteração de tema, páginas, posts ou endereço durante o rename do título;
-- Blogger_Bridge_V2 confirmou título e descrição novos no mesmo Blog ID;
-- SAFE pós-rename `41536850550` — **SUCCESS**;
-- sincronização exclusiva de identidade do Store Post `41537695402` — **SUCCESS**;
-- validação pública dessa sincronização preservou **20 Store + 12 hero** e confirmou ausência dos textos públicos antigos;
-- `.github/workflows/portal_radar_tech_identity_sync.yml` ficou **manual-only** após a validação;
-- namespaces técnicos `radar_tech_blogger_*` permanecem por compatibilidade e não representam a marca pública;
-- **Radar Tech BR** passa a designar exclusivamente o sistema WordPress separado, que não integra este projeto Blogger.
+- status LIVE
+- **20 cards de produto**
+- **12 hero cards**
+- cinco categorias coerentes com o nicho cozinha
+- disclosure de afiliado presente
+- links de produto com `rel="nofollow sponsored noopener"`
+- nenhum falso positivo evidente na revisão independente da seleção publicada
 
 ## Schedule final
 
-- horário: **10:50 America/Recife**
-- cron: `50 10 * * *`
-- `workflow_dispatch` mantido para operação manual controlada;
-- gatilho `push` removido;
-- auditor central protege horário, identidade, normalização de entidades HTML e falsos positivos;
-- auditor final `41533505042` — **SUCCESS**, 17/17 protegidos.
+- cron `5 11 * * *`
+- timezone `America/Recife`
+- horário **11:05**
+- `workflow_dispatch` mantido
+- gatilho `push` removido
+- writer final protegido pelo auditor central
+- auditor final da rede `41544208159` — **SUCCESS**, fechamento 18/18
 
-**Portal Radar Tech não deve ser reaberto sem sinal concreto de regressão.**
-
----
-
-# 7. FILA RESTANTE — EXATAMENTE 1 BLOG
-
-1. **Cozinha Sem Complicação**
-   - Blog ID `3552757910439359679`
-   - Page LOJA ID `6913756651435112886`
-   - Store Post ID `7888042807715084117`
-   - estado: `store_scaffold_needs_auto_rotation`
+**Cozinha Sem Complicação não deve ser reaberta sem sinal concreto de regressão.**
 
 ---
 
-# 8. PRÓXIMO BLOCO PERMITIDO
+# 8. REGRAS DE SEGURANÇA QUE NÃO PODEM REGREDIR
 
-O último blog pendente é **Cozinha Sem Complicação**, mas **não iniciar automaticamente neste mesmo bloco**.
-
-Somente quando o usuário disser novamente **“continue”**, retomar por Cozinha Sem Complicação e repetir a disciplina canônica:
-
-1. confirmar IDs e estado real do scaffold existente;
-2. construir perfil semântico próprio;
-3. instalar SAFE read-only;
-4. revisar semanticamente a seleção real;
-5. corrigir falsos positivos até SAFE confiável;
-6. instalar LIVE inicialmente controlado/manual;
-7. proteger no auditor central antes da escrita;
-8. executar LIVE somente após SAFE + Policy Guard + dry-runs;
-9. exigir HTTP público 200, 20 Store + 12 hero e identidade correta;
-10. ler o Blogger independentemente após o LIVE;
-11. somente então habilitar o próximo horário escalonado;
-12. atualizar inventário e checkpoint para 18/18.
-
----
-
-# 9. REGRAS DE SEGURANÇA QUE NÃO PODEM REGREDIR
-
-- nunca recriar Page/Post Loja quando os IDs existentes estão válidos;
-- nunca aceitar Action verde como única prova de qualidade sem inspeção semântica quando houver dúvida;
+- verificar estado real antes de qualquer alteração;
+- nunca recriar Page/Post Loja quando IDs existentes estão válidos;
+- nunca aceitar Action verde como única prova sem inspeção semântica quando necessária;
 - nunca persistir rotação antes do PASS público;
-- nunca ignorar HTTP 429; usar retry até 200 ou falhar;
-- normalizar entidades HTML apenas para comparação textual, nunca para relaxar Policy Guard ou contagens;
-- nunca reintroduzir writer duplicado automático;
-- nunca reintroduzir `push` em writer já promovido para schedule final;
+- nunca ignorar HTTP 429; retry até 200 ou fail-closed;
+- nunca relaxar Policy Guard ou contagens para contornar serialização HTML;
+- nunca reintroduzir writer automático duplicado;
+- nunca reintroduzir `push` em writer promovido para schedule final;
 - nunca ocultar/desativar aviso nativo de cookies;
-- nunca compartilhar arquivo de estado/rotação entre blogs;
-- **Radar Tech BR** identifica o WordPress separado e fora deste projeto; **Portal Radar Tech** identifica o Blogger deste projeto; nunca misturar writers, estado ou identidade entre eles;
-- nunca expandir globalmente sem validação blog a blog;
-- sempre manter `src/blogger_policy_repo_audit.py` sincronizado com novos SAFE/LIVE/schedules.
+- nunca compartilhar estado/rotação entre blogs;
+- manter `src/blogger_policy_repo_audit.py` sincronizado com SAFE/LIVE/schedules;
+- Portal Radar Tech Blogger e Radar Tech BR WordPress permanecem sistemas separados;
+- qualquer novo blog deve reutilizar engenharia validada, não copiar cegamente identidade ou dados específicos de outro blog.
 
 ---
 
-# 10. RESUMO PARA RETOMADA RÁPIDA
+# 9. FECHAMENTO DA ETAPA LEGADA E PRÓXIMA FASE
 
-**Estado:** 17/18 concluídos.  
-**Último concluído:** Portal Radar Tech.  
-**SAFE final Portal Radar Tech:** `41531081733` — PASS, 12/12, Policy Guard 20/20; SAFE pós-rename `41536850550` — PASS.  
-**Primeiro LIVE controlado:** `41531852901` — fail-closed por entidade HTML; rotação não persistida.  
-**LIVE final Portal Radar Tech (antes do rename):** `41532748296` — PASS, HTTP 200, 20+12; sincronização de identidade pós-rename `41537695402` — PASS, 20+12 preservados.  
-**Commit de rotação:** `d30af368cb7c4223696903f72002e4599c202aac`.  
-**Auditor pós-schedule:** `41533505042` — PASS, 17/17.  
-**Schedule Portal Radar Tech Blogger:** 10:50 America/Recife.  
-**Resta:** somente Cozinha Sem Complicação.  
-**Próximo somente após novo comando do usuário:** Cozinha Sem Complicação.
+**Rede Blogger legada: 18/18 concluída.**  
+**Scaffolds pendentes: 0.**  
+**Upgrade de Policy Guard pendente: 0.**  
+**Riscos de writer duplicado conhecidos: 0.**  
+**Último blog concluído:** Cozinha Sem Complicação.  
+**SAFE final:** `41541945212` — PASS, 44/44.  
+**LIVE final:** `41543311729` — PASS, 20+12.  
+**Auditor central final:** `41544208159` — PASS, 18/18.  
+**Schedule final Cozinha:** 11:05 America/Recife.
+
+A próxima fase do projeto é **criação/replicação de novos blogs V20**, mas nenhum novo blog deve ser criado automaticamente a partir deste checkpoint. A nova fase começa somente por comando explícito do usuário e deve iniciar por verificação do estado real, definição de nicho/identidade e SAFE antes de produção.
