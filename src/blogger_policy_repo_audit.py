@@ -228,7 +228,7 @@ def audit_radar_schedule() -> None:
         'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         "PUBLIC_HTML_ENTITY_NORMALIZATION_2026_11_02",
-        "Radar Tech BR — tecnologia e achados práticos para a rotina",
+        "Portal Radar Tech — tecnologia e achados práticos para a rotina",
         '<h3>Casa &amp; Organização</h3>',
         '<h3>Cozinha &amp; Utilidades</h3>',
         '<h3>Tecnologia &amp; Acessórios</h3>',
@@ -241,9 +241,9 @@ def audit_radar_schedule() -> None:
     ]
     missing = [x for x in required if x not in text]
     if missing:
-        fail(f"Radar Tech BR Blogger sem schedule/gates finais obrigatórios: {missing}")
+        fail(f"Portal Radar Tech Blogger sem schedule/gates finais obrigatórios: {missing}")
     if re.search(r"(?m)^\s*push\s*:", text):
-        fail("Radar Tech BR Blogger voltou a ter gatilho push após promoção final")
+        fail("Portal Radar Tech Blogger voltou a ter gatilho push após promoção final")
 
 
 def audit_legacy_writers_manual_only() -> None:
@@ -316,7 +316,7 @@ def main() -> None:
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 17/17 protegidos; schedules validados até Radar Tech BR Blogger 10:50 America/Recife; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 17/17 protegidos; schedules validados até Portal Radar Tech Blogger 10:50 America/Recife; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
