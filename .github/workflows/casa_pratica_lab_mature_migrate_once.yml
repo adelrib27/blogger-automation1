@@ -63,9 +63,8 @@ jobs:
           import time
           from selenium import webdriver
           from selenium.webdriver.chrome.options import Options
-          from selenium.webdriver.common.by import By
 
-          url='https://casa-pratica-lab-20261102.blogspot.com/p/loja.html?visual_e2e=1'
+          url='https://casa-pratica-lab-20261102.blogspot.com/p/loja.html?visual_e2e=2'
           opts=Options()
           opts.add_argument('--headless=new')
           opts.add_argument('--no-sandbox')
@@ -74,35 +73,54 @@ jobs:
           driver=webdriver.Chrome(options=opts)
           try:
               driver.get(url)
-              time.sleep(3)
-              page=driver.find_element(By.CSS_SELECTOR,'.bls-page')
-              slider=driver.find_element(By.ID,'blsSlider')
-              prev=driver.find_element(By.CSS_SELECTOR,'.bls-prev')
-              nxt=driver.find_element(By.CSS_SELECTOR,'.bls-next')
-              dots=driver.find_elements(By.CSS_SELECTOR,'#blsDots button')
-              slides=driver.find_elements(By.CSS_SELECTOR,'.bls-slide')
-              visible=[s for s in slides if s.is_displayed()]
-              width=driver.execute_script('return arguments[0].getBoundingClientRect().width',page)
-              viewport=driver.execute_script('return window.innerWidth')
-              titles=driver.find_elements(By.CSS_SELECTOR,'.post-title-container,.post-title,.entry-title')
-              visible_loja_titles=[t for t in titles if t.is_displayed() and 'LOJA' in (t.text or '').upper()]
-              if width < 1200:
-                  raise SystemExit(f'Page estreita: width={width} viewport={viewport}')
-              if len(slides) != 3 or len(visible) != 1:
-                  raise SystemExit(f'Carousel inválido: slides={len(slides)} visible={len(visible)}')
-              if len(dots) != 3 or not prev.is_displayed() or not nxt.is_displayed():
+              time.sleep(4)
+              state=driver.execute_script(r'''
+                const vis = el => {
+                  if (!el) return false;
+                  const s=getComputedStyle(el), r=el.getBoundingClientRect();
+                  return s.display!=='none' && s.visibility!=='hidden' && Number(s.opacity)!==0 && r.width>0 && r.height>0;
+                };
+                const page=document.querySelector('.bls-page');
+                const slides=[...document.querySelectorAll('.bls-slide')];
+                const dots=[...document.querySelectorAll('#blsDots button')];
+                const prev=document.querySelector('.bls-prev');
+                const next=document.querySelector('.bls-next');
+                const titles=[...document.querySelectorAll('.post-title-container,.post-title,.entry-title')];
+                return {
+                  pageExists: !!page,
+                  width: page ? page.getBoundingClientRect().width : 0,
+                  viewport: innerWidth,
+                  slides: slides.length,
+                  visibleSlides: slides.filter(vis).length,
+                  dots: dots.length,
+                  prevVisible: vis(prev),
+                  nextVisible: vis(next),
+                  visibleLojaTitles: titles.filter(x => vis(x) && /LOJA/i.test(x.textContent||'')).length,
+                  active: slides.findIndex(x=>x.classList.contains('is-active'))
+                };
+              ''')
+              if not state['pageExists']:
+                  raise SystemExit('bls-page ausente')
+              if state['width'] < 1200:
+                  raise SystemExit(f"Page estreita: width={state['width']} viewport={state['viewport']}")
+              if state['slides'] != 3 or state['visibleSlides'] != 1:
+                  raise SystemExit(f"Carousel inválido: slides={state['slides']} visible={state['visibleSlides']}")
+              if state['dots'] != 3 or not state['prevVisible'] or not state['nextVisible']:
                   raise SystemExit('Controles do carousel ausentes/invisíveis')
-              if visible_loja_titles:
+              if state['visibleLojaTitles']:
                   raise SystemExit('Título externo LOJA continua visível')
-              active_before=driver.execute_script("return [...document.querySelectorAll('.bls-slide')].findIndex(x=>x.classList.contains('is-active'))")
-              nxt.click(); time.sleep(.5)
-              active_after=driver.execute_script("return [...document.querySelectorAll('.bls-slide')].findIndex(x=>x.classList.contains('is-active'))")
-              if active_after == active_before:
-                  raise SystemExit('Botão próximo não alterou slide ativo')
-              print(f'CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={width:.0f}/{viewport}; slides=3 visible=1; dots=3; next={active_before}->{active_after}; title_hidden=PASS')
+              before=state['active']
+              driver.execute_script("document.querySelector('.bls-next').click()")
+              time.sleep(.7)
+              after=driver.execute_script("return [...document.querySelectorAll('.bls-slide')].findIndex(x=>x.classList.contains('is-active'))")
+              visible_after=driver.execute_script("return [...document.querySelectorAll('.bls-slide')].filter(x=>{const s=getComputedStyle(x),r=x.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0}).length")
+              if after == before or visible_after != 1:
+                  raise SystemExit(f'Carousel não avançou corretamente: before={before} after={after} visible={visible_after}')
+              print(f"CASA_PRATICA_LAB_BROWSER_VISUAL_PASS: width={state['width']:.0f}/{state['viewport']}; slides=3 visible=1; dots=3; next={before}->{after}; title_hidden=PASS")
           finally:
               driver.quit()
           PY
 
 # DELETE_AFTER_PASS
 # FINAL_PAGE_MATURE_MIGRATION_2026_11_02
+# VISUAL_E2E_JS_STATE_NO_STALE_ELEMENTS
