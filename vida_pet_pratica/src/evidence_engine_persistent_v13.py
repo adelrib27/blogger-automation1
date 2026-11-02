@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 import evidence_engine as live
+import firecrawl_telemetry as telemetry
 
 LAB_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = LAB_ROOT / "config" / "evidence_reuse_policy.json"
@@ -128,8 +129,11 @@ def build_evidence_package(item, max_results=8, min_external_authorized_sources=
         raise RuntimeError("EVIDENCE_REUSE_FALLBACK_NOT_FAIL_CLOSED")
     package, reasons = _validated_persisted_package(item, policy)
     if package is not None:
+        telemetry.record("CACHE_HIT")
         _audit(item_id, "PERSISTED_REUSE", checked_at=package.get("verified_at"))
         return package
+    telemetry.record("CACHE_MISS")
+    telemetry.record("FALLBACK_REQUIRED")
     _audit(item_id, "FIRECRAWL_FALLBACK_REQUIRED", reasons=reasons)
     try:
         package = live.build_evidence_package(
@@ -141,7 +145,9 @@ def build_evidence_package(item, max_results=8, min_external_authorized_sources=
             ),
         )
     except Exception as exc:
+        telemetry.record("FALLBACK_FAILURE")
         _audit(item_id, "FALLBACK_FAILED_CLOSED", reasons=reasons + [str(exc)[:400]])
         raise RuntimeError("EVIDENCE_FALLBACK_REQUIRED_BUT_UNAVAILABLE: " + ";".join(reasons)) from exc
+    telemetry.record("FALLBACK_SUCCESS")
     _audit(item_id, "LIVE_FIRECRAWL", reasons=reasons, checked_at=package.get("verified_at"))
     return package
