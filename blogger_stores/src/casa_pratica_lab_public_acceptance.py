@@ -11,6 +11,7 @@ from blogger_policy_guard import require_store_html_allowed
 
 BASE = "https://casa-pratica-lab-20261102.blogspot.com"
 STORE_PAGE = f"{BASE}/p/loja.html"
+STORE_POST_ID = "7691087355641688975"
 STORE_POST_PATH = "/2026/11/loja.html"
 STORE_POST = f"{BASE}{STORE_POST_PATH}"
 ARTICLES = [
@@ -96,8 +97,12 @@ def validate_store_post() -> None:
 
 def validate_home_and_articles() -> None:
     home = fetch_200(f"{BASE}/?m=1", "LAB_HOME")
-    if STORE_POST_PATH in home:
-        raise RuntimeError("Store Post Loja continua visível/referenciado na home.")
+    hero_signature = f"post-wrapper hero post-{STORE_POST_ID}"
+    feed_signature = f"post-wrapper not-hero post-{STORE_POST_ID}"
+    if hero_signature in home:
+        raise RuntimeError("Store Post Loja continua ocupando o FeaturedPost1 da home.")
+    if feed_signature in home:
+        raise RuntimeError("Store Post Loja continua renderizado na grade editorial da home.")
     for slug in ARTICLES:
         path = f"/2026/11/{slug}.html"
         if path not in home:
@@ -105,7 +110,7 @@ def validate_home_and_articles() -> None:
         raw = fetch_200(f"{BASE}{path}", f"LAB_ARTICLE_{slug[:16].upper().replace('-', '_')}")
         if "post-hero" not in raw:
             raise RuntimeError(f"Artigo sem imagem editorial post-hero: {path}")
-    print("CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: Loja fora da home; 3/3 artigos presentes e com imagem.")
+    print("CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: FeaturedPost editorial; Loja fora da grade; 3/3 artigos presentes e com imagem.")
 
 
 def main() -> int:
