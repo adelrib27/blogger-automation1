@@ -1,0 +1,49 @@
+name: Cozinha Sem Complicação — preparar auditor 18/18 controlado
+
+on:
+  push:
+    paths:
+      - "blogger_stores/cozinha_guard_patch_kickoff.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cozinha-sem-complicacao-controlled-patch
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Aplicar patch fail-closed
+        run: python scripts/cozinha_sem_complicacao_controlled_patch.py
+
+      - name: Compilar e executar auditor central
+        run: |
+          set -euo pipefail
+          python -m py_compile src/blogger_policy_repo_audit.py blogger_stores/src/cozinha_sem_complicacao_store.py
+          python src/blogger_policy_repo_audit.py
+
+      - name: Persistir somente os dois arquivos canônicos
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/blogger_policy_repo_audit.py blogger_stores/src/cozinha_sem_complicacao_store.py
+          git diff --cached --check
+          git commit -m "Proteger Cozinha Sem Complicação em LIVE controlado 18 de 18"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+# TEMPORARY_CONTROLLED_PATCH_2026_11_02
