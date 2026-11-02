@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Regras semânticas específicas do Conecta Achados para impedir acessórios, peças e falsos positivos na vitrine Shopee.",
   "rules": {
     "carrinho organizador": {"require_groups": [["carrinho"], ["organizador", "multiuso", "prateleira"]], "block_phrases": ["brinquedo", "miniatura", "carrinho de bebe", "carrinho controle remoto"]},
@@ -12,9 +12,9 @@
     "mixer eletrico": {"require_groups": [["mixer"]], "block_phrases": ["haste para mixer", "copo para mixer", "lamina para mixer", "acessorio para mixer", "peca para mixer"]},
     "organizador cozinha": {"require_groups": [["organizador", "prateleira", "suporte", "porta ", "carrinho", "cesto", "pote", "rack", "dispenser", "dispensador", "escorredor"], ["cozinha", "mantimento", "tempero", "papel toalha", "louca", "cafe", "talher", "geladeira", "pia"]], "block_phrases": ["cesto de roupa", "cesto de roupas", "brinquedos", "organizador de maquiagem"]},
 
-    "fone bluetooth": {"require_groups": [["fone", "headphone", "earbuds"], ["bluetooth", "sem fio", "wireless"]], "block_phrases": ["capa silicone", "capa protetora", "capa para fone", "case para fone", "estojo para fone", "almofada para fone", "cabo para fone"]},
+    "fone bluetooth": {"require_groups": [["fone", "headphone", "earbuds"], ["bluetooth", "sem fio", "wireless"]], "block_phrases": ["capa silicone", "capa protetora", "capa para fone", "case para fone", "estojo para fone", "almofada para fone", "cabo para fone", "lightning", "entrada lightning", "com fio", "conector p2"]},
     "smartwatch": {"require_groups": [["smartwatch", "relogio inteligente"]], "block_phrases": ["pulseira para smartwatch", "pelicula para smartwatch", "carregador para smartwatch", "capa para smartwatch", "bracelete"]},
-    "carregador usb c": {"require_groups": [["carregador", "fonte"], ["usb c", "type c", "pd", "power delivery"]], "block_phrases": ["cabo usb c", "cabo type c", "adaptador de cabo", "conector avulso"]},
+    "carregador usb c": {"require_groups": [["carregador", "fonte"], ["usb c", "type c", "pd", "power delivery"]], "block_phrases": ["cabo", "adaptador de cabo", "conector avulso"]},
     "caixa de som bluetooth": {"require_groups": [["caixa de som", "speaker"], ["bluetooth", "sem fio", "wireless"]], "block_phrases": ["capa para caixa de som", "suporte para caixa de som", "placa para caixa de som", "bateria para caixa de som"]},
 
     "aparador de pelos": {"require_groups": [["aparador de pelos", "aparador pelos", "maquina de barbear", "barbeador eletrico"]], "block_phrases": ["papa bolinhas", "tira pelos de roupas", "removedor de pelos de roupas", "removedor de pelo de roupa", "lamina de reposicao"]},
@@ -24,7 +24,7 @@
 
     "mochila notebook": {"require_groups": [["mochila"], ["notebook", "laptop", "executiva", "trabalho"]], "block_phrases": ["capa para notebook", "bolsa apenas para notebook", "adesivo para mochila"]},
     "garrafa termica": {"require_groups": [["garrafa"], ["termica", "térmica"]], "block_phrases": ["tampa reposicao", "tampa de reposicao", "tampa avulsa", "vedacao para garrafa", "anel de vedacao", "canudo avulso"]},
-    "lanterna recarregavel": {"require_groups": [["lanterna"], ["recarregavel", "recarregável", "usb"]], "block_phrases": ["suporte para lanterna", "bateria para lanterna", "capa para lanterna", "lampada para lanterna"]},
+    "lanterna recarregavel": {"require_groups": [["lanterna"], ["recarregavel", "recarregável", "usb"]], "block_phrases": ["suporte para lanterna", "bateria para lanterna", "capa para lanterna", "lampada para lanterna", "radio", "rádio", "caixa de som", "bluetooth"]},
     "guarda chuva automatico": {"require_groups": [["guarda chuva", "guarda-chuva"], ["automatico", "automático", "abre fecha", "abertura automatica", "abertura automática"]], "block_phrases": ["capa para guarda chuva", "suporte para guarda chuva", "miniatura", "chaveiro"]}
   }
 }
