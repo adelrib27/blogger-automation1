@@ -21,17 +21,19 @@ def final_product_gate(product: dict, keyword: str) -> bool:
             "acessorio", "pegador", "pinca", "pinça", "grade", "bandeja", "refil"
         ],
         "luminaria": ["estetica", "salao", "limpeza de pele", "manicure", "cilios", "lash", "unha", "procedimento estetico"],
-        "ventilador": [
-            "climatizador", "umidificador", "refrigerador de ar", "mini ar condicionado",
-            "escova", "limpador", "espanador", "capa para ventilador", "grade para ventilador",
-            "helice avulsa", "motor para ventilador", "capacitor", "controle para ventilador",
-            "suporte para ventilador", "peca para ventilador", "cabo para ventilador"
+        "ventilador de teto": [
+            "cilios", "extensoes", "maquiagem", "carimbo", "impressao 3d", "confeitaria",
+            "molde", "chaveiro", "adesivo", "topper", "ventoinha", "motor ventilador",
+            "resistencia ventilador", "escova", "limpador", "espanador", "capa para ventilador",
+            "grade para ventilador", "helice avulsa", "capacitor", "suporte para ventilador",
+            "peca para ventilador", "cabo para ventilador"
         ],
-        "aquecedor eletrico": [
-            "resistencia para aquecedor", "controle para aquecedor", "cabo para aquecedor",
-            "suporte para aquecedor", "peca para aquecedor", "capa para aquecedor",
-            "aquecedor de mamadeira", "aquecedor de cera", "aquecedor de caneca",
-            "aquecedor de comida", "aquecedor automotivo"
+        "ventilador de mesa": [
+            "cilios", "extensoes", "maquiagem", "carimbo", "impressao 3d", "confeitaria",
+            "molde", "chaveiro", "adesivo", "topper", "ventoinha", "motor ventilador",
+            "resistencia ventilador", "escova", "limpador", "espanador", "capa para ventilador",
+            "grade para ventilador", "helice avulsa", "capacitor", "suporte para ventilador",
+            "peca para ventilador", "cabo para ventilador"
         ],
         "mixer eletrico": ["peca para mixer", "haste para mixer", "copo para mixer", "lamina para mixer"],
         "mop giratorio": ["cabo para mop", "cabo mop", "refil", "reposicao"],
@@ -48,20 +50,16 @@ def final_product_gate(product: dict, keyword: str) -> bool:
         if not any(term in title for term in ["eletrica", "sem oleo", "air fryer", "airfryer"]):
             return False
 
-    if key == "ventilador":
-        if "ventilador" not in title:
+    if key == "ventilador de teto":
+        if "ventilador" not in title or "teto" not in title:
             return False
-        if any(term in title for term in ["escova", "limpador", "espanador", "peca", "acessorio"]):
+        if not any(term in title for term in ["pas", "helices", "velocidades", "controle remoto", "silencioso", "bivolt", "w"]):
             return False
 
-    if key == "aquecedor eletrico":
-        # A vaga deve ser ocupada pelo aparelho de aquecimento de ambiente,
-        # nunca por resistência, peça ou aquecedor destinado a outro uso.
-        if not any(term in title for term in ["aquecedor", "termoventilador"]):
+    if key == "ventilador de mesa":
+        if "ventilador" not in title or "mesa" not in title:
             return False
-        if not any(term in title for term in ["eletrico", "ceramico", "portatil", "1500w", "2000w", "ambiente"]):
-            return False
-        if any(term in title for term in ["mamadeira", "cera", "caneca", "comida", "automotivo"]):
+        if not any(term in title for term in ["pas", "helices", "velocidades", "oscilante", "turbo", "30 cm", "40 cm", "50 cm", "w"]):
             return False
 
     return True
@@ -75,15 +73,15 @@ def main() -> int:
     semantic = data.setdefault("semanticValidation", {})
     semantic["homeUsePostGateVersion"] = 6
     semantic["fritadeiraApplianceOnly"] = True
-    semantic["ventiladorApplianceOnly"] = True
-    semantic["heaterApplianceOnly"] = True
+    semantic["ceilingFanApplianceOnly"] = True
+    semantic["tableFanApplianceOnly"] = True
     gates = data.setdefault("gates", {})
     gates["homeUsePostGate"] = True
     gates["fritadeiraApplianceOnly"] = True
-    gates["ventiladorApplianceOnly"] = True
-    gates["heaterApplianceOnly"] = True
+    gates["ceilingFanApplianceOnly"] = True
+    gates["tableFanApplianceOnly"] = True
     v3.base.save_atomic(v3.base.SELECTION_PATH, data)
-    print("ACHADOS_SAFE_V6_READY: aparelhos completos obrigatórios para fritadeira, ventilador e aquecedor elétrico; diversidade e 20/20 links validados; Blogger não alterado.")
+    print("ACHADOS_SAFE_V6_READY: aparelhos completos obrigatórios para fritadeira, ventilador de teto e ventilador de mesa; diversidade e 20/20 links validados; Blogger não alterado.")
     return result
 
 
