@@ -1,0 +1,203 @@
+name: Casa Prática Lab — Registrar checkpoint E2E — uso único
+
+on:
+  push:
+    paths:
+      - ".github/workflows/casa_pratica_lab_checkpoint_once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  checkpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Registrar validação E2E sem alterar produção
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('CHECKPOINT_ATUAL.md')
+          s=p.read_text(encoding='utf-8')
+          assert 'O Blogger Policy Guard está integrado em **14 pipelines modernos**' in s
+          assert '# 13. FILA RESTANTE — 4 BLOGS' in s
+          assert '# 14. PRÓXIMO BLOCO PERMITIDO — MODA E OFERTAS, NÃO INICIADO' in s
+          marker='# LAB E2E VALIDATION — CASA PRÁTICA LAB — 2026-11-02'
+          if marker not in s:
+              block=r'''
+
+---
+
+# LAB E2E VALIDATION — CASA PRÁTICA LAB — 2026-11-02
+
+Validação isolada solicitada pelo usuário para provar o fluxo **Blogger zero → V20 → páginas → conteúdo → Python/Shopee → SAFE → LIVE 20+12 → validação pública → persistência → schedule**, sem incorporar o Lab ao rollout dos 18 blogs de produção.
+
+## Alvo de laboratório
+
+- título: **Casa Prática Lab**
+- Blog ID `8930870316690519385`
+- URL `https://casa-pratica-lab-20261102.blogspot.com/`
+- Runner Blogger Local Runner **v0.8**
+- Store Page ID `7110845449177208439`
+- Store Post ID `7691087355641688975`
+- Store Post `https://casa-pratica-lab-20261102.blogspot.com/2026/11/loja.html`
+
+## Provisionamento do zero
+
+`provision_new_blog_v20` concluiu criação, configurações/SEO e TEMA MODELO V20 com:
+
+- `BLOGGER_NEW_BLOG_V20_CORE_PROVISIONED`;
+- theme marker `emporio-revisao-visual-20-modelo-final`;
+- store extension `BLOGGER_MODELO_V20_STORE_EXTENSION`;
+- robots personalizados intocados;
+- nenhum post copiado de blog de referência;
+- nenhum post apagado.
+
+Páginas LIVE publicadas via Blogger Bridge:
+
+- Sobre `2953880269565413439`;
+- Aviso de Afiliados `9150297995502671273`;
+- Contato `3162172576294581859`;
+- Política de Privacidade `7130634486552763768`;
+- Termos de Uso `3078099834727991563`;
+- LOJA `7110845449177208439`.
+
+Posts editoriais LIVE iniciais:
+
+- `7732798999877296654` — Como organizar uma cozinha pequena sem gastar muito;
+- `5391626968548073797` — Air fryer: 7 pontos para conferir antes de comprar;
+- `1671345332688351619` — Ventilador ou climatizador: qual faz mais sentido para cada ambiente?.
+
+## SAFE independente
+
+Arquivos próprios do Lab:
+
+- `.github/workflows/casa_pratica_lab_store_safe.yml`;
+- `.github/workflows/casa_pratica_lab_store_autonomous.yml`;
+- `blogger_stores/src/casa_pratica_lab_store.py`;
+- `config/shopee_casa_pratica_lab.json`;
+- `config/shopee_casa_pratica_lab_intent_rules.json`;
+- `blogger_stores/data/casa_pratica_lab_selection.json`;
+- `blogger_stores/data/casa_pratica_lab_rotation.json`.
+
+SAFE:
+
+- run `41462328876` — **SUCCESS**;
+- job `125334256177`;
+- regressão semântica `40/40`;
+- seleção 20 produtos / 20 intenções / 5 categorias;
+- Policy Guard 20/20;
+- fallback 0 / carry 0;
+- `CASA_PRATICA_LAB_SAFE_READ_ONLY_PASS`;
+- artifact SAFE `13149856748`;
+- SHA-256 `d48208df5d4891b7548c199a4a65243951f416357355e05e45a3abc07ccefc41`;
+- revisão manual 20/20 aprovada.
+
+## Fail-closed comprovado durante a primeira publicação
+
+LIVE tentativa 1:
+
+- run `41462823574` — FAILURE;
+- falha transitória `Shopee System Error 10000` em `caixa organizadora`;
+- nenhum writer Blogger nem persistência executado.
+
+LIVE tentativa 2:
+
+- run `41463144957` — FAILURE antes dos writers;
+- SAFE fresco, Guard, identidade DRY-RUN e Store DRY-RUN passaram;
+- hero DRY-RUN detectou corretamente que um blog realmente zerado ainda não possuía os 20 links Store necessários para o contrato combinado 32 links afiliados;
+- nenhum writer nem persistência executado.
+
+A lacuna de primeira publicação zero→20+12 foi corrigida **somente no motor do Lab**: o hero DRY-RUN passou a montar em memória Store 20 + Hero 12 e continua chamando `base.verify_store_html` + `base.verify_hero`, preservando o gate de 32 `rel="nofollow sponsored noopener"`.
+
+## LIVE final — ponta a ponta
+
+- run `41463863556` — **SUCCESS**;
+- job `125339498343`;
+- head `118eb748570051339fdbd15a19e36791b56847bf`;
+- SAFE fresco 40/40;
+- Policy Guard pré-LIVE 20/20;
+- identidade DRY-RUN PASS;
+- Store DRY-RUN PASS;
+- `CASA_PRATICA_LAB_FIRST_PUBLISH_COMBINED_DRY_RUN_PASS`;
+- Store 20 publicado;
+- hero 12 publicado;
+- identidade LIVE PASS;
+- gate público `429 → 429 → 200`;
+- `PUBLIC_COUNTS_ATTEMPT_3: store=20 hero=12`;
+- `BLOGGER_POLICY_GUARD_PUBLIC_PASS`;
+- `CASA_PRATICA_LAB_IDENTITY_PUBLIC_PASS`;
+- persistência somente depois do PASS público;
+- commit automático de rotação `3e8e588229c12bf35d61f357ad01ab37fc7db68d`;
+- artifact LIVE `13150368713`;
+- SHA-256 `4244066cb60f918db7abef6cd98819458af68459e59a583b663cde6694f3c00c`.
+
+Leitura independente via Blogger Bridge confirmou o Store Post LIVE com 20 cards, 12 hero, cinco categorias, Page Loja correta, disclosure e links afiliados corretos.
+
+## Schedule e auditoria independente do Lab
+
+Após leitura direta dos 14 writers de produção, `10:20 America/Recife` estava livre.
+
+- schedule Lab `cron: "20 10 * * *"`;
+- timezone `America/Recife`;
+- workflow final usa `workflow_dispatch + schedule`;
+- gatilho `push` temporário removido;
+- commit do schedule `918549ecf3acd19c11e046acd0d08be6237520cc`.
+
+O auditor permanente de produção executou depois dessa mudança e continuou **14/14**, provando que o Lab não foi incorporado à contagem dos 18 blogs:
+
+- run `41464708926` — SUCCESS;
+- job `125342444082`;
+- `BLOGGER_POLICY_REPO_AUDIT_PASS`;
+- `SAFE/LIVE 14/14 protegidos`.
+
+Auditor E2E específico do laboratório:
+
+- `.github/workflows/casa_pratica_lab_acceptance_audit.yml`;
+- run `41464822482` — **SUCCESS**;
+- job `125342835507`;
+- `CASA_PRATICA_LAB_REPO_AUDIT_PASS`;
+- HTTP público `429 → 200`;
+- `LAB_AUDIT_COUNTS: store=20 hero=12 rels=32`;
+- `CASA_PRATICA_LAB_PUBLIC_AUDIT_PASS`.
+
+O auditor do Lab prova simultaneamente:
+
+- SAFE read-only sem credenciais Blogger;
+- LIVE com alvo fixo, schedule 10:20 e sem push;
+- seleção 5×4 / 20 produtos únicos;
+- rotação 20 persistida somente pós-PASS;
+- HTML público 20+12 + Policy Guard + identidade;
+- inventário de produção ainda `blogs_total=18` e `modern_blogger_auto_policy_guard=14`;
+- Lab ausente do inventário e dos targets de rollout;
+- rollout global permanece `enabled=false / PREPARED_NOT_DEPLOYED`.
+
+## Conclusão da validação
+
+No cenário controlado **Casa Prática Lab**, o sistema foi validado de ponta a ponta partindo de um Blogger inexistente até um blog funcional e automatizado, incluindo criação, tema V20, SEO/configurações, seis páginas, conteúdo editorial, Store Post, motor Python independente, Shopee SAFE, Policy Guard, fail-closed, primeira publicação 20+12, validação pública, persistência e schedule.
+
+Esta prova valida o fluxo implementado neste ambiente; não significa que todo blog futuro esteja isento de diferenças de nicho, disponibilidade Shopee ou mudanças externas do Blogger, portanto SAFE/Guard/validação pública continuam obrigatórios.
+
+**Produção permanece 14/18. Próximo bloco de produção continua Moda e Ofertas e não foi iniciado durante o teste Lab.**
+'''
+              p.write_text(s.rstrip()+block+'\n',encoding='utf-8',newline='\n')
+          out=p.read_text(encoding='utf-8')
+          assert marker in out
+          assert 'O Blogger Policy Guard está integrado em **14 pipelines modernos**' in out
+          assert '# 13. FILA RESTANTE — 4 BLOGS' in out
+          assert '# 14. PRÓXIMO BLOCO PERMITIDO — MODA E OFERTAS, NÃO INICIADO' in out
+          print('CASA_PRATICA_LAB_CHECKPOINT_PASS: prova E2E registrada; produção permanece 14/18; próximo Moda e Ofertas.')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHECKPOINT_ATUAL.md
+          if git diff --cached --quiet; then
+            echo "Checkpoint já continha a validação."
+            exit 0
+          fi
+          git commit -m "checkpoint: registrar validacao E2E Casa Pratica Lab sem alterar producao"
+          git pull --rebase origin main
+          git push origin HEAD:main
