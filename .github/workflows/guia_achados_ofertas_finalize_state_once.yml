@@ -1,0 +1,164 @@
+name: Guia de Achados & Ofertas — Consolidar estado final — uso único
+
+on:
+  push:
+    paths:
+      - ".github/workflows/guia_achados_ofertas_finalize_state_once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Consolidar inventário, rollout e checkpoint com asserts
+        run: |
+          python - <<'PY'
+          import json, re
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          invp=Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json')
+          rollp=Path('blogger_multi_store/config/network_store_rollout_2026-11-01.json')
+          cpp=Path('CHECKPOINT_ATUAL.md')
+
+          inv=json.loads(invp.read_text(encoding='utf-8'))
+          sm=inv['summary']
+          assert sm['blogs_total']==18
+          assert sm['modern_blogger_auto_policy_guard']==13
+          assert sm['store_scaffold_needs_auto_rotation']==5
+          assert sm['modern_blogger_auto_20x12_needs_policy_guard_upgrade']==0
+          assert sm['duplicate_writer_risks']==0
+          guia=next(b for b in inv['blogs'] if b['title']=='Guia de Achados & Ofertas')
+          assert guia['blog_id']=='1453188702831337099'
+          assert guia['store_page_id']=='9156313162825773745'
+          assert guia['store_post_id']=='3858461075334539445'
+          assert guia['automation_status']=='store_scaffold_needs_auto_rotation'
+          sm['modern_blogger_auto_policy_guard']=14
+          sm['store_scaffold_needs_auto_rotation']=4
+          guia['automation_status']='modern_policy_guard_20x12'
+          guia['safe_workflow']='.github/workflows/guia_achados_ofertas_store_safe.yml'
+          guia['live_workflow']='.github/workflows/guia_achados_ofertas_store_autonomous.yml'
+          guia['note']=(
+              'Concluído em 2026-11-02 como 14ª loja moderna. SAFE inicial 41455863415 falhou corretamente na regressão antes de consultar produtos por formas de reposição não bloqueadas. '
+              'SAFE 41456132980 ficou técnico verde, mas inspeção manual rejeitou porta-controle no lugar de ventilador de parede, mini ventilador de mão no lugar de ventilador de mesa e mini pseudo-climatizador. '
+              'Perfil v2 endurecido; SAFE final 41456616916 PASS, job 125314795846, 40/40 regressões, 20/20 Policy Guard, fallback=0/carry=0 e artifact 13147022213 SHA-256 5931db8b28bfbd1fd30490a7f7714aa87d0bf3a8612874d10ca1cdf123633362 revisado manualmente 20/20. '
+              'Auditor pré-LIVE 41457241687 PASS 14/14. LIVE 41457315455 PASS, job 125317174246, HTTP público 429,429,429,200, store=20, hero=12, Policy Guard público e identidade correta; persistência somente pós-PASS no commit 4311a7bd2810db4e5216aecbeb292e944313a453. '
+              'Artifact LIVE 13146989690 SHA-256 0b65847255880df65b3ab43935c7b901508cefd1a373592f5c02fb1fa5de3620. Leitura independente do Blogger confirmou 20+12, cinco categorias, quatro âncoras, disclosure e links patrocinados. '
+              'Schedule diário 10:05 America/Recife habilitado no commit 7bb9aab95ef4bc1941f0cd714b9156e77da165a6 sem push; auditor pós-schedule 41458378091 PASS 14/14, job 125320811307, proteção permanente no commit 64c0a78da0515c315d88b24dba324064567a35d4.'
+          )
+          invp.write_text(json.dumps(inv,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          roll=json.loads(rollp.read_text(encoding='utf-8'))
+          assert roll['enabled'] is False
+          assert roll['mode']=='PREPARED_NOT_DEPLOYED'
+          assert len(roll['targets'])==5
+          assert roll['targets'][0]['title']=='Guia de Achados & Ofertas'
+          roll['completed_prerequisites'].append(
+              'Guia de Achados & Ofertas integrado ao padrão moderno em 2026-11-02: SAFE final 41456616916 PASS após duas correções semânticas e inspeção manual 20/20; artifact SAFE 13147022213 SHA-256 5931db8b28bfbd1fd30490a7f7714aa87d0bf3a8612874d10ca1cdf123633362; auditor pré-LIVE 41457241687 PASS 14/14; LIVE 41457315455 PASS com HTTP público 429,429,429,200, 20 produtos + 12 hero, Policy Guard público e persistência pós-PASS commit 4311a7bd2810db4e5216aecbeb292e944313a453; artifact LIVE 13146989690 SHA-256 0b65847255880df65b3ab43935c7b901508cefd1a373592f5c02fb1fa5de3620; leitura independente do Blogger confirmou a saída; schedule diário 10:05 America/Recife commit 7bb9aab95ef4bc1941f0cd714b9156e77da165a6 sem push; auditor pós-schedule 41458378091 PASS 14/14, job 125320811307.'
+          )
+          roll['targets']=[t for t in roll['targets'] if t['title']!='Guia de Achados & Ofertas']
+          assert len(roll['targets'])==4
+          for i,t in enumerate(roll['targets'],1):
+              t['priority']=i
+          assert roll['targets'][0]['title']=='Moda e Ofertas'
+          rollp.write_text(json.dumps(roll,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          cp=cpp.read_text(encoding='utf-8')
+          required=[
+              'O Blogger Policy Guard está integrado em **13 pipelines modernos**',
+              '13. **Achados que Valem**',
+              '`modern_blogger_auto_policy_guard: 13`',
+              '`store_scaffold_needs_auto_rotation: 5`',
+              'O auditor cobre os **13 SAFE/LIVE modernos**',
+              '# 11. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS',
+              '# 12. FILA RESTANTE — 5 BLOGS',
+              '# 13. PRÓXIMO BLOCO PERMITIDO — GUIA DE ACHADOS & OFERTAS, NÃO INICIADO',
+              'auditor permanente = **13/13**;',
+              'inventário = **13 modernas / 5 restantes**;',
+          ]
+          missing=[x for x in required if x not in cp]
+          if missing:
+              raise SystemExit('GUIA_FINALIZE_FAIL checkpoint precondições: '+repr(missing))
+
+          now=datetime.now(ZoneInfo('America/Recife')).strftime('%Y-%m-%d %H:%M America/Recife')
+          cp=re.sub(r'\*\*Última atualização:\*\* .*?  \n', f'**Última atualização:** {now}  \n', cp, count=1)
+          cp=cp.replace(
+              '> O backup R4 de 2026-11-02 captura o estado até Escolha Certa Online. Achados que Valem foi concluído depois desse snapshot; para o estado atual de 13/18, este checkpoint + inventário + rollout prevalecem.',
+              '> O backup R4 de 2026-11-02 captura o estado até Escolha Certa Online. Achados que Valem e Guia de Achados & Ofertas foram concluídos depois desse snapshot; para o estado atual de 14/18, este checkpoint + inventário + rollout prevalecem.',1)
+          cp=cp.replace('O Blogger Policy Guard está integrado em **13 pipelines modernos**','O Blogger Policy Guard está integrado em **14 pipelines modernos**',1)
+          cp=cp.replace('13. **Achados que Valem**','13. **Achados que Valem**\n14. **Guia de Achados & Ofertas**',1)
+          cp=cp.replace('`modern_blogger_auto_policy_guard: 13`','`modern_blogger_auto_policy_guard: 14`',1)
+          cp=cp.replace('`store_scaffold_needs_auto_rotation: 5`','`store_scaffold_needs_auto_rotation: 4`',1)
+
+          oldaudit='''O auditor cobre os **13 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e os schedules/navegações finais de Casa em Ordem, Escolha Certa Online e Achados que Valem.\n\nÚltima validação, após habilitar o schedule do Achados que Valem:\n\n- commit do schedule `fed61afcd75d6ca4f3f094f5f8ea6ad64b1929dc`\n- commit do reforço permanente do auditor `cb848ecdee3c607daabb024adf96de75e2f654b8`\n- run `41453525922` — **SUCCESS**\n- job `125304377780`\n- `blogger_policy_guard_self_test: 13/13 OK`\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`\n- `SAFE/LIVE 13/13 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20 e Achados que Valem 09:50 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`'''
+          newaudit='''O auditor cobre os **14 SAFE/LIVE modernos**, `blogger_stores/src/**`, writers legados duplicados, proteção do aviso nativo de cookies e os schedules/navegações finais de Casa em Ordem, Escolha Certa Online, Achados que Valem e Guia de Achados & Ofertas.\n\nÚltima validação, após habilitar o schedule do Guia de Achados & Ofertas:\n\n- commit do schedule `7bb9aab95ef4bc1941f0cd714b9156e77da165a6`\n- commit do reforço permanente do auditor `64c0a78da0515c315d88b24dba324064567a35d4`\n- run `41458378091` — **SUCCESS**\n- job `125320811307`\n- `blogger_policy_guard_self_test: 13/13 OK`\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`\n- `SAFE/LIVE 14/14 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50 e Guia de Achados & Ofertas 10:05 protegidos; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.`'''
+          if oldaudit not in cp:
+              raise SystemExit('GUIA_FINALIZE_FAIL bloco auditor antigo ausente')
+          cp=cp.replace(oldaudit,newaudit,1)
+
+          for old,new in [
+              ('# 15. BACKUP / RECUPERAÇÃO','# 16. BACKUP / RECUPERAÇÃO'),
+              ('# 14. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES','# 15. REGRAS ESSENCIAIS PARA FUTURAS EXECUÇÕES'),
+              ('# 13. PRÓXIMO BLOCO PERMITIDO — GUIA DE ACHADOS & OFERTAS, NÃO INICIADO','# 14. PRÓXIMO BLOCO PERMITIDO — MODA E OFERTAS, NÃO INICIADO'),
+              ('# 12. FILA RESTANTE — 5 BLOGS','# 13. FILA RESTANTE — 4 BLOGS'),
+              ('# 11. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS','# 12. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS'),
+          ]:
+              cp=cp.replace(old,new,1)
+
+          anchor='# 12. OUTRAS CAMADAS DE PROTEÇÃO PRESERVADAS\n'
+          if anchor not in cp:
+              raise SystemExit('GUIA_FINALIZE_FAIL anchor seção proteções ausente')
+          section='''# 11. GUIA DE ACHADOS & OFERTAS — CONCLUÍDO COMO 14ª LOJA MODERNA\n\nAlvo:\n\n- Blog ID `1453188702831337099`\n- Page LOJA ID `9156313162825773745`\n- Store Post ID `3858461075334539445`\n- Page `https://guia-de-achados-e-ofertas.blogspot.com/p/loja.html`\n- Post `https://guia-de-achados-e-ofertas.blogspot.com/2026/11/loja.html`\n- SAFE `.github/workflows/guia_achados_ofertas_store_safe.yml`\n- LIVE `.github/workflows/guia_achados_ofertas_store_autonomous.yml`\n- motor `blogger_stores/src/guia_achados_ofertas_store.py`\n- histórico independente `blogger_stores/data/guia_achados_ofertas_rotation.json`\n\nPerfil final: Casa & Organização; Cozinha & Eletroportáteis; Iluminação & Decoração; Clima & Conforto; Utilidades & Rotina — 5 categorias x 4 intenções, derivadas dos cinco artigos reais do blog.\n\n## 11.1 SAFE e revisão semântica\n\n- primeiro SAFE `41455863415` falhou corretamente na regressão, antes da consulta real e sem escrita Blogger: faltavam formas `de reposição` em cafeteira/climatizador;\n- SAFE `41456132980` passou tecnicamente, mas não foi aceito: inspeção manual encontrou porta-controle em `ventilador parede`, mini ventilador de mão em `ventilador mesa` e mini pseudo-climatizador em `climatizador ar`;\n- perfil v2 endurecido sem afrouxar gates, exigindo frases de produto e bloqueando mini pseudo-climatizadores;\n- SAFE final `41456616916` — **SUCCESS**;\n- job `125314795846`;\n- regressão semântica `40/40`;\n- 20 produtos / 20 intenções / links 20/20; Policy Guard 20/20; fallback 0 / carry 0;\n- artifact SAFE `13147022213`;\n- SHA-256 `5931db8b28bfbd1fd30490a7f7714aa87d0bf3a8612874d10ca1cdf123633362`;\n- revisão manual final 20/20 coerente; Clima ficou com Ventex 60 cm de parede, Mondial 30 cm de mesa, Ventisol 16 L e mini umidificador USB real.\n\n## 11.2 Auditor pré-LIVE\n\n- run `41457241687` — **SUCCESS**;\n- job `125316918380`;\n- Policy Guard 13/13;\n- `BLOGGER_POLICY_REPO_AUDIT_PASS`;\n- `SAFE/LIVE 14/14 protegidos`.\n\n## 11.3 LIVE final\n\n- kickoff/head `6188320299585bd0c529d1f7b0b50d4f0b50cb46`;\n- run `41457315455` — **SUCCESS**;\n- job `125317174246`;\n- SAFE fresco v2 40/40, seleção 20/20 e Policy Guard pré-LIVE 20/20;\n- identidade, Store e hero DRY-RUN PASS;\n- Store 20 + hero 12 publicados;\n- gate público `HTTP 429 → 429 → 429 → 200`;\n- `PUBLIC_COUNTS_ATTEMPT_4: store=20 hero=12`;\n- `BLOGGER_POLICY_GUARD_PUBLIC_PASS: 20 products + 12 hero`;\n- `GUIA_ACHADOS_OFERTAS_IDENTITY_PUBLIC_PASS`;\n- persistência somente depois do PASS público;\n- commit automático `4311a7bd2810db4e5216aecbeb292e944313a453`;\n- artifact LIVE `13146989690`;\n- SHA-256 `0b65847255880df65b3ab43935c7b901508cefd1a373592f5c02fb1fa5de3620`.\n\n## 11.4 Leitura independente e schedule\n\nLeitura direta do Blogger confirmou status LIVE, IDs existentes preservados, Page Loja correta, layout amplo, 20 Store cards, 12 hero, cinco categorias próprias, quatro botões/âncoras corretos, disclosure e links `rel="nofollow sponsored noopener"`, com os mesmos 20 produtos aprovados no SAFE final.\n\nApós leitura direta dos 13 writers já agendados, `10:05 America/Recife` estava livre.\n\n- `cron: "5 10 * * *"`;\n- `timezone: "America/Recife"`;\n- gatilho `push` removido; workflow final usa somente `workflow_dispatch + schedule`;\n- commit do schedule `7bb9aab95ef4bc1941f0cd714b9156e77da165a6`;\n- commit da proteção permanente do auditor `64c0a78da0515c315d88b24dba324064567a35d4`;\n- auditor pós-schedule `41458378091` — **SUCCESS**;\n- job `125320811307`;\n- `SAFE/LIVE 14/14 protegidos; Casa em Ordem 08:05, Escolha Certa Online 08:20, Achados que Valem 09:50 e Guia de Achados & Ofertas 10:05 protegidos`.\n\nGuia de Achados & Ofertas está **CONCLUÍDO** como `modern_policy_guard_20x12`. Não reabrir sem evidência concreta de regressão.\n\n---\n\n'''
+          cp=cp.replace(anchor,section+anchor,1)
+
+          oldqueue='''Ordem atual:\n\n1. **Guia de Achados & Ofertas**\n2. Moda e Ofertas\n3. Achadinhos de Beleza\n4. Radar Tech BR Blogger\n5. Cozinha Sem Complicação'''
+          newqueue='''Ordem atual:\n\n1. **Moda e Ofertas**\n2. Achadinhos de Beleza\n3. Radar Tech BR Blogger\n4. Cozinha Sem Complicação'''
+          if oldqueue not in cp:
+              raise SystemExit('GUIA_FINALIZE_FAIL fila antiga ausente')
+          cp=cp.replace(oldqueue,newqueue,1)
+
+          oldnext='''Alvo inventariado:\n\n- Blog ID `1453188702831337099`\n- Page LOJA ID `9156313162825773745`\n- Store Post ID `3858461075334539445`\n- estado atual `STORE_SCAFFOLD_LIVE_AUTO_MISSING`\n- perfil semântico ainda precisa ser definido e validado\n\n**Não iniciar Guia de Achados & Ofertas automaticamente. Aguardar novo `continue` do usuário.**'''
+          newnext='''Alvo inventariado:\n\n- Blog ID `2858597309582499028`\n- Page LOJA ID `1341310014099438949`\n- Store Post ID `4871366557503134389`\n- estado atual `STORE_SCAFFOLD_LIVE_AUTO_MISSING`\n- perfil semântico ainda precisa ser definido e validado\n\n**Não iniciar Moda e Ofertas automaticamente. Aguardar novo `continue` do usuário.**'''
+          if oldnext not in cp:
+              raise SystemExit('GUIA_FINALIZE_FAIL próximo bloco antigo ausente')
+          cp=cp.replace(oldnext,newnext,1)
+          cp=cp.replace(
+              'Não reiniciar diagnóstico de Vitrine, Achados para Casa, Conecta, Estilo, Casa em Ordem, Escolha Certa Online ou Achados que Valem sem evidência concreta de regressão.',
+              'Não reiniciar diagnóstico de Vitrine, Achados para Casa, Conecta, Estilo, Casa em Ordem, Escolha Certa Online, Achados que Valem ou Guia de Achados & Ofertas sem evidência concreta de regressão.',1)
+          cp=cp.replace(
+              'O R4 captura o estado até Escolha Certa Online. A conclusão do Achados que Valem está registrada neste checkpoint, no inventário e no rollout posteriores ao snapshot.',
+              'O R4 captura o estado até Escolha Certa Online. As conclusões de Achados que Valem e Guia de Achados & Ofertas estão registradas neste checkpoint, no inventário e no rollout posteriores ao snapshot.',1)
+          oldfuture='''- Achados que Valem = 13ª loja moderna concluída;\n- auditor permanente = **13/13**;\n- inventário = **13 modernas / 5 restantes**;\n- próximo bloco permitido = **Guia de Achados & Ofertas**, somente após comando explícito do usuário.'''
+          newfuture='''- Achados que Valem = 13ª loja moderna concluída;\n- Guia de Achados & Ofertas = 14ª loja moderna concluída;\n- auditor permanente = **14/14**;\n- inventário = **14 modernas / 4 restantes**;\n- próximo bloco permitido = **Moda e Ofertas**, somente após comando explícito do usuário.'''
+          if oldfuture not in cp:
+              raise SystemExit('GUIA_FINALIZE_FAIL resumo futuro antigo ausente')
+          cp=cp.replace(oldfuture,newfuture,1)
+          cpp.write_text(cp,encoding='utf-8',newline='\n')
+
+          inv2=json.loads(invp.read_text(encoding='utf-8'))
+          roll2=json.loads(rollp.read_text(encoding='utf-8'))
+          cp2=cpp.read_text(encoding='utf-8')
+          assert inv2['summary']['modern_blogger_auto_policy_guard']==14
+          assert inv2['summary']['store_scaffold_needs_auto_rotation']==4
+          assert next(b for b in inv2['blogs'] if b['title']=='Guia de Achados & Ofertas')['automation_status']=='modern_policy_guard_20x12'
+          assert roll2['enabled'] is False and roll2['mode']=='PREPARED_NOT_DEPLOYED'
+          assert len(roll2['targets'])==4 and roll2['targets'][0]['title']=='Moda e Ofertas'
+          assert 'O Blogger Policy Guard está integrado em **14 pipelines modernos**' in cp2
+          assert '# 11. GUIA DE ACHADOS & OFERTAS — CONCLUÍDO COMO 14ª LOJA MODERNA' in cp2
+          assert '# 13. FILA RESTANTE — 4 BLOGS' in cp2
+          assert '# 14. PRÓXIMO BLOCO PERMITIDO — MODA E OFERTAS, NÃO INICIADO' in cp2
+          assert 'auditor permanente = **14/14**' in cp2
+          print('GUIA_ACHADOS_OFERTAS_FINALIZE_STATE_PASS: inventory=14/4 guia=modern rollout=disabled targets=4 next=Moda e Ofertas checkpoint=updated')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHECKPOINT_ATUAL.md blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-01.json blogger_multi_store/config/network_store_rollout_2026-11-01.json
+          git commit -m "checkpoint: concluir Guia de Achados e Ofertas como pipeline 14 de 14"
+          git pull --rebase origin main
+          git push origin HEAD:main
