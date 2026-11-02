@@ -166,12 +166,39 @@ def identity_check() -> int:
     return 0
 
 
+def run_radar_semantic_regression() -> None:
+    rules = json.loads(INTENT_RULES_PATH.read_text(encoding="utf-8"))
+    cases = [
+        ("Processador Picador De Alimentos Alça 3L Moedor De Carne Mixer Elétrico Cozinha Casa Alho 110v", "mixer eletrico", False),
+        ("Mixer Vertical Elétrico 3 em 1 500W com Copo e Batedor", "mixer eletrico", True),
+        ("Kit 5 Suporte Organizador de Vassoura Rodo Mop Utensílios de Parede Gancho Multiuso Adesivo Cozinha", "organizador cozinha", False),
+        ("Organizador de Cozinha Prateleira para Temperos e Mantimentos", "organizador cozinha", True),
+        ("Tomada De Parede Dupla USB E USB-C Carregador Rápido 4 Em 1 Bivolt", "carregador usb c", False),
+        ("Carregador Rápido USB-C 20W PD Fonte Bivolt", "carregador usb c", True),
+        ("Capa Térmica para Chapinha de Cabelo", "chapinha cabelo", False),
+        ("Lizze Chapinha De Cabelo Profissional 480 Extreme", "chapinha cabelo", True),
+        ("Fone com fio P2 Bluetooth para Celular", "fone bluetooth", False),
+        ("Fone de Ouvido Sem Fio Bluetooth com Cancelamento de Ruído", "fone bluetooth", True),
+        ("Lanterna Bluetooth com Caixa de Som Recarregável USB", "lanterna recarregavel", False),
+        ("Mini Lanterna Tática LED Recarregável USB com Zoom", "lanterna recarregavel", True),
+    ]
+    failures = []
+    for title, keyword, expected in cases:
+        actual = bool(shopee_v23.evaluate_keyword(title, keyword, rules).get("accepted"))
+        if actual != expected:
+            failures.append({"title": title, "keyword": keyword, "expected": expected, "actual": actual})
+    if failures:
+        raise RuntimeError("Radar semantic regression failed: " + json.dumps(failures, ensure_ascii=False))
+    print(f"RADAR_TECH_BLOGGER_SEMANTIC_REGRESSION_PASS: {len(cases)}/{len(cases)}")
+
+
 def safe_scan() -> int:
+    run_radar_semantic_regression()
     rc = base.safe_scan()
     data = base.load_json(SELECTION_PATH, {})
     semantic = dict(data.get("semanticValidation") or {})
     semantic["rulesFile"] = "config/shopee_radar_tech_blogger_intent_rules.json"
-    semantic["profileVersion"] = 3
+    semantic["profileVersion"] = 4
     semantic["profileName"] = "Radar Tech BR Blogger"
     data["semanticValidation"] = semantic
     base.save_atomic(SELECTION_PATH, data)
@@ -181,6 +208,7 @@ def safe_scan() -> int:
 
 
 def validate_only() -> int:
+    run_radar_semantic_regression()
     products = base.validate_selection(base.load_json(SELECTION_PATH, {}))
     print(f"RADAR_TECH_BLOGGER_SELECTION_VALID_PASS: {len(products)}/20 produtos; 5 categorias x 4 intenções.")
     return 0
