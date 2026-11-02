@@ -1,0 +1,40 @@
+name: Casa em Ordem — Patch pontual gate tapete
+
+on:
+  push:
+    paths:
+      - "blogger_stores/casa_em_ordem_patch_engine_once.txt"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Corrigir falso positivo pet dentro de tapete
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('blogger_stores/src/casa_em_ordem_store.py')
+          raw=p.read_text(encoding='utf-8')
+          replacements={
+              '"tapete banheiro antiderrapante": ["automotivo", "carro", "pet", "cachorro", "gato"],': '"tapete banheiro antiderrapante": ["automotivo", "carro", "para pet", "cachorro", "gato"],',
+              '"tapete sala": ["automotivo", "carro", "banheiro", "pet", "cachorro", "gato", "miniatura"],': '"tapete sala": ["automotivo", "carro", "banheiro", "para pet", "cachorro", "gato", "miniatura"],',
+          }
+          for old,new in replacements.items():
+              if old not in raw:
+                  raise SystemExit(f'CASA_ORDEM_PATCH_FAIL: trecho ausente: {old}')
+              raw=raw.replace(old,new,1)
+          p.write_text(raw,encoding='utf-8')
+          print('CASA_ORDEM_PATCH_PASS: gate de tapetes corrigido')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blogger_stores/src/casa_em_ordem_store.py
+          git commit -m "casa em ordem: corrigir falso positivo pet em tapetes"
+          git pull --rebase origin main
+          git push origin HEAD:main
