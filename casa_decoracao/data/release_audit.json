@@ -2,10 +2,10 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 9,
+    "total": 10,
     "draft_ready": 0,
     "rejected": 6,
-    "not_generated": 3,
+    "not_generated": 4,
     "published_history": 27,
     "rotation_cycle": 3,
     "rotation_pending": [
@@ -265,6 +265,22 @@
       "shopee_item_id": "23599671693",
       "category": "Banheiro",
       "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 104,
+      "shopee_item_id": "22998007959",
+      "category": "Cama, Mesa e Banho",
+      "product": "Jogo de Toalha 4 Peças Karsten 100% Algodão Felpuda Macia Excelente Absorção Banho e Rosto",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
