@@ -65,6 +65,9 @@ def validate_store_page() -> None:
         "BLOGGER_STORE_AUTO_START",
         "BLOGGER_STORE_AUTO_END",
         'id="blogger-new-store-page-surface-fix"',
+        ".bg-photo-container{display:none!important",
+        ".bg-photo{display:none!important",
+        "margin-top:12px!important",
         'id="blogger-new-store-page-carousel-fix"',
         "BLOGGER_LIQ_LAYOUT_PATCH_START",
         "BLOGGER_LIQ_LAYOUT_PATCH_END",
@@ -90,10 +93,15 @@ def validate_store_page() -> None:
         "BLOGGER_STORE_SHARE_CARD_END",
         'id="blogger-store-share-card"',
         'data-blogger-store-share-card="1"',
+        'data-share-compact="1"',
         'id="blogger-store-share-button"',
         'aria-label="Compartilhar"',
+        'class="blogger-store-share-label"',
+        "Compartilhar esta loja",
         'id="blogger-store-share-card-css"',
         'id="blogger-store-share-card-js"',
+        "width:min(1440px,calc(100vw - 48px))",
+        "padding:10px 14px",
         "navigator.share",
         "navigator.clipboard",
         "#729c0b",
@@ -101,13 +109,17 @@ def validate_store_page() -> None:
     missing = [token for token in required if token not in raw]
     if missing:
         raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
+    forbidden = ["min-height:128px", "width:min(890px", "padding:32px"]
+    legacy = [token for token in forbidden if token in raw]
+    if legacy:
+        raise RuntimeError(f"Share card gigante/legado reapareceu: {legacy}")
     if raw.count('id="blogger-store-share-card"') != 1:
         raise RuntimeError("Cartão de compartilhamento ausente ou duplicado.")
     if raw.find('id="blogger-store-share-card"') > raw.find('<div class="bls-page">'):
         raise RuntimeError("Cartão de compartilhamento precisa aparecer antes da vitrine.")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Controlador legado do carousel reapareceu na Page pública.")
-    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + layout amplo + carousel + share card + Policy Guard.")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + fundo limpo + carousel + share compacto + Policy Guard.")
 
 
 def validate_home_and_articles() -> None:
