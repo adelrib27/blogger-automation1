@@ -47,6 +47,8 @@ jobs:
           test -n "$CLOUDFLARE_API_TOKEN"
           test ! -f vida_pet_pratica/wordpress_write.flag
           python -m py_compile \
+            vida_pet_pratica/src/firecrawl_telemetry.py \
+            vida_pet_pratica/src/firecrawl_telemetry_self_test.py \
             vida_pet_pratica/src/evidence_engine.py \
             vida_pet_pratica/src/evidence_engine_persistent_v13.py \
             vida_pet_pratica/src/evidence_cache_hydrator.py \
@@ -133,6 +135,12 @@ jobs:
       - name: Validate builder failover persisted evidence reuse
         run: python vida_pet_pratica/src/builder_evidence_reuse_self_test.py
 
+      - name: Validate Firecrawl aggregate telemetry privacy and accounting
+        run: python vida_pet_pratica/src/firecrawl_telemetry_self_test.py
+
+      - name: Reset Firecrawl telemetry for real LAB round
+        run: python vida_pet_pratica/src/firecrawl_telemetry.py reset
+
       - name: Consume hydrated READY for independent LAB rotation
         shell: bash
         run: |
@@ -191,6 +199,10 @@ jobs:
 
       - name: Verify persistent state after run
         run: python vida_pet_pratica/src/d1_persistence_v2.py verify
+
+      - name: Show safe Firecrawl run telemetry
+        if: always()
+        run: python vida_pet_pratica/src/firecrawl_telemetry.py snapshot
 
       - name: Verify no WordPress writer exists
         if: always()
