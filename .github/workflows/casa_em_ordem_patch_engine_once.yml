@@ -1,4 +1,4 @@
-name: Casa em Ordem — Patch pontual gate tapete
+name: Casa em Ordem — Patch pontual semântico v3
 
 on:
   push:
@@ -15,26 +15,44 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Corrigir falso positivo pet dentro de tapete
+      - name: Bloquear cesto em caixa e porta-papel em prateleira
         run: |
+          set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          p=Path('blogger_stores/src/casa_em_ordem_store.py')
-          raw=p.read_text(encoding='utf-8')
-          replacements={
-              '"tapete banheiro antiderrapante": ["automotivo", "carro", "pet", "cachorro", "gato"],': '"tapete banheiro antiderrapante": ["automotivo", "carro", "para pet", "cachorro", "gato"],',
-              '"tapete sala": ["automotivo", "carro", "banheiro", "pet", "cachorro", "gato", "miniatura"],': '"tapete sala": ["automotivo", "carro", "banheiro", "para pet", "cachorro", "gato", "miniatura"],',
+
+          targets = {
+              Path('blogger_stores/src/casa_em_ordem_store.py'): {
+                  '"caixa organizadora": ["caixa de som", "caixa amplificada", "caixa eletrica", "ferramenta", "automotivo", "pet", "cachorro", "gato"],': '"caixa organizadora": ["caixa de som", "caixa amplificada", "caixa eletrica", "ferramenta", "automotivo", "cesto", "para pet", "cachorro", "gato"],',
+                  '"caixa organizadora": ["caixa de som", "caixa amplificada", "caixa eletrica", "ferramenta", "automotivo", "para pet", "cachorro", "gato"],': '"caixa organizadora": ["caixa de som", "caixa amplificada", "caixa eletrica", "ferramenta", "automotivo", "cesto", "para pet", "cachorro", "gato"],',
+                  '"prateleira banheiro sem furo": ["miniatura", "boneca", "pet"],': '"prateleira banheiro sem furo": ["miniatura", "boneca", "porta papel", "papel higienico", "suporte shampoo", "para pet"],',
+                  '"prateleira banheiro sem furo": ["miniatura", "boneca", "para pet"],': '"prateleira banheiro sem furo": ["miniatura", "boneca", "porta papel", "papel higienico", "suporte shampoo", "para pet"],',
+              },
+              Path('config/shopee_casa_em_ordem_intent_rules.json'): {
+                  '"caixa de ferramenta", "caixa ferramenta", "automotivo", "para pet", "cachorro", "gato"': '"caixa de ferramenta", "caixa ferramenta", "automotivo", "cesto", "para pet", "cachorro", "gato"',
+                  '"miniatura", "casa de boneca", "para pet"': '"miniatura", "casa de boneca", "porta papel", "papel higienico", "suporte shampoo", "para pet"',
+                  '"version": 2': '"version": 3',
+              },
           }
-          for old,new in replacements.items():
-              if old not in raw:
-                  raise SystemExit(f'CASA_ORDEM_PATCH_FAIL: trecho ausente: {old}')
-              raw=raw.replace(old,new,1)
-          p.write_text(raw,encoding='utf-8')
-          print('CASA_ORDEM_PATCH_PASS: gate de tapetes corrigido')
+
+          changed=[]
+          for p,replacements in targets.items():
+              raw=p.read_text(encoding='utf-8')
+              before=raw
+              for old,new in replacements.items():
+                  if old in raw:
+                      raw=raw.replace(old,new,1)
+              if raw == before:
+                  raise SystemExit(f'CASA_ORDEM_PATCH_V3_FAIL: nenhuma alteração em {p}')
+              p.write_text(raw,encoding='utf-8')
+              changed.append(str(p))
+          print('CASA_ORDEM_PATCH_V3_PASS:', ', '.join(changed))
           PY
+          python -m py_compile blogger_stores/src/casa_em_ordem_store.py
+          python -m json.tool config/shopee_casa_em_ordem_intent_rules.json >/dev/null
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add blogger_stores/src/casa_em_ordem_store.py
-          git commit -m "casa em ordem: corrigir falso positivo pet em tapetes"
+          git add blogger_stores/src/casa_em_ordem_store.py config/shopee_casa_em_ordem_intent_rules.json
+          git commit -m "casa em ordem: endurecer caixa e prateleira no perfil v3"
           git pull --rebase origin main
           git push origin HEAD:main
