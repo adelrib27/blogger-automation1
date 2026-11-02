@@ -243,6 +243,10 @@ def run_semantic_regression() -> None:
         ("Balança Digital de Cozinha para Alimentos", "balanca cozinha", True),
         ("Espátula de Silicone para Maquiagem", "espatula silicone", False),
         ("Espátula de Silicone para Cozinha", "espatula silicone", True),
+        ("Escova de Limpeza Multifuncional Flexível Para Garrafas Mamadeiras Liquidificador De Silicone", "liquidificador", False),
+        ("Interruptor Forno Eletrico Fischer Gourmet Grill 44L", "grill eletrico", False),
+        ("Cafeteira De Prensa Francesa 600ml Manual Premium Filtro Inox Café Chá Espumador de Leite", "espumador de leite", False),
+        ("Oleo Mineral Grau Usp para Selar e hidratar Tabua De corte Carne Churrasco 500 ml", "tabua de corte", False),
     ]
     failures = []
     for title, keyword, expected in cases:
@@ -265,7 +269,7 @@ def safe_scan() -> int:
     data = base.load_json(SELECTION_PATH, {})
     semantic = dict(data.get("semanticValidation") or {})
     semantic["rulesFile"] = "config/shopee_cozinha_sem_complicacao_intent_rules.json"
-    semantic["profileVersion"] = 2
+    semantic["profileVersion"] = 3
     semantic["profileName"] = "Cozinha Sem Complicação"
     data["semanticValidation"] = semantic
     base.save_atomic(SELECTION_PATH, data)

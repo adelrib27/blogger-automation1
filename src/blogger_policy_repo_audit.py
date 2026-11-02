@@ -24,6 +24,7 @@ SAFE_WORKFLOWS = [
     ".github/workflows/moda_ofertas_store_safe.yml",
     ".github/workflows/achadinhos_beleza_store_safe.yml",
     ".github/workflows/radar_tech_blogger_store_safe.yml",
+    ".github/workflows/cozinha_sem_complicacao_store_safe.yml",
 ]
 LIVE_WORKFLOWS = [
     ".github/workflows/air_fryers_store_autonomous.yml",
@@ -43,6 +44,7 @@ LIVE_WORKFLOWS = [
     ".github/workflows/moda_ofertas_store_autonomous.yml",
     ".github/workflows/achadinhos_beleza_store_autonomous.yml",
     ".github/workflows/radar_tech_blogger_store_autonomous.yml",
+    ".github/workflows/cozinha_sem_complicacao_store_autonomous.yml",
 ]
 
 LEGACY_MANUAL_WORKFLOWS = {
@@ -246,6 +248,34 @@ def audit_radar_schedule() -> None:
         fail("Portal Radar Tech Blogger voltou a ter gatilho push após promoção final")
 
 
+def audit_cozinha_controlled() -> None:
+    rel = ".github/workflows/cozinha_sem_complicacao_store_autonomous.yml"
+    text = read(rel)
+    required = [
+        "workflow_dispatch:",
+        'blogger_stores/cozinha_sem_complicacao_live_kickoff.txt',
+        "CONTROLLED_LIVE_NO_SCHEDULE_2026_11_02",
+        "PUBLIC_RATE_LIMIT_RETRY_2026_11_02",
+        "Cozinha Sem Complicação — utensílios, eletroportáteis e soluções práticas",
+        '<h3>Eletroportáteis</h3>',
+        '<h3>Panelas &amp; Cocção</h3>',
+        '<h3>Organização &amp; Pia</h3>',
+        '<h3>Café &amp; Bebidas</h3>',
+        '<h3>Utensílios &amp; Preparo</h3>',
+        "Escova de Limpeza Multifuncional Flexível Para Garrafas Mamadeiras Liquidificador De Silicone",
+        "Interruptor Forno Eletrico Fischer Gourmet Grill 44L",
+        "Cafeteira De Prensa Francesa 600ml Manual Premium Filtro Inox Café Chá Espumador de Leite",
+        "Oleo Mineral Grau Usp para Selar e hidratar Tabua De corte Carne Churrasco 500 ml",
+    ]
+    missing = [x for x in required if x not in text]
+    if missing:
+        fail(f"Cozinha Sem Complicação LIVE controlado sem gates obrigatórios: {missing}")
+    if not re.search(r"(?m)^\s*push\s*:", text):
+        fail("Cozinha Sem Complicação LIVE controlado sem gatilho de kickoff")
+    if re.search(r"(?m)^\s*schedule\s*:", text):
+        fail("Cozinha Sem Complicação recebeu schedule antes da validação pública")
+
+
 def audit_legacy_writers_manual_only() -> None:
     for rel, canonical_group in LEGACY_MANUAL_WORKFLOWS.items():
         text = read(rel)
@@ -312,11 +342,12 @@ def main() -> None:
     audit_moda_schedule()
     audit_achadinhos_schedule()
     audit_radar_schedule()
+    audit_cozinha_controlled()
     audit_legacy_writers_manual_only()
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 17/17 protegidos; schedules validados até Portal Radar Tech Blogger 10:50 America/Recife; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 18/18 protegidos; Cozinha Sem Complicação em LIVE controlado sem schedule; schedules finais validados até Portal Radar Tech Blogger 10:50 America/Recife; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
 
 
 if __name__ == "__main__":
