@@ -9,11 +9,12 @@
     "Área Externa"
   ],
   "max_per_keyword": 1,
-  "total": 9,
+  "total": 14,
   "skipped": {
-    "produto_ja_publicado": 18,
-    "produto_semelhante_ja_publicado": 4,
-    "limite_por_intencao": 1
+    "produto_ja_publicado": 12,
+    "produto_semelhante_ja_publicado": 3,
+    "limite_por_intencao": 2,
+    "produto_quase_duplicado": 1
   },
   "items": [
     {
@@ -39,15 +40,78 @@
       "generation_attempts": 3
     },
     {
+      "id": 106,
+      "shopee_item_id": "22897685273",
+      "product": "Tapete Passadeira Vários Tamanhos Corredor Quarto Sala Beira de Cama Felpudo Peludo",
+      "affiliate_link": "https://s.shopee.com.br/1BNd5rZGBP",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m4-mtz1sta56j9db6",
+      "shop_name": "STYLLO CASA ENXOVAIS",
+      "source_keyword": "tapete sala",
+      "category": "Sala",
+      "opportunity_score": 62.43,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: word_count_baixo:500"
+    },
+    {
+      "id": 110,
+      "shopee_item_id": "58263459751",
+      "product": "Kit 5/10 Luminária Solar Jardim LED Impermeável Luz Quente Branca Iluminação Externa Quintal Paisagismo",
+      "affiliate_link": "https://s.shopee.com.br/40hoV9PA35",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820mg-mr9m6xs1w5c622",
+      "shop_name": "UtiLife Store",
+      "source_keyword": "luminaria solar jardim",
+      "category": "Área Externa",
+      "opportunity_score": 59.57,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PUBLISHED",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "topic": "Iluminação externa com luz solar para jardim",
+      "editorial_title": "Iluminação externa com luz solar para jardim",
+      "quality": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 627,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 44,
+          "meta_description_length": 147,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      },
+      "last_error": "",
+      "wordpress_post_id": 242,
+      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/iluminacao-externa-com-luz-solar-para-jardim/",
+      "featured_media": 243,
+      "seo_synced": true
+    },
+    {
       "id": 105,
       "shopee_item_id": "58257090824",
       "product": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
-      "affiliate_link": "https://s.shopee.com.br/6fiYEiHUDg",
+      "affiliate_link": "https://s.shopee.com.br/9APueYyduV",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-820m9-mmm1sfjpscna7b",
       "shop_name": "VISIO DECORE ",
       "source_keyword": "almofada decorativa",
       "category": "Decoração",
-      "opportunity_score": 59.1,
+      "opportunity_score": 60.74,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -62,12 +126,12 @@
       "id": 13,
       "shopee_item_id": "21071530577",
       "product": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil",
-      "affiliate_link": "https://s.shopee.com.br/9KjHYgccyV",
+      "affiliate_link": "https://s.shopee.com.br/30pHJD4zc3",
       "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7augbm6ixf693",
       "shop_name": "Na Web Group De Marcas",
       "source_keyword": "varal de chao",
       "category": "Organização",
-      "opportunity_score": 61.58,
+      "opportunity_score": 63.25,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -81,15 +145,35 @@
       "generation_attempts": 1
     },
     {
+      "id": 109,
+      "shopee_item_id": "22694706953",
+      "product": "Caixa Organizadora 95 Litros Preta Com Rodinhas e Trava Para Transporte",
+      "affiliate_link": "https://s.shopee.com.br/4fxVGFMjbj",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m7-mrvuxqlbqd5147",
+      "shop_name": "Evo Distribuidora",
+      "source_keyword": "caixa organizadora",
+      "category": "Organização",
+      "opportunity_score": 59.73,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
       "id": 87,
       "shopee_item_id": "20452224775",
       "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
-      "affiliate_link": "https://s.shopee.com.br/3B8g4JKio3",
+      "affiliate_link": "https://s.shopee.com.br/6AmJ9pqwP8",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-8260p-mkcfopp4p5hc85",
       "shop_name": "Haute Decor",
       "source_keyword": "abajur quarto",
       "category": "Quarto",
-      "opportunity_score": 63.87,
+      "opportunity_score": 65.24,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -103,15 +187,35 @@
       "generation_attempts": 1
     },
     {
+      "id": 107,
+      "shopee_item_id": "8537566064",
+      "product": "Kit com 5 Embalagem de Travesseiro 50 x 70 de pvc Guarda Roupa Armário",
+      "affiliate_link": "https://s.shopee.com.br/4B1EhQXil3",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m7jf7suyxlqi5a",
+      "shop_name": "Isaplastic",
+      "source_keyword": "travesseiro",
+      "category": "Quarto",
+      "opportunity_score": 62.1,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
       "id": 100,
       "shopee_item_id": "11674191849",
       "product": "Fatiador De Legumes Kitop Corta Couve Repolho Fino Prático",
-      "affiliate_link": "https://s.shopee.com.br/1BNbgeAKfq",
+      "affiliate_link": "https://s.shopee.com.br/AAIRqTNfuZ",
       "image_url": "https://cf.shopee.com.br/file/2148a492309aaef6bcacf4f7158d642a",
       "shop_name": "Distribuidora KITOP",
       "source_keyword": "fatiador de legumes",
       "category": "Cozinha",
-      "opportunity_score": 59.41,
+      "opportunity_score": 61.11,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -126,12 +230,12 @@
       "id": 103,
       "shopee_item_id": "46360468172",
       "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
-      "affiliate_link": "https://s.shopee.com.br/AAIQPBPLtY",
+      "affiliate_link": "https://s.shopee.com.br/20wk7SkJCz",
       "image_url": "https://cf.shopee.com.br/file/sg-11134201-822x5-mo74eg768t8m85",
       "shop_name": "SELLNEEDS",
       "source_keyword": "potes hermeticos",
       "category": "Cozinha",
-      "opportunity_score": 58.86,
+      "opportunity_score": 60.66,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -151,27 +255,7 @@
       "shop_name": "ES Official Shop",
       "source_keyword": "prateleira banheiro",
       "category": "Banheiro",
-      "opportunity_score": 60.16,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
-    },
-    {
-      "id": 94,
-      "shopee_item_id": "58258071799",
-      "product": "Kit Banheiro Acessórios 5 Peças Completo Toalheiro Saboneteira Decoração Preto Branco Cromado Decor",
-      "affiliate_link": "https://s.shopee.com.br/7fb5QauO3u",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820md-mmjbbyrviqyscd",
-      "shop_name": "Morada de Paz",
-      "source_keyword": "toalheiro banheiro",
-      "category": "Banheiro",
-      "opportunity_score": 60.06,
+      "opportunity_score": 61.81,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -191,7 +275,47 @@
       "shop_name": "Panos Rezini",
       "source_keyword": "tapete banheiro",
       "category": "Banheiro",
-      "opportunity_score": 59.89,
+      "opportunity_score": 61.71,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 94,
+      "shopee_item_id": "58258071799",
+      "product": "Kit Banheiro Acessórios 5 Peças Completo Toalheiro Saboneteira Decoração Preto Branco Cromado Decor",
+      "affiliate_link": "https://s.shopee.com.br/5q9Sgm2VRk",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820md-mmjbbyrviqyscd",
+      "shop_name": "Morada de Paz",
+      "source_keyword": "toalheiro banheiro",
+      "category": "Banheiro",
+      "opportunity_score": 61.44,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 108,
+      "shopee_item_id": "23993063722",
+      "product": "Jogo de Toalhas 4 Peças Banhão Gigante + Rosto Fio Penteado Lumina Karsten - Emcompre",
+      "affiliate_link": "https://s.shopee.com.br/20wk7UNdhr",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lg-mner7lyfkpac01",
+      "shop_name": "Bf Casa Oficial",
+      "source_keyword": "jogo de toalhas",
+      "category": "Cama, Mesa e Banho",
+      "opportunity_score": 60.1,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
