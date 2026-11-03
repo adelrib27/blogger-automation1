@@ -114,7 +114,8 @@ Um blog novo só pode ser chamado de 100% ponta a ponta quando todos os itens ab
 15. auditor permanente cobrindo Page + home + conteúdo editorial;
 16. checkpoint/backup atualizado;
 17. enquadramento visual do Tema V20 preservado na Page LOJA;
-18. identidade textual e visual específica do próprio blog, sem copy herdada de outro nicho.
+18. identidade textual e visual específica do próprio blog, sem copy herdada de outro nicho;
+19. painel informativo final da Loja compacto, legível e integrado ao Tema V20, sem faixas escuras internas que funcionem como segundo rodapé.
 
 ## 9. Referência do laboratório
 
@@ -276,5 +277,40 @@ código/configuração
 ```
 
 Falha em qualquer etapa encerra a promoção sem avançar ao próximo alvo.
+
+## 17. Painel informativo final da Loja — padrão compacto V20
+
+Os blocos informativos finais da vitrine (`.bls-trust` e `.bls-note`) não podem formar duas faixas escuras full-width que visualmente funcionem como um segundo rodapé dentro da Loja.
+
+O padrão validado em LAB e promovido para a rede é:
+
+- conteúdo de transparência, Policy Guard, compra no destino e disclosure **preservado**;
+- apresentação em painel claro e compacto, integrado visualmente aos cards da Loja;
+- títulos e descrições em blocos separados, sem texto colado como `Seleção semânticaItens...`;
+- borda discreta, espaçamento interno consistente e responsividade;
+- no mobile, os itens podem empilhar sem voltar ao bloco escuro de largura total;
+- o rodapé real do Tema V20 permanece sendo o único rodapé visual da página.
+
+Marcador canônico da correção:
+
+```html
+<!-- BLOGGER_STORE_INFO_PANEL_V20_START -->
+```
+
+A implementação/recovery está em:
+
+- `blogger_stores/src/blogger_store_info_panel_v20_migration.py`;
+- `.github/workflows/blogger_store_info_panel_v20_migration.yml` — manual-only após promoção.
+
+Evidência de promoção:
+
+- Casa Prática Lab: run `41566709262` — SUCCESS;
+- Vida Pet Prática + 18 blogs legados: run `41566818411` — SUCCESS 19/19;
+- nenhuma nova seleção Shopee;
+- nenhuma persistência ou alteração de rotação;
+- nos Page-target, staging permaneceu DRAFT;
+- nos legados, Store Post permaneceu LIVE e 20+12.
+
+Novos blogs devem nascer já respeitando este contrato; reintroduzir as faixas escuras internas é regressão visual V20.
 
 **Segredos não pertencem a este documento.**
