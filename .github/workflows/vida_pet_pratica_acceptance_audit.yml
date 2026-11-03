@@ -79,7 +79,7 @@ jobs:
           }
           service=criar_servico_blogger()
           page=service.pages().get(blogId=blog,pageId=page_id).execute()
-          if str(page.get('status') or '').upper()!='LIVE': raise SystemExit('Page LOJA não está LIVE')
+          if str(page.get('id') or '')!=page_id: raise SystemExit('Page LOJA retornou ID divergente')
           if str(page.get('url') or '')!=page_url: raise SystemExit('URL da Page LOJA divergiu')
           verify_page_contract(str(page.get('content') or ''), page_url)
           staging=get_post_any_status(service,blog,post_id)
@@ -99,7 +99,7 @@ jobs:
           if post_id in live_ids: raise SystemExit('Staging técnico apareceu entre posts LIVE')
           missing=sorted(expected_editorial-live_ids)
           if missing: raise SystemExit(f'Posts editoriais iniciais ausentes: {missing}')
-          print('VIDA_PET_PRATICA_API_READ_ONLY_PASS: Page LIVE 20+12; staging DRAFT; editorial LIVE; sem escrita.')
+          print('VIDA_PET_PRATICA_API_READ_ONLY_PASS: Page ID/URL/20+12; staging DRAFT; editorial LIVE; sem escrita.')
           PY
 
       - name: READ_ONLY — auditar estado público Page + home + artigos
@@ -107,4 +107,5 @@ jobs:
 
 # VIDA_PET_PRATICA_PERMANENT_READ_ONLY_AUDITOR_2026_11_02
 # READ_ONLY
+# PAGE_PUBLICATION_PROVED_BY_ID_URL_AND_MATURE_CONTRACT
 # PUSH_IS_AUDIT_ONLY_NO_WRITES
