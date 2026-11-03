@@ -97,7 +97,6 @@ jobs:
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_store_page.py identity-live
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
-          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_store_share_card.py dry-run
 
       - name: Sincronizar Page pública somente após dry-run maduro
         run: |
@@ -139,6 +138,7 @@ jobs:
 
 # VIDA_PET_PRATICA_INITIAL_CONTROLLED_LIVE_2026_11_02
 # FIRST_PUBLISH_STAGING_DRAFT_BEFORE_PAGE_DRY_RUN_2026_11_02
+# FIRST_PUBLISH_SHARE_VALIDATED_INSIDE_PAGE_SYNC_DRY_RUN_2026_11_02
 # NO_SCHEDULE_UNTIL_PUBLIC_E2E_ACCEPTANCE
 # TEMPORARY_KICKOFF_PUSH_MUST_BE_REMOVED_BEFORE_PROMOTION
 # STORE_POST_TECHNICAL_STAGING_MUST_REMAIN_DRAFT
