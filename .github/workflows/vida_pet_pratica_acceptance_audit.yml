@@ -99,13 +99,14 @@ jobs:
           if post_id in live_ids: raise SystemExit('Staging técnico apareceu entre posts LIVE')
           missing=sorted(expected_editorial-live_ids)
           if missing: raise SystemExit(f'Posts editoriais iniciais ausentes: {missing}')
-          print('VIDA_PET_PRATICA_API_READ_ONLY_PASS: Page ID/URL/20+12; staging DRAFT; editorial LIVE; sem escrita.')
+          print('VIDA_PET_PRATICA_API_READ_ONLY_PASS: Page ID/URL/20+12; Tema V20 preservado; staging DRAFT; editorial LIVE; sem escrita.')
           PY
 
       - name: READ_ONLY — auditar estado público Page + home + artigos
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_public_acceptance.py
 
-# VIDA_PET_PRATICA_PERMANENT_READ_ONLY_AUDITOR_2026_11_02
+# VIDA_PET_PRATICA_PERMANENT_READ_ONLY_AUDITOR_2026_11_03
 # READ_ONLY
+# THEME_V20_FRAME_AND_IDENTITY_ISOLATION_REQUIRED
 # PAGE_PUBLICATION_PROVED_BY_ID_URL_AND_MATURE_CONTRACT
 # PUSH_IS_AUDIT_ONLY_NO_WRITES
