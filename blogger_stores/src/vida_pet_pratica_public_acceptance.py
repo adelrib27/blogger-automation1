@@ -66,8 +66,10 @@ def validate_store_page() -> None:
     if (store, hero) != (20, 12) or rels < 32:
         raise RuntimeError(f"Page LOJA inválida: store={store} hero={hero} rels={rels}")
     required = [
+        "emporio-revisao-visual-20-modelo-final",
+        "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
         "BLOGGER_STORE_AUTO_START", "BLOGGER_STORE_AUTO_END",
-        'id="blogger-new-store-page-surface-fix"', 'id="blogger-new-store-page-carousel-fix"',
+        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", 'id="blogger-new-store-page-carousel-fix"',
         "BLOGGER_LIQ_LAYOUT_PATCH_START", "BLOGGER_LIQ_LAYOUT_PATCH_END", 'id="blsSlider"',
         'class="bls-slide is-active"', ".bls-slide{display:none", ".bls-slide.is-active{display:grid",
         'class="bls-nav bls-prev"', 'class="bls-nav bls-next"', 'id="blsDots"',
@@ -81,21 +83,27 @@ def validate_store_page() -> None:
     if missing:
         raise RuntimeError(f"Contrato visual/pet público incompleto: {missing}")
     forbidden = [
+        'id="blogger-new-store-page-surface-fix"',
+        ".bg-photo-container{display:none!important",
+        ".bg-photo{display:none!important",
+        "background:transparent!important;border:0!important;box-shadow:none!important",
         "casa-pratica-lab-20261102.blogspot.com", "conectaachados.blogspot.com",
         "Cozinha &amp; Eletroportáteis", "Tecnologia &amp; Acessórios",
     ]
     bad = [token for token in forbidden if token in raw]
     if bad:
-        raise RuntimeError(f"Identidade de outro blog vazou para a Page: {bad}")
+        raise RuntimeError(f"Desvio visual/identidade de outro blog vazou para a Page: {bad}")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Controlador legado do carousel reapareceu na Page pública.")
-    print("VIDA_PET_PRATICA_PUBLIC_PAGE_PASS: /p/loja.html 20+12 + Policy Guard + identidade pet + carousel/share.")
+    print("VIDA_PET_PRATICA_PUBLIC_PAGE_PASS: /p/loja.html 20+12 + Policy Guard + identidade pet + Tema V20 enquadrado + carousel/share.")
 
 
 def validate_home_and_articles() -> None:
     home = fetch_200(f"{BASE}/?m=1", "PET_HOME")
     if f"post-wrapper hero post-{STORE_POST_ID}" in home or f"post-wrapper not-hero post-{STORE_POST_ID}" in home:
         raise RuntimeError("Store Post técnico continua renderizado na home.")
+    if "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME" not in home or "feed.subtitle" not in home:
+        raise RuntimeError("Tema público não contém runtime de descrição isolada por blog.")
     for slug in ARTICLES:
         path = f"/2026/11/{slug}.html"
         if path not in home:
@@ -103,7 +111,7 @@ def validate_home_and_articles() -> None:
         raw = fetch_200(f"{BASE}{path}", f"PET_ARTICLE_{slug[:14].upper().replace('-', '_')}")
         if "<img" not in raw or "images.unsplash.com" not in raw:
             raise RuntimeError(f"Artigo sem imagem editorial validável: {path}")
-    print("VIDA_PET_PRATICA_HOME_EDITORIAL_PASS: staging fora da home; 3/3 artigos presentes e com imagens.")
+    print("VIDA_PET_PRATICA_HOME_EDITORIAL_PASS: staging fora da home; 3/3 artigos presentes e com imagens; identidade V20 runtime ativa.")
 
 
 def main() -> int:
