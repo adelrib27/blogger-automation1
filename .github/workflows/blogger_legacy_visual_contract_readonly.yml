@@ -2,9 +2,6 @@ name: Blogger — Pente-fino visual read-only da rede legada 18/18
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/blogger_legacy_visual_contract_readonly.yml"
 
 permissions:
   contents: read
@@ -96,8 +93,6 @@ jobs:
               post_id=str(b.get('store_post_id') or '')
               reasons=[]
 
-              # Geração legada: a Page pública fornece a moldura/tema; o Store Post LIVE
-              # é o objeto canônico 20+12. Não exigir 20+12 no HTML cru da Page.
               page_raw=fetch(page_url,f'{idx:02d}-{title}-page')
               theme='emporio-revisao-visual-20-modelo-final' in page_raw
               bad=[x for x in forbidden_page if x in page_raw]
@@ -134,8 +129,10 @@ jobs:
           PY
 
 # READ_ONLY
+# MANUAL_ONLY
+# NO_PUSH_NO_SCHEDULE
 # NO_BLOGGER_WRITE
 # NO_GIT_WRITE
 # LEGACY_PAGE_IS_THEME_SURFACE_STORE_POST_IS_20X12_CANONICAL
 # LIVE_PROVED_BY_POSTS_LIST_NOT_GET_STATUS
-# TEMPORARY_PUSH_TRIGGER_FOR_FIRST_AUDIT
+# LAST_VALIDATED_RUN_41564539089_PASS_18_18
