@@ -68,10 +68,10 @@ def validate_store_page() -> None:
     required = [
         "emporio-revisao-visual-20-modelo-final",
         "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
+        "BLOGGER_MODELO_V20_BLS_STORE_NATIVE",
         "BLOGGER_STORE_AUTO_START", "BLOGGER_STORE_AUTO_END",
         "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", 'id="blogger-new-store-page-carousel-fix"',
-        "BLOGGER_LIQ_LAYOUT_PATCH_START", "BLOGGER_LIQ_LAYOUT_PATCH_END", 'id="blsSlider"',
-        'class="bls-slide is-active"', ".bls-slide{display:none", ".bls-slide.is-active{display:grid",
+        'id="blsSlider"', 'class="bls-slide is-active"', ".bls-slide{display:none", ".bls-slide.is-active{display:grid",
         'class="bls-nav bls-prev"', 'class="bls-nav bls-next"', 'id="blsDots"',
         "document.addEventListener('click'", "closest('.bls-next')", "closest('.bls-prev')",
         "event.stopImmediatePropagation()", "new MutationObserver", "pageCarouselDelegated",
@@ -83,6 +83,7 @@ def validate_store_page() -> None:
     if missing:
         raise RuntimeError(f"Contrato visual/pet público incompleto: {missing}")
     forbidden = [
+        "BLOGGER_LIQ_LAYOUT_PATCH_START", "BLOGGER_LIQ_LAYOUT_PATCH_END", 'id="blogger-liq-layout-wide-css"',
         'id="blogger-new-store-page-surface-fix"',
         ".bg-photo-container{display:none!important",
         ".bg-photo{display:none!important",
@@ -92,10 +93,10 @@ def validate_store_page() -> None:
     ]
     bad = [token for token in forbidden if token in raw]
     if bad:
-        raise RuntimeError(f"Desvio visual/identidade de outro blog vazou para a Page: {bad}")
+        raise RuntimeError(f"Desvio visual/identidade/patch de conteúdo vazou para a Page: {bad}")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Controlador legado do carousel reapareceu na Page pública.")
-    print("VIDA_PET_PRATICA_PUBLIC_PAGE_PASS: /p/loja.html 20+12 + Policy Guard + identidade pet + Tema V20 enquadrado + carousel/share.")
+    print("VIDA_PET_PRATICA_PUBLIC_PAGE_PASS: /p/loja.html 20+12 + Policy Guard + identidade pet + Loja nativa Tema V20 sem sidebar/patch de conteúdo + carousel/share.")
 
 
 def validate_home_and_articles() -> None:
