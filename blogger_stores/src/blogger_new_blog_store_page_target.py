@@ -16,6 +16,8 @@ from criar_rascunho import criar_servico_blogger
 PAGE_COMPAT_START = "<!-- BLOGGER_STORE_AUTO_START -->"
 PAGE_COMPAT_END = "<!-- BLOGGER_STORE_AUTO_END -->"
 PAGE_THEME_FRAME_MARKER = "<!-- BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED -->"
+LAYOUT_PATCH_START = "<!-- BLOGGER_LIQ_LAYOUT_PATCH_START -->"
+LAYOUT_PATCH_END = "<!-- BLOGGER_LIQ_LAYOUT_PATCH_END -->"
 
 # O Blogger pode recriar a Page depois de um clique. O índice é global e reaplicado
 # a todas as cópias do carousel, de modo que nenhum clone volte sozinho ao slide 0.
@@ -62,6 +64,10 @@ PAGE_CAROUSEL_FIX = r'''<script id="blogger-new-store-page-carousel-fix">
 
 LEGACY_CAROUSEL_RE = re.compile(
     r"<script>\s*document\.addEventListener\('DOMContentLoaded',function\(\)\{const root=document\.getElementById\('blsSlider'\).*?</script>",
+    re.S,
+)
+LAYOUT_PATCH_RE = re.compile(
+    re.escape(LAYOUT_PATCH_START) + r".*?" + re.escape(LAYOUT_PATCH_END) + r"\s*",
     re.S,
 )
 
@@ -150,10 +156,26 @@ def strip_legacy_carousel(raw: str) -> str:
     return cleaned
 
 
+def strip_legacy_layout_patch(raw: str) -> str:
+    starts = raw.count(LAYOUT_PATCH_START)
+    ends = raw.count(LAYOUT_PATCH_END)
+    if starts == 0 and ends == 0:
+        return raw
+    if starts != 1 or ends != 1:
+        raise RuntimeError(
+            f"Patch legado de layout inconsistente: start={starts} end={ends}."
+        )
+    cleaned, count = LAYOUT_PATCH_RE.subn("", raw, count=1)
+    if count != 1 or LAYOUT_PATCH_START in cleaned or LAYOUT_PATCH_END in cleaned:
+        raise RuntimeError("Patch legado de layout não pôde ser removido de forma determinística.")
+    return cleaned
+
+
 def pageify_store_html(raw: str, page_url: str) -> str:
-    # Preserva o enquadramento do TEMA MODELO V20. O adapter não pode esconder o fundo
-    # decorativo nem neutralizar o card/shell da Page; ele só adapta a vitrine e o carousel.
-    page_raw = strip_legacy_carousel(raw) + "\n" + PAGE_THEME_FRAME_MARKER + "\n" + PAGE_CAROUSEL_FIX
+    # A largura/no-sidebar da Loja pertence ao TEMA MODELO V20 (BLS Store nativa).
+    # O adapter pode retirar o patch histórico durante migração, mas nunca o publica na Page final.
+    clean = strip_legacy_layout_patch(raw)
+    page_raw = strip_legacy_carousel(clean) + "\n" + PAGE_THEME_FRAME_MARKER + "\n" + PAGE_CAROUSEL_FIX
     page_raw = inject_share_card(page_raw, page_url)
     verify_share_card(page_raw, page_url)
     return page_raw
@@ -180,6 +202,8 @@ def verify_page_contract(raw: str, page_url: str) -> None:
     stripped = [token for token in FORBIDDEN_THEME_STRIPPING if token in raw]
     if stripped:
         raise RuntimeError(f"Page LOJA está removendo o enquadramento visual do Tema V20: {stripped}")
+    if LAYOUT_PATCH_START in raw or LAYOUT_PATCH_END in raw:
+        raise RuntimeError("Page LOJA contém BLOGGER_LIQ_LAYOUT_PATCH; layout deve pertencer ao Tema V20.")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Page LOJA contém o controlador legado do carousel.")
     verify_store_html(raw, page_url)
@@ -207,7 +231,7 @@ def sync_page(dry_run: bool = False) -> int:
     page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw, page_url) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + enquadramento Tema V20 preservado + carousel + share compacto; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + layout nativo Tema V20 + carousel + share compacto; Blogger não alterado.")
         return 0
     service.pages().update(
         blogId=blog_id,
@@ -216,25 +240,41 @@ def sync_page(dry_run: bool = False) -> int:
     ).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + Tema V20 preservado + carousel + share compacto.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + layout nativo Tema V20 + carousel + share compacto.")
     return 0
 
 
 def ensure_store_post_draft() -> int:
-    service, post, _, blog_id, _, post_id, _ = load_targets()
+    service, post, _, blog_id, _, post_id, page_url = load_targets()
     if str((post or {}).get("status") or "").strip().lower() != "draft":
         service.posts().revert(blogId=blog_id, postId=post_id).execute()
     verify = get_post_any_status(service, blog_id, post_id)
     if str(verify.get("status") or "").strip().lower() != "draft":
         raise RuntimeError(f"Store Post técnico continua publicado: {verify.get('status')!r}")
-    print("BLOGGER_NEW_STORE_POST_STAGING_PASS: Store Post técnico preservado fora da home (draft).")
+
+    raw = str(verify.get("content") or "")
+    clean = strip_legacy_layout_patch(raw)
+    if clean != raw:
+        body = {"title": verify.get("title") or "Loja", "content": clean}
+        if verify.get("labels") is not None:
+            body["labels"] = verify.get("labels")
+        service.posts().update(blogId=blog_id, postId=post_id, body=body).execute()
+        verify = get_post_any_status(service, blog_id, post_id)
+        if str(verify.get("status") or "").strip().lower() != "draft":
+            raise RuntimeError("Store Post técnico deixou de ser DRAFT ao remover patch legado de layout.")
+
+    verify_raw = str(verify.get("content") or "")
+    if LAYOUT_PATCH_START in verify_raw or LAYOUT_PATCH_END in verify_raw:
+        raise RuntimeError("Store Post staging ainda contém BLOGGER_LIQ_LAYOUT_PATCH.")
+    verify_store_html(verify_raw, page_url)
+    print("BLOGGER_NEW_STORE_POST_STAGING_PASS: staging DRAFT, 20+12 e sem patch de layout; largura/sidebar pertencem ao Tema V20.")
     return 0
 
 
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, Tema V20 preservado, carousel e share compacto.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, layout nativo Tema V20, carousel e share compacto.")
     return 0
 
 
