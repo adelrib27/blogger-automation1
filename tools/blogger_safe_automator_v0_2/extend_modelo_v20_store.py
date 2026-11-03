@@ -37,10 +37,17 @@ CSS = r"""
   color:#fff!important;
 }
 
-/* A página LOJA é a única página estática que usa largura de vitrine e sem sidebar. */
+/*
+ * LOJA é uma superfície nativa do Tema V20, não uma página institucional com sidebar.
+ * Compatibilidade: renderers antigos (.ga-store-v20/.conecta-store) e Page-target atual (.bls-page).
+ * Todas as regras abaixo são condicionadas à presença de uma raiz de Loja; Sobre/Contato/etc. não mudam.
+ * BLOGGER_MODELO_V20_BLS_STORE_NATIVE
+ */
 @media screen and (min-width:981px){
   body.ga-static-page:has(.ga-store-v20) .centered-bottom,
-  body.ga-static-page:has(.conecta-store) .centered-bottom{
+  body.ga-static-page:has(.conecta-store) .centered-bottom,
+  body.ga-static-page:has(.bls-page) .centered-bottom,
+  body.ga-post-page:has(.bls-page) .centered-bottom{
     display:grid!important;
     gap:0!important;
     grid-template-columns:minmax(0,1fr)!important;
@@ -53,8 +60,11 @@ CSS = r"""
   }
 
   body.ga-static-page:has(.ga-store-v20) .main-container,
-  body.ga-static-page:has(.conecta-store) .main-container{
+  body.ga-static-page:has(.conecta-store) .main-container,
+  body.ga-static-page:has(.bls-page) .main-container,
+  body.ga-post-page:has(.bls-page) .main-container{
     grid-column:1!important;
+    grid-area:1 / 1!important;
     margin:0!important;
     max-width:none!important;
     min-width:0!important;
@@ -72,16 +82,86 @@ CSS = r"""
   body.ga-static-page:has(.conecta-store) .main-container .widget.Blog,
   body.ga-static-page:has(.conecta-store) .main-container .post-outer-container,
   body.ga-static-page:has(.conecta-store) .main-container .post-outer,
-  body.ga-static-page:has(.conecta-store) .main-container .post{
+  body.ga-static-page:has(.conecta-store) .main-container .post,
+  body.ga-static-page:has(.bls-page) .main-container .main,
+  body.ga-static-page:has(.bls-page) .main-container .Blog,
+  body.ga-static-page:has(.bls-page) .main-container .widget.Blog,
+  body.ga-post-page:has(.bls-page) .main-container .main,
+  body.ga-post-page:has(.bls-page) .main-container .Blog,
+  body.ga-post-page:has(.bls-page) .main-container .widget.Blog{
     box-sizing:border-box!important;
     max-width:none!important;
     min-width:0!important;
     width:100%!important;
   }
+}
 
-  body.ga-static-page:has(.ga-store-v20) .sidebar-container,
-  body.ga-static-page:has(.conecta-store) .sidebar-container{
-    display:none!important;
+/* Remove blocos laterais somente quando a Store moderna está presente. */
+body:has(.bls-page) .sidebar-container,
+body:has(.bls-page) .sidebar-container-container,
+body:has(.bls-page) .main-container aside,
+body:has(.bls-page) .PopularPosts,
+body:has(.bls-page) .widget.PopularPosts,
+body:has(.bls-page) [id^="PopularPosts"],
+body.ga-static-page:has(.ga-store-v20) .sidebar-container,
+body.ga-static-page:has(.conecta-store) .sidebar-container{
+  display:none!important;
+}
+
+/* A Store moderna não herda o cartão/moldura visual de uma Page institucional. */
+body:has(.bls-page) .main-container,
+body:has(.bls-page) .main,
+body:has(.bls-page) .blog-posts,
+body:has(.bls-page) .post-outer-container:has(.bls-page),
+body:has(.bls-page) .post-outer:has(.bls-page),
+body:has(.bls-page) .post:has(.bls-page),
+body:has(.bls-page) .post-body-container:has(.bls-page){
+  max-width:none!important;
+  min-width:0!important;
+  width:100%!important;
+}
+body:has(.bls-page) .post-outer-container:has(.bls-page),
+body:has(.bls-page) .post-outer:has(.bls-page),
+body:has(.bls-page) .post:has(.bls-page),
+body:has(.bls-page) .post-body-container:has(.bls-page){
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  margin-bottom:0!important;
+  margin-top:0!important;
+  overflow:visible!important;
+  padding-bottom:0!important;
+  padding-top:0!important;
+}
+body:has(.bls-page) .post:has(.bls-page) .post-header,
+body:has(.bls-page) .post:has(.bls-page) .post-title,
+body:has(.bls-page) .post:has(.bls-page) .entry-title{
+  display:none!important;
+}
+body:has(.bls-page) .post-body:has(.bls-page){
+  margin:0!important;
+  max-width:none!important;
+  overflow:visible!important;
+  padding:0!important;
+  width:100%!important;
+}
+body:has(.bls-page) .bls-page{
+  left:auto!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  max-width:none!important;
+  position:relative!important;
+  transform:none!important;
+  width:100%!important;
+}
+
+@media screen and (max-width:980px){
+  body.ga-static-page:has(.bls-page) .centered-bottom,
+  body.ga-post-page:has(.bls-page) .centered-bottom{
+    display:block!important;
+    margin:0 auto!important;
+    max-width:none!important;
+    width:100%!important;
   }
 }
 
