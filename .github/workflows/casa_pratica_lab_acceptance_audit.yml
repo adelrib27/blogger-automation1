@@ -72,7 +72,7 @@ jobs:
           assert 'service.pages().update' in adapter and 'service.posts().revert' in adapter
           assert 'BLOGGER_STORE_AUTO_START' in adapter and 'BLOGGER_STORE_AUTO_END' in adapter
           assert 'expected_products=20, expected_hero=12' in adapter
-          for token in ['BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED','FORBIDDEN_THEME_STRIPPING','inject_share_card(page_raw, page_url)','verify_share_card(raw, page_url)']:
+          for token in ['BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED','FORBIDDEN_THEME_STRIPPING','inject_share_card(page_raw, page_url)','verify_share_card(raw, page_url)','strip_legacy_layout_patch','layout nativo Tema V20']:
               assert token in adapter, token
           for forbidden in ['PAGE_SURFACE_FIX =', 'fundo decorativo removido', 'fundo limpo']:
               assert forbidden not in adapter, forbidden
@@ -80,9 +80,9 @@ jobs:
               assert token in share, token
           assert 'CASA_PRATICA_LAB_FIRST_PUBLISH_COMBINED_DRY_RUN_PASS' in engine
           assert 'def fetch_200' in public and 'CASA_PRATICA_LAB_PUBLIC_E2E_PAGE_MATURE_PASS' in public
-          for token in ['Tema V20 enquadrado','BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED','BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME']:
+          for token in ['BLOGGER_MODELO_V20_BLS_STORE_NATIVE','Loja nativa Tema V20','BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED','BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME']:
               assert token in public, token
-          for forbidden in ['.bg-photo-container{display:none!important','.bg-photo{display:none!important']:
+          for forbidden in ['BLOGGER_LIQ_LAYOUT_PATCH_START','BLOGGER_LIQ_LAYOUT_PATCH_END','id="blogger-liq-layout-wide-css"','.bg-photo-container{display:none!important','.bg-photo{display:none!important']:
               assert forbidden in public, 'auditor precisa proibir explicitamente '+forbidden
 
           categories=selection.get('categories') or {}
@@ -99,11 +99,11 @@ jobs:
           assert all(b.get('blog_id')!='8930870316690519385' for b in inventory['blogs'])
           assert rollout['enabled'] is False and rollout['mode']=='PREPARED_NOT_DEPLOYED'
           assert all(t.get('blog_id')!='8930870316690519385' for t in rollout['targets'])
-          print('CASA_PRATICA_LAB_REPO_AUDIT_PASS: Page-target 20+12; Tema V20 preservado; share compacto; staging DRAFT; writer único; rede legada 18/18 preservada.')
+          print('CASA_PRATICA_LAB_REPO_AUDIT_PASS: Page-target 20+12; Loja nativa Tema V20; sem patch de layout no conteúdo; share compacto; staging DRAFT; writer único; rede legada 18/18 preservada.')
           PY
 
       - name: Auditar estado público completo com retry
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
 
 # CASA_PRATICA_LAB_E2E_PAGE_TARGET_ACCEPTANCE_2026_11_03
-# FINAL_VISUAL_CONTRACT_THEME_V20_FRAME_COMPACT_SHARE
+# FINAL_VISUAL_CONTRACT_THEME_V20_NATIVE_STORE_NO_CONTENT_LAYOUT_PATCH
