@@ -128,4 +128,87 @@ Casa Prática Lab:
 - wrapper staging: `blogger_stores/src/casa_pratica_lab_store_page.py`
 - auditor: `.github/workflows/casa_pratica_lab_acceptance_audit.yml`
 
+## 10. Sequência obrigatória da primeira publicação — validada no Vida Pet Prática
+
+O primeiro LIVE de um blog novo é diferente de uma atualização de uma loja já madura. O staging recém-criado pode começar com **0 Store + 0 hero**. Portanto, o fluxo canônico da primeira publicação é:
+
+```text
+SAFE fresco 20/20
+→ Policy Guard pré-LIVE
+→ dry-runs de identidade / Store / hero no staging
+→ gravar Store 20 no Store Post técnico ainda DRAFT
+→ gravar hero 12 no mesmo staging DRAFT
+→ validar identidade e reler staging por ID
+→ confirmar explicitamente que staging continua DRAFT
+→ gerar em memória a Page futura a partir do staging já maduro 20+12
+→ validar Page futura, Policy Guard, carousel e share card em memória
+→ sincronizar /p/loja.html
+→ reler Page por ID e URL canônica
+→ confirmar novamente staging DRAFT
+→ validação pública Page 20+12 + Policy Guard + carousel/share
+→ validar home sem staging + artigos editoriais com imagens
+→ persistir rotação somente após todos os PASS
+```
+
+Regras derivadas:
+
+- `sync-dry-run` da Page **não deve ser chamado enquanto o staging ainda estiver 0+0**;
+- um dry-run separado de share card contra a Page pública antiga não deve bloquear a primeira publicação quando o `sync-dry-run` já validou o HTML futuro com share card injetado;
+- depois do primeiro `sync-live`, o share card deve ser verificado novamente na Page real;
+- o writer final promovido para schedule deve perder qualquer gatilho `push` usado apenas para kickoff de implantação;
+- o auditor permanente pode reagir a `push` de arquivos críticos somente se for estritamente read-only e tiver `contents: read`.
+
+## 11. Revisão semântica independente antes do primeiro LIVE
+
+Action SAFE verde é necessária, mas não suficiente para a primeira implantação de um novo nicho.
+
+Antes do primeiro LIVE:
+
+- inspecionar independentemente os 20 itens selecionados;
+- verificar se o título realmente representa a intenção da categoria, não apenas se contém palavras-chave;
+- endurecer as regras quando houver falso positivo;
+- repetir o SAFE do zero depois da correção;
+- somente promover uma seleção nova após nova revisão independente.
+
+No Vida Pet Prática, a primeira seleção SAFE passou tecnicamente, mas a revisão independente encontrou:
+
+- um arranhador/protetor que continha a palavra `cama` e havia sido classificado como `cama gato`;
+- uma bola/brinquedo com claim `anti ansiedade` incompatível com o perfil de baixo risco adotado.
+
+As regras foram endurecidas e o SAFE repetido antes de qualquer LIVE. A primeira seleção nunca foi publicada.
+
+## 12. Auditoria de Page pela Blogger API
+
+Pages e Posts não expõem exatamente o mesmo contrato de metadados na Blogger API.
+
+Para uma Page pública, o auditor read-only deve validar pelo menos:
+
+- Page ID esperado;
+- URL canônica esperada `/p/loja.html`;
+- conteúdo maduro 20+12;
+- Policy Guard e contrato visual;
+- HTTP público 200 na aceitação pública.
+
+Não exigir `page.status == LIVE` se o endpoint `pages().get()` não fornecer esse campo. Para o Store Post staging, o status **DRAFT** continua sendo obrigatório e deve ser verificado explicitamente.
+
+## 13. Referência de produção E2E — Vida Pet Prática
+
+Vida Pet Prática:
+
+- Blog ID: `8052455848487624244`
+- URL: `https://vida-pet-pratica.blogspot.com/`
+- Page LOJA ID: `8624646966938350648`
+- Page: `https://vida-pet-pratica.blogspot.com/p/loja.html`
+- Store Post staging ID: `7332800716046515902`
+- três posts editoriais LIVE com imagens;
+- 5 categorias × 4 intenções = 20 intenções próprias do nicho pet;
+- saúde/veterinária, medicamentos, suplementos e dispositivos de saúde excluídos do perfil;
+- SAFE #1 não promovido após revisão independente;
+- SAFE endurecido e repetido;
+- LIVE controlado final: run `41558454352` — SUCCESS;
+- writer final: `.github/workflows/vida_pet_pratica_store_page_autonomous.yml`;
+- schedule final: `11:35 America/Recife`;
+- auditor permanente: `.github/workflows/vida_pet_pratica_acceptance_audit.yml` às `11:50 America/Recife`;
+- auditor central mantém separação explícita entre rede legada 18/18 e nova arquitetura Page-target.
+
 **Segredos não pertencem a este documento.**
