@@ -115,7 +115,8 @@ Um blog novo só pode ser chamado de 100% ponta a ponta quando todos os itens ab
 16. checkpoint/backup atualizado;
 17. enquadramento visual do Tema V20 preservado na Page LOJA;
 18. identidade textual e visual específica do próprio blog, sem copy herdada de outro nicho;
-19. painel informativo final da Loja compacto, legível e integrado ao Tema V20, sem faixas escuras internas que funcionem como segundo rodapé.
+19. painel informativo final da Loja compacto, legível e integrado ao Tema V20, sem faixas escuras internas que funcionem como segundo rodapé;
+20. `.bls-page` reconhecida pelo próprio Tema V20 como Loja nativa, sem sidebar/blocos laterais e com zero `BLOGGER_LIQ_LAYOUT_PATCH` na Page final e no staging DRAFT.
 
 ## 9. Referência do laboratório
 
@@ -194,6 +195,8 @@ Para uma Page pública, o auditor read-only deve validar pelo menos:
 
 Não exigir `page.status == LIVE` se o endpoint `pages().get()` não fornecer esse campo. Para o Store Post staging, o status **DRAFT** continua sendo obrigatório e deve ser verificado explicitamente.
 
+A URL canônica `/p/loja.html` é requisito da **Page pública**, não do HTML técnico do staging. O staging DRAFT precisa preservar 20+12, Policy Guard, links patrocinados, identidade e estrutura madura, mas não deve falhar apenas por não repetir a URL pública em seu conteúdo. Esse contrato é explicitado por `require_page_url=False` no gate de staging do adapter genérico.
+
 ## 13. Referência de produção E2E — Vida Pet Prática
 
 Vida Pet Prática:
@@ -212,33 +215,58 @@ Vida Pet Prática:
 - writer final: `.github/workflows/vida_pet_pratica_store_page_autonomous.yml`;
 - schedule final: `11:35 America/Recife`;
 - auditor permanente: `.github/workflows/vida_pet_pratica_acceptance_audit.yml` às `11:50 America/Recife`;
-- auditor central mantém separação explícita entre rede legada 18/18 e nova arquitetura Page-target.
+- auditor central mantém separação explícita entre rede legada 18/18 e nova arquitetura Page-target;
+- migração para Loja nativa do Tema V20, sem patch de layout no conteúdo: run `41570796118` — SUCCESS;
+- Page pública: 20+12 + Policy Guard + identidade pet + Tema V20 nativo + sem sidebar/patch;
+- staging técnico: DRAFT + 20+12 + sem patch;
+- home: staging ausente + 3/3 artigos editoriais com imagens.
 
 ## 14. Contrato visual canônico do Tema V20 — obrigatório em novos blogs
 
-A correção validada primeiro no **Casa Prática Lab** e depois promovida ao **Vida Pet Prática** fixa o padrão visual mostrado pelos blogs V20 já aprovados da rede.
+A correção validada primeiro no **Casa Prática Lab** e depois promovida ao **Vida Pet Prática** fixa o contrato visual dos novos blogs V20.
 
-A Page `/p/loja.html` deve usar o **Tema Modelo V20 como moldura visual**, e o Page-target deve cuidar apenas da vitrine dinâmica, carousel, share e sincronização. O adapter não pode substituir o tema por uma superfície própria `clean/full-width`.
+A Page `/p/loja.html` continua sendo uma Page canônica do Blogger, mas **não deve parecer uma página institucional estática com coluna lateral**. A Store moderna `.bls-page` é uma superfície nativa do Tema Modelo V20.
 
-Obrigatório:
+Responsabilidades do **Tema V20**:
 
-- preservar o marcador de tema `emporio-revisao-visual-20-modelo-final`;
-- preservar fundo decorativo, shell/card e espaçamentos definidos pelo Tema V20;
-- preservar a estrutura de header, navegação e rodapé do Tema V20;
-- a Store pode ocultar a sidebar somente no escopo necessário à Loja, conforme o contrato do próprio tema;
-- a Page sincronizada deve conter `<!-- BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED -->`;
-- largura, colunas e responsividade da Store devem respeitar o contrato V20, sem redefinir globalmente a superfície da página.
+- preservar o marcador base `emporio-revisao-visual-20-modelo-final`;
+- preservar header, navegação, fundo global e rodapé do site;
+- reconhecer `.bls-page` pelo marcador/contrato `BLOGGER_MODELO_V20_BLS_STORE_NATIVE`;
+- transformar a área da Loja em uma coluna principal ampla, limitada pelo contrato V20, sem a coluna lateral reservada às páginas/posts comuns;
+- ocultar sidebar, `aside`, `PopularPosts` e blocos laterais somente quando a Store `.bls-page` estiver presente;
+- neutralizar o card/moldura de Page institucional somente no escopo da Store, sem atingir Sobre, Afiliados, Contato, Privacidade, Termos ou posts editoriais;
+- manter responsividade da Loja e compatibilidade com renderers antigos `.ga-store-v20` e `.conecta-store`.
 
-É proibido ao adapter Page-target introduzir novamente regras equivalentes a:
+Responsabilidades do **Page-target adapter**:
 
+- sincronizar 20 Store + 12 hero;
+- manter carousel e share card;
+- preservar marcadores de Store e `BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED`;
+- remover qualquer `BLOGGER_LIQ_LAYOUT_PATCH` histórico antes de publicar a Page;
+- limpar o mesmo patch do staging DRAFT quando encontrado em uma migração;
+- nunca assumir novamente largura/sidebar/moldura global como responsabilidade do HTML da Page.
+
+É proibido na Page final e no staging DRAFT:
+
+- `<!-- BLOGGER_LIQ_LAYOUT_PATCH_START -->`;
+- `<!-- BLOGGER_LIQ_LAYOUT_PATCH_END -->`;
+- `id="blogger-liq-layout-wide-css"`;
 - `.bg-photo-container{display:none!important...}`;
 - `.bg-photo{display:none!important...}`;
-- neutralização global do card/shell do post com fundo transparente, borda zero e sombra zero;
-- remoção do enquadramento do tema apenas para fazer a vitrine ocupar quase toda a viewport.
+- neutralização global indiscriminada do tema apenas para ocupar quase toda a viewport.
 
-A presença dessas regras na camada Page-target é **falha de contrato**, mesmo que 20+12 e Policy Guard estejam verdes.
+A presença de qualquer desses artefatos na superfície final é **falha de contrato**, mesmo com 20+12 e Policy Guard verdes.
 
-O patch BLS específico da própria vitrine pode continuar controlando sua grade interna e ocultando a sidebar no escopo da Loja; ele não deve ser confundido com a antiga camada Page-target que escondia `.bg-photo-container` e `.bg-photo` do Tema V20.
+O renderer da vitrine pode continuar controlando sua **grade interna, cards, hero e conteúdo**. O que ele não pode mais controlar é a estrutura externa que define se a rota se comporta como Loja ou como página estática; isso pertence ao Tema V20.
+
+Evidência do contrato nativo:
+
+- runtime da correção estrutural: commit `ba571f8a16c27dac3a04b71670d15baf600c5efc` no branch `blogger-safe-ui-provisioning-v0-2`;
+- Casa Prática Lab: remoção real do patch Page + staging e PASS run `41569092489`;
+- auditor Casa Lab depois da mudança: run `41570491822` — SUCCESS;
+- Vida Pet Prática: Tema V20 `teal` reaplicado com backup e 20+12 preservados;
+- Vida Pet Prática: produção sem patch + staging DRAFT + aceitação pública E2E run `41570796118` — SUCCESS;
+- migrações de correção encerradas como `recovery-only/manual`, sem `push` e sem `schedule`.
 
 Qualquer alteração futura deste contrato visual deve passar em **LAB antes de produção**. Nunca promover diretamente uma mudança visual genérica para um novo blog real sem validar primeiro no Casa Prática Lab ou laboratório sucessor explicitamente designado.
 
@@ -312,5 +340,21 @@ Evidência de promoção:
 - nos legados, Store Post permaneceu LIVE e 20+12.
 
 Novos blogs devem nascer já respeitando este contrato; reintroduzir as faixas escuras internas é regressão visual V20.
+
+## 18. Regra permanente — Loja não é página estática com blocos laterais
+
+A referência visual validada para novos blogs é a experiência de Store: header e rodapé pertencem ao site, enquanto a vitrine ocupa uma área central ampla e contínua, sem módulos laterais competindo com o conteúdo.
+
+Portanto:
+
+- `/p/loja.html` continua sendo a URL canônica e uma Page do Blogger;
+- visualmente, `.bls-page` deve ser tratada como **Store nativa V20**;
+- Sobre, Afiliados, Contato, Privacidade e Termos continuam sendo páginas institucionais normais;
+- remover sidebar/blocos laterais de todas as páginas é proibido; a regra é estritamente Store-scoped;
+- um novo blog só passa E2E se o tema instalado contiver `BLOGGER_MODELO_V20_BLS_STORE_NATIVE` e a Page/staging estiverem sem `BLOGGER_LIQ_LAYOUT_PATCH`;
+- o validador do runtime deve cobrar explicitamente os seletores `.bls-page`, sidebar/PopularPosts Store-scoped e supressão da moldura estática apenas na Loja;
+- a URL pública é validada na Page; o staging DRAFT não precisa repetir a URL em seu HTML para ser considerado maduro.
+
+Esse contrato substitui definitivamente a estratégia histórica de “corrigir a largura da Loja dentro do HTML da Page”.
 
 **Segredos não pertencem a este documento.**
