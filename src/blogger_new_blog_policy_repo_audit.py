@@ -62,10 +62,15 @@ def main() -> None:
     ], "writer final")
     if re.search(r"(?m)^\s*push\s*:", live):
         fail("writer final voltou a ter gatilho push")
-    ordered = ["sync-dry-run", "sync-live", "vida_pet_pratica_public_acceptance.py", "persist"]
-    positions = [live.find(x) for x in ordered]
+    ordered_steps = [
+        "- name: Preparar staging DRAFT 20+12 e validar Page em memória",
+        "- name: Sincronizar Page pública somente após dry-run maduro",
+        "- name: Aceitação pública Page + home + artigos",
+        "- name: Persistir rotação somente após PASS público completo",
+    ]
+    positions = [live.find(x) for x in ordered_steps]
     if any(p < 0 for p in positions) or positions != sorted(positions):
-        fail(f"ordem fail-closed do writer inválida: {list(zip(ordered, positions))}")
+        fail(f"ordem fail-closed das etapas do writer inválida: {list(zip(ordered_steps, positions))}")
 
     require(acceptance, [
         "workflow_dispatch:", "push:", 'cron: "50 11 * * *"', 'timezone: "America/Recife"',
