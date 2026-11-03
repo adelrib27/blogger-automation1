@@ -65,21 +65,25 @@ jobs:
           assert 'workflow_dispatch:' in legacy and '\n  schedule:' not in legacy and '\n  push:' not in legacy
           assert 'LEGACY_RECOVERY_ONLY' in legacy
           assert 'cron: "20 10 * * *"' in live and 'timezone: "America/Recife"' in live and '\n  push:' not in live
-          for token in ['BLOGGER_STORE_PAGE_ID: "7110845449177208439"','sync-live','ensure-staging-draft','verify-page','casa_pratica_lab_store_page.py','PAGE_SYNC_INCLUDES_CLEAN_SURFACE_AND_COMPACT_SHARE_CARD']:
+          for token in ['BLOGGER_STORE_PAGE_ID: "7110845449177208439"','sync-live','ensure-staging-draft','verify-page','casa_pratica_lab_store_page.py','PAGE_SYNC_PRESERVES_THEME_V20_AND_COMPACT_SHARE_CARD']:
               assert token in live, token
           for token in ['get_post_any_status','def update_staging','def store_write','def hero_write','def identity_write']:
               assert token in wrapper, token
           assert 'service.pages().update' in adapter and 'service.posts().revert' in adapter
           assert 'BLOGGER_STORE_AUTO_START' in adapter and 'BLOGGER_STORE_AUTO_END' in adapter
           assert 'expected_products=20, expected_hero=12' in adapter
-          for token in ['bg-photo-container{display:none!important','inject_share_card(page_raw, page_url)','verify_share_card(raw, page_url)']:
+          for token in ['BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED','FORBIDDEN_THEME_STRIPPING','inject_share_card(page_raw, page_url)','verify_share_card(raw, page_url)']:
               assert token in adapter, token
+          for forbidden in ['PAGE_SURFACE_FIX =', 'fundo decorativo removido', 'fundo limpo']:
+              assert forbidden not in adapter, forbidden
           for token in ['data-share-compact="1"','Compartilhar esta loja','padding:10px 14px','#729c0b']:
               assert token in share, token
           assert 'CASA_PRATICA_LAB_FIRST_PUBLISH_COMBINED_DRY_RUN_PASS' in engine
           assert 'def fetch_200' in public and 'CASA_PRATICA_LAB_PUBLIC_E2E_PAGE_MATURE_PASS' in public
-          for token in ['fundo limpo + carousel + share compacto','data-share-compact="1"','.bg-photo-container{display:none!important']:
+          for token in ['Tema V20 enquadrado','BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED','BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME']:
               assert token in public, token
+          for forbidden in ['.bg-photo-container{display:none!important','.bg-photo{display:none!important']:
+              assert forbidden in public, 'auditor precisa proibir explicitamente '+forbidden
 
           categories=selection.get('categories') or {}
           products=[p for values in categories.values() for p in values]
@@ -90,16 +94,16 @@ jobs:
           assert runs and len(runs[-1].get('items') or [])==20
 
           s=inventory['summary']
-          assert s['blogs_total']==18 and s['modern_blogger_auto_policy_guard']==15
-          assert s['store_scaffold_needs_auto_rotation']==3 and s['duplicate_writer_risks']==0
+          assert s['blogs_total']==18 and s['modern_blogger_auto_policy_guard']==18
+          assert s['store_scaffold_needs_auto_rotation']==0 and s['duplicate_writer_risks']==0
           assert all(b.get('blog_id')!='8930870316690519385' for b in inventory['blogs'])
           assert rollout['enabled'] is False and rollout['mode']=='PREPARED_NOT_DEPLOYED'
           assert all(t.get('blog_id')!='8930870316690519385' for t in rollout['targets'])
-          print('CASA_PRATICA_LAB_REPO_AUDIT_PASS: Page-target 20+12; fundo limpo; share compacto; staging DRAFT; writer único; rede 15/18 preservada.')
+          print('CASA_PRATICA_LAB_REPO_AUDIT_PASS: Page-target 20+12; Tema V20 preservado; share compacto; staging DRAFT; writer único; rede legada 18/18 preservada.')
           PY
 
       - name: Auditar estado público completo com retry
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
 
-# CASA_PRATICA_LAB_E2E_PAGE_TARGET_ACCEPTANCE_2026_11_02
-# FINAL_VISUAL_CONTRACT_CLEAN_SURFACE_COMPACT_SHARE
+# CASA_PRATICA_LAB_E2E_PAGE_TARGET_ACCEPTANCE_2026_11_03
+# FINAL_VISUAL_CONTRACT_THEME_V20_FRAME_COMPACT_SHARE
