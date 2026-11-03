@@ -1,0 +1,49 @@
+{
+  "version": "R5",
+  "date": "2026-11-02",
+  "project": "Blogger Automation — Sistema Mestre V20",
+  "backup_type": "versioned_git_checkpoint_manifest",
+  "secrets_included": false,
+  "canonical_git": {
+    "repository": "adelrib27/blogger-automation1",
+    "branch": "main",
+    "state_before_manifest_commit": "8cf96134dcaec0b9718dfd61801fe81b73945c36",
+    "contract_file": "NEW_BLOG_E2E_CONTRACT_2026-11-02.md",
+    "checkpoint_file": "CHECKPOINT_UPDATE_2026-11-02_VIDA_PET_PRATICA_E2E.md"
+  },
+  "local_theme_backup": {
+    "created_by": "Blogger Local Runner v0.8 during TEMA MODELO V20 adoption",
+    "blog_id": "8052455848487624244",
+    "note": "Theme backup was created before V20 adoption; no credentials are recorded here."
+  },
+  "legacy_network": {
+    "blogs": 18,
+    "status": "unchanged_complete_18_of_18"
+  },
+  "new_blog_e2e": {
+    "title": "Vida Pet Prática",
+    "blog_id": "8052455848487624244",
+    "url": "https://vida-pet-pratica.blogspot.com/",
+    "store_page_id": "8624646966938350648",
+    "store_page_url": "https://vida-pet-pratica.blogspot.com/p/loja.html",
+    "staging_post_id": "7332800716046515902",
+    "staging_status": "DRAFT",
+    "public_contract": "20_store_plus_12_hero",
+    "editorial_live_posts": [
+      "6872395270807124041",
+      "2711795987490959590",
+      "9175269088286950605"
+    ],
+    "live_success_run": 41558454352,
+    "permanent_audit_success_run": 41559416203,
+    "central_policy_audit_success_run": 41559416511,
+    "writer_schedule": "11:35 America/Recife",
+    "audit_schedule": "11:50 America/Recife"
+  },
+  "previous_backup_artifacts_preserved": [
+    "Blogger_Automation_Unificado_2026-11-02_FINAL.zip",
+    "blogger-automation1-backup-2026-11-02-r4.zip",
+    "Pacote_Portatil_Blogger_Automation_V20_Completa-e_validada_Para-Replicar.zip"
+  ],
+  "recovery_rule": "Validate live state first; use this manifest as checkpoint, not as a substitute for live validation."
+}
