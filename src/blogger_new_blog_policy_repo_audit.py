@@ -10,6 +10,7 @@ BLOG_ID = "8052455848487624244"
 PAGE_ID = "8624646966938350648"
 POST_ID = "7332800716046515902"
 PAGE_URL = "https://vida-pet-pratica.blogspot.com/p/loja.html"
+# VISUAL_CONTRACT_V20_FRAME_AND_IDENTITY_ISOLATION_2026_11_03
 
 
 def fail(message: str) -> None:
