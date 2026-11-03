@@ -77,6 +77,16 @@ jobs:
                   if attempt<7: time.sleep(10 if '429' in last else 3)
               raise RuntimeError(f'{label}: sem HTTP 200 ({last})')
 
+          def live_post_ids(service, blog_id):
+              ids=set(); token=None
+              while True:
+                  kwargs={'blogId':blog_id,'status':'LIVE','fetchBodies':False,'maxResults':100}
+                  if token: kwargs['pageToken']=token
+                  response=service.posts().list(**kwargs).execute()
+                  ids.update(str(x.get('id') or '') for x in (response.get('items') or []))
+                  token=response.get('nextPageToken')
+                  if not token: return ids
+
           service=criar_servico_blogger()
           rows=[]; failures=[]
           for idx,b in enumerate(blogs,1):
@@ -94,14 +104,15 @@ jobs:
               if not theme: reasons.append('page_theme_v20_marker_absent')
               if bad: reasons.append('page_forbidden='+','.join(bad))
 
+              live_ids=live_post_ids(service,blog_id)
+              is_live=post_id in live_ids
+              if not is_live: reasons.append('store_post_id_absent_from_live_list')
               post=service.posts().get(blogId=blog_id,postId=post_id).execute()
-              post_status=str(post.get('status') or '').upper()
               post_title=str(post.get('title') or '').strip()
               post_raw=str(post.get('content') or '')
               store=post_raw.count('data-item-id=')
               hero=post_raw.count('data-hero-item-id=')
               rels=post_raw.count('rel="nofollow sponsored noopener"')
-              if post_status!='LIVE': reasons.append(f'post_status={post_status or "missing"}')
               if post_title.casefold()!='loja': reasons.append(f'post_title={post_title!r}')
               if store!=20: reasons.append(f'post_store={store}')
               if hero!=12: reasons.append(f'post_hero={hero}')
@@ -111,19 +122,20 @@ jobs:
               except Exception as exc:
                   reasons.append('policy_guard='+str(exc)[:180])
 
-              row={'title':title,'page_theme_v20':theme,'page_forbidden':bad,'post_status':post_status,'store':store,'hero':hero,'rels':rels}
+              row={'title':title,'page_theme_v20':theme,'page_forbidden':bad,'post_live':is_live,'store':store,'hero':hero,'rels':rels}
               rows.append(row)
               if reasons: failures.append((title,reasons))
-              print(f'LEGACY_VISUAL_AUDIT {idx:02d}/18 | {title} | page_theme={theme} page_forbidden={len(bad)} | post={post_status} store={store} hero={hero} rels={rels}')
+              print(f'LEGACY_VISUAL_AUDIT {idx:02d}/18 | {title} | page_theme={theme} page_forbidden={len(bad)} | post_live={is_live} store={store} hero={hero} rels={rels}')
 
           print(json.dumps({'blogs':rows},ensure_ascii=False,indent=2))
           if failures:
               raise SystemExit('LEGACY_VISUAL_CONTRACT_FAIL: '+json.dumps(failures,ensure_ascii=False))
-          print('LEGACY_VISUAL_CONTRACT_PASS_18_18: 18 Pages HTTP 200 com Tema V20 e zero surface-fix novo; 18 Store Posts LIVE 20x12 + Policy Guard + links patrocinados.')
+          print('LEGACY_VISUAL_CONTRACT_PASS_18_18: 18 Pages HTTP 200 com Tema V20 e zero surface-fix novo; 18 Store Post IDs confirmados em LIVE, 20x12 + Policy Guard + links patrocinados.')
           PY
 
 # READ_ONLY
 # NO_BLOGGER_WRITE
 # NO_GIT_WRITE
 # LEGACY_PAGE_IS_THEME_SURFACE_STORE_POST_IS_20X12_CANONICAL
+# LIVE_PROVED_BY_POSTS_LIST_NOT_GET_STATUS
 # TEMPORARY_PUSH_TRIGGER_FOR_FIRST_AUDIT
