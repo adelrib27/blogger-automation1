@@ -5,6 +5,7 @@ import argparse
 import json
 import re
 from datetime import datetime, timezone
+from html import escape
 from pathlib import Path
 
 import browser_provision as bp
@@ -32,7 +33,7 @@ def _save(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def _render_pages(blog_title: str) -> list[dict]:
+def _render_pages(blog_title: str, blog_description: str) -> list[dict]:
     repo_root = Path(__file__).resolve().parents[2]
     src = repo_root / "themes" / "blogger_modelo_v20" / "pages.json"
     if not src.exists():
@@ -40,11 +41,17 @@ def _render_pages(blog_title: str) -> list[dict]:
     data = json.loads(src.read_text(encoding="utf-8"))
     if data.get("model") != "BLOGGER_MODELO_V20" or data.get("inherit_posts") is not False:
         raise ProvisionError("Template de páginas V20 inválido.")
+    safe_title = escape(str(blog_title or "").strip(), quote=False)
+    safe_description = escape(str(blog_description or "").strip(), quote=False)
+    if not safe_title or not safe_description:
+        raise ProvisionError("Título e descrição do blog são obrigatórios para renderizar as páginas V20.")
     pages = []
     for raw in data.get("pages", []):
-        content = str(raw.get("content") or "").replace("{{BLOG_TITLE}}", blog_title)
-        if "{{BLOG_TITLE}}" in content:
-            raise ProvisionError(f"Token de página não resolvido: {raw.get('key')}")
+        content = str(raw.get("content") or "")
+        content = content.replace("{{BLOG_TITLE}}", safe_title).replace("{{BLOG_DESCRIPTION}}", safe_description)
+        unresolved = sorted(set(re.findall(r"\{\{[A-Z0-9_]+\}\}", content)))
+        if unresolved:
+            raise ProvisionError(f"Token de página não resolvido em {raw.get('key')}: {unresolved}")
         pages.append({
             "key": str(raw["key"]),
             "title": str(raw["title"]),
@@ -90,7 +97,7 @@ def execute_provision(
 
     req = bp.CreateBlogRequest.build(title, address)
     settings._validate_inputs("0", description, search_description, timezone)
-    pages = _render_pages(req.title)
+    pages = _render_pages(req.title, description)
     cp = _checkpoint_path()
     state = {
         "status": "PROVISION_STARTED",
