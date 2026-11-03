@@ -82,21 +82,26 @@ jobs:
           print('BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20 produtos pet permitidos')
           PY
 
-      - name: Dry-runs staging + Page madura + share compacto
+      - name: Dry-runs do staging técnico
         run: |
           set -euo pipefail
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_store_page.py identity-dry-run
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_store_page.py store-dry-run
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_store_page.py hero-dry-run
-          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
-          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_store_share_card.py dry-run
 
-      - name: Atualizar staging DRAFT e sincronizar Page pública
+      - name: Preparar staging DRAFT 20+12 e validar Page em memória
         run: |
           set -euo pipefail
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_store_page.py store-live
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_store_page.py hero-live
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_store_page.py identity-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_store_share_card.py dry-run
+
+      - name: Sincronizar Page pública somente após dry-run maduro
+        run: |
+          set -euo pipefail
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
@@ -133,6 +138,7 @@ jobs:
           retention-days: 14
 
 # VIDA_PET_PRATICA_INITIAL_CONTROLLED_LIVE_2026_11_02
+# FIRST_PUBLISH_STAGING_DRAFT_BEFORE_PAGE_DRY_RUN_2026_11_02
 # NO_SCHEDULE_UNTIL_PUBLIC_E2E_ACCEPTANCE
 # TEMPORARY_KICKOFF_PUSH_MUST_BE_REMOVED_BEFORE_PROMOTION
 # STORE_POST_TECHNICAL_STAGING_MUST_REMAIN_DRAFT
