@@ -12,6 +12,7 @@ from pathlib import Path
 EXPECTED_KEYS = ["sobre", "afiliados", "contato", "privacidade", "termos", "loja"]
 BASE_MARKER = "emporio-revisao-visual-20-modelo-final"
 STORE_MARKER = "BLOGGER_MODELO_V20_STORE_EXTENSION"
+NATIVE_BLS_STORE_MARKER = "BLOGGER_MODELO_V20_BLS_STORE_NATIVE"
 VISIBLE_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_VISIBLE_NAV"
 FOOTER_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_FOOTER_NAV"
 STATIC_PAGE_FEED_MARKER = "BLOGGER_MODELO_V20_STATIC_PAGE_FEED_RUNTIME"
@@ -138,6 +139,8 @@ def main() -> int:
 
         if text.count(STORE_MARKER) != 1:
             fail("marker da extensão LOJA não aparece exatamente uma vez")
+        if NATIVE_BLS_STORE_MARKER not in text:
+            fail("marker da Loja BLS nativa do Tema V20 está ausente")
         if text.count(VISIBLE_NAV_MARKER) != 1:
             fail("marker do menu visível não aparece exatamente uma vez")
         if text.count(FOOTER_NAV_MARKER) < 1:
@@ -170,6 +173,14 @@ def main() -> int:
             "data-ga-brand-description-feed-runtime",
             "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
             "data-ga-static-page-feed-runtime",
+            # Contrato nativo da Store Page-target moderna (.bls-page):
+            "BLOGGER_MODELO_V20_BLS_STORE_NATIVE",
+            "body.ga-static-page:has(.bls-page) .centered-bottom",
+            "body:has(.bls-page) .sidebar-container",
+            "body:has(.bls-page) .PopularPosts",
+            "body:has(.bls-page) .post-outer-container:has(.bls-page)",
+            "body:has(.bls-page) .post-body:has(.bls-page)",
+            "body:has(.bls-page) .bls-page",
         ):
             if needle not in text:
                 fail(f"extensão não contém requisito: {needle}")
@@ -187,6 +198,7 @@ def main() -> int:
         "page_count": 6,
         "page_keys": EXPECTED_KEYS,
         "store_extension_marker": STORE_MARKER,
+        "native_bls_store_marker": NATIVE_BLS_STORE_MARKER,
         "store_visible_nav_marker": VISIBLE_NAV_MARKER,
         "store_footer_nav_marker": FOOTER_NAV_MARKER,
         "static_page_feed_marker": STATIC_PAGE_FEED_MARKER,
@@ -203,6 +215,9 @@ def main() -> int:
         "page_identity_uses_blog_description": True,
         "store_max_width": 1280,
         "store_sidebar_hidden_only": True,
+        "native_bls_store_full_width_supported": True,
+        "native_bls_store_static_shell_suppressed": True,
+        "native_bls_store_side_blocks_suppressed": True,
         "desktop_columns": 4,
         "tablet_columns": 2,
         "mobile_columns": 2,
