@@ -15,11 +15,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  lab:
+  network:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     env:
-      STORE_INFO_PANEL_SCOPE: "lab"
+      STORE_INFO_PANEL_SCOPE: "network"
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Guardas de código
+      - name: Guardas de código e evidência do LAB
         run: |
           set -euo pipefail
           python -m py_compile \
@@ -39,11 +39,13 @@ jobs:
             blogger_stores/src/blogger_new_blog_store_page_target.py \
             blogger_stores/src/blogger_store_info_panel_v20_migration.py
           grep -q 'BLOGGER_STORE_INFO_PANEL_V20_START' blogger_stores/src/blogger_store_info_panel_v20_migration.py
-          grep -q 'Casa Prática Lab' blogger_stores/src/blogger_store_info_panel_v20_migration.py
-      - name: LAB — corrigir painel da Loja sem trocar produtos
+          grep -q 'Vida Pet Prática' blogger_stores/src/blogger_store_info_panel_v20_migration.py
+          grep -q 'NETWORK_STORE_INVENTORY_2026-11-02.json' blogger_stores/src/blogger_store_info_panel_v20_migration.py
+      - name: Produção — corrigir Vida Pet + 18 legados sequencialmente
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_store_info_panel_v20_migration.py
 
-# TEMPORARY_PUSH_TRIGGER_FOR_LAB
-# ONE_TARGET_AT_A_TIME
+# TEMPORARY_PUSH_TRIGGER_FOR_NETWORK_PROMOTION
+# LAB_RUN_41566709262_SUCCESS_REQUIRED
+# ONE_BLOG_AT_A_TIME_SEQUENTIAL
 # NO_SHOPEE_SELECTION_CHANGE
 # NO_ROTATION_PERSIST
