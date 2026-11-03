@@ -1,0 +1,68 @@
+name: V20 — Migração segura do enquadramento Page-target
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/v20_theme_frame_page_migration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v20-theme-frame-page-migration
+  cancel-in-progress: false
+
+jobs:
+  migrate-casa-lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BLOGGER_BLOG_ID: "8930870316690519385"
+      BLOGGER_STORE_PAGE_ID: "7110845449177208439"
+      BLOGGER_STORE_POST_ID: "7691087355641688975"
+      BLOGGER_STORE_PAGE_URL: "https://casa-pratica-lab-20261102.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Guardas de código e alvo exato
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/blogger_policy_guard.py src/criar_rascunho.py \
+            blogger_stores/src/blogger_store_share_card.py \
+            blogger_stores/src/blogger_new_blog_store_page_target.py \
+            blogger_stores/src/casa_pratica_lab_public_acceptance.py
+          test "$BLOGGER_BLOG_ID" = "8930870316690519385"
+          test "$BLOGGER_STORE_PAGE_ID" = "7110845449177208439"
+          test "$BLOGGER_STORE_POST_ID" = "7691087355641688975"
+          grep -q 'BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED' blogger_stores/src/blogger_new_blog_store_page_target.py
+          ! grep -q 'PAGE_SURFACE_FIX =' blogger_stores/src/blogger_new_blog_store_page_target.py
+
+      - name: Dry-run da mesma vitrine 20+12 com Tema V20 preservado
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
+
+      - name: Sincronizar apenas Page LOJA e preservar staging DRAFT
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py ensure-staging-draft
+          PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py verify-page
+
+      - name: Aceitação pública completa do LAB
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_public_acceptance.py
+
+# ONE_TARGET_AT_A_TIME
+# NO_SHOPEE_SELECTION_CHANGE
+# NO_ROTATION_PERSIST
+# CASA_LAB_FIRST
