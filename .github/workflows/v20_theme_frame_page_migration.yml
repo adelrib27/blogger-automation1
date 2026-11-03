@@ -1,10 +1,7 @@
-name: V20 — Migração segura do enquadramento Page-target
+name: V20 — Migração segura do enquadramento Page-target (recovery manual)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/v20_theme_frame_page_migration.yml"
 
 permissions:
   contents: read
@@ -14,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  migrate-vida-pet:
+  migrate-vida-pet-recovery:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -63,6 +60,8 @@ jobs:
       - name: Aceitação pública completa do Vida Pet
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_public_acceptance.py
 
+# RECOVERY_ONLY_MANUAL
+# NO_PUSH_NO_SCHEDULE
 # ONE_TARGET_AT_A_TIME
 # NO_SHOPEE_SELECTION_CHANGE
 # NO_ROTATION_PERSIST
