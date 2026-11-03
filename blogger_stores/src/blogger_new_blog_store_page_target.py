@@ -127,7 +127,7 @@ def get_post_any_status(service, blog_id: str, post_id: str) -> dict:
     raise RuntimeError(f"Store Post {post_id} não encontrado em LIVE/DRAFT/SCHEDULED.")
 
 
-def verify_store_html(raw: str, page_url: str) -> None:
+def verify_store_html(raw: str, page_url: str, *, require_page_url: bool = True) -> None:
     require_store_html_allowed(raw, expected_products=20, expected_hero=12)
     if raw.count("data-item-id=") != 20:
         raise RuntimeError("Esperado exatamente 20 cards de Store.")
@@ -135,8 +135,8 @@ def verify_store_html(raw: str, page_url: str) -> None:
         raise RuntimeError("Esperado exatamente 12 cards de hero.")
     if raw.count('rel="nofollow sponsored noopener"') < 32:
         raise RuntimeError("Links afiliados incompletos.")
-    if page_url not in raw:
-        raise RuntimeError("URL canônica da LOJA ausente do HTML.")
+    if require_page_url and page_url not in raw:
+        raise RuntimeError("URL canônica da LOJA ausente do HTML da Page pública.")
     required = [
         'id="blsSlider"', 'class="bls-slide is-active"', ".bls-slide{display:none",
         ".bls-slide.is-active{display:grid", 'class="bls-nav bls-prev"',
@@ -206,7 +206,7 @@ def verify_page_contract(raw: str, page_url: str) -> None:
         raise RuntimeError("Page LOJA contém BLOGGER_LIQ_LAYOUT_PATCH; layout deve pertencer ao Tema V20.")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Page LOJA contém o controlador legado do carousel.")
-    verify_store_html(raw, page_url)
+    verify_store_html(raw, page_url, require_page_url=True)
     verify_share_card(raw, page_url)
 
 
@@ -227,7 +227,8 @@ def load_targets(require_post: bool = True):
 def sync_page(dry_run: bool = False) -> int:
     service, post, page, blog_id, page_id, _, page_url = load_targets()
     raw = str((post or {}).get("content") or "")
-    verify_store_html(raw, page_url)
+    # O staging técnico precisa ser maduro 20+12, mas não precisa conter a URL da Page pública.
+    verify_store_html(raw, page_url, require_page_url=False)
     page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw, page_url) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
@@ -266,7 +267,7 @@ def ensure_store_post_draft() -> int:
     verify_raw = str(verify.get("content") or "")
     if LAYOUT_PATCH_START in verify_raw or LAYOUT_PATCH_END in verify_raw:
         raise RuntimeError("Store Post staging ainda contém BLOGGER_LIQ_LAYOUT_PATCH.")
-    verify_store_html(verify_raw, page_url)
+    verify_store_html(verify_raw, page_url, require_page_url=False)
     print("BLOGGER_NEW_STORE_POST_STAGING_PASS: staging DRAFT, 20+12 e sem patch de layout; largura/sidebar pertencem ao Tema V20.")
     return 0
 
