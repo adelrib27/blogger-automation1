@@ -68,13 +68,16 @@ def main() -> None:
         fail(f"ordem fail-closed do writer inválida: {list(zip(ordered, positions))}")
 
     require(acceptance, [
-        "workflow_dispatch:", 'cron: "50 11 * * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", "push:", 'cron: "50 11 * * *"', 'timezone: "America/Recife"',
         "permissions:\n  contents: read", f'BLOGGER_BLOG_ID: "{BLOG_ID}"',
         f'BLOGGER_STORE_PAGE_ID: "{PAGE_ID}"', f'BLOGGER_STORE_POST_ID: "{POST_ID}"',
-        "READ_ONLY", "vida_pet_pratica_public_acceptance.py",
+        "READ_ONLY", "PUSH_IS_AUDIT_ONLY_NO_WRITES", "vida_pet_pratica_public_acceptance.py",
+        '"blogger_stores/src/vida_pet_pratica_store.py"', '"src/blogger_policy_guard.py"',
     ], "auditor permanente")
-    if re.search(r"(?m)^\s*push\s*:", acceptance):
-        fail("auditor permanente não deve ter push")
+    forbidden_write_tokens = ["git push", "service.pages().update", "service.posts().update", "service.posts().revert"]
+    bad_acceptance = [x for x in forbidden_write_tokens if x in acceptance]
+    if bad_acceptance:
+        fail(f"auditor read-only contém capacidade de escrita: {bad_acceptance}")
 
     require(engine, [
         f'BLOG_ID = "{BLOG_ID}"', f'POST_ID = "{POST_ID}"', PAGE_URL,
@@ -113,7 +116,7 @@ def main() -> None:
         fail("Vida Pet Prática foi indevidamente misturado ao inventário legado")
 
     print("BLOGGER_NEW_BLOG_POLICY_REPO_AUDIT_PASS")
-    print("Vida Pet Prática: SAFE + writer Page-target + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente + schedule 11:35 protegidos; rede legada 18 preservada.")
+    print("Vida Pet Prática: SAFE + writer Page-target + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente read-only + schedule 11:35 protegidos; rede legada 18 preservada.")
 
 
 if __name__ == "__main__":

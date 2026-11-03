@@ -2,6 +2,21 @@ name: Vida Pet Prática — Auditoria E2E permanente
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/vida_pet_pratica_acceptance_audit.yml"
+      - ".github/workflows/vida_pet_pratica_store_page_autonomous.yml"
+      - "blogger_stores/src/vida_pet_pratica_store.py"
+      - "blogger_stores/src/vida_pet_pratica_store_page.py"
+      - "blogger_stores/src/vida_pet_pratica_public_acceptance.py"
+      - "blogger_stores/src/blogger_new_blog_store_page_target.py"
+      - "blogger_stores/src/blogger_store_share_card.py"
+      - "blogger_stores/data/vida_pet_pratica_selection.json"
+      - "blogger_stores/data/vida_pet_pratica_rotation.json"
+      - "config/shopee_vida_pet_pratica.json"
+      - "config/shopee_vida_pet_pratica_intent_rules.json"
+      - "src/blogger_policy_guard.py"
+      - "config/blogger_policy_guard.json"
   schedule:
     - cron: "50 11 * * *"
       timezone: "America/Recife"
@@ -92,3 +107,4 @@ jobs:
 
 # VIDA_PET_PRATICA_PERMANENT_READ_ONLY_AUDITOR_2026_11_02
 # READ_ONLY
+# PUSH_IS_AUDIT_ONLY_NO_WRITES
