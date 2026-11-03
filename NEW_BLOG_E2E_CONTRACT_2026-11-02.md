@@ -112,7 +112,9 @@ Um blog novo só pode ser chamado de 100% ponta a ponta quando todos os itens ab
 13. writer automático único;
 14. schedule habilitado somente após aceitação;
 15. auditor permanente cobrindo Page + home + conteúdo editorial;
-16. checkpoint/backup atualizado.
+16. checkpoint/backup atualizado;
+17. enquadramento visual do Tema V20 preservado na Page LOJA;
+18. identidade textual e visual específica do próprio blog, sem copy herdada de outro nicho.
 
 ## 9. Referência do laboratório
 
@@ -210,5 +212,69 @@ Vida Pet Prática:
 - schedule final: `11:35 America/Recife`;
 - auditor permanente: `.github/workflows/vida_pet_pratica_acceptance_audit.yml` às `11:50 America/Recife`;
 - auditor central mantém separação explícita entre rede legada 18/18 e nova arquitetura Page-target.
+
+## 14. Contrato visual canônico do Tema V20 — obrigatório em novos blogs
+
+A correção validada primeiro no **Casa Prática Lab** e depois promovida ao **Vida Pet Prática** fixa o padrão visual mostrado pelos blogs V20 já aprovados da rede.
+
+A Page `/p/loja.html` deve usar o **Tema Modelo V20 como moldura visual**, e o Page-target deve cuidar apenas da vitrine dinâmica, carousel, share e sincronização. O adapter não pode substituir o tema por uma superfície própria `clean/full-width`.
+
+Obrigatório:
+
+- preservar o marcador de tema `emporio-revisao-visual-20-modelo-final`;
+- preservar fundo decorativo, shell/card e espaçamentos definidos pelo Tema V20;
+- preservar a estrutura de header, navegação e rodapé do Tema V20;
+- a Store pode ocultar a sidebar somente no escopo necessário à Loja, conforme o contrato do próprio tema;
+- a Page sincronizada deve conter `<!-- BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED -->`;
+- largura, colunas e responsividade da Store devem respeitar o contrato V20, sem redefinir globalmente a superfície da página.
+
+É proibido ao adapter Page-target introduzir novamente regras equivalentes a:
+
+- `.bg-photo-container{display:none!important...}`;
+- `.bg-photo{display:none!important...}`;
+- neutralização global do card/shell do post com fundo transparente, borda zero e sombra zero;
+- remoção do enquadramento do tema apenas para fazer a vitrine ocupar quase toda a viewport.
+
+A presença dessas regras na camada Page-target é **falha de contrato**, mesmo que 20+12 e Policy Guard estejam verdes.
+
+O patch BLS específico da própria vitrine pode continuar controlando sua grade interna e ocultando a sidebar no escopo da Loja; ele não deve ser confundido com a antiga camada Page-target que escondia `.bg-photo-container` e `.bg-photo` do Tema V20.
+
+Qualquer alteração futura deste contrato visual deve passar em **LAB antes de produção**. Nunca promover diretamente uma mudança visual genérica para um novo blog real sem validar primeiro no Casa Prática Lab ou laboratório sucessor explicitamente designado.
+
+## 15. Isolamento obrigatório de identidade e nicho
+
+Reutilizar V20 significa reutilizar **engenharia e estrutura**, nunca textos específicos de outro blog.
+
+Para cada blog novo:
+
+- `BLOG_TITLE` vem do título real do próprio blog;
+- a identidade textual institucional deve derivar da **descrição real do próprio blog** já configurada no Blogger;
+- a página Sobre não pode conter exemplos fixos como `casa, cozinha, tecnologia e dia a dia` quando o nicho é outro;
+- o rodapé deve sincronizar título e descrição do próprio blog, usando a fonte canônica do Blogger, em vez de manter copy fixa do blog-modelo;
+- categorias, textos de hero, disclosure contextual, filtros semânticos e paleta devem pertencer ao blog alvo;
+- nenhum nome, URL, Page ID, Post ID, categoria, nicho, histórico de rotação ou copy de outro blog pode vazar para o alvo.
+
+O provisionador V20 deve resolver `{{BLOG_TITLE}}` e `{{BLOG_DESCRIPTION}}`, escapar o conteúdo textual e falhar fechado se qualquer token de identidade permanecer sem resolver.
+
+A auditoria deve tratar vazamento de identidade como erro E2E, não como detalhe cosmético.
+
+## 16. Ordem de promoção de mudanças genéricas
+
+Toda mudança que afete tema, Page-target, identidade, layout ou renderer compartilhado deve seguir:
+
+```text
+código/configuração
+→ testes estáticos/CI
+→ Casa Prática Lab (ou LAB sucessor) com backup
+→ dry-run
+→ publicação LAB controlada
+→ auditoria pública LAB
+→ somente após PASS: um blog novo de produção
+→ auditoria pública de produção
+→ tornar migrações recovery-only/manual
+→ atualizar contrato/checkpoint
+```
+
+Falha em qualquer etapa encerra a promoção sem avançar ao próximo alvo.
 
 **Segredos não pertencem a este documento.**
