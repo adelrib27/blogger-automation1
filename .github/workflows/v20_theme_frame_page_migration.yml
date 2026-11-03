@@ -1,7 +1,10 @@
-name: V20 — Migração segura do enquadramento Page-target (recovery manual)
+name: V20 — Migração segura do enquadramento Page-target (promoção Vida Pet)
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/v20_theme_frame_page_migration.yml"
 
 permissions:
   contents: read
@@ -11,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  migrate-vida-pet-recovery:
+  migrate-vida-pet:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -45,12 +48,15 @@ jobs:
           test "$BLOGGER_STORE_POST_ID" = "7332800716046515902"
           test "$BLOGGER_STORE_PAGE_URL" = "https://vida-pet-pratica.blogspot.com/p/loja.html"
           grep -q 'BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED' blogger_stores/src/blogger_new_blog_store_page_target.py
+          grep -q 'strip_legacy_layout_patch' blogger_stores/src/blogger_new_blog_store_page_target.py
+          grep -q 'Page LOJA contém BLOGGER_LIQ_LAYOUT_PATCH' blogger_stores/src/blogger_new_blog_store_page_target.py
+          grep -q 'BLOGGER_MODELO_V20_BLS_STORE_NATIVE' blogger_stores/src/vida_pet_pratica_public_acceptance.py
           ! grep -q 'PAGE_SURFACE_FIX =' blogger_stores/src/blogger_new_blog_store_page_target.py
 
-      - name: Dry-run da mesma vitrine 20+12 com Tema V20 preservado
+      - name: Dry-run 20+12 removendo patch legado somente em memória
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
 
-      - name: Sincronizar apenas Page LOJA e preservar staging DRAFT
+      - name: Sincronizar Page sem patch e limpar staging DRAFT
         run: |
           set -euo pipefail
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
@@ -60,9 +66,9 @@ jobs:
       - name: Aceitação pública completa do Vida Pet
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_public_acceptance.py
 
-# RECOVERY_ONLY_MANUAL
-# NO_PUSH_NO_SCHEDULE
+# TEMPORARY_PUSH_TRIGGER_FOR_VALIDATED_PROMOTION
+# CASA_LAB_RUN_41569092489_SUCCESS_REQUIRED
+# THEME_RUNTIME_BA571F8_NATIVE_BLS_STORE_REQUIRED
 # ONE_TARGET_AT_A_TIME
 # NO_SHOPEE_SELECTION_CHANGE
 # NO_ROTATION_PERSIST
-# CASA_LAB_PASS_BEFORE_VIDA_PET
