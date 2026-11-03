@@ -49,14 +49,15 @@ jobs:
           test "$BLOGGER_STORE_PAGE_URL" = "https://vida-pet-pratica.blogspot.com/p/loja.html"
           grep -q 'BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED' blogger_stores/src/blogger_new_blog_store_page_target.py
           grep -q 'strip_legacy_layout_patch' blogger_stores/src/blogger_new_blog_store_page_target.py
+          grep -q 'require_page_url=False' blogger_stores/src/blogger_new_blog_store_page_target.py
           grep -q 'Page LOJA contém BLOGGER_LIQ_LAYOUT_PATCH' blogger_stores/src/blogger_new_blog_store_page_target.py
           grep -q 'BLOGGER_MODELO_V20_BLS_STORE_NATIVE' blogger_stores/src/vida_pet_pratica_public_acceptance.py
           ! grep -q 'PAGE_SURFACE_FIX =' blogger_stores/src/blogger_new_blog_store_page_target.py
 
-      - name: Dry-run 20+12 removendo patch legado somente em memória
+      - name: Dry-run idempotente da vitrine 20+12 sob Tema V20 nativo
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-dry-run
 
-      - name: Sincronizar Page sem patch e limpar staging DRAFT
+      - name: Revalidar Page sem patch e staging DRAFT
         run: |
           set -euo pipefail
           PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_new_blog_store_page_target.py sync-live
@@ -66,7 +67,7 @@ jobs:
       - name: Aceitação pública completa do Vida Pet
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_public_acceptance.py
 
-# TEMPORARY_PUSH_TRIGGER_FOR_VALIDATED_PROMOTION
+# TEMPORARY_PUSH_TRIGGER_FOR_VALIDATED_PROMOTION_RETRY_AFTER_STAGING_URL_GATE_FIX
 # CASA_LAB_RUN_41569092489_SUCCESS_REQUIRED
 # THEME_RUNTIME_BA571F8_NATIVE_BLS_STORE_REQUIRED
 # ONE_TARGET_AT_A_TIME
