@@ -15,6 +15,8 @@ STORE_MARKER = "BLOGGER_MODELO_V20_STORE_EXTENSION"
 VISIBLE_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_VISIBLE_NAV"
 FOOTER_NAV_MARKER = "BLOGGER_MODELO_V20_STORE_FOOTER_NAV"
 STATIC_PAGE_FEED_MARKER = "BLOGGER_MODELO_V20_STATIC_PAGE_FEED_RUNTIME"
+BRAND_DESCRIPTION_MARKER = "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME"
+GENERIC_LEAK = "produtos para casa, cozinha, tecnologia e dia a dia"
 
 
 def sha256(path: Path) -> str:
@@ -44,14 +46,16 @@ def main() -> int:
     canonical_pages_path = root / "themes" / "blogger_modelo_v20" / "pages.json"
     extension_path = here / "extend_modelo_v20_store.py"
     visible_nav_path = here / "extend_modelo_v20_store_visible_nav.py"
+    provision_path = here / "provision_new_blog_v20.py"
 
-    for p in (manifest_path, template_pages_path, canonical_pages_path, extension_path, visible_nav_path):
+    for p in (manifest_path, template_pages_path, canonical_pages_path, extension_path, visible_nav_path, provision_path):
         if not p.exists():
             fail(f"arquivo obrigatório ausente: {p}")
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     template_pages = json.loads(template_pages_path.read_text(encoding="utf-8"))
     canonical_pages = json.loads(canonical_pages_path.read_text(encoding="utf-8"))
+    provision_text = provision_path.read_text(encoding="utf-8")
 
     if manifest.get("model") != "BLOGGER_MODELO_V20" or manifest.get("version") != 20:
         fail("manifesto não identifica BLOGGER_MODELO_V20 versão 20")
@@ -66,6 +70,18 @@ def main() -> int:
         fail(f"ordem/chaves de páginas inválidas: {keys}")
     if len(pages) != 6:
         fail(f"esperadas 6 páginas; obtido {len(pages)}")
+
+    sobre = next((p for p in pages if p.get("key") == "sobre"), None)
+    if not sobre:
+        fail("página Sobre ausente")
+    sobre_content = str(sobre.get("content") or "")
+    if "{{BLOG_DESCRIPTION}}" not in sobre_content:
+        fail("página Sobre não deriva a identidade da descrição do próprio blog")
+    if GENERIC_LEAK in sobre_content.casefold():
+        fail("página Sobre ainda contém nicho fixo herdado do blog-modelo")
+    for needle in ("def _render_pages(blog_title: str, blog_description: str)", "{{BLOG_DESCRIPTION}}", "_render_pages(req.title, description)", "from html import escape"):
+        if needle not in provision_text:
+            fail(f"provisionador não protege identidade por descrição: {needle}")
 
     store = next((p for p in pages if p.get("key") == "loja"), None)
     if not store:
@@ -107,7 +123,7 @@ def main() -> int:
             f"<style>/* {BASE_MARKER} */</style></head><body class='ga-static-page'>"
             "<nav class='ga-home-v6-nav'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></nav>"
             "<main><div class='main section' id='page_body'></div></main>"
-            "<section class='ga-static-footer'><div class='ga-static-footer-brand'><h3>Modelo</h3></div>"
+            "<section class='ga-static-footer'><div class='ga-static-footer-brand'><h3>Modelo</h3><p>Texto legado</p></div>"
             "<div class='ga-static-footer-links'><a href='/'>Início</a><a href='/p/sobre.html'>Sobre</a></div>"
             "<div class='ga-static-footer-bottom'><strong>Modelo</strong></div></section>"
             "</body></html>",
@@ -128,6 +144,8 @@ def main() -> int:
             fail("marker de navegação da LOJA no rodapé está ausente")
         if STATIC_PAGE_FEED_MARKER not in text:
             fail("runtime de fallback das páginas estáticas está ausente")
+        if BRAND_DESCRIPTION_MARKER not in text:
+            fail("runtime de descrição do próprio blog no rodapé está ausente")
 
         for needle in (
             "/p/loja.html",
@@ -147,6 +165,10 @@ def main() -> int:
             "/feeds/pages/default?alt=json&max-results=25",
             "hydrateStaticPageFromFeed",
             "syncBrandFromFeed",
+            "feed.subtitle",
+            ".ga-home-footer-brand p,.ga-post-footer-brand p,.ga-static-footer-brand p",
+            "data-ga-brand-description-feed-runtime",
+            "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
             "data-ga-static-page-feed-runtime",
         ):
             if needle not in text:
@@ -168,6 +190,7 @@ def main() -> int:
         "store_visible_nav_marker": VISIBLE_NAV_MARKER,
         "store_footer_nav_marker": FOOTER_NAV_MARKER,
         "static_page_feed_marker": STATIC_PAGE_FEED_MARKER,
+        "brand_description_marker": BRAND_DESCRIPTION_MARKER,
         "store_menu_path": "/p/loja.html",
         "store_menu_position": "after-home",
         "store_menu_target": "nav.ga-home-v6-nav",
@@ -176,6 +199,8 @@ def main() -> int:
         "store_footer_position": "after-home",
         "static_page_feed_runtime_supported": True,
         "footer_brand_feed_sync_supported": True,
+        "footer_description_feed_sync_supported": True,
+        "page_identity_uses_blog_description": True,
         "store_max_width": 1280,
         "store_sidebar_hidden_only": True,
         "desktop_columns": 4,
