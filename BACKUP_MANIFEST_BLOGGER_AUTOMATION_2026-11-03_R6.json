@@ -1,0 +1,79 @@
+{
+  "version": "R6",
+  "date": "2026-11-03",
+  "project": "Blogger Automation — Sistema Mestre V20",
+  "backup_type": "versioned_git_checkpoint_manifest",
+  "secrets_included": false,
+  "canonical_git": {
+    "repository": "adelrib27/blogger-automation1",
+    "branch": "main",
+    "checkpoint_file": "CHECKPOINT_UPDATE_2026-11-03_THEME_V20_VISUAL_CONTRACT.md",
+    "contract_file": "NEW_BLOG_E2E_CONTRACT_2026-11-02.md",
+    "page_target_adapter": "blogger_stores/src/blogger_new_blog_store_page_target.py",
+    "legacy_visual_auditor": ".github/workflows/blogger_legacy_visual_contract_readonly.yml"
+  },
+  "runner": {
+    "branch": "blogger-safe-ui-provisioning-v0-2",
+    "validated_head": "54aeeee3840a86ca01d899c8f1c04ac2a6831cbb",
+    "runtime_version": "0.8",
+    "identity_contract": "BLOG_TITLE + BLOG_DESCRIPTION from target blog; footer description from Blogger feed.subtitle"
+  },
+  "visual_contract": {
+    "theme_marker": "emporio-revisao-visual-20-modelo-final",
+    "page_target_marker": "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED",
+    "forbidden_page_target_behavior": [
+      "hide bg-photo-container",
+      "hide bg-photo",
+      "globally neutralize Theme V20 post/page shell to clean full-width surface"
+    ],
+    "promotion_rule": "CI -> LAB -> public LAB PASS -> production -> public production PASS"
+  },
+  "casa_pratica_lab": {
+    "blog_id": "8930870316690519385",
+    "store_page_id": "7110845449177208439",
+    "staging_post_id": "7691087355641688975",
+    "staging_final": "DRAFT",
+    "theme_palette": "blue",
+    "visual_migration_run": 41563263035,
+    "visual_migration_result": "SUCCESS"
+  },
+  "vida_pet_pratica": {
+    "blog_id": "8052455848487624244",
+    "store_page_id": "8624646966938350648",
+    "staging_post_id": "7332800716046515902",
+    "staging_final": "DRAFT",
+    "theme_palette": "teal",
+    "visual_migration_run": 41563560342,
+    "visual_migration_result": "SUCCESS",
+    "permanent_audit_run": 41564016789,
+    "permanent_audit_result": "SUCCESS",
+    "central_policy_audit_run": 41564016778,
+    "central_policy_audit_result": "SUCCESS"
+  },
+  "legacy_network": {
+    "blogs": 18,
+    "architecture": "legacy Page as Theme V20 surface; Store Post LIVE as canonical 20+12 object",
+    "visual_readonly_audit_run": 41564539089,
+    "visual_readonly_audit_result": "SUCCESS",
+    "validated": {
+      "public_page_theme_v20": "18/18",
+      "new_page_target_surface_fix_absent": "18/18",
+      "store_post_live": "18/18",
+      "store_20": "18/18",
+      "hero_12": "18/18",
+      "sponsored_rel_32": "18/18",
+      "policy_guard": "18/18"
+    }
+  },
+  "recovery_workflows": {
+    "v20_theme_frame_page_migration": "manual-only, no push, no schedule",
+    "legacy_visual_contract_auditor": "manual-only, read-only, no push, no schedule"
+  },
+  "previous_manifests_preserved": [
+    "BACKUP_MANIFEST_BLOGGER_AUTOMATION_2026-11-02_R5.json",
+    "Blogger_Automation_Unificado_2026-11-02_FINAL.zip",
+    "blogger-automation1-backup-2026-11-02-r4.zip",
+    "Pacote_Portatil_Blogger_Automation_V20_Completa-e_validada_Para-Replicar.zip"
+  ],
+  "recovery_rule": "Validate live state first. This R6 manifest is a checkpoint, never a substitute for live validation."
+}
