@@ -64,12 +64,11 @@ def validate_store_page() -> None:
     required = [
         "emporio-revisao-visual-20-modelo-final",
         "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
+        "BLOGGER_MODELO_V20_BLS_STORE_NATIVE",
         "BLOGGER_STORE_AUTO_START",
         "BLOGGER_STORE_AUTO_END",
         "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED",
         'id="blogger-new-store-page-carousel-fix"',
-        "BLOGGER_LIQ_LAYOUT_PATCH_START",
-        "BLOGGER_LIQ_LAYOUT_PATCH_END",
         'id="blsSlider"',
         'class="bls-slide is-active"',
         ".bls-slide{display:none",
@@ -108,6 +107,9 @@ def validate_store_page() -> None:
     if missing:
         raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
     forbidden = [
+        "BLOGGER_LIQ_LAYOUT_PATCH_START",
+        "BLOGGER_LIQ_LAYOUT_PATCH_END",
+        'id="blogger-liq-layout-wide-css"',
         'id="blogger-new-store-page-surface-fix"',
         ".bg-photo-container{display:none!important",
         ".bg-photo{display:none!important",
@@ -117,14 +119,14 @@ def validate_store_page() -> None:
     ]
     bad = [token for token in forbidden if token in raw]
     if bad:
-        raise RuntimeError(f"Desvio visual/clean-surface reapareceu na Page: {bad}")
+        raise RuntimeError(f"Desvio visual/patch de conteúdo reapareceu na Page: {bad}")
     if raw.count('id="blogger-store-share-card"') != 1:
         raise RuntimeError("Cartão de compartilhamento ausente ou duplicado.")
     if raw.find('id="blogger-store-share-card"') > raw.find('<div class="bls-page">'):
         raise RuntimeError("Cartão de compartilhamento precisa aparecer antes da vitrine.")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Controlador legado do carousel reapareceu na Page pública.")
-    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + Tema V20 enquadrado + carousel + share compacto + Policy Guard.")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + Loja nativa Tema V20 sem sidebar/patch de conteúdo + carousel + share compacto + Policy Guard.")
 
 
 def validate_home_and_articles() -> None:
