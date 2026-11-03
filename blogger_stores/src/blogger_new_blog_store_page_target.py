@@ -15,21 +15,7 @@ from criar_rascunho import criar_servico_blogger
 
 PAGE_COMPAT_START = "<!-- BLOGGER_STORE_AUTO_START -->"
 PAGE_COMPAT_END = "<!-- BLOGGER_STORE_AUTO_END -->"
-
-PAGE_SURFACE_FIX = r'''<style id="blogger-new-store-page-surface-fix">
-body:has(.bls-page) .bg-photo-container{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
-body:has(.bls-page) .bg-photo{display:none!important;background:none!important;height:0!important;min-height:0!important}
-body:has(.bls-page) .centered{width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
-body:has(.bls-page) .centered-bottom{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:0!important;margin:0 auto!important;padding-top:0!important}
-body:has(.bls-page) .main-container{grid-column:1!important;grid-area:1 / 1!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;padding-top:0!important}
-body:has(.bls-page) .sidebar-container,body:has(.bls-page) .sidebar-container-container,body:has(.bls-page) .main-container aside,body:has(.bls-page) .PopularPosts,body:has(.bls-page) .widget.PopularPosts,body:has(.bls-page) [id^="PopularPosts"]{display:none!important}
-body:has(.bls-page) .main-container,body:has(.bls-page) .main,body:has(.bls-page) .blog-posts,body:has(.bls-page) .post-outer-container,body:has(.bls-page) .post-outer,body:has(.bls-page) .post,body:has(.bls-page) .post-body-container,body:has(.bls-page) .post-body{width:100%!important;max-width:none!important}
-body:has(.bls-page) .post-outer-container,body:has(.bls-page) .post-outer,body:has(.bls-page) .post,body:has(.bls-page) .post-body-container{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;padding-top:0!important;padding-bottom:0!important;margin-top:0!important;margin-bottom:0!important}
-body:has(.bls-page) .post-title-container,body:has(.bls-page) .post-title,body:has(.bls-page) .entry-title,body:has(.bls-page) .post-header{display:none!important}
-body:has(.bls-page) .post-body{margin:0!important;padding:0!important;overflow:visible!important}
-body:has(.bls-page) .bls-page{width:min(1440px,calc(100vw - 48px))!important;max-width:none!important;position:relative!important;left:50%!important;transform:translateX(-50%)!important;margin-top:12px!important;margin-bottom:0!important}
-@media(max-width:700px){body:has(.bls-page) .centered-bottom{display:block!important}body:has(.bls-page) .bls-page{width:calc(100vw - 16px)!important;margin-top:8px!important}}
-</style>'''
+PAGE_THEME_FRAME_MARKER = "<!-- BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED -->"
 
 # O Blogger pode recriar a Page depois de um clique. O índice é global e reaplicado
 # a todas as cópias do carousel, de modo que nenhum clone volte sozinho ao slide 0.
@@ -78,6 +64,16 @@ LEGACY_CAROUSEL_RE = re.compile(
     r"<script>\s*document\.addEventListener\('DOMContentLoaded',function\(\)\{const root=document\.getElementById\('blsSlider'\).*?</script>",
     re.S,
 )
+
+# Estes tokens foram usados pelo laboratório para criar uma superfície "clean/full-width".
+# Eles são incompatíveis com o padrão visual V20 já validado, que preserva fundo decorativo
+# e o enquadramento/card do tema. Qualquer reaparecimento deve falhar fechado.
+FORBIDDEN_THEME_STRIPPING = [
+    'id="blogger-new-store-page-surface-fix"',
+    '.bg-photo-container{display:none!important',
+    '.bg-photo{display:none!important',
+    'background:transparent!important;border:0!important;box-shadow:none!important',
+]
 
 
 def required_env(name: str) -> str:
@@ -155,7 +151,9 @@ def strip_legacy_carousel(raw: str) -> str:
 
 
 def pageify_store_html(raw: str, page_url: str) -> str:
-    page_raw = PAGE_SURFACE_FIX + "\n" + strip_legacy_carousel(raw) + "\n" + PAGE_CAROUSEL_FIX
+    # Preserva o enquadramento do TEMA MODELO V20. O adapter não pode esconder o fundo
+    # decorativo nem neutralizar o card/shell da Page; ele só adapta a vitrine e o carousel.
+    page_raw = strip_legacy_carousel(raw) + "\n" + PAGE_THEME_FRAME_MARKER + "\n" + PAGE_CAROUSEL_FIX
     page_raw = inject_share_card(page_raw, page_url)
     verify_share_card(page_raw, page_url)
     return page_raw
@@ -165,10 +163,7 @@ def verify_page_contract(raw: str, page_url: str) -> None:
     if raw.count(PAGE_COMPAT_START) != 1 or raw.count(PAGE_COMPAT_END) != 1:
         raise RuntimeError("Page LOJA perdeu BLOGGER_STORE_AUTO_START/END.")
     required = [
-        'id="blogger-new-store-page-surface-fix"',
-        '.bg-photo-container{display:none!important',
-        '.bg-photo{display:none!important',
-        'margin-top:12px!important',
+        PAGE_THEME_FRAME_MARKER,
         'id="blogger-new-store-page-carousel-fix"',
         "let currentIndex=0",
         "document.addEventListener('click'",
@@ -181,7 +176,10 @@ def verify_page_contract(raw: str, page_url: str) -> None:
     ]
     missing = [token for token in required if token not in raw]
     if missing:
-        raise RuntimeError(f"Controlador delegado/superfície visual incompleto: {missing}")
+        raise RuntimeError(f"Controlador delegado/enquadramento V20 incompleto: {missing}")
+    stripped = [token for token in FORBIDDEN_THEME_STRIPPING if token in raw]
+    if stripped:
+        raise RuntimeError(f"Page LOJA está removendo o enquadramento visual do Tema V20: {stripped}")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Page LOJA contém o controlador legado do carousel.")
     verify_store_html(raw, page_url)
@@ -209,7 +207,7 @@ def sync_page(dry_run: bool = False) -> int:
     page_raw = PAGE_COMPAT_START + "\n" + pageify_store_html(raw, page_url) + "\n" + PAGE_COMPAT_END
     verify_page_contract(page_raw, page_url)
     if dry_run:
-        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + fundo decorativo removido + carousel + share compacto; Blogger não alterado.")
+        print("BLOGGER_NEW_STORE_PAGE_MATURE_DRY_RUN_PASS: 20+12 + enquadramento Tema V20 preservado + carousel + share compacto; Blogger não alterado.")
         return 0
     service.pages().update(
         blogId=blog_id,
@@ -218,7 +216,7 @@ def sync_page(dry_run: bool = False) -> int:
     ).execute()
     verify = service.pages().get(blogId=blog_id, pageId=page_id).execute()
     verify_page_contract(str(verify.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + fundo limpo + carousel + share compacto.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_SYNC_PASS: /p/loja.html = 20+12 + Tema V20 preservado + carousel + share compacto.")
     return 0
 
 
@@ -236,7 +234,7 @@ def ensure_store_post_draft() -> int:
 def verify_page() -> int:
     _, _, page, _, _, _, page_url = load_targets(require_post=False)
     verify_page_contract(str(page.get("content") or ""), page_url)
-    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, fundo limpo, carousel e share compacto.")
+    print("BLOGGER_NEW_STORE_PAGE_MATURE_VERIFY_PASS: Page LOJA contém 20+12, Tema V20 preservado, carousel e share compacto.")
     return 0
 
 
