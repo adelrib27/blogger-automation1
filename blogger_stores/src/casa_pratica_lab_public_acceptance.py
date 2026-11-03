@@ -62,12 +62,11 @@ def validate_store_page() -> None:
     if (store, hero) != (20, 12) or rels < 32:
         raise RuntimeError(f"Page LOJA inválida: store={store} hero={hero} rels={rels}")
     required = [
+        "emporio-revisao-visual-20-modelo-final",
+        "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
         "BLOGGER_STORE_AUTO_START",
         "BLOGGER_STORE_AUTO_END",
-        'id="blogger-new-store-page-surface-fix"',
-        ".bg-photo-container{display:none!important",
-        ".bg-photo{display:none!important",
-        "margin-top:12px!important",
+        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED",
         'id="blogger-new-store-page-carousel-fix"',
         "BLOGGER_LIQ_LAYOUT_PATCH_START",
         "BLOGGER_LIQ_LAYOUT_PATCH_END",
@@ -100,7 +99,6 @@ def validate_store_page() -> None:
         "Compartilhar esta loja",
         'id="blogger-store-share-card-css"',
         'id="blogger-store-share-card-js"',
-        "width:min(1440px,calc(100vw - 48px))",
         "padding:10px 14px",
         "navigator.share",
         "navigator.clipboard",
@@ -109,17 +107,24 @@ def validate_store_page() -> None:
     missing = [token for token in required if token not in raw]
     if missing:
         raise RuntimeError(f"Contrato visual público da Page incompleto: {missing}")
-    forbidden = ["min-height:128px", "width:min(890px"]
-    legacy = [token for token in forbidden if token in raw]
-    if legacy:
-        raise RuntimeError(f"Share card gigante/legado reapareceu: {legacy}")
+    forbidden = [
+        'id="blogger-new-store-page-surface-fix"',
+        ".bg-photo-container{display:none!important",
+        ".bg-photo{display:none!important",
+        "background:transparent!important;border:0!important;box-shadow:none!important",
+        "min-height:128px",
+        "width:min(890px",
+    ]
+    bad = [token for token in forbidden if token in raw]
+    if bad:
+        raise RuntimeError(f"Desvio visual/clean-surface reapareceu na Page: {bad}")
     if raw.count('id="blogger-store-share-card"') != 1:
         raise RuntimeError("Cartão de compartilhamento ausente ou duplicado.")
     if raw.find('id="blogger-store-share-card"') > raw.find('<div class="bls-page">'):
         raise RuntimeError("Cartão de compartilhamento precisa aparecer antes da vitrine.")
     if "document.getElementById('blsSlider')" in raw:
         raise RuntimeError("Controlador legado do carousel reapareceu na Page pública.")
-    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + fundo limpo + carousel + share compacto + Policy Guard.")
+    print("CASA_PRATICA_LAB_PUBLIC_PAGE_MATURE_PASS: /p/loja.html 20+12 + Tema V20 enquadrado + carousel + share compacto + Policy Guard.")
 
 
 def validate_home_and_articles() -> None:
@@ -128,6 +133,8 @@ def validate_home_and_articles() -> None:
         raise RuntimeError("Store Post técnico continua ocupando o FeaturedPost1 da home.")
     if f"post-wrapper not-hero post-{STORE_POST_ID}" in home:
         raise RuntimeError("Store Post técnico continua renderizado na grade editorial da home.")
+    if "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME" not in home:
+        raise RuntimeError("Tema público não contém runtime de descrição isolada por blog.")
     for slug in ARTICLES:
         path = f"/2026/11/{slug}.html"
         if path not in home:
@@ -135,7 +142,7 @@ def validate_home_and_articles() -> None:
         raw = fetch_200(f"{BASE}{path}", f"LAB_ARTICLE_{slug[:16].upper().replace('-', '_')}")
         if "post-hero" not in raw:
             raise RuntimeError(f"Artigo sem imagem editorial post-hero: {path}")
-    print("CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: Store técnico fora da home; 3/3 artigos presentes e com imagem.")
+    print("CASA_PRATICA_LAB_HOME_AND_EDITORIAL_AUDIT_PASS: Store técnico fora da home; 3/3 artigos presentes e com imagem; identidade V20 runtime ativa.")
 
 
 def main() -> int:
