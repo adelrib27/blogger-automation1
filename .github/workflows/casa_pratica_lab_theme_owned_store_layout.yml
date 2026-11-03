@@ -2,10 +2,6 @@ name: Casa Prática Lab — Loja controlada pelo Tema V20
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/casa_pratica_lab_theme_owned_store_layout.yml"
-      - "blogger_stores/src/casa_pratica_lab_remove_layout_patch_v20.py"
 
 permissions:
   contents: read
@@ -41,11 +37,12 @@ jobs:
           grep -q '8930870316690519385' blogger_stores/src/casa_pratica_lab_remove_layout_patch_v20.py
           grep -q '7110845449177208439' blogger_stores/src/casa_pratica_lab_remove_layout_patch_v20.py
           grep -q '7691087355641688975' blogger_stores/src/casa_pratica_lab_remove_layout_patch_v20.py
-      - name: Remover patch de conteúdo e provar layout controlado pelo Tema V20
+      - name: Recovery manual — remover patch legado no LAB e validar Tema V20 nativo
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_remove_layout_patch_v20.py
 
+# RECOVERY_ONLY_MANUAL
 # LAB_ONLY
-# TEMPORARY_PUSH_TRIGGER
+# NO_PUSH_NO_SCHEDULE
 # NO_SHOPEE_SELECTION_CHANGE
 # NO_ROTATION_PERSIST
 # STAGING_MUST_REMAIN_DRAFT
