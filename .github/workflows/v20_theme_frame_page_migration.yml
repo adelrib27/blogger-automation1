@@ -1,10 +1,7 @@
-name: V20 — Migração segura do enquadramento Page-target (promoção Vida Pet)
+name: V20 — Migração segura do enquadramento Page-target (recovery manual)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/v20_theme_frame_page_migration.yml"
 
 permissions:
   contents: read
@@ -14,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  migrate-vida-pet:
+  migrate-vida-pet-recovery:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -67,9 +64,11 @@ jobs:
       - name: Aceitação pública completa do Vida Pet
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_public_acceptance.py
 
-# TEMPORARY_PUSH_TRIGGER_FOR_VALIDATED_PROMOTION_RETRY_AFTER_STAGING_URL_GATE_FIX
-# CASA_LAB_RUN_41569092489_SUCCESS_REQUIRED
-# THEME_RUNTIME_BA571F8_NATIVE_BLS_STORE_REQUIRED
+# RECOVERY_ONLY_MANUAL
+# NO_PUSH_NO_SCHEDULE
+# VIDA_PET_NATIVE_STORE_PRODUCTION_PASS_RUN_41570796118
+# CASA_LAB_NATIVE_STORE_PASS_RUN_41569092489
+# THEME_RUNTIME_BA571F8_NATIVE_BLS_STORE
 # ONE_TARGET_AT_A_TIME
 # NO_SHOPEE_SELECTION_CHANGE
 # NO_ROTATION_PERSIST
