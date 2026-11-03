@@ -29,6 +29,7 @@ JS = r"""
   var FALLBACK_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FALLBACK_DEDUPE';
   var FOOTER_DEDUPE_MARKER='BLOGGER_MODELO_V20_STORE_FOOTER_NAV';
   var STATIC_PAGE_FEED_MARKER='BLOGGER_MODELO_V20_STATIC_PAGE_FEED_RUNTIME';
+  var BRAND_DESCRIPTION_MARKER='BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME';
   var PAGE_FEED='/feeds/pages/default?alt=json&max-results=25';
   var HOST_ID='ga-static-feed-host-v20';
   var feedState={loading:false,loaded:false,data:null};
@@ -63,7 +64,18 @@ JS = r"""
   }
   function entryPath(entry){var links=(entry&&entry.link)||[];for(var i=0;i<links.length;i++) if(links[i]&&links[i].rel==='alternate'&&links[i].href) return pathOf(links[i].href);return '';}
   function syncBrandFromFeed(feed){
-    var title=feed&&feed.title&&feed.title.$t?String(feed.title.$t).trim():'';if(!title) return;var nodes=document.querySelectorAll('.ga-home-footer-brand h3,.ga-post-footer-brand h3,.ga-static-footer-brand h3,.ga-home-footer-bottom strong,.ga-post-footer-bottom strong,.ga-static-footer-bottom strong');for(var i=0;i<nodes.length;i++) nodes[i].textContent=title;document.documentElement.setAttribute('data-ga-brand-feed-runtime',STATIC_PAGE_FEED_MARKER);
+    var title=feed&&feed.title&&feed.title.$t?String(feed.title.$t).trim():'';
+    var description=feed&&feed.subtitle&&feed.subtitle.$t?String(feed.subtitle.$t).replace(/\s+/g,' ').trim():'';
+    if(title){
+      var nodes=document.querySelectorAll('.ga-home-footer-brand h3,.ga-post-footer-brand h3,.ga-static-footer-brand h3,.ga-home-footer-bottom strong,.ga-post-footer-bottom strong,.ga-static-footer-bottom strong');
+      for(var i=0;i<nodes.length;i++) nodes[i].textContent=title;
+      document.documentElement.setAttribute('data-ga-brand-feed-runtime',STATIC_PAGE_FEED_MARKER);
+    }
+    if(description){
+      var paragraphs=document.querySelectorAll('.ga-home-footer-brand p,.ga-post-footer-brand p,.ga-static-footer-brand p');
+      for(var j=0;j<paragraphs.length;j++) paragraphs[j].textContent=description;
+      document.documentElement.setAttribute('data-ga-brand-description-feed-runtime',BRAND_DESCRIPTION_MARKER);
+    }
   }
   function stableHost(target){
     var host=document.getElementById(HOST_ID);if(host) return host;if(!target||!target.parentNode) return null;
@@ -96,7 +108,7 @@ def sha256(path: Path) -> str:
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Garante LOJA nos menus, rodapes e corpo canonico das paginas estaticas do BLOGGER_MODELO_V20.")
+    p = argparse.ArgumentParser(description="Garante LOJA nos menus, rodapes, identidade e corpo canonico das paginas estaticas do BLOGGER_MODELO_V20.")
     p.add_argument("--theme-path", required=True)
     args = p.parse_args()
     path = Path(args.theme_path).resolve()
@@ -104,11 +116,11 @@ def main() -> int:
     text = path.read_text(encoding="utf-8")
     if BASE_MARKER not in text: raise SystemExit(f"Tema não pertence ao V20 validado: marcador ausente {BASE_MARKER}")
     if VISIBLE_NAV_MARKER in text:
-        ET.parse(path);print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_ALREADY_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"stable_static_page_host_supported":True,"fallback_pagelist_deduplicated":True},ensure_ascii=False,indent=2));return 0
+        ET.parse(path);print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_ALREADY_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"footer_description_feed_sync_supported":True,"stable_static_page_host_supported":True,"fallback_pagelist_deduplicated":True},ensure_ascii=False,indent=2));return 0
     if "</head>" not in text or "</body>" not in text: raise SystemExit("Tema sem </head> ou </body>; nenhuma alteração feita.")
     text=text.replace("</head>",CSS+"\n</head>",1).replace("</body>",JS+"\n</body>",1);path.write_text(text,encoding="utf-8");ET.parse(path)
     if text.count(VISIBLE_NAV_MARKER)!=1: raise SystemExit("Extensão de navegação visível não foi inserida exatamente uma vez.")
-    print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"stable_static_page_host_supported":True,"fallback_pagelist_deduplicated":True,"other_navigation_links_preserved":True},ensure_ascii=False,indent=2));return 0
+    print(json.dumps({"status":"BLOGGER_MODELO_V20_STORE_VISIBLE_NAV_APPLIED","path":str(path),"sha256":sha256(path),"xml_valid":True,"visible_nav_marker":VISIBLE_NAV_MARKER,"visible_nav_selector":"nav.ga-home-v6-nav","dynamic_header_nav_supported":True,"store_menu":STORE_PATH,"store_menu_position":"after-home","store_menu_highlighted":True,"store_footer_nav_supported":True,"store_footer_position":"after-home","static_page_feed_runtime_supported":True,"footer_brand_feed_sync_supported":True,"footer_description_feed_sync_supported":True,"stable_static_page_host_supported":True,"fallback_pagelist_deduplicated":True,"other_navigation_links_preserved":True},ensure_ascii=False,indent=2));return 0
 
 
 if __name__ == "__main__": raise SystemExit(main())
