@@ -78,7 +78,7 @@ jobs:
           print('BLOGGER_POLICY_GUARD_PRELIVE_PASS: 20/20')
           PY
 
-      - name: Dry-runs staging + Page madura + share compacto
+      - name: Dry-runs staging + Page madura + Tema V20 + share compacto
         run: |
           set -euo pipefail
           PYTHONPATH=src:radar_tech_br/src:blogger_stores/src python -u blogger_stores/src/casa_pratica_lab_store_page.py identity-dry-run
@@ -129,8 +129,8 @@ jobs:
           retention-days: 14
 
 # CASA_PRATICA_LAB_MATURE_PAGE_CANONICAL_2026_11_02
-# PUBLIC_PAGE_20X12_CAROUSEL_WITH_WIDE_SURFACE_PATCH
-# PAGE_SYNC_INCLUDES_CLEAN_SURFACE_AND_COMPACT_SHARE_CARD
+# PUBLIC_PAGE_20X12_CAROUSEL_WITH_THEME_V20_FRAME
+# PAGE_SYNC_PRESERVES_THEME_V20_AND_COMPACT_SHARE_CARD
 # STORE_POST_TECHNICAL_STAGING_MUST_REMAIN_DRAFT
-# PUBLIC_ACCEPTANCE_REQUIRES_VISUAL_CONTRACT_SHARE_AND_HOME_CLEAN
+# PUBLIC_ACCEPTANCE_REQUIRES_THEME_V20_FRAME_SHARE_AND_HOME_CLEAN
 # SCHEDULE_VALIDATED_10_20_AMERICA_RECIFE
