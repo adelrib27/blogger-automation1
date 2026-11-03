@@ -1,10 +1,10 @@
-name: Vida Pet Prática — Loja Page 20+12 controlada
+name: Vida Pet Prática — Loja Page 20+12
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "blogger_stores/vida_pet_pratica_live_kickoff.txt"
+  schedule:
+    - cron: "35 11 * * *"
+      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -128,7 +128,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vida-pet-pratica-page-controlada-${{ github.run_number }}
+          name: vida-pet-pratica-page-${{ github.run_number }}
           path: |
             blogger_stores/data/vida_pet_pratica_selection.json
             blogger_stores/data/vida_pet_pratica_rotation.json
@@ -136,10 +136,9 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-# VIDA_PET_PRATICA_INITIAL_CONTROLLED_LIVE_2026_11_02
+# SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02
 # FIRST_PUBLISH_STAGING_DRAFT_BEFORE_PAGE_DRY_RUN_2026_11_02
 # FIRST_PUBLISH_SHARE_VALIDATED_INSIDE_PAGE_SYNC_DRY_RUN_2026_11_02
-# NO_SCHEDULE_UNTIL_PUBLIC_E2E_ACCEPTANCE
-# TEMPORARY_KICKOFF_PUSH_MUST_BE_REMOVED_BEFORE_PROMOTION
 # STORE_POST_TECHNICAL_STAGING_MUST_REMAIN_DRAFT
 # PUBLIC_PAGE_MUST_PASS_20X12_POLICY_GUARD_HOME_EDITORIAL
+# FINAL_WRITER_NO_PUSH_2026_11_02

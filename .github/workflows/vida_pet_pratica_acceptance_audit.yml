@@ -1,0 +1,94 @@
+name: Vida Pet Prática — Auditoria E2E permanente
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "50 11 * * *"
+      timezone: "America/Recife"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vida-pet-pratica-acceptance-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BLOGGER_BLOG_ID: "8052455848487624244"
+      BLOGGER_STORE_PAGE_ID: "8624646966938350648"
+      BLOGGER_STORE_POST_ID: "7332800716046515902"
+      BLOGGER_STORE_PAGE_URL: "https://vida-pet-pratica.blogspot.com/p/loja.html"
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compilar e validar Policy Guard
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            src/blogger_policy_guard.py src/blogger_policy_guard_self_test.py src/criar_rascunho.py \
+            blogger_stores/src/blogger_new_blog_store_page_target.py \
+            blogger_stores/src/blogger_store_share_card.py \
+            blogger_stores/src/vida_pet_pratica_public_acceptance.py
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+
+      - name: READ_ONLY — auditar Page, staging DRAFT e posts editoriais pela API
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src:blogger_stores/src python - <<'PY'
+          import os
+          from blogger_new_blog_store_page_target import get_post_any_status, verify_page_contract
+          from criar_rascunho import criar_servico_blogger
+
+          blog=os.environ['BLOGGER_BLOG_ID']
+          page_id=os.environ['BLOGGER_STORE_PAGE_ID']
+          post_id=os.environ['BLOGGER_STORE_POST_ID']
+          page_url=os.environ['BLOGGER_STORE_PAGE_URL']
+          expected_editorial={
+              '6872395270807124041',
+              '2711795987490959590',
+              '9175269088286950605',
+          }
+          service=criar_servico_blogger()
+          page=service.pages().get(blogId=blog,pageId=page_id).execute()
+          if str(page.get('status') or '').upper()!='LIVE': raise SystemExit('Page LOJA não está LIVE')
+          if str(page.get('url') or '')!=page_url: raise SystemExit('URL da Page LOJA divergiu')
+          verify_page_contract(str(page.get('content') or ''), page_url)
+          staging=get_post_any_status(service,blog,post_id)
+          if str(staging.get('status') or '').upper()!='DRAFT': raise SystemExit(f'Staging não está DRAFT: {staging.get("status")}')
+          raw=str(staging.get('content') or '')
+          if raw.count('data-item-id=')!=20 or raw.count('data-hero-item-id=')!=12:
+              raise SystemExit('Staging perdeu contrato 20+12')
+          live_ids=set()
+          token=None
+          while True:
+              kwargs={'blogId':blog,'status':'LIVE','fetchBodies':False,'maxResults':100}
+              if token: kwargs['pageToken']=token
+              response=service.posts().list(**kwargs).execute()
+              live_ids.update(str(x.get('id') or '') for x in (response.get('items') or []))
+              token=response.get('nextPageToken')
+              if not token: break
+          if post_id in live_ids: raise SystemExit('Staging técnico apareceu entre posts LIVE')
+          missing=sorted(expected_editorial-live_ids)
+          if missing: raise SystemExit(f'Posts editoriais iniciais ausentes: {missing}')
+          print('VIDA_PET_PRATICA_API_READ_ONLY_PASS: Page LIVE 20+12; staging DRAFT; editorial LIVE; sem escrita.')
+          PY
+
+      - name: READ_ONLY — auditar estado público Page + home + artigos
+        run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/vida_pet_pratica_public_acceptance.py
+
+# VIDA_PET_PRATICA_PERMANENT_READ_ONLY_AUDITOR_2026_11_02
+# READ_ONLY
