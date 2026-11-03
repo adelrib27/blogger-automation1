@@ -37,10 +37,13 @@ def main() -> None:
     safe = read(".github/workflows/vida_pet_pratica_store_safe.yml")
     live = read(".github/workflows/vida_pet_pratica_store_page_autonomous.yml")
     acceptance = read(".github/workflows/vida_pet_pratica_acceptance_audit.yml")
+    migration = read(".github/workflows/v20_theme_frame_page_migration.yml")
     engine = read("blogger_stores/src/vida_pet_pratica_store.py")
     wrapper = read("blogger_stores/src/vida_pet_pratica_store_page.py")
     public = read("blogger_stores/src/vida_pet_pratica_public_acceptance.py")
+    lab_public = read("blogger_stores/src/casa_pratica_lab_public_acceptance.py")
     adapter = read("blogger_stores/src/blogger_new_blog_store_page_target.py")
+    contract = read("NEW_BLOG_E2E_CONTRACT_2026-11-02.md")
     rules = load_json("config/shopee_vida_pet_pratica_intent_rules.json")
     config = load_json("config/shopee_vida_pet_pratica.json")
     selection = load_json("blogger_stores/data/vida_pet_pratica_selection.json")
@@ -84,13 +87,49 @@ def main() -> None:
     if bad_acceptance:
         fail(f"auditor read-only contém capacidade de escrita: {bad_acceptance}")
 
+    require(migration, ["workflow_dispatch:", "RECOVERY_ONLY_MANUAL", "NO_PUSH_NO_SCHEDULE", "NO_SHOPEE_SELECTION_CHANGE", "NO_ROTATION_PERSIST"], "migração/recovery visual")
+    if re.search(r"(?m)^\s*(push|schedule)\s*:", migration):
+        fail("migração visual de recovery voltou a ter trigger automático")
+
     require(engine, [
         f'BLOG_ID = "{BLOG_ID}"', f'POST_ID = "{POST_ID}"', PAGE_URL,
         "GLOBAL_POLICY_BLOCKS", "regulatedPetHealthExcluded", "VIDA_PET_PRATICA_SEMANTIC_REGRESSION_PASS",
     ], "motor pet")
     require(wrapper, ["get_post_any_status", "update_staging", "store_write", "hero_write", "identity_write"], "wrapper staging")
-    require(public, ["require_store_html_allowed", "expected_products=20", "expected_hero=12", "BLOGGER_NEW_BLOG_V20_E2E_ACCEPTED"], "aceitação pública")
-    require(adapter, ["service.pages().update", "service.posts().revert", "expected_products=20, expected_hero=12", "inject_share_card"], "adapter Page-target")
+
+    require(public, [
+        "require_store_html_allowed", "expected_products=20", "expected_hero=12", "BLOGGER_NEW_BLOG_V20_E2E_ACCEPTED",
+        "emporio-revisao-visual-20-modelo-final", "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
+        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", "Tema V20 enquadrado",
+    ], "aceitação pública Vida Pet")
+    require(lab_public, [
+        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME", "Tema V20 enquadrado",
+    ], "aceitação pública Casa Lab")
+
+    require(adapter, [
+        "service.pages().update", "service.posts().revert", "expected_products=20, expected_hero=12", "inject_share_card",
+        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", "FORBIDDEN_THEME_STRIPPING",
+        "Tema V20 preservado",
+    ], "adapter Page-target")
+    forbidden_adapter = [
+        "PAGE_SURFACE_FIX =",
+        "fundo decorativo removido",
+        "fundo limpo + carousel",
+    ]
+    bad_adapter = [token for token in forbidden_adapter if token in adapter]
+    if bad_adapter:
+        fail(f"adapter Page-target voltou a codificar clean/full-width como contrato: {bad_adapter}")
+    for token in ['.bg-photo-container{display:none!important', '.bg-photo{display:none!important']:
+        if token not in adapter:
+            fail(f"adapter perdeu guard explícito contra remoção do Tema V20: {token}")
+
+    require(contract, [
+        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED",
+        "bg-photo-container",
+        "identidade textual",
+        "descrição real do próprio blog",
+        "LAB antes de produção",
+    ], "contrato E2E visual/identidade")
 
     categories = config.get("categories") or {}
     intents = [item for values in categories.values() for item in values]
@@ -117,11 +156,15 @@ def main() -> None:
     summary = inventory.get("summary") or {}
     if int(summary.get("blogs_total") or 0) != 18:
         fail("inventário legado deixou de ser 18; novo blog não deve alterar o inventário legado")
+    if int(summary.get("modern_blogger_auto_policy_guard") or 0) != 18:
+        fail("rede legada deixou de estar 18/18 no Policy Guard")
+    if int(summary.get("duplicate_writer_risks") or 0) != 0:
+        fail("rede legada voltou a ter risco de writer duplicado")
     if any(str(b.get("blog_id") or "") == BLOG_ID for b in (inventory.get("blogs") or [])):
         fail("Vida Pet Prática foi indevidamente misturado ao inventário legado")
 
     print("BLOGGER_NEW_BLOG_POLICY_REPO_AUDIT_PASS")
-    print("Vida Pet Prática: SAFE + writer Page-target + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente read-only + schedule 11:35 protegidos; rede legada 18 preservada.")
+    print("Vida Pet Prática: SAFE + Page-target com Tema V20 preservado + identidade isolada + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente + schedule 11:35 protegidos; migração recovery manual-only; rede legada 18/18 preservada.")
 
 
 if __name__ == "__main__":
