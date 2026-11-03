@@ -10,7 +10,7 @@ BLOG_ID = "8052455848487624244"
 PAGE_ID = "8624646966938350648"
 POST_ID = "7332800716046515902"
 PAGE_URL = "https://vida-pet-pratica.blogspot.com/p/loja.html"
-# VISUAL_CONTRACT_V20_FRAME_AND_IDENTITY_ISOLATION_2026_11_03
+# VISUAL_CONTRACT_V20_NATIVE_STORE_AND_IDENTITY_ISOLATION_2026_11_03
 
 
 def fail(message: str) -> None:
@@ -101,16 +101,19 @@ def main() -> None:
     require(public, [
         "require_store_html_allowed", "expected_products=20", "expected_hero=12", "BLOGGER_NEW_BLOG_V20_E2E_ACCEPTED",
         "emporio-revisao-visual-20-modelo-final", "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
-        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", "Tema V20 enquadrado",
+        "BLOGGER_MODELO_V20_BLS_STORE_NATIVE", "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED",
+        "Loja nativa Tema V20", "BLOGGER_LIQ_LAYOUT_PATCH_START",
     ], "aceitação pública Vida Pet")
     require(lab_public, [
-        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME", "Tema V20 enquadrado",
+        "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", "BLOGGER_MODELO_V20_BRAND_DESCRIPTION_FEED_RUNTIME",
+        "BLOGGER_MODELO_V20_BLS_STORE_NATIVE", "Loja nativa Tema V20", "BLOGGER_LIQ_LAYOUT_PATCH_START",
     ], "aceitação pública Casa Lab")
 
     require(adapter, [
         "service.pages().update", "service.posts().revert", "expected_products=20, expected_hero=12", "inject_share_card",
         "BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED", "FORBIDDEN_THEME_STRIPPING",
-        "Tema V20 preservado",
+        "strip_legacy_layout_patch", "LAYOUT_PATCH_START", "layout nativo Tema V20",
+        "Page LOJA contém BLOGGER_LIQ_LAYOUT_PATCH",
     ], "adapter Page-target")
     forbidden_adapter = [
         "PAGE_SURFACE_FIX =",
@@ -165,7 +168,7 @@ def main() -> None:
         fail("Vida Pet Prática foi indevidamente misturado ao inventário legado")
 
     print("BLOGGER_NEW_BLOG_POLICY_REPO_AUDIT_PASS")
-    print("Vida Pet Prática: SAFE + Page-target com Tema V20 preservado + identidade isolada + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente + schedule 11:35 protegidos; migração recovery manual-only; rede legada 18/18 preservada.")
+    print("Vida Pet Prática: SAFE + Page-target com Loja nativa Tema V20 + identidade isolada + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente + schedule 11:35 protegidos; patch de layout em conteúdo proibido; migração recovery manual-only; rede legada 18/18 preservada.")
 
 
 if __name__ == "__main__":
