@@ -33,10 +33,10 @@ class Handler(v07.Handler):
 
 
 def main() -> int:
-    v07.v06.v05.base._required_token()
-    host = v07.v06.v05.base.DEFAULT_HOST
-    port = v07.v06.v05.base._env_port()
-    server = v07.v06.v05.base.ThreadingHTTPServer((host, port), Handler)
+    v07.v05.base._required_token()
+    host = v07.v05.base.DEFAULT_HOST
+    port = v07.v05.base._env_port()
+    server = v07.v05.base.ThreadingHTTPServer((host, port), Handler)
     print(f"Blogger local runner v0.8 ativo em http://{host}:{port}")
     print("V20 protegido por sincronizacao fail-closed antes da adocao.")
     print("Chrome/CDP continua loopback; protecoes v0.7 preservadas.")

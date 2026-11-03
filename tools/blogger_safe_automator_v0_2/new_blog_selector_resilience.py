@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import browser_provision as bp
 
-# V0.6: corrige carregamento assíncrono do seletor de blogs do Blogger.
+# Resiliência canônica do seletor "Novo blog..." para o runner atual.
 # A alteração é deliberadamente restrita a operações NÃO destrutivas:
 # abrir o seletor e localizar/clicar em "Novo blog...". As proteções existentes
 # para endereço, SALVAR, Blog ID novo e HTTP 200 continuam em browser_provision.py.

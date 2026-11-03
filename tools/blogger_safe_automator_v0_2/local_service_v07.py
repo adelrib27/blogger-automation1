@@ -4,7 +4,8 @@ from __future__ import annotations
 from http import HTTPStatus
 
 import blog_id_url_resilience_v07 as blog_id_url_resilience
-import local_service_v06 as v06
+import local_service_v05 as v05
+import new_blog_selector_resilience as new_blog_selector_resilience
 import provision_new_blog_v20 as provision
 import timezone_resilience_v07 as timezone_resilience
 import timezone_keyboard_resilience_v07 as timezone_keyboard_resilience
@@ -12,6 +13,7 @@ import timezone_offscreen_resilience_v07 as timezone_offscreen_resilience
 import timezone_virtual_window_resilience_v07 as timezone_virtual_window_resilience
 import timezone_physical_click_resilience_v07 as timezone_physical_click_resilience
 
+new_blog_selector_resilience.install()
 blog_id_url_resilience.install()
 timezone_resilience.install()
 timezone_keyboard_resilience.install()
@@ -20,7 +22,7 @@ timezone_virtual_window_resilience.install()
 timezone_physical_click_resilience.install()
 
 
-class Handler(v06.Handler):
+class Handler(v05.Handler):
     server_version = "BloggerLocalRunner/0.7"
 
     def do_GET(self) -> None:
@@ -68,23 +70,23 @@ class Handler(v06.Handler):
                 str(payload.get("address") or ""),
                 str(payload.get("description") or ""),
                 str(payload.get("search_description") or ""),
-                timezone=str(payload.get("timezone") or v06.v05.base.DEFAULT_TIMEZONE) if hasattr(v06.v05.base, "DEFAULT_TIMEZONE") else str(payload.get("timezone") or provision.settings.DEFAULT_TIMEZONE),
+                timezone=str(payload.get("timezone") or v05.base.DEFAULT_TIMEZONE) if hasattr(v05.base, "DEFAULT_TIMEZONE") else str(payload.get("timezone") or provision.settings.DEFAULT_TIMEZONE),
                 palette=str(payload.get("palette") or "auto"),
                 confirm=confirm,
-                cdp_url=v06.v05.base._cdp_url(),
-                diagnostics_dir=v06.v05.base._diagnostics_dir(),
+                cdp_url=v05.base._cdp_url(),
+                diagnostics_dir=v05.base._diagnostics_dir(),
             )
         )
 
 
 def main() -> int:
-    v06.v05.base._required_token()
-    host = v06.v05.base.DEFAULT_HOST
-    port = v06.v05.base._env_port()
-    server = v06.v05.base.ThreadingHTTPServer((host, port), Handler)
+    v05.base._required_token()
+    host = v05.base.DEFAULT_HOST
+    port = v05.base._env_port()
+    server = v05.base.ThreadingHTTPServer((host, port), Handler)
     print(f"Blogger local runner v0.7 ativo em http://{host}:{port}")
     print("Auto-start compatível; provisionamento novo blog V20 disponível.")
-    print("Chrome/CDP continua loopback; proteções v0.6/v0.5 preservadas.")
+    print("Chrome/CDP continua loopback; resiliência de criação e proteções V20 preservadas.")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
