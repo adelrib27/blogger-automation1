@@ -1,0 +1,99 @@
+name: Blogger — Pente-fino visual read-only da rede legada 18/18
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/blogger_legacy_visual_contract_readonly.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blogger-legacy-visual-contract-readonly
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Auditar as 18 Pages LOJA públicas sem escrever
+        run: |
+          python - <<'PY'
+          import json
+          import time
+          from pathlib import Path
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+          from urllib.request import Request, urlopen
+
+          inventory=json.loads(Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json').read_text(encoding='utf-8'))
+          blogs=inventory.get('blogs') or []
+          if len(blogs)!=18:
+              raise SystemExit(f'Inventário legado inesperado: {len(blogs)} blogs')
+
+          ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36'
+          forbidden=[
+              'id="blogger-new-store-page-surface-fix"',
+              '.bg-photo-container{display:none!important',
+              '.bg-photo{display:none!important',
+              'BLOGGER_NEW_STORE_PAGE_THEME_FRAME_PRESERVED',
+          ]
+
+          def fetch(url, label):
+              last=''
+              for attempt in range(1,8):
+                  p=urlsplit(url)
+                  q=dict(parse_qsl(p.query,keep_blank_values=True)); q['legacy_visual_probe']=f'{int(time.time())}-{attempt}'
+                  target=urlunsplit((p.scheme,p.netloc,p.path,urlencode(q),p.fragment))
+                  req=Request(target,headers={'User-Agent':ua,'Cache-Control':'no-cache','Accept-Language':'pt-BR,pt;q=0.9'})
+                  try:
+                      with urlopen(req,timeout=35) as r:
+                          code=int(r.status); raw=r.read().decode('utf-8',errors='ignore')
+                      if code==200: return raw
+                      last=f'HTTP {code}'
+                  except HTTPError as exc:
+                      last=f'HTTP {exc.code}'
+                      if exc.code not in (429,500,502,503,504): raise
+                  except URLError as exc:
+                      last=f'URL {exc.reason}'
+                  if attempt<7: time.sleep(10 if '429' in last else 3)
+              raise RuntimeError(f'{label}: sem HTTP 200 ({last})')
+
+          rows=[]; failures=[]
+          for idx,b in enumerate(blogs,1):
+              title=str(b.get('title') or '')
+              url=str(b.get('store_page_url') or '')
+              raw=fetch(url,f'{idx:02d}-{title}')
+              store=raw.count('data-item-id=')
+              hero=raw.count('data-hero-item-id=')
+              rels=raw.count('rel="nofollow sponsored noopener"')
+              theme='emporio-revisao-visual-20-modelo-final' in raw
+              bad=[x for x in forbidden if x in raw]
+              row={'title':title,'store':store,'hero':hero,'rels':rels,'theme_v20':theme,'forbidden':bad}
+              rows.append(row)
+              reasons=[]
+              if store!=20: reasons.append(f'store={store}')
+              if hero!=12: reasons.append(f'hero={hero}')
+              if rels<32: reasons.append(f'rels={rels}')
+              if not theme: reasons.append('theme_v20_marker_absent')
+              if bad: reasons.append('forbidden='+','.join(bad))
+              if reasons: failures.append((title,reasons))
+              print(f'LEGACY_VISUAL_AUDIT {idx:02d}/18 | {title} | store={store} hero={hero} rels={rels} theme={theme} forbidden={len(bad)}')
+
+          print(json.dumps({'blogs':rows},ensure_ascii=False,indent=2))
+          if failures:
+              raise SystemExit('LEGACY_VISUAL_CONTRACT_FAIL: '+json.dumps(failures,ensure_ascii=False))
+          print('LEGACY_VISUAL_CONTRACT_PASS_18_18: HTTP 200 + 20x12 + rel patrocinado + Tema V20 + zero surface-fix Page-target em 18/18.')
+          PY
+
+# READ_ONLY
+# NO_BLOGGER_WRITE
+# NO_GIT_WRITE
+# TEMPORARY_PUSH_TRIGGER_FOR_FIRST_AUDIT
