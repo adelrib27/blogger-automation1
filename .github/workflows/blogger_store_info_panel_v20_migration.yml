@@ -1,11 +1,7 @@
-name: Blogger — Migração visual do painel informativo das Lojas V20
+name: Blogger — Migração visual do painel informativo das Lojas V20 (recovery manual)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/blogger_store_info_panel_v20_migration.yml"
-      - "blogger_stores/src/blogger_store_info_panel_v20_migration.py"
 
 permissions:
   contents: read
@@ -15,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  network:
+  network-recovery:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -41,11 +37,13 @@ jobs:
           grep -q 'BLOGGER_STORE_INFO_PANEL_V20_START' blogger_stores/src/blogger_store_info_panel_v20_migration.py
           grep -q 'Vida Pet Prática' blogger_stores/src/blogger_store_info_panel_v20_migration.py
           grep -q 'NETWORK_STORE_INVENTORY_2026-11-02.json' blogger_stores/src/blogger_store_info_panel_v20_migration.py
-      - name: Produção — corrigir Vida Pet + 18 legados sequencialmente
+      - name: Recovery manual — reaplicar Vida Pet + 18 legados sequencialmente
         run: PYTHONPATH=src:blogger_stores/src python -u blogger_stores/src/blogger_store_info_panel_v20_migration.py
 
-# TEMPORARY_PUSH_TRIGGER_FOR_NETWORK_PROMOTION
-# LAB_RUN_41566709262_SUCCESS_REQUIRED
+# RECOVERY_ONLY_MANUAL
+# NO_PUSH_NO_SCHEDULE
+# LAB_RUN_41566709262_SUCCESS
+# NETWORK_RUN_41566818411_SUCCESS
 # ONE_BLOG_AT_A_TIME_SEQUENTIAL
 # NO_SHOPEE_SELECTION_CHANGE
 # NO_ROTATION_PERSIST
