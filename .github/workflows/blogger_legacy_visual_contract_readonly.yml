@@ -16,16 +16,24 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Auditar as 18 Pages LOJA públicas sem escrever
+      - name: Auditar 18 Pages públicas + 18 Store Posts via API, sem escrever
         run: |
-          python - <<'PY'
+          PYTHONPATH=src python - <<'PY'
           import json
           import time
           from pathlib import Path
@@ -33,13 +41,16 @@ jobs:
           from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
           from urllib.request import Request, urlopen
 
+          from blogger_policy_guard import require_store_html_allowed
+          from criar_rascunho import criar_servico_blogger
+
           inventory=json.loads(Path('blogger_multi_store/data/NETWORK_STORE_INVENTORY_2026-11-02.json').read_text(encoding='utf-8'))
           blogs=inventory.get('blogs') or []
           if len(blogs)!=18:
               raise SystemExit(f'Inventário legado inesperado: {len(blogs)} blogs')
 
           ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36'
-          forbidden=[
+          forbidden_page=[
               'id="blogger-new-store-page-surface-fix"',
               '.bg-photo-container{display:none!important',
               '.bg-photo{display:none!important',
@@ -66,34 +77,53 @@ jobs:
                   if attempt<7: time.sleep(10 if '429' in last else 3)
               raise RuntimeError(f'{label}: sem HTTP 200 ({last})')
 
+          service=criar_servico_blogger()
           rows=[]; failures=[]
           for idx,b in enumerate(blogs,1):
               title=str(b.get('title') or '')
-              url=str(b.get('store_page_url') or '')
-              raw=fetch(url,f'{idx:02d}-{title}')
-              store=raw.count('data-item-id=')
-              hero=raw.count('data-hero-item-id=')
-              rels=raw.count('rel="nofollow sponsored noopener"')
-              theme='emporio-revisao-visual-20-modelo-final' in raw
-              bad=[x for x in forbidden if x in raw]
-              row={'title':title,'store':store,'hero':hero,'rels':rels,'theme_v20':theme,'forbidden':bad}
-              rows.append(row)
+              blog_id=str(b.get('blog_id') or '')
+              page_url=str(b.get('store_page_url') or '')
+              post_id=str(b.get('store_post_id') or '')
               reasons=[]
-              if store!=20: reasons.append(f'store={store}')
-              if hero!=12: reasons.append(f'hero={hero}')
-              if rels<32: reasons.append(f'rels={rels}')
-              if not theme: reasons.append('theme_v20_marker_absent')
-              if bad: reasons.append('forbidden='+','.join(bad))
+
+              # Geração legada: a Page pública fornece a moldura/tema; o Store Post LIVE
+              # é o objeto canônico 20+12. Não exigir 20+12 no HTML cru da Page.
+              page_raw=fetch(page_url,f'{idx:02d}-{title}-page')
+              theme='emporio-revisao-visual-20-modelo-final' in page_raw
+              bad=[x for x in forbidden_page if x in page_raw]
+              if not theme: reasons.append('page_theme_v20_marker_absent')
+              if bad: reasons.append('page_forbidden='+','.join(bad))
+
+              post=service.posts().get(blogId=blog_id,postId=post_id).execute()
+              post_status=str(post.get('status') or '').upper()
+              post_title=str(post.get('title') or '').strip()
+              post_raw=str(post.get('content') or '')
+              store=post_raw.count('data-item-id=')
+              hero=post_raw.count('data-hero-item-id=')
+              rels=post_raw.count('rel="nofollow sponsored noopener"')
+              if post_status!='LIVE': reasons.append(f'post_status={post_status or "missing"}')
+              if post_title.casefold()!='loja': reasons.append(f'post_title={post_title!r}')
+              if store!=20: reasons.append(f'post_store={store}')
+              if hero!=12: reasons.append(f'post_hero={hero}')
+              if rels<32: reasons.append(f'post_rels={rels}')
+              try:
+                  require_store_html_allowed(post_raw,expected_products=20,expected_hero=12)
+              except Exception as exc:
+                  reasons.append('policy_guard='+str(exc)[:180])
+
+              row={'title':title,'page_theme_v20':theme,'page_forbidden':bad,'post_status':post_status,'store':store,'hero':hero,'rels':rels}
+              rows.append(row)
               if reasons: failures.append((title,reasons))
-              print(f'LEGACY_VISUAL_AUDIT {idx:02d}/18 | {title} | store={store} hero={hero} rels={rels} theme={theme} forbidden={len(bad)}')
+              print(f'LEGACY_VISUAL_AUDIT {idx:02d}/18 | {title} | page_theme={theme} page_forbidden={len(bad)} | post={post_status} store={store} hero={hero} rels={rels}')
 
           print(json.dumps({'blogs':rows},ensure_ascii=False,indent=2))
           if failures:
               raise SystemExit('LEGACY_VISUAL_CONTRACT_FAIL: '+json.dumps(failures,ensure_ascii=False))
-          print('LEGACY_VISUAL_CONTRACT_PASS_18_18: HTTP 200 + 20x12 + rel patrocinado + Tema V20 + zero surface-fix Page-target em 18/18.')
+          print('LEGACY_VISUAL_CONTRACT_PASS_18_18: 18 Pages HTTP 200 com Tema V20 e zero surface-fix novo; 18 Store Posts LIVE 20x12 + Policy Guard + links patrocinados.')
           PY
 
 # READ_ONLY
 # NO_BLOGGER_WRITE
 # NO_GIT_WRITE
+# LEGACY_PAGE_IS_THEME_SURFACE_STORE_POST_IS_20X12_CANONICAL
 # TEMPORARY_PUSH_TRIGGER_FOR_FIRST_AUDIT
