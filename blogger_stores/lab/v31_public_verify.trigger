@@ -6,3 +6,5 @@ selection_sha256=46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0
 no_blogger_secrets=true
 no_blogger_write=true
 no_schedule=true
+attempt=2
+reason=portable_module_import_fixed_only
