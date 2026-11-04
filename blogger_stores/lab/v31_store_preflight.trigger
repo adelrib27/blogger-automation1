@@ -4,3 +4,5 @@ source_artifact=13286500833
 selection_sha256=46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c
 target_blog_id=4739187376492839837
 target_page_id=2446067640331732447
+attempt=2
+reason=validate_native_v31_category_contract_and_exact_public_check
