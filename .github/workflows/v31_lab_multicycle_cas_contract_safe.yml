@@ -1,0 +1,73 @@
+name: V31 LAB - Multi-cycle Git CAS reservation contract SAFE offline
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - .github/workflows/v31_lab_multicycle_cas_contract_safe.yml
+      - blogger_stores/v31_core/v31_multicycle_cas_contract.py
+      - blogger_stores/tests/v31_transaction/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-multicycle-cas-contract-safe
+  cancel-in-progress: false
+
+jobs:
+  testar-reserva-sem-publicar:
+    if: github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout LAB sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar identidade e estado canônico publicado
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          root=Path('blogger_stores')
+          sys.path.insert(0,str(root/'v31_core'))
+          from v31_second_resume_safe import validate_persisted_pair
+          state=json.loads((root/'v31_lab/state/v31_rotation_ledger.json').read_text())
+          history=json.loads((root/'v31_lab/state/v31_rotation_history.json').read_text())
+          assert (state['blogId'],state['pageId']) == ('4739187376492839837','2446067640331732447')
+          assert len(state['operations'])==1 and state['operations'][0]['status']=='PERSISTED'
+          assert len(history['runs'])==2
+          validate_persisted_pair(state,history)
+          print('V31_MULTICYCLE_CANONICAL_BASELINE_PASS')
+          PY
+      - name: Compilar módulo CAS e regressões anteriores
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            blogger_stores/v31_core/v31_rotation_ledger.py \
+            blogger_stores/v31_core/v31_second_resume_safe.py \
+            blogger_stores/v31_core/v31_atomic_rotation.py \
+            blogger_stores/v31_core/v31_multicycle_cas_contract.py \
+            blogger_stores/tests/v31_transaction/test_v31_multicycle_cas_contract.py
+      - name: Testar reserva CAS, concorrência, retomada e regressões
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s blogger_stores/tests/v31_transaction -v
+          python -m unittest discover -s blogger_stores/tests/v31_second_recovery -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+          python -m unittest discover -s blogger_stores/tests/v31_atomic -v
+      - name: Garantir estado intacto e ausência de publicação
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- blogger_stores/v31_lab/state
+          test -z "$(git status --porcelain -- blogger_stores/v31_lab/state)"
+          echo 'V31_MULTICYCLE_CAS_CONTRACT_SAFE_PASS; offline=true; reserve_commit=false; blogger_put=false; cron=false; production=false'
