@@ -3,8 +3,8 @@
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
     "input": 525,
-    "accepted": 282,
-    "rejected": 243
+    "accepted": 281,
+    "rejected": 244
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -27,15 +27,23 @@
     },
     "shopDistribution": [
       [
-        "844004880",
-        3
-      ],
-      [
         "1028459403",
         2
       ],
       [
+        "527518392",
+        2
+      ],
+      [
+        "411693079",
+        2
+      ],
+      [
         "628492017",
+        2
+      ],
+      [
+        "1092274438",
         2
       ],
       [
@@ -55,10 +63,6 @@
         1
       ],
       [
-        "527518392",
-        1
-      ],
-      [
         "1332034013",
         1
       ],
@@ -67,15 +71,7 @@
         1
       ],
       [
-        "728389176",
-        1
-      ],
-      [
         "1074025557",
-        1
-      ],
-      [
-        "1180298845",
         1
       ],
       [
@@ -83,11 +79,11 @@
         1
       ],
       [
-        "1016471898",
+        "1180298845",
         1
       ],
       [
-        "305201598",
+        "1016471898",
         1
       ],
       [
@@ -103,19 +99,7 @@
         1
       ],
       [
-        "1800621646",
-        1
-      ],
-      [
-        "1668941814",
-        1
-      ],
-      [
-        "1663630412",
-        1
-      ],
-      [
-        "1006215031",
+        "305201598",
         1
       ],
       [
@@ -123,25 +107,33 @@
         1
       ],
       [
-        "1092274438",
+        "1668941814",
         1
       ],
       [
-        "1626437729",
+        "1800621646",
+        1
+      ],
+      [
+        "1006215031",
+        1
+      ],
+      [
+        "1663630412",
+        1
+      ],
+      [
+        "1212721731",
         1
       ]
     ],
     "keywordDistribution": [
       [
-        "furadeira",
-        3
-      ],
-      [
-        "lavadora alta pressao",
-        3
-      ],
-      [
         "pano microfibra automotivo",
+        3
+      ],
+      [
+        "furadeira",
         3
       ],
       [
@@ -161,7 +153,11 @@
         2
       ],
       [
-        "luva de protecao",
+        "parafusadeira",
+        2
+      ],
+      [
+        "lavadora alta pressao",
         2
       ],
       [
@@ -169,11 +165,11 @@
         2
       ],
       [
-        "parafusadeira",
-        1
+        "painel ferramentas",
+        2
       ],
       [
-        "jogo de soquetes",
+        "luva de protecao",
         1
       ],
       [
@@ -185,15 +181,15 @@
         1
       ],
       [
-        "caixa ferramentas",
-        1
-      ],
-      [
         "escova limpeza automotiva",
         1
       ],
       [
-        "painel ferramentas",
+        "caixa ferramentas",
+        1
+      ],
+      [
+        "compressor de ar portatil",
         1
       ]
     ],
@@ -203,23 +199,23 @@
         7
       ],
       [
-        "Limpeza e Conservacao",
-        7
-      ],
-      [
         "Acessorios Automotivos",
         7
       ],
       [
-        "Organizacao de Garagem",
-        4
+        "Limpeza e Conservacao",
+        6
       ],
       [
-        "Seguranca e Protecao",
-        3
+        "Organizacao de Garagem",
+        5
       ],
       [
         "Manutencao",
+        3
+      ],
+      [
+        "Seguranca e Protecao",
         2
       ]
     ]
@@ -227,32 +223,19 @@
   "ranking": [
     {
       "rank": 1,
-      "itemId": 22298037153,
-      "productName": "Furadeira De Impacto Com Kit 650w 10mm 110V G1905K/BR1 Gamma",
+      "itemId": 20699205697,
+      "productName": "Pano de Limpeza Multiuso Kit 10 Panos De Limpeza Microfibra Super Absorvente , Limpeza Doméstica e Automotiva de Carro",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "furadeira"
+        "pano microfibra automotivo"
       ],
-      "opportunityScore": 81.32,
-      "shopName": "MBC FERRAMENTAS",
-      "offerLink": "https://s.shopee.com.br/1Lh1rK6yts"
+      "opportunityScore": 76.78,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/8KqnfnVINc"
     },
     {
       "rank": 2,
-      "itemId": 46668803829,
-      "productName": "Lavadora de Alta Pressão Portátil 1500Psi 1400w 110v Karcher",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "lavadora alta pressao"
-      ],
-      "opportunityScore": 80.7,
-      "shopName": "MBC FERRAMENTAS",
-      "offerLink": "https://s.shopee.com.br/80DxHBoESl"
-    },
-    {
-      "rank": 3,
       "itemId": 22892833180,
       "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas para Reparo de Carros / Conjuntos de Chaves",
       "priorityTier": "COMISSAO_EXTRA",
@@ -261,25 +244,12 @@
         "jogo de chaves",
         "caixa ferramentas"
       ],
-      "opportunityScore": 74.79,
+      "opportunityScore": 76.24,
       "shopName": "RISESHOP_brasil",
       "offerLink": "https://s.shopee.com.br/5fq2UrbRVi"
     },
     {
-      "rank": 4,
-      "itemId": 20699205697,
-      "productName": "Pano de Limpeza Multiuso Kit 10 Panos De Limpeza Microfibra Super Absorvente , Limpeza Doméstica e Automotiva de Carro",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "pano microfibra automotivo"
-      ],
-      "opportunityScore": 74.31,
-      "shopName": "MULTIORIENTAL",
-      "offerLink": "https://s.shopee.com.br/8KqnfnVINc"
-    },
-    {
-      "rank": 5,
+      "rank": 3,
       "itemId": 58270871239,
       "productName": "Kit Jogo Serra Copo 6 Peças Broca Madeira Gesso Drywall 32 38 44 51mm Furadeira Furador de Madeira Cortador de Furos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -287,12 +257,12 @@
       "intentMatchedKeywords": [
         "furadeira"
       ],
-      "opportunityScore": 72.93,
+      "opportunityScore": 76.08,
       "shopName": "O Barateiro Ferragens 3",
       "offerLink": "https://s.shopee.com.br/50aLed1Ci7"
     },
     {
-      "rank": 6,
+      "rank": 4,
       "itemId": 29535501772,
       "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas Completa Reversível Soquetes Maleta",
       "priorityTier": "COMISSAO_EXTRA",
@@ -303,25 +273,12 @@
         "caixa ferramentas",
         "maleta ferramentas"
       ],
-      "opportunityScore": 72.37,
+      "opportunityScore": 73.8,
       "shopName": "HONG11.br",
       "offerLink": "https://s.shopee.com.br/114CwJbHbx"
     },
     {
-      "rank": 7,
-      "itemId": 22598454534,
-      "productName": "Kit de Ferramentas 46 Peças com Catraca Soquete – Maleta Portátil – Ideal para Reparos Domésticos MN",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "maleta ferramentas"
-      ],
-      "opportunityScore": 69.54,
-      "shopName": "MANIA UTILIDADES E AFINS LTDA",
-      "offerLink": "https://s.shopee.com.br/8KqnfnQtcD"
-    },
-    {
-      "rank": 8,
+      "rank": 5,
       "itemId": 13513802366,
       "productName": "Porta Escova + Carvao P/ Furadeira Super Hobby Verde - Par",
       "priorityTier": "COMISSAO_EXTRA",
@@ -329,12 +286,25 @@
       "intentMatchedKeywords": [
         "furadeira"
       ],
-      "opportunityScore": 69.1,
+      "opportunityScore": 71.31,
       "shopName": "Mundo Pryst peças e acessórios",
       "offerLink": "https://s.shopee.com.br/1W0TUCEWoa"
     },
     {
-      "rank": 9,
+      "rank": 6,
+      "itemId": 22598454534,
+      "productName": "Kit de Ferramentas 46 Peças com Catraca Soquete – Maleta Portátil – Ideal para Reparos Domésticos MN",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "maleta ferramentas"
+      ],
+      "opportunityScore": 70.88,
+      "shopName": "MANIA UTILIDADES E AFINS LTDA",
+      "offerLink": "https://s.shopee.com.br/8KqnfnQtcD"
+    },
+    {
+      "rank": 7,
       "itemId": 58256818829,
       "productName": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
       "priorityTier": "COMISSAO_EXTRA",
@@ -342,12 +312,51 @@
       "intentMatchedKeywords": [
         "suporte celular carro"
       ],
-      "opportunityScore": 67.25,
+      "opportunityScore": 69.76,
       "shopName": "Umicc shop",
-      "offerLink": "https://s.shopee.com.br/2LZaWkfPXD"
+      "offerLink": "https://s.shopee.com.br/9V2lVWmvYd"
+    },
+    {
+      "rank": 8,
+      "itemId": 22892919440,
+      "productName": "Parafusadeira elétrica de precisão automática recarregável 68 em 1 ponteiras imantadas EXBOM-CKE6800",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira"
+      ],
+      "opportunityScore": 69.09,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/7puVdOHB0R"
+    },
+    {
+      "rank": 9,
+      "itemId": 21455455470,
+      "productName": "Mini Parafusadeira sem Fio Recarregável USB com Maleta 49 peças  MQL-PFU49A EXBOM",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira"
+      ],
+      "opportunityScore": 68.89,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/3LS7mHJtWo"
     },
     {
       "rank": 10,
+      "itemId": 43331185413,
+      "productName": "Porta Escovas com Escovas para Furadeira Bosch GSB 13RE 16RE 550RE",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "opportunityScore": 68.43,
+      "shopName": "Mundo Pryst peças e acessórios",
+      "offerLink": "https://s.shopee.com.br/1qdJsoDG8g"
+    },
+    {
+      "rank": 11,
       "itemId": 49466540071,
       "productName": "Pano Microfibra Toalha Grande Limpar Casa moveis Secar Carro Automotivo Lavagem Secagem Polimento",
       "priorityTier": "COMISSAO_EXTRA",
@@ -355,36 +364,22 @@
       "intentMatchedKeywords": [
         "pano microfibra automotivo"
       ],
-      "opportunityScore": 67.13,
+      "opportunityScore": 68.12,
       "shopName": "TMZ UTILIDADES",
       "offerLink": "https://s.shopee.com.br/2Vt0j4vyFZ"
     },
     {
-      "rank": 11,
-      "itemId": 58217601055,
-      "productName": "Parafusadeira Furadeira 25V Nakasaki Sem Fio a Bateria Profissional Kit Completo com Maleta",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "parafusadeira",
-        "furadeira"
-      ],
-      "opportunityScore": 66.73,
-      "shopName": "MAQ TOOLS",
-      "offerLink": "https://s.shopee.com.br/3LS7fYyc0L"
-    },
-    {
       "rank": 12,
-      "itemId": 53668853073,
-      "productName": "Kit 10 Maletas Jogo de Soquetes Sextavados 40 Peças Titanium",
+      "itemId": 22992747047,
+      "productName": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "jogo de soquetes"
+        "luva de protecao"
       ],
-      "opportunityScore": 66.65,
-      "shopName": "MBC FERRAMENTAS",
-      "offerLink": "https://s.shopee.com.br/20wk87uHbi"
+      "opportunityScore": 67.94,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/6q1zwj1d5Y"
     },
     {
       "rank": 13,
@@ -395,22 +390,22 @@
       "intentMatchedKeywords": [
         "suporte celular carro"
       ],
-      "opportunityScore": 66.16,
+      "opportunityScore": 67.05,
       "shopName": "COCONUT SHOP",
       "offerLink": "https://s.shopee.com.br/7VHggFUXao"
     },
     {
       "rank": 14,
-      "itemId": 23594156062,
-      "productName": "Kit 10 Panos de Limpeza Microfibra Alta Absorção Flanela Automotivo Carro Pia 30x30cm Vidro Multiuso Pano De Limpeza",
+      "itemId": 14720259268,
+      "productName": "Aplicador De Shampoo Encaixe Fino Lavadora Alta Pressão Wap",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "pano microfibra automotivo"
+        "lavadora alta pressao"
       ],
-      "opportunityScore": 65.83,
-      "shopName": "JWC.EMPORIUM",
-      "offerLink": "https://s.shopee.com.br/1W0TXEzmHL"
+      "opportunityScore": 67.04,
+      "shopName": "CTM E-COMMERCE",
+      "offerLink": "https://s.shopee.com.br/70LQ5Ls2Uf"
     },
     {
       "rank": 15,
@@ -421,22 +416,22 @@
       "intentMatchedKeywords": [
         "organizador porta malas"
       ],
-      "opportunityScore": 65.44,
+      "opportunityScore": 66.79,
       "shopName": "MELHOR ",
       "offerLink": "https://s.shopee.com.br/40hoVozKJ0"
     },
     {
       "rank": 16,
-      "itemId": 22992747047,
-      "productName": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
+      "itemId": 23594156062,
+      "productName": "Kit 10 Panos de Limpeza Microfibra Alta Absorção Flanela Automotivo Carro Pia 30x30cm Vidro Multiuso Pano De Limpeza",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "luva de protecao"
+        "pano microfibra automotivo"
       ],
-      "opportunityScore": 65.23,
-      "shopName": "MULTIORIENTAL",
-      "offerLink": "https://s.shopee.com.br/6fiZkPknob"
+      "opportunityScore": 66.72,
+      "shopName": "JWC.EMPORIUM",
+      "offerLink": "https://s.shopee.com.br/1W0TXEzmHL"
     },
     {
       "rank": 17,
@@ -447,38 +442,25 @@
       "intentMatchedKeywords": [
         "protetor auricular"
       ],
-      "opportunityScore": 65.13,
+      "opportunityScore": 66.47,
       "shopName": "GTEPIS Comercio e Participações",
       "offerLink": "https://s.shopee.com.br/4Ve56lwGso"
     },
     {
       "rank": 18,
-      "itemId": 23298660358,
-      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "aspirador automotivo"
-      ],
-      "opportunityScore": 65.06,
-      "shopName": "ONE LIGHT SHOP",
-      "offerLink": "https://s.shopee.com.br/AKbs0OYq8h"
-    },
-    {
-      "rank": 19,
-      "itemId": 14720259268,
-      "productName": "Aplicador De Shampoo Encaixe Fino Lavadora Alta Pressão Wap",
+      "itemId": 13061347694,
+      "productName": "Rolamento Disco 17 Esferas Karcher Lavadora Alta Pressão K3.98 K3.81 Original Bomba",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "lavadora alta pressao"
       ],
-      "opportunityScore": 64.79,
+      "opportunityScore": 65.61,
       "shopName": "CTM E-COMMERCE",
-      "offerLink": "https://s.shopee.com.br/70LQ5Ls2Uf"
+      "offerLink": "https://s.shopee.com.br/6VP9UQtwVc"
     },
     {
-      "rank": 20,
+      "rank": 19,
       "itemId": 22998858410,
       "productName": "Suporte Carro Celular GPS Universal Painel e Parabrisa Resistente Ventosa Ajustável Rotação 360°",
       "priorityTier": "COMISSAO_EXTRA",
@@ -486,12 +468,12 @@
       "intentMatchedKeywords": [
         "suporte celular carro"
       ],
-      "opportunityScore": 64.66,
+      "opportunityScore": 65.55,
       "shopName": "LojaZini",
       "offerLink": "https://s.shopee.com.br/906UT0OpYD"
     },
     {
-      "rank": 21,
+      "rank": 20,
       "itemId": 58250382369,
       "productName": "Bolsa De Armazenamento De Ferramentas De Carro Em Feltro Para O Porta-Malas Do Carro",
       "priorityTier": "COMISSAO_EXTRA",
@@ -499,12 +481,12 @@
       "intentMatchedKeywords": [
         "organizador porta malas"
       ],
-      "opportunityScore": 64.25,
+      "opportunityScore": 65.14,
       "shopName": "UR.bestie🧡",
       "offerLink": "https://s.shopee.com.br/7KyGTwmdXT"
     },
     {
-      "rank": 22,
+      "rank": 21,
       "itemId": 22694953462,
       "productName": "Kit Jogo De Ferramentas 27 Peças Com Maleta Chaves Allen Alicate Martelo Completos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -512,22 +494,35 @@
       "intentMatchedKeywords": [
         "maleta ferramentas"
       ],
-      "opportunityScore": 64.16,
+      "opportunityScore": 65.05,
       "shopName": "Super Vida_BR",
       "offerLink": "https://s.shopee.com.br/8VADs6QGHE"
     },
     {
-      "rank": 23,
-      "itemId": 58213601132,
-      "productName": "Bolsa de Armazenamento em Feltro para Porta-Malas do Carro, Organizador de Ferramentas e Acessórios Automotivos",
+      "rank": 22,
+      "itemId": 23298660358,
+      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "organizador porta malas"
+        "aspirador automotivo"
       ],
-      "opportunityScore": 63.52,
-      "shopName": "RunFu",
-      "offerLink": "https://s.shopee.com.br/5q9ShBsLaC"
+      "opportunityScore": 65.04,
+      "shopName": "ONE LIGHT SHOP",
+      "offerLink": "https://s.shopee.com.br/AKbs0OYq8h"
+    },
+    {
+      "rank": 23,
+      "itemId": 23098642201,
+      "productName": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "multimetro digital"
+      ],
+      "opportunityScore": 64.6,
+      "shopName": "SantaCasa",
+      "offerLink": "https://s.shopee.com.br/5q9ShB1Ctm"
     },
     {
       "rank": 24,
@@ -538,25 +533,38 @@
       "intentMatchedKeywords": [
         "multimetro digital"
       ],
-      "opportunityScore": 63.46,
+      "opportunityScore": 64.53,
       "shopName": "ARTIGOS_E_MAGIA1",
       "offerLink": "https://s.shopee.com.br/50aLhe97hM"
     },
     {
       "rank": 25,
-      "itemId": 13061347694,
-      "productName": "Rolamento Disco 17 Esferas Karcher Lavadora Alta Pressão K3.98 K3.81 Original Bomba",
+      "itemId": 58213601132,
+      "productName": "Bolsa de Armazenamento em Feltro para Porta-Malas do Carro, Organizador de Ferramentas e Acessórios Automotivos",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "lavadora alta pressao"
+        "organizador porta malas"
       ],
-      "opportunityScore": 63.35,
-      "shopName": "CTM E-COMMERCE",
-      "offerLink": "https://s.shopee.com.br/6VP9UQtwVc"
+      "opportunityScore": 64.42,
+      "shopName": "RunFu",
+      "offerLink": "https://s.shopee.com.br/5q9ShBsLaC"
     },
     {
       "rank": 26,
+      "itemId": 24575870687,
+      "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "escova limpeza automotiva"
+      ],
+      "opportunityScore": 64.25,
+      "shopName": "Choice Oficial",
+      "offerLink": "https://s.shopee.com.br/70LQ5Lil4C"
+    },
+    {
+      "rank": 27,
       "itemId": 22494655461,
       "productName": "Kit Ferramentas 10 40 46 Peças Aço Cromo Vanádio Chave Soquete Maleta Estojo Para Carro Moto e Casa",
       "priorityTier": "COMISSAO_EXTRA",
@@ -565,38 +573,12 @@
         "caixa ferramentas",
         "maleta ferramentas"
       ],
-      "opportunityScore": 63.02,
+      "opportunityScore": 63.91,
       "shopName": "ZAZU SHOP",
       "offerLink": "https://s.shopee.com.br/8pn4GiOzbG"
     },
     {
-      "rank": 27,
-      "itemId": 24575870687,
-      "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "escova limpeza automotiva"
-      ],
-      "opportunityScore": 62.53,
-      "shopName": "Choice Oficial",
-      "offerLink": "https://s.shopee.com.br/70LQ5Lil4C"
-    },
-    {
       "rank": 28,
-      "itemId": 23098642201,
-      "productName": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "multimetro digital"
-      ],
-      "opportunityScore": 62.35,
-      "shopName": "SantaCasa",
-      "offerLink": "https://s.shopee.com.br/5q9ShB1Ctm"
-    },
-    {
-      "rank": 29,
       "itemId": 23293604983,
       "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 118x35 + Brindes",
       "priorityTier": "COMISSAO_EXTRA",
@@ -604,22 +586,35 @@
       "intentMatchedKeywords": [
         "painel ferramentas"
       ],
-      "opportunityScore": 61.66,
+      "opportunityScore": 62.82,
       "shopName": "EXBIAN FERRAMENTAS",
       "offerLink": "https://s.shopee.com.br/7KyGTwvZdG"
     },
     {
-      "rank": 30,
-      "itemId": 22499407636,
-      "productName": "Luva Volk Ranhurada Original CA Protecao Trabalho EPI Segurança Lavar Louças Banheiro Tira Pelos",
+      "rank": 29,
+      "itemId": 58207052374,
+      "productName": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v ",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "luva de protecao"
+        "compressor de ar portatil"
       ],
-      "opportunityScore": 61.55,
-      "shopName": "JF ECOMMERCE",
-      "offerLink": "https://s.shopee.com.br/114CwKwsXk"
+      "opportunityScore": 62.64,
+      "shopName": "GR7 Imports",
+      "offerLink": "https://s.shopee.com.br/6fiZdhCJty"
+    },
+    {
+      "rank": 30,
+      "itemId": 57755036915,
+      "productName": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 62.6,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/6q1zt1xTe7"
     }
   ],
   "rejectedSample": [
@@ -753,6 +748,26 @@
               "chaves"
             ]
           ]
+        }
+      }
+    },
+    {
+      "itemId": 58264788999,
+      "productName": "Coletor de Poeira para Furadeira Drill Dust Collector em PLA 3D Preto Branco Cinza",
+      "shopName": "Nexus3Dlab",
+      "keywords": [
+        "furadeira"
+      ],
+      "evaluations": {
+        "furadeira": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "coletor de poeira",
+            "dust collector"
+          ],
+          "matched": []
         }
       }
     },
@@ -1062,6 +1077,31 @@
       "itemId": 58257835304,
       "productName": "Kit Profissional 4 Alicates Universal Corte Bico E Pressão",
       "shopName": "idemarketplace",
+      "keywords": [
+        "alicate universal"
+      ],
+      "evaluations": {
+        "alicate universal": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "universal"
+            ]
+          ],
+          "missing": [
+            [
+              "alicate"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58269139534,
+      "productName": "Conjunto Alicates Profissional 3 Peças Bico Universal Corte PVC STARTOOLS",
+      "shopName": "HELONES",
       "keywords": [
         "alicate universal"
       ],
@@ -2136,34 +2176,6 @@
       }
     },
     {
-      "itemId": 22393809246,
-      "productName": "Necessaire Organizador Bolsa Porta Sapato Mala Academia Viagem Passeio Academia Organizadora Armário Gaveta 127",
-      "shopName": "MEGA STORES",
-      "keywords": [
-        "organizador porta malas"
-      ],
-      "evaluations": {
-        "organizador porta malas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "organizador"
-            ]
-          ],
-          "missing": [
-            [
-              "porta malas",
-              "porta-malas",
-              "carro",
-              "automotivo"
-            ]
-          ]
-        }
-      }
-    },
-    {
       "itemId": 58206815999,
       "productName": "Gancho para Guarda-chuvas Sol Suporte Porta Malas para Sistema Isofix - Simples ou Duplo",
       "shopName": "VEXEL_",
@@ -2786,25 +2798,6 @@
               "oficina"
             ]
           ]
-        }
-      }
-    },
-    {
-      "itemId": 47355599290,
-      "productName": "KIT 3 Fitas EVA para Ripado Branco Autocolante 5cmx5mmx30m Painel Decorativo Parede Porta e Vedaçao",
-      "shopName": "DPR Fitas e Acabamentos",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "painel decorativo"
-          ],
-          "matched": []
         }
       }
     }
