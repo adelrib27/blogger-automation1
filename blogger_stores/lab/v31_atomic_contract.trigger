@@ -1,0 +1,7 @@
+schema=1
+mode=OFFLINE_ATOMIC_ROTATION_CONTRACT
+branch=lab/v31r1-shopee-safe-20261103
+no_github_write=true
+no_blogger_write=true
+no_cloudflare_network=true
+no_schedule=true
