@@ -1,0 +1,98 @@
+name: V31 R1 LAB — Primeira atualização Shopee LIVE controlada
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_first_live_publish.trigger
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-first-shopee-live-lab-once
+  cancel-in-progress: false
+
+jobs:
+  publicar-apenas-lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - name: Ler apenas a branch LAB
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dependências já validadas
+        run: pip install -r requirements.txt
+      - name: Seleção Shopee V23 imutável aprovada no SAFE
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-shopee-safe-2
+          run-id: 41751202914
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: blogger_stores/v31_lab/selection_input
+      - name: Confirmar identidade, origem e SHA-256
+        run: |
+          set -euo pipefail
+          test -n "$BLOGGER_CLIENT_ID" && test -n "$BLOGGER_CLIENT_SECRET" && test -n "$BLOGGER_REFRESH_TOKEN"
+          echo '46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c  blogger_stores/v31_lab/selection_input/selecao_shopee_v23_REAL_SAFE.json' | sha256sum -c -
+          python -m py_compile blogger_stores/src/v31_daily_page_publisher.py blogger_stores/src/v31_lab_store_preflight.py blogger_stores/v31_core/v31_store_safe.py blogger_stores/v31_core/v31_from_v23_selection.py
+          python -m unittest discover -s blogger_stores/tests/v31_safe -q
+      - name: Preflight exato contra Blogger vivo (somente GET)
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_lab_store_preflight.py \
+            --repo-root . \
+            --selection blogger_stores/v31_lab/selection_input/selecao_shopee_v23_REAL_SAFE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --output-dir blogger_stores/v31_lab/publish_plan
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('blogger_stores/v31_lab/publish_plan/RELATORIO_SAFE.json').read_text())
+          assert p['status']=='V31_LAB_PREFLIGHT_SAFE_PASS' and p['publication'] is False
+          assert p['blog_id']=='4739187376492839837' and p['page_id']=='2446067640331732447'
+          assert p['source_selection_sha256']=='46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c'
+          assert p['before']['sha256']=='69936bbba975c45ef4aa35f3aeac09cd20eb7fa11ffb5e19117f81a9f1fecb76'
+          assert p['candidate_sha256']=='6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450'
+          assert p['before']['cards']==16 and p['before']['affiliate_links']==16
+          assert p['candidate']['cards']==16 and p['candidate']['affiliate_links']==16 and p['candidate']['photos']==16
+          assert p['public_before']['status']=='PASS'
+          print('V31_LAB_FIRST_LIVE_PREWRITE_SHA_PIN_PASS')
+          PY
+      - name: Guardar backup e plano verificados ANTES de qualquer PUT
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-prewrite-backup-${{ github.run_number }}
+          path: blogger_stores/v31_lab/publish_plan/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publicação única no LAB — bloqueada por SHA e confirmação literal
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_daily_page_publisher.py \
+            --repo-root . \
+            --v23-selection blogger_stores/v31_lab/selection_input/selecao_shopee_v23_REAL_SAFE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --backup-dir blogger_stores/v31_lab/backup_publish \
+            --expected-sha 69936bbba975c45ef4aa35f3aeac09cd20eb7fa11ffb5e19117f81a9f1fecb76 \
+            --confirm 'PUBLISH V31 LAB STORE FROM VERIFIED SHOPEE' \
+            --apply
+      - name: Guardar diagnóstico pós-PUT mesmo em falhas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-first-live-result-${{ github.run_number }}
+          path: |
+            blogger_stores/v31_lab/backup_publish/
+            blogger_stores/v31_lab/publish_plan/RELATORIO_SAFE.json
+          if-no-files-found: warn
+          retention-days: 14
