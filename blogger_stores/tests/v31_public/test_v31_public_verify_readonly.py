@@ -3,11 +3,10 @@ import json
 import sys
 import unittest
 from urllib.error import HTTPError, URLError
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'src'))
 from v31_public_verify_readonly import (reference, verify_html, fetch_public, run,
     VerificationError, PublicThrottled, START, END, LAB_URL)
 
-ROOT=Path(__file__).resolve().parents[2]/'V31_PRIMEIRA_SELECAO_REAL_SAFE_V1'
 # The tests never access network; use an explicitly supplied fixture copied from V23 artifact.
 class Response:
     status=200
