@@ -89,6 +89,10 @@ class CloudflareTransportTests(unittest.TestCase):
         with self.assertRaises(VerificationError): fetch_via_browser_rendering(
             ACCOUNT, TOKEN, opener=lambda *a, **k: (_ for _ in ()).throw(HTTPError(LAB_URL, 401, '', {}, None)))
 
+    def test_07b_redirect_never_succeeds(self):
+        with self.assertRaises(VerificationError): fetch_via_browser_rendering(
+            ACCOUNT, TOKEN, opener=lambda *a, **k: (_ for _ in ()).throw(HTTPError(LAB_URL, 302, 'redirect', {}, None)))
+
     def test_08_network_error_pending(self):
         with self.assertRaises(PublicThrottled): fetch_via_browser_rendering(
             ACCOUNT, TOKEN, opener=lambda *a, **k: (_ for _ in ()).throw(URLError('temporary')))
