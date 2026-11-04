@@ -1,0 +1,60 @@
+name: V31 LAB — Aceitacao publica exata READ-ONLY
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_public_verify.trigger
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-lab-public-verify-readonly
+  cancel-in-progress: false
+
+jobs:
+  verificar-sem-alterar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout LAB apenas leitura
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testes do verificador puro
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/v31_public_verify_readonly.py
+          python -m unittest discover -s blogger_stores/tests/v31_public -v
+      - name: Obter selecao autenticada SAFE (sem nova consulta Shopee)
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-shopee-safe-2
+          run-id: 41751202914
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: blogger_stores/v31_lab/verify_input
+      - name: Garantir integridade do artefato SAFE
+        run: |
+          set -euo pipefail
+          echo '46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c  blogger_stores/v31_lab/verify_input/selecao_shopee_v23_REAL_SAFE.json' | sha256sum -c -
+      - name: Comparar pagina publica exata (somente GET canônico)
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_public_verify_readonly.py \
+            --selection blogger_stores/v31_lab/verify_input/selecao_shopee_v23_REAL_SAFE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --selection-sha256 46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c \
+            --report blogger_stores/v31_lab/verify_output/RELATORIO_PUBLICO.json
+      - name: Arquivar auditoria mesmo se 429
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-public-readonly-${{ github.run_number }}
+          path: blogger_stores/v31_lab/verify_output/RELATORIO_PUBLICO.json
+          if-no-files-found: warn
+          retention-days: 14
