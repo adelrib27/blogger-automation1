@@ -1,0 +1,12 @@
+schema=1
+mode=LIVE_READ_ONLY_CLOUDFLARE_PUBLIC_EXACT
+blog_id=4739187376492839837
+page_id=2446067640331732447
+selection_run_id=41751202914
+selection_sha256=46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c
+environment=v31-lab
+authorization=operator_confirmed_environment_secrets_in_screenshot
+no_blogger_write=true
+no_new_shopee_search=true
+no_rotation_commit=true
+no_schedule=true
