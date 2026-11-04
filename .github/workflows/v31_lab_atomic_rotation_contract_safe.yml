@@ -1,0 +1,38 @@
+name: V31 LAB - Atomic rotation ledger contract SAFE
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_atomic_contract.trigger
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-rotation-atomic-contract
+  cancel-in-progress: false
+
+jobs:
+  testar-sem-alterar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compilar núcleo e executor; nenhuma rede
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/v31_core/v31_rotation_ledger.py \
+            blogger_stores/v31_core/v31_atomic_rotation.py \
+            blogger_stores/src/v31_lab_atomic_finalize.py
+      - name: Testes SAFE do reconciliador e ledger
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s blogger_stores/tests/v31_atomic -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+      - name: Sem publicação e sem cron
+        run: echo 'V31_ATOMIC_CONTRACT_SAFE_PASS; offline_only=true; no_blogger_write=true; no_cloudflare_network=true; no_git_commit=true'
