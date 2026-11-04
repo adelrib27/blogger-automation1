@@ -1,0 +1,33 @@
+name: V31 LAB - ETag proof sacrificial page minimal SAFE
+on:
+  push:
+    branches: [lab/v31r1-shopee-safe-20261103]
+    paths:
+      - .github/workflows/v31_lab_etag_proof_shape_targeted_safe.yml
+      - blogger_stores/v31_core/v31_sacrificial_if_match_proof_safe.py
+      - blogger_stores/tests/v31_etag_proof/**
+permissions:
+  contents: read
+concurrency:
+  group: v31-lab-etag-proof-shape-safe
+  cancel-in-progress: false
+jobs:
+  proof-shape-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Only relevant security cases, no Blogger API/PUT, no artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s blogger_stores/tests/v31_etag_proof -v
+          git diff --exit-code -- blogger_stores/v31_lab/state
+          test -z "$(git status --porcelain -- blogger_stores/v31_lab/state)"
+          echo 'V31_ETAG_SACRIFICIAL_EVIDENCE_SHAPE_SAFE_PASS; live_proof=false; blogger_put=false; no_artifacts=true'
