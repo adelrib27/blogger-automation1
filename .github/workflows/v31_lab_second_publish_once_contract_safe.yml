@@ -1,0 +1,129 @@
+name: V31 LAB - Second one-shot publisher SAFE contract (no Blogger PUT)
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - .github/workflows/v31_lab_second_publish_once_contract_safe.yml
+      - blogger_stores/src/v31_second_publish_once_lab.py
+      - blogger_stores/tests/v31_second_once/**
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-lab-second-once-contract-safe
+  cancel-in-progress: false
+
+jobs:
+  testar-publicador-unico-sem-publicacao:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exclusivo LAB sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar HEAD, reserva PLAN, ledger e histórico antes de testar
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git merge-base --is-ancestor 801381b4e0d2d23fa60f478da67b6dca6ec3df32 "$GITHUB_SHA"
+          remote_head="$(git ls-remote --exit-code origin 'refs/heads/lab/v31r1-shopee-safe-20261103' | cut -f1)"
+          test "$remote_head" = "$GITHUB_SHA"
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0,'blogger_stores/v31_core')
+          from v31_second_publish_gate_safe import LEDGER_BLOB,HISTORY_BLOB,gitblob
+          from v31_second_resume_safe import validate_persisted_pair
+          b=Path('blogger_stores/v31_lab/state')
+          lb=(b/'v31_rotation_ledger.json').read_bytes()
+          hb=(b/'v31_rotation_history.json').read_bytes()
+          assert gitblob(lb)==LEDGER_BLOB
+          assert gitblob(hb)==HISTORY_BLOB
+          led=json.loads(lb);hist=json.loads(hb)
+          assert [o['status'] for o in led['operations']]==['PERSISTED','PLAN']
+          assert len(hist['runs'])==2
+          validate_persisted_pair(led,hist)
+          print('V31_SECOND_ONCE_EXISTING_PLAN_CANONICAL_PASS')
+          PY
+      - name: Recuperar artefato original da seleção Shopee — read-only
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-shopee-safe-1
+          run-id: 41840458808
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_second_selection
+      - name: Recuperar HTML original e candidato — read-only
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-preflight-readonly-1
+          run-id: 41841058542
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_second_html
+      - name: Verificar hashes imutáveis do lote de segunda rotação
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7  ${RUNNER_TEMP}/v31_second_selection/selecao_shopee_v23_SECOND_REAL_SAFE.json" | sha256sum -c -
+          echo "6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450  ${RUNNER_TEMP}/v31_second_html/LOJA_ORIGINAL_BACKUP.html" | sha256sum -c -
+          echo "d33070c001281ed795489a032a504accfcab2b593010c1a9e8cf5bb86b8109b8  ${RUNNER_TEMP}/v31_second_html/LOJA_CANDIDATA_NAO_PUBLICAR.html" | sha256sum -c -
+          python - <<'PY'
+          import os,sys,json,pathlib
+          from hashlib import sha256
+          sys.path.insert(0,'blogger_stores/v31_core')
+          from v31_second_publish_gate_safe import gate_second_publish_safe,REPOSITORY,BRANCH
+          tmp=pathlib.Path(os.environ['RUNNER_TEMP']);base=pathlib.Path('blogger_stores/v31_lab')
+          orig=(tmp/'v31_second_html/LOJA_ORIGINAL_BACKUP.html').read_bytes()
+          r=gate_second_publish_safe(
+              repository=REPOSITORY,branch=BRANCH,branch_head=os.environ['GITHUB_SHA'],
+              reservation_is_ancestor=True,
+              profile_bytes=(base/'perfil_v31_lab.json').read_bytes(),
+              ledger_bytes=(base/'state/v31_rotation_ledger.json').read_bytes(),
+              history_bytes=(base/'state/v31_rotation_history.json').read_bytes(),
+              selection_bytes=(tmp/'v31_second_selection/selecao_shopee_v23_SECOND_REAL_SAFE.json').read_bytes(),
+              original_html_bytes=orig,
+              candidate_html_bytes=(tmp/'v31_second_html/LOJA_CANDIDATA_NAO_PUBLICAR.html').read_bytes(),
+              observed_blogger_html_bytes=orig,
+              observed_blogger_is_authenticated_live=False)
+          assert r['decision']=='EXISTING_PLAN_READBACK_ORIGINAL_SEPARATE_APPROVAL_REQUIRED'
+          assert r['blogger_put_allowed'] is False and r['git_write_allowed'] is False
+          assert r['observed_blogger_live_authenticated'] is False
+          print('V31_SECOND_ONCE_REAL_ARTIFACT_GATE_ARCHIVED_PASS')
+          PY
+      - name: Exercitar uma única tentativa em serviço Blogger simulado e 7 suites anteriores
+        shell: bash
+        env:
+          V31_TEST_REAL_HTML_DIR: ${{ runner.temp }}/v31_second_html
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/v31_second_publish_once_lab.py \
+            blogger_stores/tests/v31_second_once/test_v31_second_publish_once_lab.py
+          python -m unittest discover -s blogger_stores/tests/v31_second_once -v
+          python -m unittest discover -s blogger_stores/tests/v31_second_publish -v
+          python -m unittest discover -s blogger_stores/tests/v31_git_write_gate -v
+          python -m unittest discover -s blogger_stores/tests/v31_git_executor -v
+          python -m unittest discover -s blogger_stores/tests/v31_transaction -v
+          python -m unittest discover -s blogger_stores/tests/v31_second_recovery -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+          python -m unittest discover -s blogger_stores/tests/v31_atomic -v
+      - name: Confirmar estado operacional sem modificação e concluir
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- blogger_stores/v31_lab/state
+          test -z "$(git status --porcelain -- blogger_stores/v31_lab/state)"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          echo 'V31_SECOND_ONCE_SAFE_PASS; fake_blogger_only=true; real_blogger_put=false; remote_git_state_write=false; cron=false; artifact_upload=false'
