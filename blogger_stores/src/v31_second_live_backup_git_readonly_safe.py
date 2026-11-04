@@ -37,7 +37,8 @@ def require(ok: bool, reason: str) -> None:
         raise PreflightBlocked(reason)
 
 
-def attest(*, page: dict, archived_original: bytes, archived_candidate: bytes,
+def attest(*, page: dict, authenticated_live_page_ids: frozenset[str],
+           archived_original: bytes, archived_candidate: bytes,
            gateway, expected_head: str, reservation_is_ancestor: bool) -> dict:
     """Verify external authenticated page representation and remote immutable Git.
 
@@ -54,8 +55,12 @@ def attest(*, page: dict, archived_original: bytes, archived_candidate: bytes,
     require(isinstance(page, dict) and str(page.get('id')) == PAGE
             and str(page.get('blog', {}).get('id')) == BLOG
             and page.get('title', '').strip().casefold() == 'loja'
-            and page.get('url') == URL and page.get('status') == 'LIVE',
-            'Authenticated Blogger LOJA identity/status mismatch')
+            and page.get('url') == URL
+            and page.get('status') in (None, 'LIVE', 'live'),
+            'Authenticated Blogger LOJA identity mismatch')
+    require(isinstance(authenticated_live_page_ids, frozenset)
+            and PAGE in authenticated_live_page_ids,
+            'Page not present in authenticated Blogger LIVE inventory')
     content = page.get('content')
     require(type(content) is str, 'Blogger HTML missing')
     actual = content.encode('utf-8')
@@ -148,12 +153,14 @@ def run_live_read_only() -> dict:
                              stderr=subprocess.DEVNULL, timeout=15, check=False)
     require(ancestor.returncode == 0, 'Reservation commit not ancestor')
     # Reuse previously audited OAuth code; call transport ONLY with method GET.
-    from v31_etag_sacrificial_live_once import oauth_access_token, transport
+    from v31_etag_sacrificial_live_once import oauth_access_token, transport, list_pages
     token = oauth_access_token()
+    live_ids = frozenset(str(p.get('id')) for p in list_pages(token, 'live'))
+    require(PAGE in live_ids, 'LOJA missing in Blogger LIVE page inventory')
     endpoint = 'https://www.googleapis.com/blogger/v3/blogs/' + BLOG + '/pages/' + PAGE
     code, page = transport(endpoint, 'GET', token=token)
     require(code == 200, 'Authenticated Blogger GET failed')
-    report = attest(page=page,
+    report = attest(page=page, authenticated_live_page_ids=live_ids,
                     archived_original=original_path.read_bytes(),
                     archived_candidate=candidate_path.read_bytes(),
                     gateway=git, expected_head=expected_head,

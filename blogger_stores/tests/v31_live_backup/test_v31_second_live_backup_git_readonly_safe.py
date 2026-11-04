@@ -44,10 +44,11 @@ class TestReadOnly(unittest.TestCase):
         self.p2=patch.object(target,'BASE_HISTORY_BLOB',target.git_blob(self.git.blobs[target.HISTORY]));self.p2.start()
         self.addCleanup(self.p1.stop);self.addCleanup(self.p2.stop)
         self.page={'id':target.PAGE,'blog':{'id':target.BLOG},'title':'LOJA','url':target.URL,
-                   'status':'LIVE','content':self.original.decode('utf-8'),'updated':target.UPDATED,
+                   'content':self.original.decode('utf-8'),'updated':target.UPDATED,
                    'etag':'"valid-strong-etag"'}
     def go(self,**kwargs):
-        args=dict(page=self.page,archived_original=self.original,
+        args=dict(page=self.page,authenticated_live_page_ids=frozenset({target.PAGE}),
+                  archived_original=self.original,
                   archived_candidate=self.candidate,gateway=self.git,
                   expected_head=self.git.head(),reservation_is_ancestor=True)
         args.update(kwargs)
@@ -60,6 +61,10 @@ class TestReadOnly(unittest.TestCase):
         with self.assertRaises(target.PreflightBlocked):self.go(archived_candidate=self.candidate[:-1])
     def test_blogger_change_blocks(self):
         self.page['content']+=' ';self.assertRaises(target.PreflightBlocked,self.go)
+    def test_missing_from_authenticated_live_inventory_blocks(self):
+        self.assertRaises(target.PreflightBlocked,self.go,authenticated_live_page_ids=frozenset())
+    def test_draft_status_if_present_blocks(self):
+        self.page['status']='DRAFT';self.assertRaises(target.PreflightBlocked,self.go)
     def test_weak_etag_blocks(self):
         self.page['etag']='W/"weak"';self.assertRaises(target.PreflightBlocked,self.go)
     def test_stale_remote_head_blocks(self):
