@@ -1,0 +1,144 @@
+name: V31 LAB - Segunda selecao Shopee SAFE (historico canonico)
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_second_shopee_safe.trigger
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-second-shopee-safe
+  cancel-in-progress: false
+
+jobs:
+  segundo-catalogo-sem-publicar:
+    if: github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - name: Checkout read-only da branch LAB
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Preparar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar dependencias do motor V23 original
+        run: python -m pip install -r requirements.txt
+      - name: Gate da primeira rotacao persistida e alvo isolado
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test -n "$SHOPEE_APP_ID" && test -n "$SHOPEE_SECRET"
+          test "$SHOPEE_APP_ID" = '18352820579'
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('blogger_stores/v31_lab')
+          p=json.loads((root/'perfil_v31_lab.json').read_text(encoding='utf8'))
+          ledger=json.loads((root/'state/v31_rotation_ledger.json').read_text(encoding='utf8'))
+          h=json.loads((root/'state/v31_rotation_history.json').read_text(encoding='utf8'))
+          assert p['mode']=='SAFE' and p['blog_id']=='4739187376492839837' and p['page_id']=='2446067640331732447'
+          assert p['page_url']=='https://blog-teste-tema-worpress.blogspot.com/p/loja.html'
+          assert ledger['blogId']==p['blog_id'] and ledger['pageId']==p['page_id']
+          ops=ledger.get('operations',[])
+          assert len(ops)==1 and ops[0].get('status')=='PERSISTED', 'Operacao pendente; bloquear nova selecao'
+          runs=h.get('runs',[])
+          assert h.get('version')==1 and h.get('blogId')==p['blog_id'] and len(runs)==2
+          assert runs[0].get('source')=='seed_from_current_blogger_store'
+          last=runs[-1]
+          assert last.get('source')=='blogger_published' and last.get('pageId')==p['page_id']
+          assert last.get('selectionSha')==ops[0]['selectionSha']
+          assert last.get('operationId')==ops[0]['operationId']
+          ids=[str(item['itemId']) for item in last.get('items',[])]
+          assert len(ids)==p['expected_products']==16 and len(set(ids))==16
+          expected={name:p['per_category'][name] for name in p['categories']}
+          assert all(sum(x['category']==cat for x in last['items'])==n for cat,n in expected.items())
+          print('V31_SECOND_SAFE_LEDGER_PERSISTED_AND_HISTORY_MATCHED; no_blogger_write=true')
+          PY
+      - name: Contratos offline para scanner, selecao e ledger
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/v31_shopee_safe_scan.py blogger_stores/v31_core/v31_from_v23_selection.py blogger_stores/v31_core/v31_rotation_ledger.py
+          python -m unittest discover -s blogger_stores/tests/v31_safe -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+      - name: Buscar segunda selecao REAL Shopee somente em SAFE
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_shopee_safe_scan.py \
+            --repo-root . \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --config config/shopee_v31_lab.json \
+            --rules config/shopee_v31_lab_intent_rules.json \
+            --rotation blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --out blogger_stores/v31_lab/second_safe_output/selecao_shopee_v23_SECOND_REAL_SAFE.json
+      - name: Comparar segunda selecao com a primeira (fail-closed)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from collections import Counter
+          from pathlib import Path
+          base=Path('blogger_stores/v31_lab')
+          old_bytes=(base/'state/v31_rotation_history.json').read_bytes()
+          h=json.loads(old_bytes)
+          ledger=json.loads((base/'state/v31_rotation_ledger.json').read_text(encoding='utf8'))
+          p=json.loads((base/'perfil_v31_lab.json').read_text(encoding='utf8'))
+          path=base/'second_safe_output/selecao_shopee_v23_SECOND_REAL_SAFE.json'
+          new_bytes=path.read_bytes()
+          doc=json.loads(new_bytes)
+          assert ledger['operations'][0]['status']=='PERSISTED'
+          assert doc['status']=='SAFE_READY' and doc['dryRun'] is True and doc['publishReady'] is True
+          assert doc['blogId']==p['blog_id'] and doc['totalItems']==p['expected_products']==16
+          assert doc['uniqueItemIds']==16 and list(doc['categories'])==p['categories']
+          assert all(doc['gates'][key] is True for key in ('allLinksResolved','semanticRulesApplied','finalProductGate','failClosed','allPhotosPresent','expectedCategories','expectedItems'))
+          products=[q for cat in p['categories'] for q in doc['categories'][cat]]
+          assert len(products)==16 and len({str(q['itemId']) for q in products})==16
+          assert all(len(doc['categories'][cat])==p['per_category'][cat] for cat in p['categories'])
+          assert all(q['imageUrl'].startswith('https://') and q['affiliateUrl'].startswith('https://s.shopee.com.br/') for q in products)
+          last={str(q['itemId']) for q in h['runs'][-1]['items']}
+          current={str(q['itemId']) for q in products}
+          new=current-last
+          assert len(new)>0, 'Nenhuma troca de produto: segunda rotacao bloqueada'
+          modes=Counter(q['rotationSelectionMode'] for q in products)
+          assert sum(modes.values())==16
+          assert int(doc['rotation']['fallbackCount'])==16-modes.get('new',0)
+          result={
+            'status':'V31_SECOND_SELECTION_SAFE_READY',
+            'blog_id':p['blog_id'],'page_id':p['page_id'],
+            'selection_sha256':hashlib.sha256(new_bytes).hexdigest(),
+            'canonical_history_sha256':hashlib.sha256(old_bytes).hexdigest(),
+            'previous_selection_sha256':ledger['operations'][0]['selectionSha'],
+            'total_items':16,'unique_items':16,'categories':p['categories'],
+            'new_vs_published':len(new),'overlap_with_published':len(current & last),
+            'selection_modes':dict(modes),
+            'published':False,'blogger_write':False,'history_write':False,'cron':False
+          }
+          (base/'second_safe_output/RELATORIO_SEGUNDA_SELECAO_SAFE.json').write_text(
+              json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+          print(json.dumps(result,ensure_ascii=False))
+          PY
+      - name: Confirmar ausencia de mudancas versionadas
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- blogger_stores/v31_lab/state blogger_stores/v31_lab/v31_lab_rotation_seed.json
+          test -z "$(git diff --name-only)"
+          echo 'V31_SECOND_SAFE_NO_STATE_OR_BLOGGER_WRITE'
+      - name: Arquivar selecao e relatorio SAFE, nunca publicar
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-second-shopee-safe-${{ github.run_number }}
+          path: |
+            blogger_stores/v31_lab/second_safe_output/
+          if-no-files-found: error
+          retention-days: 7
