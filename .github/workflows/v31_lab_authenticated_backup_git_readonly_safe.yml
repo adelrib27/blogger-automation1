@@ -22,8 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: v31-lab
     timeout-minutes: 8
-    env:
-      PYTHONPYCACHEPREFIX: ${{ runner.temp }}/v31_pycache
     steps:
       - name: Checkout LAB com branch explicita, somente leitura
         uses: actions/checkout@v4
@@ -48,6 +46,7 @@ jobs:
           V31_TEST_REAL_HTML_DIR: ${{ runner.temp }}/v31_original
         run: |
           set -euo pipefail
+          export PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/v31_pycache"
           test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
           test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
@@ -67,6 +66,7 @@ jobs:
           V31_ARCHIVED_CANDIDATE: ${{ runner.temp }}/v31_original/LOJA_CANDIDATA_NAO_PUBLICAR.html
         run: |
           set -euo pipefail
+          export PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/v31_pycache"
           test -n "$BLOGGER_CLIENT_ID"
           test -n "$BLOGGER_CLIENT_SECRET"
           test -n "$BLOGGER_REFRESH_TOKEN"
