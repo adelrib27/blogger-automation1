@@ -16,7 +16,7 @@ import re
 import sys
 from typing import Callable
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from v31_public_verify_readonly import (
     LAB_URL, PublicThrottled, VerificationError, digest, reference, require, verify_html,
@@ -27,7 +27,17 @@ MAX_ENVELOPE_BYTES = 4_000_000
 MAX_HTML_BYTES = 3_000_000
 
 
-def fetch_via_browser_rendering(account_id: str, api_token: str, *, opener: Callable = urlopen) -> str:
+class BlockRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        # Never forward an API bearer token to a different URL or host.
+        return None
+
+
+def no_redirect_open(request, timeout):
+    return build_opener(BlockRedirect).open(request, timeout=timeout)
+
+
+def fetch_via_browser_rendering(account_id: str, api_token: str, *, opener: Callable = no_redirect_open) -> str:
     """Return raw HTML through the documented Cloudflare Browser Rendering API.
 
     Cloudflare is the transport; the V31 contract checks the actual HTML.
@@ -73,7 +83,7 @@ def fetch_via_browser_rendering(account_id: str, api_token: str, *, opener: Call
 
 
 def run(selection_path: Path, profile_path: Path, pin: str,
-        account_id: str, api_token: str, *, opener: Callable = urlopen) -> dict:
+        account_id: str, api_token: str, *, opener: Callable = no_redirect_open) -> dict:
     raw = selection_path.read_bytes()
     require(digest(raw) == pin, 'SHA-256 da seleção divergiu')
     selection = json.loads(raw)
