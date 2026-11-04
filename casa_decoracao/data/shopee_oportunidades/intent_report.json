@@ -3,8 +3,8 @@
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
     "input": 525,
-    "accepted": 386,
-    "rejected": 139
+    "accepted": 384,
+    "rejected": 141
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -32,6 +32,10 @@
       ],
       [
         "313660590",
+        2
+      ],
+      [
+        "322387387",
         2
       ],
       [
@@ -64,10 +68,6 @@
       ],
       [
         "699143044",
-        1
-      ],
-      [
-        "322387387",
         1
       ],
       [
@@ -133,10 +133,6 @@
       [
         "1366028631",
         1
-      ],
-      [
-        "408653169",
-        1
       ]
     ],
     "keywordDistribution": [
@@ -154,10 +150,6 @@
       ],
       [
         "travesseiro",
-        2
-      ],
-      [
-        "potes hermeticos",
         2
       ],
       [
@@ -197,6 +189,10 @@
         1
       ],
       [
+        "potes hermeticos",
+        1
+      ],
+      [
         "abajur quarto",
         1
       ],
@@ -219,6 +215,10 @@
       [
         "almofada decorativa",
         1
+      ],
+      [
+        "jogo de toalhas",
+        1
       ]
     ],
     "categoryDistribution": [
@@ -231,16 +231,12 @@
         5
       ],
       [
-        "Banheiro",
+        "Cama Mesa Banho",
         5
       ],
       [
-        "Cozinha",
-        4
-      ],
-      [
-        "Cama Mesa Banho",
-        4
+        "Banheiro",
+        5
       ],
       [
         "Area Externa",
@@ -248,6 +244,10 @@
       ],
       [
         "Sala",
+        3
+      ],
+      [
+        "Cozinha",
         3
       ],
       [
@@ -281,7 +281,7 @@
       ],
       "opportunityScore": 70.64,
       "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/qkmjJ2UU0"
+      "offerLink": "https://s.shopee.com.br/7KyGuNAz0s"
     },
     {
       "rank": 3,
@@ -295,7 +295,7 @@
       ],
       "opportunityScore": 68.53,
       "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/9pfbRqUEDr"
+      "offerLink": "https://s.shopee.com.br/7fb7Iz0ump"
     },
     {
       "rank": 4,
@@ -664,16 +664,16 @@
     },
     {
       "rank": 32,
-      "itemId": 46360468172,
-      "productName": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "itemId": 22998007959,
+      "productName": "Jogo de Toalha 4 Peças Karsten 100% Algodão Felpuda Macia Excelente Absorção Banho e Rosto",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "potes hermeticos"
+        "jogo de toalhas"
       ],
-      "opportunityScore": 58.86,
-      "shopName": "SELLNEEDS",
-      "offerLink": "https://s.shopee.com.br/20wk7SkJCz"
+      "opportunityScore": 59.0,
+      "shopName": "MG Enxovais",
+      "offerLink": "https://s.shopee.com.br/2BGAJnN0Ms"
     }
   ],
   "rejectedSample": [
@@ -1786,6 +1786,33 @@
       }
     },
     {
+      "itemId": 22199198026,
+      "productName": "Kit Grampos e Presilhas Automotivas com 100 Peças + Estojo Organizador Universal Reforçado",
+      "shopName": "RD ECOM",
+      "keywords": [
+        "caixa organizadora"
+      ],
+      "evaluations": {
+        "caixa organizadora": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "caixa",
+              "cesto",
+              "cesta"
+            ]
+          ]
+        }
+      }
+    },
+    {
       "itemId": 22593398069,
       "productName": "Porta Joia Acrílico Luxo Com 3 Camadas Brinco Anel Compartimento caixa de armazenamento de jóias",
       "shopName": "ADS-store",
@@ -2734,6 +2761,38 @@
       }
     },
     {
+      "itemId": 20798104891,
+      "productName": "UTIL INOX - ESCORREDOR MASSA 24CM",
+      "shopName": "Bazar Dona Dirce",
+      "keywords": [
+        "escorredor de loucas"
+      ],
+      "evaluations": {
+        "escorredor de loucas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "escorredor"
+            ]
+          ],
+          "missing": [
+            [
+              "louca",
+              "loucas",
+              "prato",
+              "pratos",
+              "talher",
+              "talheres",
+              "copo",
+              "copos"
+            ]
+          ]
+        }
+      }
+    },
+    {
       "itemId": 19999894139,
       "productName": "Kit 5 Suporte Porta Esponja para Pia Cozinha Aço Inox 304 Autoadesivo Sem Furo Organizador",
       "shopName": "MIKA FASHION!",
@@ -2790,64 +2849,6 @@
               "talheres",
               "copo",
               "copos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 19222469173,
-      "productName": "Pote de Vidro Com Divisória e Tampa Hermética 1000ml Vitrizi",
-      "shopName": "LOJA STOCK ON COMERCIO VAR  LTDA",
-      "keywords": [
-        "potes hermeticos"
-      ],
-      "evaluations": {
-        "potes hermeticos": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "pote"
-            ]
-          ],
-          "missing": [
-            [
-              "hermetico",
-              "hermeticos",
-              "trava",
-              "travas",
-              "alimentos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 43327284969,
-      "productName": "Mini Potes para Congelar Papinha c/ Tampa Hermética Porta Leita em pó Frutas para Bebe adultos Kit c/2/4/8/16",
-      "shopName": "Seis_deuses_boutique.br",
-      "keywords": [
-        "potes hermeticos"
-      ],
-      "evaluations": {
-        "potes hermeticos": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "potes"
-            ]
-          ],
-          "missing": [
-            [
-              "hermetico",
-              "hermeticos",
-              "trava",
-              "travas",
-              "alimentos"
             ]
           ]
         }
