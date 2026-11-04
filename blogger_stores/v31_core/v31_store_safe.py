@@ -153,7 +153,7 @@ def render_store(data: dict, profile: dict, *, allow_fixture: bool = False, cloc
         if p['category'] not in seen_cats:
             seen_cats.add(p['category']);cat_anchor=f' id="ub-cat-{profile["categories"].index(p["category"])+1}"'
         cards.append(
-            f'<article class="ub-product-card" data-item-id="{pid}"{score_attr}{cat_anchor}>'
+            f'<article class="ub-product-card" data-item-id="{pid}" data-category="{cat}"{score_attr}{cat_anchor}>'
             f'<div class="ub-product-image">{img}</div>'
             f'<div class="ub-product-body"><span class="ub-product-tag">{cat}</span>'
             f'<h2 class="ub-product-title">{name}</h2>'
@@ -161,7 +161,7 @@ def render_store(data: dict, profile: dict, *, allow_fixture: bool = False, cloc
             f'<div class="ub-product-meta"><span>Shopee</span><span>Consulte a oferta</span></div>'
             f'<a class="ub-product-action" href="{url}" rel="nofollow sponsored noopener" target="_blank">Ver oferta na Shopee</a>'
             '</div></article>')
-    return (f'<nav class="ub-store-category-nav" aria-label="Categorias da loja">{" ".join(nav)}</nav>\n'
+    return (f'<nav class="ub-store-category-nav" aria-label="Categorias da loja" style="display:flex;flex-wrap:wrap;gap:12px;margin:0 0 16px">{" ".join(nav)}</nav>\n'
             f'<div class="ub-store-grid" id="ub-store-grid">{"".join(cards)}</div>\n'
             f'<p class="ub-store-affiliate-disclosure">{escape(POLICY_TEXT)}</p>')
 
