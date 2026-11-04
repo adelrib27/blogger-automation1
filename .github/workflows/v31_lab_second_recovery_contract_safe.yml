@@ -1,0 +1,68 @@
+name: V31 LAB - Second-cycle recovery contract SAFE offline
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - .github/workflows/v31_lab_second_recovery_contract_safe.yml
+      - blogger_stores/v31_core/v31_second_resume_safe.py
+      - blogger_stores/tests/v31_second_recovery/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-second-recovery-contract-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-somente-leitura:
+    if: github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar escopo e estado canonico da primeira rotacao
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          root=Path('blogger_stores')
+          sys.path.insert(0,str(root/'v31_core'))
+          from v31_second_resume_safe import validate_persisted_pair
+          led=json.loads((root/'v31_lab/state/v31_rotation_ledger.json').read_text())
+          hist=json.loads((root/'v31_lab/state/v31_rotation_history.json').read_text())
+          assert led['blogId']=='4739187376492839837'
+          assert led['pageId']=='2446067640331732447'
+          assert len(led['operations'])==1 and led['operations'][0]['status']=='PERSISTED'
+          assert len(hist['runs'])==2
+          validate_persisted_pair(led,hist)
+          print('V31_SECOND_RECOVERY_CANONICAL_BASELINE_PASS')
+          PY
+      - name: Compilar sem rede nem IO no Blogger
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/v31_core/v31_rotation_ledger.py blogger_stores/v31_core/v31_atomic_rotation.py blogger_stores/v31_core/v31_second_resume_safe.py blogger_stores/tests/v31_second_recovery/test_v31_second_resume_safe.py
+      - name: Testar recuperacao + regressao das rotacoes anteriores
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s blogger_stores/tests/v31_second_recovery -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+          python -m unittest discover -s blogger_stores/tests/v31_atomic -v
+      - name: Garantir ausencia de alteracao do estado e registrar PASS
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- blogger_stores/v31_lab/state
+          test -z "$(git status --porcelain -- blogger_stores/v31_lab/state)"
+          echo 'V31_SECOND_RECOVERY_SAFE_PASS; offline=true; blogger_put=false; history_commit=false; cron=false; production=false'
