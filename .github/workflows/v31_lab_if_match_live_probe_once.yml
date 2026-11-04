@@ -1,0 +1,59 @@
+name: V31 LAB - Blogger sacrificial If-Match one-shot LIVE
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - .github/workflows/v31_lab_if_match_live_probe_once.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-sacrificial-if-match-live-one-shot
+  cancel-in-progress: false
+
+jobs:
+  one-test-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    environment: v31-lab
+    timeout-minutes: 7
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      V31_SACRIFICIAL_PROBE_ONLY: YES_SINGLE_PAGE_SINGLE_PUT
+    steps:
+      - name: Checkout LAB no credentials persisted
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate workflow identity and Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$GITHUB_RUN_ATTEMPT" = '1'
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+          python -m py_compile blogger_stores/src/v31_etag_sacrificial_live_once.py
+      - name: Exactly one sacrificial page, exactly one stale If-Match PUT
+        shell: bash
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_etag_sacrificial_live_once.py
+      - name: No artifact upload, no Git remote write, no Loja publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- blogger_stores/v31_lab/state
+          test -z "$(git status --porcelain -- blogger_stores/v31_lab/state)"
+          echo 'V31_SINGLE_SACRIFICIAL_PROBE_COMPLETE; loja_put=false; cron=false; git_state_write=false; artifacts=0'
