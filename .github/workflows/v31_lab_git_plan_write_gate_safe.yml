@@ -1,0 +1,151 @@
+name: V31 LAB - Git PLAN write-gate transaction SAFE sandbox only
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - .github/workflows/v31_lab_git_plan_write_gate_safe.yml
+      - blogger_stores/src/v31_git_plan_write_gate.py
+      - blogger_stores/tests/v31_git_write_gate/**
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-lab-git-plan-write-gate-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-contrato-de-gravacao-em-git-isolado:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout LAB somente leitura, sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Identidade do LAB e baseline canonico
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          root=Path('blogger_stores')
+          sys.path.insert(0,str(root/'v31_core'))
+          from v31_second_resume_safe import validate_persisted_pair
+          ledger=json.loads((root/'v31_lab/state/v31_rotation_ledger.json').read_text())
+          hist=json.loads((root/'v31_lab/state/v31_rotation_history.json').read_text())
+          assert (ledger['blogId'],ledger['pageId'])==('4739187376492839837','2446067640331732447')
+          assert len(ledger['operations'])==1 and ledger['operations'][0]['status']=='PERSISTED'
+          assert len(hist['runs'])==2
+          validate_persisted_pair(ledger,hist)
+          print('V31_GIT_PLAN_GATE_CANONICAL_BASELINE_PASS')
+          PY
+      - name: Compilar e testar CAS, Git sandbox, ledger e recuperacao
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            blogger_stores/src/v31_git_plan_write_gate.py \
+            blogger_stores/src/v31_git_reservation_executor_safe.py \
+            blogger_stores/v31_core/v31_multicycle_cas_contract.py \
+            blogger_stores/tests/v31_git_write_gate/test_v31_git_plan_write_gate.py
+          python -m unittest discover -s blogger_stores/tests/v31_git_write_gate -v
+          python -m unittest discover -s blogger_stores/tests/v31_git_executor -v
+          python -m unittest discover -s blogger_stores/tests/v31_transaction -v
+          python -m unittest discover -s blogger_stores/tests/v31_second_recovery -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+          python -m unittest discover -s blogger_stores/tests/v31_atomic -v
+      - name: Recuperar segunda selecao Shopee SAFE imutavel
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-shopee-safe-1
+          run-id: 41840458808
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_second_selection
+      - name: Recuperar HTML original e candidato da LOJA
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-preflight-readonly-1
+          run-id: 41841058542
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_second_html
+      - name: Verificar artefatos com SHA-256 e simular proposta real SEM commit
+        run: |
+          set -euo pipefail
+          echo 'aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7  '${RUNNER_TEMP}'/v31_second_selection/selecao_shopee_v23_SECOND_REAL_SAFE.json' | sha256sum -c -
+          echo '6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450  '${RUNNER_TEMP}'/v31_second_html/LOJA_ORIGINAL_BACKUP.html' | sha256sum -c -
+          echo 'd33070c001281ed795489a032a504accfcab2b593010c1a9e8cf5bb86b8109b8  '${RUNNER_TEMP}'/v31_second_html/LOJA_CANDIDATA_NAO_PUBLICAR.html' | sha256sum -c -
+          python - <<'PY'
+          import json,os,sys,pathlib
+          from hashlib import sha256
+          p=pathlib.Path('blogger_stores')
+          sys.path.insert(0,str(p/'v31_core'))
+          sys.path.insert(0,str(p/'src'))
+          from v31_multicycle_cas_contract import REPO,BRANCH,git_blob_sha,prepare_reservation
+          from v31_git_plan_write_gate import validate_plan_bytes
+          from v31_git_reservation_executor_safe import remote_head
+          parent=os.environ['GITHUB_SHA']
+          assert remote_head(pathlib.Path('.'))==parent,'Branch alterada; fail-closed'
+          led=(p/'v31_lab/state/v31_rotation_ledger.json').read_bytes()
+          hist=(p/'v31_lab/state/v31_rotation_history.json').read_bytes()
+          profile=json.loads((p/'v31_lab/perfil_v31_lab.json').read_text())
+          t=pathlib.Path(os.environ['RUNNER_TEMP'])
+          sel=(t/'v31_second_selection/selecao_shopee_v23_SECOND_REAL_SAFE.json').read_bytes()
+          orig=(t/'v31_second_html/LOJA_ORIGINAL_BACKUP.html').read_bytes()
+          cand=(t/'v31_second_html/LOJA_CANDIDATA_NAO_PUBLICAR.html').read_bytes()
+          plan=prepare_reservation(repository=REPO,branch=BRANCH,profile=profile,
+              ledger_bytes=led,history_bytes=hist,selection_bytes=sel,
+              blogger_html_bytes=orig,candidate_html_bytes=cand,
+              expected_head=parent,observed_head=parent,
+              expected_ledger_blob=git_blob_sha(led),
+              expected_history_blob=git_blob_sha(hist))
+          op=validate_plan_bytes(ledger_before=led,history_before=hist,
+              ledger_plan=plan['proposed_ledger_bytes'],
+              expected_ledger_blob=git_blob_sha(led),
+              expected_history_blob=git_blob_sha(hist),operation_id=plan['operation_id'],
+              expected_plan_sha256=sha256(plan['proposed_ledger_bytes']).hexdigest(),
+              expected_selection_sha=sha256(sel).hexdigest(),
+              expected_original_sha=sha256(orig).hexdigest(),
+              expected_candidate_sha=sha256(cand).hexdigest())
+          assert op['status']=='PLAN'
+          report={'status':'V31_LAB_SECOND_PLAN_WRITE_GATE_SAFE_READY',
+            'repository':REPO,'branch':BRANCH,'baseline_head':parent,
+            'operation_id':plan['operation_id'],
+            'selection_sha256':plan['selection_sha256'],
+            'proposed_ledger_sha256':sha256(plan['proposed_ledger_bytes']).hexdigest(),
+            'proposed_ledger_blob':plan['proposed_ledger_blob'],
+            'history_blob':git_blob_sha(hist),'products':16,
+            'baseline_history_runs':len(json.loads(hist)['runs']),
+            'proposal_operations':len(json.loads(plan['proposed_ledger_bytes'])['operations']),
+            'git_remote_reservation_committed':False,
+            'git_remote_write_allowed':False,
+            'blogger_put_allowed':False,'cron_allowed':False}
+          (t/'V31_GIT_PLAN_WRITE_GATE_SAFE_REPORT.json').write_text(json.dumps(report,indent=2)+'\n')
+          assert remote_head(pathlib.Path('.'))==parent,'Git remoto mudou durante auditoria'
+          print('V31_LAB_SECOND_REAL_ARTIFACT_PLAN_WRITE_GATE_SAFE_PASS')
+          PY
+      - name: Reconfirmar estado e declarar ausencia de escrita operacional
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- blogger_stores/v31_lab/state
+          test -z "$(git status --porcelain -- blogger_stores/v31_lab/state)"
+          echo 'V31_LAB_GIT_PLAN_WRITE_GATE_SAFE_PASS; github_write=false; blogger_put=false; cron=false'
+      - name: Preservar relatorio SAFE SEM plano publicavel
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-git-plan-write-gate-safe-${{ github.run_number }}
+          path: ${{ runner.temp }}/V31_GIT_PLAN_WRITE_GATE_SAFE_REPORT.json
+          if-no-files-found: error
+          retention-days: 14
