@@ -1,0 +1,75 @@
+name: V31 LAB - Cloudflare public exact LIVE READ-ONLY
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_cf_live_verify.trigger
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-lab-cloudflare-public-exact-readonly
+  cancel-in-progress: false
+
+jobs:
+  verificar-sem-publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout LAB somente leitura
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regressao de seguranca do verificador
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/v31_public_verify_readonly.py blogger_stores/src/v31_public_verify_cloudflare.py
+          python -m unittest discover -s blogger_stores/tests/v31_public -v
+          python -m unittest discover -s blogger_stores/tests/v31_cf -v
+      - name: Baixar selecao REAL Shopee previamente aprovada
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-shopee-safe-2
+          run-id: 41751202914
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: blogger_stores/v31_lab/cf_verify_input
+      - name: Validar identidade imutavel da selecao
+        run: |
+          set -euo pipefail
+          echo '46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c  blogger_stores/v31_lab/cf_verify_input/selecao_shopee_v23_REAL_SAFE.json' | sha256sum -c -
+      - name: Bloqueio se token Cloudflare dedicado ausente
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.V31_CF_LAB_ACCOUNT_ID }}
+          CLOUDFLARE_BROWSER_TOKEN: ${{ secrets.V31_CF_LAB_BROWSER_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID}" ] || [ -z "${CLOUDFLARE_BROWSER_TOKEN}" ]; then
+            echo 'V31_CF_LAB_CREDENTIALS_MISSING: bloquear live sem expor credenciais'
+            exit 78
+          fi
+          echo 'V31_CF_LAB_SCOPED_CREDENTIALS_PRESENT'
+      - name: Consultar HTML com Browser Rendering e comparar exatos 16 produtos
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.V31_CF_LAB_ACCOUNT_ID }}
+          CLOUDFLARE_BROWSER_TOKEN: ${{ secrets.V31_CF_LAB_BROWSER_TOKEN }}
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_public_verify_cloudflare.py \
+            --selection blogger_stores/v31_lab/cf_verify_input/selecao_shopee_v23_REAL_SAFE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --selection-sha256 46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c \
+            --report blogger_stores/v31_lab/cf_verify_output/RELATORIO_PUBLICO_CLOUDFLARE.json
+      - name: Arquivar resultado mesmo se falhou
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-cloudflare-public-proof-${{ github.run_number }}
+          path: blogger_stores/v31_lab/cf_verify_output/RELATORIO_PUBLICO_CLOUDFLARE.json
+          if-no-files-found: warn
+          retention-days: 14
