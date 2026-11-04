@@ -1,0 +1,6 @@
+mode=OFFLINE_CONTRACT_ONLY
+branch=lab/v31r1-shopee-safe-20261103
+no_cloudflare_network=true
+no_blogger_write=true
+no_github_write=true
+no_schedule=true
