@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import unittest
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'v31_core'))
 from v31_rotation_ledger import *
 BLOG_ID='4739187376492839837';PAGE_ID='2446067640331732447'
 A='a'*64;B='b'*64;C='c'*64;D='d'*64
