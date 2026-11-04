@@ -1,0 +1,144 @@
+name: V31 LAB - Atomic rotation finalize LIVE ONCE
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_atomic_live_once.trigger
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: v31-lab-atomic-rotation-finalize-once
+  cancel-in-progress: false
+
+jobs:
+  persistir-par-atomico:
+    if: github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    environment: v31-lab
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout LAB com histórico completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bloquear replay e configuração divergente
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "${GITHUB_REPOSITORY}" = 'adelrib27/blogger-automation1'
+          test ! -e blogger_stores/v31_lab/state/v31_rotation_ledger.json
+          test ! -e blogger_stores/v31_lab/state/v31_rotation_history.json
+          python -m py_compile blogger_stores/v31_core/v31_rotation_ledger.py \
+             blogger_stores/v31_core/v31_atomic_rotation.py \
+             blogger_stores/src/v31_lab_atomic_finalize.py \
+             blogger_stores/src/v31_public_verify_cloudflare.py
+          python -m unittest discover -s blogger_stores/tests/v31_atomic -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+          python -m unittest discover -s blogger_stores/tests/v31_cf -v
+          python -m unittest discover -s blogger_stores/tests/v31_public -v
+      - name: Baixar seleção Shopee V23 imutável
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-shopee-safe-2
+          run-id: 41751202914
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: blogger_stores/v31_lab/atomic_input/selection
+      - name: Baixar prova Cloudflare autenticada e previamente validada
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-cloudflare-public-proof-1
+          run-id: 41769090187
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: blogger_stores/v31_lab/atomic_input/proof
+      - name: Garantir hashes SHA-256 das duas entradas
+        run: |
+          set -euo pipefail
+          echo '46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c  blogger_stores/v31_lab/atomic_input/selection/selecao_shopee_v23_REAL_SAFE.json' | sha256sum -c -
+          echo '1d4f0188c545888ec12c7172a91e7f8bbd37ed42e14185bd5ceab3d5104c28f1  blogger_stores/v31_lab/atomic_input/proof/RELATORIO_PUBLICO_CLOUDFLARE.json' | sha256sum -c -
+      - name: Confirmar catálogo ainda público pelo Cloudflare
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.V31_CF_LAB_ACCOUNT_ID }}
+          CLOUDFLARE_BROWSER_TOKEN: ${{ secrets.V31_CF_LAB_BROWSER_TOKEN }}
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_public_verify_cloudflare.py \
+            --selection blogger_stores/v31_lab/atomic_input/selection/selecao_shopee_v23_REAL_SAFE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --selection-sha256 46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c \
+            --report blogger_stores/v31_lab/atomic_input/fresh_public/RELATORIO_PUBLICO_CLOUDFLARE.json
+      - name: Simular reconciliação real sem gravar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_lab_atomic_finalize.py \
+            --policy blogger_stores/v31_lab/atomic_policy_lab.json \
+            --pending blogger_stores/v31_lab/state/LAB_FIRST_SHOPEE_PENDING_AUTOMATED_VERIFICATION_20261104.json \
+            --seed blogger_stores/v31_lab/v31_lab_rotation_seed.json \
+            --selection blogger_stores/v31_lab/atomic_input/selection/selecao_shopee_v23_REAL_SAFE.json \
+            --proof blogger_stores/v31_lab/atomic_input/proof/RELATORIO_PUBLICO_CLOUDFLARE.json \
+            --fresh-proof blogger_stores/v31_lab/atomic_input/fresh_public/RELATORIO_PUBLICO_CLOUDFLARE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --ledger-output blogger_stores/v31_lab/state/v31_rotation_ledger.json \
+            --history-output blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --dry-run
+      - name: Gerar par de arquivos operacionais
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_lab_atomic_finalize.py \
+            --policy blogger_stores/v31_lab/atomic_policy_lab.json \
+            --pending blogger_stores/v31_lab/state/LAB_FIRST_SHOPEE_PENDING_AUTOMATED_VERIFICATION_20261104.json \
+            --seed blogger_stores/v31_lab/v31_lab_rotation_seed.json \
+            --selection blogger_stores/v31_lab/atomic_input/selection/selecao_shopee_v23_REAL_SAFE.json \
+            --proof blogger_stores/v31_lab/atomic_input/proof/RELATORIO_PUBLICO_CLOUDFLARE.json \
+            --fresh-proof blogger_stores/v31_lab/atomic_input/fresh_public/RELATORIO_PUBLICO_CLOUDFLARE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --ledger-output blogger_stores/v31_lab/state/v31_rotation_ledger.json \
+            --history-output blogger_stores/v31_lab/state/v31_rotation_history.json
+      - name: Commit dos dois arquivos em uma transação Git sem force
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- blogger_stores/v31_lab/state/v31_rotation_ledger.json blogger_stores/v31_lab/state/v31_rotation_history.json
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '2'
+          git diff --cached --name-only | grep -Fx 'blogger_stores/v31_lab/state/v31_rotation_ledger.json'
+          git diff --cached --name-only | grep -Fx 'blogger_stores/v31_lab/state/v31_rotation_history.json'
+          git diff --cached --check
+          git commit -m 'LAB V31: persistir primeira rotação Shopee após prova Cloudflare validada'
+          git push origin HEAD:refs/heads/lab/v31r1-shopee-safe-20261103
+          git fetch --no-tags origin refs/heads/lab/v31r1-shopee-safe-20261103
+          test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)"
+          echo 'V31_ATOMIC_ROTATION_COMMITTED: TWO_FILES_ONE_COMMIT; NO_BLOGGER_WRITE; NO_SCHEDULE'
+      - name: Relatório de execução (inclusive se falha)
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p blogger_stores/v31_lab/atomic_output
+          python - <<'PY'
+          import json,os,pathlib
+          from hashlib import sha256
+          paths=['blogger_stores/v31_lab/state/v31_rotation_ledger.json','blogger_stores/v31_lab/state/v31_rotation_history.json']
+          result={'status':'AUDIT_ONLY','run_id':os.getenv('GITHUB_RUN_ID'),'target':'LAB','files':{p:sha256(pathlib.Path(p).read_bytes()).hexdigest() if pathlib.Path(p).is_file() else None for p in paths}}
+          pathlib.Path('blogger_stores/v31_lab/atomic_output/RELATORIO_TRANSACAO.json').write_text(json.dumps(result,indent=2)+'\n')
+          PY
+      - name: Arquivar auditoria do par de arquivos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-atomic-rotation-${{ github.run_number }}
+          path: blogger_stores/v31_lab/atomic_output/RELATORIO_TRANSACAO.json
+          if-no-files-found: warn
+          retention-days: 14
