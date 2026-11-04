@@ -1,0 +1,125 @@
+name: V31 LAB - Git remote read-only reservation SAFE plus sandbox race
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - .github/workflows/v31_lab_git_reservation_executor_safe.yml
+      - blogger_stores/src/v31_git_reservation_executor_safe.py
+      - blogger_stores/tests/v31_git_executor/**
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-lab-git-reservation-executor-safe
+  cancel-in-progress: false
+
+jobs:
+  verificar-remoto-e-sandbox-sem-escrita:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Garantir alvo LAB e estado canônico intacto
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          root=Path('blogger_stores')
+          sys.path.insert(0,str(root/'v31_core'))
+          from v31_second_resume_safe import validate_persisted_pair
+          st=json.loads((root/'v31_lab/state/v31_rotation_ledger.json').read_text())
+          hist=json.loads((root/'v31_lab/state/v31_rotation_history.json').read_text())
+          assert (st['blogId'],st['pageId'])==('4739187376492839837','2446067640331732447')
+          assert len(st['operations'])==1 and st['operations'][0]['status']=='PERSISTED'
+          assert len(hist['runs'])==2
+          validate_persisted_pair(st,hist)
+          print('V31_GIT_EXECUTOR_CANONICAL_READ_ONLY_BASELINE_PASS')
+          PY
+      - name: Python compile e regressão SAFE completa
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/v31_git_reservation_executor_safe.py \
+            blogger_stores/v31_core/v31_multicycle_cas_contract.py \
+            blogger_stores/tests/v31_git_executor/test_v31_git_reservation_executor_safe.py
+          python -m unittest discover -s blogger_stores/tests/v31_git_executor -v
+          python -m unittest discover -s blogger_stores/tests/v31_transaction -v
+          python -m unittest discover -s blogger_stores/tests/v31_second_recovery -v
+          python -m unittest discover -s blogger_stores/tests/v31_ledger -v
+          python -m unittest discover -s blogger_stores/tests/v31_atomic -v
+      - name: Recuperar seleção SAFE original do GitHub (somente leitura)
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-shopee-safe-1
+          run-id: 41840458808
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_selection
+      - name: Recuperar HTML original e candidato do preflight SAFE
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-preflight-readonly-1
+          run-id: 41841058542
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_preflight
+      - name: Validar SHA-256 dos artefatos imutáveis
+        run: |
+          set -euo pipefail
+          echo 'aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7  '${RUNNER_TEMP}'/v31_selection/selecao_shopee_v23_SECOND_REAL_SAFE.json' | sha256sum -c -
+          echo '6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450  '${RUNNER_TEMP}'/v31_preflight/LOJA_ORIGINAL_BACKUP.html' | sha256sum -c -
+          echo 'd33070c001281ed795489a032a504accfcab2b593010c1a9e8cf5bb86b8109b8  '${RUNNER_TEMP}'/v31_preflight/LOJA_CANDIDATA_NAO_PUBLICAR.html' | sha256sum -c -
+      - name: Verificar HEAD remoto autenticado e simular colisão Git em repositório temporário
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_git_reservation_executor_safe.py \
+            --repo-root "$GITHUB_WORKSPACE" \
+            --selection "$RUNNER_TEMP/v31_selection/selecao_shopee_v23_SECOND_REAL_SAFE.json" \
+            --html-original "$RUNNER_TEMP/v31_preflight/LOJA_ORIGINAL_BACKUP.html" \
+            --html-candidate "$RUNNER_TEMP/v31_preflight/LOJA_CANDIDATA_NAO_PUBLICAR.html" \
+            --selection-sha aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7 \
+            --original-sha 6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450 \
+            --candidate-sha d33070c001281ed795489a032a504accfcab2b593010c1a9e8cf5bb86b8109b8 \
+            --output "$RUNNER_TEMP/V31_GIT_RESERVATION_EXECUTOR_SAFE.json" \
+            --sandbox-race
+          python - <<'PY'
+          import json,os,pathlib
+          d=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'V31_GIT_RESERVATION_EXECUTOR_SAFE.json').read_text())
+          assert d['status']=='V31_LAB_GIT_REMOTE_READ_ONLY_PREFLIGHT_PASS'
+          assert d['product_count']==16 and d['remote_read_only'] is True
+          assert d['git_reservation_committed'] is False
+          assert d['git_remote_write_allowed'] is False
+          assert d['blogger_put_allowed'] is False
+          assert d['cron_allowed'] is False
+          assert d['sandbox_race']['writer_b_conflict_rejected'] is True
+          assert d['sandbox_race']['github_write'] is False
+          print('V31_GIT_REMOTE_HEAD_AND_SANDBOX_NONFORCE_RACE_PASS')
+          PY
+      - name: Garantir ausência de mudanças operacionais
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- blogger_stores/v31_lab/state
+          test -z "$(git status --porcelain -- blogger_stores/v31_lab/state)"
+          echo 'V31_REMOTE_CAS_EXECUTOR_SAFE_PASS; remote_write=false; blogger_put=false; cron=false'
+      - name: Salvar relatório descritivo SAFE (não é reserva)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-git-remote-readonly-safe-${{ github.run_number }}
+          path: ${{ runner.temp }}/V31_GIT_RESERVATION_EXECUTOR_SAFE.json
+          if-no-files-found: error
+          retention-days: 14
