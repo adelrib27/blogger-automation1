@@ -5,3 +5,5 @@ no_github_write=true
 no_blogger_write=true
 no_cloudflare_network=true
 no_schedule=true
+attempt=2
+additional_tests=git_atomic_non_ff_branch_race
