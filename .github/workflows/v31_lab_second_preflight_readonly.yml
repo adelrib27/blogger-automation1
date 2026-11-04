@@ -1,0 +1,109 @@
+name: V31 LAB - Segunda vitrine preflight SAFE READ-ONLY
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_second_preflight_readonly.trigger
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-lab-second-preflight-readonly
+  cancel-in-progress: false
+
+jobs:
+  simular-vitrine-sem-put:
+    if: github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - name: Checkout LAB sem permissão para push
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dependencias validadas
+        run: python -m pip install -r requirements.txt
+      - name: Baixar selecao 2 da Shopee imutavel
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-shopee-safe-1
+          run-id: 41840458808
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: blogger_stores/v31_lab/second_preflight_input
+      - name: Gate de SHA, historico e escopo somente LAB
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test -n "$BLOGGER_CLIENT_ID" && test -n "$BLOGGER_CLIENT_SECRET" && test -n "$BLOGGER_REFRESH_TOKEN"
+          echo 'aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7  blogger_stores/v31_lab/second_preflight_input/selecao_shopee_v23_SECOND_REAL_SAFE.json' | sha256sum -c -
+          python -m py_compile blogger_stores/src/v31_lab_store_preflight.py blogger_stores/src/v31_daily_page_publisher.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base=Path('blogger_stores/v31_lab')
+          p=json.loads((base/'perfil_v31_lab.json').read_text())
+          led=json.loads((base/'state/v31_rotation_ledger.json').read_text())
+          hist=json.loads((base/'state/v31_rotation_history.json').read_text())
+          assert p['mode']=='SAFE' and p['blog_id']=='4739187376492839837' and p['page_id']=='2446067640331732447'
+          assert len(led['operations'])==1 and led['operations'][0]['status']=='PERSISTED'
+          assert len(hist['runs'])==2 and hist['runs'][-1]['selectionSha']==led['operations'][0]['selectionSha']
+          assert hist['runs'][-1]['pageId']==p['page_id']
+          print('V31_SECOND_PREFLIGHT_PERSISTED_HISTORY_ACCEPTED')
+          PY
+      - name: Blogger GET e renderizar HTML candidato SEM PUBLICAR
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_lab_store_preflight.py \
+            --repo-root . \
+            --selection blogger_stores/v31_lab/second_preflight_input/selecao_shopee_v23_SECOND_REAL_SAFE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --output-dir blogger_stores/v31_lab/second_preflight_out
+      - name: Comparar originais e candidata com primeira rotacao
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,re,hashlib
+          from pathlib import Path
+          b=Path('blogger_stores/v31_lab')
+          d=b/'second_preflight_out'
+          h=json.loads((b/'state/v31_rotation_history.json').read_text())
+          sel=json.loads((b/'second_preflight_input/selecao_shopee_v23_SECOND_REAL_SAFE.json').read_text())
+          rep=json.loads((d/'RELATORIO_SAFE.json').read_text())
+          original=(d/'LOJA_ORIGINAL_BACKUP.html').read_text()
+          candidate=(d/'LOJA_CANDIDATA_NAO_PUBLICAR.html').read_text()
+          old=[str(x['itemId']) for x in h['runs'][-1]['items']]
+          new=[str(x['itemId']) for c in sel['categories'].values() for x in c]
+          xold=re.findall(r'data-item-id=["\']([0-9]+)',original)
+          xnew=re.findall(r'data-item-id=["\']([0-9]+)',candidate)
+          assert rep['status']=='V31_LAB_PREFLIGHT_SAFE_PASS' and rep['publication'] is False
+          assert rep['source_selection_sha256']=='aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7'
+          assert old==xold and new==xnew and len(new)==len(set(new))==16
+          assert set(old).isdisjoint(new)
+          assert original!=candidate
+          assert original.count('UNIVERSAL_V31_STORE_AUTO_START')==candidate.count('UNIVERSAL_V31_STORE_AUTO_START')==1
+          assert original.count('UNIVERSAL_V31_STORE_AUTO_END')==candidate.count('UNIVERSAL_V31_STORE_AUTO_END')==1
+          assert rep['candidate_sha256']==hashlib.sha256(candidate.encode('utf8')).hexdigest()
+          print('V31_SECOND_PREFLIGHT_SAFE_PASS; 16_NEW; 16_PHOTOS; NO_BLOGGER_PUT; NO_HISTORY_WRITE')
+          PY
+          git diff --exit-code -- blogger_stores/v31_lab/state
+      - name: Arquivar original e HTML candidato apenas para auditoria
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-second-preflight-readonly-${{ github.run_number }}
+          path: blogger_stores/v31_lab/second_preflight_out/
+          if-no-files-found: warn
+          retention-days: 7
