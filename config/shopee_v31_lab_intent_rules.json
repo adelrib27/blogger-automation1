@@ -1,0 +1,692 @@
+{
+  "version": "v31-lab-1",
+  "description": "Regras existentes validadas V23 + 16 regras específicas para 4 categorias V31 LAB; vedado fallback semântico para as intenções alvo.",
+  "rules": {
+    "projetor portatil": {
+      "require_groups": [
+        [
+          "projetor",
+          "projector"
+        ]
+      ],
+      "block_phrases": [
+        "suporte para projetor",
+        "tela para projetor",
+        "lampada para projetor",
+        "cabo para projetor",
+        "controle para projetor"
+      ]
+    },
+    "caixa de som bluetooth": {
+      "require_groups": [
+        [
+          "caixa de som",
+          "speaker bluetooth",
+          "karaoke bluetooth"
+        ]
+      ],
+      "block_phrases": [
+        "capa para caixa de som",
+        "suporte para caixa de som",
+        "bolsa para caixa de som"
+      ]
+    },
+    "smartwatch": {
+      "require_groups": [
+        [
+          "smartwatch",
+          "relogio inteligente"
+        ]
+      ],
+      "block_phrases": [
+        "pulseira para smartwatch",
+        "capa para smartwatch",
+        "pelicula para smartwatch",
+        "carregador para smartwatch"
+      ]
+    },
+    "carregador rapido": {
+      "require_groups": [
+        [
+          "carregador",
+          "fonte de carregamento",
+          "adaptador usb",
+          "carregador turbo"
+        ]
+      ],
+      "block_phrases": [
+        "cabo usb",
+        "cabo de carregamento",
+        "cabo tipo c",
+        "cabo lightning",
+        "cabo v8",
+        "organizador de cabo"
+      ]
+    },
+    "aspirador de po": {
+      "require_groups": [
+        [
+          "aspirador"
+        ]
+      ],
+      "block_phrases": [
+        "filtro para aspirador",
+        "saco para aspirador",
+        "mangueira para aspirador",
+        "bico para aspirador",
+        "escova para aspirador",
+        "peca para aspirador"
+      ]
+    },
+    "organizador banheiro": {
+      "require_groups": [
+        [
+          "organizador",
+          "prateleira",
+          "suporte",
+          "porta ",
+          "carrinho",
+          "cesto",
+          "dispenser",
+          "dispensador"
+        ],
+        [
+          "banheiro",
+          "lavabo",
+          "shampoo",
+          "sabonete",
+          "barbeador",
+          "escova de dente"
+        ]
+      ],
+      "block_phrases": [
+        "brinquedo",
+        "fantasia",
+        "decoracao de festa"
+      ]
+    },
+    "ventilador": {
+      "require_groups": [
+        [
+          "ventilador"
+        ]
+      ],
+      "block_phrases": [
+        "carimbo",
+        "impressao 3d",
+        "confeitaria",
+        "molde ventilador",
+        "chaveiro ventilador",
+        "adesivo ventilador",
+        "topper ventilador",
+        "ventilador interno",
+        "painel ar",
+        "painel do carro",
+        "automotivo",
+        "grand siena",
+        "radiador",
+        "ventoinha",
+        "motor ventilador",
+        "resistencia ventilador"
+      ]
+    },
+    "luminaria": {
+      "require_groups": [
+        [
+          "luminaria",
+          "abajur",
+          "plafon",
+          "lampada led",
+          "luz led"
+        ]
+      ],
+      "block_phrases": [
+        "fita led",
+        "adesivo",
+        "miniatura"
+      ]
+    },
+    "air fryer": {
+      "require_groups": [
+        [
+          "air fryer",
+          "airfryer",
+          "fritadeira sem oleo",
+          "fritadeira eletrica"
+        ]
+      ],
+      "block_phrases": [
+        "adaptador de tomada",
+        "forma de silicone",
+        "formas de silicone",
+        "papel para air fryer",
+        "papel air fryer",
+        "tapete de silicone",
+        "cesto para air fryer",
+        "acessorio para air fryer",
+        "capa para air fryer"
+      ]
+    },
+    "mixer eletrico": {
+      "require_groups": [
+        [
+          "mixer"
+        ]
+      ],
+      "block_phrases": [
+        "haste para mixer",
+        "copo para mixer",
+        "lamina para mixer",
+        "acessorio para mixer"
+      ]
+    },
+    "escorredor de loucas": {
+      "require_groups": [
+        [
+          "escorredor"
+        ],
+        [
+          "louca",
+          "loucas",
+          "prato",
+          "pratos",
+          "talher",
+          "talheres",
+          "copo",
+          "copos"
+        ]
+      ],
+      "block_phrases": [
+        "tapete escorredor",
+        "peca para escorredor",
+        "escorredor massa",
+        "escorredor macarrao",
+        "escorredor arroz",
+        "escorredor legumes"
+      ]
+    },
+    "organizador cozinha": {
+      "require_groups": [
+        [
+          "organizador",
+          "prateleira",
+          "suporte",
+          "porta ",
+          "carrinho",
+          "cesto",
+          "pote",
+          "rack",
+          "dispenser",
+          "dispensador",
+          "escorredor"
+        ],
+        [
+          "cozinha",
+          "mantimento",
+          "tempero",
+          "papel toalha",
+          "louca",
+          "cafe",
+          "talher",
+          "geladeira",
+          "pia"
+        ]
+      ],
+      "block_phrases": [
+        "cesto de roupa",
+        "cesto de roupas",
+        "brinquedos",
+        "organizador de maquiagem"
+      ]
+    },
+    "parafusadeira": {
+      "require_groups": [
+        [
+          "parafusadeira"
+        ]
+      ],
+      "block_phrases": [
+        "broca avulsa",
+        "bateria para parafusadeira",
+        "carregador para parafusadeira"
+      ]
+    },
+    "furadeira": {
+      "require_groups": [
+        [
+          "furadeira"
+        ]
+      ],
+      "block_phrases": [
+        "broca avulsa",
+        "bateria para furadeira",
+        "mandril para furadeira",
+        "compativel com furadeira",
+        "acessorio para furadeira",
+        "adaptador para furadeira",
+        "escova para furadeira",
+        "serra copo para furadeira",
+        "rosqueador",
+        "abridor interno"
+      ]
+    },
+    "compressor portatil": {
+      "require_groups": [
+        [
+          "compressor"
+        ]
+      ],
+      "block_phrases": [
+        "mangueira para compressor",
+        "bico para compressor",
+        "manometro para compressor",
+        "peca para compressor"
+      ]
+    },
+    "scanner automotivo obd2": {
+      "require_groups": [
+        [
+          "scanner obd2",
+          "scanner automotivo",
+          "leitor obd2",
+          "obd2 scanner",
+          "diagnostico obd2"
+        ]
+      ],
+      "block_phrases": [
+        "cabo obd2",
+        "adaptador obd2",
+        "extensao obd2"
+      ]
+    },
+    "escova secadora": {
+      "require_groups": [
+        [
+          "escova secadora",
+          "escova rotativa secadora",
+          "escova secador"
+        ]
+      ],
+      "block_phrases": [
+        "capa para escova",
+        "suporte para escova"
+      ]
+    },
+    "aparador de pelos": {
+      "require_groups": [
+        [
+          "aparador de pelos",
+          "aparador pelos",
+          "maquina de barbear",
+          "barbeador eletrico"
+        ]
+      ],
+      "block_phrases": [
+        "papa bolinhas",
+        "tira pelos de roupas",
+        "removedor de pelos de roupas",
+        "removedor de pelo de roupa"
+      ]
+    },
+    "oculos uv400": {
+      "require_groups": [
+        [
+          "oculos"
+        ],
+        [
+          "uv400",
+          "protecao uv"
+        ]
+      ],
+      "block_phrases": [
+        "estojo para oculos",
+        "cordao para oculos",
+        "lente avulsa",
+        "armacao sem lente"
+      ]
+    },
+    "saia midi": {
+      "require_groups": [
+        [
+          "saia"
+        ],
+        [
+          "midi"
+        ]
+      ],
+      "block_phrases": [
+        "molde de saia",
+        "tecido para saia",
+        "cinto para saia"
+      ]
+    },
+    "planta artificial": {
+      "require_groups": [
+        [
+          "planta",
+          "plantas"
+        ],
+        [
+          "artificial",
+          "artificiais"
+        ]
+      ],
+      "block_phrases": [
+        "semente",
+        "muda ",
+        "adubo",
+        "vaso avulso",
+        "suporte",
+        "substrato"
+      ]
+    },
+    "trilho de mesa": {
+      "require_groups": [
+        [
+          "trilho",
+          "caminho"
+        ],
+        [
+          "mesa"
+        ]
+      ],
+      "block_phrases": [
+        "tapete",
+        "toalha de banho",
+        "sousplat",
+        "fita decorativa"
+      ]
+    },
+    "vaso suculentas": {
+      "require_groups": [
+        [
+          "vaso",
+          "vasos"
+        ],
+        [
+          "suculenta",
+          "suculentas"
+        ]
+      ],
+      "block_phrases": [
+        "semente",
+        "muda viva",
+        "substrato",
+        "vaso vazio",
+        "suporte avulso"
+      ]
+    },
+    "quadro decorativo": {
+      "require_groups": [
+        [
+          "quadro",
+          "quadros"
+        ],
+        [
+          "decorativo",
+          "decorativa",
+          "decoraçao",
+          "decoracao",
+          "parede"
+        ]
+      ],
+      "block_phrases": [
+        "moldura avulsa",
+        "adesivo para",
+        "porta retrato",
+        "quadro branco"
+      ]
+    },
+    "caixa organizadora": {
+      "require_groups": [
+        [
+          "caixa",
+          "caixas"
+        ],
+        [
+          "organizadora",
+          "organizador"
+        ]
+      ],
+      "block_phrases": [
+        "caixa de som",
+        "caixa de ferramenta",
+        "miniatura",
+        "brinquedo",
+        "caixa de fusivel"
+      ]
+    },
+    "saco organizador": {
+      "require_groups": [
+        [
+          "saco",
+          "sacos",
+          "sacola",
+          "sacolas"
+        ],
+        [
+          "organizador",
+          "organizadora",
+          "organizar",
+          "a vacuo",
+          "a vácuo"
+        ]
+      ],
+      "block_phrases": [
+        "lixo",
+        "saco de lixo",
+        "fralda",
+        "saquinho de lanche",
+        "saco de dormir"
+      ]
+    },
+    "varal de chao": {
+      "require_groups": [
+        [
+          "varal"
+        ],
+        [
+          "chao",
+          "chão",
+          "piso",
+          "dobravel",
+          "dobrável"
+        ]
+      ],
+      "block_phrases": [
+        "corda avulsa",
+        "grampo",
+        "pregador",
+        "miniatura"
+      ]
+    },
+    "organizador gaveta": {
+      "require_groups": [
+        [
+          "organizador",
+          "organizadora",
+          "divisoria",
+          "divisória"
+        ],
+        [
+          "gaveta",
+          "gavetas"
+        ]
+      ],
+      "block_phrases": [
+        "puxador",
+        "corrediça",
+        "corredica",
+        "trilho de gaveta",
+        "miniatura"
+      ]
+    },
+    "potes hermeticos": {
+      "require_groups": [
+        [
+          "pote",
+          "potes",
+          "recipiente",
+          "recipientes"
+        ],
+        [
+          "hermetico",
+          "hermético",
+          "hermeticos",
+          "herméticos"
+        ]
+      ],
+      "block_phrases": [
+        "tampa avulsa",
+        "etiqueta",
+        "saco",
+        "refil"
+      ]
+    },
+    "fatiador legumes": {
+      "require_groups": [
+        [
+          "fatiador",
+          "cortador",
+          "mandoline"
+        ],
+        [
+          "legume",
+          "legumes",
+          "verdura",
+          "verduras"
+        ]
+      ],
+      "block_phrases": [
+        "lamina avulsa",
+        "lâmina avulsa",
+        "peça de reposição",
+        "peca de reposicao",
+        "brinquedo"
+      ]
+    },
+    "escorredor louca": {
+      "require_groups": [
+        [
+          "escorredor",
+          "escorredora"
+        ],
+        [
+          "louca",
+          "louça",
+          "prato",
+          "pratos",
+          "talheres"
+        ]
+      ],
+      "block_phrases": [
+        "tapete",
+        "escova",
+        "refil",
+        "ralo"
+      ]
+    },
+    "porta temperos": {
+      "require_groups": [
+        [
+          "porta tempero",
+          "porta-tempero",
+          "porta temperos",
+          "organizador de tempero",
+          "pote de tempero"
+        ],
+        [
+          "tempero",
+          "temperos"
+        ]
+      ],
+      "block_phrases": [
+        "etiqueta",
+        "adesivo",
+        "refil",
+        "especiaria avulsa"
+      ]
+    },
+    "travesseiro pluma": {
+      "require_groups": [
+        [
+          "travesseiro",
+          "travesseiros"
+        ],
+        [
+          "pluma",
+          "plumas",
+          "fibra siliconada",
+          "fibra sintética",
+          "fibra sintetica"
+        ]
+      ],
+      "block_phrases": [
+        "fronha",
+        "capa avulsa",
+        "enchimento avulso"
+      ]
+    },
+    "abajur led": {
+      "require_groups": [
+        [
+          "abajur",
+          "luminaria",
+          "luminária"
+        ],
+        [
+          "led",
+          "recarregavel",
+          "recarregável",
+          "toque"
+        ]
+      ],
+      "block_phrases": [
+        "cupula avulsa",
+        "cúpula avulsa",
+        "lampada avulsa",
+        "lâmpada avulsa",
+        "suporte avulso"
+      ]
+    },
+    "organizador edredom": {
+      "require_groups": [
+        [
+          "organizador",
+          "organizadora",
+          "saco",
+          "caixa"
+        ],
+        [
+          "edredom",
+          "cobertor",
+          "roupa de cama"
+        ]
+      ],
+      "block_phrases": [
+        "edredom infantil",
+        "fronha",
+        "saco de lixo",
+        "capa de celular"
+      ]
+    },
+    "protetor colchao": {
+      "require_groups": [
+        [
+          "protetor",
+          "capa"
+        ],
+        [
+          "colchao",
+          "colchão"
+        ]
+      ],
+      "block_phrases": [
+        "fronha",
+        "forro de carrinho",
+        "lençol avulso",
+        "lencol avulso"
+      ]
+    }
+  }
+}
