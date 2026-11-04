@@ -90,18 +90,36 @@ def prepare_page(original: str, selection: dict, profile: dict, *, clock=None) -
     need(new!=original,'Nenhuma mudanca no HTML; nao executar PUT redundante')
     return new,proof
 
-def public_check(profile: dict, expected_products: int) -> dict:
-    req=urllib.request.Request(PAGE_URL+'?v31_daily_verify='+str(time.time_ns()),headers={
-        'Cache-Control':'no-cache','User-Agent':'BloggerV31DailyStorePublicVerifier/1.0'})
-    with urllib.request.urlopen(req,timeout=35) as r:
-        status=int(r.status);html=r.read(3_000_000).decode('utf-8','replace')
-    need(status==200,'Pagina publica LOJA nao retornou HTTP 200')
-    need(AUTO_START in html and AUTO_END in html,'Marcadores publicos V31 ausentes')
-    need('var userResumed = false;' in html and 'ub-v31-share' in html,'Tema V31 R1 nao detectado')
-    count=len(re.findall(r'class="ub-product-card"',html))
-    links=len(re.findall(r'href="https://s\.shopee\.com\.br/',html))
-    need(count==expected_products and links==expected_products,'Contagem publica divergiu')
-    return {'status':'PASS','http':status,'cards':count,'affiliate_links':links,'theme':'V31_R1'}
+def public_check(profile: dict, expected_products: int, *, expected_catalog: dict | None = None, attempts: int = 6) -> dict:
+    """Confirm the exact published V31 catalog, not merely counts from a stale cache."""
+    expected_ids=[str(p['item_id']) for p in expected_catalog['products']] if expected_catalog else None
+    expected_links=[p['affiliate_url'] for p in expected_catalog['products']] if expected_catalog else None
+    expected_images=[p['image_url'] for p in expected_catalog['products']] if expected_catalog else None
+    last_reason='Nenhuma tentativa realizada'
+    for retry in range(attempts):
+        try:
+            req=urllib.request.Request(PAGE_URL+'?v31_daily_verify='+str(time.time_ns()),headers={
+                'Cache-Control':'no-cache','User-Agent':'BloggerV31DailyStorePublicVerifier/1.0'})
+            with urllib.request.urlopen(req,timeout=35) as response:
+                status=int(response.status);html=response.read(3_000_000).decode('utf-8','replace')
+            need(status==200,'Pagina publica LOJA nao retornou HTTP 200')
+            need(html.count(AUTO_START)==1 and html.count(AUTO_END)==1,'Marcadores publicos V31 ausentes/duplicados')
+            need('var userResumed = false;' in html and 'ub-v31-share' in html,'Tema V31 R1 nao detectado')
+            fragment=html.split(AUTO_START,1)[1].split(AUTO_END,1)[0]
+            parser=PageScan();parser.feed(fragment)
+            need(len(parser.cards)==expected_products and len(parser.links)==expected_products,
+                 'Contagem publica divergiu')
+            if expected_catalog is not None:
+                need(parser.cards==expected_ids,'Publico mostrou produtos antigos/inesperados')
+                need(parser.links==expected_links,'Publico mostrou links antigos/inesperados')
+                need(parser.images==expected_images,'Publico mostrou fotos antigas/inesperadas')
+            return {'status':'PASS','http':status,'cards':len(parser.cards),
+                    'affiliate_links':len(parser.links),'photos':len(parser.images),
+                    'theme':'V31_R1','exact_catalog':expected_catalog is not None,'attempt':retry+1}
+        except Exception as e:
+            last_reason=f'{type(e).__name__}: {str(e)[:150]}'
+            if retry+1 < attempts:time.sleep(5)
+    raise ContractError('Verificacao publica falhou apos '+str(attempts)+' tentativas: '+last_reason)
 
 def create_service(repo_root: Path):
     sys.path.insert(0,str(repo_root.resolve()/'src'))
@@ -146,7 +164,7 @@ def execute(service, profile:dict, selection:dict, args) -> dict:
     after=fetch_page(service)
     raw,_=inspect_mutable_page(after,profile)
     need(raw==candidate,'Readback Blogger divergente: nao repetir ou fazer rollback cego')
-    proof=public_check(profile,profile['expected_products'])
+    proof=public_check(profile,profile['expected_products'],expected_catalog=selection)
     summary.update({'status':'V31_LAB_DAILY_UPDATE_READBACK_PUBLIC_PASS',
                     'publications_performed':True,'public':proof,'backup_path':str(backup)})
     (folder/'resultado.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
