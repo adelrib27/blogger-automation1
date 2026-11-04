@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   verificar-sem-publicar:
+    if: github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    environment: v31-lab
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
