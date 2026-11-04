@@ -142,6 +142,29 @@ def choose(ranked: list[dict], profile: dict, config: dict, rules: dict, history
         "fallbackCount":sum(p["rotationSelectionMode"]!="new" for items in chosen.values() for p in items)}}
 
 
+
+def coverage_report(ranked: list[dict], profile: dict, config: dict, rules: dict, *,
+                    semantic_check: Callable, policy_check: Callable) -> dict:
+    """Safe aggregate diagnostics, never product ids, links or credentials."""
+    report={}
+    for category in profile['categories']:
+        report[category]={}
+        for keyword in config['categories'][category]:
+            matches=[p for p in ranked if category in (p.get('categories') or [])
+                     and keyword in (p.get('intentMatchedKeywords') or p.get('keywords') or [])]
+            valid=[]
+            for p in matches:
+                if not eligible(p):continue
+                if semantic_check(p.get('productName',''),keyword,rules).get('accepted') is not True:continue
+                try:policy_check(p)
+                except Exception:continue
+                valid.append(p)
+            report[category][keyword]={"in_ranking":len(matches),
+                        "eligible_with_photo_policy":len(valid),
+                        "distinct_shops":len({str(p.get('shopId') or p.get('shopName')) for p in valid})}
+    return report
+
+
 def produce_safe_selection(profile: dict, config: dict, rules: dict, history: dict,ranked:list[dict],*,
                            semantic_check,policy_check,make_link,resolve_link,
                            app_id:str,now:datetime) -> dict:
@@ -214,6 +237,8 @@ def main() -> int:
         from refresh_blogger_offer_links import generate_short_link,resolved_to_shopee
         # Re-runs the existing semantic & policy guard, without the old post publisher.
         ranked=v23.scan_v23()
+        print("V31_SAFE_KEYWORD_COVERAGE="+json.dumps(coverage_report(ranked,profile,config,rules,
+            semantic_check=v23.evaluate_keyword, policy_check=require_product_allowed),ensure_ascii=False),flush=True)
         selection=produce_safe_selection(profile,config,rules,history,ranked,
             semantic_check=v23.evaluate_keyword,policy_check=require_product_allowed,
             make_link=lambda url:generate_short_link(app_id,secret,url),
