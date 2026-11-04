@@ -22,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: v31-lab
     timeout-minutes: 8
+    env:
+      PYTHONPYCACHEPREFIX: ${{ runner.temp }}/v31_pycache
     steps:
       - name: Checkout LAB com branch explicita, somente leitura
         uses: actions/checkout@v4
