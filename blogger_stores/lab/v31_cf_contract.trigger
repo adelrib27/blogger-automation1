@@ -4,3 +4,5 @@ no_cloudflare_network=true
 no_blogger_write=true
 no_github_write=true
 no_schedule=true
+attempt=2
+purpose=final_code_redirect_guard_and_22_unit_tests
