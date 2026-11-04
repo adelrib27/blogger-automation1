@@ -1,0 +1,60 @@
+name: V31 R1 LAB — Preflight Page LOJA (somente leitura)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_store_preflight.trigger
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-lab-store-preflight-readonly
+  cancel-in-progress: false
+
+jobs:
+  verify-page-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-shopee-safe-2
+          run-id: 41751202914
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: blogger_stores/v31_lab/selection_input
+      - name: Revalidar origem e integridade da seleção
+        run: |
+          set -euo pipefail
+          test -n "$BLOGGER_CLIENT_ID" && test -n "$BLOGGER_CLIENT_SECRET" && test -n "$BLOGGER_REFRESH_TOKEN"
+          echo '46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c  blogger_stores/v31_lab/selection_input/selecao_shopee_v23_REAL_SAFE.json' | sha256sum -c -
+          python -m py_compile blogger_stores/src/v31_daily_page_publisher.py blogger_stores/src/v31_lab_store_preflight.py
+      - name: Blogger Page GET + renderização candidata (nenhum PUT)
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_lab_store_preflight.py \
+            --repo-root . \
+            --selection blogger_stores/v31_lab/selection_input/selecao_shopee_v23_REAL_SAFE.json \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --output-dir blogger_stores/v31_lab/preflight_out
+      - name: Guardar HTML anterior, candidata e prova SAFE
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-lab-preflight-readonly-${{ github.run_number }}
+          path: blogger_stores/v31_lab/preflight_out/
+          if-no-files-found: warn
+          retention-days: 5
