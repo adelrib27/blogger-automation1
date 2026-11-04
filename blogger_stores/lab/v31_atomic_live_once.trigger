@@ -1,0 +1,14 @@
+schema=1
+mode=LAB_ATOMIC_ROTATION_FINALIZE_ONCE
+blog_id=4739187376492839837
+page_id=2446067640331732447
+proof_run_id=41769090187
+proof_artifact_id=13294391153
+selection_run_id=41751202914
+selection_sha256=46ef8a293875720f036d90430d1e57c862277b42bde966fbf34b15f9d2cb6c0c
+environment=v31-lab
+atomic_pair_ledger=blogger_stores/v31_lab/state/v31_rotation_ledger.json
+atomic_pair_history=blogger_stores/v31_lab/state/v31_rotation_history.json
+no_new_blogger_publication=true
+no_daily_schedule=true
+git_push_force=false
