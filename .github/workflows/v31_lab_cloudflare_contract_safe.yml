@@ -1,0 +1,42 @@
+name: V31 LAB - Cloudflare Browser Rendering contract SAFE
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/lab/v31_cf_contract.trigger
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-cloudflare-contract-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-contrato-sem-rede:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout do codigo LAB (somente leitura)
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compilar adaptador e verificador existente
+        run: |
+          set -euo pipefail
+          python -m py_compile blogger_stores/src/v31_public_verify_cloudflare.py blogger_stores/src/v31_public_verify_readonly.py
+      - name: Testar transporte Cloudflare offline, sem token nem consultas HTTP
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s blogger_stores/tests/v31_cf -v
+      - name: Regressao do verificador V31 original
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s blogger_stores/tests/v31_public -v
+      - name: Resumo seguro
+        run: |
+          echo 'V31_CF_CONTRACT_SAFE_PASS: OFFLINE_ONLY; NO_BLOGGER_WRITE; NO_CF_NETWORK; NO_ROTATION_PERSISTENCE; NO_SCHEDULE'
