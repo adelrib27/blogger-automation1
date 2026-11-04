@@ -32,3 +32,8 @@
 ## Invariantes
 - Nenhum arquivo de `main`, Blogger tema, página LOJA, 18 blogs legados, ledger/histórico operacionais ou Cloudflare foi alterado por esta etapa.
 - Fail-closed; readback Blogger após falha de workflow deve ser tratado antes de qualquer tentativa de republicação; nunca inferir PUT falho de um job GitHub `failure`.
+
+## Artefatos temporarios (confirmados via metadados GitHub)
+- Segunda selecao: run `41840458808`, artifact `13329560335`, digest ZIP `sha256:70653f59331a8bee05d63d2e4b1844b905d0d6a722fd7243cf6d2161d20b1c97`, expira **2026-11-11 13:43:18 UTC**.
+- Preflight segundo HTML: run `41841058542`, artifact `13328911297`, digest ZIP `sha256:95553291b569c20d601157522bceb961d45879d18fe23d9d68712f0d089ed191`, expira **2026-11-11 13:46:02 UTC**.
+- Os SHA-256 dos arquivos internos e a origem devem ser revalidados antes de qualquer utilizacao. Artefato expirar nao autoriza repetir selecao nem publicacao. Snapshot duravel ainda nao foi feito nesta etapa.
