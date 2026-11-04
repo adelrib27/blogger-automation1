@@ -3,7 +3,7 @@ import copy
 import sys
 import unittest
 from pathlib import Path
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2] / 'v31_core'
 sys.path.insert(0, str(ROOT))
 from v31_rotation_ledger import (stage, mark_readback, mark_public_verified,
                                  history_commit, LedgerError, operation_id)
