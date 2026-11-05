@@ -1,0 +1,82 @@
+name: V31 Novo LAB - Auditoria SAFE a cada 30min somente 05-11-2026
+
+on:
+  schedule:
+    # 18h15, 18h45 ... 23h45 em Brasilia, exclusivamente no dia de teste.
+    - cron: '15,45 18-23 5 11 *'
+      timezone: 'America/Sao_Paulo'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_new_lab_halfhour_readonly_20261105.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-new-lab-public-status-readonly
+  cancel-in-progress: false
+
+jobs:
+  conferir-sem-publicar:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Identidade e calendario restritos
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/main'
+          test "$GITHUB_EVENT_NAME" = 'push' -o "$GITHUB_EVENT_NAME" = 'schedule' -o "$GITHUB_EVENT_NAME" = 'workflow_dispatch'
+          echo "V31_NEW_LAB_READONLY_PRECHECK event=$GITHUB_EVENT_NAME repo=$GITHUB_REPOSITORY"
+      - name: Consultar homepage e LOJA PUBLICAS sem alterar nada
+        shell: bash
+        env:
+          EXPECTED_BLOG_ID: '1625257710858445955'
+          EXPECTED_LOJA_PAGE_ID: '8266917849571219350'
+          BLOG_BASE: 'https://lab-v31-loja-20261105.blogspot.com'
+        run: |
+          set -euo pipefail
+          today=$(TZ=America/Sao_Paulo date +%F)
+          if [ "$today" != '2026-11-05' ]; then
+            echo "R24_EXPIRED_NOOP: calendário fora do dia de teste; nenhum acesso ao Blogger."
+            exit 0
+          fi
+          echo "R24_READONLY_SCHEDULE_EVENT=$GITHUB_EVENT_NAME"
+          echo "R24_TARGET_BLOG_ID=$EXPECTED_BLOG_ID R24_LOJA_PAGE_ID=$EXPECTED_LOJA_PAGE_ID"
+          echo 'R24_BLOGGER_PUT=false R24_SHOPEE_CALL=false R24_THEME_INSTALL=false R24_GIT_WRITE=false'
+          base="$BLOG_BASE"
+          for page in home loja; do
+            if [ "$page" = 'home' ]; then
+              url="$base/"
+            else
+              url="$base/p/loja.html"
+            fi
+            target="$RUNNER_TEMP/v31_new_lab_$page.html"
+            code=$(curl --silent --show-error --location --retry 0 --max-time 35 --write-out '%{http_code}' --output "$target" "$url?lab_public_probe=$GITHUB_RUN_ID")
+            echo "R24_PUBLIC_$page HTTP=$code sha256=$(sha256sum "$target" | cut -d' ' -f1)"
+            if [ "$code" != '200' ]; then
+              echo "R24_PUBLIC_READ_BLOCKED_$page_HTTP_$code"
+              exit 1
+            fi
+          done
+          html="$RUNNER_TEMP/v31_new_lab_loja.html"
+          store_count=$(grep -o 'data-item-id=' "$html" | wc -l || true)
+          case "$store_count" in
+            0) echo "R24_REAL_STORE_UPDATE_NOT_READY: storefront remains lab placeholder; 0 cards." ;;
+            16) echo "R24_NEW_LAB_HAS_16_CARDS_READONLY: this does not certify a fresh commercial rotation." ;;
+            *) echo "R24_NEW_LAB_UNEXPECTED_CARD_COUNT=$store_count; require validation." ;;
+          esac
+          echo "R24_PUBLIC_PRODUCT_CARDS=$store_count"
+          {
+            echo '### V31 Novo LAB — checkpoint read-only'
+            echo "- Event: $GITHUB_EVENT_NAME"
+            echo "- Date in Sao Paulo: $today"
+            echo "- Blog ID: $EXPECTED_BLOG_ID"
+            echo "- LOJA Page ID: $EXPECTED_LOJA_PAGE_ID"
+            echo "- Public cards: $store_count"
+            echo '- No publication, no secrets, no theme changes, no Git writes.'
+          } >> "$GITHUB_STEP_SUMMARY"
