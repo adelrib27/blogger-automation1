@@ -1,0 +1,112 @@
+name: V31 LAB - Segunda rotacao autorizada ONE PUT + Git claim
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/v31_lab/SECOND_ROTATION_USER_APPROVED_LIVE_ONCE.trigger
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: v31-lab-second-rotation-authorized-once
+  cancel-in-progress: false
+
+jobs:
+  publicar-uma-unica-vez-no-lab:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103' && github.run_attempt == 1
+    environment: v31-lab
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      V31_LAB_ONCE_APPROVAL: USER_AUTHORIZED_V31_SECOND_ROTATION_LAB_ONLY_20261104
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - name: Checkout da branch LAB com autenticacao Git apenas neste job
+        uses: actions/checkout@v4
+        with:
+          ref: lab/v31r1-shopee-safe-20261103
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Recuperar somente a selecao Shopee imutavel ja aprovada
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-shopee-safe-1
+          run-id: 41840458808
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_approved
+
+      - name: Recuperar somente os HTMLs originais imutaveis
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-lab-second-preflight-readonly-1
+          run-id: 41841058542
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/v31_approved
+
+      - name: Guardas do workflow e onze testes direcionados (sem API write)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/v31_pycache"
+          test "${GITHUB_REPOSITORY}" = 'adelrib27/blogger-automation1'
+          test "${GITHUB_REF}" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "${GITHUB_RUN_ATTEMPT}" = '1'
+          test -n "$BLOGGER_CLIENT_ID" && test -n "$BLOGGER_CLIENT_SECRET" && test -n "$BLOGGER_REFRESH_TOKEN"
+          echo "aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7  ${RUNNER_TEMP}/v31_approved/selecao_shopee_v23_SECOND_REAL_SAFE.json" | sha256sum -c -
+          echo "6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450  ${RUNNER_TEMP}/v31_approved/LOJA_ORIGINAL_BACKUP.html" | sha256sum -c -
+          echo "d33070c001281ed795489a032a504accfcab2b593010c1a9e8cf5bb86b8109b8  ${RUNNER_TEMP}/v31_approved/LOJA_CANDIDATA_NAO_PUBLICAR.html" | sha256sum -c -
+          python -m py_compile blogger_stores/src/v31_lab_second_authorized_publish_once.py
+          python -m unittest discover -s blogger_stores/tests/v31_live_launch -v
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git branch --show-current)" = 'lab/v31r1-shopee-safe-20261103'
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = 'blogger_stores/v31_lab/SECOND_ROTATION_USER_APPROVED_LIVE_ONCE.trigger'
+          test -z "$(git status --porcelain)"
+          echo 'V31_SECOND_LIVE_LAUNCH_TARGETED_PRECHECK_PASS'
+
+      - name: Backup + claim Git atomicos, um unico Blogger PUT com If-Match
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/v31_pycache"
+          python blogger_stores/src/v31_lab_second_authorized_publish_once.py
+          echo 'V31_SECOND_LIVE_GIT_CLAIM_AND_SINGLE_PUT_STEP_COMPLETED'
+
+      - name: Prova publica exata independente via Cloudflare (somente leitura)
+        shell: bash
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.V31_CF_LAB_ACCOUNT_ID }}
+          CLOUDFLARE_BROWSER_TOKEN: ${{ secrets.V31_CF_LAB_BROWSER_TOKEN }}
+        run: |
+          set -euo pipefail
+          export PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/v31_pycache"
+          test -n "$CLOUDFLARE_ACCOUNT_ID" && test -n "$CLOUDFLARE_BROWSER_TOKEN"
+          python blogger_stores/src/v31_public_verify_cloudflare.py \
+            --selection "${RUNNER_TEMP}/v31_approved/selecao_shopee_v23_SECOND_REAL_SAFE.json" \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --selection-sha256 aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7 \
+            --report "${RUNNER_TEMP}/v31_second_public/RELATORIO_PUBLICO_CLOUDFLARE.json"
+          python - <<'PY'
+          import json,os,pathlib
+          d=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'v31_second_public/RELATORIO_PUBLICO_CLOUDFLARE.json').read_text())
+          assert d.get('status')=='PUBLIC_EXACT_PASS' and d.get('public_verified') is True, 'Public exact proof unavailable'
+          print('V31_SECOND_CLOUDFLARE_PUBLIC_EXACT_PASS; no scheduled writes; history_finalization_pending=true')
+          PY
+
+      - name: Confirmar que cron e outros blogs nao foram alterados
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'V31_SECOND_LAB_ONCE_AUDIT: no_cron=true; no_theme_changes=true; no_production=true; no_artifact_upload=true; no_auto_retry=true'
