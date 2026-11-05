@@ -32,7 +32,7 @@ from v31_etag_sacrificial_live_once import oauth_access_token
 from hashlib import sha256
 
 LAUNCH = 'blogger_stores/v31_lab/SECOND_ROTATION_USER_APPROVED_LIVE_ONCE.trigger'
-APPROVAL = 'USER_AUTHORIZED_V31_SECOND_ROTATION_LAB_ONLY_20261104'
+APPROVAL = 'USER_AUTHORIZED_V31_SECOND_ROTATION_LAB_ONLY_20261104_PREFLIGHT_CORRECTED1'
 TARGET = 'https://www.googleapis.com/blogger/v3/blogs/' + BLOG + '/pages/' + PAGE
 
 class Stop(RuntimeError): pass

@@ -4,7 +4,7 @@ from unittest.mock import patch
 from urllib import error
 import io
 import json
-sys.path.insert(0,str(Path(__file__).resolve().parents[1] / 'src'))
+sys.path.insert(0,str(Path(__file__).resolve().parents[2] / 'src'))
 from v31_lab_second_authorized_publish_once import OneBloggerService, Stop,APPROVAL,validate_launch_env, BLOG,PAGE
 
 class TestAuthorizedTransport(unittest.TestCase):
