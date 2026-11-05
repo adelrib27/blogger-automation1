@@ -56,12 +56,26 @@ jobs:
               url="$base/p/loja.html"
             fi
             target="$RUNNER_TEMP/v31_new_lab_$page.html"
-            code=$(curl --silent --show-error --location --retry 0 --max-time 35 --write-out '%{http_code}' --output "$target" "$url?lab_public_probe=$GITHUB_RUN_ID")
-            echo "R24_PUBLIC_$page HTTP=$code sha256=$(sha256sum "$target" | cut -d' ' -f1)"
+            code='000'
+            for attempt in 1 2 3; do
+              code=$(curl --silent --show-error --location --retry 0 --max-time 30 \\
+                --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36' \\
+                --header 'Cache-Control: no-cache' \\
+                --write-out '%{http_code}' --output "$target" "$url?lab_public_probe=$GITHUB_RUN_ID-$attempt") || code='000'
+              echo "R24_PUBLIC_${page}_ATTEMPT_${attempt}_HTTP_${code}"
+              if [ "$code" = '200' ]; then
+                break
+              fi
+              case "$code" in
+                429|500|502|503|504) sleep 6 ;;
+                *) break ;;
+              esac
+            done
             if [ "$code" != '200' ]; then
-              echo "R24_PUBLIC_READ_BLOCKED_$page_HTTP_$code"
+              echo "R24_PUBLIC_READ_BLOCKED_${page}_HTTP_${code} (no public proof; fail closed)"
               exit 1
             fi
+            echo "R24_PUBLIC_${page}_HTTP_200_SHA256=$(sha256sum "$target" | cut -d' ' -f1)"
           done
           html="$RUNNER_TEMP/v31_new_lab_loja.html"
           store_count=$(grep -o 'data-item-id=' "$html" | wc -l || true)
