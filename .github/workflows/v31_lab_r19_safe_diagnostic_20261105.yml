@@ -1,0 +1,134 @@
+name: V31 LAB R19 - Diagnostico real SAFE (sem publicacao)
+
+on:
+  push:
+    branches: [lab/v31r1-shopee-safe-20261103]
+    paths:
+      - .github/workflows/v31_lab_r19_safe_diagnostic_20261105.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-r19-real-readonly-diagnostic
+  cancel-in-progress: false
+
+jobs:
+  diagnosticar-selecao-e-candidata-sem-escrita:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103' && github.event_name == 'push'
+    environment: v31-lab
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - name: Checkout LAB sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Conferir escopo e HEAD imutavel
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+      - name: Testar gate e contrato SAFE antes de acessar APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s blogger_stores/tests/v31_daily_gate -q
+          python -m unittest discover -s blogger_stores/tests/v31_daily_candidate -q
+          python -m unittest discover -s blogger_stores/tests/v31_daily_autonomous -q
+      - name: Gate real horario Recife, sem escritas
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_daily_cycle_gate_safe.py \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --ledger blogger_stores/v31_lab/state/v31_rotation_ledger.json \
+            --history blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --report "$RUNNER_TEMP/v31_r19_gate.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          d=json.loads((Path(os.environ['RUNNER_TEMP'])/'v31_r19_gate.json').read_text())
+          assert d['blogId']=='4739187376492839837' and d['pageId']=='2446067640331732447'
+          assert d['bloggerPutAllowed'] is False and d['remoteGitWriteAllowed'] is False
+          assert d['cronEnabled'] is False
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              out.write('can_scan='+('yes' if d['safeScanAllowed'] else 'no')+'\n')
+          print('R19_READONLY_GATE_DECISION='+d['status'])
+          PY
+      - name: Instalar dependencias do scanner previamente versionado
+        if: steps.gate.outputs.can_scan == 'yes'
+        run: python -m pip install -r requirements.txt
+      - name: Scanner Shopee seguro com selecao real e sem Blogger PUT
+        if: steps.gate.outputs.can_scan == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/v31_r19_safe"
+          python -u blogger_stores/src/v31_shopee_safe_scan.py \
+            --repo-root . \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --config config/shopee_v31_lab.json \
+            --rules config/shopee_v31_lab_intent_rules.json \
+            --rotation blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --out "$RUNNER_TEMP/v31_r19_safe/SELECAO_REAL_SAFE_NAO_PUBLICAR.json"
+      - name: GET Blogger e preflight candidata completa - nenhuma escrita
+        if: steps.gate.outputs.can_scan == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os,sys
+          from datetime import datetime
+          from pathlib import Path
+          root=Path.cwd()
+          sys.path[:0]=[str(root/'src'),str(root/'blogger_stores/src'),str(root/'blogger_stores/v31_core')]
+          from blogger_policy_guard import require_product_allowed
+          from v31_lab_daily_autonomous_transaction import oauth_access_token,blogger_call,require_live_page,RECIFE
+          from v31_daily_candidate_contract_safe import preview_daily_candidate
+          profile=json.loads((root/'blogger_stores/v31_lab/perfil_v31_lab.json').read_text())
+          ledger=json.loads((root/'blogger_stores/v31_lab/state/v31_rotation_ledger.json').read_text())
+          history=json.loads((root/'blogger_stores/v31_lab/state/v31_rotation_history.json').read_text())
+          path=Path(os.environ['RUNNER_TEMP'])/'v31_r19_safe/SELECAO_REAL_SAFE_NAO_PUBLICAR.json'
+          raw=path.read_bytes()
+          page=blogger_call(oauth_access_token(),'GET')
+          original=require_live_page(oauth_access_token(),page)
+          plan=preview_daily_candidate(
+              profile=profile, ledger=ledger, history=history,
+              selection_bytes=raw, current_page_bytes=original,
+              now=datetime.now(RECIFE), policy_guard=require_product_allowed)
+          assert plan['bloggerPutAllowed'] is False
+          assert plan['gitRemoteWriteAllowed'] is False and plan['cronEnabled'] is False
+          assert plan['cards']==16
+          assert hashlib.sha256(original).hexdigest()==plan['currentHtmlSha256']
+          assert hashlib.sha256(plan['candidateHtmlBytes']).hexdigest()==plan['candidateHtmlSha256']
+          print('R19_REAL_SHOPEE_AND_BLOGGER_READONLY_SAFE_PASS='+json.dumps({
+              'selectionSha256':hashlib.sha256(raw).hexdigest(),
+              'originalSha256':plan['currentHtmlSha256'],
+              'candidateSha256':plan['candidateHtmlSha256'],
+              'rotationModes':plan['rotationModes'],
+              'cards':plan['cards'],
+              'bloggerPut':False,'remoteGitWrite':False,'cronChanged':False
+          },sort_keys=True))
+          PY
+          test -z "$(git status --porcelain)"
+      - name: Dia ja atendido deve permanecer bloqueado
+        if: steps.gate.outputs.can_scan == 'no'
+        run: echo 'R19_READONLY_ALREADY_UPDATED_SKIP; no_shopee; no_put; no_git_write'
