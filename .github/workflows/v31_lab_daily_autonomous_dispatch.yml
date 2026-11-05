@@ -1,11 +1,17 @@
 name: V31 LAB - Ponte diaria Shopee (main agenda, LAB executa)
 
 on:
-  # 13:17 UTC = 10:17 America/Recife. GitHub executa schedule na branch padrao.
+  # Fuso local Brasilia (igual a America/Recife em 05/11/2026).
+  # O GitHub aceita timezone IANA diretamente em cada entrada de schedule.
   schedule:
-    - cron: '17 13 * * *'
-    # Janela de contingencia, 15h23 Recife; gate LAB impede duplicar o mesmo dia.
-    - cron: '23 18 * * *'
+    - cron: '17 10 * * *'
+      timezone: "America/Sao_Paulo"
+    - cron: '23 15 * * *'
+      timezone: "America/Sao_Paulo"
+    # Diagnostico SAFE, SOMENTE 05/11/2026, a cada 5 minutos entre 15h e 16h59.
+    # Este evento NUNCA chama o executor comercial.
+    - cron: '*/5 15-16 5 11 *'
+      timezone: "America/Sao_Paulo"
   # Apenas no primeiro deploy ou mudanca nesta ponte: PROBE sem Shopee/PUT.
   push:
     branches: [main]
@@ -50,7 +56,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ "$GITHUB_EVENT_NAME" = 'push' ]; then
+          if [ "$GITHUB_EVENT_NAME" = 'push' ] || [ "${{ github.event.schedule }}" = '*/5 15-16 5 11 *' ]; then
             origin='MAIN_DEPLOY_PROBE_ONLY'
           else
             origin='MAIN_SCHEDULE_LAB_ONLY'
