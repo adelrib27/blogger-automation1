@@ -1,0 +1,116 @@
+name: V31 LAB - Contrato diario SAFE + selecao Shopee somente quando elegivel
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/src/v31_daily_cycle_gate_safe.py
+      - blogger_stores/tests/v31_daily_gate/**
+      - .github/workflows/v31_lab_daily_safe_selection_preflight.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-daily-safe-scan-only
+  cancel-in-progress: false
+
+jobs:
+  verificar-e-scan-safe:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout da branch LAB sem credenciais de escrita
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Conferir branch e HEAD remoto e manter diretório limpo
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin "refs/heads/lab/v31r1-shopee-safe-20261103" | cut -f1)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+      - name: Testes direcionados do gate diario (sem testes legados)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          python -m unittest discover -s blogger_stores/tests/v31_daily_gate -v
+      - name: Verificar estado canônico V31 e decisão de calendário Recife
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          python blogger_stores/src/v31_daily_cycle_gate_safe.py \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --ledger blogger_stores/v31_lab/state/v31_rotation_ledger.json \
+            --history blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --report "${RUNNER_TEMP}/v31_daily_gate_report.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          doc=json.loads((Path(os.environ['RUNNER_TEMP'])/'v31_daily_gate_report.json').read_text())
+          assert doc['bloggerPutAllowed'] is False and doc['remoteGitWriteAllowed'] is False
+          assert doc['cronEnabled'] is False and doc['repository']=='adelrib27/blogger-automation1'
+          decision = 'yes' if doc['safeScanAllowed'] is True else 'no'
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              out.write('safe_scan='+decision+'\n')
+          print('V31_DAILY_RECIFE_GATE='+doc['status'])
+          PY
+      - name: Instalar dependencias ja usadas pelo scanner V31 (somente se elegivel)
+        if: steps.gate.outputs.safe_scan == 'yes'
+        run: python -m pip install -r requirements.txt
+      - name: Selecionar produtos via motor V23/V31 em SAFE (nenhuma publicacao)
+        if: steps.gate.outputs.safe_scan == 'yes'
+        shell: bash
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          test -n "$SHOPEE_APP_ID" && test -n "$SHOPEE_SECRET"
+          mkdir -p "${RUNNER_TEMP}/v31_daily_safe_scan"
+          python -u blogger_stores/src/v31_shopee_safe_scan.py \
+            --repo-root . \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --config config/shopee_v31_lab.json \
+            --rules config/shopee_v31_lab_intent_rules.json \
+            --rotation blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --out "${RUNNER_TEMP}/v31_daily_safe_scan/selecao_v31_diaria_SAFE_NAO_PUBLICAR.json"
+          python - <<'PY'
+          import hashlib,json,os
+          from collections import Counter
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'v31_daily_safe_scan/selecao_v31_diaria_SAFE_NAO_PUBLICAR.json'
+          raw=p.read_bytes(); doc=json.loads(raw)
+          assert doc.get('status')=='SAFE_READY' and doc.get('publishReady') is True and doc.get('dryRun') is True
+          assert doc.get('blogId')=='4739187376492839837'
+          assert doc.get('totalItems')==16 and doc.get('uniqueItemIds')==16
+          assert list(doc.get('categories',{}))==['Decoração','Organização','Cozinha','Quarto']
+          products=[product for cat in doc['categories'].values() for product in cat]
+          assert len(products)==16 and all(len(cat)==4 for cat in doc['categories'].values())
+          assert len({str(p['itemId']) for p in products})==16
+          assert all(p.get('affiliateUrl') and p.get('imageUrl') for p in products)
+          modes=Counter(p.get('rotationSelectionMode') for p in products)
+          assert set(modes).issubset({'new','fallback_older','carry_forward_last'})
+          print('V31_DAILY_SAFE_SELECTION_PASS='+json.dumps({
+              'count':16,'categoryCount':4,'selectionSha256':hashlib.sha256(raw).hexdigest(),
+              'rotationModes':dict(modes),'bloggerPut':False,'remoteGitWrite':False},sort_keys=True))
+          PY
+      - name: Fim sem escrita Git, Blogger, cron ou artefatos
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          echo 'V31_LAB_DAILY_SAFE_PREVIEW_PASS; schedule=false; blogger_put=false; git_write=false; no_artifact_upload=true'
