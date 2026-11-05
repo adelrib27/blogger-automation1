@@ -220,8 +220,24 @@ def prepare_before_write(lease: GitLease, token: str, selection_bytes: bytes, *,
     return profile, ledger, history, original_page, original, plan
 
 
+def require_public_verification_credentials():
+    """Require independent public-proof access BEFORE PLAN or any Blogger PUT."""
+    account = os.environ.get("V31_CF_LAB_ACCOUNT_ID", "")
+    token = os.environ.get("V31_CF_LAB_BROWSER_TOKEN", "")
+    need(re.fullmatch(r"[0-9a-fA-F]{32}", account) is not None,
+         "Cloudflare LAB account indisponível: nenhuma reserva permitida")
+    need(isinstance(token, str) and len(token.strip()) >= 20,
+         "Cloudflare LAB token indisponível: nenhuma reserva permitida")
+
+
+def exact_backup_verified(lease, path: str, original: bytes) -> bool:
+    """Git backup MUST match ALL HTML bytes, including any trailing newline."""
+    return type(original) is bytes and lease.read(path) == original
+
+
 def execute(selection_path: Path, profile_path: Path) -> dict:
     check_environment()
+    require_public_verification_credentials()
     need(selection_path.is_file() and profile_path.is_file(),
          "Seleção SAFE e perfil são obrigatórios")
     need(profile_path.resolve() == (Path.cwd()/PROFILE).resolve(),
@@ -260,7 +276,7 @@ def execute(selection_path: Path, profile_path: Path) -> dict:
     claim_commit = lease.commit_exact({LEDGER: canonical(claimed),
                                        backup_path: before},
                                       "V31 LAB auto: claim único + backup HTML antes do PUT")
-    need(lease.read(backup_path) == before.rstrip(b"\n") and
+    need(exact_backup_verified(lease, backup_path, before) and
          json.loads(lease.read(LEDGER))["operations"][-1]["prewriteClaim"]["state"] ==
          "ATTEMPT_CLAIMED_BEFORE_PUT", "Backup/claim remoto não confirmado")
 

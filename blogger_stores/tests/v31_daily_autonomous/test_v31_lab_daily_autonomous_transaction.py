@@ -35,6 +35,32 @@ class DummyResponse:
 
 
 class TestDailyGuards(unittest.TestCase):
+    def test_public_verification_missing_secrets_blocks_prewrite(self):
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(TX.Blocked):
+                TX.require_public_verification_credentials()
+
+    def test_public_verification_bad_account_blocks_prewrite(self):
+        with patch.dict(os.environ, {
+            "V31_CF_LAB_ACCOUNT_ID": "wrong",
+            "V31_CF_LAB_BROWSER_TOKEN": "x" * 40}, clear=True):
+            with self.assertRaises(TX.Blocked):
+                TX.require_public_verification_credentials()
+
+    def test_public_verification_usable_synthetic_secrets(self):
+        with patch.dict(os.environ, {
+            "V31_CF_LAB_ACCOUNT_ID": "f" * 32,
+            "V31_CF_LAB_BROWSER_TOKEN": "x" * 40}, clear=True):
+            TX.require_public_verification_credentials()
+
+    def test_exact_backup_requires_all_bytes_including_final_newline(self):
+        class Stub:
+            def __init__(self, raw): self.raw = raw
+            def read(self, _path): return self.raw
+        original = b"<article>original</article>\n"
+        self.assertTrue(TX.exact_backup_verified(Stub(original), "lab-backup", original))
+        self.assertFalse(TX.exact_backup_verified(Stub(original[:-1]), "lab-backup", original))
+
     def test_strong_etag_only(self):
         self.assertTrue(TX.strong_etag('"sTr0ng:12"'))
         for tag in (None, "", "W/\"weak\"", "unquoted", '"', '"sp ace"', '""'):
