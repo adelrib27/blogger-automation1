@@ -1,0 +1,52 @@
+name: V31 LAB - Contrato autonomo diario SAFE (SEM publicar)
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/src/v31_lab_daily_autonomous_transaction.py
+      - blogger_stores/tests/v31_daily_autonomous/**
+      - .github/workflows/v31_lab_daily_autonomous_contract_safe.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-daily-auto-transaction-offline-safe
+  cancel-in-progress: false
+
+jobs:
+  validar-transacao-autonoma-sem-escrita:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout LAB sem credenciais de escrita
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar identidade e HEAD remoto LAB
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+      - name: Testes transacionais e CAS pontuais em Git isolado
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          python -m unittest discover -s blogger_stores/tests/v31_daily_autonomous -v
+          python -m unittest discover -s blogger_stores/tests/v31_daily_candidate -v
+          python -m unittest discover -s blogger_stores/tests/v31_daily_gate -v
+          test -z "$(git status --porcelain)"
+          echo 'V31_LAB_DAILY_AUTONOMOUS_TRANSACTION_OFFLINE_SAFE_PASS; blogger_put=false; git_remote_write=false; cron=false; shopee_api=false; artifacts=false'
