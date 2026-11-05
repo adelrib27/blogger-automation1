@@ -1,0 +1,127 @@
+name: V31 LAB - Execucao diaria autonoma isolada
+
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: Disparador controlado pela main; probe nunca publica
+        required: true
+        type: choice
+        options:
+          - MAIN_DEPLOY_PROBE_ONLY
+          - MAIN_SCHEDULE_LAB_ONLY
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-daily-autonomous-serialized
+  cancel-in-progress: false
+
+jobs:
+  confirmar-ponte-sem-publicar:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103' && github.event_name == 'workflow_dispatch' && inputs.origin == 'MAIN_DEPLOY_PROBE_ONLY' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Atestar origem e escopo LAB sem usar credenciais
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$GITHUB_EVENT_NAME" = 'workflow_dispatch'
+          echo 'V31_LAB_SCHEDULER_BRIDGE_PROBE_PASS; blogger_put=false; shopee_api=false; git_write=false'
+
+  executar-ciclo-diario-exclusivo-lab:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103' && github.event_name == 'workflow_dispatch' && inputs.origin == 'MAIN_SCHEDULE_LAB_ONLY' && github.run_attempt == 1
+    permissions:
+      contents: write
+      actions: read
+    environment: v31-lab
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      V31_DAILY_ORIGIN: ${{ inputs.origin }}
+      V31_DAILY_APPROVAL: USER_AUTHORIZED_V31_LAB_AUTOMATIC_DAILY_20261104
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      V31_CF_LAB_ACCOUNT_ID: ${{ secrets.V31_CF_LAB_ACCOUNT_ID }}
+      V31_CF_LAB_BROWSER_TOKEN: ${{ secrets.V31_CF_LAB_BROWSER_TOKEN }}
+    steps:
+      - name: Checkout LAB para CAS nao-forcado de estado
+        uses: actions/checkout@v4
+        with:
+          ref: lab/v31r1-shopee-safe-20261103
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Escopo, HEAD e arvore LAB antes de acessar Shopee
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$GITHUB_EVENT_NAME" = 'workflow_dispatch'
+          test "$GITHUB_RUN_ATTEMPT" = '1'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+      - name: Calendario Recife e historico transacional (somente leitura)
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python blogger_stores/src/v31_daily_cycle_gate_safe.py \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --ledger blogger_stores/v31_lab/state/v31_rotation_ledger.json \
+            --history blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --report "$RUNNER_TEMP/v31_daily_calendar_gate.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          doc=json.loads((Path(os.environ["RUNNER_TEMP"])/"v31_daily_calendar_gate.json").read_text())
+          assert doc["blogId"]=="4739187376492839837" and doc["pageId"]=="2446067640331732447"
+          assert doc["bloggerPutAllowed"] is False and doc["remoteGitWriteAllowed"] is False
+          assert doc["cronEnabled"] is False and doc["repository"]=="adelrib27/blogger-automation1"
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as o:
+              o.write("safe_scan="+("yes" if doc["safeScanAllowed"] is True else "no")+"\n")
+          print("V31_LAB_DAILY_CALENDAR="+doc["status"])
+          PY
+      - name: Dependencias existentes do scanner Shopee (somente quando elegivel)
+        if: steps.gate.outputs.safe_scan == 'yes'
+        run: python -m pip install -r requirements.txt
+      - name: Shopee V23/V31 e Policy Guard em SAFE (sem PUT)
+        if: steps.gate.outputs.safe_scan == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/v31_daily_safe"
+          python -u blogger_stores/src/v31_shopee_safe_scan.py \
+            --repo-root . \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json \
+            --config config/shopee_v31_lab.json \
+            --rules config/shopee_v31_lab_intent_rules.json \
+            --rotation blogger_stores/v31_lab/state/v31_rotation_history.json \
+            --out "$RUNNER_TEMP/v31_daily_safe/SELECAO_NOVA_SAFE.json"
+      - name: Um ciclo transacional completo com fail-closed
+        if: steps.gate.outputs.safe_scan == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u blogger_stores/src/v31_lab_daily_autonomous_transaction.py \
+            --selection "$RUNNER_TEMP/v31_daily_safe/SELECAO_NOVA_SAFE.json" \
+            --profile blogger_stores/v31_lab/perfil_v31_lab.json
+          test "$(git rev-parse HEAD)" = "$(git ls-remote origin "$GITHUB_REF" | cut -f1)"
+          test -z "$(git status --porcelain)"
+          echo 'V31_LAB_DAILY_AUTO_COMPLETE; single_conditional_put; public_exact; persisted; no_retry'
+      - name: Mesmo dia sem novo PUT e sem nova selecao
+        if: steps.gate.outputs.safe_scan == 'no'
+        run: echo 'V31_LAB_DAILY_SKIP_ALREADY_UPDATED; no_shopee; no_put; no_state_write'
