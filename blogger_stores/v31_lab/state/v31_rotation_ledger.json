@@ -23,8 +23,10 @@
     },
     {
       "candidateSha": "d33070c001281ed795489a032a504accfcab2b593010c1a9e8cf5bb86b8109b8",
+      "note": "Segunda rotacao Blogger LAB: um unico PUT com If-Match, readback autenticado e Cloudflare PUBLIC_EXACT_PASS; backup e claim atomicos preservados.",
       "operationId": "2ab915f6079855824374fd9577411783bf6d8e5c2bca7eb36a4aa8e1d08d5a93",
       "originalSha": "6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450",
+      "pageUpdatedAt": "2026-11-04T21:06:56-03:00",
       "prewriteClaim": {
         "backupPath": "blogger_stores/v31_lab/prewrite_backup/2ab915f6079855824374fd9577411783bf6d8e5c2bca7eb36a4aa8e1d08d5a93/LOJA_ANTES_SEGUNDA_ROTACAO.html",
         "backupSha256": "6f3810a364fe2114865b96fa5f118c10495bfe39943406624710ac9aaf25f450",
@@ -36,8 +38,21 @@
         "state": "ATTEMPT_CLAIMED_BEFORE_PUT",
         "updatedAt": "2026-11-03T22:19:09-03:00"
       },
+      "publicProof": {
+        "cards": 16,
+        "categories": 4,
+        "htmlSha256": "bc397266753f647cbe7a412e0a7056eb0069ad7e7261d1a463b47db6890cd9ab",
+        "images": 16,
+        "links": 16,
+        "publicHttp": 200,
+        "sourceRun": 41938854284,
+        "transport": "CLOUDFLARE_BROWSER_RENDERING",
+        "verifiedAt": "2026-11-05T00:07:00.417645+00:00"
+      },
+      "publishRunId": 41938854284,
       "selectionSha": "aea7191e1e4ea77581b33591e0e940f6bd582114c90ea2e457a7173faf3664b7",
-      "status": "PLAN"
+      "shopeeSelectionRunId": 41840458808,
+      "status": "PERSISTED"
     }
   ],
   "pageId": "2446067640331732447",
