@@ -1,0 +1,87 @@
+name: V31 LAB - Preflight diario Blogger autenticado READ-ONLY
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - .github/workflows/v31_lab_daily_autonomous_live_preflight_readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-daily-authenticated-readonly-preflight
+  cancel-in-progress: false
+
+jobs:
+  autenticar-e-comparar-sem-publicar:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    environment: v31-lab
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - name: Checkout exato e sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Confirmar blog, pagina LIVE, HTML, ETag, ledger e historico
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test -z "$(git status --porcelain)"
+          python - <<'PY'
+          import json,sys
+          from datetime import datetime
+          from pathlib import Path
+          root=Path.cwd()
+          sys.path[:0]=[str(root/'blogger_stores/src'),str(root/'blogger_stores/v31_core')]
+          from v31_lab_daily_autonomous_transaction import (
+              GitLease, blogger_call, require_live_page, digest,
+              oauth_access_token, PROFILE, LEDGER, HISTORY, RECIFE, need)
+          from v31_daily_cycle_gate_safe import gate
+          lease=GitLease()
+          profile=json.loads(lease.read(PROFILE))
+          ledger=json.loads(lease.read(LEDGER))
+          history=json.loads(lease.read(HISTORY))
+          token=oauth_access_token()
+          page=blogger_call(token,'GET')
+          live=require_live_page(token,page)
+          need(len(ledger['operations'])==2 and len(history['runs'])==3,
+               'R14/R17 state changed unexpectedly')
+          need(all(op['status']=='PERSISTED' for op in ledger['operations']),
+               'One or more rotations unfinished')
+          need(digest(live)==ledger['operations'][-1]['candidateSha'],
+               'Published HTML diverged from last persisted rotation')
+          need(live.count(b'UNIVERSAL_V31_STORE_AUTO_START')==1 and
+               live.count(b'UNIVERSAL_V31_STORE_AUTO_END')==1 and
+               live.count(b'data-item-id=')==16,
+               'Published V31 LOJA content incomplete')
+          result=gate(profile,ledger,history,now=datetime.now(RECIFE))
+          need(result['bloggerPutAllowed'] is False and
+               result['remoteGitWriteAllowed'] is False and
+               result['cronEnabled'] is False,
+               'Unintended writing permission in SAFE gate')
+          print('V31_AUTHENTICATED_DAILY_PRECHECK_READONLY_PASS='+json.dumps({
+             'blogId':profile['blog_id'],
+             'pageId':profile['page_id'],'htmlSha256':digest(live),
+             'etagStrong':True,'gitHead':lease.head,
+             'persistedOperations':len(ledger['operations']),
+             'historyEntries':len(history['runs']),
+             'recifeCalendarDecision':result['status'],
+             'bloggerPut':False,'remoteGitWrite':False,'cronEnabled':False
+          },sort_keys=True))
+          PY
+          test -z "$(git status --porcelain)"
