@@ -1,0 +1,49 @@
+name: V31 LAB - Proposta dinamica diaria SAFE SEM publicacao
+
+on:
+  push:
+    branches:
+      - lab/v31r1-shopee-safe-20261103
+    paths:
+      - blogger_stores/src/v31_daily_candidate_contract_safe.py
+      - blogger_stores/tests/v31_daily_candidate/**
+      - .github/workflows/v31_lab_daily_dynamic_candidate_contract_safe.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-dynamic-candidate-contract-safe-only
+  cancel-in-progress: false
+
+jobs:
+  contrato-dinamico-offline:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout LAB sem credenciais persistidas
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Identidade, HEAD remoto e arvore limpa
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$GITHUB_REF" = 'refs/heads/lab/v31r1-shopee-safe-20261103'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin refs/heads/lab/v31r1-shopee-safe-20261103 | cut -f1)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+      - name: Testes pontuais da rotação dinâmica (SEM rede)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONDONTWRITEBYTECODE=1
+          python -m unittest discover -s blogger_stores/tests/v31_daily_candidate -v
+          test -z "$(git status --porcelain)"
+          echo 'V31_LAB_DAILY_DYNAMIC_CANDIDATE_SAFE_PASS; blogger_put=false; git_write=false; cron=false; shopee_api=false; artifact_upload=false'
