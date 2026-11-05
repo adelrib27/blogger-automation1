@@ -1,0 +1,23 @@
+name: V31 LAB R23 - Allowlist novo blog SAFE
+on:
+  push:
+    branches: [lab/v31r1-shopee-safe-20261103]
+    paths:
+      - 'blogger_stores/v31_lab/runner_access/**'
+      - '.github/workflows/v31_lab_r23_runner_allowlist_safe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  allowlist-policy-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Assert exact two-LAB authorization; no Blogger or secrets
+        run: |
+          python -m unittest discover -s blogger_stores/v31_lab/runner_access -p 'test_*.py' -v
+          echo 'R23_V31_EXACT_LAB_ALLOWLIST_SAFE_PASS; blogger_put=false; theme_install=false; runner_config_write=false'
