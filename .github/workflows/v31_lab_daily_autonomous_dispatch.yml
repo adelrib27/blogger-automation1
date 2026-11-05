@@ -4,6 +4,8 @@ on:
   # 13:17 UTC = 10:17 America/Recife. GitHub executa schedule na branch padrao.
   schedule:
     - cron: '17 13 * * *'
+    # Janela de contingencia, 15h23 Recife; gate LAB impede duplicar o mesmo dia.
+    - cron: '23 18 * * *'
   # Apenas no primeiro deploy ou mudanca nesta ponte: PROBE sem Shopee/PUT.
   push:
     branches: [main]
