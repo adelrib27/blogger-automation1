@@ -87,9 +87,14 @@ def validate_page(page):
     if str(page.get("title","")).strip().upper()!="LOJA":
         raise WriterError("WRONG_PAGE_TITLE")
     page_status = str(page.get("status") or "").strip().upper()
-    if page_status != "LIVE":
-        safe_status = re.sub(r"[^A-Z0-9_]", "", page_status)[:24] or "NOT_PROVIDED"
+    # Blogger pages.get often omits 'status' for published pages. In that
+    # case require a publication timestamp, exact Page URL and exact IDs.
+    if page_status and page_status != "LIVE":
+        safe_status = re.sub(r"[^A-Z0-9_]", "", page_status)[:24]
         raise WriterError("PAGE_NOT_LIVE_" + safe_status)
+    if not page_status and not page.get("published"):
+        raise WriterError("PAGE_LIVE_NOT_PROVABLE")
+
     if page.get("url")!=PAGE_URL:
         raise WriterError("WRONG_PAGE_URL")
     content=page.get("content")
