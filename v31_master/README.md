@@ -27,12 +27,14 @@
 - `shopee_r2_safe.py`: usa os secrets `SHOPEE_APP_ID` e `SHOPEE_SECRET` apenas via ambiente de GitHub Actions para obter ofertas `productOfferV2`, valida categoria, domínio, preço, item único e HTML. NÃO escreve no Blogger.
 - `.github/workflows/v31_lab_r2_shopee_safe.yml`: workflow SAFE isolado da V20, `contents: read`, sem cron, sem publicação automática.
 
-## Contrato para replicação futura (não executar sem preflight)
+## Contrato para replicação futura (ordem obrigatória e bloqueante)
 
-1. Alvo: Blog ID e URL exatos; verificar que não existe outra automação/Writer para o mesmo blog.
-2. SEO: descrição adaptada ao nicho; fuso Brasília, lazy/WebP/HTTPS, busca e robots preservados.
-3. Tema: V31/R52 validado; backup XML obrigatório; nenhuma instalação repetida, nenhuma troca de tema por inferência.
-4. Institucionais: criar apenas páginas inexistentes, com títulos Sobre, Contato, Política de Privacidade, Termos de Uso, Aviso de Afiliados. Conteúdos legais/contato exigem adaptação por blog; nunca copiar o texto do laboratório como texto definitivo.
+Referência atual: `v31_master/ORDEM_OBRIGATORIA_REPLICACAO_V31.md`. O LAB R58 NÃO cumpriu esta ordem, portanto seu teste E2E sequencial permanece não validado.
+
+1. Criar blog: preflight, Blog ID e URL exatos, verificar que não existe outro Writer para o mesmo blog.
+2. Tema V31/R52 IMEDIATAMENTE APÓS A CRIAÇÃO: backup do tema padrão, XML validado, uma tentativa de instalação, readback e marcador público V31 obrigatório. Bloquear todas as próximas fases enquanto o tema não estiver comprovadamente instalado.
+3. SEO SOMENTE APÓS INSTALAÇÃO V31 PUBLICAMENTE VALIDADA: descrição adaptada ao nicho, fuso Brasília, lazy/WebP/HTTPS, busca e robots preservados.
+4. Institucionais SOMENTE APÓS SEO: criar apenas páginas inexistentes, com títulos Sobre, Contato, Política de Privacidade, Termos de Uso, Aviso de Afiliados. Conteúdos legais/contato exigem adaptação por blog; nunca copiar o texto do laboratório como texto definitivo.
 5. LOJA: Page estável `/p/loja.html` e ID original preservado; não criar post `Loja` duplicado.
 6. Shopee: SAFE com ofertas atuais da API; curadoria semântica do nicho, links oficiais, deduplicação, `rel` patrocinado, preços como retornados pela API, disclosure, varredura contra scripts/injeção.
 7. Publicar somente no LAB autorizado, após backup e preflight. Exigir readback da API, HTTP 200 público, 16 cards e 32 `rel`; falhar fechado em 429/timeout.
