@@ -54,7 +54,7 @@
     "page_path": "/p/loja.html",
     "first_publish": false,
     "auto_update": false,
-    "mode": "placeholder_until_shopee_safe_pass",
+    "mode": "populated_verified_manual",
     "expected_products": 16,
     "expected_unique_items": 16,
     "write_target": "existing_page_only",
@@ -92,7 +92,13 @@
           "mop spray"
         ]
       }
-    ]
+    ],
+    "source": "Shopee Affiliate API, SAFE GitHub run 42264864219; public readback R56",
+    "published_on": "2026-11-06",
+    "validated_cards": 16,
+    "validated_affiliate_links": 32,
+    "public_http": 200,
+    "page_id_unchanged": true
   },
   "guards": {
     "allowlisted_blog_only": true,
@@ -101,6 +107,7 @@
     "never_modify_other_blogs": true,
     "never_modify_theme": true,
     "never_expose_shopee_secret": true,
-    "required_readback": true
+    "required_readback": true,
+    "local_r49_legacy_store_mode_empty_requires_future_transition": true
   }
 }
