@@ -1,11 +1,5 @@
 name: V31 LAB R2 R57 — Shopee API + Blogger Dry-run
 on:
-  push:
-    branches:
-      - lab/v31-r57-rotacao-safe-lab-r2
-    paths:
-      - "v31_master/**"
-      - ".github/workflows/v31_lab_r2_r57_api_dryrun.yml"
   workflow_dispatch:
 permissions:
   contents: read
