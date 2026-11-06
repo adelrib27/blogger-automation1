@@ -1,0 +1,126 @@
+name: V31 LAB R58 — Rotação Shopee de teste 15 minutos
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - lab/v31-r58-novo-blog-shopee-e2e-15min
+    paths:
+      - "v31_master/state/lab_r58_rotation.json"
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v31-r58-lab-store-single-writer
+  cancel-in-progress: false
+
+jobs:
+  r58-rotation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      R58_LIVE_CONFIRM: APPLY_R58_LAB_R58_EXISTING_STORE_ONLY
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Gate inicial exclusivo do LAB R58 e prazo do teste
+        id: gate
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timezone
+          from pathlib import Path
+          import json,os,urllib.request
+          p=json.loads(Path('v31_master/state/lab_r58_rotation.json').read_text(encoding='utf-8'))
+          ready=(p.get('blog_id')=='5999019959932264006'
+             and p.get('page_id')=='7680030566642713590'
+             and p.get('schema')=='blogger-v31-r58-store-state/v1'
+             and p.get('rotation_enabled') is True
+             and p.get('allow_auto_write') is True
+             and p.get('interval_minutes')==15)
+          exp=datetime.fromisoformat(p['stop_after_utc'].replace('Z','+00:00'))
+          ready=ready and datetime.now(timezone.utc)<exp
+          if ready:
+              try:
+                  req=urllib.request.Request('https://lab-v31-r58-shopee-e2e-20261106.blogspot.com/',
+                                             headers={'User-Agent':'Mozilla/5.0'})
+                  with urllib.request.urlopen(req,timeout=20) as r:
+                      page=r.read(850000).decode('utf-8','replace')
+                      ready=(r.status==200 and 'R58_MOBILE_R52_BEGIN' in page
+                             and 'ub-store-content' in page)
+              except Exception:
+                  ready=False
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              out.write('ready='+('true' if ready else 'false')+'\n')
+          print('R58_SCHEDULE_GATE_'+('READY' if ready else 'BLOCKED_NO_WRITES'))
+          PY
+
+      - name: Regressões obrigatórias antes da Shopee
+        if: steps.gate.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s v31_master/tests -p 'test_r58*.py' -v
+
+      - name: Shopee Affiliate API SAFE — 4 consultas por ciclo
+        if: steps.gate.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python v31_master/r58_shopee_safe.py --out-dir "${RUNNER_TEMP}/r58_rotation_candidate"
+
+      - name: Blogger preflight sem writes
+        if: steps.gate.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python v31_master/r58_rotate_store.py \
+            --candidate "${RUNNER_TEMP}/r58_rotation_candidate/v31_r2_store.html" \
+            --state v31_master/state/lab_r58_rotation.json \
+            --out-dir "${RUNNER_TEMP}/r58_dryrun"
+
+      - name: Aplicar UMA única atualização apenas na Page LOJA R58
+        if: steps.gate.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python v31_master/r58_rotate_store.py \
+            --candidate "${RUNNER_TEMP}/r58_rotation_candidate/v31_r2_store.html" \
+            --state v31_master/state/lab_r58_rotation.json \
+            --out-dir "${RUNNER_TEMP}/r58_live" \
+            --apply-once
+
+      - name: Anexar backup e provas R58 em sucesso ou erro, sem secrets
+        if: always() && steps.gate.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: r58-rotation-lab-${{ github.run_number }}
+          path: |
+            ${{ runner.temp }}/r58_live/
+            ${{ runner.temp }}/r58_rotation_candidate/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Persistir estado somente após PASS API e público
+        if: success() && steps.gate.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          file="${RUNNER_TEMP}/r58_live/R58_ROTATION_STATE_NEXT.json"
+          if [ ! -f "$file" ]; then
+            echo 'R58_NO_CHANGE: nenhuma rotação persistida'
+            exit 0
+          fi
+          test -f "${RUNNER_TEMP}/r58_live/R58_PUBLIC_PASS.json"
+          cp "$file" v31_master/state/lab_r58_rotation.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v31_master/state/lab_r58_rotation.json
+          git commit -m "R58 LAB: persistir rotação após prova pública"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

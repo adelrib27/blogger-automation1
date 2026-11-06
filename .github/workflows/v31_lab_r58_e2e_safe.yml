@@ -1,0 +1,42 @@
+name: V31 LAB R58 — E2E SAFE sem publicações
+on:
+  push:
+    branches:
+      - lab/v31-r58-novo-blog-shopee-e2e-15min
+    paths:
+      - "v31_master/r58*"
+      - "v31_master/tests/test_r58*"
+      - "v31_master/profiles/lab_r58_v31_e2e.json"
+      - "v31_master/state/lab_r58_rotation.json"
+      - ".github/workflows/v31_lab_r58_e2e_safe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-r58-e2e-safe
+  cancel-in-progress: false
+jobs:
+  check-r58:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Lint e 21 testes offline sem writes
+        run: |
+          set -euo pipefail
+          python -m py_compile v31_master/r58_store_policy.py v31_master/r58_rotate_store.py v31_master/r58_shopee_safe.py v31_master/r58_verify_store_readonly.py
+          python -m unittest discover -s v31_master/tests -p 'test_r58*.py' -v
+      - name: Validar SEO páginas e contrato de loja
+        run: |
+          set -euo pipefail
+          python v31_master/replication_safe.py --profile v31_master/profiles/lab_r58_v31_e2e.json
+      - name: Auditar Blogger AO VIVO em modo somente leitura
+        run: |
+          python v31_master/r58_verify_store_readonly.py
