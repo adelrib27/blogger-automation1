@@ -1,6 +1,6 @@
 # R58 — Teste Blogger V31 + Shopee de ponta a ponta, LAB isolado
 
-**Estado em 2026-11-06:** BLOG_CRIADO + SEO + 6 PÁGINAS + 3 POSTS + LOJA 16
+> **CORREÇÃO DE ORDEM OBRIGATÓRIA (06/11/2026):** o fluxo correto é criação do blog → instalação e validação pública do Tema V31 → configuração SEO → páginas institucionais → artigos → LOJA → rotação. A execução R58 já feita publicou SEO/páginas/artigos/LOJA antes do tema, contrariando essa ordem. Esses recursos permanecem preservados, mas o R58 NÃO é um teste E2E sequencial válido. Documento normativo: ORDEM_OBRIGATORIA_REPLICACAO_V31.md. NÃO criar novo blog nem remover conteúdo para disfarçar a ordem.\n\n**Estado em 2026-11-06:** BLOG_CRIADO + SEO + 6 PÁGINAS + 3 POSTS + LOJA 16
 PUBLICADOS. TEMA V31 PREPARADO, AINDA NÃO INSTALADO.
 ROTAÇÃO DE 15 MINUTOS IMPLEMENTADA E VALIDADA EM DRY-RUN,
 MAS AINDA DESATIVADA POR GATE.
