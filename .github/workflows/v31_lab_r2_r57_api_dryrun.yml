@@ -1,0 +1,54 @@
+name: V31 LAB R2 R57 — Shopee API + Blogger Dry-run
+on:
+  push:
+    branches:
+      - lab/v31-r57-rotacao-safe-lab-r2
+    paths:
+      - "v31_master/**"
+      - ".github/workflows/v31_lab_r2_r57_api_dryrun.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-r57-lab-r2-dryrun
+  cancel-in-progress: false
+jobs:
+  shopee-and-blogger-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verificar código sem executar writers
+        run: |
+          set -euo pipefail
+          python -m py_compile v31_master/shopee_r2_safe.py v31_master/r57_store_policy.py v31_master/r57_rotate_store.py
+          python -m unittest discover -s v31_master/tests -p 'test_r57*.py' -v
+      - name: Consultar a Shopee usando os secrets já existentes
+        run: |
+          set -euo pipefail
+          python v31_master/shopee_r2_safe.py --out-dir "${RUNNER_TEMP}/r57_safe_shopee"
+      - name: Gate de leitura autenticada da LOJA real sem atualizações
+        run: |
+          set -euo pipefail
+          python v31_master/r57_rotate_store.py \
+            --candidate "${RUNNER_TEMP}/r57_safe_shopee/v31_r2_store.html" \
+            --state "v31_master/state/lab_r2_rotation.json" \
+            --out-dir "${RUNNER_TEMP}/r57_dryrun"
+          echo "R57_BLOGGER_WRITES=0"
+      - name: Salvar seleção SAFE para inspeção, sem atualizar Blogger
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-r57-labr2-safe-candidate
+          path: ${{ runner.temp }}/r57_safe_shopee/
+          retention-days: 7
+          if-no-files-found: error
