@@ -1,0 +1,54 @@
+name: V31 LAB R2 R57 — Política de loja SAFE
+on:
+  push:
+    branches:
+      - lab/v31-r57-rotacao-safe-lab-r2
+    paths:
+      - "v31_master/**"
+      - ".github/workflows/v31_lab_r2_r57_verify_safe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: r57-policy-safe-labr2
+  cancel-in-progress: false
+jobs:
+  validation-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Lint syntax Python V31
+        run: |
+          python -m py_compile v31_master/replication_safe.py v31_master/shopee_r2_safe.py v31_master/r57_store_policy.py v31_master/tests/test_r57_store_policy.py
+      - name: Validar perfil R52 R55 e estado R56
+        run: |
+          set -euo pipefail
+          python v31_master/replication_safe.py --profile v31_master/profiles/lab_r2_v31_r52_r55.json
+          python - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0,'v31_master')
+          import r57_store_policy as gate
+          state=json.loads(Path('v31_master/state/lab_r2_rotation.json').read_text(encoding='utf-8'))
+          gate.validate_state(state)
+          assert state['rotation_enabled'] is False and state['allow_auto_write'] is False
+          assert state['blog_id']=='8476663092477971560' and state['page_id']=='7313055886747196118'
+          print('R57_SAFE_REGISTRY_OK_NO_WRITES')
+          PY
+      - name: Executar regressões offline sem credenciais
+        run: |
+          python -m unittest discover -s v31_master/tests -p 'test_r57*.py' -v
+      - name: Confirmar políticas imutáveis do Runner R49
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('v31_master/r57_store_policy.py').read_text(encoding='utf-8')
+          assert 'v31_master_approved_labs.json' not in p
+          assert 'local_service_v08.py' not in p
+          assert 'Start-Process' not in p
+          print('R57_LOCAL_RUNNER_IMMUTABLE_NO_WRITES')
+          PY
