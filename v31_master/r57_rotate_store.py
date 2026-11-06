@@ -86,8 +86,10 @@ def validate_page(page):
         raise WriterError("WRONG_BLOG_PAGE_ID")
     if str(page.get("title","")).strip().upper()!="LOJA":
         raise WriterError("WRONG_PAGE_TITLE")
-    if str(page.get("status","")).upper()!="LIVE":
-        raise WriterError("PAGE_NOT_LIVE")
+    page_status = str(page.get("status") or "").strip().upper()
+    if page_status != "LIVE":
+        safe_status = re.sub(r"[^A-Z0-9_]", "", page_status)[:24] or "NOT_PROVIDED"
+        raise WriterError("PAGE_NOT_LIVE_" + safe_status)
     if page.get("url")!=PAGE_URL:
         raise WriterError("WRONG_PAGE_URL")
     content=page.get("content")
