@@ -1,0 +1,76 @@
+name: V31 LAB R2 — R57 rotação controlada (somente manual até LIVE PASS)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: v31-labr2-store-writer-single
+  cancel-in-progress: false
+jobs:
+  rotation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      R57_LIVE_CONFIRM: APPLY_R57_LAB_R2_EXISTING_STORE_ONLY
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: SAFE 21 regressões locais
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s v31_master/tests -p 'test_r57*.py' -v
+          python v31_master/replication_safe.py --profile v31_master/profiles/lab_r2_v31_r52_r55.json
+      - name: Shopee Affiliate API SAFE — 16 ofertas sem escrever
+        run: |
+          set -euo pipefail
+          python v31_master/shopee_r2_safe.py --out-dir "${RUNNER_TEMP}/r57_shopee"
+      - name: Blogger API preflight de LOJA existente, sem escrita
+        run: |
+          set -euo pipefail
+          python v31_master/r57_rotate_store.py \
+            --candidate "${RUNNER_TEMP}/r57_shopee/v31_r2_store.html" \
+            --state v31_master/state/lab_r2_rotation.json \
+            --out-dir "${RUNNER_TEMP}/r57_preflight"
+      - name: Uma única tentativa de atualizar SOMENTE a Page LOJA LAB R2
+        run: |
+          set -euo pipefail
+          python v31_master/r57_rotate_store.py \
+            --candidate "${RUNNER_TEMP}/r57_shopee/v31_r2_store.html" \
+            --state v31_master/state/lab_r2_rotation.json \
+            --out-dir "${RUNNER_TEMP}/r57_live" \
+            --apply-once
+      - name: Sempre preservar backup e registro da tentativa, sem secrets
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-r57-labr2-live-diagnostico
+          path: |
+            ${{ runner.temp }}/r57_live/
+            ${{ runner.temp }}/r57_shopee/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Persistir rotação somente após PASS público
+        if: success()
+        run: |
+          set -euo pipefail
+          file="${RUNNER_TEMP}/r57_live/R57_ROTATION_STATE_NEXT.json"
+          if [ ! -f "$file" ]; then
+            echo "R57_NO_CHANGE: nenhum estado alterado."
+            exit 0
+          fi
+          test -f "${RUNNER_TEMP}/r57_live/R57_PUBLIC_PASS.json"
+          cp "$file" v31_master/state/lab_r2_rotation.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v31_master/state/lab_r2_rotation.json
+          git commit -m "R57: persistir rotação LAB R2 após PASS público"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
