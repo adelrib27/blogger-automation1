@@ -1,0 +1,54 @@
+name: V31 LAB R2 R57 — Readback do catálogo R56
+on:
+  push:
+    branches:
+      - lab/v31-r57-rotacao-safe-lab-r2
+    paths:
+      - "v31_master/**"
+      - ".github/workflows/v31_lab_r2_r57_snapshot_readback.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: v31-r57-labr2-snapshot-readback
+  cancel-in-progress: false
+jobs:
+  validate-existing-store:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          name: v31-r56-labr2-shopee-safe
+          run-id: 42264864219
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/r57_r56_snap
+      - name: Conferir catálogo original R56 sem chamar Shopee
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          root=Path('${{ runner.temp }}/r57_r56_snap')
+          h=(root/'v31_r2_store.html').read_text(encoding='utf-8')
+          p=json.loads((root/'v31_r2_products.json').read_text(encoding='utf-8'))
+          assert p['count']==16 and len(p['products'])==16
+          assert hashlib.sha256(h.encode('utf-8')).hexdigest()=='7f13af511ec8760a49583fe76224562d34428ef026a3985b16d334971c8ea42b'
+          print('R57_R56_SNAPSHOT_HASH_OK_NO_WRITES')
+          PY
+      - name: Comparar catálogo R56 com Page LIVE por Blogger API em leitura
+        run: |
+          python v31_master/r57_rotate_store.py \
+            --candidate "${RUNNER_TEMP}/r57_r56_snap/v31_r2_store.html" \
+            --state v31_master/state/lab_r2_rotation.json \
+            --out-dir "${RUNNER_TEMP}/r57_r56_readback"
+          echo "R57_BLOGGER_WRITES=0"
