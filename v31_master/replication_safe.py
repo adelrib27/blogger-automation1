@@ -60,11 +60,17 @@ def validate_profile(d: dict) -> None:
     store = d.get("store") or {}
     if (store.get("page_path") != "/p/loja.html" or not str(store.get("page_id", "")).isdigit()
             or store.get("first_publish") is not False or store.get("auto_update") is not False
-            or store.get("mode") != "placeholder_until_shopee_safe_pass"
+            or store.get("mode") not in ("placeholder_until_shopee_safe_pass", "populated_verified_manual")
             or store.get("expected_products") != 16
             or store.get("write_target") != "existing_page_only"
             or len(store.get("categories") or []) != 4):
         raise GateError("LOJA sem gate SAFE ou quantidade incorreta")
+    if store.get("mode") == "populated_verified_manual":
+        if (store.get("validated_cards") != 16 or
+                store.get("validated_affiliate_links") != 32 or
+                store.get("public_http") != 200 or
+                store.get("page_id_unchanged") is not True):
+            raise GateError("publicação da LOJA sem evidência 16/32/200")
     guards = d.get("guards") or {}
     if not all(guards.get(k) is True for k in (
             "allowlisted_blog_only", "disable_existing_writers",
