@@ -74,5 +74,16 @@ class TestWriter(unittest.TestCase):
         self.assertTrue((out/"BACKUP_LOJA_R58_PRE_WRITE.json").exists())
         self.assertFalse((out/"R58_ROTATION_STATE_NEXT.json").exists())
 
+    def test_public_html_large_theme_region_checked(self):
+        candidate=make_html(20)
+        full="<html><head>R58_MOBILE_R52_BEGIN</head><body>ub-store-content"+("X"*250000)+candidate+"</body></html>"
+        with patch.object(writer,"public_read_once",return_value=full), patch.object(writer.time,"sleep"):
+            self.assertTrue(writer.check_public(candidate))
+    def test_public_without_v31_marker_is_not_pass(self):
+        candidate=make_html(20)
+        full="<html><body>ub-store-content"+("X"*250000)+candidate+"</body></html>"
+        with patch.object(writer,"public_read_once",return_value=full), patch.object(writer.time,"sleep"):
+            self.assertFalse(writer.check_public(candidate))
+
 if __name__=="__main__":
     unittest.main(verbosity=2)
