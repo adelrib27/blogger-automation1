@@ -1,0 +1,113 @@
+{
+  "schema": "blogger-v31-replication-profile/v1",
+  "mode": "LAB_SAFE_ONLY",
+  "target": {
+    "blog_id": "8476663092477971560",
+    "url": "https://lab-v31-r2-replicacao-limpa-20261105.blogspot.com/",
+    "name": "Laboratório V31 R2 — Replicação Limpa"
+  },
+  "theme": {
+    "variant": "V31_R52_MOBILE",
+    "reference_xml_sha256": "9fc1c3999ecfa4878404c6f65892648fbfe31adc6ae08f6849a673e7577c7247",
+    "reference_only": true,
+    "install_permission": false
+  },
+  "seo": {
+    "description": "Laboratório V31 R2 — Replicação Limpa. Ambiente de testes da Automação Mestre Blogger V31 para validar identidade visual, páginas, SEO, navegação e a futura integração de LOJA Shopee sem publicação comercial.",
+    "search_description": "Laboratório técnico Blogger V31 R2: testes seguros de tema, SEO, páginas institucionais, navegação e replicação de blogs.",
+    "timezone": "(GMT-03:00) Horário Padrão de Brasília – São Paulo",
+    "https_redirect": true,
+    "search_visibility": true,
+    "lazy_images": true,
+    "webp_images": true,
+    "custom_robots": "UNCHANGED"
+  },
+  "pages": [
+    {
+      "title": "Sobre",
+      "path": "/p/sobre.html",
+      "id": "4001764750546412070"
+    },
+    {
+      "title": "Contato",
+      "path": "/p/contato.html",
+      "id": "8282933453230049623"
+    },
+    {
+      "title": "Política de Privacidade",
+      "path": "/p/politica-de-privacidade.html",
+      "id": "7381622646512326109"
+    },
+    {
+      "title": "Termos de Uso",
+      "path": "/p/termos-de-uso.html",
+      "id": "9210386582720265093"
+    },
+    {
+      "title": "Aviso de Afiliados",
+      "path": "/p/aviso-de-afiliados.html",
+      "id": "5911162103342155599"
+    }
+  ],
+  "store": {
+    "page_id": "7313055886747196118",
+    "page_path": "/p/loja.html",
+    "first_publish": false,
+    "auto_update": false,
+    "mode": "populated_verified_manual",
+    "expected_products": 16,
+    "expected_unique_items": 16,
+    "write_target": "existing_page_only",
+    "rotation_persist_after_public_pass": true,
+    "categories": [
+      {
+        "name": "Casa e Organização",
+        "terms": [
+          "organizador casa",
+          "caixa organizadora",
+          "estante organizadora"
+        ]
+      },
+      {
+        "name": "Cozinha",
+        "terms": [
+          "utensilios cozinha",
+          "air fryer",
+          "cafeteira"
+        ]
+      },
+      {
+        "name": "Tecnologia",
+        "terms": [
+          "carregador usb",
+          "suporte notebook",
+          "mouse sem fio"
+        ]
+      },
+      {
+        "name": "Utilidades",
+        "terms": [
+          "garrafa termica",
+          "luminaria led",
+          "mop spray"
+        ]
+      }
+    ],
+    "source": "Shopee Affiliate API, SAFE GitHub run 42264864219; public readback R56",
+    "published_on": "2026-11-06",
+    "validated_cards": 16,
+    "validated_affiliate_links": 32,
+    "public_http": 200,
+    "page_id_unchanged": true
+  },
+  "guards": {
+    "allowlisted_blog_only": true,
+    "disable_existing_writers": true,
+    "runner_r49_no_restart": true,
+    "never_modify_other_blogs": true,
+    "never_modify_theme": true,
+    "never_expose_shopee_secret": true,
+    "required_readback": true,
+    "local_r49_legacy_store_mode_empty_requires_future_transition": true
+  }
+}
