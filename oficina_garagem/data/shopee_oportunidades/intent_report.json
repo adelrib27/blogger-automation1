@@ -2,9 +2,9 @@
   "version": "2.3",
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
-    "input": 447,
-    "accepted": 233,
-    "rejected": 214
+    "input": 458,
+    "accepted": 239,
+    "rejected": 219
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -26,6 +26,10 @@
       "fallback": 0
     },
     "shopDistribution": [
+      [
+        "1092274438",
+        3
+      ],
       [
         "1028459403",
         2
@@ -87,6 +91,10 @@
         1
       ],
       [
+        "1212721731",
+        1
+      ],
+      [
         "1660170092",
         1
       ],
@@ -117,31 +125,15 @@
       [
         "1626437729",
         1
-      ],
-      [
-        "1534000949",
-        1
-      ],
-      [
-        "1541644955",
-        1
-      ],
-      [
-        "998773037",
-        1
-      ],
-      [
-        "1129899846",
-        1
       ]
     ],
     "keywordDistribution": [
       [
-        "pano microfibra automotivo",
+        "furadeira",
         3
       ],
       [
-        "furadeira",
+        "pano microfibra automotivo",
         3
       ],
       [
@@ -149,7 +141,7 @@
         3
       ],
       [
-        "multimetro digital",
+        "painel ferramentas",
         3
       ],
       [
@@ -173,19 +165,27 @@
         2
       ],
       [
-        "lavadora alta pressao",
-        2
-      ],
-      [
         "aspirador automotivo",
         2
       ],
       [
-        "escova limpeza automotiva",
-        2
+        "lavadora alta pressao",
+        1
       ],
       [
         "protetor auricular",
+        1
+      ],
+      [
+        "multimetro digital",
+        1
+      ],
+      [
+        "compressor de ar portatil",
+        1
+      ],
+      [
+        "escova limpeza automotiva",
         1
       ],
       [
@@ -194,10 +194,6 @@
       ]
     ],
     "categoryDistribution": [
-      [
-        "Limpeza e Conservacao",
-        7
-      ],
       [
         "Ferramentas",
         7
@@ -208,7 +204,11 @@
       ],
       [
         "Organizacao de Garagem",
-        3
+        6
+      ],
+      [
+        "Limpeza e Conservacao",
+        5
       ],
       [
         "Seguranca e Protecao",
@@ -216,26 +216,13 @@
       ],
       [
         "Manutencao",
-        3
+        2
       ]
     ]
   },
   "ranking": [
     {
       "rank": 1,
-      "itemId": 20699205697,
-      "productName": "Pano de Limpeza Multiuso Kit 10 Panos De Limpeza Microfibra Super Absorvente , Limpeza Doméstica e Automotiva de Carro",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "pano microfibra automotivo"
-      ],
-      "opportunityScore": 76.58,
-      "shopName": "MULTIORIENTAL",
-      "offerLink": "https://s.shopee.com.br/1qdND67ZS1"
-    },
-    {
-      "rank": 2,
       "itemId": 58270871239,
       "productName": "Kit Jogo Serra Copo 6 Peças Broca Madeira Gesso Drywall 32 38 44 51mm Furadeira Furador de Madeira Cortador de Furos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -246,6 +233,19 @@
       "opportunityScore": 76.43,
       "shopName": "O Barateiro Ferragens 3",
       "offerLink": "https://s.shopee.com.br/2LZdgBYrhZ"
+    },
+    {
+      "rank": 2,
+      "itemId": 20699205697,
+      "productName": "Pano de Limpeza Multiuso Kit 10 Panos De Limpeza Microfibra Super Absorvente , Limpeza Doméstica e Automotiva de Carro",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "opportunityScore": 76.27,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/1qdND67ZS1"
     },
     {
       "rank": 3,
@@ -269,7 +269,6 @@
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "jogo de chaves",
-        "jogo de soquetes",
         "caixa ferramentas",
         "maleta ferramentas"
       ],
@@ -286,7 +285,7 @@
       "intentMatchedKeywords": [
         "furadeira"
       ],
-      "opportunityScore": 71.27,
+      "opportunityScore": 71.23,
       "shopName": "Mundo Pryst peças e acessórios",
       "offerLink": "https://s.shopee.com.br/qkptQeZkQ"
     },
@@ -461,6 +460,19 @@
     },
     {
       "rank": 19,
+      "itemId": 58207052374,
+      "productName": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v ",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "compressor de ar portatil"
+      ],
+      "opportunityScore": 65.36,
+      "shopName": "GR7 Imports",
+      "offerLink": "https://s.shopee.com.br/1qdN6P3YFU"
+    },
+    {
+      "rank": 20,
       "itemId": 22694953462,
       "productName": "Kit Jogo De Ferramentas 27 Peças Com Maleta Chaves Allen Alicate Martelo Completos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -473,7 +485,7 @@
       "offerLink": "https://s.shopee.com.br/AUvLSuu3ga"
     },
     {
-      "rank": 20,
+      "rank": 21,
       "itemId": 58258700275,
       "productName": "Suporte para Celular Carro Veicular caminhão Porta Copo Universal Ajustável flexível",
       "priorityTier": "COMISSAO_EXTRA",
@@ -486,7 +498,7 @@
       "offerLink": "https://s.shopee.com.br/7KyJh3XaPF"
     },
     {
-      "rank": 21,
+      "rank": 22,
       "itemId": 24575870687,
       "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
       "priorityTier": "COMISSAO_EXTRA",
@@ -499,7 +511,7 @@
       "offerLink": "https://s.shopee.com.br/5LDFJQZaXe"
     },
     {
-      "rank": 22,
+      "rank": 23,
       "itemId": 22494655461,
       "productName": "Kit Ferramentas 10 40 46 Peças Aço Cromo Vanádio Chave Soquete Maleta Estojo Para Carro Moto e Casa",
       "priorityTier": "COMISSAO_EXTRA",
@@ -513,7 +525,7 @@
       "offerLink": "https://s.shopee.com.br/9V2oH4xriM"
     },
     {
-      "rank": 23,
+      "rank": 24,
       "itemId": 58213601132,
       "productName": "Bolsa de Armazenamento em Feltro para Porta-Malas do Carro, Organizador de Ferramentas e Acessórios Automotivos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -526,7 +538,7 @@
       "offerLink": "https://s.shopee.com.br/6VPChXa0jD"
     },
     {
-      "rank": 24,
+      "rank": 25,
       "itemId": 22998706834,
       "productName": "Mini Aspirador Automotivo Portátil Potente Recarregável Premium B-88-2",
       "priorityTier": "COMISSAO_EXTRA",
@@ -539,7 +551,20 @@
       "offerLink": "https://s.shopee.com.br/4qGyiT7VBk"
     },
     {
-      "rank": 25,
+      "rank": 26,
+      "itemId": 23293604983,
+      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 118x35 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 62.85,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/2LZdjt7odR"
+    },
+    {
+      "rank": 27,
       "itemId": 22399549197,
       "productName": "Bolsa de Armazenamento em Feltro para Porta-Malas do Carro, Organizador de Ferramentas e Acessórios Automotivos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -552,7 +577,33 @@
       "offerLink": "https://s.shopee.com.br/5fq5i0dBQ6"
     },
     {
-      "rank": 26,
+      "rank": 28,
+      "itemId": 57755036915,
+      "productName": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 62.58,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/1W0WkMAzKE"
+    },
+    {
+      "rank": 29,
+      "itemId": 23793600890,
+      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 89x52 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 62.5,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/20wnLH95JP"
+    },
+    {
+      "rank": 30,
       "itemId": 22499407636,
       "productName": "Luva Volk Ranhurada Original CA Protecao Trabalho EPI Segurança Lavar Louças Banheiro Tira Pelos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -563,58 +614,6 @@
       "opportunityScore": 62.46,
       "shopName": "JF ECOMMERCE",
       "offerLink": "https://s.shopee.com.br/7KyJlEUE4L"
-    },
-    {
-      "rank": 27,
-      "itemId": 23294140061,
-      "productName": "Lavadora De Alta Pressão Recarregável Sem Fio 48V Baterias Linha Premium Para Carros e Jardins",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "lavadora alta pressao"
-      ],
-      "opportunityScore": 62.01,
-      "shopName": "ANXIN TECH LTDA",
-      "offerLink": "https://s.shopee.com.br/7puaI2Cbdx"
-    },
-    {
-      "rank": 28,
-      "itemId": 41314419184,
-      "productName": "120ml  Limpador De Vidro Esponja Automotiva Escova De Limpeza Para-Brisa Óleo Filme Agente De Polimento Anti Mancha",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "escova limpeza automotiva"
-      ],
-      "opportunityScore": 61.9,
-      "shopName": "YF_globa.br",
-      "offerLink": "https://s.shopee.com.br/6q236BgjZ7"
-    },
-    {
-      "rank": 29,
-      "itemId": 22798793460,
-      "productName": "Multímetro Digital Profissional MD-180L ou MD-200L com Luz de Fundo, Bipe, Bateria e Pontas de Teste",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "multimetro digital"
-      ],
-      "opportunityScore": 61.2,
-      "shopName": "@LVSHOP",
-      "offerLink": "https://s.shopee.com.br/5LDFJMoTK9"
-    },
-    {
-      "rank": 30,
-      "itemId": 23998317427,
-      "productName": "Multimetro Digital Profissional Sem Bipe e Com Bipe Dígitos Voltimetro Iluminado Com Bateria e Ponta",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "multimetro digital"
-      ],
-      "opportunityScore": 60.59,
-      "shopName": "VL_Store",
-      "offerLink": "https://s.shopee.com.br/6fictojOcX"
     }
   ],
   "rejectedSample": [
@@ -778,6 +777,33 @@
       }
     },
     {
+      "itemId": 58251055533,
+      "productName": "14pecas jogo de Bits soquete para parafusadeira 5 A 13mm kit de bits sextavado",
+      "shopName": "Capiforte Tools.BR",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo",
+              "kit"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
       "itemId": 21499674796,
       "productName": "5pcs Jogo De Lima Rotativa Grossa Aço Para Madeira, Metal e Escultura",
       "shopName": "SUPERMERCADO RJ",
@@ -883,27 +909,26 @@
       }
     },
     {
-      "itemId": 22699131975,
-      "productName": "Cabo 6A USB Tipo-C | Carregamento Rápido e Dados",
-      "shopName": "Kog Store ",
+      "itemId": 22298877679,
+      "productName": "Jogo 30 peças Disco Serra Circular Madeira Alta Resistência Retifica E Furadeira Parafusadeira Conjunto de mini",
+      "shopName": "Kawan",
       "keywords": [
-        "jogo de soquetes"
+        "jogo de chaves"
       ],
       "evaluations": {
-        "jogo de soquetes": {
+        "jogo de chaves": {
           "accepted": false,
-          "score": 0.0,
+          "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
-          "matched": [],
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
           "missing": [
             [
-              "soquete",
-              "soquetes"
-            ],
-            [
-              "jogo",
-              "kit",
-              "catraca"
+              "chave",
+              "chaves"
             ]
           ]
         }
@@ -1104,31 +1129,6 @@
       }
     },
     {
-      "itemId": 47406526577,
-      "productName": "Jogo Alicates Universal Corte Bico 1000V 3 Peças Vonder",
-      "shopName": "Deend",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
-            ]
-          ]
-        }
-      }
-    },
-    {
       "itemId": 18798577439,
       "productName": "Timer Temporizador Digital Bivolt Automático 110/227V Analogico ou Digital DIVERSOS MODELOS",
       "shopName": "VOOLOJA",
@@ -1253,6 +1253,61 @@
             [
               "multimetro",
               "multímetro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58266885844,
+      "productName": "Motocompressor Ar Schulz MS2,3 Jet Fácil Plus 1/3CV 220V Monofásico 60Hz Diafragma Portátil Amarelo",
+      "shopName": "Pet Anzai",
+      "keywords": [
+        "compressor de ar portatil"
+      ],
+      "evaluations": {
+        "compressor de ar portatil": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "portatil",
+              "portátil"
+            ]
+          ],
+          "missing": [
+            [
+              "compressor",
+              "inflador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58266746911,
+      "productName": "Enchedor Pneu Portátil Jump Starter Multifuncional Digital 6 em 1. Auxiliar de partida",
+      "shopName": "Ns Perpetuo",
+      "keywords": [
+        "compressor de ar portatil"
+      ],
+      "evaluations": {
+        "compressor de ar portatil": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "portatil",
+              "portátil",
+              "pneu"
+            ]
+          ],
+          "missing": [
+            [
+              "compressor",
+              "inflador"
             ]
           ]
         }
@@ -1408,7 +1463,7 @@
     },
     {
       "itemId": 48616191340,
-      "productName": "Porta Chaves Parede Carro Antigo Decorativo 6 Ganchos Suporte Organizador Chaves",
+      "productName": "Porta Chaves Parede Carro Antigo Decorativo 6 Ganchos Suporte Organizador",
       "shopName": "LOJA 3DTUDO",
       "keywords": [
         "suporte celular carro"
@@ -2229,6 +2284,298 @@
       }
     },
     {
+      "itemId": 57854084081,
+      "productName": "Painel Blackout De Soldagem Capa De Proteção Ocular Equipamento De Soldador Antirreflexo",
+      "shopName": "senmi.br",
+      "keywords": [
+        "painel ferramentas",
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        },
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "luva",
+              "luvas"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 41005176440,
+      "productName": "36/24/12PCS Piso Painel Revestimento Vinílico Adesivo Lavável Madeira 91,4x15,2cm Cobrindo 5㎡",
+      "shopName": "Mestre dos Móveis",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23898776729,
+      "productName": "Fita Dupla Face Extra Forte Fracionada Pronta Entrega Para Placa PVC 3D Painel Ripado Cabeceira",
+      "shopName": "HGO DECOR",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 55805207201,
+      "productName": "Perfil de Acabamento Painel Ripado de Madeira MDF 90cm x 3cm",
+      "shopName": "Gs Home Décor",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58252348514,
+      "productName": "100 Peças Parafusos De Expansão Multiuso Para Painel De Cimento Painel De Isolamento Placa De Gesso Drywall",
+      "shopName": "Mochileiragem___SHOP",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19598290126,
+      "productName": "Fita Dupla Face Extra Forte Adesiva 12mm x 2/5/20m Transparente Colar Quadro Painel Parede",
+      "shopName": "Usual Mix",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 56755580448,
+      "productName": "36 Peças(5㎡) Piso Painel Revestimento Vinílico Adesivo Lavável Madeira 91,4CMx15,2CM",
+      "shopName": "KKAHDS.br",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 47355599290,
+      "productName": "KIT 3 Fitas EVA para Ripado Branco Autocolante 5cmx5mmx30m Painel Decorativo Parede Porta e Vedaçao",
+      "shopName": "DPR Fitas e Acabamentos",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "painel decorativo"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 18297670009,
+      "productName": "Placa Painel Luminoso 99 12v Led 2 Ventosas Com Cabo USB",
+      "shopName": "LIULIU",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "painel"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 20199032857,
+      "productName": "Kit 40 Placas PVC 3D Decoração Revestimento de Parede 25x25 cm",
+      "shopName": "Inove Papéis de Parede e Decoração",
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "evaluations": {
+        "painel ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "painel",
+              "pegboard"
+            ],
+            [
+              "ferramenta",
+              "ferramentas",
+              "oficina"
+            ]
+          ]
+        }
+      }
+    },
+    {
       "itemId": 22898484053,
       "productName": "Veda + Tec 4 em 1 Bi Componente Para Laje; Parede; caixa d'agua; piscina 20kg",
       "shopName": "Veda+ Impermeabilizantes",
@@ -2327,86 +2674,34 @@
       }
     },
     {
-      "itemId": 12414430914,
-      "productName": "Parafuso Chipboard Phillips P/ Madeira 3,5x12 Caixa 300 Pçs",
-      "shopName": "Meupuxador",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "caixa"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 11151528869,
-      "productName": "Caixa Com 300 Parafusos Para Madeira MDF Fenda Phillips 4x35mm",
-      "shopName": "Meupuxador",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "caixa"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 9493695671,
-      "productName": "Porca Bucha Para Pe De Cama Box Rosca Madeira 5/16 - 40 Pçs",
-      "shopName": "Meupuxador",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "caixa",
-              "maleta"
-            ],
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
       "itemId": 12614951981,
       "productName": "Parafuso Chipboard Phillips Para Madeira 4x16 Caixa 200 Pcs",
+      "shopName": "Meupuxador",
+      "keywords": [
+        "caixa ferramentas"
+      ],
+      "evaluations": {
+        "caixa ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "caixa"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 12414430914,
+      "productName": "Parafuso Chipboard Phillips P/ Madeira 3,5x12 Caixa 300 Pçs",
       "shopName": "Meupuxador",
       "keywords": [
         "caixa ferramentas"
@@ -2448,281 +2743,6 @@
             ]
           ],
           "missing": [
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 10351814828,
-      "productName": "Caixa Com 500 Parafusos Chipboard Cabeça Chata Phillips 4x14mm",
-      "shopName": "Meupuxador",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "caixa"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 5373275409,
-      "productName": "Maleta Combat 5080 Preta - 12\" - 24 X 11 X 7 Cms",
-      "shopName": "Bazar Dona Dirce",
-      "keywords": [
-        "caixa ferramentas",
-        "maleta ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "maleta"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        },
-        "maleta ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "maleta"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23094546288,
-      "productName": "Raspadores Multiuso Para Limpar Box Com 5-10 Lâminas Profissional/Vidro Piso Cerâmica Azulejo",
-      "shopName": "PANGU Store",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "caixa",
-              "maleta"
-            ],
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23394172904,
-      "productName": "Barreira de Agua Retenção em Silicone Vedação Area Molhada Banheiro Box Lavanderia dupla face",
-      "shopName": "Ngk Store",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "caixa",
-              "maleta"
-            ],
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22897310443,
-      "productName": "Caixa/Coletor Perfuro Cortante 1,5L / 3L / 7L / 13L / 20L",
-      "shopName": "Hope Cirurgica",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "caixa"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 51901315781,
-      "productName": "Barreira de Agua Retenção em Silicone Vedação Area Molhada Banheiro Box Lavanderia dupla face",
-      "shopName": "Maxoney.br",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "caixa",
-              "maleta"
-            ],
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23294415995,
-      "productName": "Selante Impermeável  100% TRANSPARENTE liquido multiuso, Box Pia Ralo Trinca Telha Vaso e Vazamentos",
-      "shopName": "MFK Impermax - impermeabilizantes",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "caixa",
-              "maleta"
-            ],
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 27443848129,
-      "productName": "1 Caixa De 60 Cílios De Seda Naturais Em Forma De L Sem Nós , Extensões De Vison De 8-14 Mm , Ferramentas De Maquiagem P",
-      "shopName": "MIOFIA Beauty.br",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "maquiagem",
-            "cilios",
-            "cílios",
-            "vison",
-            "extensoes",
-            "extensões"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 23096601354,
-      "productName": "Kit 15 Pinceis Pincel Estojo Profissional Unhas Artistica",
-      "shopName": "Femme Fashion",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "caixa",
-              "maleta"
-            ],
-            [
-              "ferramenta",
-              "ferramentas"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22598546057,
-      "productName": "Kit Manicure Completo 12/16/19 Peças com Estojo Portátil Cortador de Unha Alicate Tesoura Pinça",
-      "shopName": "LUCK FASHION",
-      "keywords": [
-        "caixa ferramentas"
-      ],
-      "evaluations": {
-        "caixa ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "caixa",
-              "maleta"
-            ],
             [
               "ferramenta",
               "ferramentas"
