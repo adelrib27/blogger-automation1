@@ -38,6 +38,18 @@ jobs:
         run: |
           set -euo pipefail
           python v31_master/shopee_r2_safe.py --out-dir "$RUNNER_TEMP/v31_r2_shopee_safe"
+      - name: Expor HTML revisado para importação via conector Blogger
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          html=(Path(os.environ['RUNNER_TEMP']) / 'v31_r2_shopee_safe' / 'v31_r2_store.html').read_text(encoding='utf-8')
+          assert html.count('data-item-id=') == 16
+          assert html.count('rel="nofollow sponsored noopener"') == 32
+          assert not any(x in html for x in ('SHOPEE_SECRET', 'SHOPEE_APP_ID', '<script'))
+          print('V31_R56_STOREFILE_JSON=' + json.dumps({'blog_id': '8476663092477971560', 'html': html}, ensure_ascii=True, separators=(',', ':')))
+          PY
       - name: Artefatos de revisão — somente candidatos reais
         if: success()
         uses: actions/upload-artifact@v4
