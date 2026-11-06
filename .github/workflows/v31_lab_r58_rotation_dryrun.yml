@@ -1,0 +1,52 @@
+name: V31 LAB R58 — rotação SAFE com API e Blogger
+on:
+  push:
+    branches:
+      - lab/v31-r58-novo-blog-shopee-e2e-15min
+    paths:
+      - ".github/workflows/v31_lab_r58_rotation_dryrun.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: v31-r58-rotation-dryrun
+  cancel-in-progress: false
+jobs:
+  rotation-dryrun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          name: r58-lab-shopee-safe-16-items
+          run-id: 42277216118
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/r58_new_offers
+      - name: Conferir integridade do catálogo aprovado e 7 itens novos
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path('${{ runner.temp }}/r58_new_offers')
+          h=(root/'v31_r2_store.html').read_bytes()
+          assert hashlib.sha256(h).hexdigest()=='1d24434ac79be436672d3f5061744e3851294dd8c81a9f1289f6fc892a8fa6ce'
+          p=json.loads((root/'v31_r2_products.json').read_text(encoding='utf-8'))
+          assert p['blog_id']=='5999019959932264006' and p['count']==16
+          print('R58_FRESH_SHOPEE_SNAPSHOT_PASS')
+          PY
+      - name: Blogger API GET + prévia de rotação, nenhuma escrita
+        run: |
+          python v31_master/r58_rotate_store.py \
+            --candidate "${RUNNER_TEMP}/r58_new_offers/v31_r2_store.html" \
+            --state "v31_master/state/lab_r58_rotation.json" \
+            --out-dir "${RUNNER_TEMP}/r58_dryrun"
+          echo "R58_BLOGGER_WRITES=0"
