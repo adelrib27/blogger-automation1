@@ -1,0 +1,129 @@
+{
+  "schema": "blogger-v31-replication-profile/v1",
+  "mode": "LAB_SAFE_ONLY",
+  "target": {
+    "blog_id": "5999019959932264006",
+    "url": "https://lab-v31-r58-shopee-e2e-20261106.blogspot.com/",
+    "name": "Laboratório V31 R58 — Shopee E2E 15 Min"
+  },
+  "theme": {
+    "variant": "V31_R52_MOBILE",
+    "reference_xml_sha256": "9d59f34aa0a2c6e03a1e59206c4d27dbcb98f2bcbbc1c8b21e728ab63a4d7d81",
+    "reference_only": true,
+    "install_permission": false,
+    "current_verified": false
+  },
+  "seo": {
+    "description": "Laboratório V31 R58 — testes completos de automação Blogger, SEO, conteúdo editorial e vitrine Shopee com rotação experimental a cada 15 minutos.",
+    "search_description": "Laboratório R58: testes de blog Blogger V31 com artigos de casa, tecnologia, utilidades e ofertas Shopee.",
+    "timezone": "(GMT-03:00) Horário Padrão de Brasília – São Paulo",
+    "https_redirect": true,
+    "search_visibility": true,
+    "lazy_images": true,
+    "webp_images": true,
+    "custom_robots": "UNCHANGED"
+  },
+  "pages": [
+    {
+      "title": "Sobre",
+      "path": "/p/sobre.html",
+      "id": "4330493101782559572"
+    },
+    {
+      "title": "Contato",
+      "path": "/p/contato.html",
+      "id": "8642485791986631414"
+    },
+    {
+      "title": "Política de Privacidade",
+      "path": "/p/politica-de-privacidade.html",
+      "id": "223485400474715031"
+    },
+    {
+      "title": "Termos de Uso",
+      "path": "/p/termos-de-uso.html",
+      "id": "2862183582058934423"
+    },
+    {
+      "title": "Aviso de Afiliados",
+      "path": "/p/aviso-de-afiliados.html",
+      "id": "6443676382450783375"
+    }
+  ],
+  "store": {
+    "page_id": "7680030566642713590",
+    "page_path": "/p/loja.html",
+    "first_publish": false,
+    "auto_update": false,
+    "mode": "populated_verified_manual",
+    "expected_products": 16,
+    "expected_unique_items": 16,
+    "write_target": "existing_page_only",
+    "rotation_persist_after_public_pass": true,
+    "validated_cards": 16,
+    "validated_affiliate_links": 32,
+    "public_http": 200,
+    "page_id_unchanged": true,
+    "source": "R56 Shopee Affiliate API snapshot 2026-11-06; reused R58 initial publish",
+    "categories": [
+      {
+        "name": "Casa e Organização",
+        "terms": [
+          "organizador"
+        ]
+      },
+      {
+        "name": "Cozinha",
+        "terms": [
+          "mixer"
+        ]
+      },
+      {
+        "name": "Tecnologia",
+        "terms": [
+          "mouse"
+        ]
+      },
+      {
+        "name": "Utilidades",
+        "terms": [
+          "luminaria"
+        ]
+      }
+    ]
+  },
+  "editorial": {
+    "posts": [
+      {
+        "id": "3893198167585505550",
+        "shopee_id": "21797631048",
+        "path": "/2026/11/sapateira-modular-como-escolher-um.html"
+      },
+      {
+        "id": "8886363878493152260",
+        "shopee_id": "22392992790",
+        "path": "/2026/11/mixer-eletrico-para-cafe-e-bebidas-guia.html"
+      },
+      {
+        "id": "1086696355631937197",
+        "shopee_id": "22597307453",
+        "path": "/2026/11/mouse-sem-fio-bluetooth-ou-usb-o-que.html"
+      }
+    ]
+  },
+  "experiment": {
+    "interval_minutes": 15,
+    "scheduled_enabled": false,
+    "utc_stop_after": "2026-11-07T21:00:00Z",
+    "scope": "R58_ONLY"
+  },
+  "guards": {
+    "allowlisted_blog_only": true,
+    "disable_existing_writers": true,
+    "runner_r49_no_restart": true,
+    "never_modify_other_blogs": true,
+    "never_modify_theme": true,
+    "never_expose_shopee_secret": true,
+    "required_readback": true
+  }
+}
