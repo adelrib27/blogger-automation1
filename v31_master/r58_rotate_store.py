@@ -122,8 +122,16 @@ def check_public(candidate):
         if wait:time.sleep(wait)
         try:
             html=public_read_once()
-            found=policy.validate_store_html(html)
-            if found["items"]==expected and "ub-header" in html and "ub-store-content" in html:
+            start=html.find(policy.START)
+            end=html.find(policy.END)
+            if start < 0 or end <= start:
+                continue
+            # HTML público contém todo o tema (>180 KB); validar apenas a região gerenciada.
+            region=html[start:end+len(policy.END)]
+            found=policy.validate_store_html(region)
+            # O tema R58 precisa ter sido instalado e confirmado publicamente.
+            if (found["items"]==expected and "R58_MOBILE_R52_BEGIN" in html
+                    and "ub-store-content" in html):
                 return True
         except (policy.GuardError, WriterError):
             pass
