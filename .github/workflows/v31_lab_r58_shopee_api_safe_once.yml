@@ -1,0 +1,37 @@
+name: V31 LAB R58 — Shopee API SAFE somente uma coleta
+on:
+  push:
+    branches:
+      - lab/v31-r58-novo-blog-shopee-e2e-15min
+    paths:
+      - ".github/workflows/v31_lab_r58_shopee_api_safe_once.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: r58-api-safe-once
+  cancel-in-progress: false
+jobs:
+  shopee-safe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Consultar Shopee Affiliate API, sem escrita Blogger
+        run: |
+          set -euo pipefail
+          python v31_master/r58_shopee_safe.py --out-dir "${RUNNER_TEMP}/r58_shopee"
+      - name: Guardar seleção para primeira rotação
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r58-lab-shopee-safe-16-items
+          path: ${{ runner.temp }}/r58_shopee/
+          if-no-files-found: error
+          retention-days: 2
