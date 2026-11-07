@@ -2,9 +2,9 @@
   "version": "2.3",
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
-    "input": 458,
-    "accepted": 330,
-    "rejected": 128
+    "input": 515,
+    "accepted": 373,
+    "rejected": 142
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -87,10 +87,6 @@
         1
       ],
       [
-        "936342834",
-        1
-      ],
-      [
         "989926234",
         1
       ],
@@ -99,7 +95,15 @@
         1
       ],
       [
+        "1499865820",
+        1
+      ],
+      [
         "988030305",
+        1
+      ],
+      [
+        "1673408562",
         1
       ],
       [
@@ -108,10 +112,6 @@
       ],
       [
         "296363855",
-        1
-      ],
-      [
-        "779134443",
         1
       ],
       [
@@ -181,7 +181,7 @@
         2
       ],
       [
-        "prateleira banheiro",
+        "toalheiro banheiro",
         2
       ],
       [
@@ -209,7 +209,7 @@
         1
       ],
       [
-        "fatiador de legumes",
+        "prateleira banheiro",
         1
       ],
       [
@@ -227,15 +227,15 @@
         5
       ],
       [
+        "Banheiro",
+        5
+      ],
+      [
         "Decoracao",
         5
       ],
       [
         "Cama Mesa Banho",
-        4
-      ],
-      [
-        "Banheiro",
         4
       ],
       [
@@ -248,7 +248,7 @@
       ],
       [
         "Cozinha",
-        3
+        2
       ]
     ]
   },
@@ -504,19 +504,6 @@
     },
     {
       "rank": 20,
-      "itemId": 58252072051,
-      "productName": "Fatiador Profissional Multifuncional De Aço Inoxidável 16 Em 1 Para Vegetais/Frutas/Legumes",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "fatiador de legumes"
-      ],
-      "opportunityScore": 61.21,
-      "shopName": "vivendo de net",
-      "offerLink": "https://s.shopee.com.br/6AmNps0Ebm"
-    },
-    {
-      "rank": 21,
       "itemId": 20197726295,
       "productName": "Caixa Saco Organizador Cobertor Casaco Guarda Roupa Ecológico Anti-Poeira Umidade Insetos Multiuso",
       "priorityTier": "COMISSAO_EXTRA",
@@ -531,7 +518,7 @@
       "offerLink": "https://s.shopee.com.br/1qdOkwZtG8"
     },
     {
-      "rank": 22,
+      "rank": 21,
       "itemId": 23499666463,
       "productName": "Tapete Trama Natural 100% Algodão para Sala, Quarto e Escritório",
       "priorityTier": "COMISSAO_EXTRA",
@@ -542,6 +529,19 @@
       "opportunityScore": 60.83,
       "shopName": "fenixpijamas1",
       "offerLink": "https://s.shopee.com.br/9V2oGDfCE2"
+    },
+    {
+      "rank": 22,
+      "itemId": 58254362999,
+      "productName": "Kit Acessórios Para Banheiro Lavabo 6 Peças Toalheiro Inox Premium Suporte Parede Luxo Preto Cromado",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "toalheiro banheiro"
+      ],
+      "opportunityScore": 60.22,
+      "shopName": "StarMove",
+      "offerLink": "https://s.shopee.com.br/906XfjjjeN"
     },
     {
       "rank": 23,
@@ -558,6 +558,19 @@
     },
     {
       "rank": 24,
+      "itemId": 58258071799,
+      "productName": "Kit Banheiro Acessórios 5 Peças Completo Toalheiro Saboneteira Decoração Preto Branco Cromado Decor",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "toalheiro banheiro"
+      ],
+      "opportunityScore": 60.04,
+      "shopName": "Morada de Paz",
+      "offerLink": "https://s.shopee.com.br/7VHlxMucM8"
+    },
+    {
+      "rank": 25,
       "itemId": 23599671693,
       "productName": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
       "priorityTier": "COMISSAO_EXTRA",
@@ -570,7 +583,7 @@
       "offerLink": "https://s.shopee.com.br/7fbBcdyaZx"
     },
     {
-      "rank": 25,
+      "rank": 26,
       "itemId": 20597689349,
       "productName": "Protetor Impermeável Capa Colchão Matelada Cama Quarto Berço, Solteiro, Casal, Queen, King com Elástico",
       "priorityTier": "COMISSAO_EXTRA",
@@ -581,19 +594,6 @@
       "opportunityScore": 59.76,
       "shopName": "CasaLauraEnxovais",
       "offerLink": "https://s.shopee.com.br/40htFjczPA"
-    },
-    {
-      "rank": 26,
-      "itemId": 23299291762,
-      "productName": "Nicho Triplo Prateleira, Decoração Sala, Nicho para Banheiro , Cozinha , Quarto 07",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "prateleira banheiro"
-      ],
-      "opportunityScore": 59.72,
-      "shopName": "MoveisKZA",
-      "offerLink": "https://s.shopee.com.br/1W0YHJdFeM"
     },
     {
       "rank": 27,
@@ -2231,6 +2231,56 @@
       }
     },
     {
+      "itemId": 6350522045,
+      "productName": "Conjunto de Mesinha Lateral Redonda Sala Pe Madeira Retro Sala Quarto",
+      "shopName": "Kelan Móveis",
+      "keywords": [
+        "mesa lateral"
+      ],
+      "evaluations": {
+        "mesa lateral": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "lateral"
+            ]
+          ],
+          "missing": [
+            [
+              "mesa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23893640086,
+      "productName": "Mesas Laterais Monopé De Madeira Design Orgânico Canto Cama Alt. 45/55cm - Mel",
+      "shopName": "ALL Company",
+      "keywords": [
+        "mesa lateral"
+      ],
+      "evaluations": {
+        "mesa lateral": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "canto"
+            ]
+          ],
+          "missing": [
+            [
+              "mesa"
+            ]
+          ]
+        }
+      }
+    },
+    {
       "itemId": 23999657087,
       "productName": "Tapetes Jacquard Emborrachado Para Sala e Quarto: Diversidade de Cores e Modelos Exclusivos",
       "shopName": "fenixpijamas1",
@@ -2275,6 +2325,174 @@
           "missing": [
             [
               "tapete"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 16029225931,
+      "productName": "5 Saco Organizador Embalagem Para Travesseiros 50 X 70 De Pvc Com Ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 14865446736,
+      "productName": "3 Saco Organizador Embalagem Para Travesseiros 50 X 70 De Pvc Com Ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 16129223966,
+      "productName": "Saco Organizador Embalagens Para Travesseiros de pvc com ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 3471729214,
+      "productName": "kit 10 Embalagem para travesseiros em pvc com ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 3173138856,
+      "productName": "Kit com 100 Embalagens para Travesseiros 50x70 cm em PVC com Zíper  Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 12914388155,
+      "productName": "Kit 10 Embalagens Para Travesseiros (organizadores) Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 7369630195,
+      "productName": "Kit com 150 Embalagens para Travesseiros 50x70 cm em PVC com Zíper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22694244439,
+      "productName": "Kit 4 Travesseiros Nasa Antialérgico Toque Macio Confortável",
+      "shopName": "Lar Norte Magazine",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
             ]
           ]
         }
@@ -2627,290 +2845,6 @@
               "talheres",
               "copo",
               "copos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 19222469173,
-      "productName": "Pote de Vidro Com Divisória e Tampa Hermética 1000ml Vitrizi",
-      "shopName": "LOJA STOCK ON COMERCIO VAR  LTDA",
-      "keywords": [
-        "potes hermeticos"
-      ],
-      "evaluations": {
-        "potes hermeticos": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "pote"
-            ]
-          ],
-          "missing": [
-            [
-              "hermetico",
-              "hermeticos",
-              "trava",
-              "travas",
-              "alimentos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58270856469,
-      "productName": "Pote Organizador de Geladeira com Cesto Escorredor e Tampa Hermética 850ml 1750ml 3300ml UpTop",
-      "shopName": "fenixpijamas1",
-      "keywords": [
-        "potes hermeticos"
-      ],
-      "evaluations": {
-        "potes hermeticos": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "pote"
-            ]
-          ],
-          "missing": [
-            [
-              "hermetico",
-              "hermeticos",
-              "trava",
-              "travas",
-              "alimentos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 43327284969,
-      "productName": "Mini Potes para Congelar Papinha c/ Tampa Hermética Porta Leita em pó Frutas para Bebe adultos Kit c/2/4/8/16",
-      "shopName": "Seis_deuses_boutique.br",
-      "keywords": [
-        "potes hermeticos"
-      ],
-      "evaluations": {
-        "potes hermeticos": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "potes"
-            ]
-          ],
-          "missing": [
-            [
-              "hermetico",
-              "hermeticos",
-              "trava",
-              "travas",
-              "alimentos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22294171220,
-      "productName": "Kit 5 Tigelas de Vidro RedondasTampas Herméticas Potes Cozinha e Armazenamento",
-      "shopName": "Bhz Store ltda",
-      "keywords": [
-        "potes hermeticos"
-      ],
-      "evaluations": {
-        "potes hermeticos": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "potes"
-            ]
-          ],
-          "missing": [
-            [
-              "hermetico",
-              "hermeticos",
-              "trava",
-              "travas",
-              "alimentos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 21699678089,
-      "productName": "Tapete Coletor Smart Ultra Cat – Dupla Camada, Retém Areia das Patinhas, Fácil de Limpar",
-      "shopName": "Smart Ultra Cat Bio",
-      "keywords": [
-        "tapete banheiro"
-      ],
-      "evaluations": {
-        "tapete banheiro": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "tapete"
-            ]
-          ],
-          "missing": [
-            [
-              "banheiro",
-              "box",
-              "lavabo",
-              "antiderrapante"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 21899678029,
-      "productName": "Tapete Higiênico Coletor para Gatos Smart Ultra Cat – Dupla Camada, Retém Areia e Facilita a Limpeza",
-      "shopName": "Smart Ultra Cat Bio",
-      "keywords": [
-        "tapete banheiro"
-      ],
-      "evaluations": {
-        "tapete banheiro": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "tapete"
-            ]
-          ],
-          "missing": [
-            [
-              "banheiro",
-              "box",
-              "lavabo",
-              "antiderrapante"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58256828309,
-      "productName": "Kit 02 Tapete Higiênico Para Cães Manada Pads Lavanda 80x60cm 30 Unidades",
-      "shopName": "MANADA ANIMAL",
-      "keywords": [
-        "tapete banheiro"
-      ],
-      "evaluations": {
-        "tapete banheiro": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "tapete"
-            ]
-          ],
-          "missing": [
-            [
-              "banheiro",
-              "box",
-              "lavabo",
-              "antiderrapante"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 52207122446,
-      "productName": "Tapete Higiênico Para Cães Manada Pads Lavanda 80x60cm 30 Unidades",
-      "shopName": "MANADA ANIMAL",
-      "keywords": [
-        "tapete banheiro"
-      ],
-      "evaluations": {
-        "tapete banheiro": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "tapete"
-            ]
-          ],
-          "missing": [
-            [
-              "banheiro",
-              "box",
-              "lavabo",
-              "antiderrapante"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58210998192,
-      "productName": "Tapete Higiênico Pet Blue Premium 82x60cm Ultra Absorção, Antivazamento, Antiodor",
-      "shopName": "TJR LOJA PETZ",
-      "keywords": [
-        "tapete banheiro"
-      ],
-      "evaluations": {
-        "tapete banheiro": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "tapete"
-            ]
-          ],
-          "missing": [
-            [
-              "banheiro",
-              "box",
-              "lavabo",
-              "antiderrapante"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 44001553177,
-      "productName": "Tapete Higiênico Descartável para Cachorro Unidades 60x60 cm - Fralda Pet Xixi Cão Pequeno Médio",
-      "shopName": "Jatobraz",
-      "keywords": [
-        "tapete banheiro"
-      ],
-      "evaluations": {
-        "tapete banheiro": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "tapete"
-            ]
-          ],
-          "missing": [
-            [
-              "banheiro",
-              "box",
-              "lavabo",
-              "antiderrapante"
             ]
           ]
         }
