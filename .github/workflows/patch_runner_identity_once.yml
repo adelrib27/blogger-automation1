@@ -1,0 +1,84 @@
+name: Patch Runner Identity Migration Once
+
+on:
+  push:
+    branches:
+      - blogger-safe-ui-provisioning-v0-2
+    paths:
+      - '.github/workflows/patch_runner_identity_once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: blogger-safe-ui-provisioning-v0-2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Patch runtime guard and V20 installer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          guard = Path('tools/blogger_safe_automator_v0_2/runtime_update_guard_v08.py')
+          s = guard.read_text(encoding='utf-8')
+          identity_rel = '    "tools/blogger_safe_automator_v0_2/update_blog_identity_safe.py",\n'
+          if identity_rel not in s:
+              anchor = '    "tools/blogger_safe_automator_v0_2/runtime_update_guard_v08.py",\n'
+              if anchor not in s:
+                  raise SystemExit('runtime guard anchor not found')
+              s = s.replace(anchor, anchor + identity_rel, 1)
+              guard.write_text(s, encoding='utf-8')
+
+          p = Path('tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py')
+          s = p.read_text(encoding='utf-8')
+          if 'import re\n' not in s:
+              s = s.replace('import json\n', 'import json\nimport re\n', 1)
+          s = s.replace('from urllib.parse import urljoin\n', 'from urllib.parse import urljoin, urlparse\n', 1)
+
+          helper = '''\n\ndef maybe_change_identity(python: str, here: Path, expected_blog_id: str, title: str, blog_url: str) -> None:\n    # Migração pontual autorizada: preserva o mesmo Blog ID e valida a nova URL publicamente.\n    target_id = "4473989735719981382"\n    target_title = "Ventiladores em Foco"\n    target_url = "https://ventiladores-em-foco.blogspot.com/"\n    if str(expected_blog_id) != target_id or title != target_title or blog_url.rstrip("/") + "/" != target_url:\n        return\n    identity = here / "update_blog_identity_safe.py"\n    if not identity.exists():\n        raise SystemExit("Migração de identidade bloqueada: update_blog_identity_safe.py ausente no runtime.")\n    host = (urlparse(target_url).hostname or "").lower()\n    suffix = ".blogspot.com"\n    if not host.endswith(suffix):\n        raise SystemExit("Migração de identidade bloqueada: domínio Blogspot inválido.")\n    address = host[:-len(suffix)]\n    run([python, str(identity), "--expected-blog-id", target_id, "--title", target_title,\n         "--address", address, "--confirm", "CHANGE BLOG IDENTITY"])\n'''
+          if 'def maybe_change_identity(' not in s:
+              anchor = '\n\ndef try_normalize_existing('
+              if anchor not in s:
+                  raise SystemExit('installer helper anchor not found')
+              s = s.replace(anchor, helper + anchor, 1)
+
+          old_js = """                    store_scope_present: !!root.querySelector('.ga-store-v20'),\n                    card_count: root.querySelectorAll('[data-item-id]').length,\n                    category_count: root.querySelectorAll('.ca-category').length,"""
+          new_js = """                    store_scope_present: !!root.querySelector('.ga-store-v20'),\n                    bls_page_present: !!document.querySelector('.bls-page'),\n                    card_count: root.querySelectorAll('[data-item-id]').length,\n                    hero_card_count: document.querySelectorAll('[data-hero-item-id]').length,\n                    category_count: root.querySelectorAll('.ca-category').length,"""
+          if 'hero_card_count:' not in s:
+              if old_js not in s:
+                  raise SystemExit('installer public probe JS anchor not found')
+              s = s.replace(old_js, new_js, 1)
+
+          old_static = '''    data["store_page_available"] = True\n    if not data.get("static_page"):\n        raise SystemExit("Validação pública V20 falhou: /p/loja.html não está no layout de página estática.")\n'''
+          new_static = '''    data["store_page_available"] = True\n    if not data.get("static_page"):\n        path = str(data.get("path") or "")\n        if (\n            re.fullmatch(r"/\\d{4}/\\d{2}/loja\\.html", path)\n            and data.get("bls_page_present")\n            and int(data.get("card_count") or 0) == 20\n            and int(data.get("hero_card_count") or 0) == 12\n        ):\n            data["validation"] = "PUBLIC_RUNTIME_PASS_POST_STORE"\n            return data\n        raise SystemExit("Validação pública V20 falhou: /p/loja.html não renderizou página estática nem redirecionou para POST Loja validado 20+12.")\n'''
+          if 'PUBLIC_RUNTIME_PASS_POST_STORE' not in s:
+              if old_static not in s:
+                  raise SystemExit('installer static validation anchor not found')
+              s = s.replace(old_static, new_static, 1)
+
+          call = '    maybe_change_identity(python, here, args.expected_blog_id, args.blog_title, args.blog_url)\n'
+          if call not in s:
+              anchor = '    python = sys.executable\n'
+              if anchor not in s:
+                  raise SystemExit('installer main anchor not found')
+              s = s.replace(anchor, anchor + call, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+          python -m py_compile tools/blogger_safe_automator_v0_2/runtime_update_guard_v08.py
+          python -m py_compile tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py
+          git config user.name 'blogger-safe-bot'
+          git config user.email 'blogger-safe-bot@users.noreply.github.com'
+          git add tools/blogger_safe_automator_v0_2/runtime_update_guard_v08.py tools/blogger_safe_automator_v0_2/install_modelo_v20_adoption.py
+          if git diff --cached --quiet; then
+            echo 'No patch needed.'
+          else
+            git commit -m 'feat: permitir migração segura de identidade no V20'
+            git push origin HEAD:blogger-safe-ui-provisioning-v0-2
+          fi

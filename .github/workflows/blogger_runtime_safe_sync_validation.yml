@@ -1,0 +1,41 @@
+name: Blogger Runtime Safe Sync Validation
+
+on:
+  push:
+    branches:
+      - blogger-safe-ui-provisioning-v0-2
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile Blogger runtime Python
+        run: python -m compileall -q tools/blogger_safe_automator_v0_2
+
+      - name: Validate V20 store contract
+        run: python tools/blogger_safe_automator_v0_2/validate_modelo_v20_store.py
+
+      - name: Validate PowerShell maintenance syntax
+        shell: pwsh
+        run: |
+          $files = @(
+            'tools/blogger_safe_automator_v0_2/windows_runtime_sync_v08/sync_blogger_runtime_v08.ps1',
+            'tools/blogger_safe_automator_v0_2/windows_runtime_sync_v08/install_blogger_runtime_sync_v08.ps1'
+          )
+          foreach ($f in $files) {
+            if (Test-Path $f) {
+              [ScriptBlock]::Create((Get-Content -Raw -LiteralPath $f)) | Out-Null
+            }
+          }
