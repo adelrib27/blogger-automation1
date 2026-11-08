@@ -79,6 +79,17 @@
    - Produto Shopee `23199528877`, link `https://s.shopee.com.br/1BNkzoCwta` na Loja.
    - LIVE/API_READBACK_PASS; após limite de chamadas do executor, confirmação extra por list_published_posts, sem duplicatas.
 
+14. **Conecta Achados** — Blog ID `1719259388907013414`, Post ID `6097552794401272775`
+   - *Mini lanterna LED recarregável: como avaliar foco, autonomia e uso em emergências*
+   - https://conectaachados.blogspot.com/2026/11/mini-lanterna-led-recarregavel-como.html
+   - Produto Shopee ID `23098921524`, link `https://s.shopee.com.br/2gCYmYLK4E` previamente validado na Loja.
+   - LIVE/API_READBACK_PASS. Sem teste HTTP público independente.
+15. **Limpeza Inteligente** — Blog ID `7757953554206491487`, Post ID `3566619667800633861`
+   - *Aspirador vertical com fio: como comparar filtros, alcance e manutenção*
+   - https://limpeza-inteligente.blogspot.com/2026/11/aspirador-vertical-com-fio-como.html
+   - Produto Shopee ID `40830814218`, link `https://s.shopee.com.br/3g55xkOjjW` previamente validado na Loja.
+   - LIVE/API_READBACK_PASS. Sem teste HTTP público independente.
+
 ## Pendentes
 - `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
 - `4739187376492839837` Casa Leve e Funcional
@@ -89,8 +100,6 @@
 - `6319734511998091378` Cabelos em Foco
 - `4473989735719981382` Ventiladores em Foco
 - `9113728635217260884` Air Fryers em Foco
-- `7757953554206491487` Limpeza Inteligente
-- `1719259388907013414` Conecta Achados
 - `7487888217273188851` Portal Radar Tech
 
 ## Observações
