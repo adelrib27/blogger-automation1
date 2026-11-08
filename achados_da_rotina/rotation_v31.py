@@ -15,6 +15,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -191,7 +192,17 @@ def build_content(original: str, selections: dict[str, list[dict]], stamp: str) 
         sections.append('<section class="ub-store-category" id="adr-cat-' + str(i+1) +
             '"><h2>' + html.escape(label) + '</h2><div class="ub-store-grid">' +
             cards + '</div></section>')
-    region = START + '\n' + css.group(0) + '\n' + nav + '\n' + '\n'.join(sections) + '\n' + END
+    # Horário fixado somente após a consulta Shopee: nunca exibir atualização fictícia.
+    stamped_at = datetime.strptime(stamp, "%Y-%m-%d %H:%M UTC").replace(tzinfo=timezone.utc)
+    local_label = stamped_at.astimezone(ZoneInfo("America/Recife")).strftime("%d/%m/%Y às %H:%M")
+    banner = (
+        '<p class="ub-store-status" role="status" style="border-left:4px solid #dc5c50;'
+        'background:#fff5f1;color:#465466;padding:14px 17px;margin:17px 0 23px;'
+        'font-size:14px;line-height:1.6;">Vitrine atualizada em <time datetime="' +
+        stamped_at.isoformat() + '">' + local_label + '</time> · produtos selecionados '
+        'automaticamente · preços e disponibilidade podem mudar na Shopee.</p>'
+    )
+    region = START + '\n' + css.group(0) + '\n' + banner + '\n' + nav + '\n' + '\n'.join(sections) + '\n' + END
     updated = original[:original.find(START)] + region + original[original.find(END) + len(END):]
     if updated.count('class="ub-product-card"') != 16 or updated.count(START) != 1 or updated.count(END) != 1:
         fail("HTML rotacionado inválido")
@@ -227,7 +238,9 @@ def self_test() -> None:
     cats = {cat: [{"itemId": str(n), "productName": "Mouse exemplo", "imageUrl": "https://cf.shopee.com.br/file/example",
                    "offerLink": "https://s.shopee.com.br/example", "priceMin": 1.99} for n in range(i*4+1, i*4+5)]
             for i, (cat, _, _) in enumerate(CATEGORIES)}
-    result = build_content(sample, cats, "teste")
+    result = build_content(sample, cats, "2026-11-08 03:00 UTC")
+    if 'Vitrine atualizada em' not in result or '08/11/2026 às 00:00' not in result:
+        fail("Self-test da data de atualização da vitrine falhou")
     if not (result.startswith("<p>antes</p>") and result.endswith("<p>depois</p>") and result.count('class="ub-product-card"') == 16):
         fail("Self-test do renderizador falhou")
     if to_product({"itemId": "5", "productName": "mouse bluetooth", "offerLink": "https://evil.example/x",
