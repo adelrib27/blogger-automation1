@@ -2,7 +2,7 @@
 
 Blog ID: `4169782185971307909`
 URL: `https://mala-pronta-viagem-pratica.blogspot.com/`
-Status de planejamento: **definido**, não equivale a posts publicados.
+Status em 08/11/2026: **2 pilares e 4 clusters publicados e verificados por readback da API Blogger**. A verificação visual pública permanece etapa separada.
 
 ## Posicionamento
 Orientação brasileira natural sobre bagagem, preparação para viagens curtas, higiene, objetos pessoais e pequenos acessórios. Não inventar testes, avaliações, regras de bagagem ou preços. Conferir regras por companhia/tarifa e data.
@@ -24,7 +24,7 @@ Orientação brasileira natural sobre bagagem, preparação para viagens curtas,
 - `5838868182551336992`: nécessaire de viagem — higiene/cosméticos/cabos.
 - LOJA `3860674971890156037`: 16 anúncios reais de 4 categorias consultados na Shopee Affiliate API; preços são referências de seleção.
 
-## Contrato de links internos (aplicar só após publicar cada destino)
+## Contrato de links internos (aplicado após publicação; validar em público)
 - Pilar A → A1, A2 e artigo sobre mala x mochila; A1/A2 → Pilar A.
 - Pilar B → B1, B2 e artigo sobre nécessaire; B1/B2 → Pilar B.
 - Link entre A1 e A2 somente quando a leitura exigir checagem de regras de bagagem.
@@ -40,3 +40,13 @@ Criar conteúdos citáveis (checklists, tabelas de verificação, comparações 
 
 ## Passagem de etapa
 Esta etapa 8 é concluída após definição acima. Etapa 9: publicar dois pilares; etapa 10: publicar quatro clusters; etapa 11: inserir links contextuais após validar os URLs reais.
+
+## IDs de artigos da arquitetura publicados (Blogger API PASS)
+- Pilar A: `739933173030588749` — `/2026/11/guia-para-planejar-bagagem-de-viagem.html`
+- Pilar B: `3641386714780569592` — `/2026/11/acessorios-de-viagem-guia-pratico-para.html`
+- Cluster A1: `2988592076002124327` — `/2026/11/checklist-de-bagagem-para-tres-dias-o.html`
+- Cluster A2: `2071943856630296572` — `/2026/11/bagagem-de-mao-como-conferir-medidas.html`
+- Cluster B1: `8666574096777829000` — `/2026/11/documentos-e-objetos-de-valor-como.html`
+- Cluster B2: `8285943515999893069` — `/2026/11/cabos-carregadores-e-adaptadores.html`
+- Os 3 artigos comerciais, 2 pilares e 4 clusters totalizam 9 posts LIVE, confirmados por Blogger Bridge V2.
+- Imagens nos 9 artigos e links internos verificadas no HTML pela API. O teste E2E público será registrado separadamente.
