@@ -49,6 +49,8 @@ jobs:
           python -m py_compile \
             vida_pet_pratica/src/firecrawl_telemetry.py \
             vida_pet_pratica/src/firecrawl_telemetry_self_test.py \
+            vida_pet_pratica/src/firecrawl_quota_guard.py \
+            vida_pet_pratica/src/firecrawl_quota_guard_self_test.py \
             vida_pet_pratica/src/evidence_engine.py \
             vida_pet_pratica/src/evidence_engine_persistent_v13.py \
             vida_pet_pratica/src/evidence_cache_hydrator.py \
@@ -138,6 +140,9 @@ jobs:
       - name: Validate Firecrawl aggregate telemetry privacy and accounting
         run: python vida_pet_pratica/src/firecrawl_telemetry_self_test.py
 
+      - name: Validate bounded Firecrawl LAB quota guard
+        run: python vida_pet_pratica/src/firecrawl_quota_guard_self_test.py
+
       - name: Reset Firecrawl telemetry for real LAB round
         run: python vida_pet_pratica/src/firecrawl_telemetry.py reset
 
@@ -187,10 +192,18 @@ jobs:
 
       - name: Build persistent candidate buffer with evidence reuse
         if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
+        env:
+          VIDAPET_FIRECRAWL_BUDGET_GUARD: "1"
+          VIDAPET_FIRECRAWL_MAX_SEARCH_CALLS: "2"
+          VIDAPET_FIRECRAWL_MAX_HTTP_ATTEMPTS: "3"
         run: python vida_pet_pratica/src/automation_core_persistent_v3.py
 
       - name: Build grounded post buffer with SAFE persistent guard
         if: env.VIDAPET_READY_REFILL_REQUIRED == '1'
+        env:
+          VIDAPET_FIRECRAWL_BUDGET_GUARD: "1"
+          VIDAPET_FIRECRAWL_MAX_SEARCH_CALLS: "2"
+          VIDAPET_FIRECRAWL_MAX_HTTP_ATTEMPTS: "3"
         run: python vida_pet_pratica/src/article_builder_persistent_v3.py
 
       - name: Persist VERIFIED_READY posts to D1
