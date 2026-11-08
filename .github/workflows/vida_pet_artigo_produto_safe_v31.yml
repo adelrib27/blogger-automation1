@@ -1,0 +1,24 @@
+name: V31 Vida Pet - produto real artigo unico SAFE
+on:
+  pull_request:
+    paths:
+      - "multi_blog/vida_pet_artigo_produto_safe_v31.py"
+      - ".github/workflows/vida_pet_artigo_produto_safe_v31.yml"
+permissions:
+  contents: read
+jobs:
+  catalogo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SHOPEE_APP_ID: ${ secrets.SHOPEE_APP_ID }
+      SHOPEE_SECRET: ${ secrets.SHOPEE_SECRET }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Consulta SAFE da API Shopee, sem escrita em Blogger
+        run: |
+          python -m py_compile multi_blog/vida_pet_artigo_produto_safe_v31.py
+          python -u multi_blog/vida_pet_artigo_produto_safe_v31.py
