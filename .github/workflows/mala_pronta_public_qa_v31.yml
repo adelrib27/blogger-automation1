@@ -1,0 +1,32 @@
+name: V31 Mala Pronta - QA publico desktop mobile SAFE
+on:
+  pull_request:
+    paths:
+      - "mala_pronta_viagem_pratica/public_e2e_v31.py"
+      - ".github/workflows/mala_pronta_public_qa_v31.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qa-publico-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Preparar browser de testes SAFE
+        run: |
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install --with-deps chromium
+      - name: Validar HTML publico com navegador desktop e celular
+        run: python -u mala_pronta_viagem_pratica/public_e2e_v31.py
+      - name: Arquivar capturas e relatorio
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mala-pronta-qa-publico-desktop-mobile
+          path: mala_pronta_viagem_pratica/qa_public/
+          retention-days: 7
+          if-no-files-found: warn

@@ -1,0 +1,61 @@
+name: V31 Mala Pronta - Shopee Loja diaria (isolado)
+on:
+  pull_request:
+    paths:
+      - "mala_pronta_viagem_pratica/rotation_daily_v31.py"
+      - ".github/workflows/mala_pronta_rotation_daily_v31.yml"
+  push:
+    branches: [main]
+    paths:
+      - "mala_pronta_viagem_pratica/rotation_daily_v31.py"
+      - ".github/workflows/mala_pronta_rotation_daily_v31.yml"
+  workflow_dispatch:
+  schedule:
+    # 09:17 UTC = 06:17 Recife (GMT-3); GitHub pode atrasar.
+    - cron: "17 9 * * *"
+permissions:
+  contents: read
+concurrency:
+  group: v31-mala-pronta-4169782185971307909-store
+  cancel-in-progress: false
+jobs:
+  rotacao-diaria:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      # PR/manual = SAFE; push main e schedule = LIVE.
+      MALA_STORE_DRY_RUN: ${{ (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && 'false' || 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar bibliotecas da Blogger API
+        run: python -m pip install --disable-pip-version-check google-api-python-client google-auth-httplib2
+      - name: Validar credenciais sem expor segredos
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          test -n "$BLOGGER_CLIENT_ID"
+          test -n "$BLOGGER_CLIENT_SECRET"
+          test -n "$BLOGGER_REFRESH_TOKEN"
+          python -m py_compile mala_pronta_viagem_pratica/rotation_daily_v31.py src/criar_rascunho.py src/blogger_policy_guard.py
+      - name: Autoteste offline de isolamento e seguranca
+        run: python mala_pronta_viagem_pratica/rotation_daily_v31.py --self-test
+      - name: Shopee API e Blogger SAFE ou LIVE com guarda de Blog ID
+        run: python -u mala_pronta_viagem_pratica/rotation_daily_v31.py
+      - name: Arquivar diagnostico sem secrets
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mala-pronta-v31-rotacao-diaria-${{ github.run_number }}
+          path: mala_pronta_viagem_pratica/rotacao_diaria_ultimo_resultado.json
+          if-no-files-found: warn
+          retention-days: 7
