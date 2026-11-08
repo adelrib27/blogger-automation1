@@ -154,3 +154,12 @@
 - Não foi realizada nova consulta Shopee Affiliate API bem-sucedida para cada post. Foram reutilizadas ofertas reais presentes nas Lojas já abastecidas pela integração. Os preços não foram tratados como atuais.
 - Validação por API não substitui teste HTTP público; rate limits 429 em testes passados exigem evitar auditoria agressiva.
 - No Portal Radar Tech, foi consultado o estado de workflows antes da escrita, não havendo execução editorial simultânea identificada na lista recente.
+
+## Auditoria final independente — 25/25
+
+- Realizada após publicar a segunda rodada em 2026-11-08 pela Blogger Bridge V2 em três lotes: 8 + 8 + 9.
+- **Resultado: 25/25 PASS; zero falhas detectadas**.
+- Verificações de cada um dos 25 posts: Blog ID exato, Post ID exato, status `live`, HTML com pelo menos 3.100 caracteres, elemento de imagem, link `s.shopee.com.br`, atributo `nofollow sponsored noopener` e aviso comercial com `Transparência:`.
+- O estado `live` e a integridade do HTML foram confirmados por leitura independente após publicação. Isso **não comprova HTTP 200 público**, renderização em navegador, disponibilidade atual do produto nem entrega de cliques de afiliados. Testes HTTP anteriores em outros contextos receberam 429 por limite de requisições.
+- Jardim e Horta na Prática, Blog ID `3644898524310766003`, permaneceu integralmente fora de qualquer escrita, exclusão ou publicação desta rodada.
+- Estado operacional da rodada 2: CONCLUIDA_VALIDADA_API, HTTP_PUBLICO_NAO_AUDITADO.
