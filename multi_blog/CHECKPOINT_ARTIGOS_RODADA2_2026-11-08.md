@@ -63,6 +63,22 @@
    - Oferta Shopee ID `58263100637`, afiliado `https://s.shopee.com.br/qkkmtUoiB` já conferido na Loja.
    - Estado: LIVE/API_READBACK_PASS; não confundir com HTTP público independente.
 
+11. **Escolha Certa Online** — Blog ID `5151950717041967683`, Post ID `1592500341892626151`
+   - *Carrinho organizador com rodinhas: o que medir para banheiro e lavanderia*
+   - https://escolha-certa-online.blogspot.com/2026/11/carrinho-organizador-com-rodinhas-o-que.html
+   - Produto Shopee `54510748479`, link `https://s.shopee.com.br/5VWk9dMV0R` na Loja.
+   - LIVE/API_READBACK_PASS; após limite de chamadas do executor, confirmação extra por list_published_posts, sem duplicatas.
+12. **Casa em Ordem** — Blog ID `4177382081459143374`, Post ID `7196076991785609432`
+   - *Cortina blackout para quarto: como medir largura, altura e fixação antes da compra*
+   - https://casa-em-ordem-pratica.blogspot.com/2026/11/cortina-blackout-para-quarto-como-medir.html
+   - Produto Shopee `22493572369`, link `https://s.shopee.com.br/5fq8jxHgO4` na Loja.
+   - LIVE/API_READBACK_PASS; após limite de chamadas do executor, confirmação extra por list_published_posts, sem duplicatas.
+13. **Estilo no Dia a Dia** — Blog ID `4830103887652146866`, Post ID `6043905916838407860`
+   - *Tênis feminino para caminhada: como avaliar numeração, solado e conforto no uso*
+   - https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/2026/11/tenis-feminino-para-caminhada-como.html
+   - Produto Shopee `23199528877`, link `https://s.shopee.com.br/1BNkzoCwta` na Loja.
+   - LIVE/API_READBACK_PASS; após limite de chamadas do executor, confirmação extra por list_published_posts, sem duplicatas.
+
 ## Pendentes
 - `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
 - `4739187376492839837` Casa Leve e Funcional
@@ -75,9 +91,6 @@
 - `9113728635217260884` Air Fryers em Foco
 - `7757953554206491487` Limpeza Inteligente
 - `1719259388907013414` Conecta Achados
-- `4830103887652146866` Estilo no Dia a Dia
-- `4177382081459143374` Casa em Ordem
-- `5151950717041967683` Escolha Certa Online
 - `7487888217273188851` Portal Radar Tech
 
 ## Observações
