@@ -72,12 +72,35 @@
    - Oferta Shopee ID `23593232547`, link `https://s.shopee.com.br/6q24hzKYoy`.
    - Estado: LIVE/API_READBACK_PASS. Não presumir teste HTTP público se não executado.
 
+
+## Continuação — mais cinco posts LIVE confirmados, sem tocar Jardim
+11. **Achados que Valem** (Blog ID `7527651041649593600`) — Post ID `8428985107679062704`
+   - *Kit de ferramentas com catraca: como avaliar soquetes, encaixes e maleta*
+   - https://achados-que-valem.blogspot.com/2026/11/kit-de-ferramentas-com-catraca-como.html
+   - Produto Shopee `22598454534`, link de afiliado `https://s.shopee.com.br/gRKaa0iny`; oferta previamente presente na Loja do blog.
+   - LIVE/API_READBACK_PASS. HTTP externo não testado nesta etapa.
+12. **Escolha Certa Online** (Blog ID `5151950717041967683`) — Post ID `7191220623899807474`
+   - *Cesto de roupa suja de bambu: como conferir capacidade, ventilação e limpeza*
+   - https://escolha-certa-online.blogspot.com/2026/11/cesto-de-roupa-suja-de-bambu-como.html
+   - Produto Shopee `19599212641`, link de afiliado `https://s.shopee.com.br/8VALidWOLQ`; oferta previamente presente na Loja do blog.
+   - LIVE/API_READBACK_PASS. HTTP externo não testado nesta etapa.
+13. **Casa em Ordem** (Blog ID `4177382081459143374`) — Post ID `6650683334695091348`
+   - *Organizador de geladeira com cesto removível: como guardar frutas e legumes com cuidado*
+   - https://casa-em-ordem-pratica.blogspot.com/2026/11/organizador-de-geladeira-com-cesto.html
+   - Produto Shopee `58265083673`, link de afiliado `https://s.shopee.com.br/1W0ZnWgvK3`; oferta previamente presente na Loja do blog.
+   - LIVE/API_READBACK_PASS. HTTP externo não testado nesta etapa.
+14. **Estilo no Dia a Dia** (Blog ID `4830103887652146866`) — Post ID `7803516204429446127`
+   - *Vestido canelado midi com fenda: como conferir medidas e combinar para o dia a dia*
+   - https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/2026/11/vestido-canelado-midi-com-fenda-como.html
+   - Produto Shopee `22498946077`, link de afiliado `https://s.shopee.com.br/6q27kC1Odp`; oferta previamente presente na Loja do blog.
+   - LIVE/API_READBACK_PASS. HTTP externo não testado nesta etapa.
+15. **Conecta Achados** (Blog ID `1719259388907013414`) — Post ID `7346665152630732731`
+   - *Mochila para notebook com compartimento USB: como avaliar espaço e segurança*
+   - https://conectaachados.blogspot.com/2026/11/mochila-para-notebook-com-compartimento.html
+   - Produto Shopee `23399371920`, link de afiliado `https://s.shopee.com.br/4B1MZI2ohX`; oferta previamente presente na Loja do blog.
+   - LIVE/API_READBACK_PASS. HTTP externo não testado nesta etapa.
+
 ## Pendentes — não criar duplicatas
-- `7527651041649593600` Achados que Valem
-- `5151950717041967683` Escolha Certa Online
-- `4177382081459143374` Casa em Ordem
-- `4830103887652146866` Estilo no Dia a Dia
-- `1719259388907013414` Conecta Achados
 - `7757953554206491487` Limpeza Inteligente
 - `9113728635217260884` Air Fryers em Foco
 - `4473989735719981382` Ventiladores em Foco
