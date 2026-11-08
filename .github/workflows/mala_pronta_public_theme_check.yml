@@ -26,8 +26,8 @@ jobs:
                   data = {
                       'http200': status == 200,
                       'title': 'Mala Pronta e Viagem Prática' in h,
-                      'header': re.search(r'\\bub-header\\b',h) is not None,
-                      'footer': re.search(r'\\bub-footer\\b',h) is not None,
+                      'header': re.search(r'\bub-header\b',h) is not None,
+                      'footer': re.search(r'\bub-footer\b',h) is not None,
                       'blogger': ('blogger' in h.lower())
                   }
                   print('SAFE_PUBLIC_CHECK', i+1, 'bytes', len(h),data,flush=True)
