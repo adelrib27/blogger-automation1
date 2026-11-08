@@ -1,0 +1,38 @@
+name: V31 Violão do Começo - Shopee catalog SAFE
+on:
+  pull_request:
+    paths:
+      - "violao_do_comeco/shopee_catalog_safe.py"
+      - ".github/workflows/violao_do_comeco_shopee_catalog_safe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  shopee-catalogo-safe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verificar credenciais e sintaxe sem segredos
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          python -m py_compile violao_do_comeco/shopee_catalog_safe.py src/blogger_policy_guard.py
+      - name: Consultar 16 ofertas reais da API Shopee em SAFE sem publicar
+        run: python -u violao_do_comeco/shopee_catalog_safe.py
+      - name: Arquivar catalogo validado sem credenciais
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: violao-do-comeco-shopee-catalogo-safe
+          path: violao_do_comeco/catalogo_shopee_safe.json
+          if-no-files-found: error
+          retention-days: 7
