@@ -1,0 +1,32 @@
+name: V31 Pedal Leve - QA visual navegador SAFE
+on:
+  pull_request:
+    paths:
+      - "pedal_leve/qa_browser_safe.py"
+      - ".github/workflows/pedal_leve_browser_qa_safe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar navegador Chromium Playwright
+        run: |
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install --with-deps chromium
+      - name: Checar fotos renderizadas desktop e mobile sem escrita
+        run: python -u pedal_leve/qa_browser_safe.py
+      - name: Guardar relatório não sensível
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pedal-v31-public-browser-qa
+          path: pedal_leve/qa_browser_result.json
+          if-no-files-found: warn
+          retention-days: 7
