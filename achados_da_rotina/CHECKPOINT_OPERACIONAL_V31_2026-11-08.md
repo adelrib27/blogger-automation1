@@ -2,6 +2,33 @@
 
 > **Ordem obrigatória de confiança:** estado real ao vivo > arquitetura V31 R52 validada > backup/checkpoint mais recente > histórico. Este documento orienta próximas execuções; **não autoriza escrita** nem atesta estados futuros. Executar em fail-closed, com preflight, readback e verificação pública.
 
+## Fluxo oficial de criação integral de novos blogs V31 (norma a partir de 08/11/2026)
+
+> **Premissas operacionais determinadas pelo usuário:** Python de automação **já validado** na arquitetura do projeto; portanto, **não adicionar uma etapa separada para revalidar o Python** a cada replicação. **Não inserir uma etapa de backup no fluxo de criação**. O Tema V31 é responsável por gerar a identidade visual própria do novo blog. A identidade textual e institucional é definida **durante a criação das páginas institucionais**. A organização editorial usa **clusters de conteúdo, tópicos-pilar, SEO e autoridade temática**, com qualidade editorial antes da quantidade. A validação SAFE por blog, a conferência de estado real, os latches e o fail-closed **continuam obrigatórios**; Python validado como componente não significa que a criação de um blog novo foi validada sem testes.
+
+1. **Planejamento do novo blog:** definir nicho, nome, endereço Blogspot, público-alvo, categorias e objetivos comerciais/editoriais.
+2. **Criação automática pelo Python:** criar o blog no Blogger, confirmar Blog ID, URL e configurações iniciais; não reaproveitar identificadores de outro blog.
+3. **Configurações do Blogger e SEO técnico:** aplicar descrição, idioma, fuso horário, indexação, metadados e demais configurações compatíveis, validando o resultado no blog correto.
+4. **Instalação do Tema V31 pelo Python:** instalar o tema universal validado para a replicação, responsável pela identidade visual automática — cores, layout, cabeçalho, rodapé e componentes. Não copiar cores/identidade de outro blog nem substituir um tema já funcional sem necessidade.
+5. **Criação das páginas institucionais:** criar **Sobre, Contato, Privacidade, Termos, Cookies, Transparência/Afiliados** e demais páginas previstas, com texto profissional, identidade do nicho e SEO. A identidade das páginas é trabalhada **aqui**, e não como etapa visual separada. Formulário, quando previsto, precisa de destino e página de retorno próprios, além de testes de envio.
+6. **Configuração da Loja Shopee:** integrar produtos reais da API, links de afiliado, categorias, carrossel e vitrine segundo contrato V31; não inventar preços, fotos ou links. Implantar guardas de blog/página e faixa com **hora da última atualização real**.
+7. **Planejamento da arquitetura editorial:** definir categorias, intenção de busca, palavras-chave estratégicas, mapeamento de consultas e **clusters tópico-pilar**, evitando canibalização e repetição artificial.
+8. **Produção dos conteúdos-pilar:** publicar guias centrais abrangentes, úteis, naturais, profissionais, originais e aprofundados, que organizem e respondam aos principais temas do nicho.
+9. **Produção dos conteúdos de apoio (clusters):** criar artigos específicos que resolvam dúvidas e subtópicos dos pilares, complementem a cobertura e evitem preenchimento artificial.
+10. **SEO On-Page e links internos:** otimizar títulos, URLs, headings, descrições de busca, imagens (origem, alt e miniatura), contexto, navegação e links internos relevantes. Cada pilar aponta para apoios; apoios retornam ao pilar e se interligam quando útil. Distribuir autoridade interna com critério, sem excesso ou links forçados.
+11. **Estratégia de backlinks e autoridade:** planejar aquisição legítima de links editoriais por conteúdos citáveis, divulgação e parcerias pertinentes; **não automatizar backlinks artificiais** nem garantir links que terceiros ainda não criaram.
+12. **Configuração da automação editorial:** integrar o Python validado, GitHub Actions e serviços necessários, com publicação, atualização da Loja, controle de duplicidade, isolamento por Blog ID, logs e validações SAFE; não afetar automações de outros blogs.
+13. **Validação pública do blog:** conferir computador e celular, identidade do tema, páginas, contato, posts e **imagens realmente visíveis**, navegação, links internos/externos, Loja, SEO e primeiras execuções da automação; distinguir teste local, API, validação pública e teste E2E.
+14. **Ativação e finalização:** após aprovação dos testes, ativar a operação, confirmar publicações reais, registrar configurações, URLs, IDs e evidências de que o blog funciona. Evitar declarar conclusão antes de comprovação.
+
+### Padrão editorial, clusters e autoridade temática
+
+**Exemplo (casa e decoração):** conteúdo-pilar **“Guia completo de organização de cozinhas pequenas”** conectado contextualmente aos clusters **“Como organizar armários de cozinha”**, **“Organizadores para gavetas pequenas”**, **“Aproveitamento do espaço vertical”** e **“Como organizar temperos e utensílios”**. O pilar apresenta e aponta os subtópicos; cada cluster retorna ao pilar, e clusters relacionados se conectam somente quando a leitura e a intenção de busca justificarem. Categorias e Loja são caminhos complementares, não motivo para inserir links desnecessários.
+
+**Qualidade obrigatória:** informação útil, português brasileiro natural, leitura agradável, coerência temática, experiência prática quando houver evidência, SEO sem exagero, respostas completas, imagens originais de produto quando provenientes da API e links para fontes confiáveis quando necessários. **Não gerar textos em massa apenas para preencher o blog**; não inventar experiência de uso, testes, números, avaliações ou preços. Backlinks de terceiros são conquistados editorialmente ao longo do tempo, não resultados garantidos pelo Python.
+
+**Regra de aplicação em próximas conversas:** consultar este arquivo versionado como norma da **ordem de criação V31**, depois conferir estado real e implementação atual antes de qualquer operação. Os contratos técnicos abaixo são verificações transversais e **não acrescentam etapas de backup ou validação inicial do Python à sequência oficial**.
+
 ## Referência real em 08/11/2026
 
 - **Achados da Rotina:** Blogger ID `1637047917126642592`, URL `https://achados-da-rotina.blogspot.com/`, 3 posts LIVE, 7 páginas LIVE. Tema V31 R52 preservado; **não reinstalar** ao acrescentar conteúdo. Conteúdo validado por Blogger Bridge V2.
@@ -11,7 +38,7 @@
 - **Casa Leve e Funcional:** ID `4739187376492839837`, `https://casa-leve-e-funcional.blogspot.com/`; renomeação manual preservou ID. Contato FormSubmit + `_next` funcionou em teste real relatado pelo usuário. **Não assumir a mesma validação em outros blogs.** Correção da renomeação automática pelo Runner ainda pendente.
 - **Repo:** `adelrib27/blogger-automation1` (`main`). Ler HEAD vivo antes de editar: em 08/11 o HEAD observado era `d852689f8dd961ef8bae27227823bff4da72df43`. Não sobrescrever trabalho paralelo.
 
-## Sequência obrigatória antes de publicar/replicar
+## Contratos técnicos e verificações transversais (não redefinem a ordem oficial)
 
 1. **Preflight**: get_blog por ID exato, URL e título; posts/páginas LIVE, página LOJA, Runner, GitHub main/HEAD, workflow/cron, tema existente. Se divergir, STOP.
 2. **Tema**: preservar R52 em blog já provisionado; não aplicar R53 candidato nem tema renderizado de outro blog. Para novo blog usar template base aprovado, identidade própria, SAFE, latch e validação pública.
