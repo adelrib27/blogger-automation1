@@ -82,7 +82,7 @@ def validate(row: dict, category: str, terms: tuple[str, ...]) -> dict | None:
             or re.search(r"\bmotos?\b|moto/|motocicl", title)):
             return None
         # Evita que um selim com detalhe refletivo seja catalogado como iluminação.
-        if category == "Segurança e Visibilidade" and any(x in title for x in ("selim", "banco", "manopla", "luva")):
+        if category == "Segurança e Visibilidade" and not any(x in title for x in ("farol", "lanterna", "sinalizador", "sinaleira", "luz", "pisca")):
             return None
         product = {"itemId": item, "productName": name, "priceMin": price,
                    "imageUrl": image, "offerLink": link, "category": category,
