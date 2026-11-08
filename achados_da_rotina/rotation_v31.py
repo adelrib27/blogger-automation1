@@ -210,17 +210,28 @@ def build_content(original: str, selections: dict[str, list[dict]], stamp: str) 
 
 
 def public_check(stamp: str) -> bool:
+    """Validar no domínio público, aguardando propagação Blogger/CDN, sem afrouxar os critérios."""
     url = BLOG_URL + "p/loja.html?rotacao_v31=" + urllib.parse.quote(stamp)
-    for attempt in range(4):
+    for attempt in range(12):
+        http_status = 0
+        public_cards = 0
+        exact_stamp = False
         try:
             req = urllib.request.Request(url + "-" + str(attempt), headers={"User-Agent": "Mozilla/5.0"})
             with urllib.request.urlopen(req, timeout=18) as resp:
+                http_status = resp.status
                 page = resp.read().decode("utf8", errors="replace")
-            if resp.status == 200 and page.count('class="ub-product-card"') >= 16 and stamp in page:
+            public_cards = page.count('class="ub-product-card"')
+            exact_stamp = stamp in page
+            if http_status == 200 and public_cards >= 16 and exact_stamp:
+                print("PUBLIC_VERIFY_PASS: HTTP 200, 16+ cards, carimbo da execução atual")
                 return True
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError):
-            pass
-        time.sleep(6)
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+            print("PUBLIC_VERIFY_RETRY: rede/HTTP " + type(exc).__name__)
+        print("PUBLIC_VERIFY_RETRY: tentativa=%s http=%s cards=%s carimbo_atual=%s" % (
+            attempt + 1, http_status, public_cards, exact_stamp))
+        if attempt < 11:
+            time.sleep(8)
     return False
 
 
