@@ -26,6 +26,17 @@
    - Oferta Shopee da Loja: ID `18399335319` e link de afiliado `https://s.shopee.com.br/114K3wbcSj`.
    - Blogger Bridge V2: LIVE, readback exato do post, HTML, link comercial, aviso de transparência.
 
+4. **Liquidificadores em Foco** — Blog ID `5271798990390532475`, Post ID `7553458705544642403`
+   - *Mixer de mão 3 em 1: como avaliar haste, acessórios e limpeza antes de comprar*
+   - https://liquidificadores-em-foco.blogspot.com/2026/11/mixer-de-mao-3-em-1-como-avaliar-haste.html
+   - Oferta Shopee da Loja: ID `54516230806`, link `https://s.shopee.com.br/5LDJz8PsL1`.
+   - Estado LIVE/API_READBACK_PASS, HTML e afiliado confirmados.
+5. **Cozinha Sem Complicação** — Blog ID `3552757910439359679`, Post ID `3056641366951495124`
+   - *Organizador de sacolas para cozinha: onde instalar e como evitar acúmulo*
+   - https://cozinha-sem-complicacao.blogspot.com/2026/11/organizador-de-sacolas-para-cozinha.html
+   - Oferta Shopee da Loja: ID `23598536942`, link `https://s.shopee.com.br/gRO67lzzV`.
+   - Estado LIVE/API_READBACK_PASS, HTML e afiliado confirmados.
+
 ## Pendentes
 - `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
 - `4739187376492839837` Casa Leve e Funcional
@@ -46,8 +57,6 @@
 - `9144338307944682868` Vitrine Prática
 - `2858597309582499028` Moda e Ofertas
 - `2562496977098748229` Achadinhos de Beleza
-- `3552757910439359679` Cozinha Sem Complicação
-- `5271798990390532475` Liquidificadores em Foco
 - `7487888217273188851` Portal Radar Tech
 
 ## Observações
