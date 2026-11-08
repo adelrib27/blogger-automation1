@@ -10,16 +10,14 @@ permissions:
 jobs:
   qa-publico:
     runs-on: ubuntu-latest
+    # Ambiente Playwright oficial (Ubuntu 24.04) com Chromium preinstalado,
+    # evitando incompatibilidade da imagem padrao do GitHub com Ubuntu 26.04.
+    container: mcr.microsoft.com/playwright/python:v1.57.0-noble
     timeout-minutes: 16
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Instalar navegador de teste
-        run: |
-          python -m pip install --disable-pip-version-check playwright==1.57.0
-          python -m playwright install --with-deps chromium
+      - name: Instalar pacote Python na imagem oficial com Chromium
+        run: python -m pip install --disable-pip-version-check playwright==1.57.0
       - name: Verificar sintaxe
         run: python -m py_compile atelie_criativo/verify_public_v31.py
       - name: QA publico desktop e mobile sem escrita
