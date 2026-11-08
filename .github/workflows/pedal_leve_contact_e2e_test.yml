@@ -1,0 +1,23 @@
+name: V31 Pedal Leve - Teste unico de contato
+on:
+  pull_request:
+    paths:
+      - "pedal_leve/contact_e2e_one_time.py"
+      - ".github/workflows/pedal_leve_contact_e2e_test.yml"
+permissions:
+  contents: read
+jobs:
+  teste-formulario:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar navegador
+        run: |
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install --with-deps chromium
+      - name: Enviar uma mensagem de teste sem contornar CAPTCHA
+        run: python -u pedal_leve/contact_e2e_one_time.py
