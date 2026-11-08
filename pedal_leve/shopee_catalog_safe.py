@@ -89,28 +89,44 @@ def validate(row: dict, category: str, terms: tuple[str, ...]) -> dict | None:
         return None
 
 def select(app: str, secret: str) -> list[dict]:
+    """Tenta quatro tipos de produto por categoria; sem catálogo mínimo, STOP."""
     used: set[str] = set()
     selected: list[dict] = []
     for category, keywords, terms in CATEGORIES:
         pool: dict[str, dict] = {}
+        per_keyword: list[dict] = []
+        selected_in_cat: set[str] = set()
         for word in keywords:
+            candidates: list[dict] = []
             for page in (1, 2):
                 for row in fetch(app, secret, word, page):
                     product = validate(row, category, terms)
                     if product and product["itemId"] not in used:
                         pool[product["itemId"]] = product
-                if len(pool) >= 8:
+                        candidates.append(product)
+                if candidates:
                     break
-            if len(pool) >= 8:
-                break
+            # Uma oferta diferente por busca sempre que a API permitir.
+            pick = next((x for x in candidates if x["itemId"] not in selected_in_cat), None)
+            if pick:
+                per_keyword.append(pick)
+                selected_in_cat.add(pick["itemId"])
         if len(pool) < 4:
             fail("menos de quatro produtos semanticamente válidos para " + category)
-        picks = list(pool.values())[:4]
-        if len({p["itemId"] for p in picks} & used):
-            fail("item duplicado entre categorias")
+        picks = list(per_keyword)
+        for p in pool.values():
+            if len(picks) >= 4:
+                break
+            if p["itemId"] not in selected_in_cat:
+                picks.append(p)
+                selected_in_cat.add(p["itemId"])
+        picks = picks[:4]
+        if len(picks) != 4 or len({p["itemId"] for p in picks} & used):
+            fail("diversidade ou exclusividade insuficiente para " + category)
         selected.extend(picks)
         used.update(p["itemId"] for p in picks)
-        print("CATEGORY_SAFE_PASS", category, "selected", len(picks), "candidates", len(pool), flush=True)
+        print("CATEGORY_SAFE_PASS", category, "selected", len(picks),
+              "candidates", len(pool), "unique_queries", len(per_keyword), flush=True)
     if len(selected) != 16 or len(used) != 16:
         fail("precisa de 16 ofertas únicas")
     return selected
