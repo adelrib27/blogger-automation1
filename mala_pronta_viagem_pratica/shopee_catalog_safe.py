@@ -18,7 +18,7 @@ CATS=(
   ("Malas e Mochilas",("mala de viagem","mochila viagem"),("mala","mochila")),
   ("Organizadores de Bagagem",("organizador de mala viagem","kit organizador mala"),("organizador","organização de mala","packing cube")),
   ("Necessaires",("necessaire viagem","necessaire feminina viagem"),("necessaire","nécessaire","frasqueira")),
-  ("Conforto em Viagem",("almofada pescoço viagem","porta passaporte viagem"),("almofada","travesseiro de pescoço","porta passaporte")),
+  ("Acessórios e Conforto",("almofada pescoço viagem","porta passaporte viagem"),("almofada","travesseiro de pescoco","porta passaporte")),
 )
 API="https://open-api.affiliate.shopee.com.br/graphql"
 OUT=ROOT/"mala_pronta_viagem_pratica"/"catalogo_shopee_safe.json"
@@ -57,6 +57,7 @@ def product(raw,label,tokens):
             link.startswith("https://") and 0 < price < 100000):
             return None
         if not any(token in norm(name) for token in tokens):return None
+        if any(term in norm(name) for term in ("bebe","maternidade","crianca","infantil")):return None
         item={"itemId":ident,"productName":name,"imageUrl":image,"offerLink":link,
               "priceMin":round(price,2),"category":label}
         require_product_allowed(item)
