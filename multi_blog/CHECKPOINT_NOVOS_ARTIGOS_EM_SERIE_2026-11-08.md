@@ -100,12 +100,35 @@
    - Produto Shopee `23399371920`, link de afiliado `https://s.shopee.com.br/4B1MZI2ohX`; oferta previamente presente na Loja do blog.
    - LIVE/API_READBACK_PASS. HTTP externo não testado nesta etapa.
 
+
+## Continuação — mais cinco posts LIVE confirmados
+16. **Limpeza Inteligente** (Blog ID `7757953554206491487`) — Post ID `9074049091852180631`
+   - *Mop spray com reservatório: como avaliar piso, gatilho e pano de microfibra*
+   - https://limpeza-inteligente.blogspot.com/2026/11/mop-spray-com-reservatorio-como-avaliar.html
+   - Produto Shopee `58251317295` e link afiliado `https://s.shopee.com.br/5VWiYxLHDN` presentes na Loja do blog.
+   - LIVE/API_READBACK_PASS; HTTP externo não testado.
+17. **Air Fryers em Foco** (Blog ID `9113728635217260884`) — Post ID `4013461566443151922`
+   - *Forma de silicone para air fryer: como escolher tamanho sem bloquear o ar quente*
+   - https://air-fryers-em-foco.blogspot.com/2026/11/forma-de-silicone-para-air-fryer-como.html
+   - Produto Shopee `23898553736` e link afiliado `https://s.shopee.com.br/4B1L1pQFjG` presentes na Loja do blog.
+   - LIVE/API_READBACK_PASS; HTTP externo não testado.
+18. **Ventiladores em Foco** (Blog ID `4473989735719981382`) — Post ID `3962701426329852563`
+   - *Ventilador de torre ou de mesa: diferenças de espaço, limpeza e fluxo de ar*
+   - https://ventiladores-em-foco.blogspot.com/2026/11/ventilador-de-torre-ou-de-mesa.html
+   - Produto Shopee `19098031027` e link afiliado `https://s.shopee.com.br/2qVz3yxl0v` presentes na Loja do blog.
+   - LIVE/API_READBACK_PASS; HTTP externo não testado.
+19. **Cabelos em Foco** (Blog ID `6319734511998091378`) — Post ID `6587849354550389347`
+   - *Touca de cetim para dormir: como avaliar ajuste, tecido e cuidados na lavagem*
+   - https://cabelos-em-foco.blogspot.com/2026/11/touca-de-cetim-para-dormir-como-avaliar.html
+   - Produto Shopee `22399686961` e link afiliado `https://s.shopee.com.br/3LSDzhtH97` presentes na Loja do blog.
+   - LIVE/API_READBACK_PASS; HTTP externo não testado.
+20. **Achados da Rotina** (Blog ID `1637047917126642592`) — Post ID `3230074796629832017`
+   - *Mousepad grande para home office: como escolher tamanho, superfície e apoio*
+   - https://achados-da-rotina.blogspot.com/2026/11/mousepad-grande-para-home-office-como.html
+   - Produto Shopee `22393975400` e link afiliado `https://s.shopee.com.br/6figeaNK2p` presentes na Loja do blog.
+   - LIVE/API_READBACK_PASS; HTTP externo não testado.
+
 ## Pendentes — não criar duplicatas
-- `7757953554206491487` Limpeza Inteligente
-- `9113728635217260884` Air Fryers em Foco
-- `4473989735719981382` Ventiladores em Foco
-- `6319734511998091378` Cabelos em Foco
-- `1637047917126642592` Achados da Rotina
 - `8658632621591002634` Eletroportáteis na Cozinha
 - `8930870316690519385` Casa Prática Lab
 - `1426630233929943394` Achados para Casa
