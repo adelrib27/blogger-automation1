@@ -37,6 +37,32 @@
    - Oferta Shopee da Loja: ID `23598536942`, link `https://s.shopee.com.br/gRO67lzzV`.
    - Estado LIVE/API_READBACK_PASS, HTML e afiliado confirmados.
 
+6. **Achadinhos de Beleza** — Blog ID `2562496977098748229`, Post ID `5263052823603027666`
+   - *Pincéis de maquiagem: como escolher formatos e organizar a higienização*
+   - https://canal-attitude.blogspot.com/2026/11/pinceis-de-maquiagem-como-escolher.html
+   - Oferta Shopee ID `23794212818`, afiliado `https://s.shopee.com.br/9AQ2dI2MpR` já conferido na Loja.
+   - Estado: LIVE/API_READBACK_PASS; não confundir com HTTP público independente.
+7. **Moda e Ofertas** — Blog ID `2858597309582499028`, Post ID `7978853987045660385`
+   - *Camisa polo masculina de piquet: como conferir modelagem, tecido e tamanho*
+   - https://moda-ofertas.blogspot.com/2026/11/camisa-polo-masculina-de-piquet-como.html
+   - Oferta Shopee ID `3858948394`, afiliado `https://s.shopee.com.br/60T0rIWCcl` já conferido na Loja.
+   - Estado: LIVE/API_READBACK_PASS; não confundir com HTTP público independente.
+8. **Vitrine Prática** — Blog ID `9144338307944682868`, Post ID `5812968915710590665`
+   - *Garrafa térmica com tampa click: como avaliar vedação, capacidade e limpeza*
+   - https://vitrine-pratica.blogspot.com/2026/11/garrafa-termica-com-tampa-click-como.html
+   - Oferta Shopee ID `22494277737`, afiliado `https://s.shopee.com.br/1qdRn0klCa` já conferido na Loja.
+   - Estado: LIVE/API_READBACK_PASS; não confundir com HTTP público independente.
+9. **Guia de Achados & Ofertas** — Blog ID `1453188702831337099`, Post ID `2034707350230640398`
+   - *Mini umidificador USB de mesa: o que verificar em limpeza, reservatório e segurança*
+   - https://guia-de-achados-e-ofertas.blogspot.com/2026/11/mini-umidificador-usb-de-mesa-o-que.html
+   - Oferta Shopee ID `22492820556`, afiliado `https://s.shopee.com.br/W84IrlXSo` já conferido na Loja.
+   - Estado: LIVE/API_READBACK_PASS; não confundir com HTTP público independente.
+10. **Achados que Valem** — Blog ID `7527651041649593600`, Post ID `7464278404787700224`
+   - *Carregador veicular USB-C: como conferir potência, portas e compatibilidade*
+   - https://achados-que-valem.blogspot.com/2026/11/carregador-veicular-usb-c-como-conferir.html
+   - Oferta Shopee ID `58263100637`, afiliado `https://s.shopee.com.br/qkkmtUoiB` já conferido na Loja.
+   - Estado: LIVE/API_READBACK_PASS; não confundir com HTTP público independente.
+
 ## Pendentes
 - `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
 - `4739187376492839837` Casa Leve e Funcional
@@ -52,11 +78,6 @@
 - `4830103887652146866` Estilo no Dia a Dia
 - `4177382081459143374` Casa em Ordem
 - `5151950717041967683` Escolha Certa Online
-- `7527651041649593600` Achados que Valem
-- `1453188702831337099` Guia de Achados &amp; Ofertas
-- `9144338307944682868` Vitrine Prática
-- `2858597309582499028` Moda e Ofertas
-- `2562496977098748229` Achadinhos de Beleza
 - `7487888217273188851` Portal Radar Tech
 
 ## Observações
