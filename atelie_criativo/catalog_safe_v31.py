@@ -20,9 +20,9 @@ API = "https://open-api.affiliate.shopee.com.br/graphql"
 BLOG_ID = "8888519348129960729"
 CATEGORIES = (
     ("Papelaria Criativa", ("kit canetas coloridas", "caderno pontilhado", "adesivos scrapbook"), ("caneta", "marca texto", "caderno", "adesivo", "planner", "washi", "scrapbook")),
-    ("Costura e Bordado", ("kit costura", "kit bordado", "bastidor bordado"), ("costura", "bordado", "bastidor", "tesoura", "agulha", "linha")),
+    ("Costura e Bordado", ("agulha de costura manual", "kit bordado iniciantes", "bastidor bordado", "alfinete para costura", "kit linhas bordado"), ("agulha", "bordado", "bastidor", "tesoura de costura", "alfinete", "dedal", "passador de linha")),
     ("Crochê e Tricô", ("kit agulha croche", "kit croche", "fio amigurumi"), ("croche", "amigurumi", "trico", "agulha", "marcador ponto")),
-    ("Organização do Ateliê", ("caixa organizadora com divisorias", "organizador de mesa", "estojo organizador"), ("organizador", "organizadora", "estojo", "caixa", "compartimento", "gaveta")),
+    ("Organização do Ateliê", ("organizador miçangas artesanato", "caixa organizadora material artesanato", "estojo canetas escolar", "organizador pincel desenho"), ("organizador", "organizadora", "estojo", "caixa", "compartimento", "gaveta")),
 )
 DEST = ROOT / "atelie_criativo" / "catalogo_produtos_safe.json"
 
@@ -74,6 +74,14 @@ def select() -> dict:
                     image = str(row.get("imageUrl") or "").strip()
                     if not item.isdecimal() or not name or not any(t in normalized(name) for t in tokens):
                         continue
+                    item_name = normalized(name)
+                    unrelated_clothes = ("calcinha", "cueca", "bermuda", "roupa intima", "tanga", "lingerie", "sutia", "vestido", "short feminino", "biquini", "moda feminina")
+                    if any(bad in item_name for bad in unrelated_clothes):
+                        continue
+                    if label == "Costura e Bordado" and not any(t in item_name for t in ("agulha", "bordado", "bastidor", "alfinete", "dedal", "passador de linha", "tesoura de costura")):
+                        continue
+                    if label == "Organização do Ateliê" and not any(t in item_name for t in ("micanga", "artesanato", "caneta", "pincel", "papelaria", "escolar", "bijuteria", "pedraria", "linha", "costura")):
+                        continue
                     try:
                         price = float(row.get("priceMin") or 0)
                     except (ValueError,TypeError):
@@ -108,6 +116,7 @@ def main() -> None:
     if "--self-test" in sys.argv:
         assert normalized("Agulhas de Crochê")=="agulhas de croche"
         assert len(CATEGORIES)==4
+        assert all("calcinha" not in normalized(t) for t in CATEGORIES[1][2])
         print("CATALOG_SELF_TEST_PASS: 4 categories, 16 unique IDs contract")
         return
     products=select()
