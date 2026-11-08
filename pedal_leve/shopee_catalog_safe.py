@@ -78,7 +78,11 @@ def validate(row: dict, category: str, terms: tuple[str, ...]) -> dict | None:
             or not image.startswith("https://") or not link.startswith("https://")
             or not any(x in title for x in terms)
             or not any(x in title for x in CONTEXT)
-            or any(x in title for x in EXCLUDE)):
+            or any(x in title for x in EXCLUDE)
+            or re.search(r"\\bmotos?\\b|moto/|motocicl", title)):
+            return None
+        # Evita que um selim com detalhe refletivo seja catalogado como iluminação.
+        if category == "Segurança e Visibilidade" and any(x in title for x in ("selim", "banco", "manopla", "luva")):
             return None
         product = {"itemId": item, "productName": name, "priceMin": price,
                    "imageUrl": image, "offerLink": link, "category": category,
