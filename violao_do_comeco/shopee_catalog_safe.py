@@ -78,11 +78,18 @@ def main():
         pool={}
         for keyword in keywords:
             for page in (1,2):
-                items=query(app,secret,keyword,page)
+                time.sleep(1.2)  # ritmo conservador da API oficial
+                try:
+                    items=query(app,secret,keyword,page)
+                except RuntimeError as err:
+                    if "GraphQL" not in str(err):raise
+                    time.sleep(5)  # uma repetição limitada; falha fechada em erro persistente
+                    items=query(app,secret,keyword,page)
                 for row in items:
                     item=product(row,label,tokens)
                     if item:pool[item["itemId"]]=item
-                if len(pool)>=8:break
+                if len(pool)>=6:break
+            if len(pool)>=6:break
         candidates=sorted(pool.values(),key=lambda p:p["itemId"])
         choice=[]
         for item in candidates:
