@@ -143,7 +143,7 @@ def page_check(blogger) -> dict:
         fail("Blog ID, título ou URL divergente")
     page = blogger.pages().get(blogId=BLOG_ID, pageId=PAGE_ID).execute()
     raw = str(page.get("content") or "")
-    if str(page.get("id")) != PAGE_ID or page.get("title") != "LOJA" or page.get("status") != "LIVE":
+    if str(page.get("id")) != PAGE_ID or page.get("title") != "LOJA" or str(page.get("status") or "").lower() != "live":
         fail("Página LOJA divergente")
     if raw.count(START) != 1 or raw.count(END) != 1 or raw.find(START) >= raw.find(END):
         fail("Marcadores da região rotativa inválidos")
