@@ -1,0 +1,71 @@
+name: V31 Pedal Leve - Auditoria publica editorial SAFE
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pedal_leve_qa_public_safe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  auditoria-http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Conferir paginas artigos links e imagens no HTML publico sem escrita
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re, time, urllib.request, urllib.error
+          base='https://pedal-leve-mobilidade-urbana.blogspot.com'
+          paths={
+            '/':('Pedal Leve', 'home'),
+            '/p/sobre.html':('Sobre o Pedal Leve', 'page'),
+            '/p/contato.html':('name="message"', 'contact'),
+            '/p/politica-de-privacidade.html':('Política de Privacidade', 'page'),
+            '/p/termos-de-uso.html':('Termos de Uso', 'page'),
+            '/p/politica-de-cookies.html':('Política de Cookies', 'page'),
+            '/p/aviso-de-afiliados.html':('Aviso de Afiliados', 'page'),
+            '/p/mensagem-enviada.html':('Mensagem encaminhada', 'page'),
+            '/p/loja.html':('Loja Pedal Leve', 'store'),
+            '/2026/11/ciclismo-urbano-para-iniciantes-guia.html':('Ciclismo urbano para iniciantes', 'post'),
+            '/2026/11/manutencao-basica-de-bicicleta.html':('Manutenção básica de bicicleta', 'post'),
+            '/2026/11/acessorios-para-bicicleta-como-escolher.html':('Acessórios para bicicleta', 'post'),
+            '/2026/11/farol-e-lanterna-para-bicicleta.html':('Farol e lanterna', 'post'),
+            '/2026/11/kit-basico-de-ferramentas-para.html':('Kit básico de ferramentas', 'post'),
+            '/2026/11/bolsa-de-quadro-selim-ou-guidao-como.html':('Bolsa de quadro', 'post'),
+            '/2026/11/luvas-manoplas-e-selim-de-bicicleta-o.html':('Luvas, manoplas e selim', 'post'),
+          }
+          def get(path):
+              for n in range(12):
+                  try:
+                      req=urllib.request.Request(base+path+'?pedal_qa_no_write='+str(n),
+                           headers={'User-Agent':'Mozilla/5.0 (compatible; PedalLeveQAV31/1.0)'})
+                      with urllib.request.urlopen(req,timeout=20) as r:
+                          h=r.read().decode('utf-8','replace')
+                          if r.status==200 and len(h)>2000:
+                              return h
+                  except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError) as e:
+                      print('HTTP_RETRY',path,n+1,type(e).__name__,getattr(e,'code',''),flush=True)
+                  if n<11:time.sleep(7)
+              raise SystemExit('FAIL_CLOSED: HTTP nao confirmado '+path)
+          total_posts=0
+          for path,(needle,kind) in paths.items():
+              h=get(path)
+              checks={'identity':'Pedal Leve' in h,'expected':needle in h}
+              if kind=='post':
+                  total_posts+=1
+                  checks.update({'article_image':('<img' in h and ('cf.shopee.com.br' in h)),
+                                 'affiliate_disclosure':('Transparência' in h or 'comissão' in h)})
+              if kind=='store':
+                  checks.update({'16_cards':h.count('class="ub-product-card"')==16,
+                                 '3_slides':h.count('class="pl-store-slide"')==3,
+                                 'disclosure':'Transparência sobre esta vitrine' in h,
+                                 'markers':'UNIVERSAL_V31_STORE_AUTO_START' in h})
+              if kind=='contact':
+                  checks.update({'next':'/p/mensagem-enviada.html' in h,'name':'name="name"' in h,
+                                 'email':'name="email"' in h,'formsubmit':'formsubmit.co' in h})
+              print('PEDAL_QA_PUBLIC',path,'bytes',len(h),checks,flush=True)
+              if not all(checks.values()):
+                  raise SystemExit('FAIL_CLOSED: checklist publico '+path+' '+str(checks))
+          print('PEDAL_QA_PUBLIC_PASS: homepage, 8 pages, 7 posts, 16 products; no writes',flush=True)
+          PY
