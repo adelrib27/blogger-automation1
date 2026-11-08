@@ -1,0 +1,41 @@
+name: V31 Mala Pronta - verificar tema publico SAFE
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mala_pronta_public_theme_check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Conferir HTTP publico e marcadores do Tema V31 sem escrita
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re, time, urllib.request
+          url = 'https://mala-pronta-viagem-pratica.blogspot.com/'
+          for i in range(6):
+              try:
+                  req = urllib.request.Request(url + '?v31_safe_check=' + str(i),
+                      headers={'User-Agent':'Mozilla/5.0'})
+                  with urllib.request.urlopen(req,timeout=18) as r:
+                      h=r.read().decode('utf8','replace'); status=r.status
+                  data = {
+                      'http200': status == 200,
+                      'title': 'Mala Pronta e Viagem Prática' in h,
+                      'header': re.search(r'\\bub-header\\b',h) is not None,
+                      'footer': re.search(r'\\bub-footer\\b',h) is not None,
+                      'blogger': ('blogger' in h.lower())
+                  }
+                  print('SAFE_PUBLIC_CHECK', i+1, 'bytes', len(h),data,flush=True)
+                  if all(data.values()):
+                      print('THEME_V31_PUBLIC_PASS',flush=True)
+                      break
+              except Exception as e:
+                  print('SAFE_PUBLIC_RETRY',i+1,type(e).__name__,flush=True)
+              if i==5:raise SystemExit('FAIL_CLOSED: tema nao comprovado no HTML publico')
+              time.sleep(6)
+          PY
