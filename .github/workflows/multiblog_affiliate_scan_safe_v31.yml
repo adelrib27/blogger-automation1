@@ -1,0 +1,27 @@
+name: V31 Multiblog - Shopee API produtos SAFE diagnostico
+on:
+  pull_request:
+    paths:
+      - "multi_blog/scan_affiliate_oneoff_v31.py"
+      - ".github/workflows/multiblog_affiliate_scan_safe_v31.yml"
+permissions:
+  contents: read
+concurrency:
+  group: multiblog-shopee-scan-safe-v31
+  cancel-in-progress: false
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compilacao sem rede
+        run: python -m py_compile multi_blog/scan_affiliate_oneoff_v31.py
+      - name: Consulta READ ONLY e resultado de produtos reais
+        run: python -u multi_blog/scan_affiliate_oneoff_v31.py
