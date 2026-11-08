@@ -28,7 +28,7 @@ jobs:
                       with urllib.request.urlopen(req,timeout=20) as resp:
                           html=resp.read().decode("utf8","replace")
                           if resp.status!=200: raise RuntimeError("HTTP_NOT_200")
-                      tag=re.search(r'<a\\b[^>]*id="'+re.escape(marker)+r'"[^>]*>',html)
+                      tag=re.search(r'<a\b[^>]*id="'+re.escape(marker)+r'"[^>]*>',html)
                       checks={
                           "home_button":bool(tag and 'href="/"' in tag.group(0)),
                           "button_text":"Voltar ao blog" in html,
