@@ -143,8 +143,17 @@ def page_check(blogger) -> dict:
         fail("Blog ID, título ou URL divergente")
     page = blogger.pages().get(blogId=BLOG_ID, pageId=PAGE_ID).execute()
     raw = str(page.get("content") or "")
-    if str(page.get("id")) != PAGE_ID or page.get("title") != "LOJA" or str(page.get("status") or "").lower() != "live":
-        fail("Página LOJA divergente: id_ok=" + str(str(page.get("id")) == PAGE_ID) + ", title_ok=" + str(page.get("title") == "LOJA") + ", status=" + repr(page.get("status")))
+    # Blogger API v3 pode omitir status em pages.get para páginas publicadas.
+    state = str(page.get("status") or "").lower()
+    live_ok = state == "live" or (
+        not state and page.get("url") == BLOG_URL + "p/loja.html" and bool(page.get("published"))
+    )
+    if str(page.get("id")) != PAGE_ID or page.get("title") != "LOJA" or not live_ok:
+        fail("Página LOJA divergente: id_ok=" + str(str(page.get("id")) == PAGE_ID) +
+             ", title_ok=" + str(page.get("title") == "LOJA") +
+             ", state=" + repr(state) + ", url_ok=" +
+             str(page.get("url") == BLOG_URL + "p/loja.html") +
+             ", published=" + str(bool(page.get("published"))))
     if raw.count(START) != 1 or raw.count(END) != 1 or raw.find(START) >= raw.find(END):
         fail("Marcadores da região rotativa inválidos")
     if raw.count('class="ub-product-card"') != 16:
