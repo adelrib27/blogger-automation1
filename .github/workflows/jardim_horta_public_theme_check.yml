@@ -1,0 +1,45 @@
+name: V31 Jardim e Horta - verificar tema publico SAFE
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/jardim_horta_public_theme_check.yml"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/jardim_horta_public_theme_check.yml"
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Conferir HTTP publico e marcadores do Tema V31 sem escrita
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re, time, urllib.request
+          url = 'https://jardim-e-horta-na-pratica.blogspot.com/'
+          for i in range(4):
+              try:
+                  req = urllib.request.Request(url + '?v31_safe_check=' + str(i),
+                      headers={'User-Agent':'Mozilla/5.0'})
+                  with urllib.request.urlopen(req,timeout=18) as r:
+                      h=r.read().decode('utf8','replace'); status=r.status
+                  data = {
+                      'http200': status == 200,
+                      'title': 'Jardim e Horta e Viagem Prática' in h,
+                      'header': re.search(r'\bub-header\b',h) is not None,
+                      'footer': re.search(r'\bub-footer\b',h) is not None,
+                      'blogger': ('blogger' in h.lower())
+                  }
+                  print('SAFE_PUBLIC_CHECK', i+1, 'bytes', len(h),data,flush=True)
+                  if all(data.values()):
+                      print('THEME_V31_PUBLIC_PASS',flush=True)
+                      break
+              except Exception as e:
+                  print('SAFE_PUBLIC_RETRY',i+1,type(e).__name__,flush=True)
+              if i==3:raise SystemExit('FAIL_CLOSED: tema nao comprovado no HTML publico')
+              time.sleep(12)
+          PY
