@@ -90,16 +90,37 @@
    - Produto Shopee ID `40830814218`, link `https://s.shopee.com.br/3g55xkOjjW` previamente validado na Loja.
    - LIVE/API_READBACK_PASS. Sem teste HTTP público independente.
 
+16. **Air Fryers em Foco** — Blog ID `9113728635217260884`, Post ID `2509465864100374119`
+   - *Air fryer de 1,4 litro para uma pessoa: como avaliar capacidade e uso diário*
+   - https://air-fryers-em-foco.blogspot.com/2026/11/air-fryer-de-14-litro-para-uma-pessoa.html
+   - Produto Shopee ID `18499921512`, link `https://s.shopee.com.br/5fqAQWYntK` na Loja.
+   - LIVE/API_READBACK_PASS e HTML original conferido.
+17. **Ventiladores em Foco** — Blog ID `4473989735719981382`, Post ID `3293213017395371893`
+   - *Ventilador de mão recarregável: como avaliar autonomia, segurança e portabilidade*
+   - https://ventiladores-em-foco.blogspot.com/2026/11/ventilador-de-mao-recarregavel-como.html
+   - Produto Shopee ID `58261116729`, link `https://s.shopee.com.br/9KjSkbhQjE` na Loja.
+   - LIVE/API_READBACK_PASS e HTML original conferido.
+18. **Cabelos em Foco** — Blog ID `6319734511998091378`, Post ID `856440532092918971`
+   - *Escova raquete para desembaraçar cabelo: como escolher cerdas e reduzir tração*
+   - https://cabelos-em-foco.blogspot.com/2026/11/escova-raquete-para-desembaracar-cabelo.html
+   - Produto Shopee ID `18397762654`, link `https://s.shopee.com.br/9pfjLeKHeo` na Loja.
+   - LIVE/API_READBACK_PASS e HTML original conferido.
+19. **Achados da Rotina** — Blog ID `1637047917126642592`, Post ID `6263855415318951818`
+   - *Luminária de mesa recarregável: como planejar a iluminação do home office*
+   - https://achados-da-rotina.blogspot.com/2026/11/luminaria-de-mesa-recarregavel-como.html
+   - Produto Shopee ID `22194725412`, link `https://s.shopee.com.br/1gK0hOofw0` na Loja.
+   - LIVE/API_READBACK_PASS e HTML original conferido.
+20. **Eletroportáteis na Cozinha** — Blog ID `8658632621591002634`, Post ID `278009230600370225`
+   - *Batedeira de mão para bolos: como comparar velocidades, tigela e segurança*
+   - https://eletroportateis-na-cozinha.blogspot.com/2026/11/batedeira-de-mao-para-bolos-como.html
+   - Produto Shopee ID `23194230974`, link `https://s.shopee.com.br/8KqtzXrabY` na Loja.
+   - LIVE/API_READBACK_PASS e HTML original conferido.
+
 ## Pendentes
 - `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
 - `4739187376492839837` Casa Leve e Funcional
 - `1426630233929943394` Achados para Casa
 - `8930870316690519385` Casa Prática Lab
-- `8658632621591002634` Eletroportáteis na Cozinha
-- `1637047917126642592` Achados da Rotina
-- `6319734511998091378` Cabelos em Foco
-- `4473989735719981382` Ventiladores em Foco
-- `9113728635217260884` Air Fryers em Foco
 - `7487888217273188851` Portal Radar Tech
 
 ## Observações
