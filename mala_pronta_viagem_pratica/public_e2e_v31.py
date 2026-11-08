@@ -8,13 +8,9 @@ from playwright.sync_api import sync_playwright
 BLOG="https://mala-pronta-viagem-pratica.blogspot.com"
 BLOG_ID="4169782185971307909"
 # Rotas representativas publicas. Demais paginas verificadas no Blogger API.
-PAGES=("sobre","politica-de-privacidade","contato","loja")
+PAGES=("contato",)
 # Um post comercial, um pilar e um cluster; 9 posts verificados pela API.
-POSTS=(
-  "necessaire-para-viajar-organize-higiene",
-  "acessorios-de-viagem-guia-pratico-para",
-  "bagagem-de-mao-como-conferir-medidas",
-)
+POSTS=("necessaire-para-viajar-organize-higiene",)
 OUT=Path(__file__).resolve().parent/"qa_public"
 OUT.mkdir(parents=True,exist_ok=True)
 errors=[]
@@ -23,18 +19,26 @@ def check(cond,message):
     if not cond:
         errors.append(message)
         print("QA_FAIL",message,flush=True)
-def go(page,url,attempts=5):
+def go(page,url,attempts=1):
+    # Usa URL canonica sem cache-busting: consultas repetidas com query unico
+    # provocaram HTTP 429 no Blogger em testes anteriores.
     last=None
     for attempt in range(attempts):
         try:
-            resp=page.goto(url+"?v31qacheck="+str(attempt),wait_until="domcontentloaded",timeout=25000)
-            if resp and resp.status==200:
-                page.wait_for_timeout(1800)
+            resp=page.goto(url,wait_until="domcontentloaded",timeout=25000)
+            status=resp.status if resp else None
+            if status==200:
+                page.wait_for_timeout(2000)
+                print("PUBLIC_HTTP_PASS",url,flush=True)
                 return True
-            last=f"HTTP {resp.status if resp else 'missing'}"
+            last="HTTP "+str(status)
+            if status==429:
+                print("PUBLIC_RATE_LIMIT_FAIL_CLOSED",url,flush=True)
+                break  # Nao insistir em 429
         except Exception as exc:
             last=type(exc).__name__
-        page.wait_for_timeout(1800)
+        if attempt+1<attempts:
+            page.wait_for_timeout(12000)
     print("PUBLIC_HTTP_FAIL",url,last,flush=True)
     errors.append("HTTP 200 indisponivel: "+url.split("/")[-1])
     return False
@@ -59,14 +63,19 @@ def images_loaded(page,query):
     return count,good
 with sync_playwright() as engine:
     browser=engine.chromium.launch(headless=True,args=["--no-sandbox"])
+    # Publico em Desktop/Mobile fica restrito a homepage/Loja;
+    # demais 9 paginas e 9 posts sao validados via Blogger Bridge.
+
     for mode,width,height in (("desktop",1366,768),("mobile",390,844)):
         page=browser.new_page(viewport={"width":width,"height":height},device_scale_factor=1)
+        page.wait_for_timeout(4000)
         if go(page,BLOG+"/"):
             html=page.content()
             check("Mala Pronta e Viagem Prática" in html,mode+" identidade divergente")
             check("ub-header" in html and "ub-footer" in html,mode+" Tema V31 nao identificado")
             check(page.locator("title").count()>0,mode+" title ausente")
             page.screenshot(path=str(OUT/(mode+"_home.png")),full_page=True)
+        page.wait_for_timeout(4000)
         if go(page,BLOG+"/p/loja.html"):
             html=page.content()
             cards=page.locator(".ub-product-card").count()
