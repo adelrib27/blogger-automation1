@@ -116,13 +116,41 @@
    - Produto Shopee ID `23194230974`, link `https://s.shopee.com.br/8KqtzXrabY` na Loja.
    - LIVE/API_READBACK_PASS e HTML original conferido.
 
-## Pendentes
-- `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
-- `4739187376492839837` Casa Leve e Funcional
-- `1426630233929943394` Achados para Casa
-- `8930870316690519385` Casa Prática Lab
-- `7487888217273188851` Portal Radar Tech
+21. **Casa Prática Lab** — Blog ID `8930870316690519385`, Post ID `8432818293819733140`
+   - *Colher-balança digital para cozinha: como avaliar limite, leitura e limpeza*
+   - https://casa-pratica-lab-20261102.blogspot.com/2026/11/colher-balanca-digital-para-cozinha.html
+   - Produto real da Loja (Shopee Affiliate API): ID `42976595917`, link `https://s.shopee.com.br/80DvK2zfvm`.
+   - Estado LIVE/API_READBACK_PASS; publicação em rascunho, readback, publish, readback; sem garantia de HTTP público independente.
+22. **Achados para Casa** — Blog ID `1426630233929943394`, Post ID `2331982879373121211`
+   - *Varal de chão com abas: como calcular espaço aberto e peso das roupas úmidas*
+   - https://achadosparacasa2026.blogspot.com/2026/11/varal-de-chao-com-abas-como-calcular.html
+   - Produto real da Loja (Shopee Affiliate API): ID `23594376424`, link `https://s.shopee.com.br/qkkgoTFhm`.
+   - Estado LIVE/API_READBACK_PASS; publicação em rascunho, readback, publish, readback; sem garantia de HTTP público independente.
+23. **Casa Leve e Funcional** — Blog ID `4739187376492839837`, Post ID `337509209588515219`
+   - *Toalha de mesa e trilho Oxford: como escolher caimento, tamanho e manutenção*
+   - https://casa-leve-e-funcional.blogspot.com/2026/11/toalha-de-mesa-e-trilho-oxford-como.html
+   - Produto real da Loja (Shopee Affiliate API): ID `42973947939`, link `https://s.shopee.com.br/AAIWjWADeE`.
+   - Estado LIVE/API_READBACK_PASS; publicação em rascunho, readback, publish, readback; sem garantia de HTTP público independente.
+24. **Pedal Leve — Mobilidade e Ciclismo Urbano** — Blog ID `4073458513010284301`, Post ID `3767036595079372204`
+   - *Caramanhola e suporte para bicicleta: como conferir encaixe, acesso e limpeza*
+   - https://pedal-leve-mobilidade-urbana.blogspot.com/2026/11/caramanhola-e-suporte-para-bicicleta.html
+   - Produto real da Loja (Shopee Affiliate API): ID `11341733069`, link `https://s.shopee.com.br/114KA5Jh5K`.
+   - Estado LIVE/API_READBACK_PASS; publicação em rascunho, readback, publish, readback; sem garantia de HTTP público independente.
+25. **Portal Radar Tech** — Blog ID `7487888217273188851`, Post ID `1112908279388723822`
+   - *Carregador USB-C para celular: como conferir potência, cabo e segurança elétrica*
+   - https://portalradartechbr.blogspot.com/2026/11/carregador-usb-c-para-celular-como.html
+   - Produto real da Loja (Shopee Affiliate API): ID `58265754410`, link `https://s.shopee.com.br/70LXwRtF5Z`.
+   - Estado LIVE/API_READBACK_PASS; publicação em rascunho, readback, publish, readback; sem garantia de HTTP público independente.
+
+## Pendentes — nenhum artigo pendente da rodada 2
 
 ## Observações
 - A publicação editorial automática de alguns blogs, como Portal Radar Tech, pode ocorrer em paralelo. Não substituir código nem disputar workflows; fazer preflight dedicado antes de cada publicação.
 - Este checkpoint só é atualizado após evidência real de escrita e leitura posterior.
+
+## Finalização da segunda rodada
+- **25 de 25 blogs no escopo receberam um novo artigo**, distintos da primeira rodada; resultado confirmado pela Blogger Bridge V2 e vinculado a oferta já existente na Loja do respectivo blog. **25 novos posts nesta campanha**, sem contar os 25 da campanha anterior.
+- **Jardim e Horta na Prática (Blog ID `3644898524310766003`) permaneceu totalmente excluído desta execução, sem alteração, exclusão ou publicação**. O usuário o está editando em outro chat.
+- Não foi realizada nova consulta Shopee Affiliate API bem-sucedida para cada post. Foram reutilizadas ofertas reais presentes nas Lojas já abastecidas pela integração. Os preços não foram tratados como atuais.
+- Validação por API não substitui teste HTTP público; rate limits 429 em testes passados exigem evitar auditoria agressiva.
+- No Portal Radar Tech, foi consultado o estado de workflows antes da escrita, não havendo execução editorial simultânea identificada na lista recente.
