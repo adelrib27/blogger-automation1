@@ -7,20 +7,13 @@ from playwright.sync_api import sync_playwright
 
 BLOG="https://mala-pronta-viagem-pratica.blogspot.com"
 BLOG_ID="4169782185971307909"
-PAGES=(
-  "sobre","politica-de-cookies","politica-de-privacidade","termos-de-uso",
-  "aviso-de-afiliados","transparencia-editorial","mensagem-enviada","contato","loja"
-)
+# Rotas representativas publicas. Demais paginas verificadas no Blogger API.
+PAGES=("sobre","politica-de-privacidade","contato","loja")
+# Um post comercial, um pilar e um cluster; 9 posts verificados pela API.
 POSTS=(
-  "mala-de-bordo-mochila-ou-bolsa-dobravel",
-  "organizador-de-mala-vale-pena-como",
   "necessaire-para-viajar-organize-higiene",
-  "guia-para-planejar-bagagem-de-viagem",
   "acessorios-de-viagem-guia-pratico-para",
-  "checklist-de-bagagem-para-tres-dias-o",
   "bagagem-de-mao-como-conferir-medidas",
-  "documentos-e-objetos-de-valor-como",
-  "cabos-carregadores-e-adaptadores",
 )
 OUT=Path(__file__).resolve().parent/"qa_public"
 OUT.mkdir(parents=True,exist_ok=True)
@@ -51,8 +44,18 @@ def images_loaded(page,query):
     page.evaluate("""() => {document.querySelectorAll('img').forEach(img => {
        img.loading = 'eager'; img.setAttribute('loading','eager');
     })}""")
-    page.wait_for_timeout(6000)
-    good=els.evaluate_all("(els) => els.filter(e => e.complete && e.naturalWidth > 0).length")
+    page.wait_for_timeout(2300)
+    # Simular rolagem real: captura full-page sozinha pode nao ativar lazy/intersection.
+    for i in range(min(count,20)):
+        try:
+            els.nth(i).scroll_into_view_if_needed(timeout=7000)
+            page.wait_for_timeout(180)
+        except Exception as exc:
+            print("SCROLL_WARNING",i,type(exc).__name__,flush=True)
+    page.wait_for_timeout(1400)
+    good=els.evaluate_all("(els) => els.filter(e => e.complete && e.naturalWidth > 0 && getComputedStyle(e).visibility !== 'hidden' && getComputedStyle(e).opacity !== '0').length")
+    page.evaluate("window.scrollTo(0,0)")
+    page.wait_for_timeout(500)
     return count,good
 with sync_playwright() as engine:
     browser=engine.chromium.launch(headless=True,args=["--no-sandbox"])
