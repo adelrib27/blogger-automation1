@@ -4,6 +4,10 @@ on:
     paths:
       - ".github/workflows/mala_pronta_public_theme_check.yml"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mala_pronta_public_theme_check.yml"
 permissions:
   contents: read
 jobs:
