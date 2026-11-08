@@ -1,0 +1,43 @@
+name: V31 Mala Pronta - Shopee catalog SAFE
+on:
+  pull_request:
+    paths:
+      - "mala_pronta_viagem_pratica/shopee_catalog_safe.py"
+      - ".github/workflows/mala_pronta_shopee_catalog_safe.yml"
+  push:
+    branches: [main]
+    paths:
+      - "mala_pronta_viagem_pratica/shopee_catalog_safe.py"
+      - ".github/workflows/mala_pronta_shopee_catalog_safe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  consultar-shopee-sem-escrita:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Credenciais sem exposicao e preflight de sintaxe
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          python -m py_compile mala_pronta_viagem_pratica/shopee_catalog_safe.py src/blogger_policy_guard.py
+      - name: Consultar 16 ofertas reais da API Shopee SAFE
+        run: python -u mala_pronta_viagem_pratica/shopee_catalog_safe.py
+      - name: Registrar produtos publicos sem segredos
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mala-pronta-shopee-safe-catalog
+          path: mala_pronta_viagem_pratica/catalogo_shopee_safe.json
+          retention-days: 7
+          if-no-files-found: error
