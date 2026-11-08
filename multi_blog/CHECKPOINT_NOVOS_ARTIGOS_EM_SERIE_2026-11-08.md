@@ -128,11 +128,41 @@
    - Produto Shopee `22393975400` e link afiliado `https://s.shopee.com.br/6figeaNK2p` presentes na Loja do blog.
    - LIVE/API_READBACK_PASS; HTTP externo não testado.
 
-## Pendentes — não criar duplicatas
-- `8658632621591002634` Eletroportáteis na Cozinha
-- `8930870316690519385` Casa Prática Lab
-- `1426630233929943394` Achados para Casa
-- `4739187376492839837` Casa Leve e Funcional
-- `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
+
+## Finalização da campanha V31 — cinco posts finais publicados em sequência
+21. **Eletroportáteis na Cozinha** (Blog ID `8658632621591002634`) — Post ID `7325809246468703690`
+   - *Chaleira elétrica de inox: como conferir capacidade, voltagem e desligamento*
+   - https://eletroportateis-na-cozinha.blogspot.com/2026/11/chaleira-eletrica-de-inox-como-conferir.html
+   - Produto real da Loja com Shopee Affiliate API `58268221009`, link `https://s.shopee.com.br/40hupbTkTG`.
+   - LIVE/API_READBACK_PASS; não afirmar teste HTTP público se não foi executado.
+22. **Casa Prática Lab** (Blog ID `8930870316690519385`) — Post ID `6599597466487542006`
+   - *Barra LED com sensor para armário: como medir, instalar e evitar pontos de sombra*
+   - https://casa-pratica-lab-20261102.blogspot.com/2026/11/barra-led-com-sensor-para-armario-como.html
+   - Produto real da Loja com Shopee Affiliate API `22594751357`, link `https://s.shopee.com.br/1Lh1QOuKep`.
+   - LIVE/API_READBACK_PASS; não afirmar teste HTTP público se não foi executado.
+23. **Achados para Casa** (Blog ID `1426630233929943394`) — Post ID `1458760695170097632`
+   - *Bandeja giratória organizadora: onde usar na cozinha e no banheiro sem desperdiçar espaço*
+   - https://achadosparacasa2026.blogspot.com/2026/11/bandeja-giratoria-organizadora-onde.html
+   - Produto real da Loja com Shopee Affiliate API `23493132499`, link `https://s.shopee.com.br/2VsxkJTjpP`.
+   - LIVE/API_READBACK_PASS; não afirmar teste HTTP público se não foi executado.
+24. **Casa Leve e Funcional** (Blog ID `4739187376492839837`) — Post ID `8070709849553040481`
+   - *Organizador de talheres com divisórias: como planejar a gaveta sem perder espaço*
+   - https://casa-leve-e-funcional.blogspot.com/2026/11/organizador-de-talheres-com-divisorias.html
+   - Produto real da Loja com Shopee Affiliate API `52018104144`, link `https://s.shopee.com.br/70LUxjQLcw`.
+   - LIVE/API_READBACK_PASS; não afirmar teste HTTP público se não foi executado.
+25. **Pedal Leve — Mobilidade e Ciclismo Urbano** (Blog ID `4073458513010284301`) — Post ID `3285654107064345881`
+   - *Lubrificante de corrente para bicicleta: como escolher e evitar contaminar os freios*
+   - https://pedal-leve-mobilidade-urbana.blogspot.com/2026/11/lubrificante-de-corrente-para-bicicleta.html
+   - Produto real da Loja com Shopee Affiliate API `10302700539`, link `https://s.shopee.com.br/9AQ1t52CtW`.
+   - LIVE/API_READBACK_PASS; não afirmar teste HTTP público se não foi executado.
+
+### Resultado global da campanha
+- **25 blogs no escopo; 25 artigos adicionais publicados e confirmados LIVE pela API Blogger Bridge V2**, um por blog e com item comercial real identificado na sua própria Loja.
+- **Jardim e Horta na Prática** (Blog ID `3644898524310766003`) foi preservado e permaneceu fora de todas as escritas desta campanha, por solicitação do usuário; está sendo editado em outro chat. **Não excluir, restaurar, publicar, configurar ou alterar neste escopo.**
+- A API Shopee LIVE retornou GraphQL 10020 na tentativa nova de consulta pet: por isso foram utilizados itens reais **anteriormente recuperados pela Shopee Affiliate API e ainda presentes nas respectivas Lojas**; preços não foram declarados atuais.
+- Readback API após publicação confirmou os 25 posts LIVE. HTTP público via GitHub enfrentou 429 em teste anterior, portanto **não declarar auditoria pública HTTP 100% aprovada**. Eventuais ajustes estruturais de blogs incompletos permanecem em escopo de auditoria separado; não reabrir criação dos posts.
+- Esta campanha de um novo artigo por blog está concluída. Para nova rodada, exigir definição de escopo/controle de duplicidade com novos títulos.
+
+## Pendentes — nenhum artigo pendente da campanha de 25 blogs
 
 **IMPORTANTE:** Estado real > checkpoint. Antes de cada novo artigo, reconsultar o inventário e posts; outro executor pode ter publicado durante a pausa. A Loja serve somente como fonte de oferta previamente validada pela API; a API nova está reportando 10020. Não afirmar consulta atual bem-sucedida. Não modificar Jardim e Horta. Não realizar exclusão.
