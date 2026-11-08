@@ -1,0 +1,52 @@
+name: V31 Pedal Leve - retorno ao blog SAFE
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pedal_leve_return_link_public_safe.yml"
+permissions:
+  contents: read
+jobs:
+  checar-retorno:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Verificar botoes e formulario no HTML publico sem escrita
+        shell: bash
+        run: |
+          python - <<'PY'
+          import urllib.request, urllib.error, time, re
+          base="https://pedal-leve-mobilidade-urbana.blogspot.com"
+          pages={
+            "/p/contato.html":("pedal-return-home-link", True),
+            "/p/mensagem-enviada.html":("pedal-thanks-return-home-link", False),
+          }
+          for path,(marker,is_form) in pages.items():
+              verified=False
+              for i in range(10):
+                  try:
+                      req=urllib.request.Request(base+path+"?pedal_return_qa="+str(i),headers={"User-Agent":"Mozilla/5.0"})
+                      with urllib.request.urlopen(req,timeout=20) as resp:
+                          html=resp.read().decode("utf8","replace")
+                          if resp.status!=200: raise RuntimeError("HTTP_NOT_200")
+                      tag=re.search(r'<a\\b[^>]*id="'+re.escape(marker)+r'"[^>]*>',html)
+                      checks={
+                          "home_button":bool(tag and 'href="/"' in tag.group(0)),
+                          "button_text":"Voltar ao blog" in html,
+                          "blog_identity":"Pedal Leve" in html,
+                      }
+                      if is_form:
+                          checks.update({
+                              "send_button":'Enviar mensagem' in html,
+                              "formsubmit":'action="https://formsubmit.co/blogbloggerautomation@gmail.com"' in html,
+                              "next_destination":'/p/mensagem-enviada.html' in html,
+                          })
+                      print("PEDAL_RETURN_SAFE",path,checks,flush=True)
+                      if not all(checks.values()):raise SystemExit("FAIL_CLOSED: campos ou retorno ausentes "+path)
+                      verified=True
+                      break
+                  except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError) as exc:
+                      print("PEDAL_RETURN_HTTP_RETRY",path,i+1,type(exc).__name__,getattr(exc,'code',''),flush=True)
+                  if i<9:time.sleep(7)
+              if not verified:raise SystemExit("FAIL_CLOSED: pagina publica inacessivel "+path)
+          print("PEDAL_RETURN_BUTTON_PUBLIC_PASS",flush=True)
+          PY
