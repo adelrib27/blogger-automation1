@@ -7,32 +7,11 @@ from urllib.parse import urlparse
 API="https://open-api.affiliate.shopee.com.br/graphql"
 # Apenas blogs reais ja inventariados. Cada par de buscas possui assunto editorial proprio.
 TASKS=[
-("4073458513010284301","Pedal Leve","bomba de ar bicicleta manometro","bomba ar bicicleta"),
-("4169782185971307909","Mala Pronta","cadeado mala senha","cadeado viagem"),
-("8888519348129960729","Atelie Criativo","base de corte artesanato","tapete de corte costura"),
-("3644898524310766003","Jardim e Horta","regador plantas","regador jardim"),
-("1637047917126642592","Achados da Rotina","suporte notebook mesa","suporte notebook"),
-("4739187376492839837","Casa Leve","cesto organizador empilhavel","cesto organizador"),
-("1426630233929943394","Achados para Casa","organizador cabos adesivo","organizador fios"),
-("8052455848487624244","Vida Pet","tapete coletor areia gato","tapete areia gatos"),
-("8930870316690519385","Casa Pratica Lab","pote hermetico cozinha","pote armazenamento cozinha"),
-("8658632621591002634","Eletroportateis","sanduicheira eletrica","sanduicheira grill"),
-("6319734511998091378","Cabelos em Foco","mascara morte subita lola 450g","morte subita lola"),
-("4473989735719981382","Ventiladores em Foco","ventilador mondial vsp 40 b","ventilador mesa mondial 40"),
-("9113728635217260884","Air Fryers em Foco","air fryer elgin cube fry 4.2l","elgin cube fry"),
-("7757953554206491487","Limpeza Inteligente","robo aspirador wap robot w90","wap robot w90"),
-("1719259388907013414","Conecta Achados","hub usb c multifuncional","adaptador usb c hub"),
-("4830103887652146866","Estilo Dia a Dia","bolsa transversal feminina","bolsa tiracolo feminina"),
-("4177382081459143374","Casa em Ordem","divisoria organizadora gaveta","organizador gaveta divisorias"),
-("5151950717041967683","Escolha Certa Online","organizador sapatos","sapateira organizadora"),
-("7527651041649593600","Achados que Valem","luminaria led recarregavel","luminaria mesa recarregavel"),
-("1453188702831337099","Guia Achados Ofertas","balanca digital cozinha","balanca cozinha digital"),
-("9144338307944682868","Vitrine Pratica","cabide multiuso","cabide organizador"),
-("2858597309582499028","Moda e Ofertas","bolsa feminina transversal","bolsa feminina tiracolo"),
-("2562496977098748229","Achadinhos Beleza","escova limpeza facial silicone","escova facial silicone"),
-("7487888217273188851","Portal Radar Tech","teclado bluetooth","teclado bluetooth sem fio"),
-("3552757910439359679","Cozinha Sem Complicacao","tabua de corte cozinha","tabua corte bambu"),
-("5271798990390532475","Liquidificadores em Foco","liquidificador philips walita ri2242","philips walita ri2242")
+("1426630233929943394","Achados para Casa","presilha organizadora cabos","clips organizador fios"),
+("4473989735719981382","Ventiladores em Foco","ventilador mondial vsp40b","ventilador de mesa mondial vsp40"),
+("1637047917126642592","Achados da Rotina","suporte para notebook aluminio ajustavel","base ajustavel notebook"),
+("9113728635217260884","Air Fryers em Foco","fritadeira eletrica elgin cube fry 4l","airfryer elgin 4,2 litros"),
+("2858597309582499028","Moda e Ofertas","bolsa tote feminina grande","bolsa shopper feminina")
 ]
 def fail(msg):raise RuntimeError("FAIL_CLOSED:"+msg)
 def norm(x):
