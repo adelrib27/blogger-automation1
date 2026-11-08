@@ -42,12 +42,37 @@
    - Antes de publicar foi corrigido no rascunho um link interno de `/2026/11/` para o slug real em `/2026/10/` após conferência API.
    - Estado: LIVE/API_READBACK_PASS.
 
+
+## Continuação em 08/11/2026 — Novo chat, Jardim preservado
+- Usuário especificou: **Jardim e Horta na Prática NÃO deve ser excluído** e deve ficar de fora de todas as operações de hoje, pois está sendo editado em outro chat. Apenas excluir do ESCOPO da campanha; preservar integralmente.
+- Mais cinco artigos publicados sequencialmente, status LIVE e HTML/readback pela Blogger Bridge V2, com produto e link já presentes em Loja da Shopee Affiliate API:
+6. **Cozinha Sem Complicação** — Blog ID `3552757910439359679`, Post ID `5283119069759760117`
+   - *Porta-temperos giratório: como avaliar espaço, potes e uso diário na cozinha*
+   - https://cozinha-sem-complicacao.blogspot.com/2026/11/porta-temperos-giratorio-como-avaliar.html
+   - Oferta Shopee ID `58216601427`, link `https://s.shopee.com.br/W7xcDnEPb`.
+   - Estado: LIVE/API_READBACK_PASS. Não presumir teste HTTP público se não executado.
+7. **Achadinhos de Beleza** — Blog ID `2562496977098748229`, Post ID `1228052396044811809`
+   - *Máscara de cílios marrom e delineador: como combinar acabamento e remoção sem irritar os olhos*
+   - https://canal-attitude.blogspot.com/2026/11/mascara-de-cilios-marrom-e-delineador.html
+   - Oferta Shopee ID `58254271380`, link `https://s.shopee.com.br/3g54TLtZFr`.
+   - Estado: LIVE/API_READBACK_PASS. Não presumir teste HTTP público se não executado.
+8. **Moda e Ofertas** — Blog ID `2858597309582499028`, Post ID `5075103736629337907`
+   - *Cinto elástico sem fivela: quando ajuda no jeans e como conferir o ajuste*
+   - https://moda-ofertas.blogspot.com/2026/11/cinto-elastico-sem-fivela-quando-ajuda.html
+   - Oferta Shopee ID `53707116674`, link `https://s.shopee.com.br/114JHqEjpo`.
+   - Estado: LIVE/API_READBACK_PASS. Não presumir teste HTTP público se não executado.
+9. **Vitrine Prática** — Blog ID `9144338307944682868`, Post ID `8224723807403374087`
+   - *Sapateira de aço compacta: o que medir antes de organizar tênis e sapatos*
+   - https://vitrine-pratica.blogspot.com/2026/11/sapateira-de-aco-compacta-o-que-medir.html
+   - Oferta Shopee ID `23793687166`, link `https://s.shopee.com.br/5LDJx3pvif`.
+   - Estado: LIVE/API_READBACK_PASS. Não presumir teste HTTP público se não executado.
+10. **Guia de Achados & Ofertas** — Blog ID `1453188702831337099`, Post ID `8790716739654760829`
+   - *Mini batedor elétrico para café e leite: o que conferir na recarga e na limpeza*
+   - https://guia-de-achados-e-ofertas.blogspot.com/2026/11/mini-batedor-eletrico-para-cafe-e-leite.html
+   - Oferta Shopee ID `23593232547`, link `https://s.shopee.com.br/6q24hzKYoy`.
+   - Estado: LIVE/API_READBACK_PASS. Não presumir teste HTTP público se não executado.
+
 ## Pendentes — não criar duplicatas
-- `3552757910439359679` Cozinha Sem Complicação
-- `2562496977098748229` Achadinhos de Beleza
-- `2858597309582499028` Moda e Ofertas
-- `9144338307944682868` Vitrine Prática
-- `1453188702831337099` Guia de Achados & Ofertas
 - `7527651041649593600` Achados que Valem
 - `5151950717041967683` Escolha Certa Online
 - `4177382081459143374` Casa em Ordem
