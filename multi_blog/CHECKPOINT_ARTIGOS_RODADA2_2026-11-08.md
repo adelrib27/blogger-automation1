@@ -10,7 +10,21 @@
 - Auditoria API valida publicação; teste HTTP público via navegação é adicional e não pode ser presumido por status `live`.
 
 ## Artigos confirmados LIVE nesta rodada
-_Nenhum ainda._
+1. **Vida Pet Prática** — Blog ID `8052455848487624244`, Post ID `4801584793677919174`
+   - *Comedouro de inox para cães e gatos: como escolher tamanho, base e higienização*
+   - https://vida-pet-pratica.blogspot.com/2026/11/comedouro-de-inox-para-caes-e-gatos.html
+   - Oferta Shopee da Loja: ID `22298882024` e link de afiliado `https://s.shopee.com.br/7Aep7Kl8ma`.
+   - Blogger Bridge V2: LIVE, readback exato do post, HTML, link comercial, aviso de transparência.
+2. **Mala Pronta e Viagem Prática** — Blog ID `4169782185971307909`, Post ID `9124026890007298181`
+   - *Porta-passaporte e etiqueta de mala: como identificar bagagem sem expor dados pessoais*
+   - https://mala-pronta-viagem-pratica.blogspot.com/2026/11/porta-passaporte-e-etiqueta-de-mala.html
+   - Oferta Shopee da Loja: ID `22098437418` e link de afiliado `https://s.shopee.com.br/1Bmx5CzHG`.
+   - Blogger Bridge V2: LIVE, readback exato do post, HTML, link comercial, aviso de transparência.
+3. **Ateliê Criativo em Casa** — Blog ID `8888519348129960729`, Post ID `336082826373084324`
+   - *Caneta permanente para artesanato: como testar em madeira, cerâmica e tecido*
+   - https://atelie-criativo-em-casa.blogspot.com/2026/11/caneta-permanente-para-artesanato-como.html
+   - Oferta Shopee da Loja: ID `18399335319` e link de afiliado `https://s.shopee.com.br/114K3wbcSj`.
+   - Blogger Bridge V2: LIVE, readback exato do post, HTML, link comercial, aviso de transparência.
 
 ## Pendentes
 - `4073458513010284301` Pedal Leve — Mobilidade e Ciclismo Urbano
@@ -35,9 +49,6 @@ _Nenhum ainda._
 - `3552757910439359679` Cozinha Sem Complicação
 - `5271798990390532475` Liquidificadores em Foco
 - `7487888217273188851` Portal Radar Tech
-- `8888519348129960729` Ateliê Criativo em Casa
-- `4169782185971307909` Mala Pronta e Viagem Prática
-- `8052455848487624244` Vida Pet Prática
 
 ## Observações
 - A publicação editorial automática de alguns blogs, como Portal Radar Tech, pode ocorrer em paralelo. Não substituir código nem disputar workflows; fazer preflight dedicado antes de cada publicação.
