@@ -166,3 +166,9 @@
 ## Pendentes — nenhum artigo pendente da campanha de 25 blogs
 
 **IMPORTANTE:** Estado real > checkpoint. Antes de cada novo artigo, reconsultar o inventário e posts; outro executor pode ter publicado durante a pausa. A Loja serve somente como fonte de oferta previamente validada pela API; a API nova está reportando 10020. Não afirmar consulta atual bem-sucedida. Não modificar Jardim e Horta. Não realizar exclusão.
+
+## Auditoria final readback API — 25/25
+- Realizada em 08/11/2026 após os 25 envios: leitura independente de cada Post ID pelo Blogger Bridge V2, dividida em lotes de 8, 8 e 9.
+- Resultado: **25/25 PASS** no contrato: status `live`, blog ID e post ID exatos, HTML editorial com pelo menos 3.000 caracteres, link `s.shopee.com.br`, `rel="nofollow sponsored noopener"` e aviso `Transparência:`.
+- O teste comprova integridade da publicação e conteúdo via API, **não prova** que todos os endereços responderam HTTP 200 a um navegador público; testes HTTP anteriores sofreram rate limit 429.
+- Nenhum processo de exclusão ou alteração foi executado no blog Jardim e Horta na Prática; permanece preservado para edição em outro chat.
