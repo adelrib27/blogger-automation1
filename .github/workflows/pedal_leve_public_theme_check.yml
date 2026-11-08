@@ -1,0 +1,41 @@
+name: V31 Pedal Leve - Validar Tema Publico SAFE
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pedal_leve_public_theme_check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ler HTML publico do blog sem escrita
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re, time, urllib.request
+          url = 'https://pedal-leve-mobilidade-urbana.blogspot.com/'
+          for i in range(6):
+              try:
+                  req = urllib.request.Request(url+'?v31_pedal_check='+str(i), headers={'User-Agent':'Mozilla/5.0'})
+                  with urllib.request.urlopen(req, timeout=18) as resp:
+                      html=resp.read().decode('utf8','replace'); status=resp.status
+                  checks = {
+                      'http200': status==200,
+                      'blog_title': 'Pedal Leve' in html,
+                      'header': re.search(r'\bub-header\b',html) is not None,
+                      'footer': re.search(r'\bub-footer\b',html) is not None,
+                      'blogger': 'blogger' in html.lower(),
+                  }
+                  print('PEDAL_SAFE_PUBLIC',i+1,'bytes',len(html),checks,flush=True)
+                  if all(checks.values()):
+                      print('PEDAL_V31_THEME_PUBLIC_PASS',flush=True)
+                      break
+              except Exception as exc:
+                  print('PUBLIC_RETRY',i+1,type(exc).__name__,flush=True)
+              if i == 5:
+                  raise SystemExit('FAIL_CLOSED: sem validacao publica do Tema V31')
+              time.sleep(6)
+          PY
