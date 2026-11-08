@@ -1,0 +1,42 @@
+name: V31 Vida Pet - artigo novo QA publico SAFE
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/vida_pet_post_public_qa_safe_v31.yml"
+permissions:
+  contents: read
+jobs:
+  validar-artigo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Conferir HTML publico do artigo sem escrita
+        shell: bash
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.error,time
+          url="https://vida-pet-pratica.blogspot.com/2026/11/bola-interativa-automatica-para-pets.html"
+          for i in range(10):
+              try:
+                  req=urllib.request.Request(url+"?qa_v31_pet="+str(i),headers={"User-Agent":"Mozilla/5.0"})
+                  with urllib.request.urlopen(req,timeout=20) as r:
+                      status=r.status
+                      html=r.read().decode("utf-8","replace")
+                  if status!=200: raise RuntimeError("HTTP_NON_200")
+                  checks={
+                      "article_title": "Bola interativa automática para pets" in html,
+                      "real_affiliate": "https://s.shopee.com.br/1qdIlZR2zB" in html,
+                      "sponsored": "nofollow sponsored noopener" in html,
+                      "product_image": "sg-11134201-8262r-mk2m7rxjhipu52" in html,
+                      "commercial_disclosure": "Transparência:" in html,
+                      "internal_link": "/2026/11/enriquecimento-ambiental-para-gatos.html" in html
+                  }
+                  print("VIDA_PET_PUBLIC_QA",checks,flush=True)
+                  if not all(checks.values()):raise SystemExit("FAIL_CLOSED: HTML publicado com campos ausentes")
+                  print("VIDA_PET_ARTIGO_PUBLIC_PASS",flush=True)
+                  break
+              except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError) as e:
+                  print("VIDA_PET_HTTP_RETRY",i+1,type(e).__name__,getattr(e,"code",""),flush=True)
+                  if i==9:raise SystemExit("FAIL_CLOSED: sem HTTP200")
+                  time.sleep(7)
+          PY
