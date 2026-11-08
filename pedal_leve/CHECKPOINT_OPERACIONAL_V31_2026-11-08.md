@@ -74,3 +74,11 @@ Pilares apontam para clusters; clusters retornam a pilares, com links contextuai
 - Estado real ao vivo > V31 validada > evidências/checkpoints > histórico. Sempre conferir `main`, Blogger API e estado público antes de qualquer escrita. Nunca publicar novos produtos, preços, imagens ou links imaginários. Sem manipular credenciais, cookies, tokens ou perfis Chrome.
 
 **Próximas verificações:** (1) validar manualmente o FormSubmit e recepção real no Gmail; (2) observar pelo menos três execuções independentes `schedule` com `LIVE_API_AND_PUBLIC_PASS` e mudança de IDs; (3) se desejar artigos futuros autônomos, construir e validar pipeline editorial em LAB/SAFE antes de ativar em produção, preservando qualidade e deduplicação.
+
+## Atualização de interface — 08/11/2026 (depois do checkpoint)
+- Após observação direta do usuário, constatado que faltava botão visível de retorno à página inicial na página **Contato**.
+- Editadas SOMENTE as páginas públicas do blog `4073458513010284301`: **Contato** Page ID `5651764171349213719` e **Mensagem enviada** Page ID `8022921473820967967`. Ambas receberam link destacado **“← Voltar ao blog”** com `href="/"`.
+- Formulário FormSubmit, `action`, `_next`, campos e botão **Enviar mensagem** preservados.
+- Blogger Bridge V2 `update_page` confirmou status `live` e identidade integral do HTML atualizado.
+- Evidência pública externa: GitHub Actions `42492516107`, resultado `PEDAL_RETURN_BUTTON_PUBLIC_PASS`: botões presentes nas duas URLs, formulário preservado. Um HTTP 429 inicial foi contornado por nova leitura SAFE, sem escrita.
+- A correção de navegação **NÃO comprova entrega de e-mail pelo FormSubmit** e não altera a limitação identificada no teste E2E `42458795314`; FormSubmit fora do blog não é controlável por edição da página do Blogger.
