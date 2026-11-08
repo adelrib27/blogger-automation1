@@ -7,11 +7,22 @@ from urllib.parse import urlparse
 API="https://open-api.affiliate.shopee.com.br/graphql"
 # Apenas blogs reais ja inventariados. Cada par de buscas possui assunto editorial proprio.
 TASKS=[
-("1426630233929943394","Achados para Casa","presilha organizadora cabos","clips organizador fios"),
-("4473989735719981382","Ventiladores em Foco","ventilador mondial vsp40b","ventilador de mesa mondial vsp40"),
-("1637047917126642592","Achados da Rotina","suporte para notebook aluminio ajustavel","base ajustavel notebook"),
-("9113728635217260884","Air Fryers em Foco","fritadeira eletrica elgin cube fry 4l","airfryer elgin 4,2 litros"),
-("2858597309582499028","Moda e Ofertas","bolsa tote feminina grande","bolsa shopper feminina")
+("3644898524310766003","Regar - Regador","regador plantas","regador jardim"),
+("3644898524310766003","Regar - Borrifador","borrifador plantas","pulverizador plantas"),
+("3644898524310766003","Regar - Gotejador","gotejador vasos plantas","irrigador gotejamento vasos"),
+("3644898524310766003","Regar - Mangueira","mangueira jardim flexivel","mangueira jardim"),
+("3644898524310766003","Vasos - Vaso Drenagem","vaso planta drenagem","vaso jardinagem furos"),
+("3644898524310766003","Vasos - Autoirrigavel","vaso autoirrigavel plantas","vaso auto irrigavel"),
+("3644898524310766003","Vasos - Jardineira","jardineira plastica varanda","jardineira plantas"),
+("3644898524310766003","Vasos - Prato","prato vaso planta","prato suporte vaso"),
+("3644898524310766003","Ferramentas - Tesoura","tesoura poda jardim","tesoura poda"),
+("3644898524310766003","Ferramentas - Kit","kit ferramentas jardinagem","ferramenta jardinagem kit"),
+("3644898524310766003","Ferramentas - Luva","luva jardinagem","luvas jardim"),
+("3644898524310766003","Ferramentas - Pazinha","pazinha jardinagem","pa para jardinagem"),
+("3644898524310766003","Horta - Suporte","suporte vaso planta","suporte plantas"),
+("3644898524310766003","Horta - Tutor","tutor plantas jardim","tutor horta"),
+("3644898524310766003","Horta - Etiqueta","etiqueta jardim plantas","marcador plantas"),
+("3644898524310766003","Horta - Sombrite","tela sombrite horta","sombrite jardim")
 ]
 def fail(msg):raise RuntimeError("FAIL_CLOSED:"+msg)
 def norm(x):
