@@ -1,0 +1,21 @@
+name: V31 Multiblog - QA publica 26 artigos SAFE
+on:
+  pull_request:
+    paths:
+      - "multi_blog/qa_new_posts_v31.py"
+      - ".github/workflows/multiblog_qa_public_safe_v31.yml"
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compilar auditoria
+        run: python -m py_compile multi_blog/qa_new_posts_v31.py
+      - name: Auditar 26 URLs publicas sem nenhuma escrita
+        run: python -u multi_blog/qa_new_posts_v31.py
