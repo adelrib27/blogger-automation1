@@ -15,10 +15,10 @@ from blogger_policy_guard import require_product_allowed
 
 EXPECTED_BLOG_ID="3644898524310766003"
 CATS=(
-  ("Vasos e Jardineiras",("vaso para plantas", "jardineira plantas"),("vaso","jardineira")),
-  ("Rega e Irrigação",("regador para plantas", "borrifador jardinagem"),("regador","borrifador","pulverizador")),
-  ("Ferramentas Manuais",("kit ferramentas jardinagem", "pazinha jardinagem"),("pazinha","ferramenta jardinagem","kit jardinagem","pa jardinagem")),
-  ("Suportes para Vasos",("suporte para vasos plantas", "suporte vaso plantas"),("suporte","prateleira","estante plantas")),
+  ("Vasos e Jardineiras",("jardineira plantas", "vaso para horta", "vaso autoirrigavel plantas"),("vaso","jardineira")),
+  ("Rega e Irrigação",("regador para plantas", "borrifador plantas", "regador jardim horta"),("regador","borrifador")),
+  ("Ferramentas Manuais",("kit ferramentas jardinagem", "pazinha jardinagem", "tesoura poda jardinagem"),("pazinha","ferramenta jardinagem","kit jardinagem","pa jardinagem","tesoura de poda","tesoura poda")),
+  ("Suportes para Vasos",("suporte para vasos plantas", "suporte vaso plantas", "prateleira de vasos de plantas"),("suporte","prateleira","estante plantas")),
 )
 API="https://open-api.affiliate.shopee.com.br/graphql"
 OUT=ROOT/"jardim_horta_pratica"/"catalogo_shopee_safe.json"
@@ -57,7 +57,9 @@ def product(raw,label,tokens):
             link.startswith("https://") and 0 < price < 100000):
             return None
         if not any(token in norm(name) for token in tokens):return None
-        if any(term in norm(name) for term in ("bebe","maternidade","crianca","infantil")):return None
+        excluded=("bebe","maternidade","crianca","infantil","brinquedo","cupcake","bolo de festa","topper de doce", "plantas artificiais","planta artificial","flores artificiais","vaso sanitario","agricola","defensivo","veneno","inseticida","herbicida")
+        if any(term in norm(name) for term in excluded):return None
+        if label=="Vasos e Jardineiras" and ("80ml" in norm(name) or "mini-vasos" in norm(name)):return None
         item={"itemId":ident,"productName":name,"imageUrl":image,"offerLink":link,
               "priceMin":round(price,2),"category":label}
         require_product_allowed(item)
