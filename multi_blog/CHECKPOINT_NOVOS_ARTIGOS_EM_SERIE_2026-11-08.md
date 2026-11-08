@@ -5,7 +5,7 @@
 - Usuário informou que **Jardim e Horta na Prática**, Blog ID `3644898524310766003`, será excluído por ele. **EXCLUIR O BLOG DO ESCOPO E NÃO APAGAR OU ALTERAR.**
 - Inventário realizado: 26 blogs; 25 no escopo; cada blog deve receber apenas um artigo **novo** adicional nesta campanha. Não confundir com os 26 artigos que já existiam antes.
 - Preflight por blog: ID/nome/URL, posts existentes (evitar pauta duplicada), Loja e produto verdadeiro, link afiliado, políticas; criar rascunho, readback, publicar, readback; validar público quando acesso permitir.
-- Nova consulta Shopee realizada via GitHub PR #31 (fechado sem merge), run `42504307962`: GraphQL `10020` em três consultas de produtos pet, fail-closed. Para os três posts abaixo, reutilizou-se **produto real previamente obtido pela Shopee Affiliate API e já validado na página LOJA do próprio blog**, sem inventar produto, link, imagem ou preço atual.
+- Nova consulta Shopee realizada via GitHub PR #31 (fechado sem merge), run `42504307962`: GraphQL `10020` em três consultas de produtos pet, fail-closed. Para os cinco posts abaixo, reutilizou-se **produto real previamente obtido pela Shopee Affiliate API e já validado na página LOJA do próprio blog**, sem inventar produto, link, imagem ou preço atual.
 - Auditoria HTTP de Vida Pet run `42504723298`, PR #32 (fechado sem merge), recebeu HTTP 429 repetidamente. Não é prova de falha de publicação. Blogger Bridge V2 confirmou cada post LIVE e conteúdo com afiliado. Evitar novos loops agressivos de GET públicos.
 
 ## Concluídos com Blogger API live e readback
@@ -28,9 +28,21 @@
    - Produto Shopee da Loja: ID `21699888784`, `https://s.shopee.com.br/1W0aerviLF`.
    - Estado: LIVE/API_READBACK_PASS.
 
+4. **Portal Radar Tech**, Blog ID `7487888217273188851`
+   - Post ID `8180014042421101273`
+   - Título: *Caixa de som Bluetooth portátil: como comparar conexões, bateria e potência anunciada*
+   - https://portalradartechbr.blogspot.com/2026/11/caixa-de-som-bluetooth-portatil-como.html
+   - Produto real do post Loja redirecionado: ID `20997608223`, afiliado `https://s.shopee.com.br/2LZglP61P4`.
+   - Estado: LIVE/API_READBACK_PASS. O blog ainda requer revisão de páginas institucionais ausentes.
+5. **Liquidificadores em Foco**, Blog ID `5271798990390532475`
+   - Post ID `8365046370075588694`
+   - Título: *Mini liquidificador portátil USB: o que conferir em capacidade, recarga e limpeza*
+   - https://liquidificadores-em-foco.blogspot.com/2026/11/mini-liquidificador-portatil-usb-o-que.html
+   - Produto real do post Loja: ID `58255874292`, `https://s.shopee.com.br/7fbElOrTmx`.
+   - Antes de publicar foi corrigido no rascunho um link interno de `/2026/11/` para o slug real em `/2026/10/` após conferência API.
+   - Estado: LIVE/API_READBACK_PASS.
+
 ## Pendentes — não criar duplicatas
-- `7487888217273188851` Portal Radar Tech
-- `5271798990390532475` Liquidificadores em Foco
 - `3552757910439359679` Cozinha Sem Complicação
 - `2562496977098748229` Achadinhos de Beleza
 - `2858597309582499028` Moda e Ofertas
