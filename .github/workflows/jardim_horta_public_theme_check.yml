@@ -27,6 +27,11 @@ jobs:
                       headers={'User-Agent':'Mozilla/5.0'})
                   with urllib.request.urlopen(req,timeout=18) as r:
                       h=r.read().decode('utf8','replace'); status=r.status
+                  import html as html_module
+                  decoded = html_module.unescape(h)
+                  titles = re.findall(r'<title[^>]*>(.*?)</title>', decoded, flags=re.I|re.S)
+                  print('PUBLIC_TITLE_DIAGNOSTIC', [re.sub(r'\\s+', ' ', x)[:200] for x in titles[:3]], flush=True)
+                  print('PUBLIC_BRAND_DIAGNOSTIC', {'jardim': 'Jardim' in decoded, 'horta': 'Horta' in decoded, 'brand_exact': 'Jardim e Horta na Prática' in decoded}, flush=True)
                   data = {
                       'http200': status == 200,
                       'title': 'Jardim e Horta e Viagem Prática' in h,
