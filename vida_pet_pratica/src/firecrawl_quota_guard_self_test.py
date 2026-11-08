@@ -109,6 +109,18 @@ def run():
                 assert "EVIDENCE_FALLBACK_REQUIRED_BUT_UNAVAILABLE" in str(exc)
             assert calls["n"] == 2
 
+            # A strict HTTP attempt budget also applies across separate searches.
+            telemetry.reset()
+            calls["n"] = 0
+            os.environ["VIDAPET_FIRECRAWL_MAX_HTTP_ATTEMPTS"] = "1"
+            engine.firecrawl_search("SENTINEL_HTTP_LIMIT_A", limit=1)
+            try:
+                engine.firecrawl_search("SENTINEL_HTTP_LIMIT_B", limit=1)
+                raise AssertionError("second HTTP attempt should be refused")
+            except RuntimeError as exc:
+                assert "FIRECRAWL_LAB_CALL_BUDGET_EXHAUSTED" in str(exc)
+            assert calls["n"] == 1
+            os.environ["VIDAPET_FIRECRAWL_MAX_HTTP_ATTEMPTS"] = "3"
             telemetry.reset()
             calls["n"] = 0
 
