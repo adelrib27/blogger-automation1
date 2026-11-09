@@ -2,9 +2,9 @@
   "version": "2.3",
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
-    "input": 484,
-    "accepted": 254,
-    "rejected": 230
+    "input": 477,
+    "accepted": 266,
+    "rejected": 211
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -59,27 +59,11 @@
         1
       ],
       [
-        "628492017",
-        1
-      ],
-      [
         "427457955",
         1
       ],
       [
-        "1310142226",
-        1
-      ],
-      [
-        "728389176",
-        1
-      ],
-      [
-        "1533370985",
-        1
-      ],
-      [
-        "1016471898",
+        "628492017",
         1
       ],
       [
@@ -87,7 +71,11 @@
         1
       ],
       [
-        "1790785656",
+        "1310142226",
+        1
+      ],
+      [
+        "1016471898",
         1
       ],
       [
@@ -95,19 +83,15 @@
         1
       ],
       [
-        "1212721731",
-        1
-      ],
-      [
         "1668941814",
         1
       ],
       [
-        "1568639279",
+        "1183719086",
         1
       ],
       [
-        "1006215031",
+        "1533370985",
         1
       ],
       [
@@ -115,7 +99,23 @@
         1
       ],
       [
+        "305201598",
+        1
+      ],
+      [
+        "1212721731",
+        1
+      ],
+      [
         "1660170092",
+        1
+      ],
+      [
+        "1006215031",
+        1
+      ],
+      [
+        "1568639279",
         1
       ],
       [
@@ -137,7 +137,7 @@
         3
       ],
       [
-        "parafusadeira",
+        "maleta ferramentas",
         3
       ],
       [
@@ -145,11 +145,11 @@
         3
       ],
       [
-        "caixa ferramentas",
+        "jogo de chaves",
         2
       ],
       [
-        "maleta ferramentas",
+        "parafusadeira",
         2
       ],
       [
@@ -161,8 +161,8 @@
         2
       ],
       [
-        "jogo de soquetes",
-        1
+        "aspirador automotivo",
+        2
       ],
       [
         "luva de protecao",
@@ -181,25 +181,21 @@
         1
       ],
       [
-        "aspirador automotivo",
-        1
-      ],
-      [
         "escova limpeza automotiva",
         1
       ]
     ],
     "categoryDistribution": [
       [
-        "Organizacao de Garagem",
-        7
-      ],
-      [
         "Ferramentas",
         7
       ],
       [
         "Acessorios Automotivos",
+        7
+      ],
+      [
+        "Organizacao de Garagem",
         6
       ],
       [
@@ -219,6 +215,19 @@
   "ranking": [
     {
       "rank": 1,
+      "itemId": 22892833180,
+      "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas para Reparo de Carros / Conjuntos de Chaves",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "jogo de chaves"
+      ],
+      "opportunityScore": 76.77,
+      "shopName": "RISESHOP_brasil",
+      "offerLink": "https://s.shopee.com.br/3B8mHURVwx"
+    },
+    {
+      "rank": 2,
       "itemId": 20699205697,
       "productName": "Pano de Limpeza Multiuso Kit 10 Panos De Limpeza Microfibra Super Absorvente , Limpeza Doméstica e Automotiva de Carro",
       "priorityTier": "COMISSAO_EXTRA",
@@ -226,22 +235,9 @@
       "intentMatchedKeywords": [
         "pano microfibra automotivo"
       ],
-      "opportunityScore": 79.76,
+      "opportunityScore": 75.54,
       "shopName": "MULTIORIENTAL",
       "offerLink": "https://s.shopee.com.br/1qdRodJA49"
-    },
-    {
-      "rank": 2,
-      "itemId": 22892833180,
-      "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas para Reparo de Carros / Conjuntos de Chaves",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "caixa ferramentas"
-      ],
-      "opportunityScore": 78.6,
-      "shopName": "RISESHOP_brasil",
-      "offerLink": "https://s.shopee.com.br/3B8mHURVwx"
     },
     {
       "rank": 3,
@@ -250,13 +246,13 @@
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
+        "jogo de chaves",
         "jogo de soquetes",
-        "caixa ferramentas",
         "maleta ferramentas"
       ],
-      "opportunityScore": 76.19,
+      "opportunityScore": 74.37,
       "shopName": "HONG11.br",
-      "offerLink": "https://s.shopee.com.br/2qVxtdEqjj"
+      "offerLink": "https://s.shopee.com.br/7pufSyQLHs"
     },
     {
       "rank": 4,
@@ -267,7 +263,7 @@
       "intentMatchedKeywords": [
         "furadeira"
       ],
-      "opportunityScore": 74.92,
+      "opportunityScore": 72.03,
       "shopName": "Mundo Pryst peças e acessórios",
       "offerLink": "https://s.shopee.com.br/4LKlgJb4mm"
     },
@@ -280,38 +276,12 @@
       "intentMatchedKeywords": [
         "suporte celular carro"
       ],
-      "opportunityScore": 74.74,
+      "opportunityScore": 71.99,
       "shopName": "Umicc shop",
-      "offerLink": "https://s.shopee.com.br/1W0bPyHJKw"
+      "offerLink": "https://s.shopee.com.br/6VPHsYmD11"
     },
     {
       "rank": 6,
-      "itemId": 22892919440,
-      "productName": "Parafusadeira elétrica de precisão automática recarregável 68 em 1 ponteiras imantadas EXBOM-CKE6800",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "parafusadeira"
-      ],
-      "opportunityScore": 73.51,
-      "shopName": "Trissolaris Vooloja",
-      "offerLink": "https://s.shopee.com.br/7fbEj9Tx68"
-    },
-    {
-      "rank": 7,
-      "itemId": 21455455470,
-      "productName": "Mini Parafusadeira sem Fio Recarregável USB com Maleta 49 peças  MQL-PFU49A EXBOM",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "parafusadeira"
-      ],
-      "opportunityScore": 73.31,
-      "shopName": "Trissolaris Vooloja",
-      "offerLink": "https://s.shopee.com.br/7fbElLSDwn"
-    },
-    {
-      "rank": 8,
       "itemId": 22598454534,
       "productName": "Kit de Ferramentas 46 Peças com Catraca Soquete – Maleta Portátil – Ideal para Reparos Domésticos MN",
       "priorityTier": "COMISSAO_EXTRA",
@@ -319,25 +289,38 @@
       "intentMatchedKeywords": [
         "maleta ferramentas"
       ],
-      "opportunityScore": 73.13,
+      "opportunityScore": 71.43,
       "shopName": "MANIA UTILIDADES E AFINS LTDA",
       "offerLink": "https://s.shopee.com.br/4B1Mauwjde"
     },
     {
-      "rank": 9,
-      "itemId": 22992747047,
-      "productName": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
+      "rank": 7,
+      "itemId": 22892919440,
+      "productName": "Parafusadeira elétrica de precisão automática recarregável 68 em 1 ponteiras imantadas EXBOM-CKE6800",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "luva de protecao"
+        "parafusadeira"
       ],
-      "opportunityScore": 72.36,
-      "shopName": "MULTIORIENTAL",
-      "offerLink": "https://s.shopee.com.br/4VeCzZ3ryx"
+      "opportunityScore": 70.09,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/7fbEj9Tx68"
     },
     {
-      "rank": 10,
+      "rank": 8,
+      "itemId": 21455455470,
+      "productName": "Mini Parafusadeira sem Fio Recarregável USB com Maleta 49 peças  MQL-PFU49A EXBOM",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira"
+      ],
+      "opportunityScore": 69.89,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/7fbElLSDwn"
+    },
+    {
+      "rank": 9,
       "itemId": 12419824135,
       "productName": "Escovas De Carvão P/ Furadeira Skil - Par",
       "priorityTier": "COMISSAO_EXTRA",
@@ -345,9 +328,22 @@
       "intentMatchedKeywords": [
         "furadeira"
       ],
-      "opportunityScore": 72.04,
+      "opportunityScore": 69.32,
       "shopName": "Mundo Pryst peças e acessórios",
       "offerLink": "https://s.shopee.com.br/4VeBscaRRp"
+    },
+    {
+      "rank": 10,
+      "itemId": 22992747047,
+      "productName": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "luva de protecao"
+      ],
+      "opportunityScore": 68.94,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/LoeXICT8B"
     },
     {
       "rank": 11,
@@ -358,25 +354,12 @@
       "intentMatchedKeywords": [
         "furadeira"
       ],
-      "opportunityScore": 71.7,
+      "opportunityScore": 68.85,
       "shopName": "Mundo Pryst peças e acessórios",
       "offerLink": "https://s.shopee.com.br/4B1LU0bi7n"
     },
     {
       "rank": 12,
-      "itemId": 14720259268,
-      "productName": "Aplicador De Shampoo Encaixe Fino Lavadora Alta Pressão Wap",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "lavadora alta pressao"
-      ],
-      "opportunityScore": 70.96,
-      "shopName": "CTM E-COMMERCE",
-      "offerLink": "https://s.shopee.com.br/8KqvYayTqA"
-    },
-    {
-      "rank": 13,
       "itemId": 49466540071,
       "productName": "Pano Microfibra Toalha Grande Limpar Casa moveis Secar Carro Automotivo Lavagem Secagem Polimento",
       "priorityTier": "COMISSAO_EXTRA",
@@ -384,65 +367,25 @@
       "intentMatchedKeywords": [
         "pano microfibra automotivo"
       ],
-      "opportunityScore": 69.69,
+      "opportunityScore": 68.4,
       "shopName": "TMZ UTILIDADES",
-      "offerLink": "https://s.shopee.com.br/7fbElMEYJV"
+      "offerLink": "https://s.shopee.com.br/20wsWL1zV9"
+    },
+    {
+      "rank": 13,
+      "itemId": 14720259268,
+      "productName": "Aplicador De Shampoo Encaixe Fino Lavadora Alta Pressão Wap",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lavadora alta pressao"
+      ],
+      "opportunityScore": 68.11,
+      "shopName": "CTM E-COMMERCE",
+      "offerLink": "https://s.shopee.com.br/8KqvYayTqA"
     },
     {
       "rank": 14,
-      "itemId": 22899126718,
-      "productName": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade Fixação no Banco Traseiro Rede Multiuso Gancho",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "organizador porta malas"
-      ],
-      "opportunityScore": 68.99,
-      "shopName": "MELHOR ",
-      "offerLink": "https://s.shopee.com.br/AKbzwDs0cw"
-    },
-    {
-      "rank": 15,
-      "itemId": 58217601055,
-      "productName": "Parafusadeira Furadeira 1X Bateria 25V Nakasaki Sem Fio Profissional Kit Completo com Maleta",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "parafusadeira",
-        "furadeira"
-      ],
-      "opportunityScore": 68.98,
-      "shopName": "MAQ TOOLS",
-      "offerLink": "https://s.shopee.com.br/8KqvWNec6t"
-    },
-    {
-      "rank": 16,
-      "itemId": 23098642201,
-      "productName": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "multimetro digital"
-      ],
-      "opportunityScore": 68.71,
-      "shopName": "SantaCasa",
-      "offerLink": "https://s.shopee.com.br/3LSDzTq8FM"
-    },
-    {
-      "rank": 17,
-      "itemId": 22394334585,
-      "productName": "Protetor Auricular Silicone com Cordão EPI Auditivo Plug Ouvido – Escolha a Quantidade",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "protetor auricular"
-      ],
-      "opportunityScore": 68.52,
-      "shopName": "GTEPIS Comercio e Participações",
-      "offerLink": "https://s.shopee.com.br/30pPCow2u6"
-    },
-    {
-      "rank": 18,
       "itemId": 23499011933,
       "productName": "Suporte Magnético 360° Dobrável p/ Celular com Sucção a Vácuo Forte – Carro Mesa Parede",
       "priorityTier": "COMISSAO_EXTRA",
@@ -450,25 +393,38 @@
       "intentMatchedKeywords": [
         "suporte celular carro"
       ],
-      "opportunityScore": 68.47,
+      "opportunityScore": 67.28,
       "shopName": "COCONUT SHOP",
       "offerLink": "https://s.shopee.com.br/5q9aZwILOi"
     },
     {
-      "rank": 19,
-      "itemId": 58258700275,
-      "productName": "Suporte para Celular Carro Veicular caminhão Porta Copo Universal Ajustável flexível",
+      "rank": 15,
+      "itemId": 22899126718,
+      "productName": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade Fixação no Banco Traseiro Rede Multiuso Gancho",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "suporte celular carro"
+        "organizador porta malas"
       ],
-      "opportunityScore": 68.18,
-      "shopName": "Marocas variedades",
-      "offerLink": "https://s.shopee.com.br/1BNl1MIa0u"
+      "opportunityScore": 67.21,
+      "shopName": "MELHOR ",
+      "offerLink": "https://s.shopee.com.br/AKbzwDs0cw"
     },
     {
-      "rank": 20,
+      "rank": 16,
+      "itemId": 22394334585,
+      "productName": "Protetor Auricular Silicone com Cordão EPI Auditivo Plug Ouvido – Escolha a Quantidade",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "protetor auricular"
+      ],
+      "opportunityScore": 67.13,
+      "shopName": "GTEPIS Comercio e Participações",
+      "offerLink": "https://s.shopee.com.br/30pPCow2u6"
+    },
+    {
+      "rank": 17,
       "itemId": 23594156062,
       "productName": "Kit 10 Panos de Limpeza Microfibra Alta Absorção Flanela Automotivo Carro Pia 30x30cm Vidro Multiuso Pano De Limpeza",
       "priorityTier": "COMISSAO_EXTRA",
@@ -476,25 +432,12 @@
       "intentMatchedKeywords": [
         "pano microfibra automotivo"
       ],
-      "opportunityScore": 68.16,
+      "opportunityScore": 67.05,
       "shopName": "JWC.EMPORIUM",
-      "offerLink": "https://s.shopee.com.br/80E0UKCJ2c"
+      "offerLink": "https://s.shopee.com.br/2LZiux0ipB"
     },
     {
-      "rank": 21,
-      "itemId": 58207052374,
-      "productName": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v ",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "compressor de ar portatil"
-      ],
-      "opportunityScore": 67.53,
-      "shopName": "GR7 Imports",
-      "offerLink": "https://s.shopee.com.br/3LSFZhyKiN"
-    },
-    {
-      "rank": 22,
+      "rank": 18,
       "itemId": 58207126680,
       "productName": "Multímetro Digital Inteligente Automático Profissional LCD HD - Medidor De Tensão E Corrente Com Detecção NCV",
       "priorityTier": "COMISSAO_EXTRA",
@@ -502,38 +445,38 @@
       "intentMatchedKeywords": [
         "multimetro digital"
       ],
-      "opportunityScore": 67.45,
+      "opportunityScore": 66.11,
       "shopName": "ARTIGOS_E_MAGIA1",
       "offerLink": "https://s.shopee.com.br/9AQ2Y36807"
     },
     {
-      "rank": 23,
-      "itemId": 22998706834,
-      "productName": "Mini Aspirador Automotivo Portátil Potente Recarregável Premium B-88-2",
+      "rank": 19,
+      "itemId": 22998858410,
+      "productName": "Suporte Carro Celular GPS Universal Painel e Parabrisa Resistente Ventosa Ajustável Rotação 360°",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "aspirador automotivo"
+        "suporte celular carro"
       ],
-      "opportunityScore": 67.26,
-      "shopName": "Premium.Store",
-      "offerLink": "https://s.shopee.com.br/4qGyiT7VBk"
+      "opportunityScore": 65.97,
+      "shopName": "LojaZini",
+      "offerLink": "https://s.shopee.com.br/7AeyAODGh6"
     },
     {
-      "rank": 24,
-      "itemId": 24575870687,
-      "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
+      "rank": 20,
+      "itemId": 23098642201,
+      "productName": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "escova limpeza automotiva"
+        "multimetro digital"
       ],
-      "opportunityScore": 66.89,
-      "shopName": "Choice Oficial",
-      "offerLink": "https://s.shopee.com.br/W84H8tuKc"
+      "opportunityScore": 65.86,
+      "shopName": "SantaCasa",
+      "offerLink": "https://s.shopee.com.br/6fii4qPqIS"
     },
     {
-      "rank": 25,
+      "rank": 21,
       "itemId": 58250382369,
       "productName": "Bolsa De Armazenamento De Ferramentas De Carro Em Feltro Para O Porta-Malas Do Carro",
       "priorityTier": "COMISSAO_EXTRA",
@@ -541,12 +484,38 @@
       "intentMatchedKeywords": [
         "organizador porta malas"
       ],
-      "opportunityScore": 66.57,
+      "opportunityScore": 65.41,
       "shopName": "UR.bestie🧡",
       "offerLink": "https://s.shopee.com.br/8fTlx9yM0S"
     },
     {
-      "rank": 26,
+      "rank": 22,
+      "itemId": 23298660358,
+      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 65.17,
+      "shopName": "ONE LIGHT SHOP",
+      "offerLink": "https://s.shopee.com.br/BVDnJc3pd"
+    },
+    {
+      "rank": 23,
+      "itemId": 58207052374,
+      "productName": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v ",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "compressor de ar portatil"
+      ],
+      "opportunityScore": 65.06,
+      "shopName": "GR7 Imports",
+      "offerLink": "https://s.shopee.com.br/3qOWhe9tbd"
+    },
+    {
+      "rank": 24,
       "itemId": 22694953462,
       "productName": "Kit Jogo De Ferramentas 27 Peças Com Maleta Chaves Allen Alicate Martelo Completos",
       "priorityTier": "COMISSAO_EXTRA",
@@ -554,9 +523,35 @@
       "intentMatchedKeywords": [
         "maleta ferramentas"
       ],
-      "opportunityScore": 66.3,
+      "opportunityScore": 65.0,
       "shopName": "Super Vida_BR",
       "offerLink": "https://s.shopee.com.br/4LKmnDw6If"
+    },
+    {
+      "rank": 25,
+      "itemId": 24575870687,
+      "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "escova limpeza automotiva"
+      ],
+      "opportunityScore": 64.56,
+      "shopName": "Choice Oficial",
+      "offerLink": "https://s.shopee.com.br/W84H8tuKc"
+    },
+    {
+      "rank": 26,
+      "itemId": 22998706834,
+      "productName": "Mini Aspirador Automotivo Portátil Potente Recarregável Premium B-88-2",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 64.41,
+      "shopName": "Premium.Store",
+      "offerLink": "https://s.shopee.com.br/1LhBj4VnR6"
     },
     {
       "rank": 27,
@@ -565,10 +560,9 @@
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "caixa ferramentas",
         "maleta ferramentas"
       ],
-      "opportunityScore": 65.3,
+      "opportunityScore": 64.15,
       "shopName": "ZAZU SHOP",
       "offerLink": "https://s.shopee.com.br/4qH3O8uCHi"
     },
@@ -581,25 +575,12 @@
       "intentMatchedKeywords": [
         "painel ferramentas"
       ],
-      "opportunityScore": 64.7,
+      "opportunityScore": 63.18,
       "shopName": "EXBIAN FERRAMENTAS",
       "offerLink": "https://s.shopee.com.br/3B8pP3o5fB"
     },
     {
       "rank": 29,
-      "itemId": 23793600890,
-      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 89x52 + Brindes",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "painel ferramentas"
-      ],
-      "opportunityScore": 64.37,
-      "shopName": "EXBIAN FERRAMENTAS",
-      "offerLink": "https://s.shopee.com.br/2qVz0RpML9"
-    },
-    {
-      "rank": 30,
       "itemId": 57755036915,
       "productName": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
       "priorityTier": "COMISSAO_EXTRA",
@@ -607,9 +588,22 @@
       "intentMatchedKeywords": [
         "painel ferramentas"
       ],
-      "opportunityScore": 64.37,
+      "opportunityScore": 62.97,
       "shopName": "EXBIAN FERRAMENTAS",
       "offerLink": "https://s.shopee.com.br/3LSFbMnSKA"
+    },
+    {
+      "rank": 30,
+      "itemId": 23793600890,
+      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 89x52 + Brindes",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "opportunityScore": 62.88,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "offerLink": "https://s.shopee.com.br/2qVz0RpML9"
     }
   ],
   "rejectedSample": [
@@ -773,9 +767,114 @@
       }
     },
     {
-      "itemId": 58206741786,
-      "productName": "Jogo Soquete Torx Longo 1/2 8 Peças Aço S2 Alta Resistência",
-      "shopName": "XIUPRIME999",
+      "itemId": 21499674796,
+      "productName": "5pcs Jogo De Lima Rotativa Grossa Aço Para Madeira, Metal e Escultura",
+      "shopName": "SUPERMERCADO RJ",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 48455747079,
+      "productName": "Bits Magnético Ponteira Philips Parafusadeira Ph2 Jogo 6 Pcs Imantado Antiderrapante Com Imã Sextavado",
+      "shopName": "Jialvo.br",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22999247409,
+      "productName": "Jogo 6 Ponteiras Philips Magnéticos PH2 de Impacto Anti Derrapante Parafusadeira Bits Cruzado",
+      "shopName": "Global Kitchen Hub",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22493876691,
+      "productName": "Jogo 10/15 Brocas Diamantadas Serra Copo furar Vidro Granito Ceramica 6 a 50 mm kit ferramentas",
+      "shopName": "ManufaturaPrecisa",
+      "keywords": [
+        "jogo de chaves"
+      ],
+      "evaluations": {
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo",
+              "kit"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22298877679,
+      "productName": "Jogo 30 peças Disco Serra Circular Madeira Alta Resistência Retifica E Furadeira Parafusadeira Conjunto de mini",
+      "shopName": "Kawan",
       "keywords": [
         "jogo de chaves"
       ],
@@ -820,200 +919,6 @@
               "jogo",
               "kit",
               "catraca"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58270254411,
-      "productName": "Conjunto Alicates Profissional 3 Peças Bico Universal Corte PVC Manutenção",
-      "shopName": "PICFY",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58219184222,
-      "productName": "Conjunto Alicates Profissional 3 Peças Bico Universal Corte PVC STARTOOLS",
-      "shopName": "DUNIKA",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23194450705,
-      "productName": "Kit 3 mini Alicates  Aço Forjado Universal Corte e Bico Linha PREMIUM",
-      "shopName": "XIUPRIME999",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22399471744,
-      "productName": "Kit 5 Alicates Mini Corte Bico Universal Profissional",
-      "shopName": "XIUPRIME999",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58258118190,
-      "productName": "Kit 5 Peças Mini Alicates Profissional Corte Bico Universal Cabo Antiderrapante Jogo De Precisão",
-      "shopName": "XQW - ELETRÔNICOS E VARIEDADES",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23694360247,
-      "productName": "Jogo 3 Mini Alicate Com Mola 4,5 Bico Corte Universal",
-      "shopName": "MODERNA COMERCIO VAREJISTA ONLINE",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "mini alicate"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 58257835304,
-      "productName": "Kit Profissional 4 Alicates Universal Corte Bico E Pressão",
-      "shopName": "idemarketplace",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58269139534,
-      "productName": "Conjunto Alicates Profissional 3 Peças Bico Universal Corte PVC STARTOOLS",
-      "shopName": "HELONES",
-      "keywords": [
-        "alicate universal"
-      ],
-      "evaluations": {
-        "alicate universal": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "universal"
-            ]
-          ],
-          "missing": [
-            [
-              "alicate"
             ]
           ]
         }
@@ -1628,9 +1533,9 @@
       }
     },
     {
-      "itemId": 23394640360,
-      "productName": "360 °Suporte Magnético Forte Para Telefone Carro Design Dobrável Vácuo Ajustável/Mesa/Uso Universal",
-      "shopName": "PC COMERCIO",
+      "itemId": 19442582758,
+      "productName": "Suporte Universal Veicular Carro Encaixe Retrovisor 360o  Cor Preto",
+      "shopName": "Keedi Eletrônicos",
       "keywords": [
         "suporte celular carro"
       ],
@@ -1644,7 +1549,8 @@
               "suporte"
             ],
             [
-              "carro"
+              "carro",
+              "veicular"
             ]
           ],
           "missing": [
@@ -1767,6 +1673,33 @@
       }
     },
     {
+      "itemId": 22193930893,
+      "productName": "Bolsa Organizadora Porta Malas Renegade, Compass, Cherokee -> Carpete Preto",
+      "shopName": "MR_mercado",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "porta malas",
+              "porta-malas"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ]
+          ]
+        }
+      }
+    },
+    {
       "itemId": 22495121837,
       "productName": "Kit Audi: Bolsa Organizadora Porta Mala Preta + Tapete A3 Sportback 2007 A 2012 Preto",
       "shopName": "MR_mercado",
@@ -1789,33 +1722,6 @@
               "porta-malas",
               "carro",
               "automotivo"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22193930893,
-      "productName": "Bolsa Organizadora Porta Malas Renegade, Compass, Cherokee -> Carpete Preto",
-      "shopName": "MR_mercado",
-      "keywords": [
-        "organizador porta malas"
-      ],
-      "evaluations": {
-        "organizador porta malas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "porta malas",
-              "porta-malas"
-            ]
-          ],
-          "missing": [
-            [
-              "organizador",
-              "bolsa de armazenamento"
             ]
           ]
         }
@@ -2456,7 +2362,6 @@
       "shopName": "senmi.br",
       "keywords": [
         "painel ferramentas",
-        "oculos de protecao",
         "luva de protecao"
       ],
       "evaluations": {
@@ -2474,33 +2379,6 @@
               "ferramenta",
               "ferramentas",
               "oficina"
-            ]
-          ]
-        },
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.3333,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "protecao",
-              "proteção"
-            ]
-          ],
-          "missing": [
-            [
-              "oculos",
-              "óculos"
-            ],
-            [
-              "trabalho",
-              "seguranca",
-              "segurança",
-              "epi",
-              "industrial",
-              "obra",
-              "oficina",
-              "ca"
             ]
           ]
         },
@@ -2774,6 +2652,104 @@
       "itemId": 22898484053,
       "productName": "Veda + Tec 4 em 1 Bi Componente Para Laje; Parede; caixa d'agua; piscina 20kg",
       "shopName": "Veda+ Impermeabilizantes",
+      "keywords": [
+        "caixa ferramentas"
+      ],
+      "evaluations": {
+        "caixa ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "caixa"
+            ]
+          ],
+          "missing": [
+            [
+              "ferramenta",
+              "ferramentas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 46102172466,
+      "productName": "Kit com 5 unidades de Caixa de ferramentas - Tema Dinossauro - Lembrancinha",
+      "shopName": "Flog Utilidades",
+      "keywords": [
+        "caixa ferramentas"
+      ],
+      "evaluations": {
+        "caixa ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "lembrancinha",
+            "tema dinossauro"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 11948349097,
+      "productName": "Bucha ( Porca ) Para Pe De Cama Box Rosca 5/16  Kit 10 Peças",
+      "shopName": "Meupuxador",
+      "keywords": [
+        "caixa ferramentas"
+      ],
+      "evaluations": {
+        "caixa ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa",
+              "maleta"
+            ],
+            [
+              "ferramenta",
+              "ferramentas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 13009018841,
+      "productName": "Bucha Porca Para Pe De Cama Box Madeira Rosca 5/16 - 30 Peças",
+      "shopName": "Meupuxador",
+      "keywords": [
+        "caixa ferramentas"
+      ],
+      "evaluations": {
+        "caixa ferramentas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "caixa",
+              "maleta"
+            ],
+            [
+              "ferramenta",
+              "ferramentas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 12614951981,
+      "productName": "Parafuso Chipboard Phillips Para Madeira 4x16 Caixa 200 Pcs",
+      "shopName": "Meupuxador",
       "keywords": [
         "caixa ferramentas"
       ],
