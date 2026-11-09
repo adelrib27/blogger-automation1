@@ -18,7 +18,7 @@ jobs:
   diagnostico-shopee-readonly:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
@@ -34,14 +34,10 @@ jobs:
       - name: Executar uma consulta GraphQL autenticada (sem escrita)
         run: python -u diagnostics/shopee_graphql_minimal_safe_v31.py
 
-      - name: Matriz diagnostica de filtros e campos (somente leitura)
-        run: |
-          python -m py_compile diagnostics/shopee_graphql_matrix_safe_v31.py
-          python -u diagnostics/shopee_graphql_matrix_safe_v31.py
 
-      - name: Teste do retry e scan SAFE de 3 pautas (sem publicacao)
+      - name: Scan SAFE das 27 pautas (sem publicacao)
         env:
-          EDITORIAL_SAFE_SCAN_COUNT: "3"
+          EDITORIAL_SAFE_SCAN_COUNT: "27"
         run: |
           python -m py_compile diagnostics/shopee_editorial_retry_scan_v31.py
           python diagnostics/shopee_editorial_retry_scan_v31.py --self-test
