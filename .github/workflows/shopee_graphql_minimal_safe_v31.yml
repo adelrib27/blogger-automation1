@@ -4,6 +4,7 @@ on:
     paths:
       - "diagnostics/shopee_graphql_minimal_safe_v31.py"
       - "diagnostics/shopee_graphql_matrix_safe_v31.py"
+      - "diagnostics/shopee_editorial_retry_scan_v31.py"
       - ".github/workflows/shopee_graphql_minimal_safe_v31.yml"
 
 permissions:
@@ -17,7 +18,7 @@ jobs:
   diagnostico-shopee-readonly:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 10
     env:
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
@@ -37,3 +38,19 @@ jobs:
         run: |
           python -m py_compile diagnostics/shopee_graphql_matrix_safe_v31.py
           python -u diagnostics/shopee_graphql_matrix_safe_v31.py
+
+      - name: Teste do retry e scan SAFE de 3 pautas (sem publicacao)
+        env:
+          EDITORIAL_SAFE_SCAN_COUNT: "3"
+        run: |
+          python -m py_compile diagnostics/shopee_editorial_retry_scan_v31.py
+          python diagnostics/shopee_editorial_retry_scan_v31.py --self-test
+          python -u diagnostics/shopee_editorial_retry_scan_v31.py
+      - name: Arquivar candidatos SAFE (sem segredos)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-v31-shopee-candidates-safe-${{ github.run_number }}
+          path: diagnostics/data/editorial_v31_shopee_candidates_safe.json
+          if-no-files-found: warn
+          retention-days: 7
