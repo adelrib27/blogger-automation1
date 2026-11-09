@@ -1,0 +1,33 @@
+name: Shopee GraphQL - consulta minima SAFE V31
+on:
+  pull_request:
+    paths:
+      - "diagnostics/shopee_graphql_minimal_safe_v31.py"
+      - ".github/workflows/shopee_graphql_minimal_safe_v31.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shopee-graphql-minimal-v31-readonly
+  cancel-in-progress: false
+
+jobs:
+  diagnostico-shopee-readonly:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testar sintaxe e regras offline
+        run: |
+          python -m py_compile diagnostics/shopee_graphql_minimal_safe_v31.py
+          python diagnostics/shopee_graphql_minimal_safe_v31.py --self-test
+      - name: Executar uma consulta GraphQL autenticada (sem escrita)
+        run: python -u diagnostics/shopee_graphql_minimal_safe_v31.py
