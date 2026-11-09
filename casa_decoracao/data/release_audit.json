@@ -2,25 +2,24 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 6,
+    "total": 9,
     "draft_ready": 1,
-    "rejected": 1,
-    "not_generated": 4,
-    "published_history": 33,
+    "rejected": 0,
+    "not_generated": 8,
+    "published_history": 34,
     "rotation_cycle": 4,
     "rotation_pending": [
       "Sala",
-      "Banheiro",
       "Área Externa",
       "Cama, Mesa e Banho"
     ]
   },
   "items": [
     {
-      "id": 148,
-      "shopee_item_id": "58263985618",
-      "category": "Sala",
-      "product": "Kit Mesa de Centro Mesa Lateral Orgânica Móveis para Sala Decoração Recepção Consultório Luxo",
+      "id": 151,
+      "shopee_item_id": "21299673093",
+      "category": "Banheiro",
+      "product": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
       "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
@@ -33,57 +32,25 @@
       }
     },
     {
-      "id": 129,
-      "shopee_item_id": "58252072051",
-      "category": "Cozinha",
-      "product": "Fatiador Profissional Multifuncional De Aço Inoxidável 16 Em 1 Para Vegetais/Frutas/Legumes",
+      "id": 152,
+      "shopee_item_id": "23498464792",
+      "category": "Banheiro",
+      "product": "Carrinho Organizador De Aço Multiuso 3 Prateleiras Premium Rodízio 360º Cozinha Sala Banheiro Livros Decoração Moderna",
       "queue_status": "PUBLISHED",
-      "wordpress_post_id": 265,
+      "wordpress_post_id": 268,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 582,
+          "word_count": 552,
           "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 46,
+          "seo_title_length": 48,
           "meta_description_length": 148,
           "cta_count": 2
         },
         "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 150,
-      "shopee_item_id": "46360468172",
-      "category": "Cozinha",
-      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 136,
-      "shopee_item_id": "23599671693",
-      "category": "Banheiro",
-      "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
       }
     },
     {
@@ -103,38 +70,99 @@
       }
     },
     {
-      "id": 87,
-      "shopee_item_id": "20452224775",
-      "category": "Quarto",
-      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
-      "queue_status": "QUARANTINE",
+      "id": 153,
+      "shopee_item_id": "58213378390",
+      "category": "Decoração",
+      "product": "Caminho de Mesa Ceia do Senhor 1,60x0,60 Decoração Cristã Luxo",
+      "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "REJECTED",
+        "status": "NOT_GENERATED",
         "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
+          "arquivo_gerado_ausente"
         ],
         "warnings": [],
-        "metrics": {
-          "word_count": 787,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 153,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
+      }
+    },
+    {
+      "id": 154,
+      "shopee_item_id": "23294240502",
+      "category": "Decoração",
+      "product": "Quadro Decorativo Com Moldura Filete Sala Quarto Coleção Matisse Style Flores Arte O Vaso Das Flores",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 156,
+      "shopee_item_id": "58263716656",
+      "category": "Organização",
+      "product": "Kit Sistema Conquista 6º Ano Ensino Fundamental | Livros do Professor + Caixa Organizadora",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 158,
+      "shopee_item_id": "46860175552",
+      "category": "Quarto",
+      "product": "Organizador de Cabides em Forma de V de Dupla Face - Cabide Multi-Gancho que Economiza Espaço para Guarda-Roupa do Quart",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 155,
+      "shopee_item_id": "58257199934",
+      "category": "Cozinha",
+      "product": "Escorredor de Louças em Aço Carbono para Cozinha Organizador de Pratos, Tigelas e Talheres",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 157,
+      "shopee_item_id": "20798271105",
+      "category": "Cozinha",
+      "product": "COMBO 4 Cortador Ondulado de Batata Machadinho Fatiador Inox Legumes e Frutas multiuso linha Premium",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
       }
     }
   ]
