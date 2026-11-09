@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "diagnostics/shopee_graphql_minimal_safe_v31.py"
+      - "diagnostics/shopee_graphql_matrix_safe_v31.py"
       - ".github/workflows/shopee_graphql_minimal_safe_v31.yml"
 
 permissions:
@@ -31,3 +32,8 @@ jobs:
           python diagnostics/shopee_graphql_minimal_safe_v31.py --self-test
       - name: Executar uma consulta GraphQL autenticada (sem escrita)
         run: python -u diagnostics/shopee_graphql_minimal_safe_v31.py
+
+      - name: Matriz diagnostica de filtros e campos (somente leitura)
+        run: |
+          python -m py_compile diagnostics/shopee_graphql_matrix_safe_v31.py
+          python -u diagnostics/shopee_graphql_matrix_safe_v31.py
