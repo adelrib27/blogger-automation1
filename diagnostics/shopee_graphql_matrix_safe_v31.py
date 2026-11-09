@@ -2,7 +2,7 @@
 """Matriz de leitura Shopee: isolar keyword/sortType/campos sem publicar.
 
 Não mostra Authorization, assinatura, Secret, ofertas/URLs ou resposta bruta.
-No máximo quatro chamadas assinadas, intervalos de três segundos.
+No máximo sete chamadas assinadas, intervalos de três segundos.
 """
 from __future__ import annotations
 import hashlib
@@ -20,12 +20,15 @@ CASES = (
     ("sort_only", 'query { productOfferV2(sortType: 2, page: 1, limit: 1) { nodes { itemId imageUrl offerLink } } }'),
     ("rich_fields", 'query { productOfferV2(page: 1, limit: 1) { nodes { itemId productName imageUrl offerLink priceMin priceMax shopName ratingStar sales } pageInfo { page hasNextPage } } }'),
     ("v31_shape", 'query ViolaoComeco { productOfferV2(keyword: "cordas para violao nylon", sortType: 2, page: 1, limit: 1) { nodes { itemId productName imageUrl offerLink priceMin priceMax shopName ratingStar sales } pageInfo { page hasNextPage } } }'),
+    ("v31_limit10", 'query ViolaoComeco { productOfferV2(keyword: "encordoamento violao nylon", sortType: 2, page: 1, limit: 10) { nodes { itemId productName imageUrl offerLink priceMin priceMax shopName ratingStar sales } pageInfo { page hasNextPage } } }'),
+    ("v31_limit20_page1", 'query ViolaoComeco { productOfferV2(keyword: "encordoamento violao nylon", sortType: 2, page: 1, limit: 20) { nodes { itemId productName imageUrl offerLink priceMin priceMax shopName ratingStar sales } pageInfo { page hasNextPage } } }'),
+    ("v31_limit20_page2", 'query ViolaoComeco { productOfferV2(keyword: "encordoamento violao nylon", sortType: 2, page: 2, limit: 20) { nodes { itemId productName imageUrl offerLink priceMin priceMax shopName ratingStar sales } pageInfo { page hasNextPage } } }'),
 )
 
 
 def one_case(app, secret, case, query):
     payload = {"query": query}
-    if case == "v31_shape":
+    if case == "v31_shape" or case.startswith("v31_limit"):
         payload["operationName"] = "ViolaoComeco"
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     ts = str(int(time.time()))
