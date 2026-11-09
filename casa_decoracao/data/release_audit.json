@@ -2,15 +2,14 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 10,
+    "total": 6,
     "draft_ready": 1,
     "rejected": 1,
-    "not_generated": 8,
-    "published_history": 32,
+    "not_generated": 4,
+    "published_history": 33,
     "rotation_cycle": 4,
     "rotation_pending": [
       "Sala",
-      "Cozinha",
       "Banheiro",
       "Área Externa",
       "Cama, Mesa e Banho"
@@ -18,32 +17,80 @@
   },
   "items": [
     {
-      "id": 141,
-      "shopee_item_id": "58210215150",
-      "category": "Quarto",
-      "product": "Kit 5 Saco Organizador Pvc para Edredom e Cobertor com Zíper Preto Guarda-Roupa",
+      "id": 148,
+      "shopee_item_id": "58263985618",
+      "category": "Sala",
+      "product": "Kit Mesa de Centro Mesa Lateral Orgânica Móveis para Sala Decoração Recepção Consultório Luxo",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 129,
+      "shopee_item_id": "58252072051",
+      "category": "Cozinha",
+      "product": "Fatiador Profissional Multifuncional De Aço Inoxidável 16 Em 1 Para Vegetais/Frutas/Legumes",
       "queue_status": "PUBLISHED",
-      "wordpress_post_id": 262,
+      "wordpress_post_id": 265,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 614,
+          "word_count": 582,
           "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 52,
-          "meta_description_length": 155,
+          "seo_title_length": 46,
+          "meta_description_length": 148,
           "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
     },
     {
-      "id": 142,
-      "shopee_item_id": "8537566064",
-      "category": "Quarto",
-      "product": "Kit com 5 Embalagem de Travesseiro 50 x 70 de pvc Guarda Roupa Armário",
+      "id": 150,
+      "shopee_item_id": "46360468172",
+      "category": "Cozinha",
+      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 136,
+      "shopee_item_id": "23599671693",
+      "category": "Banheiro",
+      "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 149,
+      "shopee_item_id": "58258071799",
+      "category": "Banheiro",
+      "product": "Kit Banheiro Acessórios 5 Peças Completo Toalheiro Saboneteira Decoração Preto Branco Cromado Decor",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -88,118 +135,6 @@
           "cta_count": 1
         },
         "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 129,
-      "shopee_item_id": "58252072051",
-      "category": "Cozinha",
-      "product": "Fatiador Profissional Multifuncional De Aço Inoxidável 16 Em 1 Para Vegetais/Frutas/Legumes",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 147,
-      "shopee_item_id": "21299367155",
-      "category": "Cozinha",
-      "product": "Conjunto 2/3/5/10 Potes 370/640/640ml Vidro Hermético Mantimentos Marmita Fitness",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 143,
-      "shopee_item_id": "58257638413",
-      "category": "Banheiro",
-      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 144,
-      "shopee_item_id": "23498464792",
-      "category": "Banheiro",
-      "product": "Carrinho Organizador De Aço Multiuso 3 Prateleiras Premium Rodízio 360º Cozinha Sala Banheiro Livros Decoração Moderna",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 136,
-      "shopee_item_id": "23599671693",
-      "category": "Banheiro",
-      "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 146,
-      "shopee_item_id": "22998007959",
-      "category": "Cama, Mesa e Banho",
-      "product": "Jogo de Toalha 4 Peças Karsten 100% Algodão Felpuda Macia Excelente Absorção Banho e Rosto",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 145,
-      "shopee_item_id": "58253704479",
-      "category": "Decoração",
-      "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
       }
     }
   ]
