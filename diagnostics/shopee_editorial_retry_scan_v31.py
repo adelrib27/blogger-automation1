@@ -149,7 +149,24 @@ def retry_query(app, secret, keyword, pause_fn=time.sleep, request_fn=request_on
         pause_fn((3, 7)[attempt - 1])
     return history, []
 
-def select_candidate(nodes, expression):
+
+def niche_product_check(blog_id, name):
+    """Evita correspondencias literais que nao resolvem a pauta editorial."""
+    title = normalize(name)
+    if blog_id == "8930870316690519385":
+        # Descansos/apoiadores de bancada nao organizam tampas no armario.
+        return not any(part in title for part in ("apoiador", "descanso para colher", "suporte colher"))
+    if blog_id == "8658632621591002634":
+        # Este nicho cobre eletroportateis, nao mini processadores manuais.
+        if "manual" in title or "de corda" in title:
+            return False
+        return any(part in title for part in ("eletric", "motor", "recarregavel", "usb", "110v", "127v", "220v", "bivolt"))
+    if blog_id == "1453188702831337099":
+        # Timer de um eletrodomestico nao e temporizador digital avulso.
+        return not any(part in title for part in ("cafeteira", "microondas", "forno", "fritadeira", "air fryer", "batedeira"))
+    return True
+
+def select_candidate(nodes, expression, blog_id):
     for row in nodes:
         if not isinstance(row, dict):
             continue
@@ -157,7 +174,7 @@ def select_candidate(nodes, expression):
         name = str(row.get("productName") or "").strip()
         image, offer = str(row.get("imageUrl") or ""), str(row.get("offerLink") or "")
         if not (ident.isdecimal() and len(name) >= 12 and
-                semantic_ok(name, expression) and valid_url(image, "image") and
+                semantic_ok(name, expression) and niche_product_check(blog_id, name) and valid_url(image, "image") and
                 valid_url(offer, "offer")):
             continue
         product = {
@@ -175,6 +192,10 @@ def self_test():
     assert len(set(row[0] for row in ROWS)) == 27
     assert semantic_ok("Kit Toalha Microfibra para Cabelo", "toalha&cabelo")
     assert not semantic_ok("Pano de cozinha", "toalha&cabelo")
+    assert not niche_product_check("8930870316690519385", "Apoiador de Tampa de Panela e Colher AIME Organizador Cozinha Moderno")
+    assert not niche_product_check("8658632621591002634", "Mini Processador de Alimentos Manual Formato Compacto")
+    assert not niche_product_check("1453188702831337099", "Cafeteira Elétrica Digital com Timer")
+    assert niche_product_check("8658632621591002634", "Mini Processador Eletrico de Alimentos 127v")
     assert not valid_url("https://evil.example", "offer")
     calls = [({"status": "GRAPHQL_STOP", "code": 10000}, []),
              ({"status": "PASS", "received": 1}, [{"itemId": "5"}])]
@@ -205,7 +226,7 @@ def main():
         if index:
             time.sleep(2.5)
         history, nodes = retry_query(app, secret, keyword)
-        candidate = select_candidate(nodes, accept)
+        candidate = select_candidate(nodes, accept, bid)
         # Source-backed commercial data stays in GitHub artifact; stdout only metadata.
         result = {"blog_id": bid, "keyword": keyword, "history": history,
                   "status": "CANDIDATE_REQUIRES_EDITORIAL_REVIEW" if candidate else "BLOCKED_NO_VALID_CANDIDATE",
