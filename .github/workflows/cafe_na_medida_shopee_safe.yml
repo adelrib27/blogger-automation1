@@ -14,9 +14,6 @@ jobs:
   catalogo-safe:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
-      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,6 +25,9 @@ jobs:
           python cafe_na_medida/shopee_catalog_safe.py --self-test
       - name: Consultar API real sem escrita (somente dispatch)
         if: github.event_name == 'workflow_dispatch'
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
         run: |
           test -n "$SHOPEE_APP_ID"
           test -n "$SHOPEE_SECRET"
