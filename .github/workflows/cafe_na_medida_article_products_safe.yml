@@ -1,0 +1,41 @@
+name: V31 Cafe na Medida - Quatro Produtos Shopee SAFE
+on:
+  push:
+    branches: [feat/cafe-na-medida-shopee-safe-20261110]
+    paths:
+      - "cafe_na_medida/article_products_safe.py"
+      - ".github/workflows/cafe_na_medida_article_products_safe.yml"
+  pull_request:
+    paths:
+      - "cafe_na_medida/article_products_safe.py"
+      - ".github/workflows/cafe_na_medida_article_products_safe.yml"
+permissions:
+  contents: read
+concurrency:
+  group: v31-cafe-article-products-safe
+  cancel-in-progress: false
+jobs:
+  selecionar-quatro-produtos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compilar e verificar guardas sem rede
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m py_compile cafe_na_medida/article_products_safe.py src/blogger_policy_guard.py
+          python cafe_na_medida/article_products_safe.py --self-test
+      - name: Consultar quatro ofertas reais na Shopee sem escrever no Blogger
+        if: github.event_name == 'push'
+        env:
+          PYTHONPATH: src
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+        run: |
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          python -u cafe_na_medida/article_products_safe.py
