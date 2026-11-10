@@ -1,10 +1,6 @@
 name: V31 Cafe na Medida - Gerar 4 Links Shopee SAFE
 on:
-  push:
-    branches: [feat/cafe-na-medida-shopee-safe-20261110]
-    paths:
-      - "cafe_na_medida/generate_article_links_safe.py"
-      - ".github/workflows/cafe_na_medida_link_gen_safe.yml"
+  workflow_dispatch:
   pull_request:
     paths:
       - "cafe_na_medida/generate_article_links_safe.py"
@@ -30,7 +26,7 @@ jobs:
           python -m py_compile cafe_na_medida/generate_article_links_safe.py radar_tech_br/src/refresh_blogger_offer_links.py
           python cafe_na_medida/generate_article_links_safe.py --self-test
       - name: Solicitar quatro shortLinks reais na Shopee sem escrita Blogger
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch'
         env:
           PYTHONPATH: src:radar_tech_br/src
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
