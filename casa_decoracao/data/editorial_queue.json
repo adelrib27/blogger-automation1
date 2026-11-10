@@ -5,58 +5,18 @@
   "editorial_policy": "produto real -> rotação entre 8 categorias -> título editorial -> Qwen3 -> CTA contextual -> imagem real -> gate -> publicação",
   "category_rotation_cycle": 4,
   "category_rotation_pending": [
-    "Sala",
     "Área Externa",
     "Cama, Mesa e Banho"
   ],
   "max_per_keyword": 1,
-  "total": 7,
+  "total": 11,
   "skipped": {
-    "produto_ja_publicado": 6,
-    "limite_por_intencao": 19
+    "produto_ja_publicado": 12,
+    "produto_semelhante_ja_publicado": 3,
+    "limite_por_intencao": 5,
+    "produto_quase_duplicado": 1
   },
   "items": [
-    {
-      "id": 162,
-      "shopee_item_id": "58270146049",
-      "product": "Tapete Passadeira Felpudo Antiderrapante Macio para Quarto Sala Corredor 120x60 180x60cm",
-      "affiliate_link": "https://s.shopee.com.br/Log7emAU6",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lb-mu3j59mlp5aadb",
-      "shop_name": "DeinShop",
-      "source_keyword": "tapete sala",
-      "category": "Sala",
-      "opportunity_score": 65.04,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PUBLISHED",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      },
-      "topic": "Como escolher um tapete para sala com conforto e estilo",
-      "editorial_title": "Como escolher um tapete para sala com conforto e estilo",
-      "quality": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 574,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 55,
-          "meta_description_length": 155,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      },
-      "last_error": "",
-      "wordpress_post_id": 271,
-      "wordpress_url": "https://casaedecoracao.radartechbr.com.br/como-escolher-um-tapete-para-sala-com-conforto-e-estilo/",
-      "featured_media": 272,
-      "seo_synced": true
-    },
     {
       "id": 159,
       "shopee_item_id": "58207037675",
@@ -66,67 +26,7 @@
       "shop_name": "FGVITALFARMA",
       "source_keyword": "vaso jardim",
       "category": "Área Externa",
-      "opportunity_score": 68.41,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
-    },
-    {
-      "id": 153,
-      "shopee_item_id": "58213378390",
-      "product": "Caminho de Mesa Ceia do Senhor 1,60x0,60 Decoração Cristã Luxo",
-      "affiliate_link": "https://s.shopee.com.br/1qdTl9Ejy8",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820l8-mq228aposgsh9d",
-      "shop_name": "S&M FÊNIX HOME DECOR",
-      "source_keyword": "caminho de mesa",
-      "category": "Decoração",
-      "opportunity_score": 61.52,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
-    },
-    {
-      "id": 161,
-      "shopee_item_id": "23093204805",
-      "product": "Escorredor de louça inox para 16 pratos com porta talher inox",
-      "affiliate_link": "https://s.shopee.com.br/8AXXCvnk0i",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-lynz6x74da1xc6",
-      "shop_name": "Loja_Melv",
-      "source_keyword": "escorredor de loucas",
-      "category": "Cozinha",
-      "opportunity_score": 60.46,
-      "priority_tier": "COMISSAO_EXTRA",
-      "status": "PENDING",
-      "rules": {
-        "no_fake_testing": true,
-        "no_invented_specs": true,
-        "publication_requires_gate": true,
-        "single_editorial_title": true,
-        "category_rotation_required": true
-      }
-    },
-    {
-      "id": 151,
-      "shopee_item_id": "21299673093",
-      "product": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
-      "affiliate_link": "https://s.shopee.com.br/6VPJFUk5NX",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-m82ov28y0wepdb",
-      "shop_name": "Smart Ultra Cat Bio",
-      "source_keyword": "tapete banheiro",
-      "category": "Banheiro",
-      "opportunity_score": 68.54,
+      "opportunity_score": 61.36,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "QUARANTINE",
       "rules": {
@@ -136,19 +36,185 @@
         "single_editorial_title": true,
         "category_rotation_required": true
       },
-      "last_error": "geração editorial bloqueada após revisões: quality gate: alegacao_absoluta_nao_sustentada",
-      "generation_attempts": 1
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: poucos_h2:4"
     },
     {
-      "id": 149,
-      "shopee_item_id": "58258071799",
-      "product": "Kit Banheiro Acessórios 5 Peças Completo Toalheiro Saboneteira Decoração Preto Branco Cromado Decor",
-      "affiliate_link": "https://s.shopee.com.br/1BNn7CqykQ",
-      "image_url": "https://cf.shopee.com.br/file/br-11134207-820md-mmjbbyrviqyscd",
-      "shop_name": "Morada de Paz",
-      "source_keyword": "toalheiro banheiro",
+      "id": 167,
+      "shopee_item_id": "21999578406",
+      "product": "4 lED À Prova D'água Para Jardim Muro e Varanda Luminária Solar De Parede Promoção",
+      "affiliate_link": "https://s.shopee.com.br/5VWm0hiTz2",
+      "image_url": "https://cf.shopee.com.br/file/br-11134201-7r98o-m4tyl6444nlxc8",
+      "shop_name": "IDEAL LIFE.br",
+      "source_keyword": "luminaria solar jardim",
+      "category": "Área Externa",
+      "opportunity_score": 59.46,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: CTA contextual com tom promocional exagerado"
+    },
+    {
+      "id": 168,
+      "shopee_item_id": "58213253583",
+      "product": "8 Cadeira Plástica Bistrô Empilhável Cozinha Varanda Festa Evento Restaurante",
+      "affiliate_link": "https://s.shopee.com.br/7Af0UUgcka",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lx-mpxopuz3j2tea7",
+      "shop_name": "Gomes Home",
+      "source_keyword": "cadeira varanda",
+      "category": "Área Externa",
+      "opportunity_score": 58.35,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: meta_description_tamanho:156"
+    },
+    {
+      "id": 169,
+      "shopee_item_id": "58217914250",
+      "product": "Kit/Jogo 2 Toalhas Banhão Premium 100% Algodão Fio Penteado Alta Absorção Turim Wanka.Be",
+      "affiliate_link": "https://s.shopee.com.br/3qOWBgrM6Q",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-825b8-msyv5fl3vkec00",
+      "shop_name": "Super Store BR",
+      "source_keyword": "jogo de toalhas",
+      "category": "Cama, Mesa e Banho",
+      "opportunity_score": 56.26,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: quality gate: meta_description_tamanho:156"
+    },
+    {
+      "id": 165,
+      "shopee_item_id": "23598125773",
+      "product": "Varal de Chão em Aço Vertical Dobrável 3 Andares Preto - Fasterr",
+      "affiliate_link": "https://s.shopee.com.br/AKc2GEbKdF",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-majv3bzy13ax0f",
+      "shop_name": "DD Máquinas Ferramentas",
+      "source_keyword": "varal de chao",
+      "category": "Organização",
+      "opportunity_score": 62.4,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 164,
+      "shopee_item_id": "58263985618",
+      "product": "Kit Mesa de Centro Mesa Lateral Orgânica Móveis para Sala Decoração Recepção Consultório Luxo",
+      "affiliate_link": "https://s.shopee.com.br/906ajMqgoz",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-825ai-mqgly43ae3nw81",
+      "shop_name": "Loja Ambienta",
+      "source_keyword": "mesa lateral",
+      "category": "Sala",
+      "opportunity_score": 65.0,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 171,
+      "shopee_item_id": "23598657219",
+      "product": "Manta Pet Ultra Soft 70x90 Leve Macia Estampada Conforto Para Cachorros E Gatos Para Cama Sofá Transporte Chão",
+      "affiliate_link": "https://s.shopee.com.br/9V2vGhvl9O",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-7r98o-mb8hpz19vb0v52",
+      "shop_name": "STUDIO DECOR COMERCIO",
+      "source_keyword": "manta sofa",
+      "category": "Sala",
+      "opportunity_score": 48.99,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 163,
+      "shopee_item_id": "20452224775",
+      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "affiliate_link": "https://s.shopee.com.br/9fML1I3dVr",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8260p-mkcfopp4p5hc85",
+      "shop_name": "Haute Decor",
+      "source_keyword": "abajur quarto",
+      "category": "Quarto",
+      "opportunity_score": 65.27,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 170,
+      "shopee_item_id": "3273437960",
+      "product": "Escorredor de Pratos 440x335x50mm Plástico Resistente Ideal para Pia Cozinha e Lavagem de Louças",
+      "affiliate_link": "https://s.shopee.com.br/3Vlfnordql",
+      "image_url": "https://cf.shopee.com.br/file/br-11134201-23030-xxbhuu916vovb2",
+      "shop_name": "Bazar Dona Dirce",
+      "source_keyword": "escorredor de loucas",
+      "category": "Cozinha",
+      "opportunity_score": 55.47,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 166,
+      "shopee_item_id": "23599671693",
+      "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
+      "affiliate_link": "https://s.shopee.com.br/6fijRo4y76",
+      "image_url": "https://cf.shopee.com.br/file/br-11134201-820lf-mue1ofvyqghs42",
+      "shop_name": "Panos Rezini",
+      "source_keyword": "tapete banheiro",
       "category": "Banheiro",
-      "opportunity_score": 64.11,
+      "opportunity_score": 62.16,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
@@ -168,7 +234,7 @@
       "shop_name": "ES Official Shop",
       "source_keyword": "prateleira banheiro",
       "category": "Banheiro",
-      "opportunity_score": 63.23,
+      "opportunity_score": 61.92,
       "priority_tier": "COMISSAO_EXTRA",
       "status": "PENDING",
       "rules": {
