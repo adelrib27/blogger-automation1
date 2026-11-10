@@ -18,6 +18,7 @@ import urllib.parse
 import urllib.request
 
 from blogger_policy_guard import require_product_allowed
+from shopee_oportunidades import post_graphql, product_query
 
 BLOG_ID = "4820923154548273510"
 API = "https://open-api.affiliate.shopee.com.br/graphql"
@@ -83,45 +84,17 @@ def select_one(topic: str, nodes: list[dict], used: set[str]) -> dict | None:
     return None
 
 def query_api(app: str, secret: str, term: str) -> list[dict]:
-    q = (
-        'query CafeArticleSelection { productOfferV2(keyword: ' +
-        json.dumps(term, ensure_ascii=False) +
-        ', listType: 1, sortType: 2, page: 1, limit: 20) ' +
-        '{ nodes { itemId productName imageUrl offerLink priceMin shopName } ' +
-        'pageInfo { page limit hasNextPage } } }'
-    )
-    body = json.dumps({"query": q, "operationName": "CafeArticleSelection"},
-                      ensure_ascii=False, separators=(",", ":"))
-    for attempt in range(2):
-        stamp = str(int(time.time()))
-        signature = hashlib.sha256((app + stamp + body + secret).encode("utf-8")).hexdigest()
-        request = urllib.request.Request(
-            API, data=body.encode("utf-8"), method="POST",
-            headers={
-                "Authorization": "SHA256 Credential=" + app + ", Timestamp=" + stamp + ", Signature=" + signature,
-                "Content-Type": "application/json", "Accept": "application/json",
-                "User-Agent": "CafeNaMedida-ShopeeSAFE/1.0"
-            })
-        try:
-            with urllib.request.urlopen(request, timeout=35) as response:
-                if response.status != 200:
-                    fail("HTTP da Shopee não 200")
-                data = json.load(response)
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as error:
-            fail("transporte API indisponível: " + type(error).__name__)
-        if data.get("errors"):
-            codes = sorted({str((err.get("extensions") or {}).get("code", "NONE"))
-                            for err in data.get("errors", []) if isinstance(err, dict)})
-            if codes == ["10000"] and attempt == 0:
-                print("SHOPEE_SYSTEM_10000_RETRY_ONCE keyword=" + term, flush=True)
-                time.sleep(5)
-                continue
-            fail("GraphQL código(s)=" + ",".join(codes) + " keyword=" + term)
-        nodes = ((data.get("data") or {}).get("productOfferV2") or {}).get("nodes")
-        if not isinstance(nodes, list):
-            fail("nodes ausentes ou tipo incorreto")
-        return nodes
-    fail("requisição sem conclusão")
+    # Reutiliza o motor validado do projeto, inclusive listType e isAMSOffer.
+    query = product_query(term, list_type=1, sort_type=2, limit=20, ams_only=False)
+    data = post_graphql(app, secret, query, retries=1)
+    if data.get("errors"):
+        codes = sorted({str((err.get("extensions") or {}).get("code", "NONE"))
+                        for err in data.get("errors", []) if isinstance(err, dict)})
+        fail("GraphQL código(s)=" + ",".join(codes) + " keyword=" + term)
+    nodes = ((data.get("data") or {}).get("productOfferV2") or {}).get("nodes")
+    if not isinstance(nodes, list):
+        fail("nodes ausentes ou tipo incorreto")
+    return nodes
 
 def self_test() -> None:
     sample = {"itemId":"123", "productName":"Moedor manual de cafe em inox",
