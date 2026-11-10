@@ -66,7 +66,7 @@ def fetch(app: str, secret: str, term: str, page: int) -> list[dict]:
     if data.get("errors"):
         # Registrar somente a classe da falha; nunca imprimir texto bruto de provedores.
         message = " ".join(str(e.get("message", "")) for e in data["errors"] if isinstance(e, dict)).lower()
-        if any(x in message for x in ("credential", "signature", "unauthorized", "authentication", "10020", "auth")):
+        if any(x in message for x in ("credential", "signature", "unauthorized", "authentication", "10020", "auth", "permission", "forbidden", "access denied", "invalid app", "not authorized")):
             kind = "AUTH"
         elif any(x in message for x in ("cannot query field", "unknown argument", "unknown type", "syntax error", "operation name")):
             kind = "SCHEMA"
@@ -74,7 +74,8 @@ def fetch(app: str, secret: str, term: str, page: int) -> list[dict]:
             kind = "RATE_LIMIT"
         else:
             kind = "OTHER"
-        fail("GraphQL bloqueado: classe=" + kind)
+        codes = re.findall(r"(?<![0-9])[0-9]{5}(?![0-9])", message)[:2]
+        fail("GraphQL bloqueado: classe=" + kind + " codigo=" + (",".join(codes) if codes else "nao_informado"))
     offers = (data.get("data") or {}).get("productOfferV2") or {}
     if not isinstance(offers.get("nodes"), list):
         fail("Shopee sem nodes válidos")
