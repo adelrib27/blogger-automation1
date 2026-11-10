@@ -4,12 +4,6 @@ on:
     paths:
       - "cafe_na_medida/shopee_catalog_safe.py"
       - ".github/workflows/cafe_na_medida_shopee_safe.yml"
-  push:
-    branches:
-      - "feat/cafe-na-medida-shopee-safe-20261110"
-    paths:
-      - "cafe_na_medida/shopee_catalog_safe.py"
-      - ".github/workflows/cafe_na_medida_shopee_safe.yml"
   workflow_dispatch:
 permissions:
   contents: read
@@ -30,7 +24,7 @@ jobs:
           python -m py_compile cafe_na_medida/shopee_catalog_safe.py src/blogger_policy_guard.py
           python cafe_na_medida/shopee_catalog_safe.py --self-test
       - name: Consultar API real sem escrita (somente dispatch)
-        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/cafe-na-medida-shopee-safe-20261110')
+        if: github.event_name == 'workflow_dispatch'
         env:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
