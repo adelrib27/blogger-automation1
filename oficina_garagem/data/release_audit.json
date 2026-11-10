@@ -2,38 +2,36 @@
   "project": "Oficina & Garagem",
   "live_publish_enabled": false,
   "summary": {
-    "total": 9,
-    "draft_ready": 0,
-    "human_review": 1,
+    "total": 13,
+    "draft_ready": 1,
+    "human_review": 0,
     "rejected": 0,
-    "not_generated": 8
+    "not_generated": 12
   },
   "items": [
     {
       "id": 1,
-      "product": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
+      "product": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 97,
       "gate": {
-        "status": "HUMAN_REVIEW_REQUIRED",
+        "status": "DRAFT_READY",
         "reasons": [],
-        "warnings": [
-          "revisao_humana_obrigatoria:serra"
-        ],
+        "warnings": [],
         "metrics": {
-          "word_count": 552,
+          "word_count": 561,
           "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 49,
-          "meta_description_length": 153,
+          "seo_title_length": 41,
+          "meta_description_length": 151,
           "cta_count": 2
         },
-        "safety_class": "HUMAN_REVIEW"
+        "safety_class": "STANDARD"
       }
     },
     {
       "id": 2,
-      "product": "Suporte Magnético 360° Dobrável p/ Celular com Sucção a Vácuo Forte – Carro Mesa Parede",
+      "product": "Porta Escova + Carvao P/ Furadeira Super Hobby Verde - Par",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -47,7 +45,7 @@
     },
     {
       "id": 3,
-      "product": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
+      "product": "Kit de Ferramentas 46 Peças com Catraca Soquete – Maleta Portátil – Ideal para Reparos Domésticos MN",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -61,7 +59,7 @@
     },
     {
       "id": 4,
-      "product": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
+      "product": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -75,7 +73,7 @@
     },
     {
       "id": 5,
-      "product": "Kit Ferramenta Jogo De Soquete Aço Crv 1/4 Catraca Chave Allen Com Maleta Completo Barato",
+      "product": "Pano Microfibra Toalha Grande Limpar Casa moveis Secar Carro Automotivo Lavagem Secagem Polimento",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -89,7 +87,7 @@
     },
     {
       "id": 6,
-      "product": "Compressor de Ar Portátil Digital Recarregável Inflador Pneu Carro Moto Bike USB LED  Multi-função 4 em 1 PowerBank",
+      "product": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade Fixação no Banco Traseiro Rede Multiuso Gancho",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -103,7 +101,7 @@
     },
     {
       "id": 7,
-      "product": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 118x35 + Brindes",
+      "product": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -117,7 +115,7 @@
     },
     {
       "id": 8,
-      "product": "MALETA P/ FERRAMENTAS GRANITE PRO ALTA 13\"",
+      "product": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -131,7 +129,63 @@
     },
     {
       "id": 9,
-      "product": "Torquimetro Mini Soquete Chave Torque Ajustável Kit Ferramentas Reparo Bicicleta Conjunto Manuais",
+      "product": "Mini Aspirador Automotivo Portátil Potente Recarregável Premium B-88-2",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 10,
+      "product": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 118x35 + Brindes",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 11,
+      "product": "Lavadora De Alta Pressão Recarregável Sem Fio 48V Baterias Linha Premium Para Carros e Jardins",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 12,
+      "product": "Óculos de Proteção Segurança EPI Incolor/Cinza CA Construção Obra Esporte Laboratórios",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 13,
+      "product": "MALETA P/ FERRAMENTAS GRANITE PRO ALTA 13\"",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {

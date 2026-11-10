@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1794262633,
+  "generatedAt": 1794281403,
   "method": "seller-extra-first; standard commission only as reserve; Google Autocomplete proxy; Shopee performance",
   "searchSignalWarning": "Google Autocomplete é proxy de intenção/popularidade, não volume mensal exato.",
   "priorityPolicy": {
@@ -100,10 +100,10 @@
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
-        "Organizacao de Garagem"
+        "Ferramentas"
       ],
       "keywords": [
-        "caixa ferramentas"
+        "jogo de chaves"
       ],
       "sourceModes": [
         "top_performance"
@@ -111,32 +111,49 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "caixa ferramentas"
+        "jogo de chaves",
+        "maleta ferramentas"
       ],
       "intentMatchedKeywords": [
-        "caixa ferramentas"
+        "jogo de chaves"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "caixa ferramentas": {
+        "jogo de chaves": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "caixa"
+              "jogo"
             ],
+            [
+              "chave",
+              "chaves"
+            ]
+          ],
+          "missing": []
+        },
+        "maleta ferramentas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
             [
               "ferramentas"
             ]
           ],
-          "missing": []
+          "missing": [
+            [
+              "maleta"
+            ]
+          ]
         }
       },
-      "opportunityScore": 79.28,
+      "opportunityScore": 77.29,
       "scoreComponents": {
-        "seller_extra_commission": 0.5333,
+        "seller_extra_commission": 0.4834,
         "search_demand_proxy": 1.0,
         "sales": 1.0,
         "rating": 0.96,
@@ -172,10 +189,12 @@
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
+        "Ferramentas",
         "Organizacao de Garagem"
       ],
       "keywords": [
-        "caixa ferramentas"
+        "jogo de chaves",
+        "maleta ferramentas"
       ],
       "sourceModes": [
         "top_performance"
@@ -183,21 +202,36 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "caixa ferramentas"
+        "jogo de chaves",
+        "maleta ferramentas"
       ],
       "intentMatchedKeywords": [
-        "caixa ferramentas"
+        "jogo de chaves",
+        "maleta ferramentas"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "caixa ferramentas": {
+        "jogo de chaves": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "caixa",
+              "jogo"
+            ],
+            [
+              "chave"
+            ]
+          ],
+          "missing": []
+        },
+        "maleta ferramentas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
               "maleta"
             ],
             [
@@ -207,9 +241,9 @@
           "missing": []
         }
       },
-      "opportunityScore": 76.87,
+      "opportunityScore": 74.88,
       "scoreComponents": {
-        "seller_extra_commission": 0.5333,
+        "seller_extra_commission": 0.4834,
         "search_demand_proxy": 1.0,
         "sales": 0.8061,
         "rating": 0.96,
@@ -223,10 +257,295 @@
       "selectionPass": "strict_diversity"
     },
     {
+      "itemId": 58256818829,
+      "productName": "Suporte Celular Rotativo Magnético 360° Carro Casa Mesa",
+      "productLink": "https://shopee.com.br/product/1332034013/58256818829",
+      "offerLink": "https://s.shopee.com.br/906ed39Tvn",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lk-mlqojhea9r7q2f",
+      "priceMin": "36.9",
+      "priceMax": "36.9",
+      "priceDiscountRate": 55,
+      "sales": 35,
+      "ratingStar": "4.8",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
+      "shopeeCommissionRate": "0.03",
+      "commission": "10.332",
+      "shopId": 1332034013,
+      "shopName": "Umicc shop",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Acessorios Automotivos"
+      ],
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "suporte celular carro"
+      ],
+      "intentMatchedKeywords": [
+        "suporte celular carro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "suporte celular carro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "celular"
+            ],
+            [
+              "carro"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 73.18,
+      "scoreComponents": {
+        "seller_extra_commission": 0.7553,
+        "search_demand_proxy": 1.0,
+        "sales": 0.3745,
+        "rating": 0.96,
+        "discount": 0.55,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 25.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 28.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 13513802366,
+      "productName": "Porta Escova + Carvao P/ Furadeira Super Hobby Verde - Par",
+      "productLink": "https://shopee.com.br/product/527518392/13513802366",
+      "offerLink": "https://s.shopee.com.br/50aVTH2NmB",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lv-mosw37ytksue5c",
+      "priceMin": "16.99",
+      "priceMax": "16.99",
+      "priceDiscountRate": 28,
+      "sales": 66,
+      "ratingStar": "4.8",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
+      "shopeeCommissionRate": "0.03",
+      "commission": "4.7572",
+      "shopId": 527518392,
+      "shopName": "Mundo Pryst peças e acessórios",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Ferramentas"
+      ],
+      "keywords": [
+        "furadeira"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "furadeira"
+      ],
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "furadeira": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "furadeira"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 72.8,
+      "scoreComponents": {
+        "seller_extra_commission": 0.7553,
+        "search_demand_proxy": 1.0,
+        "sales": 0.4394,
+        "rating": 0.96,
+        "discount": 0.28,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 25.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 28.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22598454534,
+      "productName": "Kit de Ferramentas 46 Peças com Catraca Soquete – Maleta Portátil – Ideal para Reparos Domésticos MN",
+      "productLink": "https://shopee.com.br/product/1520942179/22598454534",
+      "offerLink": "https://s.shopee.com.br/9fMLQJRn48",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m8jl4odrplgxa0",
+      "priceMin": "27.9",
+      "priceMax": "27.9",
+      "priceDiscountRate": 77,
+      "sales": 724,
+      "ratingStar": "4.8",
+      "commissionRate": "0.21",
+      "sellerCommissionRate": "0.15",
+      "shopeeCommissionRate": "0.06",
+      "commission": "5.859",
+      "shopId": 1520942179,
+      "shopName": "MANIA UTILIDADES E AFINS LTDA",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1798772399,
+      "categories": [
+        "Organizacao de Garagem"
+      ],
+      "keywords": [
+        "maleta ferramentas"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "maleta ferramentas"
+      ],
+      "intentMatchedKeywords": [
+        "maleta ferramentas"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "maleta ferramentas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "maleta"
+            ],
+            [
+              "ferramentas"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 71.9,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4532,
+        "search_demand_proxy": 1.0,
+        "sales": 0.6882,
+        "rating": 0.96,
+        "discount": 0.77,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 21.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 12419824135,
+      "productName": "Escovas De Carvão P/ Furadeira Skil - Par",
+      "productLink": "https://shopee.com.br/product/527518392/12419824135",
+      "offerLink": "https://s.shopee.com.br/2qW0tIAdAm",
+      "imageUrl": "https://cf.shopee.com.br/file/7dbe88c5d4ec59e295e7f57da5a739a3",
+      "priceMin": "10.99",
+      "priceMax": "10.99",
+      "priceDiscountRate": 4,
+      "sales": 23,
+      "ratingStar": "4.8",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
+      "shopeeCommissionRate": "0.03",
+      "commission": "3.0772",
+      "shopId": 527518392,
+      "shopName": "Mundo Pryst peças e acessórios",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Ferramentas"
+      ],
+      "keywords": [
+        "furadeira"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "furadeira"
+      ],
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "furadeira": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "furadeira"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 69.99,
+      "scoreComponents": {
+        "seller_extra_commission": 0.7553,
+        "search_demand_proxy": 1.0,
+        "sales": 0.3321,
+        "rating": 0.96,
+        "discount": 0.04,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 25.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 28.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
       "itemId": 22992747047,
       "productName": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
       "productLink": "https://shopee.com.br/product/1028459403/22992747047",
-      "offerLink": "https://s.shopee.com.br/4LKoj3Qa1i",
+      "offerLink": "https://s.shopee.com.br/AAIc1FLQYl",
       "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-lpjdougddnrc94",
       "priceMin": "9.9",
       "priceMax": "19.9",
@@ -256,6 +575,7 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
+        "oculos de protecao",
         "luva de protecao"
       ],
       "intentMatchedKeywords": [
@@ -264,6 +584,28 @@
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção",
+              "epi"
+            ],
+            [
+              "epi",
+              "industrial"
+            ]
+          ],
+          "missing": [
+            [
+              "oculos",
+              "óculos"
+            ]
+          ]
+        },
         "luva de protecao": {
           "accepted": true,
           "score": 1.0,
@@ -285,9 +627,9 @@
           "missing": []
         }
       },
-      "opportunityScore": 73.65,
+      "opportunityScore": 69.9,
       "scoreComponents": {
-        "seller_extra_commission": 1.0,
+        "seller_extra_commission": 0.9063,
         "search_demand_proxy": 1.0,
         "sales": 0.0,
         "rating": 0.86,
@@ -301,182 +643,32 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 23499011933,
-      "productName": "Suporte Magnético 360° Dobrável p/ Celular com Sucção a Vácuo Forte – Carro Mesa Parede",
-      "productLink": "https://shopee.com.br/product/1074025557/23499011933",
-      "offerLink": "https://s.shopee.com.br/5q9aZwILOi",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-824gc-mfprp3yzdrm497",
-      "priceMin": "15.86",
-      "priceMax": "42.88",
-      "priceDiscountRate": 64,
-      "sales": 3673,
-      "ratingStar": "4.7",
-      "commissionRate": "0.13",
-      "sellerCommissionRate": "0.1",
+      "itemId": 43331185413,
+      "productName": "Porta Escovas com Escovas para Furadeira Bosch GSB 13RE 16RE 550RE",
+      "productLink": "https://shopee.com.br/product/527518392/43331185413",
+      "offerLink": "https://s.shopee.com.br/2gCagzBGVl",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-823p4-moojr74qdy4re8",
+      "priceMin": "36.49",
+      "priceMax": "36.49",
+      "priceDiscountRate": 6,
+      "sales": 13,
+      "ratingStar": "5",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
       "shopeeCommissionRate": "0.03",
-      "commission": "2.0618",
-      "shopId": 1074025557,
-      "shopName": "COCONUT SHOP",
+      "commission": "10.2172",
+      "shopId": 527518392,
+      "shopName": "Mundo Pryst peças e acessórios",
       "shopType": [
         2
       ],
-      "periodStartTime": 1787713200,
+      "periodStartTime": 1789096440,
       "periodEndTime": 32503651199,
       "categories": [
-        "Acessorios Automotivos"
+        "Ferramentas"
       ],
       "keywords": [
-        "suporte celular carro"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "suporte celular carro"
-      ],
-      "intentMatchedKeywords": [
-        "suporte celular carro"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "suporte celular carro": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "suporte"
-            ],
-            [
-              "celular"
-            ],
-            [
-              "carro"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 68.8,
-      "scoreComponents": {
-        "seller_extra_commission": 0.3333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.8578,
-        "rating": 0.94,
-        "discount": 0.64,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 10.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 13.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 22998858410,
-      "productName": "Suporte Carro Celular GPS Universal Painel e Parabrisa Resistente Ventosa Ajustável Rotação 360°",
-      "productLink": "https://shopee.com.br/product/1183719086/22998858410",
-      "offerLink": "https://s.shopee.com.br/114MksNE6B",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81z1k-mffzfmqrzh1c47",
-      "priceMin": "17.9",
-      "priceMax": "48.33",
-      "priceDiscountRate": 64,
-      "sales": 1443,
-      "ratingStar": "4.8",
-      "commissionRate": "0.13",
-      "sellerCommissionRate": "0.1",
-      "shopeeCommissionRate": "0.03",
-      "commission": "2.327",
-      "shopId": 1183719086,
-      "shopName": "LojaZini",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1789648320,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Acessorios Automotivos"
-      ],
-      "keywords": [
-        "suporte celular carro"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "suporte celular carro"
-      ],
-      "intentMatchedKeywords": [
-        "suporte celular carro"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "suporte celular carro": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "suporte"
-            ],
-            [
-              "celular"
-            ],
-            [
-              "carro"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 67.54,
-      "scoreComponents": {
-        "seller_extra_commission": 0.3333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.7602,
-        "rating": 0.96,
-        "discount": 0.64,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 10.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 13.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 24575870687,
-      "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
-      "productLink": "https://shopee.com.br/product/1006215031/24575870687",
-      "offerLink": "https://s.shopee.com.br/1BNmxDYdj7",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-823r2-mp4n4weiypkx69",
-      "priceMin": "13.89",
-      "priceMax": "13.89",
-      "priceDiscountRate": 26,
-      "sales": 26,
-      "ratingStar": "4.7",
-      "commissionRate": "0.23",
-      "sellerCommissionRate": "0.2",
-      "shopeeCommissionRate": "0.03",
-      "commission": "3.1947",
-      "shopId": 1006215031,
-      "shopName": "Choice Oficial",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Limpeza e Conservacao"
-      ],
-      "keywords": [
-        "escova limpeza automotiva"
+        "furadeira"
       ],
       "sourceModes": [
         "extra_commission"
@@ -484,69 +676,68 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "escova limpeza automotiva"
+        "furadeira"
       ],
       "intentMatchedKeywords": [
-        "escova limpeza automotiva"
+        "furadeira"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "escova limpeza automotiva": {
+        "furadeira": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "escova"
-            ],
-            [
-              "carro"
+              "furadeira"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 67.53,
+      "opportunityScore": 69.65,
       "scoreComponents": {
-        "seller_extra_commission": 0.6667,
+        "seller_extra_commission": 0.7553,
         "search_demand_proxy": 1.0,
-        "sales": 0.3444,
-        "rating": 0.94,
-        "discount": 0.26,
+        "sales": 0.2758,
+        "rating": 1.0,
+        "discount": 0.06,
         "top_performance": 0.0
       },
-      "sellerExtraCommissionPct": 20.0,
+      "sellerExtraCommissionPct": 25.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 23.0,
+      "totalCommissionPct": 28.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 23298660358,
-      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
-      "productLink": "https://shopee.com.br/product/305201598/23298660358",
-      "offerLink": "https://s.shopee.com.br/BVDnJc3pd",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7rash-mb5rcz7ytftub4",
-      "priceMin": "28.88",
-      "priceMax": "29.99",
-      "priceDiscountRate": 4,
-      "sales": 3994,
-      "ratingStar": "4.6",
+      "itemId": 49466540071,
+      "productName": "Pano Microfibra Toalha Grande Limpar Casa moveis Secar Carro Automotivo Lavagem Secagem Polimento",
+      "productLink": "https://shopee.com.br/product/427457955/49466540071",
+      "offerLink": "https://s.shopee.com.br/9zzBove438",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820md-murrvh9gbri925",
+      "priceMin": "10",
+      "priceMax": "29.9",
+      "priceDiscountRate": 83,
+      "sales": 1497,
+      "ratingStar": "4.9",
       "commissionRate": "0.14",
       "sellerCommissionRate": "0.11",
       "shopeeCommissionRate": "0.03",
-      "commission": "4.0432",
-      "shopId": 305201598,
-      "shopName": "ONE LIGHT SHOP",
-      "shopType": [],
-      "periodStartTime": 1787713200,
+      "commission": "1.4",
+      "shopId": 427457955,
+      "shopName": "TMZ UTILIDADES",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1788825000,
       "periodEndTime": 32503651199,
       "categories": [
-        "Acessorios Automotivos"
+        "Limpeza e Conservacao"
       ],
       "keywords": [
-        "aspirador automotivo"
+        "pano microfibra automotivo"
       ],
       "sourceModes": [
         "top_performance"
@@ -554,36 +745,41 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "aspirador automotivo"
+        "pano microfibra automotivo"
       ],
       "intentMatchedKeywords": [
-        "aspirador automotivo"
+        "pano microfibra automotivo"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "aspirador automotivo": {
+        "pano microfibra automotivo": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "aspirador"
+              "pano",
+              "toalha"
             ],
             [
-              "automotivo"
+              "microfibra"
+            ],
+            [
+              "automotivo",
+              "carro"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 67.06,
+      "opportunityScore": 68.7,
       "scoreComponents": {
-        "seller_extra_commission": 0.3667,
+        "seller_extra_commission": 0.3323,
         "search_demand_proxy": 1.0,
-        "sales": 0.8666,
-        "rating": 0.92,
-        "discount": 0.04,
+        "sales": 0.7641,
+        "rating": 0.98,
+        "discount": 0.83,
         "top_performance": 1.0
       },
       "sellerExtraCommissionPct": 11.0,
@@ -593,25 +789,241 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 19698331679,
-      "productName": "Suporte Celular Carro Veicular Trava Anti Queda 360º GPS Ventosa Painel Anti Queda",
-      "productLink": "https://shopee.com.br/product/1485077747/19698331679",
-      "offerLink": "https://s.shopee.com.br/9fML4nqEVv",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m5-mrlbk4l9uex157",
-      "priceMin": "29.99",
-      "priceMax": "59.9",
-      "priceDiscountRate": 50,
-      "sales": 1322,
+      "itemId": 22899126718,
+      "productName": "Organizador de Porta-Malas Universal em Oxford – Grande Capacidade Fixação no Banco Traseiro Rede Multiuso Gancho",
+      "productLink": "https://shopee.com.br/product/1310142226/22899126718",
+      "offerLink": "https://s.shopee.com.br/114N6MHbS6",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m1-mv1587ad70n7f2",
+      "priceMin": "26.88",
+      "priceMax": "47.88",
+      "priceDiscountRate": 54,
+      "sales": 73,
       "ratingStar": "4.9",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.15",
+      "shopeeCommissionRate": "0.03",
+      "commission": "4.8384",
+      "shopId": 1310142226,
+      "shopName": "MELHOR ",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Acessorios Automotivos"
+      ],
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "organizador porta malas"
+      ],
+      "intentMatchedKeywords": [
+        "organizador porta malas"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "organizador porta malas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "organizador"
+            ],
+            [
+              "porta malas",
+              "porta-malas"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 67.37,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4532,
+        "search_demand_proxy": 1.0,
+        "sales": 0.4498,
+        "rating": 0.98,
+        "discount": 0.54,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23594156062,
+      "productName": "Kit 10 Panos de Limpeza Microfibra Alta Absorção Flanela Automotivo Carro Pia 30x30cm Vidro Multiuso Pano De Limpeza",
+      "productLink": "https://shopee.com.br/product/1180298845/23594156062",
+      "offerLink": "https://s.shopee.com.br/AKc2DXcnNA",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81z1k-mht65f9o464h1e",
+      "priceMin": "13.5",
+      "priceMax": "19.9",
+      "priceDiscountRate": 71,
+      "sales": 2969,
+      "ratingStar": "4.6",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
       "shopeeCommissionRate": "0.03",
-      "commission": "3.8987",
-      "shopId": 1485077747,
-      "shopName": "ENDLESS",
+      "commission": "1.755",
+      "shopId": 1180298845,
+      "shopName": "JWC.EMPORIUM",
       "shopType": [
         2
       ],
+      "periodStartTime": 1791069141,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Limpeza e Conservacao"
+      ],
+      "keywords": [
+        "pano microfibra automotivo"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "intentMatchedKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "pano microfibra automotivo": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "pano"
+            ],
+            [
+              "microfibra"
+            ],
+            [
+              "automotivo",
+              "carro"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 67.37,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3021,
+        "search_demand_proxy": 1.0,
+        "sales": 0.8356,
+        "rating": 0.92,
+        "discount": 0.71,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23098642201,
+      "productName": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
+      "productLink": "https://shopee.com.br/product/1533370985/23098642201",
+      "offerLink": "https://s.shopee.com.br/7Af0RfGvvg",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7ratg-maww153sck8mc0",
+      "priceMin": "47.9",
+      "priceMax": "47.9",
+      "priceDiscountRate": 29,
+      "sales": 0,
+      "ratingStar": "5",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
+      "shopeeCommissionRate": "0.03",
+      "commission": "13.412",
+      "shopId": 1533370985,
+      "shopName": "SantaCasa",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Manutencao"
+      ],
+      "keywords": [
+        "multimetro digital"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "multimetro digital"
+      ],
+      "intentMatchedKeywords": [
+        "multimetro digital"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "multimetro digital": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "multimetro",
+              "multímetro"
+            ],
+            [
+              "digital"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 66.66,
+      "scoreComponents": {
+        "seller_extra_commission": 0.7553,
+        "search_demand_proxy": 1.0,
+        "sales": 0.0,
+        "rating": 1.0,
+        "discount": 0.29,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 25.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 28.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58258700275,
+      "productName": "Suporte para Celular Carro Veicular caminhão Porta Copo Universal Ajustável flexível",
+      "productLink": "https://shopee.com.br/product/1790785656/58258700275",
+      "offerLink": "https://s.shopee.com.br/80E7RDDHxd",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-81zww-mmysiwgxvll2c9",
+      "priceMin": "27.54",
+      "priceMax": "27.54",
+      "priceDiscountRate": 0,
+      "sales": 2,
+      "ratingStar": "4.6",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
+      "shopeeCommissionRate": "0.03",
+      "commission": "7.7112",
+      "shopId": 1790785656,
+      "shopName": "Marocas variedades",
+      "shopType": [],
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
@@ -621,7 +1033,7 @@
         "suporte celular carro"
       ],
       "sourceModes": [
-        "top_performance"
+        "extra_commission"
       ],
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
@@ -653,82 +1065,204 @@
           "missing": []
         }
       },
-      "opportunityScore": 66.9,
+      "opportunityScore": 66.13,
       "scoreComponents": {
-        "seller_extra_commission": 0.3333,
+        "seller_extra_commission": 0.7553,
         "search_demand_proxy": 1.0,
-        "sales": 0.7511,
-        "rating": 0.98,
-        "discount": 0.5,
-        "top_performance": 1.0
+        "sales": 0.1148,
+        "rating": 0.92,
+        "discount": 0.0,
+        "top_performance": 0.0
       },
-      "sellerExtraCommissionPct": 10.0,
+      "sellerExtraCommissionPct": 25.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 13.0,
+      "totalCommissionPct": 28.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 22893172849,
-      "productName": "Kit Ferramenta Jogo De Soquete Aço Crv 1/4 Catraca Chave Allen Com Maleta Completo Barato",
-      "productLink": "https://shopee.com.br/product/1021742766/22893172849",
-      "offerLink": "https://s.shopee.com.br/5VWm4EZDEw",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7rdvl-ly446z3911jxb3",
-      "priceMin": "38.99",
-      "priceMax": "38.99",
-      "priceDiscountRate": 0,
-      "sales": 1,
-      "ratingStar": "4.8",
-      "commissionRate": "0.31",
-      "sellerCommissionRate": "0.28",
+      "itemId": 58207052374,
+      "productName": "Compressor De Ar Mini Elétrico Portátil 12v Carro 300psi So Preto 12v ",
+      "productLink": "https://shopee.com.br/product/1212721731/58207052374",
+      "offerLink": "https://s.shopee.com.br/W86VQBBC8",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8262m-mlxhb9sl0rgod8",
+      "priceMin": "38",
+      "priceMax": "38",
+      "priceDiscountRate": 37,
+      "sales": 1598,
+      "ratingStar": "4.6",
+      "commissionRate": "0.18",
+      "sellerCommissionRate": "0.15",
       "shopeeCommissionRate": "0.03",
-      "commission": "12.0869",
-      "shopId": 1021742766,
-      "shopName": "PINKpink Yang",
+      "commission": "6.84",
+      "shopId": 1212721731,
+      "shopName": "GR7 Imports",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Manutencao"
+      ],
+      "keywords": [
+        "compressor de ar portatil"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 0.7912037037037036,
+      "sourceKeywords": [
+        "compressor de ar portatil"
+      ],
+      "intentMatchedKeywords": [
+        "compressor de ar portatil"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "compressor de ar portatil": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "compressor"
+            ],
+            [
+              "portatil",
+              "portátil"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 65.52,
+      "scoreComponents": {
+        "seller_extra_commission": 0.4532,
+        "search_demand_proxy": 0.7912,
+        "sales": 0.7709,
+        "rating": 0.92,
+        "discount": 0.37,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 15.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 18.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22998706834,
+      "productName": "Mini Aspirador Automotivo Portátil Potente Recarregável Premium B-88-2",
+      "productLink": "https://shopee.com.br/product/1568639279/22998706834",
+      "offerLink": "https://s.shopee.com.br/1LhBj4VnR6",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134202-7rdyk-mc11voo0btg8c1",
+      "priceMin": "77.9",
+      "priceMax": "77.9",
+      "priceDiscountRate": 0,
+      "sales": 0,
+      "ratingStar": "5",
+      "commissionRate": "0.28",
+      "sellerCommissionRate": "0.25",
+      "shopeeCommissionRate": "0.03",
+      "commission": "21.812",
+      "shopId": 1568639279,
+      "shopName": "Premium.Store",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Acessorios Automotivos"
+      ],
+      "keywords": [
+        "aspirador automotivo"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "aspirador automotivo"
+      ],
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "aspirador automotivo": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "aspirador"
+            ],
+            [
+              "automotivo"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 65.21,
+      "scoreComponents": {
+        "seller_extra_commission": 0.7553,
+        "search_demand_proxy": 1.0,
+        "sales": 0.0,
+        "rating": 1.0,
+        "discount": 0.0,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 25.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 28.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22694953462,
+      "productName": "Kit Jogo De Ferramentas 27 Peças Com Maleta Chaves Allen Alicate Martelo Completos",
+      "productLink": "https://shopee.com.br/product/1660170092/22694953462",
+      "offerLink": "https://s.shopee.com.br/AAIc1EPt3D",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m6-mnebufxbery8a9",
+      "priceMin": "78.99",
+      "priceMax": "78.99",
+      "priceDiscountRate": 70,
+      "sales": 598,
+      "ratingStar": "4.8",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "10.2687",
+      "shopId": 1660170092,
+      "shopName": "Super Vida_BR",
       "shopType": [
         2
       ],
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
-        "Ferramentas",
         "Organizacao de Garagem"
       ],
       "keywords": [
-        "jogo de chaves",
         "maleta ferramentas"
       ],
       "sourceModes": [
-        "extra_commission"
+        "top_performance"
       ],
       "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 0.75,
+      "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "jogo de chaves",
         "maleta ferramentas"
       ],
       "intentMatchedKeywords": [
-        "jogo de chaves",
         "maleta ferramentas"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "jogo de chaves": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "jogo",
-              "kit"
-            ],
-            [
-              "chave"
-            ]
-          ],
-          "missing": []
-        },
         "maleta ferramentas": {
           "accepted": true,
           "score": 1.0,
@@ -738,24 +1272,607 @@
               "maleta"
             ],
             [
-              "ferramenta"
+              "ferramentas"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 66.77,
+      "opportunityScore": 65.21,
       "scoreComponents": {
-        "seller_extra_commission": 0.9333,
-        "search_demand_proxy": 0.75,
-        "sales": 0.0724,
+        "seller_extra_commission": 0.3021,
+        "search_demand_proxy": 1.0,
+        "sales": 0.6683,
         "rating": 0.96,
-        "discount": 0.0,
+        "discount": 0.7,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 22494655461,
+      "productName": "Kit Ferramentas 10 40 46 Peças Aço Cromo Vanádio Chave Soquete Maleta Estojo Para Carro Moto e Casa",
+      "productLink": "https://shopee.com.br/product/1663630412/22494655461",
+      "offerLink": "https://s.shopee.com.br/AKc2DXPFiC",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81z1k-mibf3ei8jf9e03",
+      "priceMin": "27.85",
+      "priceMax": "32.85",
+      "priceDiscountRate": 44,
+      "sales": 731,
+      "ratingStar": "4.9",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "3.6205",
+      "shopId": 1663630412,
+      "shopName": "ZAZU SHOP",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao de Garagem"
+      ],
+      "keywords": [
+        "maleta ferramentas"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "maleta ferramentas"
+      ],
+      "intentMatchedKeywords": [
+        "maleta ferramentas"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "maleta ferramentas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "maleta"
+            ],
+            [
+              "ferramentas"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 64.42,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3021,
+        "search_demand_proxy": 1.0,
+        "sales": 0.6892,
+        "rating": 0.98,
+        "discount": 0.44,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23293604983,
+      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 118x35 + Brindes",
+      "productLink": "https://shopee.com.br/product/1092274438/23293604983",
+      "offerLink": "https://s.shopee.com.br/gRWMH1kXI",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ln-msagrtfrqhvr70",
+      "priceMin": "82.31",
+      "priceMax": "82.31",
+      "priceDiscountRate": 2,
+      "sales": 154,
+      "ratingStar": "4.9",
+      "commissionRate": "0.16",
+      "sellerCommissionRate": "0.13",
+      "shopeeCommissionRate": "0.03",
+      "commission": "13.1696",
+      "shopId": 1092274438,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao de Garagem"
+      ],
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "painel ferramentas"
+      ],
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "painel ferramentas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "painel"
+            ],
+            [
+              "ferramentas"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.52,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3927,
+        "search_demand_proxy": 1.0,
+        "sales": 0.527,
+        "rating": 0.98,
+        "discount": 0.02,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 13.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 16.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23793600890,
+      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 89x52 + Brindes",
+      "productLink": "https://shopee.com.br/product/1092274438/23793600890",
+      "offerLink": "https://s.shopee.com.br/114Mkt0TrO",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m0-mrj9ypp137yefa",
+      "priceMin": "82.31",
+      "priceMax": "82.31",
+      "priceDiscountRate": 2,
+      "sales": 136,
+      "ratingStar": "4.9",
+      "commissionRate": "0.16",
+      "sellerCommissionRate": "0.13",
+      "shopeeCommissionRate": "0.03",
+      "commission": "13.1696",
+      "shopId": 1092274438,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao de Garagem"
+      ],
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "painel ferramentas"
+      ],
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "painel ferramentas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "painel"
+            ],
+            [
+              "ferramentas"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.32,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3927,
+        "search_demand_proxy": 1.0,
+        "sales": 0.5141,
+        "rating": 0.98,
+        "discount": 0.02,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 13.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 16.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 57755036915,
+      "productName": "Painel Ferramentas Organizador Perfurado 118x52 + Brindes",
+      "productLink": "https://shopee.com.br/product/1092274438/57755036915",
+      "offerLink": "https://s.shopee.com.br/4B1OWhoQQv",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81ztc-mjrhsagrpibq06",
+      "priceMin": "141.9",
+      "priceMax": "141.9",
+      "priceDiscountRate": 5,
+      "sales": 268,
+      "ratingStar": "4.9",
+      "commissionRate": "0.15",
+      "sellerCommissionRate": "0.12",
+      "shopeeCommissionRate": "0.03",
+      "commission": "21.285",
+      "shopId": 1092274438,
+      "shopName": "EXBIAN FERRAMENTAS",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Organizacao de Garagem"
+      ],
+      "keywords": [
+        "painel ferramentas"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "painel ferramentas"
+      ],
+      "intentMatchedKeywords": [
+        "painel ferramentas"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "painel ferramentas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "painel"
+            ],
+            [
+              "ferramentas"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.32,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3625,
+        "search_demand_proxy": 1.0,
+        "sales": 0.5846,
+        "rating": 0.98,
+        "discount": 0.05,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 12.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 15.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23199463288,
+      "productName": "Suporte de Celular Veícular GPS Carro Caminhão Portátil Giratório 360° Ajustável Flexível Ventosa",
+      "productLink": "https://shopee.com.br/product/274421888/23199463288",
+      "offerLink": "https://s.shopee.com.br/9fMJeNa9aY",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820l8-moh0lxw6zpxc9b",
+      "priceMin": "68",
+      "priceMax": "68",
+      "priceDiscountRate": 15,
+      "sales": 0,
+      "ratingStar": "0",
+      "commissionRate": "0.34",
+      "sellerCommissionRate": "0.31",
+      "shopeeCommissionRate": "0.03",
+      "commission": "23.12",
+      "shopId": 274421888,
+      "shopName": "A Casa dos Importados",
+      "shopType": [],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Acessorios Automotivos"
+      ],
+      "keywords": [
+        "suporte celular carro"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "suporte celular carro"
+      ],
+      "intentMatchedKeywords": [
+        "suporte celular carro"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "suporte celular carro": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "suporte"
+            ],
+            [
+              "celular"
+            ],
+            [
+              "carro",
+              "veicular"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.21,
+      "scoreComponents": {
+        "seller_extra_commission": 0.9366,
+        "search_demand_proxy": 1.0,
+        "sales": 0.0,
+        "rating": 0.0,
+        "discount": 0.15,
         "top_performance": 0.0
       },
-      "sellerExtraCommissionPct": 28.0,
+      "sellerExtraCommissionPct": 31.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 31.0,
+      "totalCommissionPct": 34.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23694250603,
+      "productName": "Pano de Chão Microfibra Gigante 60x80cm Neves - Multiuso - Limpeza Geral - Automotivo - Multicores - Kit de 5 Panos",
+      "productLink": "https://shopee.com.br/product/971982021/23694250603",
+      "offerLink": "https://s.shopee.com.br/9KjV1hgbP4",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lt-mv7hekcc49a86b",
+      "priceMin": "37.99",
+      "priceMax": "37.99",
+      "priceDiscountRate": 16,
+      "sales": 886,
+      "ratingStar": "4.8",
+      "commissionRate": "0.13",
+      "sellerCommissionRate": "0.1",
+      "shopeeCommissionRate": "0.03",
+      "commission": "4.9387",
+      "shopId": 971982021,
+      "shopName": "Zoom Comercial",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Limpeza e Conservacao"
+      ],
+      "keywords": [
+        "pano microfibra automotivo"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "intentMatchedKeywords": [
+        "pano microfibra automotivo"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "pano microfibra automotivo": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "pano"
+            ],
+            [
+              "microfibra"
+            ],
+            [
+              "automotivo"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.12,
+      "scoreComponents": {
+        "seller_extra_commission": 0.3021,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7093,
+        "rating": 0.96,
+        "discount": 0.16,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 10.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 13.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58206133051,
+      "productName": "Compressor de Ar Portátil M6 Inflador Digital para Pneus Carro Moto Bike Compacto e Prático",
+      "productLink": "https://shopee.com.br/product/1386771889/58206133051",
+      "offerLink": "https://s.shopee.com.br/1LhDUx80VT",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820lo-mtnngqcvzeo165",
+      "priceMin": "75.45",
+      "priceMax": "75.45",
+      "priceDiscountRate": 85,
+      "sales": 1039,
+      "ratingStar": "4.9",
+      "commissionRate": "0.11",
+      "sellerCommissionRate": "0.08",
+      "shopeeCommissionRate": "0.03",
+      "commission": "8.2995",
+      "shopId": 1386771889,
+      "shopName": " KODI",
+      "shopType": [
+        1
+      ],
+      "periodStartTime": 1787713440,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Manutencao"
+      ],
+      "keywords": [
+        "compressor de ar portatil"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 0.9370370370370371,
+      "sourceKeywords": [
+        "compressor de ar portatil"
+      ],
+      "intentMatchedKeywords": [
+        "compressor de ar portatil"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "compressor de ar portatil": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "compressor",
+              "inflador"
+            ],
+            [
+              "portatil",
+              "portátil",
+              "pneus"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 63.03,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2417,
+        "search_demand_proxy": 0.937,
+        "sales": 0.7259,
+        "rating": 0.98,
+        "discount": 0.85,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 8.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 11.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 23294140061,
+      "productName": "Lavadora De Alta Pressão Recarregável Sem Fio 48V Baterias Linha Premium Para Carros e Jardins",
+      "productLink": "https://shopee.com.br/product/1534000949/23294140061",
+      "offerLink": "https://s.shopee.com.br/AAIc1EzZ9q",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820l7-mtxysxdl90jma6",
+      "priceMin": "91.9",
+      "priceMax": "139.98",
+      "priceDiscountRate": 71,
+      "sales": 1066,
+      "ratingStar": "4.7",
+      "commissionRate": "0.1",
+      "sellerCommissionRate": "0.07",
+      "shopeeCommissionRate": "0.03",
+      "commission": "9.19",
+      "shopId": 1534000949,
+      "shopName": "ANXIN TECH LTDA",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1787713200,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Limpeza e Conservacao"
+      ],
+      "keywords": [
+        "lavadora alta pressao"
+      ],
+      "sourceModes": [
+        "top_performance"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 1.0,
+      "sourceKeywords": [
+        "lavadora alta pressao"
+      ],
+      "intentMatchedKeywords": [
+        "lavadora alta pressao"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "lavadora alta pressao": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "lavadora"
+            ],
+            [
+              "alta pressao",
+              "alta pressão"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 62.34,
+      "scoreComponents": {
+        "seller_extra_commission": 0.2115,
+        "search_demand_proxy": 1.0,
+        "sales": 0.7286,
+        "rating": 0.94,
+        "discount": 0.71,
+        "top_performance": 1.0
+      },
+      "sellerExtraCommissionPct": 7.0,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 10.0,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -819,9 +1936,9 @@
           "missing": []
         }
       },
-      "opportunityScore": 65.27,
+      "opportunityScore": 62.14,
       "scoreComponents": {
-        "seller_extra_commission": 0.8333,
+        "seller_extra_commission": 0.7553,
         "search_demand_proxy": 0.7704,
         "sales": 0.1449,
         "rating": 0.98,
@@ -835,32 +1952,30 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 23293604983,
-      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 118x35 + Brindes",
-      "productLink": "https://shopee.com.br/product/1092274438/23293604983",
-      "offerLink": "https://s.shopee.com.br/gRWMH1kXI",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ln-msagrtfrqhvr70",
-      "priceMin": "82.31",
-      "priceMax": "82.31",
-      "priceDiscountRate": 2,
-      "sales": 154,
-      "ratingStar": "4.9",
-      "commissionRate": "0.16",
-      "sellerCommissionRate": "0.13",
+      "itemId": 22493620066,
+      "productName": "Lavadora de Alta Pressão Pistola Portátil Profissional Sem Fio Recarregável a Bateria Original Carro",
+      "productLink": "https://shopee.com.br/product/1057481903/22493620066",
+      "offerLink": "https://s.shopee.com.br/4LKojzU1ys",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m4g8xopn148xfe",
+      "priceMin": "114.99",
+      "priceMax": "149.99",
+      "priceDiscountRate": 32,
+      "sales": 2697,
+      "ratingStar": "4.7",
+      "commissionRate": "0.1",
+      "sellerCommissionRate": "0.07",
       "shopeeCommissionRate": "0.03",
-      "commission": "13.1696",
-      "shopId": 1092274438,
-      "shopName": "EXBIAN FERRAMENTAS",
-      "shopType": [
-        2
-      ],
+      "commission": "11.499",
+      "shopId": 1057481903,
+      "shopName": "BALD COMEX",
+      "shopType": [],
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
-        "Organizacao de Garagem"
+        "Limpeza e Conservacao"
       ],
       "keywords": [
-        "painel ferramentas"
+        "lavadora alta pressao"
       ],
       "sourceModes": [
         "top_performance"
@@ -868,41 +1983,126 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "painel ferramentas"
+        "lavadora alta pressao"
       ],
       "intentMatchedKeywords": [
-        "painel ferramentas"
+        "lavadora alta pressao"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "painel ferramentas": {
+        "lavadora alta pressao": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "painel"
+              "lavadora"
             ],
             [
-              "ferramentas"
+              "alta pressao",
+              "alta pressão"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 65.14,
+      "opportunityScore": 61.84,
       "scoreComponents": {
-        "seller_extra_commission": 0.4333,
+        "seller_extra_commission": 0.2115,
         "search_demand_proxy": 1.0,
-        "sales": 0.527,
-        "rating": 0.98,
-        "discount": 0.02,
+        "sales": 0.8255,
+        "rating": 0.94,
+        "discount": 0.32,
         "top_performance": 1.0
       },
-      "sellerExtraCommissionPct": 13.0,
+      "sellerExtraCommissionPct": 7.0,
       "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 16.0,
+      "totalCommissionPct": 10.0,
+      "priorityRank": 1,
+      "selectionPass": "strict_diversity"
+    },
+    {
+      "itemId": 58217509628,
+      "productName": "Óculos de Proteção Segurança EPI Incolor/Cinza CA Construção Obra Esporte Laboratórios",
+      "productLink": "https://shopee.com.br/product/976844410/58217509628",
+      "offerLink": "https://s.shopee.com.br/9zzBowM3ti",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m0-mte96y7v0kqq68",
+      "priceMin": "12",
+      "priceMax": "12",
+      "priceDiscountRate": 60,
+      "sales": 1,
+      "ratingStar": "0",
+      "commissionRate": "0.361",
+      "sellerCommissionRate": "0.331",
+      "shopeeCommissionRate": "0.03",
+      "commission": "4.332",
+      "shopId": 976844410,
+      "shopName": "ESPARTAEPI",
+      "shopType": [
+        2
+      ],
+      "periodStartTime": 1789154548,
+      "periodEndTime": 32503651199,
+      "categories": [
+        "Seguranca e Protecao"
+      ],
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "sourceModes": [
+        "extra_commission"
+      ],
+      "priorityTier": "COMISSAO_EXTRA",
+      "searchDemandProxy": 0.6880291005291005,
+      "sourceKeywords": [
+        "oculos de protecao"
+      ],
+      "intentMatchedKeywords": [
+        "oculos de protecao"
+      ],
+      "intentDecision": "ACEITO",
+      "semanticIntentScore": 1.0,
+      "intentEvaluations": {
+        "oculos de protecao": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "oculos",
+              "óculos"
+            ],
+            [
+              "protecao",
+              "proteção",
+              "seguranca",
+              "segurança",
+              "epi"
+            ],
+            [
+              "seguranca",
+              "segurança",
+              "epi",
+              "obra",
+              "ca"
+            ]
+          ],
+          "missing": []
+        }
+      },
+      "opportunityScore": 61.29,
+      "scoreComponents": {
+        "seller_extra_commission": 1.0,
+        "search_demand_proxy": 0.688,
+        "sales": 0.0724,
+        "rating": 0.0,
+        "discount": 0.6,
+        "top_performance": 0.0
+      },
+      "sellerExtraCommissionPct": 33.1,
+      "shopeeCommissionPct": 3.0,
+      "totalCommissionPct": 36.1,
       "priorityRank": 1,
       "selectionPass": "strict_diversity"
     },
@@ -910,7 +2110,7 @@
       "itemId": 20811707147,
       "productName": "MALETA P/ FERRAMENTAS GRANITE PRO ALTA 13\"",
       "productLink": "https://shopee.com.br/product/368026611/20811707147",
-      "offerLink": "https://s.shopee.com.br/7pugqWQKVI",
+      "offerLink": "https://s.shopee.com.br/LogJ9EvOV",
       "imageUrl": "https://cf.shopee.com.br/file/br-11134201-23030-7yrwz6ll6vovf5",
       "priceMin": "40.99",
       "priceMax": "40.99",
@@ -930,6 +2130,7 @@
         "Organizacao de Garagem"
       ],
       "keywords": [
+        "caixa ferramentas",
         "maleta ferramentas"
       ],
       "sourceModes": [
@@ -938,14 +2139,30 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
+        "caixa ferramentas",
         "maleta ferramentas"
       ],
       "intentMatchedKeywords": [
+        "caixa ferramentas",
         "maleta ferramentas"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
+        "caixa ferramentas": {
+          "accepted": true,
+          "score": 1.0,
+          "reason": "intencao_confirmada",
+          "matched": [
+            [
+              "maleta"
+            ],
+            [
+              "ferramentas"
+            ]
+          ],
+          "missing": []
+        },
         "maleta ferramentas": {
           "accepted": true,
           "score": 1.0,
@@ -961,9 +2178,9 @@
           "missing": []
         }
       },
-      "opportunityScore": 65.0,
+      "opportunityScore": 61.25,
       "scoreComponents": {
-        "seller_extra_commission": 1.0,
+        "seller_extra_commission": 0.9063,
         "search_demand_proxy": 1.0,
         "sales": 0.0,
         "rating": 0.0,
@@ -977,1023 +2194,30 @@
       "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 19598658116,
-      "productName": "MALETA P/ FERRAMENTAS S/BAND PRETA 16,5X20X37 CM",
-      "productLink": "https://shopee.com.br/product/368026611/19598658116",
-      "offerLink": "https://s.shopee.com.br/7fbGeDQxqH",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134201-7qukw-li95gymzax80e9",
-      "priceMin": "42.99",
-      "priceMax": "42.99",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.33",
-      "sellerCommissionRate": "0.3",
-      "shopeeCommissionRate": "0.03",
-      "commission": "14.1867",
-      "shopId": 368026611,
-      "shopName": "Bazar Dona Dirce",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Organizacao de Garagem"
-      ],
-      "keywords": [
-        "maleta ferramentas"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "maleta ferramentas"
-      ],
-      "intentMatchedKeywords": [
-        "maleta ferramentas"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "maleta ferramentas": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "maleta"
-            ],
-            [
-              "ferramentas"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 65.0,
-      "scoreComponents": {
-        "seller_extra_commission": 1.0,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 30.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 33.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 19211706872,
-      "productName": "MALETA P/ FERRAMENTAS GRANITE PRO 19\"",
-      "productLink": "https://shopee.com.br/product/368026611/19211706872",
-      "offerLink": "https://s.shopee.com.br/7VHqRuRbBG",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134201-23030-8redhk7m6vovf5",
-      "priceMin": "115.99",
-      "priceMax": "115.99",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.33",
-      "sellerCommissionRate": "0.3",
-      "shopeeCommissionRate": "0.03",
-      "commission": "38.2767",
-      "shopId": 368026611,
-      "shopName": "Bazar Dona Dirce",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Organizacao de Garagem"
-      ],
-      "keywords": [
-        "maleta ferramentas"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "maleta ferramentas"
-      ],
-      "intentMatchedKeywords": [
-        "maleta ferramentas"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "maleta ferramentas": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "maleta"
-            ],
-            [
-              "ferramentas"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 65.0,
-      "scoreComponents": {
-        "seller_extra_commission": 1.0,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 30.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 33.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 23793600890,
-      "productName": "Painel Suporte Porta Ferramentas Organizador Parede Perfurado 89x52 + Brindes",
-      "productLink": "https://shopee.com.br/product/1092274438/23793600890",
-      "offerLink": "https://s.shopee.com.br/114Mkt0TrO",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820m0-mrj9ypp137yefa",
-      "priceMin": "82.31",
-      "priceMax": "82.31",
-      "priceDiscountRate": 2,
-      "sales": 136,
-      "ratingStar": "4.9",
-      "commissionRate": "0.16",
-      "sellerCommissionRate": "0.13",
-      "shopeeCommissionRate": "0.03",
-      "commission": "13.1696",
-      "shopId": 1092274438,
-      "shopName": "EXBIAN FERRAMENTAS",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Organizacao de Garagem"
-      ],
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "painel ferramentas"
-      ],
-      "intentMatchedKeywords": [
-        "painel ferramentas"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "painel ferramentas": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "painel"
-            ],
-            [
-              "ferramentas"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 64.94,
-      "scoreComponents": {
-        "seller_extra_commission": 0.4333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.5141,
-        "rating": 0.98,
-        "discount": 0.02,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 13.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 16.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 44074831609,
-      "productName": "Mini Aspirador De Pó Sem Fio Automotivo Profissional Recarregável Casa Sofá BOMVINK",
-      "productLink": "https://shopee.com.br/product/1391355567/44074831609",
-      "offerLink": "https://s.shopee.com.br/7VHqRterGA",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81ztc-mjeu603pb20z50",
-      "priceMin": "39.99",
-      "priceMax": "39.99",
-      "priceDiscountRate": 43,
-      "sales": 34,
-      "ratingStar": "4.4",
-      "commissionRate": "0.16",
-      "sellerCommissionRate": "0.13",
-      "shopeeCommissionRate": "0.03",
-      "commission": "6.3984",
-      "shopId": 1391355567,
-      "shopName": "GL Global",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Acessorios Automotivos"
-      ],
-      "keywords": [
-        "aspirador automotivo"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentMatchedKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "aspirador automotivo": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "aspirador"
-            ],
-            [
-              "automotivo"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 63.86,
-      "scoreComponents": {
-        "seller_extra_commission": 0.4333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.3715,
-        "rating": 0.88,
-        "discount": 0.43,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 13.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 16.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 41314419184,
-      "productName": "120ml  Limpador De Vidro Esponja Automotiva Escova De Limpeza Para-Brisa Óleo Filme Agente De Polimento Anti Mancha",
-      "productLink": "https://shopee.com.br/product/1541644955/41314419184",
-      "offerLink": "https://s.shopee.com.br/6AmSrTRWkh",
-      "imageUrl": "https://cf.shopee.com.br/file/cn-11134207-820l4-mhjxwfmquepu9f",
-      "priceMin": "11.99",
-      "priceMax": "27.99",
-      "priceDiscountRate": 67,
-      "sales": 565,
-      "ratingStar": "4.6",
-      "commissionRate": "0.11",
-      "sellerCommissionRate": "0.08",
-      "shopeeCommissionRate": "0.03",
-      "commission": "1.3189",
-      "shopId": 1541644955,
-      "shopName": "YF_globa.br",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Limpeza e Conservacao"
-      ],
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "escova limpeza automotiva"
-      ],
-      "intentMatchedKeywords": [
-        "escova limpeza automotiva"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "escova limpeza automotiva": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "escova"
-            ],
-            [
-              "para-brisa"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 63.15,
-      "scoreComponents": {
-        "seller_extra_commission": 0.2667,
-        "search_demand_proxy": 1.0,
-        "sales": 0.6623,
-        "rating": 0.92,
-        "discount": 0.67,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 8.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 11.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 58256737904,
-      "productName": "Kit Jogo Chave Soquete 8 Peças Hexagonal Longo 1/2 Profissional",
-      "productLink": "https://shopee.com.br/product/1499661843/58256737904",
-      "offerLink": "https://s.shopee.com.br/80E72nYxVY",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8262u-mlp9p4u6j0n406",
-      "priceMin": "72.99",
-      "priceMax": "72.99",
-      "priceDiscountRate": 27,
-      "sales": 14,
-      "ratingStar": "4.9",
-      "commissionRate": "0.28",
-      "sellerCommissionRate": "0.25",
-      "shopeeCommissionRate": "0.03",
-      "commission": "20.4372",
-      "shopId": 1499661843,
-      "shopName": "XIUPRIME999",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Ferramentas"
-      ],
-      "keywords": [
-        "jogo de chaves"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 0.575,
-      "sourceKeywords": [
-        "jogo de chaves"
-      ],
-      "intentMatchedKeywords": [
-        "jogo de chaves"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "jogo de chaves": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "jogo",
-              "kit"
-            ],
-            [
-              "chave"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 63.1,
-      "scoreComponents": {
-        "seller_extra_commission": 0.8333,
-        "search_demand_proxy": 0.575,
-        "sales": 0.283,
-        "rating": 0.98,
-        "discount": 0.27,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 25.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 28.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 23599300636,
-      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
-      "productLink": "https://shopee.com.br/product/1673238650/23599300636",
-      "offerLink": "https://s.shopee.com.br/7fbGeCeDvB",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8260x-mjehu84qwgzrb4",
-      "priceMin": "28.99",
-      "priceMax": "28.99",
-      "priceDiscountRate": 52,
-      "sales": 39,
-      "ratingStar": "4.5",
-      "commissionRate": "0.13",
-      "sellerCommissionRate": "0.1",
-      "shopeeCommissionRate": "0.03",
-      "commission": "3.7687",
-      "shopId": 1673238650,
-      "shopName": "3MAX16999",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Acessorios Automotivos"
-      ],
-      "keywords": [
-        "aspirador automotivo"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentMatchedKeywords": [
-        "aspirador automotivo"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "aspirador automotivo": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "aspirador"
-            ],
-            [
-              "automotivo"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 60.72,
-      "scoreComponents": {
-        "seller_extra_commission": 0.3333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.3855,
-        "rating": 0.9,
-        "discount": 0.52,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 10.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 13.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 22799677524,
-      "productName": "Escova Limpa Cinto Zacs Vonixx para Detalhamento Automotivo Limpeza de Cinto de Segurança Carro Higienização",
-      "productLink": "https://shopee.com.br/product/1027418284/22799677524",
-      "offerLink": "https://s.shopee.com.br/1LhD9WY0O6",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-825a5-mt5sadq2drt3fd",
-      "priceMin": "28.8",
-      "priceMax": "28.8",
-      "priceDiscountRate": 24,
-      "sales": 1,
-      "ratingStar": "0",
-      "commissionRate": "0.28",
-      "sellerCommissionRate": "0.25",
-      "shopeeCommissionRate": "0.03",
-      "commission": "8.064",
-      "shopId": 1027418284,
-      "shopName": "VIXX CAR PRODUTOS AUTOMOTIVOS",
-      "shopType": [],
-      "periodStartTime": 1789494468,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Limpeza e Conservacao"
-      ],
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "escova limpeza automotiva"
-      ],
-      "intentMatchedKeywords": [
-        "escova limpeza automotiva"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "escova limpeza automotiva": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "escova"
-            ],
-            [
-              "automotivo",
-              "carro",
-              "detalhamento"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 60.62,
-      "scoreComponents": {
-        "seller_extra_commission": 0.8333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0724,
-        "rating": 0.0,
-        "discount": 0.24,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 25.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 28.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 20698025185,
-      "productName": "Moletom Masculino Canguru Chaves Jogo Kiko Serie 100% Algodão",
-      "productLink": "https://shopee.com.br/product/1166445183/20698025185",
-      "offerLink": "https://s.shopee.com.br/W84E68JUK",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m5omu5ayd85h5d",
-      "priceMin": "199.8",
-      "priceMax": "319.8",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.28",
-      "sellerCommissionRate": "0.25",
-      "shopeeCommissionRate": "0.03",
-      "commission": "55.944",
-      "shopId": 1166445183,
-      "shopName": "Forged Way",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Ferramentas"
-      ],
-      "keywords": [
-        "jogo de chaves"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "jogo de chaves"
-      ],
-      "intentMatchedKeywords": [
-        "jogo de chaves"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "jogo de chaves": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "jogo"
-            ],
-            [
-              "chaves"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 58.33,
-      "scoreComponents": {
-        "seller_extra_commission": 0.8333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 25.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 28.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 19452179596,
-      "productName": "Torquimetro Mini Soquete Chave Torque Ajustável Kit Ferramentas Reparo Bicicleta Conjunto Manuais",
-      "productLink": "https://shopee.com.br/product/345038678/19452179596",
-      "offerLink": "https://s.shopee.com.br/8fTnsxXhK1",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-81ztc-mjy5yaqhvny9d8",
-      "priceMin": "188.99",
-      "priceMax": "188.99",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "5",
-      "commissionRate": "0.2",
-      "sellerCommissionRate": "0.17",
-      "shopeeCommissionRate": "0.03",
-      "commission": "37.798",
-      "shopId": 345038678,
-      "shopName": "REBECHI BIKES FITNESS",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Manutencao"
-      ],
-      "keywords": [
-        "torquimetro"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "torquimetro"
-      ],
-      "intentMatchedKeywords": [
-        "torquimetro"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "torquimetro": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "torquimetro",
-              "torquímetro"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 57.67,
-      "scoreComponents": {
-        "seller_extra_commission": 0.5667,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 1.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 17.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 20.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 22198264055,
-      "productName": "Compressor de Ar e PowerBank Portátil 12V 120W para Carro, Moto, Bicicleta, Bola",
-      "productLink": "https://shopee.com.br/product/335303722/22198264055",
-      "offerLink": "https://s.shopee.com.br/114MeS3bpK",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-md3m5dh3scaa91",
-      "priceMin": "129.99",
-      "priceMax": "129.99",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "5",
-      "commissionRate": "0.23",
-      "sellerCommissionRate": "0.2",
-      "shopeeCommissionRate": "0.03",
-      "commission": "29.8977",
-      "shopId": 335303722,
-      "shopName": "RTshop2020",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Manutencao"
-      ],
-      "keywords": [
-        "compressor de ar portatil"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 0.7703703703703704,
-      "sourceKeywords": [
-        "compressor de ar portatil"
-      ],
-      "intentMatchedKeywords": [
-        "compressor de ar portatil"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "compressor de ar portatil": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "compressor"
-            ],
-            [
-              "portatil",
-              "portátil"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 55.93,
-      "scoreComponents": {
-        "seller_extra_commission": 0.6667,
-        "search_demand_proxy": 0.7704,
-        "sales": 0.0,
-        "rating": 1.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 20.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 23.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 50759274555,
-      "productName": "Um Conjunto De Kit De Aerógrafo YOULUN XD131 , Compressor De Ar Portátil Com De 3 Xícaras Para Modelo De Pintura Artísti",
-      "productLink": "https://shopee.com.br/product/1006215031/50759274555",
-      "offerLink": "https://s.shopee.com.br/gRWFq4sVE",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8258u-mrlbakgf3ncx68",
-      "priceMin": "120.96",
-      "priceMax": "120.96",
-      "priceDiscountRate": 18,
-      "sales": 0,
-      "ratingStar": "5",
-      "commissionRate": "0.23",
-      "sellerCommissionRate": "0.2",
-      "shopeeCommissionRate": "0.03",
-      "commission": "27.8208",
-      "shopId": 1006215031,
-      "shopName": "Choice Oficial",
-      "shopType": [
-        2
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Manutencao"
-      ],
-      "keywords": [
-        "compressor de ar portatil"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 0.7222222222222223,
-      "sourceKeywords": [
-        "compressor de ar portatil"
-      ],
-      "intentMatchedKeywords": [
-        "compressor de ar portatil"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "compressor de ar portatil": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "compressor"
-            ],
-            [
-              "portatil",
-              "portátil"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 55.62,
-      "scoreComponents": {
-        "seller_extra_commission": 0.6667,
-        "search_demand_proxy": 0.7222,
-        "sales": 0.0,
-        "rating": 1.0,
-        "discount": 0.18,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 20.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 23.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 58201345910,
-      "productName": "Torquimetro C/ Catraca Estalo 1/4\" 5- 25Nm Gedore Red",
-      "productLink": "https://shopee.com.br/product/1096473040/58201345910",
-      "offerLink": "https://s.shopee.com.br/9AQ4TsVnJ8",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-8226b-mhrr2mkj6684a5",
-      "priceMin": "1608.15",
-      "priceMax": "1608.15",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.19",
-      "sellerCommissionRate": "0.16",
-      "shopeeCommissionRate": "0.03",
-      "commission": "305.5485",
-      "shopId": 1096473040,
-      "shopName": "Cicampo Maquinas e Ferramentas",
-      "shopType": [
-        1
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Manutencao"
-      ],
-      "keywords": [
-        "torquimetro"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "torquimetro"
-      ],
-      "intentMatchedKeywords": [
-        "torquimetro"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "torquimetro": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "torquimetro",
-              "torquímetro"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 46.33,
-      "scoreComponents": {
-        "seller_extra_commission": 0.5333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 16.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 19.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 22998685500,
-      "productName": "Torquímetro de Estalo 38\" com Catraca 10 a 50 N.m Gedore Red R58900050 - 3369938",
-      "productLink": "https://shopee.com.br/product/1096473040/22998685500",
-      "offerLink": "https://s.shopee.com.br/70LZtte2hn",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7rdx8-mbo35w7c9g7q3e",
-      "priceMin": "1431.5",
-      "priceMax": "1431.5",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.19",
-      "sellerCommissionRate": "0.16",
-      "shopeeCommissionRate": "0.03",
-      "commission": "271.985",
-      "shopId": 1096473040,
-      "shopName": "Cicampo Maquinas e Ferramentas",
-      "shopType": [
-        1
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Manutencao"
-      ],
-      "keywords": [
-        "torquimetro"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 0.5125,
-      "sourceKeywords": [
-        "torquimetro"
-      ],
-      "intentMatchedKeywords": [
-        "torquimetro"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "torquimetro": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "torquimetro",
-              "torquímetro"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 34.15,
-      "scoreComponents": {
-        "seller_extra_commission": 0.5333,
-        "search_demand_proxy": 0.5125,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 16.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 19.0,
-      "priorityRank": 1,
-      "selectionPass": "strict_diversity"
-    },
-    {
-      "itemId": 23493907428,
-      "productName": "Electro Nest Suporte Magnetico de Celular mini Suporte Celular Carro Veicular Forte adsorção CJ-50",
-      "productLink": "https://shopee.com.br/product/1515130648/23493907428",
-      "offerLink": "https://s.shopee.com.br/9KjUgBrVBp",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-7r98o-m8u9p6k2pqma9d",
-      "priceMin": "15.99",
-      "priceMax": "32.98",
-      "priceDiscountRate": 53,
-      "sales": 1075,
+      "itemId": 58261311625,
+      "productName": "Organizador Porta-Malas Universal Carro Oxford Grande Capacidade Multiuso com Rede e Fixação Banco Traseiro",
+      "productLink": "https://shopee.com.br/product/1310142226/58261311625",
+      "offerLink": "https://s.shopee.com.br/1BpuWLPTw",
+      "imageUrl": "https://cf.shopee.com.br/file/br-11134207-820ld-monn6jdy9amb02",
+      "priceMin": "49.88",
+      "priceMax": "49.88",
+      "priceDiscountRate": 50,
+      "sales": 57,
       "ratingStar": "4.9",
       "commissionRate": "0.13",
       "sellerCommissionRate": "0.1",
       "shopeeCommissionRate": "0.03",
-      "commission": "2.0787",
-      "shopId": 1515130648,
-      "shopName": "Electro Nest",
-      "shopType": [
-        2
-      ],
+      "commission": "6.4844",
+      "shopId": 1310142226,
+      "shopName": "MELHOR ",
+      "shopType": [],
       "periodStartTime": 1787713200,
       "periodEndTime": 32503651199,
       "categories": [
         "Acessorios Automotivos"
       ],
       "keywords": [
-        "suporte celular carro"
+        "organizador porta malas"
       ],
       "sourceModes": [
         "top_performance"
@@ -2001,262 +2225,118 @@
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "suporte celular carro"
+        "organizador porta malas"
       ],
       "intentMatchedKeywords": [
-        "suporte celular carro"
+        "organizador porta malas"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "suporte celular carro": {
+        "organizador porta malas": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "suporte"
+              "organizador"
             ],
             [
-              "celular"
-            ],
-            [
-              "carro",
-              "veicular"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 66.73,
-      "scoreComponents": {
-        "seller_extra_commission": 0.3333,
-        "search_demand_proxy": 1.0,
-        "sales": 0.7295,
-        "rating": 0.98,
-        "discount": 0.53,
-        "top_performance": 1.0
-      },
-      "sellerExtraCommissionPct": 10.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 13.0,
-      "priorityRank": 1,
-      "selectionPass": "relaxed_diversity"
-    },
-    {
-      "itemId": 21499360913,
-      "productName": "Suporte Celular Para-brisa Super Fixador Para Painel Carro",
-      "productLink": "https://shopee.com.br/product/373745451/21499360913",
-      "offerLink": "https://s.shopee.com.br/5AttmiKskZ",
-      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-82623-mlt4ygg1hq84fa",
-      "priceMin": "27.89",
-      "priceMax": "27.89",
-      "priceDiscountRate": 15,
-      "sales": 4109,
-      "ratingStar": "4.6",
-      "commissionRate": "0.13",
-      "sellerCommissionRate": "0.1",
-      "shopeeCommissionRate": "0.03",
-      "commission": "3.6257",
-      "shopId": 373745451,
-      "shopName": "Keedi Eletrônicos",
-      "shopType": [
-        1
-      ],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Acessorios Automotivos"
-      ],
-      "keywords": [
-        "suporte celular carro"
-      ],
-      "sourceModes": [
-        "top_performance"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "suporte celular carro"
-      ],
-      "intentMatchedKeywords": [
-        "suporte celular carro"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "suporte celular carro": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "suporte"
-            ],
-            [
-              "celular"
-            ],
-            [
+              "porta malas",
+              "porta-malas",
               "carro"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 66.33,
+      "opportunityScore": 60.75,
       "scoreComponents": {
-        "seller_extra_commission": 0.3333,
+        "seller_extra_commission": 0.3021,
         "search_demand_proxy": 1.0,
-        "sales": 0.8695,
-        "rating": 0.92,
-        "discount": 0.15,
+        "sales": 0.4243,
+        "rating": 0.98,
+        "discount": 0.5,
         "top_performance": 1.0
       },
       "sellerExtraCommissionPct": 10.0,
       "shopeeCommissionPct": 3.0,
       "totalCommissionPct": 13.0,
       "priorityRank": 1,
-      "selectionPass": "relaxed_diversity"
+      "selectionPass": "strict_diversity"
     },
     {
-      "itemId": 12694026833,
-      "productName": "MALETA P/ FERRAMENTAS GRANITE PRO BAIXA 13\"",
-      "productLink": "https://shopee.com.br/product/368026611/12694026833",
-      "offerLink": "https://s.shopee.com.br/7KyQFbSEWF",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134201-23030-rbzttidp6vovb4",
-      "priceMin": "31.99",
-      "priceMax": "31.99",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.33",
-      "sellerCommissionRate": "0.3",
-      "shopeeCommissionRate": "0.03",
-      "commission": "10.5567",
-      "shopId": 368026611,
-      "shopName": "Bazar Dona Dirce",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
+      "itemId": 23498370145,
+      "productName": "Lavadora de Alta Pressão Potente Compacta 1200W Porta Detergente Lav1300 Vonder",
+      "productLink": "https://shopee.com.br/product/951290141/23498370145",
+      "offerLink": "https://s.shopee.com.br/AUvSPqyITs",
+      "imageUrl": "https://cf.shopee.com.br/file/sg-11134201-7reou-m83egtsfqg7rd7",
+      "priceMin": "288.9",
+      "priceMax": "288.9",
+      "priceDiscountRate": 28,
+      "sales": 1494,
+      "ratingStar": "4.9",
+      "commissionRate": "0.12",
+      "sellerCommissionRate": "0.06",
+      "shopeeCommissionRate": "0.06",
+      "commission": "34.668",
+      "shopId": 951290141,
+      "shopName": "Eletricario Loja Oficial",
+      "shopType": [
+        1
+      ],
+      "periodStartTime": 1782874800,
+      "periodEndTime": 1798772399,
       "categories": [
-        "Organizacao de Garagem"
+        "Limpeza e Conservacao"
       ],
       "keywords": [
-        "maleta ferramentas"
+        "lavadora alta pressao"
       ],
       "sourceModes": [
-        "extra_commission"
+        "top_performance"
       ],
       "priorityTier": "COMISSAO_EXTRA",
       "searchDemandProxy": 1.0,
       "sourceKeywords": [
-        "maleta ferramentas"
+        "lavadora alta pressao"
       ],
       "intentMatchedKeywords": [
-        "maleta ferramentas"
+        "lavadora alta pressao"
       ],
       "intentDecision": "ACEITO",
       "semanticIntentScore": 1.0,
       "intentEvaluations": {
-        "maleta ferramentas": {
+        "lavadora alta pressao": {
           "accepted": true,
           "score": 1.0,
           "reason": "intencao_confirmada",
           "matched": [
             [
-              "maleta"
+              "lavadora"
             ],
             [
-              "ferramentas"
+              "alta pressao",
+              "alta pressão"
             ]
           ],
           "missing": []
         }
       },
-      "opportunityScore": 65.0,
+      "opportunityScore": 59.91,
       "scoreComponents": {
-        "seller_extra_commission": 1.0,
+        "seller_extra_commission": 0.1813,
         "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.0,
-        "top_performance": 0.0
+        "sales": 0.7638,
+        "rating": 0.98,
+        "discount": 0.28,
+        "top_performance": 1.0
       },
-      "sellerExtraCommissionPct": 30.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 33.0,
+      "sellerExtraCommissionPct": 6.0,
+      "shopeeCommissionPct": 6.0,
+      "totalCommissionPct": 12.0,
       "priorityRank": 1,
-      "selectionPass": "relaxed_diversity"
-    },
-    {
-      "itemId": 15387675345,
-      "productName": "MALETA P/ FERRAMENTAS GRANITE PRO 16\"",
-      "productLink": "https://shopee.com.br/product/368026611/15387675345",
-      "offerLink": "https://s.shopee.com.br/5fqCGXYZtx",
-      "imageUrl": "https://cf.shopee.com.br/file/br-11134201-23030-p8xyzico6vovf6",
-      "priceMin": "76.99",
-      "priceMax": "76.99",
-      "priceDiscountRate": 0,
-      "sales": 0,
-      "ratingStar": "0",
-      "commissionRate": "0.33",
-      "sellerCommissionRate": "0.3",
-      "shopeeCommissionRate": "0.03",
-      "commission": "25.4067",
-      "shopId": 368026611,
-      "shopName": "Bazar Dona Dirce",
-      "shopType": [],
-      "periodStartTime": 1787713200,
-      "periodEndTime": 32503651199,
-      "categories": [
-        "Organizacao de Garagem"
-      ],
-      "keywords": [
-        "maleta ferramentas"
-      ],
-      "sourceModes": [
-        "extra_commission"
-      ],
-      "priorityTier": "COMISSAO_EXTRA",
-      "searchDemandProxy": 1.0,
-      "sourceKeywords": [
-        "maleta ferramentas"
-      ],
-      "intentMatchedKeywords": [
-        "maleta ferramentas"
-      ],
-      "intentDecision": "ACEITO",
-      "semanticIntentScore": 1.0,
-      "intentEvaluations": {
-        "maleta ferramentas": {
-          "accepted": true,
-          "score": 1.0,
-          "reason": "intencao_confirmada",
-          "matched": [
-            [
-              "maleta"
-            ],
-            [
-              "ferramentas"
-            ]
-          ],
-          "missing": []
-        }
-      },
-      "opportunityScore": 65.0,
-      "scoreComponents": {
-        "seller_extra_commission": 1.0,
-        "search_demand_proxy": 1.0,
-        "sales": 0.0,
-        "rating": 0.0,
-        "discount": 0.0,
-        "top_performance": 0.0
-      },
-      "sellerExtraCommissionPct": 30.0,
-      "shopeeCommissionPct": 3.0,
-      "totalCommissionPct": 33.0,
-      "priorityRank": 1,
-      "selectionPass": "relaxed_diversity"
+      "selectionPass": "strict_diversity"
     }
   ]
 }
