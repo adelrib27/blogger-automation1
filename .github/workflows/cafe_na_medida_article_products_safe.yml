@@ -1,10 +1,6 @@
 name: V31 Cafe na Medida - Quatro Produtos Shopee SAFE
 on:
-  push:
-    branches: [feat/cafe-na-medida-shopee-safe-20261110]
-    paths:
-      - "cafe_na_medida/article_products_safe.py"
-      - ".github/workflows/cafe_na_medida_article_products_safe.yml"
+  workflow_dispatch:
   pull_request:
     paths:
       - "cafe_na_medida/article_products_safe.py"
@@ -30,7 +26,7 @@ jobs:
           python -m py_compile cafe_na_medida/article_products_safe.py src/blogger_policy_guard.py
           python cafe_na_medida/article_products_safe.py --self-test
       - name: Consultar quatro ofertas reais na Shopee sem escrever no Blogger
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch'
         env:
           PYTHONPATH: src
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
