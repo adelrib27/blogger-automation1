@@ -1,0 +1,28 @@
+name: Diagnostico Cloudflare Achados
+on:
+  push:
+    branches: [diagnostico-cloudflare-achados]
+    paths: ['.github/workflows/diagnostico_cloudflare_achados.yml']
+permissions: {}
+jobs:
+  comparar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Comparar sem imprimir valores
+        env:
+          ACCOUNT_CONFIGURADO: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set +x
+          if [[ -z "$ACCOUNT_CONFIGURADO" ]]; then
+            echo "RESULTADO: SECRET_INDISPONIVEL"
+            exit 2
+          fi
+          hash_atual=$(printf '%s' "$ACCOUNT_CONFIGURADO" | sha256sum)
+          if [[ "${hash_atual%% *}" == 'db47443f43725867d6b925030ba97afdfb9c361961686f2336a0cb68cb01e40d' ]]; then
+            echo "RESULTADO: CONFERE"
+          else
+            echo "RESULTADO: DIVERGE"
+            exit 1
+          fi
