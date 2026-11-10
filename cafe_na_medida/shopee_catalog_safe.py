@@ -64,7 +64,17 @@ def fetch(app: str, secret: str, term: str, page: int) -> list[dict]:
     except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
         fail("consulta API indisponível: " + type(exc).__name__)
     if data.get("errors"):
-        fail("GraphQL informou erro; não selecionar produtos")
+        # Registrar somente a classe da falha; nunca imprimir texto bruto de provedores.
+        message = " ".join(str(e.get("message", "")) for e in data["errors"] if isinstance(e, dict)).lower()
+        if any(x in message for x in ("credential", "signature", "unauthorized", "authentication", "10020", "auth")):
+            kind = "AUTH"
+        elif any(x in message for x in ("cannot query field", "unknown argument", "unknown type", "syntax error", "operation name")):
+            kind = "SCHEMA"
+        elif any(x in message for x in ("rate limit", "too many", "quota", "10023")):
+            kind = "RATE_LIMIT"
+        else:
+            kind = "OTHER"
+        fail("GraphQL bloqueado: classe=" + kind)
     offers = (data.get("data") or {}).get("productOfferV2") or {}
     if not isinstance(offers.get("nodes"), list):
         fail("Shopee sem nodes válidos")
