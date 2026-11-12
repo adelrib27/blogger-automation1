@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import urllib.request
+import urllib.error
 from pathlib import Path
 from candidate import SOURCE_PATHS, regression_path, digest, git_blob, validate
 from engine import SafetyStop
@@ -15,6 +16,29 @@ ENDPOINT = 'https://api.openai.com/v1/chat/completions'
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, *args, **kwargs):
         raise SafetyStop('MODEL_REDIRECT_DENIED')
+
+
+def safe_http_failure(exc):
+    """Only known error labels survive; never persist server messages or headers."""
+    known = {
+        'insufficient_quota': 'API_QUOTA_UNAVAILABLE',
+        'billing_hard_limit_reached': 'API_QUOTA_UNAVAILABLE',
+        'invalid_api_key': 'API_KEY_REJECTED',
+        'model_not_found': 'MODEL_UNAVAILABLE',
+        'rate_limit_exceeded': 'API_RATE_LIMIT',
+        'unsupported_parameter': 'API_PARAMETER_UNSUPPORTED',
+        'unsupported_value': 'API_PARAMETER_UNSUPPORTED',
+    }
+    code = None
+    try:
+        raw = exc.read(8193)
+        if len(raw) <= 8192:
+            data = json.loads(raw)
+            if isinstance(data, dict) and isinstance(data.get('error'), dict):
+                code = data['error'].get('code')
+    except Exception:
+        pass
+    return known.get(code, 'API_REQUEST_REJECTED') if isinstance(code, str) else 'API_REQUEST_REJECTED'
 
 
 def request_candidate(context: dict, key: str, model: str) -> dict:
@@ -91,6 +115,8 @@ def main():
                 validate(result, root, sha)
                 (out / 'candidate.json').write_text(json.dumps(result, ensure_ascii=False))
                 status = 'CANDIDATE_READY'
+    except urllib.error.HTTPError as exc:
+        status = 'BLOCKED_' + safe_http_failure(exc)
     except Exception as exc:
         # Never expose provider response bodies or tokens in stdout or artifacts.
         status = 'BLOCKED_' + type(exc).__name__
