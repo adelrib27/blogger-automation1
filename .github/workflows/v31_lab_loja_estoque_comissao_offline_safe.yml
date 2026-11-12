@@ -9,6 +9,7 @@ on:
       - "v31_master/shopee_r2_safe.py"
       - "v31_master/tests/test_v31_store_stock_commission_safe.py"
       - "v31_master/tests/test_v31_stock_rotation_cli_safe.py"
+      - "v31_master/tests/test_v31_productoffer_stock_unknown.py"
       - ".github/workflows/v31_lab_loja_estoque_comissao_offline_safe.yml"
   workflow_dispatch:
 
@@ -40,6 +41,9 @@ jobs:
       - name: Testar CLI de proposta de rotacao sem escrever no Blogger
         run: |
           python -m unittest discover -s v31_master/tests -p 'test_v31_stock_rotation_cli_safe.py' -v
+      - name: Confirmar ausencia e erro Shopee nunca sao estoque zero
+        run: |
+          python -m unittest discover -s v31_master/tests -p 'test_v31_productoffer_stock_unknown.py' -v
       - name: Regressao filtros e rotacao SAFE V31
         run: |
           python -m unittest discover -s v31_master/tests -p 'test_r57_relaxed_product_filters.py' -v
