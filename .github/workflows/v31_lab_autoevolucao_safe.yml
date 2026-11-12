@@ -82,7 +82,8 @@ jobs:
           assert all(x == "v31_master/autoevolution/knowledge/state.json" for x in modified), "UNAPPROVED_TRACKED_FILE_CHANGE"
           assert Path("v31_master/autoevolution/knowledge/state.json").is_file(), "MISSING_KNOWLEDGE"
           PY
-          test "$(find v31_master/autoevolution/reports -type f -name '*.json' | wc -l)" -eq 1
+          # Permitir historico acumulado; verificar somente o relatorio desta execucao.
+          test -f "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json"
           echo "AUTO_CODE_PATCHES=0; PRODUCTION_BLOGGER_WRITES=0; TARGET_LAB_ONLY=1"
       - name: Guardar aprendizado no repositorio LAB sem sobrescrever trabalho paralelo
         shell: bash
