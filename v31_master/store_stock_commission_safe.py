@@ -188,3 +188,72 @@ def plan_oos_rotation(current: list[dict], offers: dict[str, list[dict]],
     return {"status": "OOS_REPLACEMENT_CANDIDATE_SAFE_REVIEW", "writes": False,
             "new_item_count": len(oos_slots), "stock_replacements": len(oos_slots),
             "products": proposed, "candidate_html": candidate_html}
+
+
+def run_lab_cli(argv: list[str] | None = None) -> int:
+    """Planeja alteracao em artefatos separados. NUNCA escreve no Blogger.
+
+    Dados de estoque e comissao devem ser preparados por adaptadores
+    autenticados e auditados; os marcadores em arquivos JSON nao provam sua
+    origem. Portanto o resultado sera SEMPRE um candidato LAB SAFE.
+    """
+    import argparse
+    import json
+    from pathlib import Path
+    from replication_safe import load_profile
+
+    parser = argparse.ArgumentParser(description="Loja V31: plano SAFE de estoque/comissao")
+    parser.add_argument("--profile", type=Path, required=True)
+    parser.add_argument("--current", type=Path, required=True)
+    parser.add_argument("--offers", type=Path, required=True)
+    parser.add_argument("--inventory", type=Path, required=True)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    args = parser.parse_args(argv)
+
+    try:
+        profile = load_profile(args.profile)
+        if profile.get("mode") != "LAB_SAFE_ONLY":
+            raise GateError("ONLY_LAB_PROFILE_ALLOWED")
+        target = str(profile["target"]["blog_id"])
+        # Nunca misturar dados de outros blogs (mesmo que todos sejam LAB).
+        current = json.loads(args.current.read_text(encoding="utf-8"))
+        candidates = json.loads(args.offers.read_text(encoding="utf-8"))
+        inventory = json.loads(args.inventory.read_text(encoding="utf-8"))
+        if not all(isinstance(x, dict) and str(x.get("blog_id")) == target
+                   for x in (current, candidates, inventory)):
+            raise GateError("CROSS_BLOG_INPUT_DENIED")
+        if current.get("count") != REQUIRED or not isinstance(current.get("products"), list):
+            raise GateError("CURRENT_CATALOG_INVALID")
+        if not isinstance(candidates.get("categories"), dict):
+            raise GateError("CANDIDATE_CATALOG_INVALID")
+        if not isinstance(inventory.get("observations"), list):
+            raise GateError("INVENTORY_FORMAT_INVALID")
+        result = plan_oos_rotation(current["products"], candidates["categories"],
+                                   inventory["observations"], now=datetime.now(timezone.utc))
+        status = result["status"]
+        summary = {"status": status, "writes_blogger": False, "lab_only": True,
+                   "new_item_count": result["new_item_count"],
+                   "stock_replacements": result["stock_replacements"],
+                   "target_blog_id": target}
+        if status != "OOS_REPLACEMENT_CANDIDATE_SAFE_REVIEW":
+            print(json.dumps(summary, ensure_ascii=False))
+            return 0
+        if args.out_dir.exists():
+            raise GateError("OUTPUT_DIRECTORY_ALREADY_EXISTS")
+        args.out_dir.mkdir(parents=True, exist_ok=False)
+        (args.out_dir / "loja_candidata_safe.html").write_text(
+            result["candidate_html"], encoding="utf-8")
+        (args.out_dir / "loja_plano_safe.json").write_text(
+            json.dumps({"summary": summary, "products": result["products"]},
+                       ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(summary, ensure_ascii=False))
+        return 0
+    except (GateError, OSError, ValueError, KeyError, TypeError) as exc:
+        # Somente o tipo e um status fixo; nao ecoar caminhos ou dados sensiveis.
+        print(json.dumps({"status": "STOCK_ROTATION_LAB_FAIL_CLOSED",
+                          "error_type": type(exc).__name__, "writes_blogger": False}))
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(run_lab_cli())
