@@ -114,5 +114,44 @@ class TestRelaxedFiltersSafe(unittest.TestCase):
         self.assertEqual(len(selected), 16)
 
 
+    def test_strict_vs_relaxed_same_fixture(self):
+        from lab_shopee_filters_probe import strict_eligible
+        pool = offers_by_category()
+        strict_count = sum(1 for rows in pool.values() for raw in rows if strict_eligible(raw))
+        relaxed_count = len(selection.choose(profile(), pool))
+        self.assertEqual(strict_count, 0)
+        self.assertEqual(relaxed_count, 16)
+
+    def test_rotation_candidate_staged_without_write(self):
+        import r57_store_policy as gate
+        before_pool = offers_by_category()
+        after_pool = offers_by_category()
+        for rows in after_pool.values():
+            for raw in rows:
+                raw["itemId"] = str(int(raw["itemId"]) + 100000)
+        before = selection.render(selection.choose(profile(), before_pool), lab_url="https://example.invalid/")
+        after = selection.render(selection.choose(profile(), after_pool), lab_url="https://example.invalid/")
+        old = gate.validate_store_html(before)
+        gate.validate_store_html(after)
+        state = {
+            "schema": gate.SCHEMA, "blog_id": gate.BLOG_ID, "page_id": gate.PAGE_ID, "url": gate.STORE_URL,
+            "card_count": 16, "affiliate_link_count": 32,
+            "item_ids": old["items"], "html_sha256": old["sha256"],
+            "allow_auto_write": False,
+            "guards": {
+                "blogger_page_exact": True, "no_runner_files_write": True,
+                "no_theme_install": True, "no_new_post_or_page": True,
+                "public_pass_before_state_update": True,
+            },
+        }
+        outcome = gate.decision(before, after, state)
+        self.assertEqual(outcome["status"], "R57_CANDIDATE_SAFE_NOT_AUTHORIZED")
+        self.assertFalse(outcome["writes"])
+        self.assertEqual(outcome["new_item_count"], 16)
+        unchanged = gate.decision(before, before, state)
+        self.assertEqual(unchanged["status"], "R57_NO_CHANGE")
+        self.assertFalse(unchanged["writes"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
