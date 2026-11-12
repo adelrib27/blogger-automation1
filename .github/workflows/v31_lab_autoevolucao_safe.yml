@@ -1,0 +1,98 @@
+name: V31 LAB - Autoevolucao por evidencias SAFE
+
+on:
+  push:
+    branches:
+      - lab/v31-autoevolucao-safe-20261112
+    paths:
+      - "v31_master/autoevolution/engine.py"
+      - "v31_master/tests/test_v31_autoevolution_engine.py"
+      - ".github/workflows/v31_lab_autoevolucao_safe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: v31-lab-autoevolucao-evidence-single
+  cancel-in-progress: false
+
+jobs:
+  learn-without-touching-production:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Contratos de sintaxe
+        run: |
+          set -euo pipefail
+          python -m py_compile v31_master/autoevolution/engine.py
+          python -m py_compile v31_master/store_stock_commission_safe.py
+          python -m py_compile v31_master/shopee_r2_safe.py
+      - name: Testes novos do motor de aprendizagem
+        run: |
+          python -m unittest discover -s v31_master/tests -p 'test_v31_autoevolution_engine.py' -v
+      - name: Regressoes intocaveis da Loja V31
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s v31_master/tests -p 'test_v31_store_stock_commission_safe.py' -v
+          python -m unittest discover -s v31_master/tests -p 'test_v31_stock_rotation_cli_safe.py' -v
+          python -m unittest discover -s v31_master/tests -p 'test_v31_productoffer_stock_unknown.py' -v
+          python -m unittest discover -s v31_master/tests -p 'test_r57_relaxed_product_filters.py' -v
+          python -m unittest discover -s v31_master/tests -p 'test_r57_store_policy.py' -v
+          python -m unittest discover -s v31_master/tests -p 'test_v31_shopee_minimal_gateway.py' -v
+          python -m unittest discover -s v31_master/tests -p 'test_v31_shopee_graphql_diagnostic.py' -v
+      - name: Recolher resultados dos workflows desta conta sem logs nem secrets
+        run: |
+          set -euo pipefail
+          python -u v31_master/autoevolution/engine.py \
+            --repo "$GITHUB_REPOSITORY" \
+            --branch "$GITHUB_REF_NAME" \
+            --run-id "$GITHUB_RUN_ID" \
+            --out "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json"
+      - name: Verificar unico arquivo de evidencia e impedir autopatch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "adelrib27/blogger-automation1"
+          test "$GITHUB_REF_NAME" = "lab/v31-autoevolucao-safe-20261112"
+          test -f "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          test "$(find v31_master/autoevolution/reports -type f -name '*.json' | wc -l)" -eq 1
+          echo "AUTO_CODE_PATCHES=0; PRODUCTION_BLOGGER_WRITES=0; TARGET_LAB_ONLY=1"
+      - name: Guardar aprendizado no repositorio LAB sem sobrescrever trabalho paralelo
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json"
+          python - <<'PY'
+          import subprocess, sys
+          sys.path.insert(0, "v31_master/autoevolution")
+          from engine import changed_paths_guard
+          changes = subprocess.check_output(
+              ["git", "diff", "--cached", "--name-only"], text=True).splitlines()
+          changed_paths_guard(changes)
+          print("STAGED_REPORT_PATH_GUARD_OK")
+          PY
+          git commit -m "LAB SAFE evidence: run ${GITHUB_RUN_ID} [skip ci]"
+          # Nunca force-push. Se existir trabalho paralelo, a atualizacao falha FECHADA.
+          git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"
+      - name: Arquivar evidencia de execucao
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-autoevolution-safe-${{ github.run_id }}
+          path: v31_master/autoevolution/reports/${{ github.run_id }}.json
+          retention-days: 30
+          if-no-files-found: error
