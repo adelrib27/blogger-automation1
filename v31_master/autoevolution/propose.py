@@ -18,10 +18,17 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise SafetyStop('MODEL_REDIRECT_DENIED')
 
 
-def safe_http_failure(exc):
+def safe_http_failure(exc, diagnostic=None):
     """Only known error labels survive; never persist server messages or headers."""
     known = {
         'insufficient_quota': 'API_QUOTA_UNAVAILABLE',
+        'credit_balance_exhausted': 'API_CREDIT_BALANCE_EXHAUSTED',
+        'organization_spend_limit_exceeded': 'API_ORGANIZATION_SPEND_LIMIT',
+        'project_spend_limit_exceeded': 'API_PROJECT_SPEND_LIMIT',
+        'organization_usage_limit_exceeded': 'API_ORGANIZATION_USAGE_LIMIT',
+        'slow_down': 'API_RATE_LIMIT',
+        'server_is_overloaded': 'API_TEMPORARILY_OVERLOADED',
+        'unsupported_country_region_territory': 'API_REGION_UNSUPPORTED',
         'billing_hard_limit_reached': 'API_QUOTA_UNAVAILABLE',
         'invalid_api_key': 'API_KEY_REJECTED',
         'model_not_found': 'MODEL_UNAVAILABLE',
@@ -30,15 +37,32 @@ def safe_http_failure(exc):
         'unsupported_value': 'API_PARAMETER_UNSUPPORTED',
     }
     code = None
+    error = {}
+    if diagnostic is not None:
+        diagnostic['http_status'] = exc.code if type(exc.code) is int else None
     try:
         raw = exc.read(8193)
         if len(raw) <= 8192:
             data = json.loads(raw)
             if isinstance(data, dict) and isinstance(data.get('error'), dict):
-                code = data['error'].get('code')
+                error = data['error']
+                code = error.get('code')
     except Exception:
         pass
-    return known.get(code, 'API_REQUEST_REJECTED') if isinstance(code, str) else 'API_REQUEST_REJECTED'
+    kind = error.get('type')
+    param = error.get('param')
+    if diagnostic is not None:
+        diagnostic['error_code'] = code if isinstance(code, str) and code in known else 'UNRECOGNIZED'
+        diagnostic['error_type'] = kind if isinstance(kind, str) and kind in {
+            'insufficient_quota', 'invalid_request_error', 'authentication_error',
+            'permission_error', 'rate_limit_error', 'service_unavailable_error'} else 'UNRECOGNIZED'
+        diagnostic['parameter'] = param if isinstance(param, str) and param in {
+            'model', 'response_format', 'max_completion_tokens', 'messages', 'service_tier'} else 'UNRECOGNIZED'
+    if isinstance(code, str) and code in known:
+        return known[code]
+    if kind == 'insufficient_quota':
+        return 'API_QUOTA_UNAVAILABLE'
+    return 'API_REQUEST_REJECTED'
 
 
 def request_candidate(context: dict, key: str, model: str) -> dict:
@@ -81,6 +105,7 @@ def main():
     key, model = os.getenv('AUTOEVOLUTION_API_KEY'), os.getenv('AUTOEVOLUTION_MODEL')
     status = 'BLOCKED_MODEL_CONFIGURATION'
     fingerprint = ''
+    diagnostic = {}
     try:
         if os.getenv('AUTOEVOLUTION_ENABLED') == 'true' and key and model:
             root = Path.cwd()
@@ -116,12 +141,14 @@ def main():
                 (out / 'candidate.json').write_text(json.dumps(result, ensure_ascii=False))
                 status = 'CANDIDATE_READY'
     except urllib.error.HTTPError as exc:
-        status = 'BLOCKED_' + safe_http_failure(exc)
+        status = 'BLOCKED_' + safe_http_failure(exc, diagnostic)
     except Exception as exc:
         # Never expose provider response bodies or tokens in stdout or artifacts.
         status = 'BLOCKED_' + type(exc).__name__
-    (out / 'status.json').write_text(json.dumps({'status': status, 'production_writes': False}))
+    (out / 'status.json').write_text(json.dumps({'status': status, 'diagnostic': diagnostic, 'production_writes': False}))
     print(status)
+    if diagnostic:
+        print(json.dumps({'api_diagnostic': diagnostic}, sort_keys=True))
     if os.getenv('GITHUB_OUTPUT'):
         with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
             stream.write('status=' + status + '\ncontext_key=' + fingerprint + '\n')
