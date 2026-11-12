@@ -1,29 +1,29 @@
 {
   "branch": "lab/v31-autoevolucao-safe-20261112",
   "cumulative_failures_by_layer": {
-    "BLOGGER_PIPELINE": 68,
-    "CI_GENERAL": 88,
-    "SHOPEE_PIPELINE": 184,
+    "BLOGGER_PIPELINE": 70,
+    "CI_GENERAL": 90,
+    "SHOPEE_PIPELINE": 207,
     "VISUAL_QA": 20
   },
   "cumulative_successes_by_layer": {
-    "BLOGGER_PIPELINE": 221,
-    "CI_GENERAL": 105,
-    "SHOPEE_PIPELINE": 283,
-    "VISUAL_QA": 15
+    "BLOGGER_PIPELINE": 225,
+    "CI_GENERAL": 106,
+    "SHOPEE_PIPELINE": 288,
+    "VISUAL_QA": 16
   },
-  "historical_failure_observations": 375,
+  "historical_failure_observations": 402,
   "history_capacity": 50000,
   "history_capacity_warning": false,
-  "last_report_run_id": 43243465879,
+  "last_report_run_id": 43320163394,
   "legacy_attempt_unknown_count": 35,
   "lessons": [
     {
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "SHOPEE_PIPELINE",
-      "observed_failures": 184,
-      "observed_successes": 283,
+      "observed_failures": 207,
+      "observed_successes": 288,
       "production_approval_required": true,
       "proposal": "SAFE_DIAGNOSE_GRAPHQL_AND_CATALOG",
       "required_gates": [
@@ -36,8 +36,8 @@
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "CI_GENERAL",
-      "observed_failures": 88,
-      "observed_successes": 105,
+      "observed_failures": 90,
+      "observed_successes": 106,
       "production_approval_required": true,
       "proposal": "SAFE_REVIEW_FAILURE_WITHOUT_INFERRED_CAUSE",
       "required_gates": [
@@ -48,8 +48,8 @@
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "BLOGGER_PIPELINE",
-      "observed_failures": 68,
-      "observed_successes": 221,
+      "observed_failures": 70,
+      "observed_successes": 225,
       "production_approval_required": true,
       "proposal": "SAFE_RECHECK_TARGET_AND_IDEMPOTENCY",
       "required_gates": [
@@ -62,7 +62,7 @@
       "auto_patch": false,
       "category": "VISUAL_QA",
       "observed_failures": 20,
-      "observed_successes": 15,
+      "observed_successes": 16,
       "production_approval_required": true,
       "proposal": "SAFE_RECHECK_VISUAL_CONTRACT",
       "required_gates": [
@@ -6235,6 +6235,234 @@
       "conclusion": "success",
       "run_attempt": 1,
       "run_id": 43233229864
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43247793723
+    },
+    {
+      "category": "VISUAL_QA",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43259806375
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43267157371
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43267475231
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43271495875
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43278014739
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43281140459
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43281156369
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43281743887
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43282830220
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43283768819
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43284153346
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43285263503
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43285382091
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43285856031
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43286282343
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43286541242
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43287164602
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43292897299
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43294173784
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43294367840
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43296075038
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43296997619
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43299497481
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43300793923
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43303345046
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43304034083
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43304037277
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43304047689
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43304080237
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43305563437
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43305892970
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43307364541
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43309695552
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43311549536
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43311956675
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43314877912
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43317028375
     }
   ],
   "repository": "adelrib27/blogger-automation1",
@@ -6245,6 +6473,6 @@
     "no_model_weight_updates": true,
     "no_production_code_writes": true
   },
-  "total_distinct_completed_runs": 992,
-  "total_observations_including_attempts": 1027
+  "total_distinct_completed_runs": 1030,
+  "total_observations_including_attempts": 1065
 }
