@@ -2,118 +2,95 @@ name: V31 LAB - Autoevolucao por evidencias SAFE
 
 on:
   push:
-    branches:
-      - lab/v31-autoevolucao-safe-20261112
+    branches: [lab/v31-autoevolucao-safe-20261112]
     paths:
-      - "**"
-      - "!v31_master/autoevolution/reports/**"
-      - "!v31_master/autoevolution/knowledge/state.json"
+      - '**'
+      - '!v31_master/autoevolution/reports/**'
+      - '!v31_master/autoevolution/knowledge/state.json'
+      - '!v31_master/autoevolution/experiments/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   actions: read
-
 concurrency:
   group: v31-lab-autoevolucao-evidence-single
   cancel-in-progress: false
 
 jobs:
-  learn-without-touching-production:
+  observe:
     if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Contratos de sintaxe
+          python-version: '3.12'
+      - name: Todas as regressoes V31, incluindo writer e autoevolucao
+        run: python -m unittest discover -s v31_master/tests -v
+      - name: Coletar janela paginada sem logs nem secrets de blogs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
-          python -m py_compile v31_master/autoevolution/engine.py
-          python -m py_compile v31_master/store_stock_commission_safe.py
-          python -m py_compile v31_master/shopee_r2_safe.py
-      - name: Testes novos do motor de aprendizagem
-        run: |
-          python -m unittest discover -s v31_master/tests -p 'test_v31_autoevolution_engine.py' -v
-      - name: Testar memoria cumulativa e contra duplicacao de eventos
-        run: |
-          python -m unittest discover -s v31_master/tests -p 'test_v31_autoevolution_knowledge.py' -v
-      - name: Regressoes intocaveis da Loja V31
-        run: |
-          set -euo pipefail
-          python -m unittest discover -s v31_master/tests -p 'test_v31_store_stock_commission_safe.py' -v
-          python -m unittest discover -s v31_master/tests -p 'test_v31_stock_rotation_cli_safe.py' -v
-          python -m unittest discover -s v31_master/tests -p 'test_v31_productoffer_stock_unknown.py' -v
-          python -m unittest discover -s v31_master/tests -p 'test_r57_relaxed_product_filters.py' -v
-          python -m unittest discover -s v31_master/tests -p 'test_r57_store_policy.py' -v
-          python -m unittest discover -s v31_master/tests -p 'test_v31_shopee_minimal_gateway.py' -v
-          python -m unittest discover -s v31_master/tests -p 'test_v31_shopee_graphql_diagnostic.py' -v
-      - name: Recolher resultados dos workflows desta conta sem logs nem secrets
-        run: |
-          set -euo pipefail
-          python -u v31_master/autoevolution/engine.py \
-            --repo "$GITHUB_REPOSITORY" \
-            --branch "$GITHUB_REF_NAME" \
+          python v31_master/autoevolution/engine.py \
+            --repo "$GITHUB_REPOSITORY" --branch "$GITHUB_REF_NAME" \
             --run-id "$GITHUB_RUN_ID" \
             --out "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json"
-      - name: Atualizar memoria cumulativa sem confundir evidencias com causas
+      - name: Acumular tentativas e preservar historico
         run: |
-          set -euo pipefail
-          python -u v31_master/autoevolution/knowledge.py \
+          python v31_master/autoevolution/knowledge.py \
             --report "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json" \
             --state v31_master/autoevolution/knowledge/state.json
-      - name: Verificar unico arquivo de evidencia e impedir autopatch
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$GITHUB_REPOSITORY" = "adelrib27/blogger-automation1"
-          test "$GITHUB_REF_NAME" = "lab/v31-autoevolucao-safe-20261112"
-          test -f "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json"
-          python - <<'PY'
-          import subprocess
-          from pathlib import Path
-          modified=subprocess.check_output(["git","diff","--name-only"],text=True).splitlines()
-          assert all(x == "v31_master/autoevolution/knowledge/state.json" for x in modified), "UNAPPROVED_TRACKED_FILE_CHANGE"
-          assert Path("v31_master/autoevolution/knowledge/state.json").is_file(), "MISSING_KNOWLEDGE"
-          PY
-          # Permitir historico acumulado; verificar somente o relatorio desta execucao.
-          test -f "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json"
-          echo "AUTO_CODE_PATCHES=0; PRODUCTION_BLOGGER_WRITES=0; TARGET_LAB_ONLY=1"
-      - name: Guardar aprendizado no repositorio LAB sem sobrescrever trabalho paralelo
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json" "v31_master/autoevolution/knowledge/state.json"
-          python - <<'PY'
-          import subprocess, sys
-          sys.path.insert(0, "v31_master/autoevolution")
-          from engine import changed_paths_guard
-          changes = subprocess.check_output(
-              ["git", "diff", "--cached", "--name-only"], text=True).splitlines()
-          report_changes = [path for path in changes if path.startswith("v31_master/autoevolution/reports/")]
-          changed_paths_guard(report_changes)
-          remaining = set(changes) - set(report_changes)
-          assert remaining == {"v31_master/autoevolution/knowledge/state.json"}, "UNAPPROVED_STAGED_CHANGE"
-          print("STAGED_REPORT_AND_KNOWLEDGE_GUARD_OK")
-          PY
-          git commit -m "LAB SAFE evidence: run ${GITHUB_RUN_ID} [skip ci]"
-          # Nunca force-push. Se existir trabalho paralelo, a atualizacao falha FECHADA.
-          git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"
-      - name: Arquivar evidencia de execucao
-        if: success()
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: v31-autoevolution-safe-${{ github.run_id }}
+          name: v31-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             v31_master/autoevolution/reports/${{ github.run_id }}.json
             v31_master/autoevolution/knowledge/state.json
-          retention-days: 30
           if-no-files-found: error
+          retention-days: 30
+
+  persist:
+    needs: observe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: lab/v31-autoevolucao-safe-20261112
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: v31-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence-input
+      - name: Revalidar dados com codigo confiavel antes da escrita
+        run: python v31_master/autoevolution/evidence_guard.py
+      - name: Commit restrito e push sem force
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json" v31_master/autoevolution/knowledge/state.json
+          python - <<'PY'
+          import os, subprocess
+          allowed = {f"v31_master/autoevolution/reports/{os.environ['GITHUB_RUN_ID']}.json", "v31_master/autoevolution/knowledge/state.json"}
+          paths = set(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())
+          if not paths <= allowed:
+              raise SystemExit('UNAPPROVED_STAGED_CHANGE')
+          PY
+          if git diff --cached --quiet; then
+            echo 'EVIDENCE_ALREADY_PERSISTED'
+            exit 0
+          fi
+          git commit -m "LAB evidence: run ${GITHUB_RUN_ID} [skip ci]"
+          git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"

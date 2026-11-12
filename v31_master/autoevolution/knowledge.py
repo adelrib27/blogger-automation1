@@ -13,9 +13,10 @@ from pathlib import Path
 from engine import (ALLOWED_REPO, ALLOWED_BRANCH, ENGINE_VERSION,
                     SafetyStop, SUGGESTIONS)
 
-SCHEMA = "v31-autoevolution-knowledge/v1"
+SCHEMA = "v31-autoevolution-knowledge/v2"
+LEGACY_SCHEMA = "v31-autoevolution-knowledge/v1"
 STATE_PATH = "v31_master/autoevolution/knowledge/state.json"
-MAX_KNOWN_RUNS = 1000
+MAX_KNOWN_RUNS = 50_000
 TERMINAL = {"success", "failure", "timed_out", "cancelled", "neutral", "skipped", "action_required", "stale"}
 
 
@@ -28,7 +29,7 @@ def verified_report(report: object) -> dict:
         report.get("source") != "GITHUB_ACTIONS_RUN_METADATA_ONLY" or
         report.get("stage") != "OBSERVE_ANALYZE_REPORT"):
         raise SafetyStop("REPORT_PROVENANCE_INVALID")
-    if report.get("safety", {}).get("production_writes") is not False:
+    if not isinstance(report.get("safety"), dict) or report["safety"].get("production_writes") is not False:
         raise SafetyStop("REPORT_UNSAFE")
     if not isinstance(report.get("run_summaries"), list):
         raise SafetyStop("REPORT_RUNS_MISSING")
@@ -44,7 +45,11 @@ def _event(item: object) -> dict | None:
     if (not isinstance(run_id, int) or isinstance(run_id, bool) or run_id <= 0 or
         category not in SUGGESTIONS or conclusion not in TERMINAL):
         return None
-    return {"run_id": run_id, "category": category, "conclusion": conclusion}
+    attempt = item.get("run_attempt", 0)
+    if type(attempt) is not int or attempt < 0:
+        return None
+    return {"run_id": run_id, "run_attempt": attempt,
+            "category": category, "conclusion": conclusion}
 
 
 def update_knowledge(previous: object, report: object) -> dict:
@@ -52,35 +57,38 @@ def update_knowledge(previous: object, report: object) -> dict:
     if previous is None:
         stored = []
     else:
-        if (not isinstance(previous, dict) or previous.get("schema") != SCHEMA or
+        if (not isinstance(previous, dict) or previous.get("schema") not in (SCHEMA, LEGACY_SCHEMA) or
             previous.get("repository") != ALLOWED_REPO or
             previous.get("branch") != ALLOWED_BRANCH or
             not isinstance(previous.get("observed"), list)):
             raise SafetyStop("KNOWLEDGE_STATE_INVALID")
         stored = previous["observed"]
-    all_events: dict[int, dict] = {}
+    all_events: dict[tuple[int, int], dict] = {}
     for value in stored:
         event = _event({**value, "status": "completed"}) if isinstance(value, dict) else None
-        if event is None or event["run_id"] in all_events:
+        if event is None or (event["run_id"], event["run_attempt"]) in all_events:
             raise SafetyStop("KNOWLEDGE_STATE_CORRUPTED")
-        all_events[event["run_id"]] = event
+        all_events[(event["run_id"], event["run_attempt"])] = event
     for value in report["run_summaries"]:
         event = _event(value)
         if event is None:
             continue
         # Mantenha o registro original; nao permita que snapshots posteriores
         # reescrevam um resultado historico.
-        old = all_events.get(event["run_id"])
+        old = all_events.get((event["run_id"], event["run_attempt"]))
         if old is not None and old != event:
             raise SafetyStop("CONFLICTING_RUN_HISTORY")
-        all_events[event["run_id"]] = event
+        all_events[(event["run_id"], event["run_attempt"])] = event
     if len(all_events) > MAX_KNOWN_RUNS:
         raise SafetyStop("HISTORY_LIMIT_REVIEW_REQUIRED")
     ordered = [all_events[k] for k in sorted(all_events)]
+    latest = {}
+    for event in ordered:
+        latest[event["run_id"]] = event
     failures = Counter(
-        e["category"] for e in ordered
+        e["category"] for e in latest.values()
         if e["conclusion"] in ("failure", "timed_out"))
-    successes = Counter(e["category"] for e in ordered if e["conclusion"] == "success")
+    successes = Counter(e["category"] for e in latest.values() if e["conclusion"] == "success")
     lessons = []
     for category, n in sorted(failures.items(), key=lambda v: (-v[1],v[0])):
         lessons.append({
@@ -94,7 +102,13 @@ def update_knowledge(previous: object, report: object) -> dict:
         })
     return {
         "schema": SCHEMA, "repository": ALLOWED_REPO, "branch": ALLOWED_BRANCH,
-        "observed": ordered, "total_distinct_completed_runs": len(ordered),
+        "observed": ordered, "total_distinct_completed_runs": len(latest),
+        "total_observations_including_attempts": len(ordered),
+        "legacy_attempt_unknown_count": sum(e["run_attempt"] == 0 for e in ordered),
+        "metrics_basis": "LATEST_OBSERVED_ATTEMPT_PER_RUN",
+        "historical_failure_observations": sum(e['conclusion'] in ('failure', 'timed_out') for e in ordered),
+        "history_capacity": MAX_KNOWN_RUNS,
+        "history_capacity_warning": len(ordered) >= int(MAX_KNOWN_RUNS * .8),
         "cumulative_failures_by_layer": dict(failures),
         "cumulative_successes_by_layer": dict(successes),
         "lessons": lessons,
@@ -117,7 +131,8 @@ def main(argv: list[str] | None = None) -> int:
         root=Path.cwd().resolve()
         report_path=(root / args.report).resolve()
         state_path=(root / args.state).resolve()
-        if (state_path != (root / STATE_PATH).resolve() or
+        if (not state_path.is_relative_to(root) or not report_path.is_relative_to(root) or
+            state_path != (root / STATE_PATH).resolve() or
             not report_path.is_relative_to((root / "v31_master/autoevolution/reports").resolve()) or
             not report_path.name.endswith(".json")):
             raise SafetyStop("KNOWLEDGE_PATH_DENIED")
@@ -125,7 +140,9 @@ def main(argv: list[str] | None = None) -> int:
         previous=json.loads(state_path.read_text(encoding="utf-8")) if state_path.exists() else None
         state=update_knowledge(previous, report)
         state_path.parent.mkdir(parents=True, exist_ok=True)
-        state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True)+"\n", encoding="utf-8")
+        temporary = state_path.with_suffix(".tmp")
+        temporary.write_text(json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True)+"\n", encoding="utf-8")
+        temporary.replace(state_path)
         print(json.dumps({
             "status": "LAB_KNOWLEDGE_UPDATED",
             "distinct_runs": state["total_distinct_completed_runs"],

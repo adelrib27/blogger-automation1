@@ -1,0 +1,155 @@
+name: V31 JARVIS - Candidatos isolados LAB
+
+on:
+  push:
+    branches: [lab/v31-autoevolucao-safe-20261112]
+    paths:
+      - 'v31_master/autoevolution/**'
+      - 'v31_master/tests/**'
+      - '.github/workflows/v31_lab_autoevolucao_candidates.yml'
+      - '!v31_master/autoevolution/reports/**'
+      - '!v31_master/autoevolution/knowledge/**'
+      - '!v31_master/autoevolution/experiments/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: v31-jarvis-candidates
+  cancel-in-progress: false
+
+jobs:
+  sandbox-healthcheck:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prova sintetica de isolamento sem publicar candidato
+        run: python v31_master/autoevolution/sandbox_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jarvis-sandbox-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: sandbox-smoke-output/verification.json
+          if-no-files-found: warn
+
+  propose:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    outputs:
+      ready: ${{ steps.proposal.outputs.ready }}
+      status: ${{ steps.proposal.outputs.status }}
+      context_key: ${{ steps.proposal.outputs.context_key }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar engenharia confiavel
+        run: python -m unittest discover -s v31_master/tests -v
+      - name: Propor no maximo uma alteracao com chave exclusiva
+        id: proposal
+        env:
+          AUTOEVOLUTION_ENABLED: ${{ vars.AUTOEVOLUTION_ENABLED }}
+          AUTOEVOLUTION_MODEL: ${{ vars.AUTOEVOLUTION_MODEL }}
+          AUTOEVOLUTION_API_KEY: ${{ secrets.AUTOEVOLUTION_API_KEY }}
+        run: python v31_master/autoevolution/propose.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jarvis-proposal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: autoevolution-output/
+          if-no-files-found: warn
+          retention-days: 30
+
+  verify:
+    needs: propose
+    if: needs.propose.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: jarvis-proposal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: autoevolution-output/
+      - name: Baseline, regressao vermelha e suite verde sem rede nem secrets
+        run: python v31_master/autoevolution/verify_candidate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jarvis-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: autoevolution-output/
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    needs: [propose, verify, sandbox-healthcheck]
+    if: needs.verify.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # Always run the trusted triggering revision, never the generated candidate.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: jarvis-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: autoevolution-output/
+      - name: Criar branch e PR rascunho para LAB, sem merge
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python v31_master/autoevolution/publish_candidate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jarvis-publication-${{ github.run_id }}-${{ github.run_attempt }}
+          path: autoevolution-output/
+          if-no-files-found: error
+          retention-days: 30
+
+  record-outcome:
+    needs: [propose, verify, publish, sandbox-healthcheck]
+    if: always() && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Persistir resultado sanitizado para o proximo ciclo
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RESULT_PROPOSE: ${{ needs.propose.result }}
+          RESULT_VERIFY: ${{ needs.verify.result }}
+          RESULT_PUBLISH: ${{ needs.publish.result }}
+          RESULT_SANDBOX: ${{ needs.sandbox-healthcheck.result }}
+          PROPOSAL_STATUS: ${{ needs.propose.outputs.status || 'UNAVAILABLE' }}
+          CONTEXT_KEY: ${{ needs.propose.outputs.context_key }}
+        run: python v31_master/autoevolution/feedback.py

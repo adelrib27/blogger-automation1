@@ -32,7 +32,7 @@ Nunca substituir código V31 funcional por precedente legado sem comparar implem
 - Rotação: não trocar itens apenas para simular novidade; manter itens relevantes e preservar o catálogo bom se API/filtros falharem.
 - Blog/URL/Page/Post ID, tema, arquivos de estado, escopo de credenciais e workflow são exclusivos do projeto. Não compartilhar tokens nem cotas supostamente independentes com a mesma aplicação Shopee.
 - Os guardas de `r57_store_policy.py` e as regressões de Loja V31 devem permanecer aprovados.
-- Nem o modelo de IA nem este workflow têm autorização geral para alterar produção. A escrita autônoma deste LAB está limitada a `v31_master/autoevolution/reports/` e `v31_master/autoevolution/knowledge/state.json`, após todos os testes.
+- Nem o modelo de IA nem este workflow têm autorização geral para alterar produção. O observador escreve somente relatórios e memória após os testes. O workflow de candidatos pode criar branches `lab/jarvis-candidate-*` e PRs rascunho para LAB, após baseline, regressão vermelha e suíte verde em sandbox. Não pode promover ou editar seus próprios guardas. Resultados sanitizados ficam em `v31_master/autoevolution/experiments/`.
 
 ## Motor piloto instalado e evidências
 
@@ -41,7 +41,7 @@ Nunca substituir código V31 funcional por precedente legado sem comparar implem
 - Workflow: `.github/workflows/v31_lab_autoevolucao_safe.yml`, disparado automaticamente em push na branch LAB, com testes antes de gravar evidência.
 - Nenhum autopatch do código da Loja, nenhuma escrita Blogger, nenhum merge ou promoção de produção.
 - Como o GitHub só garante agendamentos `schedule` a partir do branch default, **esta branch LAB opera por eventos de push**, não como cron global contínuo.
-- Histórico limitado de IDs distintos: 1.000 por estado. Ao atingir o limite, parar e arquivar/revalidar, nunca descartar silenciosamente.
+- Histórico limitado: 50.000 observações de tentativas por estado, com alerta aos 80%. Ao atingir o limite, parar e arquivar/revalidar, nunca descartar silenciosamente.
 
 ## Protocolo para um novo blog em repositório próprio
 
@@ -54,3 +54,14 @@ Nunca substituir código V31 funcional por precedente legado sem comparar implem
 ## Limites honestos
 
 Este é **aprendizado operacional persistido no GitHub**, não retreinamento automático do ChatGPT. O modelo só usa essas lições se um agente/código consultar os arquivos. A evolução automática segura atual observa e registra; mudanças de código são propostas e validadas antes de promoção. Não declarar 100% E2E sem evidência de laboratório e produção.
+
+## Extensão v2 — contrato do candidato
+
+Leia `v31_master/autoevolution/README.md` antes de operar o motor. A geração paga por IA
+requer chave exclusiva, modelo e habilitação explícita nas configurações do repositório.
+Sem isso, o estado é BLOCKED_MODEL_CONFIGURATION, nunca declarar IA ativa.
+Não confundir smoke sintético com melhoria real. Nunca executar candidato com tokens,
+rede ou acesso a `.git`. Preservar regressões existentes e registrar resultados verificáveis.
+A base observada antes desta revisão foi `cdbe7bba122ae3130cdc25b5bd410f492bf387fc`;
+a main observada foi `2286726c6353fc2bfc454fd8b54bd7207cd36aec`. Estes SHAs são
+referências de auditoria, não autorização de promoção nem substitutos de nova leitura ao vivo.

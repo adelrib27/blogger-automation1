@@ -21,7 +21,8 @@ ALLOWED_REPO = "adelrib27/blogger-automation1"
 ALLOWED_BRANCH = "lab/v31-autoevolucao-safe-20261112"
 ALLOWED_OUTPUT_PREFIX = "v31_master/autoevolution/reports/"
 ENGINE_VERSION = "v31-autoevolution-safe/v1"
-MAX_RUNS = 40
+MAX_RUNS = 1000
+MAX_PAGES = 10
 MAX_RESPONSE = 2_000_000
 KIND = ("SHOPEE_PIPELINE", "VISUAL_QA", "BLOGGER_PIPELINE",
         "CI_GENERAL", "UNKNOWN")
@@ -56,7 +57,7 @@ def output_path_guard(path: str, repo_root: Path) -> Path:
     root = repo_root.resolve()
     dest = (root / path).resolve()
     allowed = (root / ALLOWED_OUTPUT_PREFIX).resolve()
-    if not dest.is_relative_to(allowed) or dest.suffix != ".json":
+    if not allowed.is_relative_to(root) or not dest.is_relative_to(allowed) or dest.suffix != ".json":
         raise SafetyStop("OUTPUT_PATH_NOT_ALLOWLISTED")
     if dest.name.startswith(".") or not re.fullmatch(r"[0-9]{5,20}\.json", dest.name):
         raise SafetyStop("OUTPUT_FILENAME_NOT_RUN_ID")
@@ -114,7 +115,13 @@ def valid_run(r: object, repo: str) -> dict | None:
         return None
     if status != "completed":
         conclusion = None
+    attempt = r.get("run_attempt", 1)
+    if type(attempt) is not int or attempt < 1:
+        return None
+    if SECRET_PATTERN.search(branch):
+        return None
     return {
+        "run_attempt": attempt,
         "run_id": run_id,
         "workflow": name,
         "branch": branch,
@@ -129,16 +136,19 @@ def valid_run(r: object, repo: str) -> dict | None:
 def collect_report(raw_runs: list, *, repo: str, branch: str, generated_run_id: int) -> dict:
     if repo != ALLOWED_REPO or branch != ALLOWED_BRANCH:
         raise SafetyStop("CROSS_REPO_OR_BRANCH_DENIED")
-    if not isinstance(raw_runs, list) or len(raw_runs) > 100:
+    if not isinstance(raw_runs, list) or len(raw_runs) > MAX_RUNS:
         raise SafetyStop("INVALID_OR_TOO_MANY_RUNS")
     unique = {}
     for raw in raw_runs:
         entry = valid_run(raw, repo)
         if entry is None or entry["run_id"] == generated_run_id:
             continue
-        if "Autoevolucao" in entry["workflow"] or "AutoEvolution" in entry["workflow"]:
+        if any(word in entry["workflow"].casefold() for word in ("autoevolucao", "autoevolution", "jarvis")):
             continue
-        unique[entry["run_id"]] = entry
+        key = (entry["run_id"], entry["run_attempt"])
+        if key in unique and unique[key] != entry:
+            raise SafetyStop("CONFLICTING_RUN_SNAPSHOT")
+        unique[key] = entry
     selected = list(unique.values())[:MAX_RUNS]
     totals = Counter(e["conclusion"] or e["status"] for e in selected)
     failures = Counter(
@@ -164,6 +174,9 @@ def collect_report(raw_runs: list, *, repo: str, branch: str, generated_run_id: 
         "generated_by_run_id": generated_run_id,
         "stage": "OBSERVE_ANALYZE_REPORT",
         "observed_runs": len(selected),
+        "coverage": {"kind": "BOUNDED_RECENT_WINDOW", "limit": MAX_RUNS,
+                     "at_limit": len(raw_runs) >= MAX_RUNS,
+                     "complete_history_claimed": False},
         "totals": dict(totals),
         "failures_by_layer": dict(failures),
         "lessons": lessons,
@@ -186,29 +199,39 @@ def collect_report(raw_runs: list, *, repo: str, branch: str, generated_run_id: 
 def github_runs(repo: str, *, token: str, max_runs: int = MAX_RUNS) -> list:
     if repo != ALLOWED_REPO or not token:
         raise SafetyStop("REPOSITORY_OR_TOKEN_NOT_AVAILABLE")
-    url = "https://api.github.com/repos/" + repo + "/actions/runs?per_page=" + str(max_runs)
-    req = urllib.request.Request(url, headers={
-        "Authorization": "Bearer " + token,
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "V31-LAB-AutoEvolution-SAFE",
-    })
-    try:
-        with urllib.request.urlopen(req, timeout=22) as resp:
-            if resp.status != 200:
-                raise SafetyStop("GITHUB_RUNS_NOT_200")
-            raw = resp.read(MAX_RESPONSE + 1)
-    except (urllib.error.URLError, TimeoutError, OSError):
-        raise SafetyStop("GITHUB_READ_FAILED") from None
-    if len(raw) > MAX_RESPONSE:
-        raise SafetyStop("GITHUB_RESPONSE_TOO_LARGE")
-    try:
-        d = json.loads(raw)
-    except (ValueError, UnicodeError):
-        raise SafetyStop("INVALID_GITHUB_JSON") from None
-    if not isinstance(d, dict) or not isinstance(d.get("workflow_runs"), list):
-        raise SafetyStop("INVALID_GITHUB_RUNS_SHAPE")
-    return d["workflow_runs"]
+    if type(max_runs) is not int or not 1 <= max_runs <= MAX_RUNS:
+        raise SafetyStop("INVALID_COLLECTION_LIMIT")
+    collected = []
+    per_page = min(max_runs, 100)
+    for page in range(1, MAX_PAGES + 1):
+        url = ("https://api.github.com/repos/" + repo + "/actions/runs?per_page="
+               + str(per_page) + "&page=" + str(page))
+        req = urllib.request.Request(url, headers={
+            "Authorization": "Bearer " + token,
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "V31-LAB-AutoEvolution-SAFE",
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=22) as resp:
+                if resp.status != 200:
+                    raise SafetyStop("GITHUB_RUNS_NOT_200")
+                raw = resp.read(MAX_RESPONSE + 1)
+        except (urllib.error.URLError, TimeoutError, OSError):
+            raise SafetyStop("GITHUB_READ_FAILED") from None
+        if len(raw) > MAX_RESPONSE:
+            raise SafetyStop("GITHUB_RESPONSE_TOO_LARGE")
+        try:
+            data = json.loads(raw)
+        except (ValueError, UnicodeError):
+            raise SafetyStop("INVALID_GITHUB_JSON") from None
+        if not isinstance(data, dict) or not isinstance(data.get("workflow_runs"), list):
+            raise SafetyStop("INVALID_GITHUB_RUNS_SHAPE")
+        runs = data["workflow_runs"]
+        collected.extend(runs[:max_runs - len(collected)])
+        if len(runs) < per_page or len(collected) >= max_runs:
+            break
+    return collected
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -225,6 +248,13 @@ def main(argv: list[str] | None = None) -> int:
         out = output_path_guard(args.out, Path.cwd())
         if out.name != str(args.run_id) + ".json":
             raise SafetyStop("RUN_ID_OUTPUT_MISMATCH")
+        if out.exists():
+            existing = json.loads(out.read_text(encoding="utf-8"))
+            if (existing.get("repository") != args.repo or existing.get("branch") != args.branch
+                    or existing.get("generated_by_run_id") != args.run_id):
+                raise SafetyStop("EXISTING_REPORT_PROVENANCE_MISMATCH")
+            print(json.dumps({"status": "EXISTING_REPORT_REUSED", "production_writes": False}))
+            return 0
         if args.fixture:
             runs = json.loads(Path(args.fixture).read_text(encoding="utf-8"))
         else:
