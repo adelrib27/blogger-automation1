@@ -40,7 +40,8 @@ jobs:
           if-no-files-found: warn
 
   propose:
-    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
+    # Pausado a pedido do responsavel em 12/11/2026: nao usar API paga.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     outputs:
@@ -59,9 +60,8 @@ jobs:
       - name: Propor no maximo uma alteracao com chave exclusiva
         id: proposal
         env:
-          AUTOEVOLUTION_ENABLED: ${{ vars.AUTOEVOLUTION_ENABLED }}
+          AUTOEVOLUTION_ENABLED: 'false'
           AUTOEVOLUTION_MODEL: ${{ vars.AUTOEVOLUTION_MODEL }}
-          AUTOEVOLUTION_API_KEY: ${{ secrets.AUTOEVOLUTION_API_KEY }}
         run: python v31_master/autoevolution/propose.py
       - uses: actions/upload-artifact@v4
         if: always()
