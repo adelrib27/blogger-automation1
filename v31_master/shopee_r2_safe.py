@@ -13,6 +13,7 @@ import os
 import re
 import sys
 import time
+import unicodedata
 import urllib.request
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -87,15 +88,20 @@ def normalize(item: dict, category: str) -> dict | None:
         rating_raw = item.get("ratingStar")
         rating = Decimal(str(rating_raw)) if rating_raw is not None else None
         sales = max(0, int(item.get("sales") or 0))
-        if not item_id.isdigit() or len(title) < 12 or len(title) > 190:
+        # LAB SAFE: aceita titulos curtos, preservando itemId identificavel.
+        if not item_id.isdigit() or len(title) < 8 or len(title) > 190:
             return None
         if not trusted(link, affiliate=True) or not trusted(image, affiliate=False):
             return None
         if not price.is_finite() or not (Decimal("1") <= price <= Decimal("100000")):
             return None
-        if rating is not None and (not rating.is_finite() or rating < Decimal("4")):
+        # LAB SAFE: nota 3,5+; negativos, NaN e notas acima de 5 continuam bloqueados.
+        if rating is not None and (not rating.is_finite() or not (Decimal("3.5") <= rating <= Decimal("5"))):
             return None
-        if not any(re.search(r"(?<!\w)" + re.escape(w) + r"(?!\w)", title.casefold())
+        # LAB SAFE: tolerancia a acentos e plural/sufixo no termo, mantendo fronteira de palavra.
+        folded = "".join(c for c in unicodedata.normalize("NFKD", title.casefold())
+                         if not unicodedata.combining(c))
+        if not any(re.search(r"(?<!\w)" + re.escape(w) + r"\w*", folded)
                    for w in KEYWORDS[category]):
             return None
         return {"item_id": item_id, "title": title, "offer_link": link,
@@ -118,7 +124,8 @@ def choose(profile: dict, by_category: dict[str, list[dict]]) -> list[dict]:
             if p["item_id"] in seen_items:
                 continue
             shop = p["shop_id"]
-            if shop and shops.get(shop, 0) >= 2:
+            # LAB SAFE: expande limite de vendedor de 2 para 4, sem permitir loja unica dominar 16.
+            if shop and shops.get(shop, 0) >= 4:
                 continue
             selected.append(p)
             seen_items.add(p["item_id"])
