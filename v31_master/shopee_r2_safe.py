@@ -47,11 +47,13 @@ def trusted(url: str, *, affiliate: bool) -> bool:
 
 def signed_query(keyword: str, app_id: str, secret: str) -> list[dict]:
     k = json.dumps(keyword, ensure_ascii=False)
+    # LAB SAFE: consulta mínima documentada e observada como funcional em 1 execução
+    # 12/11/2026. NÃO presume que resolve o erro intermitente GraphQL 10000.
+    # Campos necessários ao motor: não exigir ordenação/listType no servidor.
     query = ("query V31R2Safe { productOfferV2(keyword: " + k +
-             ", listType: 2, sortType: 2, page: 1, limit: 20) { nodes {"
-             " itemId productName offerLink imageUrl priceMin priceMax sales ratingStar"
-             " shopId shopName commissionRate periodEndTime"
-             " } pageInfo { page limit hasNextPage } } }")
+             ", page: 1, limit: 20) { nodes {"
+             " itemId productName offerLink imageUrl priceMin shopId ratingStar sales"
+             " } } }")
     body = json.dumps({"query": query, "operationName": "V31R2Safe"}, ensure_ascii=False,
                       separators=(",", ":"))
     stamp = int(time.time())
