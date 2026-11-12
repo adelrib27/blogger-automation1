@@ -1,0 +1,39 @@
+name: V31 LAB - Shopee GraphQL diferencial SAFE
+
+on:
+  push:
+    branches:
+      - lab/v31-shopee-filtros-flex-safe-20261112
+    paths:
+      - ".github/workflows/v31_lab_shopee_graphql_differential_safe.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-shopee-graphql-differential-safe-single
+  cancel-in-progress: false
+
+jobs:
+  graphql-diagnostico-isolado:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validar scripts sem Internet
+        run: |
+          set -euo pipefail
+          python -m py_compile v31_master/lab_shopee_graphql_diagnostic.py v31_master/tests/test_v31_shopee_graphql_diagnostic.py
+          python -m unittest discover -s v31_master/tests -p "test_v31_shopee_graphql_diagnostic.py" -v
+      - name: Consulta diferencial Shopee: no maximo quatro POST, sem Blogger
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+        run: |
+          set -euo pipefail
+          python -u v31_master/lab_shopee_graphql_diagnostic.py
+          echo "BloggerWrites=0; ShopeeMutations=0; ProductionMainUnchanged=1"
