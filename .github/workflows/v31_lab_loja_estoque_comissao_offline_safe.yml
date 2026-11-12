@@ -1,0 +1,53 @@
+name: V31 LAB - Loja Estoque e Comissao SAFE OFFLINE
+
+on:
+  push:
+    branches:
+      - lab/v31-loja-estoque-comissao-safe-20261112
+    paths:
+      - "v31_master/store_stock_commission_safe.py"
+      - "v31_master/shopee_r2_safe.py"
+      - "v31_master/tests/test_v31_store_stock_commission_safe.py"
+      - ".github/workflows/v31_lab_loja_estoque_comissao_offline_safe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-loja-estoque-comissao-offline
+  cancel-in-progress: false
+
+jobs:
+  test-store-stock-commercial-policy:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verificar sintaxe e pureza da nova politica
+        run: |
+          set -euo pipefail
+          python -m py_compile v31_master/store_stock_commission_safe.py v31_master/shopee_r2_safe.py
+      - name: Testar politica de comissao positiva e estoque confirmado
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s v31_master/tests -p 'test_v31_store_stock_commission_safe.py' -v
+      - name: Regressao filtros e rotacao SAFE V31
+        run: |
+          python -m unittest discover -s v31_master/tests -p 'test_r57_relaxed_product_filters.py' -v
+      - name: Regressao policy guard da Loja
+        run: |
+          python -m unittest discover -s v31_master/tests -p 'test_r57_store_policy.py' -v
+      - name: Regressao query minima Shopee sem rede
+        run: |
+          python -m unittest discover -s v31_master/tests -p 'test_v31_shopee_minimal_gateway.py' -v
+      - name: Confirmar execucao sem chamadas externas e sem Blogger PUT
+        run: |
+          echo "LAB_ONLY=1"
+          echo "SHOPEE_HTTP_REQUESTS=0"
+          echo "BLOGGER_WRITES=0"
+          echo "PRODUCTION_MAIN_UNCHANGED=1"
