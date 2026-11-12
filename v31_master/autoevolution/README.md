@@ -1,114 +1,86 @@
-# J.A.R.V.I.S. V31 — evolução por evidências, LAB v2
+# J.A.R.V.I.S. V31 — modo OFFLINE, sem API paga
 
-## Estado e limites
+**Decisão do responsável em 12/11/2026:** continuar apenas sem gastos adicionais de API.
+O fluxo ativo usa receitas determinísticas revisadas, testes, memória e GitHub. Não chama
+OpenAI, não usa modelos externos e não precisa recarregar créditos. Não é uma IA aprendendo
+a gerar código livremente, nem retreinamento do ChatGPT.
 
-O observador, a memória de tentativas e o registro de resultados são automáticos por push no LAB.
-O pipeline de candidatos possui geração por API, teste isolado e publicação de PR rascunho
-**para o LAB**, sem merge automático. Não é retreinamento do ChatGPT nem garantia de qualidade E2E.
-Nenhum blog, tema, credencial comercial ou workflow de produção é alterado por este pacote.
+## O que funciona
 
-A geração real por IA fica bloqueada até configurar **neste repositório**:
+1. Observer consulta metadados de Actions do próprio repo e mantém memória por execução/tentativa.
+2. `offline.py` verifica receitas de manutenção previamente revisadas. Uma receita só pode
+   alterar o padrão exato para o qual foi escrita. Implementação desconhecida vira no-op.
+3. Candidato inclui SHA base, hash do conteúdo original e teste de regressão novo.
+4. Sandbox sem rede, secrets ou `.git` exige baseline aprovada, falha por asserção no original
+   e suíte inteira aprovada após a mudança.
+5. Publisher em outro job revalida hashes e cria branch/PR para LAB. Nunca mergeia em main.
+6. Feedback fica no git e evita repetir candidato já publicado para a mesma receita/fonte.
+7. Se não houver receita aplicável, registra isso honestamente e não inventa melhoria.
 
-- Secret exclusivo `AUTOEVOLUTION_API_KEY` (não reutilizar chaves de blogs).
-- Variable `AUTOEVOLUTION_MODEL`: modelo compatível com Chat Completions, JSON mode e
-  `max_completion_tokens`, na API OpenAI usada pelo adaptador `propose.py`.
-- Variable `AUTOEVOLUTION_ENABLED=true` para habilitar a chamada paga, no máximo uma por ciclo.
-- Permissão do repositório para Actions criar PRs. Sem ela, o candidato validado permanece
-  na branch e no artifact, com o bloqueio de PR identificado. Não conceder permissão de autoaprovação.
+Receita inicial: `strict-affiliate-verification-v1` exige `True` booleano como confirmação
+externa de origem afiliada. Strings como `"false"`, números e coleções deixam de servir como
+confirmação. Comissão positiva verificável continua aceita sem percentual mínimo.
+Esse flag não substitui autenticação real: o gateway continua responsável pela origem.
 
-Não há modelo padrão, fallback para outra conta nem teste pago silencioso. A integração HTTP
-é testada por mocks; uma execução real depende dessas configurações. Outros provedores requerem
-um adaptador explicitamente validado antes de configurar a chave. Não colocar secrets em arquivos.
+## Custos e limites
 
-## Pipeline
+- Repositório verificado como público: `adelrib27/blogger-automation1`.
+- Jobs usam somente `ubuntu-latest`, runner padrão gratuito para repositórios públicos.
+- O job inicial e o registro de resultados bloqueiam execução se o repo virar privado.
+- Estes dois workflows não usam upload/download de artifacts, caches nem modelos externos.
+- Pacotes pequenos passam por job outputs; estado e resultados ficam no git. Logs e summaries
+  não consomem armazenamento de artifacts, conforme documentação GitHub.
+- Os artifacts antigos de execuções anteriores permanecem sujeitos à retenção já definida.
+  Esta mudança não altera faturamento de outros projetos, workflows ou serviços da conta.
+- O trabalho conversacional continua sujeito às cotas do plano ChatGPT existente.
+- Não há scheduler global nem polling de IA ativo: eventos de push no LAB iniciam os ciclos.
 
-1. Observer executa toda a suíte V31, coleta até 10 páginas de 100 metadados do próprio repo.
-2. Memória usa `(run_id, run_attempt)`. Reexecução legítima não é adulteração de histórico.
-   Importação v1 preserva tentativa desconhecida como `0`, sem inventar a tentativa original.
-   Totais por execução consideram a última tentativa observada; falhas anteriores são preservadas.
-3. Job separado revalida os artifacts e grava apenas relatório e estado no LAB. Nunca force-push.
-   Conflito concorrente mantém evidência no artifact e bloqueia a gravação, sem sobrescrever.
-4. Proposer lê fontes permitidas, métricas e resultados anteriores. Pode responder sem alteração.
-   Contexto já tentado não gera repetidamente o mesmo experimento nos 20 resultados recentes.
-5. Validador exige SHA base, hash do conteúdo original, alteração pequena e um novo teste.
-   Não pode modificar workflows, AGENTS, guardas do JARVIS, testes existentes, temas ou secrets.
-6. Runner exporta o commit confiável sem `.git`, sem credenciais, em container sem rede,
-   filesystem read-only, usuário sem privilégios e limites de tempo, memória, CPU e processos.
-   Exige baseline aprovada, regressão por **asserção** no original (erro de importação não vale)
-   e suíte inteira aprovada no candidato. Não importa código gerado fora do container.
-7. Publisher em outro job revalida candidato e SHA256 da prova, cria branch determinística e PR
-   rascunho para LAB. Não executa fonte gerada; nunca mergeia. Retry não sobrescreve branch existente.
-8. Feedback persiste resultados sanitizados em `experiments/<run>-<attempt>.json` no LAB.
-   A IA recebe esses resultados no próximo ciclo; não recebem logs brutos nem saída do modelo.
+Referência: https://docs.github.com/en/billing/concepts/product-billing/github-actions
 
-O smoke test é **sintético**, verifica isolamento e o trajeto red/green, não é uma melhoria de
-produto e nunca é publicado como candidato real. PASS de testes não prova estoque, conversões,
-qualidade visual ou causa raiz de uma falha de API. PR precisa de revisão técnica e QA pertinente.
+## Proteções
 
-## Autonomia e proteção
+Os candidatos só podem alterar `store_stock_commission_safe.py`, `shopee_r2_safe.py` e um
+novo teste `test_autoevolution_candidate_<sha-base-12>.py`. Não podem alterar seus próprios
+controles, workflows, testes existentes, credenciais, temas ou blogs. O publisher aceita
+somente a procedência `DETERMINISTIC_REVIEWED_RECIPE` neste modo.
 
-- Fontes candidatas iniciais: `store_stock_commission_safe.py` e `shopee_r2_safe.py`.
-- Teste novo: `v31_master/tests/test_autoevolution_candidate_<sha-base-12>.py`.
-  O nome muda por revisão base; testes já integrados nunca podem ser sobrescritos.
-- Os controles são executados na revisão confiável; a IA não pode editar esses controles.
-- O modelo recebe metadados de falhas, não diagnóstico de causa. Deve justificar a correção
-  pelo código e reproduzir a regressão. A avaliação semântica continua necessária na revisão.
-- Testes de candidatos são código não confiável, isolado. Docker não garante ausência de
-  vulnerabilidades de kernel; usar runners hospedados efêmeros, nunca um runner com secrets locais.
-- Os arquivos AGENTS orientam os agentes que os leem; não obrigam chats externos automaticamente.
-- Não habilitar `pull_request_target` para executar código candidato com credenciais.
+O observador tem job de testes read-only separado do job de persistência. A persistência
+usa a revisão atual do LAB somente se todo o código for igual ao que foi testado; mudanças
+concorrentes de código bloqueiam o ciclo. Mudanças apenas de evidências podem ser incorporadas.
+Tokens GitHub são usados somente para leitura/escrita do repo autorizado; não há token de
+serviço comercial nos jobs. Push sem force nunca sobrescreve trabalho concorrente.
 
-## Continuidade e operação
+`propose.py` é código histórico da opção paga, **fora dos workflows ativos**. As variáveis
+AUTOEVOLUTION_ENABLED/MODEL e o secret antes cadastrados não ativam esse modo offline.
+Reativação paga requer nova decisão explícita e alteração revisada do workflow.
 
-A leitura é uma janela recente **limitada**, não todo o histórico. O relatório expõe o limite e
-se ele foi atingido; intervalos longos podem deixar lacunas e requerem coleta de backfill revisada.
-A memória admite 50.000 observações, alerta aos 80% e bloqueia ao atingir o teto. Não descarta
-histórico silenciosamente; arquivamento verificável deve preceder nova expansão de capacidade.
-Relatórios no git são permanentes; artifacts de execução têm retenção de 30 dias.
+## Aprendizado e continuidade
 
-O LAB roda por **push**, e por `workflow_dispatch` onde disponível. Não há cron global ativo.
-GitHub exige o workflow na branch padrão para disponibilizar dispatch/schedule normalmente.
-A habilitação contínua por relógio exige implantar um dispatcher revisado na branch padrão;
-não mover os workflows produtivos nem publicar a branch LAB inteira em `main`.
+A memória mantém tentativas anteriores e a última conclusão de cada execução. A janela
+consultada é de até 1.000 execuções, não todo o histórico; pode haver lacunas entre ciclos
+muito distantes. Estado tem limite de 50.000 observações com alerta a 80%, sem descarte
+silencioso. O arquivo de resultados identifica receita, contexto e gates executados.
 
-Se não houver chave/modelo/enable, o workflow registra `BLOCKED_MODEL_CONFIGURATION`, executa
-smoke test e não chama a API. Isso é infraestrutura validada, **não IA de código ativa**.
+Novas capacidades exigem adicionar receitas revisadas e seus testes. Não criar consertos
+aleatórios a partir do nome de um workflow que falhou. PASS não comprova estoque, conversões,
+qualidade visual ou efeitos em Blogger/WordPress; promoção exige QA pertinente por destino.
 
-## Promoção e recuperação
+## Replicar em outro blog
 
-Antes de integrar: comparar base atual, confirmar regressões, revisar diffs e validar o destino
-exato. PR candidato é para LAB, não para `main`. Não misturar experimentos com instalação da
-engenharia em outro blog. Integrar em produção só a mudança revisada, com snapshot e readback
-quando houver alteração externa. Reverter commit não desfaz publicação em Blogger/WordPress.
-Recuperação de efeitos externos exige backup e procedimento próprio do destino.
+Copiar engenharia e testes, não credenciais nem memória de outro blog. Atualizar allowlist
+de repositório/branch/fontes e guards dos workflows. Iniciar com estado vazio e testes próprios.
+Para repositório privado, este perfil não executa: avaliar alternativa local antes de ativar
+qualquer serviço que possa ser cobrado. Não tornar outro repositório público automaticamente.
 
-## Replicação por blog
-
-Copiar somente código da engenharia, testes e workflows; **não copiar** state.json, relatórios,
-experimentos, tokens ou configurações comerciais. Alterar `ALLOWED_REPO`, `ALLOWED_BRANCH`,
-allowlist de fontes, guards e branch nos dois workflows. Criar estado vazio com o schema v2.
-Executar testes e smoke no repo novo, depois configurar chave/modelo próprios. Não alegar cota
-independente só por copiar a mesma chave em outro repositório. Revisar a política de publicação
-por destino antes de promover qualquer candidato.
-
-## Verificação local
+## Verificar localmente
 
 `python -m unittest discover -s v31_master/tests -v`
 
+`python v31_master/autoevolution/offline.py`
+
 Com Docker e um commit contendo o pacote:
-`python v31_master/autoevolution/sandbox_smoke.py`
+`python v31_master/autoevolution/verify_candidate.py`
 
-O workflow repete o smoke no GitHub Actions; os testes normais são offline e não usam secrets.
-
-Referências de implementação:
-- https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
-- https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow
-- https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
-
-## Primeiro teste com provedor real — 12/11/2026
-
-O responsável confirmou o cadastro do secret exclusivo AUTOEVOLUTION_API_KEY e das
-variáveis AUTOEVOLUTION_MODEL=gpt-5.4-mini e AUTOEVOLUTION_ENABLED=true.
-Este registro dispara um ciclo LAB para validar autenticação, acesso ao modelo,
-resposta e verificações do candidato. Configuração informada não equivale a teste aprovado.
-Nenhum merge ou alteração em produção está autorizado por este teste.
+Nunca executar o conteúdo de um candidato fora do sandbox. Nenhum comando dessas verificações
+chama modelos ou utiliza a chave OpenAI. Resultados sintéticos permanecem identificados como
+sintéticos e não devem ser publicados como melhorias reais.

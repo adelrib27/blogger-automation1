@@ -40,6 +40,8 @@ def main():
     raw = (out / 'candidate.json').read_bytes()
     candidate = validate(json.loads(raw), root, sha)
     verification_guard(json.loads((out / 'verification.json').read_text()), raw, sha)
+    if candidate.get('generator') != 'DETERMINISTIC_REVIEWED_RECIPE':
+        raise SafetyStop('OFFLINE_GENERATOR_REQUIRED')
     branch = 'lab/jarvis-candidate-' + digest(raw)[:20]
     # Deterministic branch makes retries idempotent. Existing branches are never overwritten.
     try:
@@ -71,7 +73,7 @@ def main():
             pr = api('POST', '/pulls', {
                 'title': 'JARVIS: candidato LAB com regressao reproduzida',
                 'head': branch, 'base': ALLOWED_BRANCH, 'draft': True,
-                'body': ('Candidato gerado por IA, sem promocao automatica.\n\n'
+                'body': ('Candidato de receita deterministica revisada, sem API paga e sem promocao automatica.\n\n'
                          'Baseline aprovada; novo teste falhou por assercao antes da alteracao; '
                          'suite completa aprovada depois. Execucao sem rede e sem credenciais.\n\n'
                          'Base: ' + sha + '\nCandidate SHA256: ' + digest(raw) + '\n\n'

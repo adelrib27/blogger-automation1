@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   observe:
-    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
+    if: github.repository == 'adelrib27/blogger-automation1' && github.event.repository.private == false && github.ref == 'refs/heads/lab/v31-autoevolucao-safe-20261112'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -31,6 +31,35 @@ jobs:
           python-version: '3.12'
       - name: Todas as regressoes V31, incluindo writer e autoevolucao
         run: python -m unittest discover -s v31_master/tests -v
+
+  persist:
+    concurrency:
+      group: v31-lab-state-writer
+      cancel-in-progress: false
+    needs: observe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: lab/v31-autoevolucao-safe-20261112
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Confirmar que o codigo e o mesmo aprovado pelo job de testes
+        run: |
+          python - <<'PYCODE'
+          import os, subprocess
+          changes = subprocess.check_output(['git','diff','--name-only',os.environ['GITHUB_SHA'],'HEAD'],text=True).splitlines()
+          def evidence(path):
+              return path.startswith(('v31_master/autoevolution/reports/', 'v31_master/autoevolution/experiments/')) or path == 'v31_master/autoevolution/knowledge/state.json'
+          if not all(evidence(path) for path in changes):
+              raise SystemExit('UNTESTED_CONCURRENT_CODE_CHANGE')
+          PYCODE
       - name: Coletar janela paginada sem logs nem secrets de blogs
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -44,36 +73,6 @@ jobs:
           python v31_master/autoevolution/knowledge.py \
             --report "v31_master/autoevolution/reports/${GITHUB_RUN_ID}.json" \
             --state v31_master/autoevolution/knowledge/state.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: v31-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            v31_master/autoevolution/reports/${{ github.run_id }}.json
-            v31_master/autoevolution/knowledge/state.json
-          if-no-files-found: error
-          retention-days: 30
-
-  persist:
-    needs: observe
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: lab/v31-autoevolucao-safe-20261112
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - uses: actions/download-artifact@v4
-        with:
-          name: v31-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: evidence-input
-      - name: Revalidar dados com codigo confiavel antes da escrita
-        run: python v31_master/autoevolution/evidence_guard.py
       - name: Commit restrito e push sem force
         shell: bash
         run: |

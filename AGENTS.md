@@ -65,3 +65,14 @@ rede ou acesso a `.git`. Preservar regressões existentes e registrar resultados
 A base observada antes desta revisão foi `cdbe7bba122ae3130cdc25b5bd410f492bf387fc`;
 a main observada foi `2286726c6353fc2bfc454fd8b54bd7207cd36aec`. Estes SHAs são
 referências de auditoria, não autorização de promoção nem substitutos de nova leitura ao vivo.
+
+## Diretriz vigente — OFFLINE, sem API paga (12/11/2026)
+
+O responsável cancelou a opção paga e autorizou continuar somente sem gastos adicionais.
+O pipeline ativo usa `offline.py`: receitas determinísticas revisadas, sem chamadas a LLMs.
+Não reativar `propose.py` nem usar AUTOEVOLUTION_API_KEY sem nova autorização explícita.
+Publicar somente candidatos de receita conhecida, com regressão reproduzida e suíte verde.
+Os workflows do JARVIS usam runners padrão em repo público, bloqueiam repo privado e não
+usam armazenamento de artifacts/caches. Memória e feedback persistem no git. Essa diretriz
+substitui as orientações anteriores de ativação paga; os checkpoints antigos são históricos.
+Não alegar autoaprendizado livre de IA: a evolução autônoma fica restrita às receitas revisadas.
