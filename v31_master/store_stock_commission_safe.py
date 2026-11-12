@@ -40,7 +40,7 @@ def commission_eligible(raw: dict, *, verified_affiliate_response: bool) -> bool
     Nao exige sellerCommissionRate/extra. Ausencia de dado = UNKNOWN, nao elegivel.
     A prova de origem deve vir do gateway autenticado, nunca de entrada de publico.
     """
-    if not verified_affiliate_response or not isinstance(raw, dict):
+    if verified_affiliate_response is not True or not isinstance(raw, dict):
         return False
     rate = _decimal(raw.get("commissionRate"))
     absolute = _decimal(raw.get("commission"))
