@@ -104,3 +104,11 @@ Referências de implementação:
 - https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
 - https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow
 - https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
+
+## Primeiro teste com provedor real — 12/11/2026
+
+O responsável confirmou o cadastro do secret exclusivo AUTOEVOLUTION_API_KEY e das
+variáveis AUTOEVOLUTION_MODEL=gpt-5.4-mini e AUTOEVOLUTION_ENABLED=true.
+Este registro dispara um ciclo LAB para validar autenticação, acesso ao modelo,
+resposta e verificações do candidato. Configuração informada não equivale a teste aprovado.
+Nenhum merge ou alteração em produção está autorizado por este teste.
