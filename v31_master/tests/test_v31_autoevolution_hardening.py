@@ -185,5 +185,27 @@ class TestCandidates(unittest.TestCase):
             call.assert_not_called()
 
 
+class TestSafeApiDiagnostics(unittest.TestCase):
+    def error(self, payload):
+        import urllib.error
+        return urllib.error.HTTPError('https://api.openai.com', 429, 'private header', {},
+                                      io.BytesIO(json.dumps(payload).encode()))
+
+    def test_quota_recognized_without_server_message(self):
+        error = self.error({'error': {'code': 'insufficient_quota', 'message': 'secret private data'}})
+        self.assertEqual(propose.safe_http_failure(error), 'API_QUOTA_UNAVAILABLE')
+
+    def test_arbitrary_error_code_not_echoed(self):
+        error = self.error({'error': {'code': 'secret-private-data'}})
+        self.assertEqual(propose.safe_http_failure(error), 'API_REQUEST_REJECTED')
+
+    def test_malformed_error_never_exposes_payload(self):
+        self.assertEqual(propose.safe_http_failure(self.error(['private-data'])), 'API_REQUEST_REJECTED')
+
+    def test_auth_and_model_errors_distinguished(self):
+        for code, expected in [('invalid_api_key', 'API_KEY_REJECTED'), ('model_not_found', 'MODEL_UNAVAILABLE')]:
+            self.assertEqual(propose.safe_http_failure(self.error({'error': {'code': code}})), expected)
+
+
 if __name__ == '__main__':
     unittest.main()
