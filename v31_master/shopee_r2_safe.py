@@ -52,7 +52,7 @@ def signed_query(keyword: str, app_id: str, secret: str) -> list[dict]:
     # Campos necessários ao motor: não exigir ordenação/listType no servidor.
     query = ("query V31R2Safe { productOfferV2(keyword: " + k +
              ", page: 1, limit: 20) { nodes {"
-             " itemId productName offerLink imageUrl priceMin shopId ratingStar sales"
+             " itemId productName offerLink imageUrl priceMin shopId ratingStar sales commissionRate"
              " } } }")
     body = json.dumps({"query": query, "operationName": "V31R2Safe"}, ensure_ascii=False,
                       separators=(",", ":"))
@@ -211,7 +211,10 @@ def main() -> int:
                     all_nodes.append(raw)
                     seen.add(rid)
         groups[cat["name"]] = all_nodes
-    products = choose(profile, groups)
+    # Gate comercial V31: comissao positiva verificada no retorno da API
+    # sem taxa percentual minima e sem exigir comissao extra do vendedor.
+    from store_stock_commission_safe import select_verified
+    products = select_verified(profile, groups)
     content = render(products, lab_url=profile["target"]["url"])
     args.out_dir.mkdir(parents=True, exist_ok=True)
     if any(args.out_dir.iterdir()):
