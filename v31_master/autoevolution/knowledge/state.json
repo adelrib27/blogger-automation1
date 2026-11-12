@@ -1,0 +1,240 @@
+{
+  "branch": "lab/v31-autoevolucao-safe-20261112",
+  "cumulative_failures_by_layer": {
+    "BLOGGER_PIPELINE": 2,
+    "CI_GENERAL": 3,
+    "SHOPEE_PIPELINE": 10
+  },
+  "cumulative_successes_by_layer": {
+    "BLOGGER_PIPELINE": 5,
+    "SHOPEE_PIPELINE": 15
+  },
+  "last_report_run_id": 43235806626,
+  "lessons": [
+    {
+      "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
+      "auto_patch": false,
+      "category": "SHOPEE_PIPELINE",
+      "observed_failures": 10,
+      "observed_successes": 15,
+      "production_approval_required": true,
+      "proposal": "SAFE_DIAGNOSE_GRAPHQL_AND_CATALOG",
+      "required_gates": [
+        "GRAPHQL_ERRORS_NEVER_OOS",
+        "STOCK_UNKNOWN",
+        "NO_BLOGGER_PUT"
+      ]
+    },
+    {
+      "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
+      "auto_patch": false,
+      "category": "CI_GENERAL",
+      "observed_failures": 3,
+      "observed_successes": 0,
+      "production_approval_required": true,
+      "proposal": "SAFE_REVIEW_FAILURE_WITHOUT_INFERRED_CAUSE",
+      "required_gates": [
+        "MANUAL_DIAGNOSIS"
+      ]
+    },
+    {
+      "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
+      "auto_patch": false,
+      "category": "BLOGGER_PIPELINE",
+      "observed_failures": 2,
+      "observed_successes": 5,
+      "production_approval_required": true,
+      "proposal": "SAFE_RECHECK_TARGET_AND_IDEMPOTENCY",
+      "required_gates": [
+        "BLOG_ID_PAGE_ID_ALLOWLIST",
+        "NO_UNREVIEWED_PUT"
+      ]
+    }
+  ],
+  "observed": [
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43091328886
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43093642735
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43094260937
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "run_id": 43094272116
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43094298336
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43094298550
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43094888047
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43100960330
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43103678449
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "run_id": 43104302037
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43112638500
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43119996599
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43121889954
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43130403115
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "run_id": 43130412111
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43133627059
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43139946069
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43142414321
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43145394299
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43166821942
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43224569435
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43224900760
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43225144206
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43227160295
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43227286424
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43227603848
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43227975705
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43228266798
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43228442713
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43231902870
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43232184434
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43232383069
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_id": 43233019997
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43233090708
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_id": 43233229864
+    }
+  ],
+  "repository": "adelrib27/blogger-automation1",
+  "schema": "v31-autoevolution-knowledge/v1",
+  "security": {
+    "human_review_required_for_promotion": true,
+    "no_blogger_mutations": true,
+    "no_model_weight_updates": true,
+    "no_production_code_writes": true
+  },
+  "total_distinct_completed_runs": 35
+}
