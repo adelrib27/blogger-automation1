@@ -39,3 +39,29 @@
 - Branch: https://github.com/adelrib27/blogger-automation1/tree/lab/v31-shopee-filtros-flex-safe-20261112
 - Offline PASS: https://github.com/adelrib27/blogger-automation1/actions/runs/43225144206
 - Sonda REAL bloqueada: https://github.com/adelrib27/blogger-automation1/actions/runs/43224900760
+
+## Adendo P0 - Diagnóstico diferencial GraphQL (12/11/2026)
+
+**Estado:** causa-raiz AINDA NÃO DETERMINADA. Houve respostas reais bem-sucedidas e falhas `10000` em consultas consecutivas. O resultado contradiz a hipótese de indisponibilidade total da API, mas não prova rate limit nem erro específico nos parâmetros.
+
+### Evidências ao vivo (somente LAB, chamadas POST GraphQL de leitura)
+
+1. Run [43227286424](https://github.com/adelrib27/blogger-automation1/actions/runs/43227286424): `__typename` raiz HTTP 200 / PASS; `productOfferV2` com `nodes { __typename }` `10000`; `productOfferV2` com `nodes { itemId productName }` **PASS, 1 oferta real**; com `listType:2`, `sortType:2` `10000`. 9 testes offline PASS no mesmo workflow.
+2. Run [43227603848](https://github.com/adelrib27/blogger-automation1/actions/runs/43227603848): sem filtros opcionais e com campos úteis (link/imagem/preço/ID/avaliação) **PASS, 1 oferta real**; consultas posteriores com `sortType:2`, `listType:2`, `sortType:1` e até consulta básica repetida deram `10000`. Portanto não isolar como defeito determinístico de `sortType` ou `listType`.
+3. Run [43227975705](https://github.com/adelrib27/blogger-automation1/actions/runs/43227975705): uma única consulta até 20 nós, sem filtros opcionais, devolveu HTTP 200 + GraphQL `10000`. **Nenhuma amostra válida para comparar filtros rígidos e flexibilizados neste run**.
+4. Nenhuma mutação Shopee, nenhuma escrita Blogger, nenhum produto/identificador real/secret persistido ou impresso no diagnóstico. O status GitHub `success` significa execução do DIAGNÓSTICO, não sucesso da API de ofertas.
+
+### Correção candidata, somente branch LAB
+
+- Em `v31_master/shopee_r2_safe.py`, a query passou a usar apenas `productOfferV2(keyword, page:1, limit:20)` e os campos essenciais `itemId productName offerLink imageUrl priceMin shopId ratingStar sales`.
+- Mantidos como guardas: `GateError` quando existem `errors` GraphQL, 16 produtos distintos, 4 por categoria, HTTPS e whitelists para produto/imagem, preço válido, lock e `r57_store_policy.py` não modificado.
+- Esta mudança não foi comprovada como solução; **a query reduzida também foi vista falhar esporadicamente** no ambiente da Shopee.
+- Run [43228442713](https://github.com/adelrib27/blogger-automation1/actions/runs/43228442713): **36 testes offline PASS** (17 seleção/rotação simulada + 5 gateway mínimo + 14 policy guard). Nenhuma chamada externa nesse workflow.
+- `main` / workflows produtivos / blogs / temas / Lojas: não alterados pelo diagnóstico.
+
+### Próximo gate
+
+- **Não repetir consultas continuamente** quando Shopee retorna `10000`. Considerar cooldown e 1 sonda por janela, com observação do code HTTP/GraphQL, sem usar dados antigos como novos.
+- Esperar retorno real não vazio e estável para coletar contagens de candidatos aceitos sob ambos filtros `estrito` e `flexível`, sem logar dados comerciais nem publicá-los.
+- Em seguida rodar a seleção 16/16 e somente uma simulação de rotação; antes de uma publicação LAB, exigir preflight de blog/page, diff, autorização de escopo, readback e HTTP público.
+- Não promover a `main` ou produção sem evidência adicional e autorização específica.
