@@ -29,7 +29,7 @@ jobs:
           set -euo pipefail
           python -m py_compile v31_master/lab_shopee_graphql_diagnostic.py v31_master/tests/test_v31_shopee_graphql_diagnostic.py
           python -m unittest discover -s v31_master/tests -p "test_v31_shopee_graphql_diagnostic.py" -v
-      - name: Consulta diferencial Shopee: no maximo quatro POST, sem Blogger
+      - name: "Consulta diferencial Shopee: no maximo quatro POST, sem Blogger"
         env:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
