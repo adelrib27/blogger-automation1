@@ -1,0 +1,36 @@
+name: V31 LAB - Uma consulta Shopee sem escrita Blogger
+
+on:
+  push:
+    branches:
+      - lab/v31-shopee-filtros-flex-safe-20261112
+    paths:
+      - ".github/workflows/v31_lab_filters_single_shopee_probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-shopee-one-query-only
+  cancel-in-progress: false
+
+jobs:
+  shopee-one-query-no-blooger-write:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sintaxe e verificacao local
+        run: |
+          python -m py_compile v31_master/lab_shopee_filters_probe.py v31_master/shopee_r2_safe.py
+      - name: UMA consulta real a Shopee, sem escrita no Blogger
+        run: |
+          python -u v31_master/lab_shopee_filters_probe.py
