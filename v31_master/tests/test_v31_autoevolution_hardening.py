@@ -207,5 +207,33 @@ class TestSafeApiDiagnostics(unittest.TestCase):
             self.assertEqual(propose.safe_http_failure(self.error({'error': {'code': code}})), expected)
 
 
+class TestCurrentApiDiagnostics(unittest.TestCase):
+    error = TestSafeApiDiagnostics.error
+
+    def test_credit_balance_distinct_from_rate_limit(self):
+        info = {}
+        reason = propose.safe_http_failure(self.error({'error': {
+            'code': 'credit_balance_exhausted', 'type': 'insufficient_quota'}}), info)
+        self.assertEqual(reason, 'API_CREDIT_BALANCE_EXHAUSTED')
+        self.assertEqual(info['http_status'], 429)
+        self.assertEqual(info['error_code'], 'credit_balance_exhausted')
+
+    def test_private_values_never_persist(self):
+        info = {}
+        propose.safe_http_failure(self.error({'error': {
+            'code': 'private-code', 'type': 'private-type', 'param': 'private-param',
+            'message': 'private-message'}}), info)
+        self.assertNotIn('private', json.dumps(info))
+
+    def test_quota_type_without_code_is_classified(self):
+        self.assertEqual(propose.safe_http_failure(self.error({'error': {
+            'type': 'insufficient_quota', 'code': None}})), 'API_QUOTA_UNAVAILABLE')
+
+    def test_limits_are_not_credits(self):
+        for code, label in [('project_spend_limit_exceeded', 'API_PROJECT_SPEND_LIMIT'),
+                            ('organization_spend_limit_exceeded', 'API_ORGANIZATION_SPEND_LIMIT')]:
+            self.assertEqual(propose.safe_http_failure(self.error({'error': {'code': code}})), label)
+
+
 if __name__ == '__main__':
     unittest.main()
