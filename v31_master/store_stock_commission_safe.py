@@ -62,6 +62,47 @@ def _utc(raw: object) -> datetime | None:
         return None
 
 
+def classify_product_offer_visibility(item_id: str, payload: object, *,
+                                      http_status: int | None = 200) -> dict:
+    """A busca productOfferV2 NÃO informa estoque de forma homologada.
+
+    Resultado ausente, erro 10000, HTTP 200 + GraphQL errors, estoque nulo e
+    campos 'stock' hipotéticos NUNCA são convertidos em zero/disponibilidade.
+    A disponibilidade fica UNKNOWN, mesmo quando o item aparece na busca.
+    Apenas um adaptador de estoque autorizado, separado, pode comprovar OOS.
+    """
+    if not isinstance(item_id, str) or not item_id.isdigit():
+        raise GateError("INVALID_DISCOVERY_ITEM_ID")
+    base = {"stock_status": UNKNOWN, "stock_source": "NO_VERIFIED_INVENTORY"}
+    if http_status != 200 or not isinstance(payload, dict):
+        return {**base, "discovery_status": "API_UNAVAILABLE"}
+    if payload.get("errors"):
+        return {**base, "discovery_status": "API_GRAPHQL_ERROR"}
+    data = payload.get("data")
+    offers = data.get("productOfferV2") if isinstance(data, dict) else None
+    nodes = offers.get("nodes") if isinstance(offers, dict) else None
+    if not isinstance(nodes, list):
+        return {**base, "discovery_status": "INVALID_DISCOVERY"}
+    listed = any(isinstance(row, dict) and
+                 str(row.get("itemId") or "").strip() == item_id for row in nodes)
+    return {**base, "discovery_status": "LISTED" if listed else "NOT_LISTED"}
+
+
+def require_clean_discovery_metadata(metadata: object) -> None:
+    """Guard SAFE do envelope da lista de candidatos da Loja.
+
+    É contrato de dados, NÃO autenticação: um JSON arbitrário não prova que
+    veio da Shopee. Mesmo com metadados válidos, nunca permite PUT.
+    """
+    if not isinstance(metadata, dict):
+        raise GateError("DISCOVERY_METADATA_MISSING")
+    if (metadata.get("operation") != "productOfferV2" or
+        metadata.get("http_status") != 200 or
+        metadata.get("query_status") != "OK" or
+        metadata.get("graphql_error_codes") != []):
+        raise GateError("DISCOVERY_NOT_CLEAN_NO_ROTATION")
+
+
 def stock_status(item_id: str, observations: list[dict], *, now: datetime) -> str:
     """Estoque desconhecido salvo prova explicita com duas leituras independentes.
 
@@ -226,6 +267,7 @@ def run_lab_cli(argv: list[str] | None = None) -> int:
             raise GateError("CURRENT_CATALOG_INVALID")
         if not isinstance(candidates.get("categories"), dict):
             raise GateError("CANDIDATE_CATALOG_INVALID")
+        require_clean_discovery_metadata(candidates.get("discovery"))
         if not isinstance(inventory.get("observations"), list):
             raise GateError("INVENTORY_FORMAT_INVALID")
         result = plan_oos_rotation(current["products"], candidates["categories"],
