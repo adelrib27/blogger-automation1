@@ -1,0 +1,44 @@
+name: V31 LAB - Filtros Shopee flexibilizados OFFLINE SAFE
+
+on:
+  push:
+    branches:
+      - lab/v31-shopee-filtros-flex-safe-20261112
+    paths:
+      - "v31_master/shopee_r2_safe.py"
+      - "v31_master/tests/test_r57_relaxed_product_filters.py"
+      - ".github/workflows/v31_lab_relaxed_product_filters_offline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-lab-relaxed-offline-branch
+  cancel-in-progress: false
+
+jobs:
+  testar-sem-shopee-e-sem-blogger:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validar sintaxe
+        run: |
+          python -m py_compile v31_master/shopee_r2_safe.py v31_master/r57_store_policy.py v31_master/tests/test_r57_relaxed_product_filters.py
+      - name: Testar filtros flexibilizados (somente fixtures)
+        run: |
+          python -m unittest discover -s v31_master/tests -p "test_r57_relaxed_product_filters.py" -v
+      - name: Regressao dos contratos de seguranca da Loja
+        run: |
+          python -m unittest discover -s v31_master/tests -p "test_r57_store_policy.py" -v
+      - name: Confirmar escopo SAFE
+        run: |
+          echo "LAB_OFFLINE_ONLY=1"
+          echo "SHOPEE_API_CALLS=0"
+          echo "BLOGGER_API_WRITES=0"
+          echo "PRODUCTION_BRANCH_UNCHANGED=1"
