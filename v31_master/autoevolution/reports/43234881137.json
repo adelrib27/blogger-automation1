@@ -1,0 +1,460 @@
+{
+  "branch": "lab/v31-autoevolucao-safe-20261112",
+  "failures_by_layer": {
+    "BLOGGER_PIPELINE": 2,
+    "CI_GENERAL": 3,
+    "SHOPEE_PIPELINE": 12
+  },
+  "generated_by_run_id": 43234881137,
+  "lessons": [
+    {
+      "auto_code_edit_authorized": false,
+      "category": "SHOPEE_PIPELINE",
+      "failure_count_observed": 12,
+      "maturity": "REPEATED_NEEDS_SAFE_DIAGNOSTIC",
+      "proposal": "SAFE_DIAGNOSE_GRAPHQL_AND_CATALOG",
+      "required_gates": [
+        "GRAPHQL_ERRORS_NEVER_OOS",
+        "STOCK_UNKNOWN",
+        "NO_BLOGGER_PUT"
+      ],
+      "root_cause_known": false
+    },
+    {
+      "auto_code_edit_authorized": false,
+      "category": "CI_GENERAL",
+      "failure_count_observed": 3,
+      "maturity": "REPEATED_NEEDS_SAFE_DIAGNOSTIC",
+      "proposal": "SAFE_REVIEW_FAILURE_WITHOUT_INFERRED_CAUSE",
+      "required_gates": [
+        "MANUAL_DIAGNOSIS"
+      ],
+      "root_cause_known": false
+    },
+    {
+      "auto_code_edit_authorized": false,
+      "category": "BLOGGER_PIPELINE",
+      "failure_count_observed": 2,
+      "maturity": "REPEATED_NEEDS_SAFE_DIAGNOSTIC",
+      "proposal": "SAFE_RECHECK_TARGET_AND_IDEMPOTENCY",
+      "required_gates": [
+        "BLOG_ID_PAGE_ID_ALLOWLIST",
+        "NO_UNREVIEWED_PUT"
+      ],
+      "root_cause_known": false
+    }
+  ],
+  "observed_runs": 39,
+  "repository": "adelrib27/blogger-automation1",
+  "run_summaries": [
+    {
+      "branch": "lab/v31-loja-estoque-comissao-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43233229864,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43233229864",
+      "status": "completed",
+      "workflow": "V31 LAB - Loja Estoque e Comissao SAFE OFFLINE"
+    },
+    {
+      "branch": "lab/v31-loja-estoque-comissao-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43233090708,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43233090708",
+      "status": "completed",
+      "workflow": "V31 LAB - Loja Estoque e Comissao SAFE OFFLINE"
+    },
+    {
+      "branch": "lab/v31-loja-estoque-comissao-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "push",
+      "run_id": 43233019997,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43233019997",
+      "status": "completed",
+      "workflow": "V31 LAB - Loja Estoque e Comissao SAFE OFFLINE"
+    },
+    {
+      "branch": "lab/v31-loja-estoque-comissao-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43232383069,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43232383069",
+      "status": "completed",
+      "workflow": "V31 LAB - Loja Estoque e Comissao SAFE OFFLINE"
+    },
+    {
+      "branch": "lab/v31-loja-estoque-comissao-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43232184434,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43232184434",
+      "status": "completed",
+      "workflow": "V31 LAB - Loja Estoque e Comissao SAFE OFFLINE"
+    },
+    {
+      "branch": "lab/v31-loja-estoque-comissao-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43231902870,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43231902870",
+      "status": "completed",
+      "workflow": "V31 LAB - Loja Estoque e Comissao SAFE OFFLINE"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43228442713,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43228442713",
+      "status": "completed",
+      "workflow": "V31 LAB - Filtros Shopee flexibilizados OFFLINE SAFE"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43228266798,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43228266798",
+      "status": "completed",
+      "workflow": "V31 LAB - Filtros Shopee flexibilizados OFFLINE SAFE"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43227975705,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43227975705",
+      "status": "completed",
+      "workflow": "V31 LAB - Shopee uma consulta real comparacao filtros"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43227603848,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43227603848",
+      "status": "completed",
+      "workflow": "V31 LAB - Shopee parametro e campos SAFE"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43227286424,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43227286424",
+      "status": "completed",
+      "workflow": "V31 LAB - Shopee GraphQL diferencial SAFE"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "push",
+      "run_id": 43227160295,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43227160295",
+      "status": "completed",
+      "workflow": ".github/workflows/v31_lab_shopee_graphql_differential_safe.yml"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43225144206,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43225144206",
+      "status": "completed",
+      "workflow": "V31 LAB - Filtros Shopee flexibilizados OFFLINE SAFE"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43224900760,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43224900760",
+      "status": "completed",
+      "workflow": "V31 LAB - Uma consulta Shopee sem escrita Blogger"
+    },
+    {
+      "branch": "lab/v31-shopee-filtros-flex-safe-20261112",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "push",
+      "run_id": 43224569435,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43224569435",
+      "status": "completed",
+      "workflow": "V31 LAB - Filtros Shopee flexibilizados OFFLINE SAFE"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43166821942,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43166821942",
+      "status": "completed",
+      "workflow": "V31 Achados da Rotina - Shopee Loja 20min (isolado)"
+    },
+    {
+      "branch": "main",
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "event": "schedule",
+      "run_id": 43145394299,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43145394299",
+      "status": "completed",
+      "workflow": "Casa e Decoração — Editorial Autônomo v3 3x/dia"
+    },
+    {
+      "branch": "main",
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "event": "schedule",
+      "run_id": 43142414321,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43142414321",
+      "status": "completed",
+      "workflow": "Radar Tech BR — Editorial vNext Autônomo 5x/dia"
+    },
+    {
+      "branch": "main",
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "event": "schedule",
+      "run_id": 43139946069,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43139946069",
+      "status": "completed",
+      "workflow": "Oficina & Garagem — Editorial Autônomo 2x/dia"
+    },
+    {
+      "branch": "main",
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "event": "schedule",
+      "run_id": 43133627059,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43133627059",
+      "status": "completed",
+      "workflow": "Radar Tech BR — Editorial vNext Autônomo 5x/dia"
+    },
+    {
+      "branch": "lab/v31r1-shopee-safe-20261103",
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "event": "workflow_dispatch",
+      "run_id": 43130412111,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43130412111",
+      "status": "completed",
+      "workflow": "V31 LAB - Execucao diaria autonoma isolada"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "schedule",
+      "run_id": 43130403115,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43130403115",
+      "status": "completed",
+      "workflow": "V31 LAB - Ponte diaria Shopee (main agenda, LAB executa)"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43121889954,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43121889954",
+      "status": "completed",
+      "workflow": "V31 Achados da Rotina - Shopee Loja 20min (isolado)"
+    },
+    {
+      "branch": "main",
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "event": "schedule",
+      "run_id": 43119996599,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43119996599",
+      "status": "completed",
+      "workflow": "Casa e Decoração — Editorial Autônomo v3 3x/dia"
+    },
+    {
+      "branch": "main",
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43112638500,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43112638500",
+      "status": "completed",
+      "workflow": "Radar Tech BR — Editorial vNext Autônomo 5x/dia"
+    },
+    {
+      "branch": "main",
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43104302037,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43104302037",
+      "status": "completed",
+      "workflow": "Vida Pet Prática — Auditoria E2E permanente"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43103678449,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43103678449",
+      "status": "completed",
+      "workflow": "Vida Pet Prática — Loja Page 20+12"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43100960330,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43100960330",
+      "status": "completed",
+      "workflow": "Cozinha Sem Complicação — Loja Shopee diária"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": null,
+      "event": "schedule",
+      "run_id": 43098006344,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43098006344",
+      "status": "queued",
+      "workflow": "Portal Radar Tech Blogger — Loja Shopee 10:50"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": null,
+      "event": "schedule",
+      "run_id": 43095615062,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43095615062",
+      "status": "queued",
+      "workflow": "Achadinhos de Beleza — Loja Shopee 10:35"
+    },
+    {
+      "branch": "main",
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43094888047,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43094888047",
+      "status": "completed",
+      "workflow": "Radar Tech BR — Editorial vNext Autônomo 5x/dia"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43094298550,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43094298550",
+      "status": "completed",
+      "workflow": "Casa Prática Lab — Loja Page madura 20+12"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43094298336,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43094298336",
+      "status": "completed",
+      "workflow": "Moda e Ofertas — Loja Shopee 10:20"
+    },
+    {
+      "branch": "lab/v31r1-shopee-safe-20261103",
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "event": "workflow_dispatch",
+      "run_id": 43094272116,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43094272116",
+      "status": "completed",
+      "workflow": "V31 LAB - Execucao diaria autonoma isolada"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "event": "schedule",
+      "run_id": 43094260937,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43094260937",
+      "status": "completed",
+      "workflow": "V31 LAB - Ponte diaria Shopee (main agenda, LAB executa)"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43093642735,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43093642735",
+      "status": "completed",
+      "workflow": "Guia de Achados & Ofertas — Loja Shopee LIVE Controlada"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43091328886,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43091328886",
+      "status": "completed",
+      "workflow": "Achados que Valem — Loja Shopee LIVE Controlada"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43090762993,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43090762993",
+      "status": "completed",
+      "workflow": "Ventiladores em Foco — Loja Shopee LIVE"
+    },
+    {
+      "branch": "main",
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "event": "schedule",
+      "run_id": 43089789199,
+      "run_url": "https://github.com/adelrib27/blogger-automation1/actions/runs/43089789199",
+      "status": "completed",
+      "workflow": "Limpeza Inteligente — Loja Shopee LIVE"
+    }
+  ],
+  "safety": {
+    "auto_code_edit": false,
+    "auto_write_scope": "v31_master/autoevolution/reports/",
+    "code_changes_require_review": true,
+    "cross_repository_writes": false,
+    "exposed_run_logs": false,
+    "graphql_error_10000": "API_FAILURE_NOT_STOCK",
+    "model_retraining": false,
+    "production_writes": false,
+    "stock_from_missing_offer": "UNKNOWN"
+  },
+  "schema": "v31-autoevolution-safe/v1",
+  "source": "GITHUB_ACTIONS_RUN_METADATA_ONLY",
+  "stage": "OBSERVE_ANALYZE_REPORT",
+  "totals": {
+    "failure": 17,
+    "queued": 2,
+    "success": 20
+  }
+}
