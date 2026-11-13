@@ -35,22 +35,80 @@ class TestStrictAffiliateVerification(unittest.TestCase):
 '''
 
 
-def build_candidate(root: Path, sha: str):
-    source = git_blob(root, sha, SOURCE)
+DISCOVERY_SOURCE = 'v31_master/shopee_r2_safe.py'
+DISCOVERY_RECIPE = 'require-shopee-offer-nodes-v1'
+DISCOVERY_BEFORE = '''    nodes = (((data.get("data") or {}).get("productOfferV2") or {}).get("nodes") or [])
+    if not isinstance(nodes, list):
+        raise GateError("Nodes da Shopee ausentes")'''
+DISCOVERY_AFTER = '''    payload = data.get("data")
+    offers = payload.get("productOfferV2") if isinstance(payload, dict) else None
+    nodes = offers.get("nodes") if isinstance(offers, dict) else None
+    if not isinstance(nodes, list):
+        raise GateError("Nodes da Shopee ausentes")'''
+DISCOVERY_REGRESSION = '''import json
+import sys
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from shopee_r2_safe import GateError, signed_query
+
+
+class TestShopeeOfferEnvelope(unittest.TestCase):
+    def query(self, payload):
+        with patch('shopee_r2_safe.urllib.request.urlopen') as request:
+            response = request.return_value.__enter__.return_value
+            response.status = 200
+            response.read.return_value = json.dumps(payload).encode()
+            return signed_query('teste', 'local-id', 'local-secret')
+
+    def test_incomplete_envelopes_raise_controlled_error(self):
+        for payload in (
+            {},
+            {'data': []},
+            {'data': {'productOfferV2': 'invalid'}},
+            {'data': {'productOfferV2': {}}},
+            {'data': {'productOfferV2': {'nodes': None}}},
+            {'data': {'productOfferV2': {'nodes': {}}}},
+        ):
+            with self.subTest(payload=payload):
+                with self.assertRaisesRegex(GateError, 'Nodes da Shopee ausentes'):
+                    self.query(payload)
+
+    def test_explicit_list_remains_valid(self):
+        for nodes in ([], [{'itemId': '123'}]):
+            with self.subTest(nodes=nodes):
+                self.assertEqual(self.query({'data': {'productOfferV2': {'nodes': nodes}}}), nodes)
+'''
+
+RECIPES = (
+    (RECIPE, SOURCE, BEFORE, AFTER, REGRESSION,
+     'Truthy non-boolean values currently bypass the affiliate-origin boolean guard.',
+     'Require exactly True for verified origin, retaining all positive commissions.'),
+    (DISCOVERY_RECIPE, DISCOVERY_SOURCE, DISCOVERY_BEFORE, DISCOVERY_AFTER,
+     DISCOVERY_REGRESSION,
+     'Missing or malformed Shopee offer nodes can look like an empty result or raise an unexpected exception.',
+     'Require an explicit list of offers and preserve successful empty results.'),
+)
+
+
+def build_candidate(root: Path, sha: str, recipe=RECIPES[0]):
+    name, path, before, after, regression, hypothesis, improvement = recipe
+    source = git_blob(root, sha, path)
     text = source.decode('utf-8')
-    if BEFORE not in text:
-        return None  # Fixed or unknown source: never guess a replacement.
-    if text.count(BEFORE) != 1:
+    if before not in text:
+        return None
+    if text.count(before) != 1:
         raise SafetyStop('AMBIGUOUS_RECIPE_TARGET')
     candidate = {
         'schema': 'v31-candidate/v1', 'base_sha': sha,
-        'generator': 'DETERMINISTIC_REVIEWED_RECIPE', 'recipe': RECIPE,
-        'hypothesis': 'Truthy non-boolean values currently bypass the affiliate-origin boolean guard.',
-        'expected_improvement': 'Require exactly True for verified origin, retaining all positive commissions.',
+        'generator': 'DETERMINISTIC_REVIEWED_RECIPE', 'recipe': name,
+        'hypothesis': hypothesis, 'expected_improvement': improvement,
         'files': [
-            {'path': SOURCE, 'before_sha256': digest(source),
-             'content': text.replace(BEFORE, AFTER, 1)},
-            {'path': regression_path(sha), 'before_sha256': None, 'content': REGRESSION},
+            {'path': path, 'before_sha256': digest(source),
+             'content': text.replace(before, after, 1)},
+            {'path': regression_path(sha), 'before_sha256': None, 'content': regression},
         ],
     }
     validate(candidate, root, sha)
@@ -63,24 +121,29 @@ def main():
         raise SafetyStop('OFFLINE_TARGET_DENIED')
     root = Path.cwd()
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-    fingerprint = digest(RECIPE.encode() + git_blob(root, sha, SOURCE))
+    fingerprint = ''
     status = 'OFFLINE_NO_APPLICABLE_RECIPE'
     out = Path('autoevolution-output')
     out.mkdir(exist_ok=True)
     candidate_path = out / 'candidate.json'
     candidate_path.unlink(missing_ok=True)
-    past = []
+    published_contexts = set()
     for path in (root / 'v31_master/autoevolution/experiments').glob('*.json'):
         item = json.loads(path.read_text())
-        if item.get('context_key') == fingerprint and item.get('publish') == 'success':
-            past.append(item)
-    if past:
-        status = 'OFFLINE_ALREADY_PROPOSED'
-    else:
-        candidate = build_candidate(root, sha)
-        if candidate is not None:
-            candidate_path.write_text(json.dumps(candidate, ensure_ascii=False))
-            status = 'OFFLINE_CANDIDATE_READY'
+        if item.get('publish') == 'success':
+            published_contexts.add(item.get('context_key'))
+    for recipe in RECIPES:
+        name, path, *_ = recipe
+        candidate = build_candidate(root, sha, recipe)
+        if candidate is None:
+            continue
+        fingerprint = digest(name.encode() + git_blob(root, sha, path))
+        if fingerprint in published_contexts:
+            status = 'OFFLINE_ALREADY_PROPOSED'
+            continue
+        candidate_path.write_text(json.dumps(candidate, ensure_ascii=False))
+        status = 'OFFLINE_CANDIDATE_READY'
+        break
     result = {'status': status, 'mode': 'OFFLINE_RULES', 'context_key': fingerprint,
               'paid_api_calls': 0, 'production_writes': False}
     (out / 'status.json').write_text(json.dumps(result, indent=2))
