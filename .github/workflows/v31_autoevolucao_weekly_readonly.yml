@@ -1,0 +1,110 @@
+name: V31 - Auditoria semanal JARVIS SAFE (somente leitura)
+
+# Nao modifica repositorio, memoria, Blogger, Shopee ou workflows produtivos.
+# Um agendamento so fica ativo se esta proposta for integrada na main.
+on:
+  schedule:
+    # Segunda-feira, 12:37 UTC (09:37 em America/Recife).
+    - cron: '37 12 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: v31-weekly-autoevolution-readonly
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.event.repository.private == false && github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      V31_LAB_BRANCH: lab/v31-autoevolucao-safe-20261112
+      # Codigo ja auditado em LAB; revisao fixa evita executar alteracoes futuras nao revisadas.
+      V31_SAFE_SOURCE_SHA: 867a7167b1d496090471cb15239084ccae63994c
+
+    steps:
+      - name: Checkout somente da revisao LAB aprovada para observacao
+        uses: actions/checkout@v4
+        with:
+          ref: 867a7167b1d496090471cb15239084ccae63994c
+          persist-credentials: false
+
+      - name: Confirmar origem imutavel antes de executar qualquer codigo
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'adelrib27/blogger-automation1'
+          test "$(git rev-parse HEAD)" = "$V31_SAFE_SOURCE_SHA"
+          test "$V31_LAB_BRANCH" = 'lab/v31-autoevolucao-safe-20261112'
+
+      - name: Preparar Python padrao sem dependencia paga
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Executar todas as regressoes V31 em modo SAFE
+        run: python -m unittest discover -s v31_master/tests -v
+
+      - name: Observar somente metadados do Actions (relatorio local efemero)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python v31_master/autoevolution/engine.py \
+            --repo "$GITHUB_REPOSITORY" \
+            --branch "$V31_LAB_BRANCH" \
+            --run-id "$GITHUB_RUN_ID" \
+            --out "v31_master/autoevolution/reports/$GITHUB_RUN_ID.json"
+
+      - name: Registrar resumo sanitizado no proprio Actions run
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = Path("v31_master/autoevolution/reports") / (os.environ["GITHUB_RUN_ID"] + ".json")
+          data = json.loads(report.read_text(encoding="utf-8"))
+          if data.get("schema") != "v31-autoevolution-safe/v1":
+              raise SystemExit("INVALID_REPORT_SCHEMA")
+          if data.get("repository") != "adelrib27/blogger-automation1":
+              raise SystemExit("INVALID_REPORT_REPOSITORY")
+          if data.get("branch") != "lab/v31-autoevolucao-safe-20261112":
+              raise SystemExit("INVALID_REPORT_BRANCH")
+          if data.get("safety", {}).get("production_writes") is not False:
+              raise SystemExit("UNSAFE_REPORT")
+          limit = data.get("coverage", {})
+          observed = data.get("observed_runs")
+          if type(observed) is not int or observed < 0 or observed > 1000:
+              raise SystemExit("INVALID_OBSERVED_RUNS")
+          totals = data.get("totals", {})
+          if not isinstance(totals, dict):
+              raise SystemExit("INVALID_TOTALS")
+          allowed = {"success", "failure", "cancelled", "timed_out", "action_required",
+                     "neutral", "skipped", "stale", "queued", "in_progress"}
+          if any(k not in allowed or type(v) is not int or v < 0 for k, v in totals.items()):
+              raise SystemExit("INVALID_TOTAL_COUNTERS")
+          lines = [
+              "## V31 — Auditoria semanal SAFE",
+              "",
+              "- Origem: revisao LAB imutavel, sem novas escritas remotas",
+              "- Base: metadados recentes de GitHub Actions; nao logs, nao provas E2E",
+              f"- Execucoes observadas: {observed} (janela limitada a 1.000)",
+              f"- Janela atingiu limite: {bool(limit.get('at_limit'))}",
+              f"- Resultados: sucesso={totals.get('success', 0)}, falha={totals.get('failure', 0)}, timeout={totals.get('timed_out', 0)}",
+              "- Nenhum PUT Blogger, nenhuma consulta Shopee, nenhuma API de IA",
+              "- Relatorio gerado apenas no workspace efemero; nao gravado no Git",
+              "- Falhas bloqueiam novas etapas; revisao humana exigida para producao",
+              "",
+          ]
+          Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8").write("\n".join(lines))
+          print(json.dumps({"status": "V31_WEEKLY_READONLY_PASS",
+                            "observed_runs": observed,
+                            "remote_writes": False, "paid_api_calls": 0}))
+          PY
