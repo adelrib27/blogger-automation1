@@ -39,9 +39,16 @@ class HttpTests(unittest.TestCase):
         self.assertTrue(http.handle_post(h))
         self.assertEqual(h.calls, ["auth"])
 
+    def test_gate_disabled_by_default(self):
+        h = HandlerStub(http.GET_PATH)
+        with patch.dict(http.os.environ, {http.ENABLED_ENV: "false"}):
+            self.assertTrue(http.handle_get(h))
+        self.assertEqual(h.calls[-1][1], HTTPStatus.FORBIDDEN)
+        self.assertEqual(h.calls[-1][2]["error"], "inspection_not_enabled")
+
     def test_manifest_ok(self):
         h = HandlerStub(http.GET_PATH)
-        with patch.object(http, "manifest", return_value={"mode": "READ_ONLY"}):
+        with patch.object(http, "manifest", return_value={"mode": "READ_ONLY"}), patch.object(http, "_enabled", return_value=True):
             self.assertTrue(http.handle_get(h))
         self.assertEqual(h.calls[-1][1], HTTPStatus.OK)
         self.assertEqual(h.calls[-1][2]["result"]["mode"], "READ_ONLY")
@@ -51,7 +58,8 @@ class HttpTests(unittest.TestCase):
             "name": "../private.env", "expected_sha256": "0" * 64,
             "confirm": "READ V31 SOURCE"
         })
-        self.assertTrue(http.handle_post(h))
+        with patch.object(http, "_enabled", return_value=True):
+            self.assertTrue(http.handle_post(h))
         self.assertEqual(h.calls[-1][1], HTTPStatus.CONFLICT)
         self.assertEqual(h.calls[-1][2]["error"], "SOURCE_NOT_ALLOWLISTED")
 
