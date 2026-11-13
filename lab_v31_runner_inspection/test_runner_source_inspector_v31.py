@@ -12,7 +12,7 @@ class InspectorTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         self.content = "def test():\n    return 1\n"
-        (self.root / "browser_provision.py").write_text(self.content, encoding="utf-8")
+        (self.root / "browser_provision.py").write_bytes(self.content.encode("utf-8"))
         self.digest = hashlib.sha256(self.content.encode()).hexdigest()
 
     def read(self, **kwargs):
@@ -30,6 +30,14 @@ class InspectorTests(unittest.TestCase):
 
     def test_read_specific_sha(self):
         self.assertEqual(self.read()["content"], self.content)
+
+    def test_crlf_file_sha_is_computed_over_exact_bytes(self):
+        source_bytes = b"def test():\r\n    return 1\r\n"
+        (self.root / "browser_provision.py").write_bytes(source_bytes)
+        sha = hashlib.sha256(source_bytes).hexdigest()
+        result = self.read(expected_sha256=sha)
+        self.assertEqual(result["sha256"], sha)
+        self.assertEqual(result["content"].encode("utf-8"), source_bytes)
 
     def test_reject_wrong_confirmation(self):
         with self.assertRaisesRegex(InspectionDenied, "READ_CONFIRMATION_REQUIRED"):
@@ -49,7 +57,7 @@ class InspectorTests(unittest.TestCase):
 
     def test_reject_symlink(self):
         other = self.root / "anything.txt"
-        other.write_text(self.content)
+        other.write_bytes(self.content.encode("utf-8"))
         (self.root / "browser_provision.py").unlink()
         try:
             (self.root / "browser_provision.py").symlink_to(other)
@@ -65,21 +73,21 @@ class InspectorTests(unittest.TestCase):
 
     def test_reject_hardcoded_secret(self):
         source = 'client_secret = "should-not-leak-these-credentials"\n'
-        (self.root / "browser_provision.py").write_text(source, encoding="utf-8")
+        (self.root / "browser_provision.py").write_bytes(source.encode("utf-8"))
         sha = hashlib.sha256(source.encode()).hexdigest()
         with self.assertRaisesRegex(InspectionDenied, "POSSIBLE_HARDCODED_CREDENTIAL"):
             self.read(expected_sha256=sha)
 
     def test_reject_email(self):
         source = 'contact_email = "someone@example.net"\n'
-        (self.root / "browser_provision.py").write_text(source, encoding="utf-8")
+        (self.root / "browser_provision.py").write_bytes(source.encode("utf-8"))
         sha = hashlib.sha256(source.encode()).hexdigest()
         with self.assertRaisesRegex(InspectionDenied, "PERSONAL_DATA_POSSIBLE"):
             self.read(expected_sha256=sha)
 
     def test_credential_env_name_allowed(self):
         source = 'token_env = "BLOGGER_RUNNER_TOKEN"\n'
-        (self.root / "browser_provision.py").write_text(source, encoding="utf-8")
+        (self.root / "browser_provision.py").write_bytes(source.encode("utf-8"))
         sha = hashlib.sha256(source.encode()).hexdigest()
         self.assertEqual(self.read(expected_sha256=sha)["content"], source)
 
