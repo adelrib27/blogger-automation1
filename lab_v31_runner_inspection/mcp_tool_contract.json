@@ -1,0 +1,52 @@
+{
+  "schema": "v31-mcp-plugin-contract-proposal/v1",
+  "status": "LAB_ONLY_NOT_DEPLOYED",
+  "enabled_by_default": false,
+  "feature_gate": "BLOGGER_V31_SOURCE_INSPECTION_ENABLED=true",
+  "required_existing_tools": [
+    "health",
+    "audit",
+    "preflight_blog",
+    "create_blog",
+    "preflight_settings",
+    "configure_settings",
+    "adopt_model_v31_exact",
+    "provision_new_blog_v31"
+  ],
+  "proposed_tools": [
+    {
+      "name": "source_manifest_v31",
+      "http": {
+        "method": "GET",
+        "path": "/v1/source-manifest-v31"
+      },
+      "args": {},
+      "auth": "existing Runner bearer",
+      "effect": "READ_ONLY"
+    },
+    {
+      "name": "read_source_v31",
+      "http": {
+        "method": "POST",
+        "path": "/v1/source-read-v31"
+      },
+      "args": {
+        "name": "exact_allowlisted_filename",
+        "expected_sha256": "sha256_from_manifest",
+        "confirm": "READ V31 SOURCE"
+      },
+      "auth": "existing Runner bearer",
+      "effect": "READ_ONLY"
+    }
+  ],
+  "explicitly_not_authorized": [
+    "arbitrary_command",
+    "arbitrary_filepath",
+    "credentials",
+    "cookies",
+    "cross_repo_access",
+    "auto_deploy",
+    "auto_resume",
+    "BloggerWrites"
+  ]
+}
