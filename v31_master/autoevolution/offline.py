@@ -73,8 +73,10 @@ class TestShopeeOfferEnvelope(unittest.TestCase):
             {'data': {'productOfferV2': {'nodes': {}}}},
         ):
             with self.subTest(payload=payload):
-                with self.assertRaisesRegex(GateError, 'Nodes da Shopee ausentes'):
+                with self.assertRaises(Exception) as caught:
                     self.query(payload)
+                self.assertIsInstance(caught.exception, GateError)
+                self.assertEqual(str(caught.exception), 'Nodes da Shopee ausentes')
 
     def test_explicit_list_remains_valid(self):
         for nodes in ([], [{'itemId': '123'}]):
