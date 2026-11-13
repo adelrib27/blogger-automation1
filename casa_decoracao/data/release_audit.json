@@ -2,25 +2,24 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 7,
-    "draft_ready": 0,
+    "total": 10,
+    "draft_ready": 1,
     "rejected": 0,
-    "not_generated": 7,
-    "published_history": 43,
+    "not_generated": 9,
+    "published_history": 44,
     "rotation_cycle": 5,
     "rotation_pending": [
       "Cozinha",
-      "Banheiro",
       "Área Externa",
       "Cama, Mesa e Banho"
     ]
   },
   "items": [
     {
-      "id": 243,
-      "shopee_item_id": "58203212212",
-      "category": "Área Externa",
-      "product": "Vaso Polietileno + Planta Artificial Jiboia Follhas Grande Decoracao Jardim",
+      "id": 249,
+      "shopee_item_id": "23398723658",
+      "category": "Cozinha",
+      "product": "Ralador De Legumes Cortador Fatiador Legumes tabletop 3 Laminas Verduras Ralador Ralador Verdura Legumes Manivela",
       "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
@@ -33,10 +32,10 @@
       }
     },
     {
-      "id": 244,
-      "shopee_item_id": "23897417274",
-      "category": "Área Externa",
-      "product": "4 lED À Prova D'água Para Jardim Muro e Varanda Luminária Solar De Parede",
+      "id": 246,
+      "shopee_item_id": "23599671693",
+      "category": "Banheiro",
+      "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
       "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
@@ -49,11 +48,33 @@
       }
     },
     {
-      "id": 245,
-      "shopee_item_id": "7886168933",
+      "id": 247,
+      "shopee_item_id": "58257638413",
+      "category": "Banheiro",
+      "product": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 292,
+      "gate": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 574,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 53,
+          "meta_description_length": 146,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 254,
+      "shopee_item_id": "22197552043",
       "category": "Cama, Mesa e Banho",
-      "product": "Embalagem Para Jogo De Lençol Casal 45 X 37 Kit 20 Unidades Guarda Roupa Armário",
-      "queue_status": "QUARANTINE",
+      "product": "Capa Protetor de Colchão Box Matelado Impermeável Varias Cores Promoção",
+      "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
         "status": "NOT_GENERATED",
@@ -65,10 +86,26 @@
       }
     },
     {
-      "id": 241,
-      "shopee_item_id": "58253704479",
+      "id": 252,
+      "shopee_item_id": "22695782878",
+      "category": "Cama, Mesa e Banho",
+      "product": "Jogo Toalhas De Banho Super Luxo 4 Peças 100% Algodão Casal Gigante Alta Absorção Toalha Felpuda",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 250,
+      "shopee_item_id": "20199547395",
       "category": "Decoração",
-      "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
+      "product": "Kit 4 capa de almofada Decorativa Feliz Natal Alta Qualidade",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -81,10 +118,10 @@
       }
     },
     {
-      "id": 242,
-      "shopee_item_id": "9369604116",
-      "category": "Sala",
-      "product": "Manta Cobertinha Microfibra Lisa Casal Solteiro Cobertor Soft Veludo Cama Casal Sofá",
+      "id": 251,
+      "shopee_item_id": "21173589087",
+      "category": "Organização",
+      "product": "Kit 5 Saco Organizador Multiuso Brinquedo Guarda Roupa Porta Tudo Pvc e Ziper",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -97,10 +134,26 @@
       }
     },
     {
-      "id": 239,
-      "shopee_item_id": "20452224775",
+      "id": 253,
+      "shopee_item_id": "22094440551",
       "category": "Quarto",
-      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "product": "Kit 10 Saco Capa de Travesseiro 50 x 80 Transparente de Pvc e Ziper Anti Poeira",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 248,
+      "shopee_item_id": "22297611418",
+      "category": "Quarto",
+      "product": "Abajur Infantil Rosa Design Italiano Quarto Bebê Criança",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {

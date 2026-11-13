@@ -2,9 +2,9 @@
   "version": "2.3",
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
-    "input": 102,
-    "accepted": 80,
-    "rejected": 22
+    "input": 159,
+    "accepted": 98,
+    "rejected": 61
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -21,33 +21,49 @@
       "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
     },
     "selectionPasses": {
-      "strict": 16,
-      "relaxed": 8,
-      "fallback": 8
+      "strict": 20,
+      "relaxed": 9,
+      "fallback": 3
     },
     "shopDistribution": [
       [
         "344438002",
-        6
+        5
       ],
       [
-        "832040275",
-        3
-      ],
-      [
-        "327228576",
+        "779134443",
         2
       ],
       [
-        "699143044",
+        "1028459403",
+        2
+      ],
+      [
+        "296363855",
+        2
+      ],
+      [
+        "1264071501",
+        2
+      ],
+      [
+        "1426423897",
         1
       ],
       [
-        "1397947911",
+        "1662989296",
         1
       ],
       [
-        "989926234",
+        "605571142",
+        1
+      ],
+      [
+        "1242226486",
+        1
+      ],
+      [
+        "740111576",
         1
       ],
       [
@@ -55,7 +71,31 @@
         1
       ],
       [
+        "989926234",
+        1
+      ],
+      [
+        "1545872929",
+        1
+      ],
+      [
         "1464118632",
+        1
+      ],
+      [
+        "331541488",
+        1
+      ],
+      [
+        "1366028631",
+        1
+      ],
+      [
+        "596316342",
+        1
+      ],
+      [
+        "336245402",
         1
       ],
       [
@@ -63,123 +103,95 @@
         1
       ],
       [
-        "1515808332",
+        "1338165044",
         1
       ],
       [
-        "735707447",
+        "1357069533",
         1
       ],
       [
-        "1446851090",
+        "1905189087",
         1
       ],
       [
-        "1126188021",
+        "313984108",
         1
       ],
       [
-        "1460028285",
-        1
-      ],
-      [
-        "290908815",
-        1
-      ],
-      [
-        "397571861",
-        1
-      ],
-      [
-        "373745451",
-        1
-      ],
-      [
-        "1515741369",
-        1
-      ],
-      [
-        "1860475257",
-        1
-      ],
-      [
-        "1062551370",
-        1
-      ],
-      [
-        "947844282",
-        1
-      ],
-      [
-        "1134696185",
-        1
-      ],
-      [
-        "349149441",
-        1
-      ],
-      [
-        "1603106316",
+        "546270549",
         1
       ]
     ],
     "keywordDistribution": [
       [
-        "vaso jardim",
-        6
-      ],
-      [
-        "abajur quarto",
+        "protetor de colchao",
         5
       ],
       [
-        "lencol casal",
-        5
-      ],
-      [
-        "organizador guarda roupa",
+        "tapete banheiro",
         4
       ],
       [
-        "caixa organizadora",
+        "travesseiro",
         3
       ],
       [
-        "vaso decorativo",
+        "prateleira banheiro",
         3
       ],
       [
-        "luminaria solar jardim",
+        "organizador armario",
         3
       ],
       [
-        "manta sofa",
+        "organizador guarda roupa",
         3
+      ],
+      [
+        "fatiador de legumes",
+        3
+      ],
+      [
+        "almofada decorativa",
+        3
+      ],
+      [
+        "jogo de toalhas",
+        3
+      ],
+      [
+        "toalheiro banheiro",
+        1
+      ],
+      [
+        "abajur quarto",
+        1
       ]
     ],
     "categoryDistribution": [
       [
-        "Quarto",
-        9
-      ],
-      [
-        "Area Externa",
-        9
+        "Banheiro",
+        8
       ],
       [
         "Cama Mesa Banho",
-        5
+        8
+      ],
+      [
+        "Quarto",
+        7
       ],
       [
         "Organizacao",
         3
       ],
       [
-        "Decoracao",
+        "Cozinha",
         3
       ],
       [
-        "Sala",
+        "Decoracao",
         3
       ]
     ]
@@ -187,72 +199,123 @@
   "ranking": [
     {
       "rank": 1,
-      "itemId": 20452224775,
-      "productName": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "itemId": 23599671693,
+      "productName": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "abajur quarto"
+        "tapete banheiro"
       ],
-      "opportunityScore": 69.28,
-      "shopName": "Haute Decor",
-      "offerLink": "https://s.shopee.com.br/2gCeFNDiTm"
+      "opportunityScore": 74.37,
+      "shopName": "Panos Rezini",
+      "offerLink": "https://s.shopee.com.br/gRauupKgn"
     },
     {
       "rank": 2,
-      "itemId": 17740635467,
-      "productName": "Saco Embalagem Organizador para Toalha Lençol Casal Queen  De Pvc Com Ziper",
+      "itemId": 58200253216,
+      "productName": "Kit C/2 e KitC/4 Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "lencol casal"
+        "travesseiro"
       ],
-      "opportunityScore": 69.14,
-      "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/40i4XrAVB2"
+      "opportunityScore": 69.12,
+      "shopName": "Debela Home",
+      "offerLink": "https://s.shopee.com.br/AKc5NSOBhI"
     },
     {
       "rank": 3,
-      "itemId": 21173588648,
-      "productName": "Kit 10 Saco Organizador Multiuso Lençol Casal e Queen 55 X 49 De Pvc Com Ziper Guarda Roupa Armário",
+      "itemId": 8537566064,
+      "productName": "Kit com 5 Embalagem de Travesseiro 50 x 70 de pvc Guarda Roupa Armário",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "lencol casal"
+        "travesseiro"
       ],
-      "opportunityScore": 68.87,
+      "opportunityScore": 68.89,
       "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/4B1UkA9rq5"
+      "offerLink": "https://s.shopee.com.br/8Kr3tRkLDj"
     },
     {
       "rank": 4,
-      "itemId": 23394958787,
-      "productName": "Pedrisco Pedrinha Nº 0 Branca 1kg até 5kg para Jardim Aquário Vaso de Planta Decoração de Calçada",
+      "itemId": 21299673093,
+      "productName": "Tapete Coletor de Areia para Gatos Dupla Camada –Retém Sujeira, Antiderrapante, Lavável, Resistente",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "vaso jardim"
+        "tapete banheiro"
       ],
-      "opportunityScore": 65.62,
-      "shopName": "BGD Variedades",
-      "offerLink": "https://s.shopee.com.br/6L5xfLBpJB"
+      "opportunityScore": 68.54,
+      "shopName": "Smart Ultra Cat Bio",
+      "offerLink": "https://s.shopee.com.br/3B8w4hlOB1"
     },
     {
       "rank": 5,
-      "itemId": 20197726295,
-      "productName": "Caixa Saco Organizador Cobertor Casaco Guarda Roupa Ecológico Anti-Poeira Umidade Insetos Multiuso",
+      "itemId": 23498464792,
+      "productName": "Carrinho Organizador De Aço Multiuso 3 Prateleiras Premium Rodízio 360º Cozinha Sala Banheiro Livros Decoração Moderna",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "caixa organizadora",
-        "organizador guarda roupa"
+        "prateleira banheiro"
       ],
-      "opportunityScore": 65.05,
-      "shopName": "TIKO SHOP",
-      "offerLink": "https://s.shopee.com.br/LojgKGfw3"
+      "opportunityScore": 66.54,
+      "shopName": "VTO.VENDAS",
+      "offerLink": "https://s.shopee.com.br/AUvWbm4b3G"
     },
     {
       "rank": 6,
+      "itemId": 23299291762,
+      "productName": "Nicho Triplo Prateleira, Decoração Sala, Nicho para Banheiro , Cozinha , Quarto 07",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "prateleira banheiro"
+      ],
+      "opportunityScore": 66.02,
+      "shopName": "MoveisKZA",
+      "offerLink": "https://s.shopee.com.br/7pulS5feHe"
+    },
+    {
+      "rank": 7,
+      "itemId": 23392973710,
+      "productName": "Protetor Impermeável para Colchão SUPER SILENCIOSO 100% Impermeável Tecido Jacquard Premium Tamanhos",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "protetor de colchao"
+      ],
+      "opportunityScore": 65.66,
+      "shopName": "Loja do Koala",
+      "offerLink": "https://s.shopee.com.br/5AtzE03OLp"
+    },
+    {
+      "rank": 8,
+      "itemId": 12277774078,
+      "productName": "Kit 10 Saco Organizador Guarda Roupa Brinquedos C/ Ziper",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador armario"
+      ],
+      "opportunityScore": 64.88,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/5q9hOPJCq9"
+    },
+    {
+      "rank": 9,
+      "itemId": 58257638413,
+      "productName": "Kit 4 Acessórios Banheiro Inox Preto/Dourado Brilhante Toalheiro 40/60 Cm",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "toalheiro banheiro"
+      ],
+      "opportunityScore": 64.81,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/70LeSyGmwf"
+    },
+    {
+      "rank": 10,
       "itemId": 22297611418,
       "productName": "Abajur Infantil Rosa Design Italiano Quarto Bebê Criança",
       "priorityTier": "COMISSAO_EXTRA",
@@ -260,12 +323,51 @@
       "intentMatchedKeywords": [
         "abajur quarto"
       ],
-      "opportunityScore": 65.0,
+      "opportunityScore": 64.57,
       "shopName": "MVP & KUBIS 2020",
       "offerLink": "https://s.shopee.com.br/8fTsWO25ey"
     },
     {
-      "rank": 7,
+      "rank": 11,
+      "itemId": 20197726295,
+      "productName": "Caixa Saco Organizador Cobertor Casaco Guarda Roupa Ecológico Anti-Poeira Umidade Insetos Multiuso",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador guarda roupa"
+      ],
+      "opportunityScore": 64.23,
+      "shopName": "TIKO SHOP",
+      "offerLink": "https://s.shopee.com.br/LojgKGfw3"
+    },
+    {
+      "rank": 12,
+      "itemId": 23398723658,
+      "productName": "Ralador De Legumes Cortador Fatiador Legumes tabletop 3 Laminas Verduras Ralador Ralador Verdura Legumes Manivela",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "fatiador de legumes"
+      ],
+      "opportunityScore": 63.48,
+      "shopName": "Rio Shop Bazar",
+      "offerLink": "https://s.shopee.com.br/9fMQ9ZMML0"
+    },
+    {
+      "rank": 13,
+      "itemId": 20597689349,
+      "productName": "Protetor Impermeável Capa Colchão Matelada Cama Quarto Berço, Solteiro, Casal, Queen, King com Elástico",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "protetor de colchao"
+      ],
+      "opportunityScore": 63.31,
+      "shopName": "CasaLauraEnxovais",
+      "offerLink": "https://s.shopee.com.br/4qH8pO4f1n"
+    },
+    {
+      "rank": 14,
       "itemId": 23798178107,
       "productName": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
       "priorityTier": "COMISSAO_EXTRA",
@@ -273,12 +375,142 @@
       "intentMatchedKeywords": [
         "organizador guarda roupa"
       ],
-      "opportunityScore": 63.94,
+      "opportunityScore": 63.19,
       "shopName": "Maison Plus",
       "offerLink": "https://s.shopee.com.br/7fbLFlFsO4"
     },
     {
-      "rank": 8,
+      "rank": 15,
+      "itemId": 20199547395,
+      "productName": "Kit 4 capa de almofada Decorativa Feliz Natal Alta Qualidade",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "almofada decorativa"
+      ],
+      "opportunityScore": 62.56,
+      "shopName": "Liss Fashion Variedades",
+      "offerLink": "https://s.shopee.com.br/7VHvZVx1dk"
+    },
+    {
+      "rank": 16,
+      "itemId": 58257090824,
+      "productName": "Kit 4 Capas de Almofada 40x40 Suede Luxo Decorativa para Sofá Sala Quarto Macia com Zíper",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "almofada decorativa"
+      ],
+      "opportunityScore": 62.31,
+      "shopName": "VISIO DECORE ",
+      "offerLink": "https://s.shopee.com.br/7VHv3QhiYd"
+    },
+    {
+      "rank": 17,
+      "itemId": 21173589087,
+      "productName": "Kit 5 Saco Organizador Multiuso Brinquedo Guarda Roupa Porta Tudo Pvc e Ziper",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador armario"
+      ],
+      "opportunityScore": 62.23,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/6VPOBdGfUL"
+    },
+    {
+      "rank": 18,
+      "itemId": 22695782878,
+      "productName": "Jogo Toalhas De Banho Super Luxo 4 Peças 100% Algodão Casal Gigante Alta Absorção Toalha Felpuda",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "jogo de toalhas"
+      ],
+      "opportunityScore": 62.23,
+      "shopName": "DMC Cama Mesa Banho",
+      "offerLink": "https://s.shopee.com.br/2gCfNOFfUz"
+    },
+    {
+      "rank": 19,
+      "itemId": 23493088476,
+      "productName": "Jogo De Toalhas 4 Peças - Banho e Rosto Algodão Antipiling Yuna Karsten - BF Casa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "jogo de toalhas"
+      ],
+      "opportunityScore": 61.92,
+      "shopName": "Bf Casa Oficial",
+      "offerLink": "https://s.shopee.com.br/3B8vyJDlU6"
+    },
+    {
+      "rank": 20,
+      "itemId": 12132019052,
+      "productName": "Fatiador Couve Legumes Cortador Kitop Prático Picador Fino",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "fatiador de legumes"
+      ],
+      "opportunityScore": 60.84,
+      "shopName": "SuperAchados24H",
+      "offerLink": "https://s.shopee.com.br/8Kr2Z7RR2c"
+    },
+    {
+      "rank": 21,
+      "itemId": 22094440551,
+      "productName": "Kit 10 Saco Capa de Travesseiro 50 x 80 Transparente de Pvc e Ziper Anti Poeira",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "travesseiro"
+      ],
+      "opportunityScore": 67.01,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/AKc8H7cjAB"
+    },
+    {
+      "rank": 22,
+      "itemId": 18797496018,
+      "productName": "Tapete Antiderrapante Banheiro Absorção Rápida 60x40cm Lavável Cinza Azul Rosa Premium",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "tapete banheiro"
+      ],
+      "opportunityScore": 63.9,
+      "shopName": "MULTIORIENTAL",
+      "offerLink": "https://s.shopee.com.br/2BGOhfjceC"
+    },
+    {
+      "rank": 23,
+      "itemId": 58253960625,
+      "productName": "Nicho Triplo Prateleira, Decoração Sala, Nicho para Banheiro , Cozinha , Quarto 07",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "prateleira banheiro"
+      ],
+      "opportunityScore": 63.1,
+      "shopName": "MoveisKZA",
+      "offerLink": "https://s.shopee.com.br/80EBeOf0wj"
+    },
+    {
+      "rank": 24,
+      "itemId": 22197552043,
+      "productName": "Capa Protetor de Colchão Box Matelado Impermeável Varias Cores Promoção",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "protetor de colchao"
+      ],
+      "opportunityScore": 62.67,
+      "shopName": "CasaLauraEnxovais",
+      "offerLink": "https://s.shopee.com.br/80EBeI3luo"
+    },
+    {
+      "rank": 25,
       "itemId": 23395023935,
       "productName": "Colmeia Organizadora Gavetas Divisórias Organizador de Guarda Roupas Peças Intimas Meias Gaveta",
       "priorityTier": "COMISSAO_EXTRA",
@@ -286,583 +518,578 @@
       "intentMatchedKeywords": [
         "organizador guarda roupa"
       ],
-      "opportunityScore": 63.08,
+      "opportunityScore": 62.34,
       "shopName": "LojiniHome",
       "offerLink": "https://s.shopee.com.br/1BNtAcIB5c"
     },
     {
-      "rank": 9,
-      "itemId": 58253704479,
-      "productName": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "vaso decorativo"
-      ],
-      "opportunityScore": 63.0,
-      "shopName": "Artt mineira",
-      "offerLink": "https://s.shopee.com.br/4qH8pJxTdV"
-    },
-    {
-      "rank": 10,
-      "itemId": 42630439042,
-      "productName": "Pedra Branca Dolomita Para Decoração de Vaso Jardim",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "vaso jardim"
-      ],
-      "opportunityScore": 62.97,
-      "shopName": "Agiani Decor",
-      "offerLink": "https://s.shopee.com.br/6q2EGG9vIE"
-    },
-    {
-      "rank": 11,
-      "itemId": 21798317249,
-      "productName": "Caixa Saco Organizador Cobertor Casaco Guarda Roupa Ecológico Anti-Poeira Umidade Insetos Multiuso",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "caixa organizadora",
-        "organizador guarda roupa"
-      ],
-      "opportunityScore": 62.64,
-      "shopName": "Salmão Store",
-      "offerLink": "https://s.shopee.com.br/6fio3vJgPq"
-    },
-    {
-      "rank": 12,
-      "itemId": 23897136984,
-      "productName": "100 Leds Luminária Parede Solar Com Sensor Jardim Externa Prova D'água",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "luminaria solar jardim"
-      ],
-      "opportunityScore": 61.8,
-      "shopName": "P&H  Oficial",
-      "offerLink": "https://s.shopee.com.br/ql2m1aZZG"
-    },
-    {
-      "rank": 13,
-      "itemId": 9369604116,
-      "productName": "Manta Cobertinha Microfibra Lisa Casal Solteiro Cobertor Soft Veludo Cama Casal Sofá",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "manta sofa"
-      ],
-      "opportunityScore": 58.99,
-      "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/40i4SNbqre"
-    },
-    {
-      "rank": 14,
-      "itemId": 58254960691,
-      "productName": "Kit Decorativo Minimalista Home Vaso Cachepot Moderno",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "vaso decorativo"
-      ],
-      "opportunityScore": 57.0,
-      "shopName": "PowerAdesivos",
-      "offerLink": "https://s.shopee.com.br/4fxid0y6yS"
-    },
-    {
-      "rank": 15,
-      "itemId": 23598657219,
-      "productName": "Manta Pet Ultra Soft 70x90 Leve Macia Estampada Conforto Para Cachorros E Gatos Para Cama Sofá Transporte Chão",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "manta sofa"
-      ],
-      "opportunityScore": 56.38,
-      "shopName": "STUDIO DECOR COMERCIO",
-      "offerLink": "https://s.shopee.com.br/30pXGXfetY"
-    },
-    {
-      "rank": 16,
-      "itemId": 20296948206,
-      "productName": "KIT 4 Luminária Solar 100 Led Com Sensor Jardim Prova D'Água Led Solar",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "luminaria solar jardim"
-      ],
-      "opportunityScore": 56.21,
-      "shopName": "P&H  Oficial",
-      "offerLink": "https://s.shopee.com.br/gRcZibCuF"
-    },
-    {
-      "rank": 17,
-      "itemId": 20573590003,
-      "productName": "Saco Organizador Multiuso Lençol Casal e Queen 55 X 49 De Pvc Com Ziper Guarda Roupa Armário",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "lencol casal"
-      ],
-      "opportunityScore": 67.25,
-      "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/4LKuwT9EV8"
-    },
-    {
-      "rank": 18,
-      "itemId": 22098082869,
-      "productName": "Kit Saco A Vácuo Grande Organizador Edredom Coberto Mala Roupa Viagem De Cama com Bomba Manual Tamanho Grande",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "organizador guarda roupa"
-      ],
-      "opportunityScore": 62.91,
-      "shopName": "Panda Max Brasil",
-      "offerLink": "https://s.shopee.com.br/6q2EGEJ34t"
-    },
-    {
-      "rank": 19,
-      "itemId": 58203212212,
-      "productName": "Vaso Polietileno + Planta Artificial Jiboia Follhas Grande Decoracao Jardim",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "vaso jardim"
-      ],
-      "opportunityScore": 62.39,
-      "shopName": "Zestos",
-      "offerLink": "https://s.shopee.com.br/6fio3xAYdD"
-    },
-    {
-      "rank": 20,
-      "itemId": 29490649664,
-      "productName": "Abajur de Mesa Retrátil Recarregável LED Quente para Quarto/Escritório/Sala",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "abajur quarto"
-      ],
-      "opportunityScore": 61.29,
-      "shopName": "Keedi Eletrônicos",
-      "offerLink": "https://s.shopee.com.br/2LZp25MBtE"
-    },
-    {
-      "rank": 21,
-      "itemId": 19999844971,
-      "productName": "Suporte De Parede Banheiro Caixa Organizadora De Papel Higiênico Sem Furar Parede",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "caixa organizadora"
-      ],
-      "opportunityScore": 60.39,
-      "shopName": "HEXUN SHOP",
-      "offerLink": "https://s.shopee.com.br/2LZo4093sd"
-    },
-    {
-      "rank": 22,
-      "itemId": 14348909952,
-      "productName": "Manta Microfibra Lisa Casal Soft Veludo 2,40x1.80 Branca Branquíssima Cama Casal Sofá",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "manta sofa"
-      ],
-      "opportunityScore": 57.37,
-      "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/4B1UegbDWh"
-    },
-    {
-      "rank": 23,
-      "itemId": 23897417274,
-      "productName": "4 lED À Prova D'água Para Jardim Muro e Varanda Luminária Solar De Parede",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "luminaria solar jardim"
-      ],
-      "opportunityScore": 54.6,
-      "shopName": "P&H  Oficial",
-      "offerLink": "https://s.shopee.com.br/1qdZxrWlXU"
-    },
-    {
-      "rank": 24,
-      "itemId": 58212759681,
-      "productName": "Vaso Decorativo Moderno Canelado Impresso em 3D | Vaso para Flores e Decoração",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "vaso decorativo"
-      ],
-      "opportunityScore": 50.0,
-      "shopName": "camargoshope1",
-      "offerLink": "https://s.shopee.com.br/6AmWPlsOvu"
-    },
-    {
-      "rank": 25,
-      "itemId": 7886168933,
-      "productName": "Embalagem Para Jogo De Lençol Casal 45 X 37 Kit 20 Unidades Guarda Roupa Armário",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "lencol casal"
-      ],
-      "opportunityScore": 67.25,
-      "shopName": "Isaplastic",
-      "offerLink": "https://s.shopee.com.br/4VeL8m8bAB"
-    },
-    {
       "rank": 26,
-      "itemId": 22898771215,
-      "productName": "Lençol Plano Virol Algodão Penteado Estampado Sem Elastico Solteiro, Casal, Queen",
+      "itemId": 58257024938,
+      "productName": "Kit 4 Capas de Almofada 40x40 Suede Premium Drapeada Decorativa Zíper Luxo",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "lencol casal"
+        "almofada decorativa"
       ],
-      "opportunityScore": 62.61,
-      "shopName": "ALGOESTER (Cama-Mesa-Banho)",
-      "offerLink": "https://s.shopee.com.br/W8CNQNpHX"
+      "opportunityScore": 61.83,
+      "shopName": "Meu Lar - Online Decor",
+      "offerLink": "https://s.shopee.com.br/3qOcggvg00"
     },
     {
       "rank": 27,
-      "itemId": 47809638585,
-      "productName": "Pedra Branca Dolomita Para Decoração de Vaso Jardim",
+      "itemId": 23993063722,
+      "productName": "Jogo de Toalhas 4 Peças Banhão Gigante + Rosto Fio Penteado Lumina Karsten - Emcompre",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "vaso jardim"
+        "jogo de toalhas"
       ],
-      "opportunityScore": 61.61,
-      "shopName": "Vai de Tech",
-      "offerLink": "https://s.shopee.com.br/6AmXT2CSeA"
+      "opportunityScore": 61.72,
+      "shopName": "Bf Casa Oficial",
+      "offerLink": "https://s.shopee.com.br/2qW5ZhF2A0"
     },
     {
       "rank": 28,
-      "itemId": 22494167243,
-      "productName": "Casca De Arroz Carbonizada Substrato Para Horta Jardim Plantas Vaso Cultivo Orquídea Terrário",
+      "itemId": 15554199889,
+      "productName": "Saco Organizador Guarda Roupa Brinquedos C/ Ziper Caixa Baú Quarto Infantil",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "vaso jardim"
+        "organizador armario"
       ],
-      "opportunityScore": 61.23,
-      "shopName": "VGL DISTRIBUIDORA",
-      "offerLink": "https://s.shopee.com.br/5q9h4QDjK8"
+      "opportunityScore": 60.21,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/9V2zR6wVxn"
     },
     {
       "rank": 29,
-      "itemId": 23298244757,
-      "productName": "Kit 5 ou 10 Saco A Vácuo Grande Organizador Edredom Coberto Mala Roupa De Cama com bomba elétrica Grande 110x70",
+      "itemId": 22594205202,
+      "productName": "Fatiador Profissional Multifuncional De Aço Inoxidável 16 Em 1 Para Vegetais/Frutas/Legumes",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "organizador guarda roupa"
+        "fatiador de legumes"
       ],
-      "opportunityScore": 61.09,
-      "shopName": "MAXMULTI",
-      "offerLink": "https://s.shopee.com.br/6q2EaHWBst"
+      "opportunityScore": 58.89,
+      "shopName": "VIVALAR SHOP",
+      "offerLink": "https://s.shopee.com.br/80ECAVShiW"
     },
     {
       "rank": 30,
-      "itemId": 22696976027,
-      "productName": "Abajur De Chão Tripé 1,50 Cm Completo Com Cúpula E Fiação Luminária De Piso Para Sala, Quarto",
+      "itemId": 58267487467,
+      "productName": "Tapete Mágico Banheiro Antiderrapante 40x60cm Super Absorvente Secagem Rápida Microfibra Box Cozinha",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "abajur quarto"
+        "tapete banheiro"
       ],
-      "opportunityScore": 61.03,
-      "shopName": "temshopnet",
-      "offerLink": "https://s.shopee.com.br/3VllEuAXmt"
+      "opportunityScore": 63.8,
+      "shopName": "Bekel Textil Filial",
+      "offerLink": "https://s.shopee.com.br/1BNrVpnQfu"
     },
     {
       "rank": 31,
-      "itemId": 26836402859,
-      "productName": "10KG Pedra Branca Dolomita Para Decoração de Vaso Jardim",
+      "itemId": 21297458008,
+      "productName": "Protetor Para Colchão Impermeável Matelado Varias Medidas",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "vaso jardim"
+        "protetor de colchao"
       ],
-      "opportunityScore": 60.87,
-      "shopName": "Vai de Tech",
-      "offerLink": "https://s.shopee.com.br/5LDQTVFdL5"
+      "opportunityScore": 62.53,
+      "shopName": "CASA NOVA ENXOVAIS E DECORAÇÃO",
+      "offerLink": "https://s.shopee.com.br/6VPNrX9Txh"
     },
     {
       "rank": 32,
-      "itemId": 23099154378,
-      "productName": "Luminaria Projetor De Estrelas Galaxy Abajur Quarto Criancas Star Master Combinação de Duas Cores",
+      "itemId": 23193709615,
+      "productName": "Capa de Colchão Casal,Queen, King ,Solteiro Protetor em Malha com Zíper",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "abajur quarto"
+        "protetor de colchao"
       ],
-      "opportunityScore": 60.0,
-      "shopName": "tola1brasil",
-      "offerLink": "https://s.shopee.com.br/4VeIQk6jkz"
+      "opportunityScore": 62.5,
+      "shopName": "Bela Manu Home",
+      "offerLink": "https://s.shopee.com.br/4B1S2A7CNj"
     }
   ],
   "rejectedSample": [
     {
-      "itemId": 58207037675,
-      "productName": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
-      "shopName": "FGVITALFARMA",
+      "itemId": 22593485560,
+      "productName": "Kit Carimbo Coração Decorativo 2x2cm para sacola kraft embalagem caixa tags madeira tags papel seda",
+      "shopName": "Carimbos Rio Preto",
       "keywords": [
-        "vaso decorativo"
+        "almofada decorativa"
       ],
       "evaluations": {
-        "vaso decorativo": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "vaso"
-            ]
-          ],
-          "missing": [
-            [
-              "decorativo",
-              "decoracao",
-              "ceramica",
-              "vidro",
-              "resina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23898927498,
-      "productName": "Kit 3 Peças Painel de Quadros Decorativos Gratidão Para Sala Vaso Folha Verde",
-      "shopName": "PLANEJADOS MACHADO",
-      "keywords": [
-        "vaso decorativo"
-      ],
-      "evaluations": {
-        "vaso decorativo": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "vaso"
-            ]
-          ],
-          "missing": [
-            [
-              "decorativo",
-              "decoracao",
-              "ceramica",
-              "vidro",
-              "resina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 19399889999,
-      "productName": "Quadros Decorativos Boho Gratidão Muda Tudo Sala Kit Vaso Flores Sala",
-      "shopName": "PLANEJADOS MACHADO",
-      "keywords": [
-        "vaso decorativo"
-      ],
-      "evaluations": {
-        "vaso decorativo": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "vaso"
-            ]
-          ],
-          "missing": [
-            [
-              "decorativo",
-              "decoracao",
-              "ceramica",
-              "vidro",
-              "resina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 42026188269,
-      "productName": "Quadros Decorativos Trio Vasos Floral 3D Dourado Rosé Moderno Luxo Sala Quarto",
-      "shopName": "Fernandes_Arts",
-      "keywords": [
-        "vaso decorativo"
-      ],
-      "evaluations": {
-        "vaso decorativo": {
+        "almofada decorativa": {
           "accepted": false,
           "score": 0.0,
           "reason": "nucleo_do_produto_ausente",
           "matched": [],
           "missing": [
             [
-              "vaso"
+              "almofada",
+              "capa de almofada"
             ],
             [
-              "decorativo",
+              "decorativa",
               "decoracao",
-              "ceramica",
-              "vidro",
-              "resina"
+              "sala",
+              "sofa"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 56350407495,
-      "productName": "Quadros Decorativo Trio Vasos Geométricos Bege e Dourado Abstrato Sala Quarto",
-      "shopName": "Fernandes_Arts",
+      "itemId": 22393484962,
+      "productName": "💕Kit 2 Carimbos Coração decorativo para sacola kraft embalagem caixa tags papel seda",
+      "shopName": "Carimbos Rio Preto",
       "keywords": [
-        "vaso decorativo"
+        "almofada decorativa"
       ],
       "evaluations": {
-        "vaso decorativo": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23793513796,
+      "productName": "Kit 8 Carimbos decorativos para embalagens de venda envios delivery loja virtual caixa sacola kraft",
+      "shopName": "Carimbos Rio Preto",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58256493610,
+      "productName": "Almofadas para Sofá Suede 45x45cm Drapeada e Lisas Decorativas - Envio Imediato",
+      "shopName": "A&VDecor",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "decorativo"
+              "sofa"
             ]
           ],
           "missing": [
             [
-              "vaso"
+              "almofada",
+              "capa de almofada"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 58207060926,
-      "productName": "Arranjo De Rosas Artificiais Branco E Rosa Vaso Madeira MDF 27,5cm Para Mesa Sala Quarto Presente",
-      "shopName": "Goryane Indústria",
+      "itemId": 58206488256,
+      "productName": "Capa de Almofadas para sofá 45x45cm Drapeada e Lisas Decorativas - Envio Imediato",
+      "shopName": "A&VDecor",
       "keywords": [
-        "vaso decorativo"
+        "almofada decorativa"
       ],
       "evaluations": {
-        "vaso decorativo": {
+        "almofada decorativa": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "vaso"
+              "sofa"
             ]
           ],
           "missing": [
             [
-              "decorativo",
-              "decoracao",
-              "ceramica",
-              "vidro",
-              "resina"
+              "almofada",
+              "capa de almofada"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 56770096087,
-      "productName": "Kit 2 Vasos Decorativos Aurora Letreiro Personalizado Decoração Moderna Elegante Casa Escritório",
-      "shopName": "Isaas Express",
+      "itemId": 22099316416,
+      "productName": "Kit 2 Capas de Almofada Suede 45x45cm Drapeada Decorativas - Envio Imediato",
+      "shopName": "A&VDecor",
       "keywords": [
-        "vaso decorativo"
+        "almofada decorativa"
       ],
       "evaluations": {
-        "vaso decorativo": {
+        "almofada decorativa": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
+              "almofada"
+            ]
+          ],
+          "missing": [
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 9374772578,
+      "productName": "Almofadas Decorativas Lisas e Estampadas + Refil de Fibra Silicone 100%",
+      "shopName": "BES SHOP",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 7782951315,
+      "productName": "KIT com  2, 3, 4, 5 e 6 Capas Para Almofadas Decorativas Lisas e Estampadas Tecido Gorgorinho",
+      "shopName": "BES SHOP",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 9074742938,
+      "productName": "1 Capa de Almofada Decorativas Lisa ou Estampada 45x45Cm.",
+      "shopName": "BES SHOP",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "almofada",
+              "capa de almofada"
+            ]
+          ],
+          "missing": [
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22292019240,
+      "productName": "Kit 4 Capas Almofadas Decorativas Fe Preto e Branco 45x45cm",
+      "shopName": "Liss Fashion Variedades",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23796520145,
+      "productName": "Kit 4 Capas Almofadas Decorativas Aqui Mora Amor - 45x45cm",
+      "shopName": "Liss Fashion Variedades",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23199680933,
+      "productName": "KIT 4 CAPAS DE ALMOFADAS DECORATIVAS NATAL PAPAI NOEL BONECO DE NEVE FELIZ NATAL  RENA LANÇAMENTO 2026",
+      "shopName": "Bibili  Enxovais",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 43634047502,
+      "productName": "KIT 4 CAPAS DE ALMOFADAS DECORATIVAS NATAL PAPAI NOEL BONECO DE NEVE FELIZ NATAL LANÇAMENTO 2026 NV",
+      "shopName": "Casadopersonalizado",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ],
+            [
+              "decorativa",
+              "decoracao",
+              "sala",
+              "sofa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 14828351521,
+      "productName": "Kit 04 Almofadas Decorativa Estampa Digital Com e Sem Enchimento",
+      "shopName": "Vitoria Home",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "decorativa"
+            ]
+          ],
+          "missing": [
+            [
+              "almofada",
+              "capa de almofada"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58212669834,
+      "productName": "Kit Manta Decorativa P + 4 Capas de Almofadas Natalinas Estampa Digital Decoração Natal",
+      "shopName": "Luana Home",
+      "keywords": [
+        "almofada decorativa"
+      ],
+      "evaluations": {
+        "almofada decorativa": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "decorativa",
               "decoracao"
             ]
           ],
           "missing": [
             [
-              "vaso"
+              "almofada",
+              "capa de almofada"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 23096150316,
-      "productName": "1/2/5 Suporte De Parede Multifuncional Caixa De Armazenamento Casa Para Carregar Remoto Um Slot Organizadores para Casa",
-      "shopName": "P&H  Oficial",
+      "itemId": 58255534121,
+      "productName": "Kit Peseira Para Cama 3 Peças 2 Capas de Almofadas Decorativa Flannel Fofinho Macio Casal Queen King",
+      "shopName": "Andrade Prime Enxovais",
       "keywords": [
-        "caixa organizadora"
+        "almofada decorativa"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "almofada decorativa": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "caixa"
+              "decorativa"
             ]
           ],
           "missing": [
             [
-              "organizadora",
-              "organizador",
-              "organizacao"
+              "almofada",
+              "capa de almofada"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 12016728643,
-      "productName": "Cesto De Roupa Grande 40x70/30x50CM Caixa Cesto Dobrável Para Roupas E Brinquedos Cesto Infantil Casa Caixa Organizado",
-      "shopName": "MAX MO (Atacado & Varejo)",
+      "itemId": 23399044730,
+      "productName": "Kit 4 Almofadas Decorativas Para Sofá Cheias 100% Fibra Siliconada Tecido Várias cores 45x45cm Luxo",
+      "shopName": "Casa Oliveira Decor",
       "keywords": [
-        "caixa organizadora"
+        "almofada decorativa"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "almofada decorativa": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "caixa",
-              "cesto"
+              "sofa"
             ]
           ],
           "missing": [
             [
-              "organizadora",
-              "organizador",
-              "organizacao"
+              "almofada",
+              "capa de almofada"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 21797990606,
-      "productName": "1 unid Necessaire box personalizada com inicial organizador de maquiagem bolsinhas Necesser",
-      "shopName": "Donage Variedades",
+      "itemId": 13614461290,
+      "productName": "Kit 3 Saco Organizador Closet Edredon Cobertor C/ Ziper",
+      "shopName": "Isaplastic",
       "keywords": [
-        "caixa organizadora"
+        "organizador armario"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "organizador armario": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
@@ -873,145 +1100,430 @@
           ],
           "missing": [
             [
-              "caixa",
-              "cesto",
-              "cesta"
+              "armario",
+              "guarda roupa",
+              "gaveta",
+              "roupa"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 23998316312,
-      "productName": "155L/180L/195L Caixa Multifuncional De Armazenamento De Grande Capacidade Para Colchas E Roupas Domésticas",
-      "shopName": "Jonny Home",
+      "itemId": 12214476532,
+      "productName": "Kit 10 Saco Organizador Closet Edredom Cobertor C/ Ziper",
+      "shopName": "Isaplastic",
       "keywords": [
-        "caixa organizadora"
+        "organizador armario"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "organizador armario": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "caixa"
+              "organizador"
             ]
           ],
           "missing": [
             [
-              "organizadora",
-              "organizador",
-              "organizacao"
+              "armario",
+              "guarda roupa",
+              "gaveta",
+              "roupa"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 22493344923,
-      "productName": "Necessaire Feminina Personalizada com Inicial Box com Alça Porta Maquiagem Bolsa Viagem",
-      "shopName": "GB Gift",
+      "itemId": 15819646281,
+      "productName": "Kit 10 Saco Organizador Closet Edredon Cobertor C/ Ziper",
+      "shopName": "Isaplastic",
       "keywords": [
-        "caixa organizadora"
+        "organizador armario"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "organizador armario": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "armario",
+              "guarda roupa",
+              "gaveta",
+              "roupa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 10786490910,
+      "productName": "Kit 10 Organizadores De Roupas, Lençois E Enxovais Armário Cômoda",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "organizador armario"
+      ],
+      "evaluations": {
+        "organizador armario": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "armario"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "colmeia",
+              "divisoria",
+              "prateleira"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 16029225931,
+      "productName": "5 Saco Organizador Embalagem Para Travesseiros 50 X 70 De Pvc Com Ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
           "accepted": false,
           "score": 0.0,
           "reason": "nucleo_do_produto_ausente",
           "matched": [],
           "missing": [
             [
-              "caixa",
-              "cesto",
-              "cesta"
-            ],
-            [
-              "organizadora",
-              "organizador",
-              "organizacao"
+              "travesseiro"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 23594149969,
-      "productName": "Kit 5 Caixas Organizadoras com Tampa Cesto Grande de Plástico 2 Litros 4,5 Litros 17 Litros",
-      "shopName": "RV-ECOMMERCE",
+      "itemId": 14865446736,
+      "productName": "3 Saco Organizador Embalagem Para Travesseiros 50 X 70 De Pvc Com Ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
       "keywords": [
-        "caixa organizadora"
+        "travesseiro"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "travesseiro": {
           "accepted": false,
-          "score": 0.5,
+          "score": 0.0,
           "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "cesto"
-            ]
-          ],
+          "matched": [],
           "missing": [
             [
-              "organizadora",
-              "organizador",
-              "organizacao"
+              "travesseiro"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 58204627141,
-      "productName": "Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio",
-      "shopName": "WeDaily.BR",
+      "itemId": 16129223966,
+      "productName": "Saco Organizador Embalagens Para Travesseiros de pvc com ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
       "keywords": [
-        "caixa organizadora"
+        "travesseiro"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "travesseiro": {
           "accepted": false,
-          "score": 0.5,
+          "score": 0.0,
           "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "organizador"
-            ]
-          ],
+          "matched": [],
           "missing": [
             [
-              "caixa",
-              "cesto",
-              "cesta"
+              "travesseiro"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 22199198026,
-      "productName": "Kit Grampos e Presilhas Automotivas com 100 Peças + Estojo Organizador Universal Reforçado",
-      "shopName": "RD ECOM",
+      "itemId": 12914388155,
+      "productName": "Kit 10 Embalagens Para Travesseiros (organizadores) Guarda Roupa Armário",
+      "shopName": "Isaplastic",
       "keywords": [
-        "caixa organizadora"
+        "travesseiro"
       ],
       "evaluations": {
-        "caixa organizadora": {
+        "travesseiro": {
           "accepted": false,
-          "score": 0.5,
+          "score": 0.0,
           "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "organizador"
-            ]
-          ],
+          "matched": [],
           "missing": [
             [
-              "caixa",
-              "cesto",
-              "cesta"
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 7369630195,
+      "productName": "Kit com 150 Embalagens para Travesseiros 50x70 cm em PVC com Zíper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 3471729214,
+      "productName": "kit 10 Embalagem para travesseiros em pvc com ziper Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 3173138856,
+      "productName": "Kit com 100 Embalagens para Travesseiros 50x70 cm em PVC com Zíper  Guarda Roupa Armário",
+      "shopName": "Isaplastic",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22694244439,
+      "productName": "Kit 4 Travesseiros Nasa Antialérgico Toque Macio Confortável",
+      "shopName": "Lar Norte Magazine",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22893738408,
+      "productName": "Jogo de Lençol 400 Fios Extra Macio c/ Fronhas Ponto Palito Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Nosso Lar Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22893873080,
+      "productName": "Jogo de Lençol 400 fios Toque Suave e Acetinado Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Nosso Lar Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23493849040,
+      "productName": "Lencol Queen 400 Fios Micropercal Cama Casal Solteiro Tecido Super Macio",
+      "shopName": "GUCASACONFORTO",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 27794250681,
+      "productName": "Jogo de Lençol 400 Fios ponto palito Tecido Leve Suave Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Nosso Lar Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21497454288,
+      "productName": "Jogo De Lençol Solteiro Casal Queen 400 fios 3 Peças Micro Percal Toque Macio",
+      "shopName": "Gabi Pires Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 10220123465,
+      "productName": "Jogo de Lençol Queen 400 fios Luna 3 Peças  Casal Solteiro Ponto Palito Micro Percal",
+      "shopName": "Enxovais_Santana",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23393729993,
+      "productName": "Jogo De Lençol Todos os Tamanhos Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Rhavi Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23698029372,
+      "productName": "JOGO DE CAMA Queen 500 Fios Percal Toque Algodão + 2 Fronhas 50x70 | Cobre Leito Luxo Sem Elástico",
+      "shopName": "AS CONFECCOES TEXTIL",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
             ]
           ]
         }
@@ -1103,109 +1615,570 @@
       }
     },
     {
-      "itemId": 22794924951,
-      "productName": "Kit Vasos de Parede para Jardim flor e flores Vertical Marrom - 150ML grande pequeno",
-      "shopName": "PoliPlast",
+      "itemId": 23898906294,
+      "productName": "Kit Acessórios 5 Peças Banheiro Suporte Metal Aço Inox Quadrado Dourado Escovado Organizador Toalha Porta-Papel Demima",
+      "shopName": "Demima",
       "keywords": [
-        "vaso jardim"
+        "toalheiro banheiro"
       ],
       "evaluations": {
-        "vaso jardim": {
+        "toalheiro banheiro": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "jardim",
-              "flor"
+              "banheiro",
+              "toalha"
             ]
           ],
           "missing": [
             [
-              "vaso",
-              "cachepot"
+              "toalheiro",
+              "porta toalha",
+              "suporte toalha"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 58218239398,
-      "productName": "Fixador de Tubo para Irrigação Grampo para Mangueira em PLA Rega em Vasos Hortas Jardins e Canteiros",
-      "shopName": "JLDistribuidora10",
+      "itemId": 21699678089,
+      "productName": "Tapete Coletor Smart Ultra Cat – Dupla Camada, Retém Areia das Patinhas, Fácil de Limpar",
+      "shopName": "Smart Ultra Cat Bio",
       "keywords": [
-        "vaso jardim"
+        "tapete banheiro"
       ],
       "evaluations": {
-        "vaso jardim": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21899678029,
+      "productName": "Tapete Higiênico Coletor para Gatos Smart Ultra Cat – Dupla Camada, Retém Areia e Facilita a Limpeza",
+      "shopName": "Smart Ultra Cat Bio",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58256828309,
+      "productName": "Kit 02 Tapete Higiênico Para Cães Manada Pads Lavanda 80x60cm 30 Unidades",
+      "shopName": "MANADA ANIMAL",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 52207122446,
+      "productName": "Tapete Higiênico Para Cães Manada Pads Lavanda 80x60cm 30 Unidades",
+      "shopName": "MANADA ANIMAL",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58210998192,
+      "productName": "Tapete Higiênico Pet Blue Premium 82x60cm Ultra Absorção, Antivazamento, Antiodor",
+      "shopName": "TJR LOJA PETZ",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23792338028,
+      "productName": "Kit De Acessórios Para Banheiro 5 Peças Inox Preto - Demima",
+      "shopName": "EmmaDecor2013",
+      "keywords": [
+        "prateleira banheiro"
+      ],
+      "evaluations": {
+        "prateleira banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banheiro"
+            ]
+          ],
+          "missing": [
+            [
+              "prateleira",
+              "nicho",
+              "suporte",
+              "organizador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23098691920,
+      "productName": "Kit 02 Nichos 50X25 cm Sala, Quarto, Decoração, Banheiro - 47",
+      "shopName": "Casas e Parafusos",
+      "keywords": [
+        "prateleira banheiro"
+      ],
+      "evaluations": {
+        "prateleira banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banheiro"
+            ]
+          ],
+          "missing": [
+            [
+              "prateleira",
+              "nicho",
+              "suporte",
+              "organizador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 11297690370,
+      "productName": "Kit 02 Nichos 50X25cm Sala, Quarto, Decoração, Banheiro (47)",
+      "shopName": "MoveisKZA",
+      "keywords": [
+        "prateleira banheiro"
+      ],
+      "evaluations": {
+        "prateleira banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banheiro"
+            ]
+          ],
+          "missing": [
+            [
+              "prateleira",
+              "nicho",
+              "suporte",
+              "organizador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22498910656,
+      "productName": "Almofada de Pescoço Bebê com Apoio de Cabeça para Cadeirinha bebe conforto",
+      "shopName": "HeC shop",
+      "keywords": [
+        "protetor de colchao"
+      ],
+      "evaluations": {
+        "protetor de colchao": {
           "accepted": false,
           "score": 0.0,
           "reason": "nucleo_do_produto_ausente",
           "matched": [],
           "missing": [
             [
-              "vaso",
-              "cachepot"
+              "protetor",
+              "capa"
             ],
             [
-              "planta",
-              "jardim",
-              "flor",
-              "externa"
+              "colchao"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 58262496498,
-      "productName": "Casca de Pinus Polida Natural Pronta Para Uso Orquídeas Vasos Jardim Decoração Paisagismo Uso Adubo",
-      "shopName": "AG-PRIME",
+      "itemId": 22899281274,
+      "productName": "Toalha de Mesa para Jogos de Baralho Cartas Poker Quadrada e Retangular 4, 6 Lugares",
+      "shopName": "ALGOESTER (Cama-Mesa-Banho)",
       "keywords": [
-        "vaso jardim"
+        "jogo de toalhas"
       ],
       "evaluations": {
-        "vaso jardim": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "toalha de mesa"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23794346332,
+      "productName": "Jogo Banho E Rosto Tenille 12 Peças Algodão Premium Macio",
+      "shopName": "S M Story",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "jardim"
+              "banho",
+              "rosto",
+              "algodao"
             ]
           ],
           "missing": [
             [
-              "vaso",
-              "cachepot"
+              "toalha",
+              "toalhas"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 58253194830,
-      "productName": "Kit 6000 Bolinhas Orbis De Gel Cresce Na Água Incolor Transparente Decoração Vasos de Plantas",
-      "shopName": "Inovari.Shop",
+      "itemId": 23698848273,
+      "productName": "Jogo Banho E Rosto Tenille 4 Peças Qualidade Toque De Maciez",
+      "shopName": "S M Story",
       "keywords": [
-        "vaso jardim"
+        "jogo de toalhas"
       ],
       "evaluations": {
-        "vaso jardim": {
+        "jogo de toalhas": {
           "accepted": false,
-          "score": 0.0,
+          "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
-          "matched": [],
+          "matched": [
+            [
+              "banho",
+              "rosto"
+            ]
+          ],
           "missing": [
             [
-              "vaso",
-              "cachepot"
-            ],
+              "toalha",
+              "toalhas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23198852606,
+      "productName": "Jogo Banho E Rosto Tenille 2 Peças Absorvente Macio Algodão",
+      "shopName": "S M Story",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
             [
-              "planta",
-              "jardim",
-              "flor",
-              "externa"
+              "banho",
+              "rosto",
+              "algodao"
+            ]
+          ],
+          "missing": [
+            [
+              "toalha",
+              "toalhas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23098852590,
+      "productName": "Jogo Banho E Rosto Tenille 8 Peças Toque Fino E Suave Macio",
+      "shopName": "S M Story",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banho",
+              "rosto"
+            ]
+          ],
+          "missing": [
+            [
+              "toalha",
+              "toalhas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 18599879766,
+      "productName": "Jogo Banho E Rosto Tenille 12 Peças Macio Algodão Premium",
+      "shopName": "S M Story",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banho",
+              "rosto",
+              "algodao"
+            ]
+          ],
+          "missing": [
+            [
+              "toalha",
+              "toalhas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23794346399,
+      "productName": "Jogo Banho E Rosto Stella 4 Peças Alta Qualidade Toque Macio",
+      "shopName": "S M Story",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banho",
+              "rosto"
+            ]
+          ],
+          "missing": [
+            [
+              "toalha",
+              "toalhas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23298852616,
+      "productName": "Jogo Banho E Rosto Tenille 8 Peças Suave Macio Toque Fino",
+      "shopName": "S M Story",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banho",
+              "rosto"
+            ]
+          ],
+          "missing": [
+            [
+              "toalha",
+              "toalhas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23594356831,
+      "productName": "Jogo Banho E Rosto Stella 2 Peças Macia Algodão Premium",
+      "shopName": "S M Story",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "banho",
+              "rosto",
+              "algodao"
+            ]
+          ],
+          "missing": [
+            [
+              "toalha",
+              "toalhas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19299551988,
+      "productName": "Jogo de Toalhas Banhão Gigante 2 Peças Fios Penteados Lumina Karsten - Emcompre",
+      "shopName": "Bf Casa Oficial",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "toalhas"
+            ]
+          ],
+          "missing": [
+            [
+              "banho",
+              "rosto",
+              "algodao"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22594537301,
+      "productName": "Jogo de Toalhas de Geladeira em PE - Estampas Sortidas",
+      "shopName": "Aurora_Shop",
+      "keywords": [
+        "jogo de toalhas"
+      ],
+      "evaluations": {
+        "jogo de toalhas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "toalhas"
+            ]
+          ],
+          "missing": [
+            [
+              "banho",
+              "rosto",
+              "algodao"
             ]
           ]
         }
