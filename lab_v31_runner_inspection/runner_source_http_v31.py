@@ -6,6 +6,7 @@ Adds two read-only paths while preserving the prior Handler behavior.
 from __future__ import annotations
 
 from http import HTTPStatus
+import os
 from pathlib import Path
 
 from runner_source_inspector_v31 import InspectionDenied, manifest, read_source
@@ -13,12 +14,21 @@ from runner_source_inspector_v31 import InspectionDenied, manifest, read_source
 SOURCE_DIR = Path(__file__).resolve().parent
 GET_PATH = "/v1/source-manifest-v31"
 POST_PATH = "/v1/source-read-v31"
+ENABLED_ENV = "BLOGGER_V31_SOURCE_INSPECTION_ENABLED"
+
+
+def _enabled() -> bool:
+    # Explicit release gate. Unset / any value other than true => disabled.
+    return os.environ.get(ENABLED_ENV, "").lower() == "true"
 
 
 def handle_get(handler) -> bool:
     if handler.path != GET_PATH:
         return False
     if not handler._require_auth():
+        return True
+    if not _enabled():
+        handler._send(HTTPStatus.FORBIDDEN, {"ok": False, "error": "inspection_not_enabled"})
         return True
     try:
         result = manifest(SOURCE_DIR)
@@ -33,6 +43,9 @@ def handle_post(handler) -> bool:
     if handler.path != POST_PATH:
         return False
     if not handler._require_auth():
+        return True
+    if not _enabled():
+        handler._send(HTTPStatus.FORBIDDEN, {"ok": False, "error": "inspection_not_enabled"})
         return True
     try:
         payload = handler._read_json()
