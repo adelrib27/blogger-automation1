@@ -76,7 +76,9 @@ def signed_query(keyword: str, app_id: str, secret: str) -> list[dict]:
         raise GateError("Resposta Shopee inválida") from None
     if not isinstance(data, dict) or data.get("errors"):
         raise GateError("GraphQL retornou erro; não usar resposta parcial")
-    nodes = (((data.get("data") or {}).get("productOfferV2") or {}).get("nodes") or [])
+    payload = data.get("data")
+    offers = payload.get("productOfferV2") if isinstance(payload, dict) else None
+    nodes = offers.get("nodes") if isinstance(offers, dict) else None
     if not isinstance(nodes, list):
         raise GateError("Nodes da Shopee ausentes")
     return nodes
