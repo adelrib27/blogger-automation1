@@ -18,8 +18,8 @@ def fixture(root):
     for index, (var, hashvar, filename) in enumerate(mod.MODULES):
         content = (f"sample-{index}").encode()
         (tools / filename).write_bytes(content)
-        lines.append(f"\${var} = Join-Path $Tools '{filename}'")
-        lines.append(f"\${hashvar} = '{hashlib.sha256(content).hexdigest()}'")
+        lines.append(f"${var} = Join-Path $Tools '{filename}'")
+        lines.append(f"${hashvar} = '{hashlib.sha256(content).hexdigest()}'")
     boot = root / mod.BOOTSTRAP
     boot.parent.mkdir(parents=True, exist_ok=True)
     boot.write_text("\n".join(lines) + "\n", encoding="utf-8")
