@@ -1,29 +1,29 @@
 {
   "branch": "lab/v31-autoevolucao-safe-20261112",
   "cumulative_failures_by_layer": {
-    "BLOGGER_PIPELINE": 70,
-    "CI_GENERAL": 90,
-    "SHOPEE_PIPELINE": 207,
+    "BLOGGER_PIPELINE": 71,
+    "CI_GENERAL": 91,
+    "SHOPEE_PIPELINE": 209,
     "VISUAL_QA": 20
   },
   "cumulative_successes_by_layer": {
-    "BLOGGER_PIPELINE": 225,
+    "BLOGGER_PIPELINE": 229,
     "CI_GENERAL": 106,
-    "SHOPEE_PIPELINE": 288,
+    "SHOPEE_PIPELINE": 289,
     "VISUAL_QA": 16
   },
-  "historical_failure_observations": 402,
+  "historical_failure_observations": 406,
   "history_capacity": 50000,
   "history_capacity_warning": false,
-  "last_report_run_id": 43322420220,
+  "last_report_run_id": 43431341873,
   "legacy_attempt_unknown_count": 35,
   "lessons": [
     {
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "SHOPEE_PIPELINE",
-      "observed_failures": 207,
-      "observed_successes": 288,
+      "observed_failures": 209,
+      "observed_successes": 289,
       "production_approval_required": true,
       "proposal": "SAFE_DIAGNOSE_GRAPHQL_AND_CATALOG",
       "required_gates": [
@@ -36,7 +36,7 @@
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "CI_GENERAL",
-      "observed_failures": 90,
+      "observed_failures": 91,
       "observed_successes": 106,
       "production_approval_required": true,
       "proposal": "SAFE_REVIEW_FAILURE_WITHOUT_INFERRED_CAUSE",
@@ -48,8 +48,8 @@
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "BLOGGER_PIPELINE",
-      "observed_failures": 70,
-      "observed_successes": 225,
+      "observed_failures": 71,
+      "observed_successes": 229,
       "production_approval_required": true,
       "proposal": "SAFE_RECHECK_TARGET_AND_IDEMPOTENCY",
       "required_gates": [
@@ -6463,6 +6463,60 @@
       "conclusion": "success",
       "run_attempt": 1,
       "run_id": 43317028375
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43322572738
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43331123986
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43331134867
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43333091814
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43347366467
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43350688728
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43352296700
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43353573488
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43405424777
     }
   ],
   "repository": "adelrib27/blogger-automation1",
@@ -6473,6 +6527,6 @@
     "no_model_weight_updates": true,
     "no_production_code_writes": true
   },
-  "total_distinct_completed_runs": 1030,
-  "total_observations_including_attempts": 1065
+  "total_distinct_completed_runs": 1039,
+  "total_observations_including_attempts": 1074
 }
