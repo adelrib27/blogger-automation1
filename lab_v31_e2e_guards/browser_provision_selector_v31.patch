@@ -1,0 +1,79 @@
+--- a/browser_provision.py
++++ b/browser_provision.py
+@@ -241,25 +241,66 @@
+         page.wait_for_timeout(500)
+ 
+ 
++def _wait_new_blog_option(page: Page, *, attempts: int = 10, delay_ms: int = 200) -> Locator | None:
++    """Bounded wait for an existing, visible menu option. Never creates a blog."""
++    for attempt in range(attempts):
++        control = find_new_blog(page)
++        if control is not None:
++            return control
++        if attempt + 1 < attempts:
++            page.wait_for_timeout(delay_ms)
++    return None
++
++
+ def open_blog_switcher(page: Page) -> None:
++    """Open the Blogger listbox at most once, without closing an already-open menu.
++
++    The Blogger menu is toggleable. Preflight and creation can observe different
++    initial states; clicking an already-expanded listbox can hide 'Novo blog'.
++    No title, address, save or theme actions are performed here.
++    """
++    if find_new_blog(page) is not None:
++        return  # Already expanded: an extra click would close it.
+     _ensure_main_drawer(page)
+     listbox = visible_first([page.get_by_role("listbox", name=BLOG_SELECTION_RE)])
+     if listbox is None:
+         raise SafeAutomationError(
+-            "Não foi possível identificar com segurança o seletor de blogs. "
+-            "Nenhum clique de criação foi executado."
++            "O seletor de blogs não está visível. Nenhum clique de criação foi executado."
++        )
++
++    if _wait_new_blog_option(page, attempts=2) is not None:
++        return  # Drawer activation may already have opened it.
++    try:
++        expanded = listbox.get_attribute("aria-expanded")
++    except Exception as exc:
++        raise SafeAutomationError(
++            "Estado de expansão do seletor indisponível; nenhum clique de criação foi executado."
++        ) from exc
++    if expanded not in (None, "true", "false"):
++        raise SafeAutomationError(
++            "Estado de expansão inesperado; nenhum clique de criação foi executado."
++        )
++    if expanded == "true":
++        # Do not toggle an expanded menu closed just because options hydrate slowly.
++        if _wait_new_blog_option(page, attempts=12) is not None:
++            return
++        raise SafeAutomationError(
++            "Seletor expandido, mas Novo blog não apareceu. Nenhum clique de criação foi executado."
+         )
+ 
+     try:
+         listbox.click(timeout=3_000)
+-    except Exception:
+-        try:
+-            listbox.evaluate("el => el.click()")
+-        except Exception as exc:
+-            raise SafeAutomationError(
+-                "O seletor de blogs foi localizado, mas não pôde ser aberto com segurança."
+-            ) from exc
+-    page.wait_for_timeout(500)
++    except Exception as exc:
++        # Playwright may throw after the UI received the click; never click twice.
++        if _wait_new_blog_option(page, attempts=4) is not None:
++            return
++        raise SafeAutomationError(
++            "A abertura do seletor falhou ou ficou ambígua; nenhum clique de criação foi executado."
++        ) from exc
++    if _wait_new_blog_option(page, attempts=12) is None:
++        raise SafeAutomationError(
++            "Novo blog não ficou visível após abrir o seletor; nenhum clique de criação foi executado."
++        )
+ 
+ 
+ def find_new_blog(page: Page) -> Locator | None:

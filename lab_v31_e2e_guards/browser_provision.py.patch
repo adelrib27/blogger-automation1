@@ -1,0 +1,24 @@
+--- a/browser_provision.py
++++ b/browser_provision.py
+@@ -151,13 +151,14 @@
+ 
+ 
+ def select_page(context: BrowserContext) -> Page:
+-    for page in context.pages:
+-        try:
+-            if "blogger.com" in (urlparse(page.url).hostname or "").lower():
+-                return page
+-        except Exception:
+-            pass
+-    return context.pages[0] if context.pages else context.new_page()
++    # Reuse the already-shipped strict-host, foreground-aware selection helper.
++    # In particular never trust blogger.com.attacker.invalid as a Blogger host.
++    from active_blogger_page import select_active_blogger_page
++
++    return select_active_blogger_page(
++        context,
++        lambda ctx: ctx.pages[0] if ctx.pages else ctx.new_page(),
++    )
+ 
+ 
+ def visible_first(candidates: Iterable[Locator]) -> Locator | None:
