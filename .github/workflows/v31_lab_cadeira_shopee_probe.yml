@@ -34,13 +34,9 @@ jobs:
           import json
           import os
           import time
-          from pathlib import Path
           from lab_shopee_graphql_diagnostic import send_query
-          from shopee_r2_safe import load_commercial_profile
 
-          profile = load_commercial_profile(Path("v31_master/profiles/cadeira_certa_commercial_safe.json"))
-          for category in profile["store"]["categories"]:
-              keyword = category["terms"][0]
+          for keyword in ("cadeira ergonomica", "cadeira mesh", "cadeira estofada", "cadeira gamer"):
               query = ('query V31Probe { productOfferV2(keyword: ' + json.dumps(keyword) +
                        ', page: 1, limit: 5) { nodes { itemId productName offerLink imageUrl '
                        'priceMin shopId ratingStar sales commissionRate } } }')
