@@ -1,0 +1,16 @@
+*** browser_resilience_v06.py (baseline SHA-256 d6dd775ce80cd5c5d7d125290075da1b040814e348f31f1e4a9bc5540f49d2a7)
+--- browser_resilience_v06.py (R62 candidate SHA-256 3c2efec115dc120d20a8cd326aa659974f3304b1e28cfb436ab44753fc080080)
+@@
+ def install() -> None:
+     global _INSTALLED
+     if _INSTALLED:
+         return
+     bp.ensure_new_blog_available = ensure_new_blog_available_resilient
+-    bp.click_new_blog = click_new_blog_resilient
++    # R62 compatibility: R56 already defines a single-click / title-wait routine
++    # with a `phase` parameter. Never replace it with the legacy multi-click
++    # implementation, which both loses telemetry and rejects `phase=`.
++    # Keep the legacy V06 click resilience for pre-R56 browser modules only.
++    if not callable(getattr(bp, '_wait_new_blog_title', None)):
++        bp.click_new_blog = click_new_blog_resilient
+     _INSTALLED = True
