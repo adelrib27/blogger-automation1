@@ -26,7 +26,7 @@ No slug, checkpoint, Blogger API, SEO, theme, Cloudflare, credentials, publicati
 - Candidate plus 15 previous core/tests = **25/25 offline PASS** in isolated container; dependencies used current available files and selected historical snapshots, **NOT a real Chrome test**.
 - Windows installer simulated under a temporary root: exact single-file backup/apply/hash/rollback PASS; second rollback blocked. The scratch test replaced the local_service hash only to account for an older snapshot; **no such bypass exists in the delivered installer**.
 - Candidate `browser_provision.py` SHA256: `9c679f8f5b4f16390696ab2fd0eb9314006895617317ee586477a370e9b2216a`.
-- Delivered ZIP: `BLOGGER_V31_SELECTOR_GUARD_LAB_SAFE_2026-11-13.zip`; SHA256 `d1efc64933bf0259d8748f1507edb7e35e7e9928193581ce17a879cbf08c22c8`. Contains scripts for 25 Windows offline tests, exact source-hash preconditions, backup/rollback and the previously validated V2 controlled Python process restart gate. Installer only touches `browser_provision.py` and never writes Blogger.
+- Delivered ZIP: `BLOGGER_V31_SELECTOR_GUARD_LAB_SAFE_2026-11-13.zip`; SHA256 `92d43b48d97220639e37f6566090a02a551d3f7c1497b5dc5810211694cca999`. Manifest and archive integrity cross-checked; contains scripts for 25 Windows offline tests, exact source-hash preconditions, backup/rollback and the previously validated V2 controlled Python process restart gate. Installer only touches `browser_provision.py` and never writes Blogger.
 - **The ZIP is NOT yet installed on Windows**; live MCP `source_manifest_v31` still confirms baseline SHA `eee759...`, Runner health OK, `v31_public_e2e_validated=false`.
 
 ## Next only available action
