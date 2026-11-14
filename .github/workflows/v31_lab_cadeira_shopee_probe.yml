@@ -1,4 +1,4 @@
-name: V31 LAB - Teste real Shopee Cadeira Certa
+name: V31 LAB - Catalogo SAFE Shopee Cadeira Certa
 
 on:
   push:
@@ -20,25 +20,53 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Fazer uma consulta productOfferV2 e registrar contagens
+      - name: Validar o perfil e buscar o catalogo real
         env:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
         run: |
-          PYTHONPATH=v31_master python - <<'PY'
+          set -euo pipefail
+          if [[ "$SHOPEE_APP_ID" != "18352820579" || -z "$SHOPEE_SECRET" ]]; then
+            echo 'CREDENTIALS_MISSING_OR_APP_ID_MISMATCH'
+            exit 1
+          fi
+          python -W ignore - <<'PY'
           import json
           import os
-          from lab_shopee_graphql_diagnostic import send_query
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "v31_master")
+          import shopee_r2_safe as store
 
-          app = os.environ.get("SHOPEE_APP_ID", "").strip()
-          secret = os.environ.get("SHOPEE_SECRET", "").strip()
-          if app != "18352820579" or not secret:
-              print(json.dumps({"status": "CREDENTIALS_MISSING_OR_APP_ID_MISMATCH", "requests": 0}))
-              raise SystemExit(1)
-          query = ('query V31Probe { productOfferV2(keyword: "cadeira ergonomica", page: 1, limit: 5) '
-                   '{ nodes { itemId productName offerLink imageUrl priceMin shopId ratingStar sales commissionRate } } }')
-          result = send_query("cadeira_ergonomica", query, app, secret)
-          print("SHOPEE_PROBE_RESULT=" + json.dumps(result, sort_keys=True))
-          if result["status"] != "GRAPHQL_OK" or not result.get("offers_count"):
-              raise SystemExit(1)
+          path = Path("v31_master/profiles/cadeira_certa_commercial_safe.json")
+          profile = store.load_commercial_profile(path)
+          assert profile["target"]["blog_id"] == "7163624325768776034"
+          assert profile["store"]["page_id"] == "5014986967420563988"
+          assert sum(len(c["terms"]) for c in profile["store"]["categories"]) == 4
+          output = Path(os.environ["RUNNER_TEMP"]) / "cadeira-safe"
+          sys.argv = [store.__file__, "--commercial-profile", str(path), "--out-dir", str(output)]
+          try:
+              store.main()
+          except store.GateError as error:
+              reason = str(error)
+              allowed = {
+                  "Falha ao consultar Shopee; nenhum dado publicado",
+                  "Resposta Shopee inválida",
+                  "GraphQL retornou erro; não usar resposta parcial",
+                  "Nodes da Shopee ausentes",
+                  "Categoria sem quatro ofertas verificadas",
+                  "Oferta Shopee inválida",
+              }
+              print("CATALOG_SAFE_BLOCKED=" + (reason if reason in allowed else "VALIDATION_FAILED"))
+              raise SystemExit(1) from None
+          catalog = json.loads((output / "v31_r2_products.json").read_text())
+          products = catalog["products"]
+          assert len({p["item_id"] for p in products}) == 16
+          assert all(store.trusted(p["offer_link"], affiliate=True) and
+                     store.trusted(p["image"], affiliate=False) for p in products)
+          assert (output / "v31_r2_store.html").read_text().count('rel="nofollow sponsored noopener"') == 32
+          # Only the public-facing fields and destination IDs of the approved catalog.
+          fields = ("item_id", "title", "offer_link", "image", "price", "category", "rating")
+          catalog["products"] = [{k: p[k] for k in fields} for p in products]
+          print("CATALOG_APPROVED_JSON=" + json.dumps(catalog, ensure_ascii=True, separators=(",", ":")))
           PY
