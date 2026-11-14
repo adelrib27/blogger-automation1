@@ -30,43 +30,21 @@ jobs:
             echo 'CREDENTIALS_MISSING_OR_APP_ID_MISMATCH'
             exit 1
           fi
-          python -W ignore - <<'PY'
+          PYTHONPATH=v31_master python - <<'PY'
           import json
           import os
-          import sys
+          import time
           from pathlib import Path
-          sys.path.insert(0, "v31_master")
-          import shopee_r2_safe as store
+          from lab_shopee_graphql_diagnostic import send_query
+          from shopee_r2_safe import load_commercial_profile
 
-          path = Path("v31_master/profiles/cadeira_certa_commercial_safe.json")
-          profile = store.load_commercial_profile(path)
-          assert profile["target"]["blog_id"] == "7163624325768776034"
-          assert profile["store"]["page_id"] == "5014986967420563988"
-          assert sum(len(c["terms"]) for c in profile["store"]["categories"]) == 4
-          output = Path(os.environ["RUNNER_TEMP"]) / "cadeira-safe"
-          sys.argv = [store.__file__, "--commercial-profile", str(path), "--out-dir", str(output)]
-          try:
-              store.main()
-          except store.GateError as error:
-              reason = str(error)
-              allowed = {
-                  "Falha ao consultar Shopee; nenhum dado publicado",
-                  "Resposta Shopee inválida",
-                  "GraphQL retornou erro; não usar resposta parcial",
-                  "Nodes da Shopee ausentes",
-                  "Categoria sem quatro ofertas verificadas",
-                  "Oferta Shopee inválida",
-              }
-              print("CATALOG_SAFE_BLOCKED=" + (reason if reason in allowed else "VALIDATION_FAILED"))
-              raise SystemExit(1) from None
-          catalog = json.loads((output / "v31_r2_products.json").read_text())
-          products = catalog["products"]
-          assert len({p["item_id"] for p in products}) == 16
-          assert all(store.trusted(p["offer_link"], affiliate=True) and
-                     store.trusted(p["image"], affiliate=False) for p in products)
-          assert (output / "v31_r2_store.html").read_text().count('rel="nofollow sponsored noopener"') == 32
-          # Only the public-facing fields and destination IDs of the approved catalog.
-          fields = ("item_id", "title", "offer_link", "image", "price", "category", "rating")
-          catalog["products"] = [{k: p[k] for k in fields} for p in products]
-          print("CATALOG_APPROVED_JSON=" + json.dumps(catalog, ensure_ascii=True, separators=(",", ":")))
+          profile = load_commercial_profile(Path("v31_master/profiles/cadeira_certa_commercial_safe.json"))
+          for category in profile["store"]["categories"]:
+              keyword = category["terms"][0]
+              query = ('query V31Probe { productOfferV2(keyword: ' + json.dumps(keyword) +
+                       ', page: 1, limit: 5) { nodes { itemId productName offerLink imageUrl '
+                       'priceMin shopId ratingStar sales commissionRate } } }')
+              result = send_query(keyword, query, os.environ["SHOPEE_APP_ID"].strip(), os.environ["SHOPEE_SECRET"].strip())
+              print("CATEGORY_PROBE=" + json.dumps(result, sort_keys=True), flush=True)
+              time.sleep(2)
           PY
