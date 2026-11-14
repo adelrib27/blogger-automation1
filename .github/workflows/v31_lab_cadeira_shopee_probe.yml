@@ -1,0 +1,44 @@
+name: V31 LAB - Teste real Shopee Cadeira Certa
+
+on:
+  push:
+    branches: [lab/v31-shopee-cadeira-probe-20261114]
+    paths: [.github/workflows/v31_lab_cadeira_shopee_probe.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fazer uma consulta productOfferV2 e registrar contagens
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+        run: |
+          PYTHONPATH=v31_master python - <<'PY'
+          import json
+          import os
+          from lab_shopee_graphql_diagnostic import send_query
+
+          app = os.environ.get("SHOPEE_APP_ID", "").strip()
+          secret = os.environ.get("SHOPEE_SECRET", "").strip()
+          if app != "18352820579" or not secret:
+              print(json.dumps({"status": "CREDENTIALS_MISSING_OR_APP_ID_MISMATCH", "requests": 0}))
+              raise SystemExit(1)
+          query = ('query V31Probe { productOfferV2(keyword: "cadeira ergonomica", page: 1, limit: 5) '
+                   '{ nodes { itemId productName offerLink imageUrl priceMin shopId ratingStar sales commissionRate } } }')
+          result = send_query("cadeira_ergonomica", query, app, secret)
+          print("SHOPEE_PROBE_RESULT=" + json.dumps(result, sort_keys=True))
+          if result["status"] != "GRAPHQL_OK" or not result.get("offers_count"):
+              raise SystemExit(1)
+          PY
