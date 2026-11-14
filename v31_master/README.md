@@ -50,3 +50,7 @@ python v31_master/shopee_r2_safe.py --self-test
 ```
 
 A branch é somente para integração incremental. Não fazer merge na `main` nem ativar schedules/writers sem validação e autorização de publicação para os demais blogs.
+
+## Contato padrão para novos blogs do Sistema Mestre
+
+Use `blogbloggerautomation@gmail.com` como contato oficial nas novas páginas Contato. O endereço deve aparecer como texto e como link `mailto:`. Verifique a página publicada pelo Blogger. Registre a verificação de recebimento separadamente se houver um teste de envio autorizado. Não copie credenciais de e-mail para o repositório.
