@@ -83,7 +83,50 @@ def signed_query(keyword: str, app_id: str, secret: str) -> list[dict]:
         raise GateError("Nodes da Shopee ausentes")
     return nodes
 
-def normalize(item: dict, category: str) -> dict | None:
+def fold_title(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value.casefold())
+    return " ".join("".join(c for c in normalized if not unicodedata.combining(c)).split())
+
+
+def match_any(title: str, terms: list[str] | tuple[str, ...]) -> bool:
+    return any(re.search(r"(?<!\w)" + re.escape(term) + r"\w*", title) for term in terms)
+
+
+def load_commercial_profile(path: Path) -> dict:
+    profile = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(profile, dict) or profile.get("schema") != "v31-shopee-commercial/v1":
+        raise GateError("Perfil comercial inválido")
+    target = profile.get("target")
+    store = profile.get("store")
+    if (not isinstance(target, dict) or not isinstance(store, dict)
+            or not re.fullmatch(r"[0-9]{10,22}", str(target.get("blog_id", "")))
+            or not re.fullmatch(r"https://[a-z0-9-]+\.blogspot\.com/", str(target.get("url", "")))
+            or not re.fullmatch(r"[0-9]{10,22}", str(store.get("page_id", "")))
+            or store.get("page_path") != "/p/loja.html"):
+        raise GateError("Destino comercial inválido")
+    categories = store.get("categories")
+    if not isinstance(categories, list) or len(categories) != 4:
+        raise GateError("Perfil comercial exige quatro categorias")
+    names = set()
+    for category in categories:
+        name = category.get("name") if isinstance(category, dict) else None
+        if not isinstance(name, str) or not 1 <= len(name.strip()) <= 80 or fold_title(name) in names:
+            raise GateError("Categoria comercial inválida ou duplicada")
+        names.add(fold_title(name))
+        for field in ("terms", "include"):
+            terms = category.get(field)
+            if not isinstance(terms, list) or not 1 <= len(terms) <= 4:
+                raise GateError("Termos comerciais ausentes ou fora do limite")
+            if not all(isinstance(term, str) and 2 <= len(term.strip()) <= 100 for term in terms):
+                raise GateError("Termo comercial inválido")
+        exclude = category.get("exclude", [])
+        if (not isinstance(exclude, list) or len(exclude) > 12
+                or not all(isinstance(term, str) and 2 <= len(term.strip()) <= 100 for term in exclude)):
+            raise GateError("Exclusão comercial inválida")
+    return profile
+
+
+def normalize(item: dict, category: str, *, criteria: dict | None = None) -> dict | None:
     try:
         item_id = str(item.get("itemId", ""))
         title = str(item.get("productName", "")).strip()
@@ -103,11 +146,17 @@ def normalize(item: dict, category: str) -> dict | None:
         if rating is not None and (not rating.is_finite() or not (Decimal("3.5") <= rating <= Decimal("5"))):
             return None
         # LAB SAFE: tolerancia a acentos e plural/sufixo no termo, mantendo fronteira de palavra.
-        folded = "".join(c for c in unicodedata.normalize("NFKD", title.casefold())
-                         if not unicodedata.combining(c))
-        if not any(re.search(r"(?<!\w)" + re.escape(w) + r"\w*", folded)
-                   for w in KEYWORDS[category]):
-            return None
+        if criteria is None:
+            folded = "".join(c for c in unicodedata.normalize("NFKD", title.casefold())
+                             if not unicodedata.combining(c))
+            if not match_any(folded, KEYWORDS[category]):
+                return None
+        else:
+            folded = fold_title(title)
+            if not match_any(folded, [fold_title(term) for term in criteria["include"]]):
+                return None
+            if match_any(folded, [fold_title(term) for term in criteria.get("exclude", [])]):
+                return None
         return {"item_id": item_id, "title": title, "offer_link": link,
                 "image": image, "price": str(price), "rating": str(rating) if rating else None,
                 "sales": sales, "category": category, "shop_id": str(item.get("shopId", ""))}
@@ -121,7 +170,8 @@ def choose(profile: dict, by_category: dict[str, list[dict]]) -> list[dict]:
         raise GateError("Categorias não correspondem ao perfil")
     for category in categories:
         name = category["name"]
-        candidates = [p for x in by_category[name] if (p := normalize(x, name))]
+        criteria = category if profile.get("schema") == "v31-shopee-commercial/v1" else None
+        candidates = [p for x in by_category[name] if (p := normalize(x, name, criteria=criteria))]
         candidates.sort(key=lambda a: (-a["sales"], a["item_id"]))
         selected = []
         for p in candidates:
@@ -183,11 +233,21 @@ def render(products: list[dict], *, lab_url: str) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--profile", default=str(Path(__file__).parent / "profiles" / "lab_r2_v31_r52_r55.json"))
+    profiles = ap.add_mutually_exclusive_group()
+    profiles.add_argument("--profile", default=str(Path(__file__).parent / "profiles" / "lab_r2_v31_r52_r55.json"))
+    profiles.add_argument("--commercial-profile", type=Path)
+    ap.add_argument("--check-commercial-profile", action="store_true")
     ap.add_argument("--out-dir", type=Path)
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
-    profile = load_profile(Path(args.profile))
+    profile = (load_commercial_profile(args.commercial_profile) if args.commercial_profile
+               else load_profile(Path(args.profile)))
+    if args.check_commercial_profile:
+        if not args.commercial_profile:
+            ap.error("--check-commercial-profile exige --commercial-profile")
+        print(json.dumps({"status": "V31_COMMERCIAL_PROFILE_OK", "writes_blogger": False,
+                          "blog_id": profile["target"]["blog_id"]}))
+        return 0
     if args.self_test:
         assert trusted("https://s.shopee.com.br/abc", affiliate=True)
         assert not trusted("https://s.shopee.com.br.evil.com/abc", affiliate=True)
@@ -203,27 +263,36 @@ def main() -> int:
     app_id, secret = os.environ.get("SHOPEE_APP_ID", "").strip(), os.environ.get("SHOPEE_SECRET", "").strip()
     if not re.fullmatch(r"[0-9]+", app_id) or not secret:
         raise GateError("Credenciais não disponíveis no ambiente seguro")
+    from store_stock_commission_safe import commission_eligible, select_verified
+
     groups = {}
     for cat in profile["store"]["categories"]:
         seen, all_nodes = set(), []
         for keyword in cat["terms"]:
             for raw in signed_query(keyword, app_id, secret):
+                if not isinstance(raw, dict):
+                    raise GateError("Oferta Shopee inválida")
                 rid = str(raw.get("itemId", ""))
+                if args.commercial_profile and not commission_eligible(raw, verified_affiliate_response=True):
+                    continue
                 if rid not in seen:
                     all_nodes.append(raw)
                     seen.add(rid)
         groups[cat["name"]] = all_nodes
     # Gate comercial V31: comissao positiva verificada no retorno da API
     # sem taxa percentual minima e sem exigir comissao extra do vendedor.
-    from store_stock_commission_safe import select_verified
     products = select_verified(profile, groups)
     content = render(products, lab_url=profile["target"]["url"])
     args.out_dir.mkdir(parents=True, exist_ok=True)
     if any(args.out_dir.iterdir()):
         raise GateError("Diretório de saída deve estar vazio")
     (args.out_dir / "v31_r2_store.html").write_text(content, encoding="utf-8")
+    catalog = {"blog_id": profile["target"]["blog_id"], "count": 16, "products": products}
+    if args.commercial_profile:
+        catalog["page_id"] = profile["store"]["page_id"]
+        catalog["store_url"] = profile["target"]["url"].rstrip("/") + profile["store"]["page_path"]
     (args.out_dir / "v31_r2_products.json").write_text(
-        json.dumps({"blog_id": profile["target"]["blog_id"], "count": 16, "products": products},
+        json.dumps(catalog,
                    ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"status": "V31_R56_SHOPEE_SAFE_FETCH_OK_NO_BLOGGER_WRITES",
                       "blog_id": profile["target"]["blog_id"], "products": 16,
