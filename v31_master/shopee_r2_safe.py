@@ -45,6 +45,35 @@ def trusted(url: str, *, affiliate: bool) -> bool:
     except (ValueError, TypeError):
         return False
 
+class ShopeeGraphQLError(GateError):
+    def __init__(self, errors: object):
+        super().__init__("GraphQL retornou erro; não usar resposta parcial")
+        codes = []
+        if isinstance(errors, list):
+            for error in errors[:5]:
+                if not isinstance(error, dict):
+                    continue
+                extension = error.get("extensions")
+                code = extension.get("code", error.get("code")) if isinstance(extension, dict) else error.get("code")
+                if type(code) is int and 0 <= code <= 999999:
+                    codes.append(code)
+                elif isinstance(code, str) and re.fullmatch(r"[0-9]{1,6}", code):
+                    codes.append(int(code))
+        self.system_error = isinstance(errors, list) and len(errors) == len(codes) and set(codes) == {10000}
+        self.codes = tuple(codes)
+
+
+def query_commercial(keyword: str, app_id: str, secret: str) -> list[dict]:
+    try:
+        return signed_query(keyword, app_id, secret)
+    except ShopeeGraphQLError as error:
+        if not error.system_error:
+            raise
+    print(json.dumps({"status": "SHOPEE_RETRY", "graphql_error_codes": [10000], "delay_seconds": 8}))
+    time.sleep(8)
+    return signed_query(keyword, app_id, secret)
+
+
 def signed_query(keyword: str, app_id: str, secret: str) -> list[dict]:
     k = json.dumps(keyword, ensure_ascii=False)
     # LAB SAFE: consulta mínima documentada e observada como funcional em 1 execução
@@ -74,8 +103,11 @@ def signed_query(keyword: str, app_id: str, secret: str) -> list[dict]:
         data = json.loads(raw)
     except (ValueError, UnicodeError):
         raise GateError("Resposta Shopee inválida") from None
-    if not isinstance(data, dict) or data.get("errors"):
-        raise GateError("GraphQL retornou erro; não usar resposta parcial")
+    if not isinstance(data, dict):
+        raise GateError("Resposta Shopee inválida")
+    errors = data.get("errors")
+    if errors:
+        raise ShopeeGraphQLError(errors)
     payload = data.get("data")
     offers = payload.get("productOfferV2") if isinstance(payload, dict) else None
     nodes = offers.get("nodes") if isinstance(offers, dict) else None
@@ -265,11 +297,12 @@ def main() -> int:
         raise GateError("Credenciais não disponíveis no ambiente seguro")
     from store_stock_commission_safe import commission_eligible, select_verified
 
+    query = query_commercial if args.commercial_profile else signed_query
     groups = {}
     for cat in profile["store"]["categories"]:
         seen, all_nodes = set(), []
         for keyword in cat["terms"]:
-            for raw in signed_query(keyword, app_id, secret):
+            for raw in query(keyword, app_id, secret):
                 if not isinstance(raw, dict):
                     raise GateError("Oferta Shopee inválida")
                 rid = str(raw.get("itemId", ""))
@@ -303,6 +336,9 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except Exception as exc:
-        print(json.dumps({"status": "V31_R56_SHOPEE_SAFE_FAIL_CLOSED",
-                          "reason_type": type(exc).__name__, "writes_blogger": False}, ensure_ascii=False))
+        result = {"status": "V31_R56_SHOPEE_SAFE_FAIL_CLOSED",
+                  "reason_type": type(exc).__name__, "writes_blogger": False}
+        if isinstance(exc, ShopeeGraphQLError):
+            result["graphql_error_codes"] = exc.codes
+        print(json.dumps(result, ensure_ascii=False))
         raise SystemExit(2)
