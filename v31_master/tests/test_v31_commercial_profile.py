@@ -56,3 +56,25 @@ class TestCommercialProfile(unittest.TestCase):
             path.write_text(json.dumps(profile))
             with self.assertRaisesRegex(store.GateError, "duplicada"):
                 store.load_commercial_profile(path)
+
+    def test_transient_graphql_error_retries_once_and_discards_partial_data(self):
+        transient = store.ShopeeGraphQLError([{"extensions": {"code": "10000"}}])
+        with patch.object(store, "signed_query", side_effect=[transient, []]) as request, \
+                patch.object(store.time, "sleep") as sleep:
+            self.assertEqual(store.query_commercial("cadeira", "123", "mock"), [])
+            self.assertEqual(request.call_count, 2)
+            sleep.assert_called_once_with(8)
+        with patch.object(store, "signed_query", side_effect=transient) as request, \
+                patch.object(store.time, "sleep"):
+            with self.assertRaises(store.ShopeeGraphQLError):
+                store.query_commercial("cadeira", "123", "mock")
+            self.assertEqual(request.call_count, 2)
+
+    def test_non_transient_error_is_not_retried(self):
+        error = store.ShopeeGraphQLError([{"code": 10020}])
+        with patch.object(store, "signed_query", side_effect=error) as request, \
+                patch.object(store.time, "sleep") as sleep:
+            with self.assertRaises(store.ShopeeGraphQLError):
+                store.query_commercial("cadeira", "123", "mock")
+            request.assert_called_once()
+            sleep.assert_not_called()
