@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 from affiliate_hub_v31.feed_audit import FeedAuditError, inspect_csv
+from affiliate_hub_v31.feed_download import redirect_allowed
 
 
 class FeedAuditTests(unittest.TestCase):
@@ -43,6 +44,16 @@ class FeedAuditTests(unittest.TestCase):
         with self.assertRaises(FeedAuditError) as caught:
             inspect_csv(invalid,set(),"feed_1")
         self.assertEqual(str(caught.exception),"CSV_COLUMN_COUNT_MISMATCH")
+
+    def test_redirect_allowed_only_inside_https_shopee(self):
+        self.assertTrue(redirect_allowed("https://download.shopee.com.br/path?token=private"))
+        self.assertTrue(redirect_allowed("https://affiliate.shopee.com.br/api/v1/datafeed/download?id=test"))
+        for url in ("http://download.shopee.com.br/path",
+                    "https://shopee.com.br.evil.test/path",
+                    "https://user:pass@shopee.com.br/path",
+                    "https://example.com/feed.csv",
+                    "https://shopee.com.br:444/path"):
+            self.assertFalse(redirect_allowed(url))
 
     def test_reject_compressed_content_without_exposing_it(self):
         data=self.root/"f.csv"
