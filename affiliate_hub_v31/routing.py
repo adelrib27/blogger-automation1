@@ -65,16 +65,26 @@ def plan_site(catalog: Catalog, site_key: str, limit: int = 20) -> dict:
     selected = []
     seen = set()
     cached_count = 0
+    # Intercala os nichos para evitar preencher a vitrine com um único assunto.
+    pools = []
     for pair in route["allowed_niches"]:
-        category, niche = pair.split("/",1)
-        for product in catalog.select_products(route["campaign"],limit,category=category,niche=niche):
+        category, niche = pair.split("/", 1)
+        pools.append(iter(catalog.select_products(route["campaign"], limit,
+                                                 category=category, niche=niche)))
+    while len(selected) < limit:
+        progressed = False
+        for pool in pools:
+            product = next(pool, None)
+            if product is None:
+                continue
+            progressed = True
             if product[0] not in seen:
                 selected.append(product[0])
                 seen.add(product[0])
                 cached_count += int(product[4])
             if len(selected) >= limit:
                 break
-        if len(selected) >= limit:
+        if not progressed:
             break
     return {"mode":"SAFE_NO_PUBLICATION", "site_key":site_key,
             "platform":route["platform"], "campaign":route["campaign"],
