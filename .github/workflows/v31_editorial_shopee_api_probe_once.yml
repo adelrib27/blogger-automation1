@@ -1,0 +1,39 @@
+name: V31 Editorial - Probe Shopee temporario SAFE (uma consulta)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - .github/workflows/v31_editorial_shopee_api_probe_once.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-probe-once-20261115
+  cancel-in-progress: false
+
+jobs:
+  uma-consulta-sem-publicacao:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115' &&
+      github.event_name == 'push'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Baixar somente codigo da branch isolada
+        uses: actions/checkout@v4
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar contrato de credenciais (sem utilizar valores)
+        run: python -m affiliate_hub_v31.credentials --profile manifest
+      - name: Consulta unica autenticada, sem escrita, sem listar produtos, sem log de segredo
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: python -m affiliate_hub_v31.shopee_probe
