@@ -1,0 +1,44 @@
+name: V31 Editorial Shopee - API SAFE 1 consulta (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      credential_rotated:
+        description: "CONFIRMO: chave anteriormente exposta foi rotacionada e outros blogs foram atualizados se necessario"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-shopee-api-probe-safe
+  cancel-in-progress: false
+
+jobs:
+  consultar-shopee-sem-publicar:
+    # Nunca executar credenciais em PR/branch de desenvolvimento.
+    # Aprovacao do workflow e configuracao de Environment sao obrigatorias.
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      inputs.credential_rotated == true
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Codigo revisado da main
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar contrato dos nomes sem credenciais
+        run: python -m affiliate_hub_v31.credentials --profile manifest
+      - name: Uma consulta productOfferV2; sem escrita, sem links, sem logs de valores
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: python -m affiliate_hub_v31.shopee_probe
