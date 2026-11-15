@@ -59,11 +59,22 @@ def check_feed_url(raw: str) -> None:
         raise ValueError("URL de feed inválida") from None
 
 
+def redirect_allowed(raw: str) -> bool:
+    try:
+        if not isinstance(raw, str) or len(raw) > 2500 or any(c.isspace() for c in raw):
+            return False
+        u = urllib.parse.urlsplit(raw)
+        host = (u.hostname or "").lower().rstrip(".")
+        return (u.scheme == "https" and u.username is None and u.password is None
+                and u.port in (None, 443) and not u.fragment
+                and (host == "shopee.com.br" or host.endswith(".shopee.com.br")))
+    except (TypeError, ValueError, AttributeError):
+        return False
+
+
 class RestrictRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        try:
-            check_feed_url(newurl)
-        except ValueError:
+        if not redirect_allowed(newurl):
             raise RedirectNotAllowed(redirect_category(newurl)) from None
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
