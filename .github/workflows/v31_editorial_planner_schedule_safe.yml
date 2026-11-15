@@ -1,0 +1,62 @@
+name: V31 Editorial - Agendar PAUTAS SAFE (sem publicacao)
+
+on:
+  schedule:
+    # 09:17 America/Recife (UTC-03), todos os dias; gate desligado por padrao.
+    - cron: '17 12 * * *'
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: "Site do inventario ou all (rede completa)"
+        required: true
+        type: string
+        default: all
+      limit:
+        description: "Pautas por site na rede: 1 a 3"
+        required: true
+        type: choice
+        default: '1'
+        options: ['1', '2', '3']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  gerar-pautas-sem-publicacao:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event_name == 'schedule' &&
+          vars.V31_EDITORIAL_PLANNER_ENABLED == 'true'
+        )
+      )
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar cliente de R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Validar código e regressões SAFE
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Reservar pautas de revisão, NÃO criar posts
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_SITE_KEY: ${{ github.event_name == 'schedule' && 'all' || inputs.site_key }}
+          V31_LIMIT: ${{ github.event_name == 'schedule' && '1' || inputs.limit }}
+        run: python -m affiliate_hub_v31.editorial_plan --mode cloud --site "$V31_SITE_KEY" --limit "$V31_LIMIT"
