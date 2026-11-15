@@ -301,5 +301,35 @@ class Catalog:
             LEFT JOIN affiliate_links l ON l.product_key=p.product_key AND l.campaign=?
             WHERE """ + " AND ".join(clauses) + " ORDER BY p.product_key LIMIT ?", params).fetchall()
 
+    def select_products(self, campaign: str, limit: int = 20, *, category: str | None = None,
+                        niche: str | None = None):
+        """Catálogo editorial inclui convertidos E não convertidos.
+
+        Devolve indicador de cache (0/1), nunca o URL afiliado comercial.
+        É diferente de candidates(), que atende apenas a fila de conversão.
+        """
+        if not re.fullmatch(r"[a-z0-9_-]{1,32}", campaign):
+            raise ValueError("Campanha inválida")
+        if not 1 <= limit <= 100:
+            raise ValueError("Limite inválido")
+        for term in (category, niche):
+            if term is not None and not re.fullmatch(r"[a-z0-9_]{2,50}", term):
+                raise ValueError("Categoria ou nicho inválido")
+        clauses = ["p.moderation='eligible'", "t.status='matched'"]
+        params = [campaign]
+        if category is not None:
+            clauses.append("t.category=?")
+            params.append(category)
+        if niche is not None:
+            clauses.append("t.niche=?")
+            params.append(niche)
+        params.append(limit)
+        return self.db.execute("""SELECT p.product_key,p.title,p.origin_url,p.image_url,
+              CASE WHEN l.product_key IS NULL THEN 0 ELSE 1 END AS has_cached
+            FROM products p JOIN product_taxonomy t ON t.product_key=p.product_key
+            LEFT JOIN affiliate_links l ON l.product_key=p.product_key AND l.campaign=?
+            WHERE """ + " AND ".join(clauses) +
+            " ORDER BY has_cached DESC,p.product_key LIMIT ?", params).fetchall()
+
     def integrity(self) -> bool:
         return self.db.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
