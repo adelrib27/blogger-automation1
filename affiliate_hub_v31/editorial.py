@@ -207,7 +207,9 @@ class EditorialLedger:
                 WHERE site_key=? AND status!='REJECTED'""",(brief.site_key,)).fetchall()
             # Previne títulos por mera troca de uma palavra (mesmo keyword e intenção).
             tokens=set(fold(brief.title).split())
-            for _,old_topic in recent:
+            for stored_title,old_topic in recent:
+                if stored_title == identity:
+                    raise EditorialError("duplicate_title_or_subject")
                 old_tokens=set(fold(old_topic).split())
                 new_tokens=set(fold(brief.topic).split())
                 if old_tokens and new_tokens and len(old_tokens & new_tokens) / len(old_tokens | new_tokens) >= 0.88:
