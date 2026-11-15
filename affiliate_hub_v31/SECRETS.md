@@ -98,6 +98,12 @@ O App Secret anterior foi exposto em uma captura. Antes de qualquer execução a
 
 **Código de continuidade:** `V31-EDITORIAL-C1-API-REAL-PASS-20261115`.
 
+### C2 — Feeds e R2 (pendentes de cadastro real)
+
+Para processamento dos CSVs **sem computador ligado**, seguir [CHECKPOINT_C2_2026-11-15.md](CHECKPOINT_C2_2026-11-15.md). São necessários os dois Secrets `V31_EDITORIAL_DATAFEED_URL_1` e `V31_EDITORIAL_DATAFEED_URL_2`, duas chaves R2 dedicadas (`V31_EDITORIAL_R2_ACCESS_KEY_ID`, `V31_EDITORIAL_R2_SECRET_ACCESS_KEY`) e duas Variables (`V31_EDITORIAL_R2_ACCOUNT_ID`, `V31_EDITORIAL_R2_BUCKET`). Nenhum desses valores foi cadastrado por esta sessão.
+
+O workflow de importação `v31_editorial_ingest_r2_safe.yml` é manual e exclusivo da `main` revisada, utiliza `concurrency: v31-editorial-catalog-single-writer` e exige `confirm_private_storage=true`. Na PRIMEIRA execução com bucket vazio, informar também `initialize_new_catalog=true`; em execução normal com catálogo existente, manter `false`. Isso impede substituição silenciosa de catálogo histórico quando o ponteiro remoto desaparece.
+
 ### Código de continuidade
 
 `V31-EDITORIAL-C1-API-PROBE-20261115-SAFE` — credenciais agora aparecem em Secrets segundo captura, teste automático de autenticação preparado, mas não executado e aguardando rotação da chave e proteção do Environment.
