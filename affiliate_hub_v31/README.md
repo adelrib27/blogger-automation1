@@ -15,6 +15,14 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. O cadastro efetivo dos secrets/variables no GitHub Environment `v31-editorial-safe` ainda é obrigatório e não foi executado.
 
+### C3 — Cloudflare R2 privado criado e verificado
+
+- **Bucket existente:** `v31-editorial-shopee`, na conta selecionada pelo proprietário, classe **Standard**, sem domínio público `r2.dev` ou domínio personalizado.
+- **Comprovado:** ativação da assinatura no painel e criação/consulta pela API Cloudflare. **Ainda não gravamos catálogo/objetos.**
+- **Pendente:** criar credenciais S3 limitadas ao bucket e cadastrá-las no Environment GitHub `v31-editorial-safe`, configurar `V31_EDITORIAL_R2_ACCOUNT_ID` e `V31_EDITORIAL_R2_BUCKET`; validar conexão real e só então importar os feeds.
+- **Checkpoint:** [C3 — bucket privado criado](CHECKPOINT_C3_R2_2026-11-15.md).
+- **Continuidade:** `V31-EDITORIAL-C3-R2-PRIVATE-20261115-CREATED`.
+
 ### C2.1 — Dois feeds REAIS auditados em GitHub Actions
 
 - **Prova:** [run 43732094595](https://github.com/adelrib27/blogger-automation1/actions/runs/43732094595), `V31_C2_REAL_FEEDS_PASS`. Foram lidos **100.000 + 10.000 registros**, com cabeçalhos de **24 e 16 colunas**.
