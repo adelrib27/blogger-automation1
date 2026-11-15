@@ -3,26 +3,26 @@
   "cumulative_failures_by_layer": {
     "BLOGGER_PIPELINE": 81,
     "CI_GENERAL": 98,
-    "SHOPEE_PIPELINE": 262,
+    "SHOPEE_PIPELINE": 265,
     "VISUAL_QA": 20
   },
   "cumulative_successes_by_layer": {
-    "BLOGGER_PIPELINE": 238,
+    "BLOGGER_PIPELINE": 239,
     "CI_GENERAL": 107,
     "SHOPEE_PIPELINE": 300,
     "VISUAL_QA": 16
   },
-  "historical_failure_observations": 476,
+  "historical_failure_observations": 479,
   "history_capacity": 50000,
   "history_capacity_warning": false,
-  "last_report_run_id": 43655486557,
+  "last_report_run_id": 43660000056,
   "legacy_attempt_unknown_count": 35,
   "lessons": [
     {
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "SHOPEE_PIPELINE",
-      "observed_failures": 262,
+      "observed_failures": 265,
       "observed_successes": 300,
       "production_approval_required": true,
       "proposal": "SAFE_DIAGNOSE_GRAPHQL_AND_CATALOG",
@@ -49,7 +49,7 @@
       "auto_patch": false,
       "category": "BLOGGER_PIPELINE",
       "observed_failures": 81,
-      "observed_successes": 238,
+      "observed_successes": 239,
       "production_approval_required": true,
       "proposal": "SAFE_RECHECK_TARGET_AND_IDEMPOTENCY",
       "required_gates": [
@@ -7063,6 +7063,30 @@
       "conclusion": "success",
       "run_attempt": 1,
       "run_id": 43655366610
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43655505050
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43656954949
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43657306382
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43659860485
     }
   ],
   "repository": "adelrib27/blogger-automation1",
@@ -7073,6 +7097,6 @@
     "no_model_weight_updates": true,
     "no_production_code_writes": true
   },
-  "total_distinct_completed_runs": 1130,
-  "total_observations_including_attempts": 1165
+  "total_distinct_completed_runs": 1134,
+  "total_observations_including_attempts": 1169
 }
