@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
+from .taxonomy import classify_title
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -106,6 +108,14 @@ class Catalog:
             image_url TEXT NOT NULL, moderation TEXT NOT NULL, moderation_reason TEXT NOT NULL,
             first_source TEXT NOT NULL, last_seen_utc TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS product_taxonomy (
+            product_key TEXT PRIMARY KEY,
+            category TEXT NOT NULL, niche TEXT NOT NULL,
+            status TEXT NOT NULL, reason TEXT NOT NULL, version TEXT NOT NULL,
+            FOREIGN KEY (product_key) REFERENCES products(product_key)
+        );
+        CREATE INDEX IF NOT EXISTS idx_product_taxonomy_route
+          ON product_taxonomy(status,category,niche);
         CREATE TABLE IF NOT EXISTS affiliate_links (
             product_key TEXT NOT NULL, campaign TEXT NOT NULL, affiliate_url TEXT NOT NULL,
             verified_origin TEXT NOT NULL, updated_utc TEXT NOT NULL,
@@ -128,7 +138,8 @@ class Catalog:
     def import_csv(self, path: Path | str, source: str, *, max_rows: int = 200_000) -> dict[str, int]:
         if not re.fullmatch(r"[a-zA-Z0-9_-]{1,40}", source):
             raise ValueError("Identificador de origem inválido")
-        count = {"rows": 0, "added": 0, "duplicates": 0, "review": 0, "eligible": 0}
+        count = {"rows": 0, "added": 0, "duplicates": 0, "review": 0, "eligible": 0,
+                 "taxonomy_matched": 0, "taxonomy_review": 0}
         # Com open strict: não importa feed truncado/encoding inválido.
         with Path(path).open("r", encoding="utf-8-sig", newline="") as stream:
             sample = stream.read(8192)
@@ -151,6 +162,11 @@ class Catalog:
                     count["rows"] += 1
                     data = fields(raw)
                     key, moderation, reason = classify(data)
+                    route = classify_title(data["title"])
+                    count["taxonomy_matched" if route.status == "matched" else "taxonomy_review"] += 1
+                    if route.status != "matched":
+                        moderation = "review"
+                        reason = ",".join(filter(None, (reason, "taxonomy_" + route.reason)))
                     count[moderation] += 1
                     seen = self.db.execute("SELECT 1 FROM products WHERE product_key=?", (key,)).fetchone()
                     if seen:
@@ -175,13 +191,73 @@ class Catalog:
                           last_seen_utc=excluded.last_seen_utc
                         """, (key, shop, item, data["title"], data["description"], data["url"],
                               data["image"], moderation, reason, source, utc_now()))
+                    self.db.execute("""
+                        INSERT INTO product_taxonomy(product_key,category,niche,status,reason,version)
+                        VALUES (?,?,?,?,?,?)
+                        ON CONFLICT(product_key) DO UPDATE SET
+                          category=CASE WHEN product_taxonomy.status='matched'
+                            AND excluded.status='matched'
+                            AND product_taxonomy.category=excluded.category
+                            AND product_taxonomy.niche=excluded.niche
+                            THEN excluded.category ELSE '' END,
+                          niche=CASE WHEN product_taxonomy.status='matched'
+                            AND excluded.status='matched'
+                            AND product_taxonomy.category=excluded.category
+                            AND product_taxonomy.niche=excluded.niche
+                            THEN excluded.niche ELSE '' END,
+                          status=CASE WHEN product_taxonomy.status='matched'
+                            AND excluded.status='matched'
+                            AND product_taxonomy.category=excluded.category
+                            AND product_taxonomy.niche=excluded.niche
+                            THEN 'matched' ELSE 'review' END,
+                          reason=CASE WHEN product_taxonomy.status='matched'
+                            AND excluded.status='matched'
+                            AND product_taxonomy.category=excluded.category
+                            AND product_taxonomy.niche=excluded.niche
+                            THEN excluded.reason ELSE 'conflicting_or_unclassified_reimport' END,
+                          version=excluded.version
+                    """, (key, route.category, route.niche, route.status, route.reason, route.version))
         return count
 
     def stats(self) -> dict:
         total = self.db.execute("SELECT COUNT(*) FROM products").fetchone()[0]
-        review = self.db.execute("SELECT COUNT(*) FROM products WHERE moderation='review'").fetchone()[0]
+        eligible = self.db.execute("""SELECT COUNT(*) FROM products p
+            JOIN product_taxonomy t ON t.product_key=p.product_key
+            WHERE p.moderation='eligible' AND t.status='matched'""").fetchone()[0]
         links = self.db.execute("SELECT COUNT(*) FROM affiliate_links").fetchone()[0]
-        return {"products": total, "eligible": total - review, "review": review, "cached_affiliate_links": links}
+        return {"products": total, "eligible": eligible, "review": total - eligible, "cached_affiliate_links": links}
+
+    def categories(self) -> list[dict]:
+        rows = self.db.execute("""SELECT t.category,t.niche,COUNT(*) FROM products p
+            JOIN product_taxonomy t ON t.product_key=p.product_key
+            WHERE p.moderation='eligible' AND t.status='matched'
+            GROUP BY t.category,t.niche ORDER BY t.category,t.niche""").fetchall()
+        return [{"category": cat, "niche": niche, "products": count} for cat, niche, count in rows]
+
+    def for_conversion(self, key: str) -> tuple[str, str, str] | None:
+        row = self.db.execute("""SELECT p.origin_url,t.category,t.niche
+            FROM products p JOIN product_taxonomy t ON t.product_key=p.product_key
+            WHERE p.product_key=? AND p.moderation='eligible' AND t.status='matched'""", (key,)).fetchone()
+        return tuple(row) if row else None
+
+    def reclassify_missing(self) -> int:
+        """Rotula produtos herdados sem taxonomia. Não libera registros já reprovados."""
+        rows = self.db.execute("""SELECT p.product_key,p.title
+            FROM products p LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
+            WHERE t.product_key IS NULL""").fetchall()
+        with self.db:
+            for key, title in rows:
+                route = classify_title(title)
+                self.db.execute("""INSERT OR IGNORE INTO product_taxonomy
+                    (product_key,category,niche,status,reason,version)
+                    VALUES (?,?,?,?,?,?)""",
+                    (key, route.category, route.niche, route.status, route.reason, route.version))
+                if route.status != "matched":
+                    self.db.execute("""UPDATE products SET moderation='review',
+                        moderation_reason=CASE WHEN moderation_reason=''
+                          THEN ? ELSE moderation_reason || ',' || ? END
+                        WHERE product_key=?""", ("taxonomy_"+route.reason,"taxonomy_"+route.reason,key))
+        return len(rows)
 
     def cache_link(self, key: str, campaign: str, url: str, *, origin: str = "shopee_api") -> bool:
         if not re.fullmatch(r"[a-z0-9_-]{1,32}", campaign):
@@ -190,8 +266,8 @@ class Catalog:
             raise ValueError("Proveniência inválida")
         if not host_allowed(url, allow_short=True):
             raise ValueError("Link de afiliado deve ser HTTPS do domínio Shopee")
-        if not self.db.execute("SELECT 1 FROM products WHERE product_key=?", (key,)).fetchone():
-            raise ValueError("Produto não existe")
+        if not self.for_conversion(key):
+            raise ValueError("Produto ausente ou ainda não aprovado para conversão")
         with self.db:
             result = self.db.execute("""INSERT OR IGNORE INTO affiliate_links
                 (product_key,campaign,affiliate_url,verified_origin,updated_utc)
@@ -202,15 +278,28 @@ class Catalog:
         row = self.db.execute("SELECT affiliate_url FROM affiliate_links WHERE product_key=? AND campaign=?", (key, campaign)).fetchone()
         return row[0] if row else None
 
-    def candidates(self, campaign: str, limit: int = 20):
+    def candidates(self, campaign: str, limit: int = 20, *, category: str | None = None,
+                   niche: str | None = None):
         if not re.fullmatch(r"[a-z0-9_-]{1,32}", campaign):
             raise ValueError("Campanha inválida")
         if not 1 <= limit <= 100:
             raise ValueError("Limite inválido")
+        for term in (category, niche):
+            if term is not None and not re.fullmatch(r"[a-z0-9_]{2,50}", term):
+                raise ValueError("Categoria ou nicho inválido")
+        clauses = ["p.moderation='eligible'", "t.status='matched'", "l.product_key IS NULL"]
+        params = [campaign]
+        if category is not None:
+            clauses.append("t.category=?")
+            params.append(category)
+        if niche is not None:
+            clauses.append("t.niche=?")
+            params.append(niche)
+        params.append(limit)
         return self.db.execute("""SELECT p.product_key,p.title,p.origin_url,p.image_url
-            FROM products p LEFT JOIN affiliate_links l ON l.product_key=p.product_key AND l.campaign=?
-            WHERE p.moderation='eligible' AND l.product_key IS NULL
-            ORDER BY p.product_key LIMIT ?""", (campaign, limit)).fetchall()
+            FROM products p JOIN product_taxonomy t ON t.product_key=p.product_key
+            LEFT JOIN affiliate_links l ON l.product_key=p.product_key AND l.campaign=?
+            WHERE """ + " AND ".join(clauses) + " ORDER BY p.product_key LIMIT ?", params).fetchall()
 
     def integrity(self) -> bool:
         return self.db.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
