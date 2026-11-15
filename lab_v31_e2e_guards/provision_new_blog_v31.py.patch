@@ -1,0 +1,20 @@
+--- a/provision_new_blog_v31.py
++++ b/provision_new_blog_v31.py
+@@ -67,11 +67,15 @@
+     except FileExistsError as e:
+         raise ProvisionV31Error('Checkpoint do endereco ja existe; consultar estado, nao criar outro blog.') from e
+     try:
++        # This provision is checkpointed for ONE exact authorized slug.
++        # A fallback slug would create an untracked blog before this stage could save its ID.
+         created=rc.execute_create_resilient(req.title,req.address,confirm=bp.CREATE_CONFIRMATION,
+-             cdp_url=cdp_url,diagnostics_dir=diagnostics_dir,allow_remote_cdp=False)
++             cdp_url=cdp_url,diagnostics_dir=diagnostics_dir,allow_remote_cdp=False,
++             max_address_attempts=1)
+         blog_id=str(created['blog_id']);blog_url=str(created['expected_url'])
++        if blog_url!=f'https://{req.address}.blogspot.com/':
++            raise ProvisionV31Error('Endereco retornado diferente do solicitado.')
+         adopter.renderer.strict_target(blog_id,req.title,blog_url)
+-        if urlparse(blog_url).hostname.split('.')[0]!=req.address:raise ProvisionV31Error('Endereco retornado diferente do solicitado.')
+         state.update({'blog_id':blog_id,'blog_url':blog_url,'created':True,
+                       'status':'CREATED_AWAIT_SETTINGS'})
+         state['steps'].append('CREATE_BLOG_VALIDATED');save(cp,state)
