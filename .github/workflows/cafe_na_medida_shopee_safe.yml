@@ -1,0 +1,34 @@
+name: V31 Cafe na Medida - Shopee Catalogo SAFE
+on:
+  pull_request:
+    paths:
+      - "cafe_na_medida/shopee_catalog_safe.py"
+      - ".github/workflows/cafe_na_medida_shopee_safe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-cafe-na-medida-safe-4820923154548273510
+  cancel-in-progress: false
+jobs:
+  catalogo-safe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validar apenas codigo e dados sinteticos no PR
+        run: |
+          python -m py_compile cafe_na_medida/shopee_catalog_safe.py src/blogger_policy_guard.py
+          python cafe_na_medida/shopee_catalog_safe.py --self-test
+      - name: Consultar API real sem escrita (somente dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+        run: |
+          test -n "$SHOPEE_APP_ID"
+          test -n "$SHOPEE_SECRET"
+          python -u cafe_na_medida/shopee_catalog_safe.py
