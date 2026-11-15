@@ -133,9 +133,45 @@ class R2State:
             raise
         return True
 
+    def _prune_old_snapshots(self, keep: set[str]) -> int:
+        """Retenção limitada a estado atual + estado anterior.
+
+        Só remove snapshots conhecidos sob este prefixo. Nunca remove CURRENT.json
+        nem objetos de outra aplicação. Um erro de limpeza não apaga o estado atual.
+        """
+        prefix = PREFIX + "/snapshots/"
+        scanned = 0
+        obsolete = []
+        token = None
+        for _ in range(100):
+            options = {"Bucket": self.bucket, "Prefix": prefix, "MaxKeys": 1000}
+            if token:
+                options["ContinuationToken"] = token
+            result = self.s3.list_objects_v2(**options)
+            objects = result.get("Contents", [])
+            scanned += len(objects)
+            if scanned > 100000:
+                raise StorageError("retention_list_limit")
+            for obj in objects:
+                key = obj.get("Key")
+                if isinstance(key, str) and SNAPSHOT_RE.fullmatch(key) and key not in keep:
+                    obsolete.append(key)
+            if not result.get("IsTruncated"):
+                break
+            new_token = result.get("NextContinuationToken")
+            if not new_token or new_token == token:
+                raise StorageError("retention_pagination_failed")
+            token = new_token
+        else:
+            raise StorageError("retention_list_limit")
+        for key in obsolete:
+            self.s3.delete_object(Bucket=self.bucket, Key=key)
+        return len(obsolete)
+
     def save_from(self, path: Path | str) -> dict:
         source = Path(path)
         verify_database(source)
+        prior = self._read_manifest()
         sha = sha256_file(source)
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         key = f"{PREFIX}/snapshots/{timestamp}-{sha[:16]}.sqlite3"
@@ -160,4 +196,16 @@ class R2State:
                                CacheControl="no-store")
         except Exception:
             raise StorageError("r2_pointer_update_failed") from None
-        return {"snapshot_sha256": sha, "state_saved": True}
+        # O ponteiro novo já é durável. Falha de limpeza é relatada, não
+        # apaga o estado; monitorar retenção para impedir custos cumulativos.
+        keep = {key}
+        if prior:
+            keep.add(prior["key"])
+        try:
+            cleaned = self._prune_old_snapshots(keep)
+            pending = False
+        except Exception:
+            cleaned = 0
+            pending = True
+        return {"snapshot_sha256": sha, "state_saved": True,
+                "retention_deleted": cleaned, "retention_pending": pending}
