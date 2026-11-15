@@ -92,7 +92,7 @@ class TestCommercialProfile(unittest.TestCase):
             with patch.object(sys, "argv", args), patch.dict("os.environ", {
                 "SHOPEE_APP_ID": "1234", "SHOPEE_SECRET": "mock-only",
             }), patch.object(store, "query_commercial", side_effect=query) as request:
-                with self.assertRaisesRegex(store.GateError, "Categoria sem quatro ofertas"):
+                with self.assertRaisesRegex(store.GateError, r"Cadeiras ergonômicas \(0/4\)"):
                     store.main()
                 self.assertEqual(request.call_count, self.search_count(profile))
                 self.assertFalse((root / "incomplete").exists())
