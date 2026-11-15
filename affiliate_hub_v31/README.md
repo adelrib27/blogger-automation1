@@ -38,13 +38,13 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 
 - `affiliate_hub_v31/catalog.py`: banco SQLite local e importador CSV, deduplicação, revisão básica, cache por campanha, consultas.
 - `affiliate_hub_v31/__init__.py`: pacote Python.
-- **Ainda falta** workflow de ingestão, esquema real dos dois CSVs, estado persistente remoto, testes automatizados executados, conversor Open API funcional, adaptadores Blogger/WordPress, agendamento e execução LIVE.
+- **Testes SAFE:** 14/14 passaram no GitHub Actions (push `8370a2d`, run `43722692312`), sem acesso a APIs reais nem secrets. **Ainda falta:** workflow de ingestão real, esquema real dos dois CSVs, estado persistente remoto, cadastro dos secrets, conversor Open API funcional, adaptadores Blogger/WordPress, agendamento e execução LIVE.
 
 ### Próximo marco de validação
 
 `V31-EDITORIAL-C1-20261115-SAFE`
 
-Passar testes unitários com dados sintéticos e validar o esquema de CSV real. Só então preparar ingestão em nuvem com persistência privada e sem publicação. Não tratar simulação como implantação concluída.
+Testes unitários sintéticos **14/14 PASS** em CI após correção de allowlist de encurtadores. Próximo passo: validar o esquema CSV real e os secrets do Environment; depois preparar ingestão em nuvem com persistência privada. Não tratar simulação como implantação concluída.
 
 ## Separação operacional
 
