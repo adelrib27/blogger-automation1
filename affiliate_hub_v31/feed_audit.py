@@ -83,6 +83,10 @@ def inspect_csv(path: Path, seen: set[str], source_name: str) -> dict:
                     seen.add(key)
                 if not row["title"] or not row["url"]:
                     counters["missing_core_fields"]+=1
+    except UnicodeDecodeError:
+        raise FeedAuditError("CSV_ENCODING") from None
+    except csv.Error:
+        raise FeedAuditError("CSV_PARSE_ERROR") from None
     if not counters["rows"]:
         raise FeedAuditError("EMPTY_FEED")
     return {"source": source_name,
