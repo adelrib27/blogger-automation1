@@ -53,6 +53,14 @@ class FakeS3:
     def download_file(self, bucket, key, destination):
         Path(destination).write_bytes(self.objects[key])
 
+    def list_objects_v2(self, *, Bucket, Prefix, MaxKeys, **kwargs):
+        return {"Contents":[{"Key":key} for key in sorted(self.objects)
+                            if key.startswith(Prefix)], "IsTruncated":False}
+
+    def delete_object(self, *, Bucket, Key):
+        self.objects.pop(Key, None)
+        self.metadata.pop(Key, None)
+
 
 class IngestAndStorageTests(unittest.TestCase):
     def setUp(self):
@@ -122,6 +130,28 @@ class IngestAndStorageTests(unittest.TestCase):
         with Catalog(restored) as cat:
             self.assertEqual(cat.stats()["products"],2)
             self.assertTrue(cat.integrity())
+
+    def test_r2_retention_keeps_current_and_previous_only(self):
+        f1=self.root/"a.csv";f2=self.root/"b.csv"
+        feed(f1,[(1,"Organizador de Cozinha")]);feed(f2,[(2,"Air Fryer")])
+        db=self.root/"state.sqlite3"
+        ingest_two(db,f1,f2)
+        cloud=FakeS3()
+        state=R2State(cloud,"v31-private-hub")
+        for i in range(3):
+            with Catalog(db) as catalog:
+                with catalog.db:
+                    catalog.db.execute("UPDATE products SET title=? WHERE product_key=?",
+                                       ("Air Fryer V"+str(i),"shopee:900:2"))
+            result=state.save_from(db)
+            self.assertFalse(result["retention_pending"])
+        snapshots=[key for key in cloud.objects if key.startswith("v31-editorial/snapshots/")]
+        self.assertEqual(len(snapshots),2)
+        self.assertEqual(result["retention_deleted"],1)
+        output=self.root/"restored.sqlite3"
+        self.assertTrue(state.restore_to(output))
+        with Catalog(output) as catalog:
+            self.assertEqual(catalog.stats()["products"],2)
 
     def test_r2_snapshot_tampering_detected(self):
         f1=self.root/"a.csv";f2=self.root/"b.csv"
