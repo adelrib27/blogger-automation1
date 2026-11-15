@@ -15,6 +15,15 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. O cadastro efetivo dos secrets/variables no GitHub Environment `v31-editorial-safe` ainda é obrigatório e não foi executado.
 
+### C2.1 — Dois feeds REAIS auditados em GitHub Actions
+
+- **Prova:** [run 43732094595](https://github.com/adelrib27/blogger-automation1/actions/runs/43732094595), `V31_C2_REAL_FEEDS_PASS`. Foram lidos **100.000 + 10.000 registros**, com cabeçalhos de **24 e 16 colunas**.
+- **493 duplicações preliminares** e **109.507 chaves diferentes** pelo deduplicador atual. Os feeds não possuem coluna reconhecida de `shopId`; revisar identificadores alternativos antes de tratar essas chaves como produtos comerciais distintos.
+- **4.758 registros** corresponderam a nichos na versão inicial da taxonomia, **105.242 ainda sem nicho aprovado**. Não significa descarte definitivo.
+- Bugs reais resolvidos: redirecionamento HTTPS interno Shopee e CSV com campos multilinha/aspas. O workflow temporário de auditoria foi removido; dados não foram persistidos.
+- **Checkpoint C2.1:** [leitura real, limitações e próximos passos](CHECKPOINT_C2_1_FEEDS_REAIS_2026-11-15.md). Código: `V31-EDITORIAL-C2.1-FEEDS-REAIS-20261115-PASS`.
+- R2, conversões comerciais e publicação ainda **não executados**.
+
 ### C2 — Categorias, nichos, feeds e R2 SAFE
 
 **Checkpoint de continuidade:** [C2-2026-11-15](CHECKPOINT_C2_2026-11-15.md)  
