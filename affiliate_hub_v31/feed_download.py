@@ -15,6 +15,14 @@ MAX_FEED_BYTES = 512 * 1024 * 1024
 BUFFER = 1024 * 1024
 
 
+class DownloadFeedError(ValueError):
+    """Código estático seguro; não contém URL, token ou corpo de resposta."""
+
+
+class RedirectNotAllowed(ValueError):
+    """Um redirecionamento tentou sair do endereço permitido."""
+
+
 def check_feed_url(raw: str) -> None:
     if not isinstance(raw, str) or len(raw) > 1500 or any(c.isspace() for c in raw):
         raise ValueError("URL de feed inválida")
@@ -33,7 +41,10 @@ def check_feed_url(raw: str) -> None:
 
 class RestrictRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        check_feed_url(newurl)
+        try:
+            check_feed_url(newurl)
+        except ValueError:
+            raise RedirectNotAllowed("REDIRECT_BLOCKED") from None
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
@@ -63,10 +74,22 @@ def download_feed(raw_url: str, destination: Path | str, *, max_bytes=MAX_FEED_B
                 if size > max_bytes:
                     raise ValueError("Feed excede limite")
                 output.write(block)
-    except Exception:
-        # Suprimir URL / token do traceback e remover download parcial.
+    except Exception as exc:
+        # Suprimir URL/token/response do traceback e remover download parcial.
         dest.unlink(missing_ok=True)
-        raise ValueError("download_feed_failed") from None
+        if isinstance(exc, RedirectNotAllowed):
+            code = "REDIRECT_BLOCKED"
+        elif isinstance(exc, urllib.error.HTTPError):
+            code = "HTTP_" + str(exc.code) if 100 <= exc.code <= 599 else "HTTP_INVALID"
+        elif isinstance(exc, urllib.error.URLError):
+            code = "NETWORK_ERROR"
+        elif isinstance(exc, TimeoutError):
+            code = "NETWORK_TIMEOUT"
+        elif isinstance(exc, ValueError):
+            code = "INVALID_RESPONSE_OR_SIZE"
+        else:
+            code = "DOWNLOAD_UNKNOWN"
+        raise DownloadFeedError(code) from None
     if size < 10:
         dest.unlink(missing_ok=True)
         raise ValueError("Feed vazio ou inválido")
