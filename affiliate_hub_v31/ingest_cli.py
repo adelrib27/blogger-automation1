@@ -30,6 +30,10 @@ def run_cloud() -> dict:
         download_feed(url1, first)
         download_feed(url2, second)
         loaded = storage.restore_to(state)
+        # Ponteiro ausente não pode zerar silenciosamente histórico/comissões.
+        # Primeira importação exige confirmação explícita de novo catálogo.
+        if not loaded and os.environ.get("V31_EDITORIAL_R2_ALLOW_INIT") != "CONFIRM_NEW_PRIVATE_CATALOG":
+            raise ValueError("initialization_not_authorized")
         report = ingest_two(state, first, second)
         status = storage.save_from(state)
         return {**report, "previous_snapshot_restored": loaded, **status}
