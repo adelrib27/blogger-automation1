@@ -8,6 +8,11 @@ on:
         required: true
         default: false
         type: boolean
+      initialize_new_catalog:
+        description: "CONFIRMO: primeira importacao em bucket privado NOVO e sem estado antigo"
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -47,4 +52,5 @@ jobs:
           V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ALLOW_INIT: ${{ inputs.initialize_new_catalog && 'CONFIRM_NEW_PRIVATE_CATALOG' || 'DENY' }}
         run: python -m affiliate_hub_v31.ingest_cli --mode cloud
