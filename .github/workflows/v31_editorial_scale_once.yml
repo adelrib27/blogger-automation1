@@ -1,0 +1,24 @@
+name: V31 Editorial - Benchmark C2 110K sintetico (temporario)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_editorial_scale_once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark-offline-isolado:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Executar 110 mil linhas sinteticas em staging local e validar integridade
+        run: python -m affiliate_hub_v31.bench_scale
