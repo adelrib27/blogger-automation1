@@ -19,7 +19,8 @@ class TaxonomyTests(unittest.TestCase):
     def test_example_routes(self):
         cases = {
             "Organizador de Cozinha Inox": ("cozinha", "organizacao_utensilios"),
-            "Air Fryer Digital 5 litros": ("cozinha", "eletroportateis"),
+            "Air Fryer Digital 5 litros": ("cozinha", "air_fryers"),
+            "Liquidificador de 1 Litro": ("cozinha", "liquidificadores"),
             "Aspirador de Pó Vertical 2 em 1": ("limpeza", "equipamentos"),
             "Escova Secadora Bivolt": ("beleza", "cabelos"),
             "Scanner OBD2 Bluetooth": ("automotivo", "acessorios"),
@@ -70,7 +71,7 @@ class TaxonomyTests(unittest.TestCase):
                 self.assertEqual(result["taxonomy_matched"], 2)
                 self.assertEqual(cat.stats()["eligible"], 2)
                 self.assertEqual(cat.stats()["review"], 2)
-                self.assertEqual(len(cat.candidates("blogger", category="cozinha", niche="eletroportateis")), 1)
+                self.assertEqual(len(cat.candidates("blogger", category="cozinha", niche="air_fryers")), 1)
                 self.assertEqual(cat.for_conversion("shopee:200:2"), None)
                 with self.assertRaises(ValueError):
                     cat.cache_link("shopee:200:2","blogger","https://s.shopee.com.br/abc")
