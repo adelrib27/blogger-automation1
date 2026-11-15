@@ -72,6 +72,20 @@ O bucket **precisa existir, ser privado, com credenciais próprias de privilégi
 - Nenhum arquivo de banco ou CSV deve ser publicado em Actions artifacts ou commits de repositório público.
 - Snapshot R2 com ponteiro é recuperável, porém não substitui backups/rotinas de retenção. Outros writers fora do GitHub Actions quebrariam a garantia do grupo de concorrência.
 
+## Provas automatizadas C2 (15/11/2026)
+
+- GitHub Actions SAFE (sem tokens): **45/45 testes aprovados** após correções de quarentena e inicialização de R2. Runs de PR/push no PR #52.
+- **Benchmark com 110.000 produtos sintéticos**: GitHub Actions [43728505370](https://github.com/adelrib27/blogger-automation1/actions/runs/43728505370), **SUCCESS**, registro de log:
+  - entrada: **100.000 + 10.000 linhas**;
+  - duplicatas deliberadas no teste: **5.000**;
+  - produtos únicos esperados e obtidos: **105.000**;
+  - elegíveis pela taxonomia de teste: **87.500**, em revisão: **17.500**;
+  - tempo registrado no runner: **18,41 segundos**.
+- Este benchmark **não demonstra** contagem, cobertura de nichos, duplicatas ou velocidade dos feeds comerciais reais; os arquivos foram gerados com dados fictícios.
+- O gatilho de benchmark `.github/workflows/v31_editorial_scale_once.yml` foi **apagado da branch** logo após o PASS. O benchmark reutilizável `bench_scale.py` permanece sem disparo automático.
+- O primeiro snapshot no R2 exige `initialize_new_catalog=true` no despacho manual. Ausência do ponteiro remoto, sem esse consentimento, **falha fechada** para evitar reset de histórico.
+- Feeds vazios ou malformados não substituem a base existente.
+
 ## Próximas validações obrigatórias
 
 1. Cadastrar duas URLs assinadas de feeds como Secrets e configurar bucket R2 privado com acesso mínimo.
