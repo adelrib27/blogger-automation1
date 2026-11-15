@@ -71,6 +71,22 @@ jobs:
 
 Esse exemplo não foi conectado a workflows comerciais existentes. **Não presumir que um nome cadastrado corresponde a uma credencial válida ou que outros projetos tenham acesso.**
 
+### C1.2 — checagem da API (preparada, execução real PENDENTE)
+
+A captura de tela de 15/11/2026 confirma dois nomes em **Environment secrets** e nenhum segredo em **Environment variables**. **Isso prova somente o cadastro/posicionamento, não a validade dos valores.**
+
+O App Secret anterior foi exposto em uma captura. Antes de qualquer execução autenticada, substituí-lo na Shopee (e sincronizar os outros fluxos que eventualmente compartilhem a credencial). O workflow manual exige a confirmação explícita dessa rotação:
+
+- `.github/workflows/v31_editorial_shopee_api_probe_safe.yml`
+- `affiliate_hub_v31/shopee_probe.py`
+- Executa **uma** chamada assinada de leitura `productOfferV2` com limite de 1, sem publicar e sem gravar produtos.
+- Bloqueado para todas as refs exceto `refs/heads/main`, com input `credential_rotated=true`.
+- Não pode ser acionado pelo botão Actions até estar na branch padrão, após a revisão do PR. **Não fazer merge automaticamente.**
+- Não imprime valores de secrets, links, conteúdo dos produtos ou detalhes livres da resposta da API.
+- Apenas status sanitizado `V31_SHOPEE_API_PASS` confirma que a consulta foi aceita; outros estados exigem análise controlada.
+
+**Proteção adicional no GitHub Environment:** em `Deployment branches and tags`, substituir `No restriction` por regra de branches selecionadas, permitindo inicialmente apenas `main` (quando o workflow for aprovado e integrado). Isso reduz o risco de outro workflow em branch livre acessar os segredos. A regra do workflow é adicional, não substitui essa restrição. Se usar `Required reviewers`, conferir que a conta/nível do repositório suporta a regra; não presumir que self-approval será permitido.
+
 ### Código de continuidade
 
-`V31-EDITORIAL-C1-SECRETS-20261115-SAFE` — manifesto e verificador criados, valores reais pendentes do proprietário, sem publicação e sem Pinterest.
+`V31-EDITORIAL-C1-API-PROBE-20261115-SAFE` — credenciais agora aparecem em Secrets segundo captura, teste automático de autenticação preparado, mas não executado e aguardando rotação da chave e proteção do Environment.
