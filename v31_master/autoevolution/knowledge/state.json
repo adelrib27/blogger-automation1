@@ -2,27 +2,27 @@
   "branch": "lab/v31-autoevolucao-safe-20261112",
   "cumulative_failures_by_layer": {
     "BLOGGER_PIPELINE": 81,
-    "CI_GENERAL": 98,
-    "SHOPEE_PIPELINE": 265,
+    "CI_GENERAL": 99,
+    "SHOPEE_PIPELINE": 266,
     "VISUAL_QA": 20
   },
   "cumulative_successes_by_layer": {
-    "BLOGGER_PIPELINE": 239,
+    "BLOGGER_PIPELINE": 240,
     "CI_GENERAL": 107,
     "SHOPEE_PIPELINE": 300,
     "VISUAL_QA": 16
   },
-  "historical_failure_observations": 479,
+  "historical_failure_observations": 481,
   "history_capacity": 50000,
   "history_capacity_warning": false,
-  "last_report_run_id": 43660000056,
+  "last_report_run_id": 43661289392,
   "legacy_attempt_unknown_count": 35,
   "lessons": [
     {
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "SHOPEE_PIPELINE",
-      "observed_failures": 265,
+      "observed_failures": 266,
       "observed_successes": 300,
       "production_approval_required": true,
       "proposal": "SAFE_DIAGNOSE_GRAPHQL_AND_CATALOG",
@@ -36,7 +36,7 @@
       "action": "OPEN_SAFE_EXPERIMENT_FOR_REVIEW",
       "auto_patch": false,
       "category": "CI_GENERAL",
-      "observed_failures": 98,
+      "observed_failures": 99,
       "observed_successes": 107,
       "production_approval_required": true,
       "proposal": "SAFE_REVIEW_FAILURE_WITHOUT_INFERRED_CAUSE",
@@ -49,7 +49,7 @@
       "auto_patch": false,
       "category": "BLOGGER_PIPELINE",
       "observed_failures": 81,
-      "observed_successes": 239,
+      "observed_successes": 240,
       "production_approval_required": true,
       "proposal": "SAFE_RECHECK_TARGET_AND_IDEMPOTENCY",
       "required_gates": [
@@ -7087,6 +7087,24 @@
       "conclusion": "success",
       "run_attempt": 1,
       "run_id": 43659860485
+    },
+    {
+      "category": "SHOPEE_PIPELINE",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43660198108
+    },
+    {
+      "category": "CI_GENERAL",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "run_id": 43660538204
+    },
+    {
+      "category": "BLOGGER_PIPELINE",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "run_id": 43660855963
     }
   ],
   "repository": "adelrib27/blogger-automation1",
@@ -7097,6 +7115,6 @@
     "no_model_weight_updates": true,
     "no_production_code_writes": true
   },
-  "total_distinct_completed_runs": 1134,
-  "total_observations_including_attempts": 1169
+  "total_distinct_completed_runs": 1137,
+  "total_observations_including_attempts": 1172
 }
