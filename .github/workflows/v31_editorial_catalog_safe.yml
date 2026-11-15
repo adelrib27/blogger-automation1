@@ -2,6 +2,13 @@ name: V31 Editorial Shopee - Testes SAFE Blogger WordPress
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'affiliate_hub_v31/**'
+      - '.github/workflows/v31_editorial_catalog_safe.yml'
+
   push:
     branches:
       - feature/v31-affiliate-hub-c1-safe-20261115
