@@ -2,9 +2,9 @@
   "version": "2.3",
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
-    "input": 158,
-    "accepted": 101,
-    "rejected": 57
+    "input": 159,
+    "accepted": 104,
+    "rejected": 55
   },
   "reserveSemanticFilter": null,
   "diversity": {
@@ -21,8 +21,8 @@
       "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
     },
     "selectionPasses": {
-      "strict": 29,
-      "relaxed": 1,
+      "strict": 21,
+      "relaxed": 9,
       "fallback": 0
     },
     "shopDistribution": [
@@ -31,27 +31,15 @@
         3
       ],
       [
-        "1096473040",
+        "1027418284",
         3
       ],
       [
-        "1081252292",
+        "628492017",
         2
       ],
       [
-        "1006215031",
-        2
-      ],
-      [
-        "832036467",
-        1
-      ],
-      [
-        "408715442",
-        1
-      ],
-      [
-        "1258554467",
+        "728389176",
         1
       ],
       [
@@ -59,11 +47,35 @@
         1
       ],
       [
+        "1081252292",
+        1
+      ],
+      [
+        "1504466128",
+        1
+      ],
+      [
         "305201598",
         1
       ],
       [
-        "1258878023",
+        "1568639279",
+        1
+      ],
+      [
+        "1835930110",
+        1
+      ],
+      [
+        "1006215031",
+        1
+      ],
+      [
+        "1021742766",
+        1
+      ],
+      [
+        "1626437729",
         1
       ],
       [
@@ -71,11 +83,27 @@
         1
       ],
       [
-        "1541644955",
+        "1748172680",
         1
       ],
       [
-        "762221966",
+        "1624940780",
+        1
+      ],
+      [
+        "804643748",
+        1
+      ],
+      [
+        "1448437551",
+        1
+      ],
+      [
+        "1830268167",
+        1
+      ],
+      [
+        "1581724838",
         1
       ],
       [
@@ -83,187 +111,95 @@
         1
       ],
       [
-        "976844410",
+        "1684498287",
         1
       ],
       [
-        "230709939",
+        "1499661843",
         1
       ],
       [
-        "1074025557",
+        "408715442",
         1
       ],
       [
-        "1587189119",
-        1
-      ],
-      [
-        "696196245",
-        1
-      ],
-      [
-        "1403196542",
-        1
-      ],
-      [
-        "1665970257",
-        1
-      ],
-      [
-        "1143387482",
-        1
-      ],
-      [
-        "1638805020",
-        1
-      ],
-      [
-        "278525147",
+        "1617548365",
         1
       ]
     ],
     "keywordDistribution": [
       [
-        "jogo de chaves",
-        3
+        "multimetro digital",
+        5
+      ],
+      [
+        "furadeira",
+        5
+      ],
+      [
+        "aspirador automotivo",
+        5
+      ],
+      [
+        "escova limpeza automotiva",
+        5
+      ],
+      [
+        "organizador porta malas",
+        4
       ],
       [
         "parafusadeira",
         3
       ],
       [
-        "multimetro digital",
-        3
-      ],
-      [
-        "aspirador automotivo",
-        3
-      ],
-      [
-        "escova limpeza automotiva",
-        3
-      ],
-      [
-        "organizador porta malas",
-        3
-      ],
-      [
-        "painel ferramentas",
-        3
-      ],
-      [
-        "torquimetro",
-        3
-      ],
-      [
-        "estante metalica garagem",
-        3
-      ],
-      [
-        "jogo de soquetes",
+        "luva de protecao",
         2
       ],
       [
-        "oculos de protecao",
+        "jogo de chaves",
         1
       ]
     ],
     "categoryDistribution": [
       [
         "Ferramentas",
-        8
-      ],
-      [
-        "Manutencao",
-        6
+        9
       ],
       [
         "Acessorios Automotivos",
-        6
+        9
       ],
       [
-        "Organizacao de Garagem",
-        6
+        "Manutencao",
+        5
       ],
       [
         "Limpeza e Conservacao",
-        3
+        5
       ],
       [
         "Seguranca e Protecao",
-        1
+        2
       ]
     ]
   },
   "ranking": [
     {
       "rank": 1,
-      "itemId": 22892833180,
-      "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas para Reparo de Carros / Conjuntos de Chaves",
+      "itemId": 58217601055,
+      "productName": "Parafusadeira Furadeira 1X Bateria 25V Nakasaki Sem Fio Profissional Kit Completo com Maleta",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "jogo de chaves"
+        "parafusadeira"
       ],
-      "opportunityScore": 76.77,
-      "shopName": "RISESHOP_brasil",
-      "offerLink": "https://s.shopee.com.br/3VlmMCQPX5"
+      "opportunityScore": 70.46,
+      "shopName": "MAQ TOOLS",
+      "offerLink": "https://s.shopee.com.br/50aer9SBFe"
     },
     {
       "rank": 2,
-      "itemId": 22892919440,
-      "productName": "Parafusadeira elétrica de precisão automática recarregável 68 em 1 ponteiras imantadas EXBOM-CKE6800",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "parafusadeira"
-      ],
-      "opportunityScore": 70.09,
-      "shopName": "Trissolaris Vooloja",
-      "offerLink": "https://s.shopee.com.br/5q9h1wj4RJ"
-    },
-    {
-      "rank": 3,
-      "itemId": 21455455470,
-      "productName": "Mini Parafusadeira sem Fio Recarregável USB com Maleta 49 peças  MQL-PFU49A EXBOM",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "parafusadeira"
-      ],
-      "opportunityScore": 69.89,
-      "shopName": "Trissolaris Vooloja",
-      "offerLink": "https://s.shopee.com.br/4B1T61CFA5"
-    },
-    {
-      "rank": 4,
-      "itemId": 58266648874,
-      "productName": "Jogo De Soquetes E Bits 27 Peças Para Reparos Automotivos E Casa 1/4 E 1/2",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "jogo de soquetes"
-      ],
-      "opportunityScore": 66.56,
-      "shopName": "SHR ELETRONICOS",
-      "offerLink": "https://s.shopee.com.br/4LKurdXci7"
-    },
-    {
-      "rank": 5,
-      "itemId": 29535501772,
-      "productName": "40 Peças / 46 Peças Jogo De Chave Catraca Caixa De Ferramentas Completa Reversível Soquetes Maleta",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "jogo de chaves"
-      ],
-      "opportunityScore": 66.55,
-      "shopName": "HONG11.br",
-      "offerLink": "https://s.shopee.com.br/AUvYD0DjtM"
-    },
-    {
-      "rank": 6,
       "itemId": 23098642201,
       "productName": "Multímetro Digital Eletrônico Foxlux Ponta de Prova com Bico de Metal Alta Precisão",
       "priorityTier": "COMISSAO_EXTRA",
@@ -271,26 +207,38 @@
       "intentMatchedKeywords": [
         "multimetro digital"
       ],
-      "opportunityScore": 65.86,
+      "opportunityScore": 69.78,
       "shopName": "SantaCasa",
       "offerLink": "https://s.shopee.com.br/9V31553Ske"
     },
     {
-      "rank": 7,
+      "rank": 3,
       "itemId": 21198996053,
       "productName": "Coldre porta furadeira parafusadeira para eletricistas SOLZE",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "parafusadeira",
         "furadeira"
       ],
-      "opportunityScore": 65.49,
+      "opportunityScore": 69.5,
       "shopName": "SOLZE OFICIAL",
-      "offerLink": "https://s.shopee.com.br/40i61367Nr"
+      "offerLink": "https://s.shopee.com.br/80EGQfcl52"
     },
     {
-      "rank": 8,
+      "rank": 4,
+      "itemId": 22999247409,
+      "productName": "Jogo 6 Ponteiras Philips Magnéticos PH2 de Impacto Anti Derrapante Parafusadeira Bits Cruzado",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira"
+      ],
+      "opportunityScore": 69.18,
+      "shopName": "Global Kitchen Hub",
+      "offerLink": "https://s.shopee.com.br/1gKCt1es1C"
+    },
+    {
+      "rank": 5,
       "itemId": 23298660358,
       "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
       "priorityTier": "COMISSAO_EXTRA",
@@ -298,38 +246,103 @@
       "intentMatchedKeywords": [
         "aspirador automotivo"
       ],
-      "opportunityScore": 65.31,
+      "opportunityScore": 68.82,
       "shopName": "ONE LIGHT SHOP",
       "offerLink": "https://s.shopee.com.br/3B8xPeXUZp"
     },
     {
+      "rank": 6,
+      "itemId": 23810674763,
+      "productName": "Interruptor Para Furadeira 12a Philco Pfu01 Original 127v Chave Reposição",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "opportunityScore": 68.68,
+      "shopName": "CTM E-COMMERCE",
+      "offerLink": "https://s.shopee.com.br/8pnNQCZaO9"
+    },
+    {
+      "rank": 7,
+      "itemId": 21899384773,
+      "productName": "Furadeira e Parafusadeira Sem Fio Recarregável 36V com 2 Baterias e Maleta MQL-PFX5600 EXBOM",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "opportunityScore": 68.33,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/6q2J2WhCRh"
+    },
+    {
+      "rank": 8,
+      "itemId": 22998706834,
+      "productName": "Mini Aspirador Automotivo Portátil Potente Recarregável Premium B-88-2",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 68.33,
+      "shopName": "Premium.Store",
+      "offerLink": "https://s.shopee.com.br/40i7fLHdXN"
+    },
+    {
       "rank": 9,
-      "itemId": 22493052160,
-      "productName": "Jogo De Chaves e Ferramentas - Catraca Soquete Aço Crv 1/4 E Chave Allen Completo Profissional | BN",
+      "itemId": 58214925368,
+      "productName": "kit 9 bits ph2 philips magnéticos antiderrapantes, resistentes a impacto, liga s2 para parafusadeira de impacto",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "parafusadeira"
+      ],
+      "opportunityScore": 68.17,
+      "shopName": "LUIZ STORE  BR",
+      "offerLink": "https://s.shopee.com.br/3g5HGhXFxW"
+    },
+    {
+      "rank": 10,
+      "itemId": 24575870687,
+      "productName": "1 Pacote De Escova De Limpeza De Veludo Para Remoção De Poeira De Lacuna De Carro Saída Interna E Ca",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "escova limpeza automotiva"
+      ],
+      "opportunityScore": 67.51,
+      "shopName": "Choice Oficial",
+      "offerLink": "https://s.shopee.com.br/8AXeyjgeI4"
+    },
+    {
+      "rank": 11,
+      "itemId": 22893172849,
+      "productName": "Kit Ferramenta Jogo De Soquete Aço Crv 1/4 Catraca Chave Allen Com Maleta Completo Barato",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "jogo de chaves"
       ],
-      "opportunityScore": 65.28,
-      "shopName": "BNVT Variedades",
-      "offerLink": "https://s.shopee.com.br/8AXdQfxRbE"
+      "opportunityScore": 66.85,
+      "shopName": "PINKpink Yang",
+      "offerLink": "https://s.shopee.com.br/30pXHBchPj"
     },
     {
-      "rank": 10,
-      "itemId": 56510815613,
-      "productName": "Conjunto Profissional de Multímetro Digital ANENG SZ01: Medidor de Tensão AC/DC, Corrente e Resistência + Detector de",
+      "rank": 12,
+      "itemId": 22499407636,
+      "productName": "Luva Volk Ranhurada Original CA Protecao Trabalho EPI Segurança Lavar Louças Banheiro Tira Pelos",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "multimetro digital"
+        "luva de protecao"
       ],
-      "opportunityScore": 63.86,
-      "shopName": "Choice Oficial",
-      "offerLink": "https://s.shopee.com.br/AAIjpNhogM"
+      "opportunityScore": 65.37,
+      "shopName": "JF ECOMMERCE",
+      "offerLink": "https://s.shopee.com.br/7KyUvIs7dH"
     },
     {
-      "rank": 11,
+      "rank": 13,
       "itemId": 58203089928,
       "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa\r\n",
       "priorityTier": "COMISSAO_EXTRA",
@@ -337,90 +350,51 @@
       "intentMatchedKeywords": [
         "aspirador automotivo"
       ],
-      "opportunityScore": 62.25,
+      "opportunityScore": 64.64,
       "shopName": "FLMAX",
       "offerLink": "https://s.shopee.com.br/1gK8BuWixv"
     },
     {
-      "rank": 12,
-      "itemId": 41314419184,
-      "productName": "120ml  Limpador De Vidro Esponja Automotiva Escova De Limpeza Para-Brisa Óleo Filme Agente De Polimento Anti Mancha",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "escova limpeza automotiva"
-      ],
-      "opportunityScore": 62.18,
-      "shopName": "YF_globa.br",
-      "offerLink": "https://s.shopee.com.br/6fioWRn3Yn"
-    },
-    {
-      "rank": 13,
-      "itemId": 58271081608,
-      "productName": "Porta Chaves Decorativo Formato Traseira de Carro Retrô / Porta Malas Organizador De Parede\n",
+      "rank": 14,
+      "itemId": 58208107581,
+      "productName": "Organizador P/ Porta Malas Porta Treco Carro Viagem Grande Capacidade",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "organizador porta malas"
       ],
-      "opportunityScore": 60.29,
-      "shopName": "LH impressões",
-      "offerLink": "https://s.shopee.com.br/AAIjpOhPdd"
-    },
-    {
-      "rank": 14,
-      "itemId": 22791523448,
-      "productName": "Mini Aspirador De pó Portátil Automotivo e Casa Potente Recarregável",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "aspirador automotivo"
-      ],
-      "opportunityScore": 60.25,
-      "shopName": "ANJ.GG store",
-      "offerLink": "https://s.shopee.com.br/3VlnoGWDtr"
+      "opportunityScore": 63.38,
+      "shopName": "Fit Pico",
+      "offerLink": "https://s.shopee.com.br/3qOd9DgeDl"
     },
     {
       "rank": 15,
-      "itemId": 58217509628,
-      "productName": "Óculos de Proteção Segurança EPI Incolor/Cinza CA Construção Obra Esporte Laboratórios",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "oculos de protecao"
-      ],
-      "opportunityScore": 60.22,
-      "shopName": "ESPARTAEPI",
-      "offerLink": "https://s.shopee.com.br/5Au0jhbB03"
-    },
-    {
-      "rank": 16,
-      "itemId": 53352121285,
-      "productName": " Organizador Universal para Carro SUV/MPV com Bolsa de Armazenamento no Porta-malas e Banco Traseiro - Rede",
+      "itemId": 58208414631,
+      "productName": "Organizador de Porta-Malas para Carro, Porta-Treco Resistente de Grande Capacidade, Acessório para Viagem e Armazenament",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "organizador porta malas"
       ],
-      "opportunityScore": 60.08,
-      "shopName": "Value Choice",
-      "offerLink": "https://s.shopee.com.br/70Li3ZtT4E"
+      "opportunityScore": 62.91,
+      "shopName": "GuardaBem",
+      "offerLink": "https://s.shopee.com.br/2qW5xNkSFX"
     },
     {
-      "rank": 17,
-      "itemId": 41164964675,
-      "productName": "Alicate De Clipe De Carro E Ferramentas De Desmontagem Ferramenta Multifuncional De Remoção De Prendedor De Painel",
+      "rank": 16,
+      "itemId": 22693745981,
+      "productName": "Luva Imbatex Cut Poliuretano PU Epi Anti corte Profissional",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "painel ferramentas"
+        "luva de protecao"
       ],
-      "opportunityScore": 59.43,
-      "shopName": "Choice Oficial",
-      "offerLink": "https://s.shopee.com.br/6L61GMDbZ9"
+      "opportunityScore": 61.71,
+      "shopName": "NEW AGE CARE & PROTECTION",
+      "offerLink": "https://s.shopee.com.br/80EBiWpaHT"
     },
     {
-      "rank": 18,
+      "rank": 17,
       "itemId": 48454179995,
       "productName": "Multímetro Digital Profissional com Bipe e NCV automático MD-500 Exbom",
       "priorityTier": "COMISSAO_EXTRA",
@@ -428,270 +402,188 @@
       "intentMatchedKeywords": [
         "multimetro digital"
       ],
-      "opportunityScore": 58.53,
+      "opportunityScore": 61.67,
       "shopName": "Trissolaris Vooloja",
       "offerLink": "https://s.shopee.com.br/906kUA5Mlf"
     },
     {
+      "rank": 18,
+      "itemId": 22894531652,
+      "productName": "Multímetro Digital DT-830 com bateria e ponta de teste (SEM BIPE)",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "multimetro digital"
+      ],
+      "opportunityScore": 61.31,
+      "shopName": "Trissolaris Vooloja",
+      "offerLink": "https://s.shopee.com.br/9AQAgT4jQg"
+    },
+    {
       "rank": 19,
-      "itemId": 58217417403,
-      "productName": "Pincel Escova de Limpeza Automotiva Super Macia com Capa para Painel, Saída de Ar, Console e Frestas do Carro",
+      "itemId": 22799677524,
+      "productName": "Escova Limpa Cinto Zacs Vonixx para Detalhamento Automotivo Limpeza de Cinto de Segurança Carro Higienização",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "escova limpeza automotiva"
       ],
-      "opportunityScore": 57.53,
-      "shopName": "COCONUT SHOP",
-      "offerLink": "https://s.shopee.com.br/5q9hWuqEFm"
+      "opportunityScore": 60.7,
+      "shopName": "VIXX CAR PRODUTOS AUTOMOTIVOS",
+      "offerLink": "https://s.shopee.com.br/2VtIEK2Dmv"
     },
     {
       "rank": 20,
-      "itemId": 58253140064,
-      "productName": "Ponte Acessório de trava para Tapete Cargo Lock SP Organizador de Caçamba ou Porta Malas",
+      "itemId": 56219582664,
+      "productName": "Kit 2 Pincel Multiuso Automotivo Detalhamento Limpeza Interno Remoção Poeira Escova Macio",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "escova limpeza automotiva"
+      ],
+      "opportunityScore": 60.45,
+      "shopName": "MASTERCEL PJ",
+      "offerLink": "https://s.shopee.com.br/906lyGdTbL"
+    },
+    {
+      "rank": 21,
+      "itemId": 58215282791,
+      "productName": "Organizador Suspenso Porta-Malas Carro Vários Compartimentos Resistente à Água",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "organizador porta malas"
       ],
-      "opportunityScore": 56.76,
-      "shopName": "CARGOLOCK.SP",
-      "offerLink": "https://s.shopee.com.br/AUvaE0g8xj"
+      "opportunityScore": 60.03,
+      "shopName": "CASA MISTA",
+      "offerLink": "https://s.shopee.com.br/50aaXMcCr6"
     },
     {
-      "rank": 21,
-      "itemId": 22791609139,
-      "productName": "Kit Limpeza Automotiva Pano Microfibra Flanela Pincel Detalhamento Automotivo Luva Escova de Pneu para Lavar Moto",
+      "rank": 22,
+      "itemId": 23394297832,
+      "productName": "Coletor de pó para Furadeira/Parafusadeira",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "opportunityScore": 68.13,
+      "shopName": "3Droid",
+      "offerLink": "https://s.shopee.com.br/906ncVYx3C"
+    },
+    {
+      "rank": 23,
+      "itemId": 15648905239,
+      "productName": "Engrenagem Furadeira Makita Hp1630 Hp1631 227806-3",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "furadeira"
+      ],
+      "opportunityScore": 68.08,
+      "shopName": "CTM E-COMMERCE",
+      "offerLink": "https://s.shopee.com.br/8fTxDtaDj6"
+    },
+    {
+      "rank": 24,
+      "itemId": 22791523448,
+      "productName": "Mini Aspirador De pó Portátil Automotivo e Casa Potente Recarregável",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 61.96,
+      "shopName": "ANJ.GG store",
+      "offerLink": "https://s.shopee.com.br/3VlnoGWDtr"
+    },
+    {
+      "rank": 25,
+      "itemId": 58203095010,
+      "productName": "Mini Aspirador de Pó Portátil Automotivo Casa Sem Fio 3 em 1 Recarregável Potente 6000Pa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "aspirador automotivo"
+      ],
+      "opportunityScore": 61.6,
+      "shopName": "FLBAZAR",
+      "offerLink": "https://s.shopee.com.br/1BuCqd4Lh"
+    },
+    {
+      "rank": 26,
+      "itemId": 58218164024,
+      "productName": "Escova Dupla Face Limpa Cinto de Segurança Sigma Tools SGT Limpeza Automotiva Cerdas Flexíveis Detalhamento",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
         "escova limpeza automotiva"
       ],
-      "opportunityScore": 56.75,
-      "shopName": "CWK Comércio",
-      "offerLink": "https://s.shopee.com.br/5fqHKbqral"
-    },
-    {
-      "rank": 22,
-      "itemId": 23994130630,
-      "productName": "Painel Para Ferramentas Solze Reforçado",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "painel ferramentas"
-      ],
-      "opportunityScore": 54.41,
-      "shopName": "SOLZE OFICIAL",
-      "offerLink": "https://s.shopee.com.br/5q9kfRFVZy"
-    },
-    {
-      "rank": 23,
-      "itemId": 22794225940,
-      "productName": "Solze Painel Para Ferramentas Reforçado",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "painel ferramentas"
-      ],
-      "opportunityScore": 54.41,
-      "shopName": "Solze & Holger",
-      "offerLink": "https://s.shopee.com.br/5fqKT8G8ux"
-    },
-    {
-      "rank": 24,
-      "itemId": 58201345910,
-      "productName": "Torquimetro C/ Catraca Estalo 1/4\" 5- 25Nm Gedore Red",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "torquimetro"
-      ],
-      "opportunityScore": 43.82,
-      "shopName": "Cicampo Maquinas e Ferramentas",
-      "offerLink": "https://s.shopee.com.br/6fio4bBvgL"
-    },
-    {
-      "rank": 25,
-      "itemId": 58263816224,
-      "productName": "Estante de Aço Reforçada Sem Parafusos, Prateleira Metálica Ajustável Resistente para Garagem Depósito Casa",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "estante metalica garagem"
-      ],
-      "opportunityScore": 42.6,
-      "shopName": "M·D·E",
-      "offerLink": "https://s.shopee.com.br/ql2lAzyAG"
-    },
-    {
-      "rank": 26,
-      "itemId": 22998685500,
-      "productName": "Torquímetro de Estalo 38\" com Catraca 10 a 50 N.m Gedore Red R58900050 - 3369938",
-      "priorityTier": "COMISSAO_EXTRA",
-      "semanticIntentScore": 1.0,
-      "intentMatchedKeywords": [
-        "torquimetro"
-      ],
-      "opportunityScore": 30.59,
-      "shopName": "Cicampo Maquinas e Ferramentas",
-      "offerLink": "https://s.shopee.com.br/3LSM6TOcRl"
+      "opportunityScore": 59.78,
+      "shopName": "VIXX CAR PRODUTOS AUTOMOTIVOS",
+      "offerLink": "https://s.shopee.com.br/2BGRpi3USt"
     },
     {
       "rank": 27,
-      "itemId": 22593225031,
-      "productName": "Torquímetro de Estalo 1/2\" com Catraca 60 a 300 N.m Gedore Red R68900300 - 3369942",
+      "itemId": 58265975786,
+      "productName": "Multímetro Gancho Digital 600V Lanterna Display LCD Alta Precisão Alicate Amperímetro",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "torquimetro"
+        "multimetro digital"
       ],
-      "opportunityScore": 30.59,
-      "shopName": "Cicampo Maquinas e Ferramentas",
-      "offerLink": "https://s.shopee.com.br/50aa5XIH4F"
+      "opportunityScore": 59.68,
+      "shopName": "XIUPRIME999",
+      "offerLink": "https://s.shopee.com.br/AKc84c0I3n"
     },
     {
       "rank": 28,
-      "itemId": 58262851305,
-      "productName": "Prateleira Estante Metálica Dobrável 3 Andares Compartimentos com Rodinhas Organizador Garagem Escritório",
+      "itemId": 58265975659,
+      "productName": "Multímetro Gancho Digital 600V Lanterna Display LCD Alta Precisão Alicate Amperímetro",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "estante metalica garagem"
+        "multimetro digital"
       ],
-      "opportunityScore": 29.67,
-      "shopName": "masterferramenta",
-      "offerLink": "https://s.shopee.com.br/3B8xTYwRpG"
+      "opportunityScore": 59.68,
+      "shopName": "SHR ELETRONICOS",
+      "offerLink": "https://s.shopee.com.br/9Kjasm465d"
     },
     {
       "rank": 29,
-      "itemId": 22895377013,
-      "productName": "Estante de Aço Multiuso 5 Prateleiras Reforçada Organizador Metálico para Cozinha Casa Escritório e Garagem",
+      "itemId": 22299716676,
+      "productName": "Escova Cerdas Médias SGT Tools Detalhamento Automotivo Limpeza Interna Carro Banco Couro Tecido Painel Plástico",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "estante metalica garagem"
+        "escova limpeza automotiva"
       ],
-      "opportunityScore": 28.64,
-      "shopName": "NestTrail",
-      "offerLink": "https://s.shopee.com.br/30pXHFx5AF"
+      "opportunityScore": 59.63,
+      "shopName": "VIXX CAR PRODUTOS AUTOMOTIVOS",
+      "offerLink": "https://s.shopee.com.br/20x1dP47nq"
     },
     {
       "rank": 30,
-      "itemId": 22899458287,
-      "productName": "Jogo Extensão Para Soquetes 6 Pcs - Idea",
+      "itemId": 58258025133,
+      "productName": "1/2/3 peças Organizador Porta Malas Rede Elástica Velcro Carro Bolsa Armazenamento Universal",
       "priorityTier": "COMISSAO_EXTRA",
       "semanticIntentScore": 1.0,
       "intentMatchedKeywords": [
-        "jogo de soquetes"
+        "organizador porta malas"
       ],
-      "opportunityScore": 65.0,
-      "shopName": "EGITO FERRAMENTAS",
-      "offerLink": "https://s.shopee.com.br/3B8xTUc44k"
+      "opportunityScore": 55.66,
+      "shopName": "Seu Zé Online",
+      "offerLink": "https://s.shopee.com.br/2gCfl4l5aU"
     }
   ],
   "rejectedSample": [
-    {
-      "itemId": 23698208840,
-      "productName": "Adaptador Angular Para Parafusadeira 105 Graus PROFISSIONAL",
-      "shopName": "MULTIORIENTAL",
-      "keywords": [
-        "parafusadeira"
-      ],
-      "evaluations": {
-        "parafusadeira": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "adaptador angular"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 22298215521,
-      "productName": "Adaptador Angular Para Parafusadeira 105 Graus PROFISSIONAL",
-      "shopName": "DeinShop",
-      "keywords": [
-        "parafusadeira"
-      ],
-      "evaluations": {
-        "parafusadeira": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "adaptador angular"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 22699146351,
-      "productName": "Adaptador para Parafusadeira Encaixe 1/4 Angular Magnético Profissional",
-      "shopName": "Planeta Dig",
-      "keywords": [
-        "parafusadeira"
-      ],
-      "evaluations": {
-        "parafusadeira": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "adaptador para parafusadeira"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 22599380159,
-      "productName": "Cinto Duplo Preto Solze Porta Parafusadeira Ferramentas + Multiuso",
-      "shopName": "Solze & Holger",
-      "keywords": [
-        "parafusadeira"
-      ],
-      "evaluations": {
-        "parafusadeira": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "porta parafusadeira",
-            "cinto duplo"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 20797417922,
-      "productName": "Cinto Duplo Solze Verde Militar para ferramentas. Bolsa Multiuso + Coldre para parafusadeira + cinto acolchoado e fivela",
-      "shopName": "SOLZE OFICIAL",
-      "keywords": [
-        "parafusadeira"
-      ],
-      "evaluations": {
-        "parafusadeira": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "cinto duplo"
-          ],
-          "matched": []
-        }
-      }
-    },
     {
       "itemId": 23194652778,
       "productName": "Kit Jogo 16 Brocas Estojo Ferro Concreto Madeira Videa Aço Para Furadeira - HSS Aço Rápido",
       "shopName": "MRMUNDOUTILSHOP",
       "keywords": [
-        "furadeira"
+        "furadeira",
+        "jogo de chaves"
       ],
       "evaluations": {
         "furadeira": {
@@ -702,6 +594,23 @@
             "kit jogo 16 brocas"
           ],
           "matched": []
+        },
+        "jogo de chaves": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "jogo",
+              "kit"
+            ]
+          ],
+          "missing": [
+            [
+              "chave",
+              "chaves"
+            ]
+          ]
         }
       }
     },
@@ -726,36 +635,9 @@
       }
     },
     {
-      "itemId": 58251055533,
-      "productName": "14pecas jogo de Bits soquete para parafusadeira 5 A 13mm kit de bits sextavado",
-      "shopName": "Capiforte Tools.BR",
-      "keywords": [
-        "jogo de chaves"
-      ],
-      "evaluations": {
-        "jogo de chaves": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "jogo",
-              "kit"
-            ]
-          ],
-          "missing": [
-            [
-              "chave",
-              "chaves"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22999247409,
-      "productName": "Jogo 6 Ponteiras Philips Magnéticos PH2 de Impacto Anti Derrapante Parafusadeira Bits Cruzado",
-      "shopName": "Global Kitchen Hub",
+      "itemId": 22794271951,
+      "productName": "JOGO 5 DISCOS DE CORTE MADEIRA 24 DENTES SERRA CIRCULAR MARCENEIRO PEDREIRO CONSTRUTOR",
+      "shopName": "KIKA UTILIDADES",
       "keywords": [
         "jogo de chaves"
       ],
@@ -779,36 +661,9 @@
       }
     },
     {
-      "itemId": 22493876691,
-      "productName": "Jogo 10/15 Brocas Diamantadas Serra Copo furar Vidro Granito Ceramica 6 a 50 mm kit ferramentas",
-      "shopName": "ManufaturaPrecisa",
-      "keywords": [
-        "jogo de chaves"
-      ],
-      "evaluations": {
-        "jogo de chaves": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "jogo",
-              "kit"
-            ]
-          ],
-          "missing": [
-            [
-              "chave",
-              "chaves"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23699167573,
-      "productName": "Jogo 10 Bits Ponteira Phillips Imantada Furadeira Parafusadeira Antiderrapante",
-      "shopName": "Global Kitchen Hub",
+      "itemId": 58206741786,
+      "productName": "Jogo Soquete Torx Longo 1/2 8 Peças Aço S2 Alta Resistência",
+      "shopName": "XIUPRIME999",
       "keywords": [
         "jogo de chaves"
       ],
@@ -832,53 +687,25 @@
       }
     },
     {
-      "itemId": 21499674796,
-      "productName": "5pcs Jogo De Lima Rotativa Grossa Aço Para Madeira, Metal e Escultura",
-      "shopName": "SUPERMERCADO RJ",
+      "itemId": 47406526577,
+      "productName": "Jogo Alicates Universal Corte Bico 1000V 3 Peças Vonder",
+      "shopName": "Deend",
       "keywords": [
-        "jogo de chaves"
+        "alicate universal"
       ],
       "evaluations": {
-        "jogo de chaves": {
+        "alicate universal": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "jogo"
+              "universal"
             ]
           ],
           "missing": [
             [
-              "chave",
-              "chaves"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 27823179319,
-      "productName": "Kit 7Pcs Jogo De Brocas Hexagonais Cruzadas De 3-12mm De 4 Bordas Para De Porcelanato De Concreto Vidro-Preto/Laranja",
-      "shopName": "senmi.br",
-      "keywords": [
-        "jogo de chaves"
-      ],
-      "evaluations": {
-        "jogo de chaves": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "jogo",
-              "kit"
-            ]
-          ],
-          "missing": [
-            [
-              "chave",
-              "chaves"
+              "alicate"
             ]
           ]
         }
@@ -989,9 +816,89 @@
       }
     },
     {
-      "itemId": 58204633438,
-      "productName": "Tapete Protetor Organizador Puxa empurra Para Caçamba Caminhonete Frontier",
-      "shopName": "CARGOLOCK.SP",
+      "itemId": 29206667147,
+      "productName": "Voltímetro Digital LED Quadrado De Duplo Display E Medidor De Tensão AC 60-500V 0-100A",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "multimetro digital"
+      ],
+      "evaluations": {
+        "multimetro digital": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "digital"
+            ]
+          ],
+          "missing": [
+            [
+              "multimetro",
+              "multímetro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23399515247,
+      "productName": "Aspirador Portatil Compacto Potente 2 Em 1 Vertical Cores Sortidas Limpeza Residencial Automotiva",
+      "shopName": "Garimpo Salvador Comércio Ltda",
+      "keywords": [
+        "aspirador automotivo"
+      ],
+      "evaluations": {
+        "aspirador automotivo": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "aspirador"
+            ]
+          ],
+          "missing": [
+            [
+              "automotivo",
+              "carro",
+              "veicular"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58263159772,
+      "productName": "Aspirador Portatil Vertical Com Fio Potente 2 Em 1 110v Limpeza Residencial Automotiva",
+      "shopName": "Garimpo Salvador Comércio Ltda",
+      "keywords": [
+        "aspirador automotivo"
+      ],
+      "evaluations": {
+        "aspirador automotivo": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "aspirador"
+            ]
+          ],
+          "missing": [
+            [
+              "automotivo",
+              "carro",
+              "veicular"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22692447818,
+      "productName": "Kit 6 Saquinhos Bebe Gestante Organizador Mala Maternidade TAG + 2 Nécessaire Porta Fraldas Remédio.",
+      "shopName": "UniqueOrganiza",
       "keywords": [
         "organizador porta malas"
       ],
@@ -1017,65 +924,9 @@
       }
     },
     {
-      "itemId": 22394639037,
-      "productName": "Porta jaleco scrub estetoscópio enfermagem medicina odontologia farmacia veterinaria mala maternidadebebê saúde saquinho",
-      "shopName": "Tessihbolsas",
-      "keywords": [
-        "organizador porta malas"
-      ],
-      "evaluations": {
-        "organizador porta malas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "organizador",
-              "bolsa de armazenamento"
-            ],
-            [
-              "porta malas",
-              "porta-malas",
-              "carro",
-              "automotivo"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22495121837,
-      "productName": "Kit Audi: Bolsa Organizadora Porta Mala Preta + Tapete A3 Sportback 2007 A 2012 Preto",
-      "shopName": "MR_mercado",
-      "keywords": [
-        "organizador porta malas"
-      ],
-      "evaluations": {
-        "organizador porta malas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "organizador",
-              "bolsa de armazenamento"
-            ],
-            [
-              "porta malas",
-              "porta-malas",
-              "carro",
-              "automotivo"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22193930893,
-      "productName": "Bolsa Organizadora Porta Malas Renegade, Compass, Cherokee -> Carpete Preto",
-      "shopName": "MR_mercado",
+      "itemId": 23302574458,
+      "productName": "Rede Elástica Porta Obj Porta Malas",
+      "shopName": "mirandaeunice",
       "keywords": [
         "organizador porta malas"
       ],
@@ -1100,9 +951,93 @@
       }
     },
     {
-      "itemId": 42782303156,
-      "productName": "Armazenamento Dobrável Para Porta-Malas De Carro Bolsa Compartimentos Organizadores De Vários Slots Bolso De Rede Trasei",
-      "shopName": "Choice Oficial",
+      "itemId": 21498975415,
+      "productName": "Kit 6 Saquinhos Bebe Gestante Organizador Mala Maternidade TAG + 2 Nécessaire Porta Fraldas Remédio.",
+      "shopName": "Unique Store SP",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23898625632,
+      "productName": "Mala Esportiva Bolsa Feminina Organizadora Passeio Viagem Porta Tenis",
+      "shopName": "NEST&NOOK",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ],
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58217261485,
+      "productName": "Necessaire Feminina Organizadora Porta Pincéis Maquiagem Com Faixa Para Fixar na Mala de Viagem",
+      "shopName": "LUMEN  LTDA",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ],
+            [
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23698670603,
+      "productName": "Bolsa Porta Malas Ferramentas Automotiva ideal para organizar o carro",
+      "shopName": "Stars Capas",
       "keywords": [
         "organizador porta malas"
       ],
@@ -1128,9 +1063,36 @@
       }
     },
     {
-      "itemId": 22994062628,
-      "productName": "Kit 4 Bolsa Mala Saída Maternidade + Mochila Bordado Bebê Menino Menina Organizador Porta Fralda Exclusive Safari Luxo",
-      "shopName": "Artfine Oficial ",
+      "itemId": 58206815999,
+      "productName": "Gancho para Guarda-chuvas Sol Suporte Porta Malas para Sistema Isofix - Simples ou Duplo",
+      "shopName": "VEXEL_",
+      "keywords": [
+        "organizador porta malas"
+      ],
+      "evaluations": {
+        "organizador porta malas": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "porta malas",
+              "porta-malas"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "bolsa de armazenamento"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58205794616,
+      "productName": "Kit 6 Saquinhos Organizador Mala Maternidade Bebe Gestante TAG + 2 Necessaire Porta Fraldas Remédio.",
+      "shopName": "Casa de Coisinhas",
       "keywords": [
         "organizador porta malas"
       ],
@@ -1156,305 +1118,65 @@
       }
     },
     {
-      "itemId": 22894447600,
-      "productName": "Kit 10/20/40/60 peças clipes dreno placa solar escoar drenar água painel 30mm/33mm/35mm/40mm",
-      "shopName": "DN MAGAZINE",
+      "itemId": 23598831757,
+      "productName": "Rede Elástica Organizadora Com Velcro Para Porta Malas Universal Para Carro Suvs Caminhonetes",
+      "shopName": "Royal-Store",
       "keywords": [
-        "painel ferramentas"
+        "organizador porta malas"
       ],
       "evaluations": {
-        "painel ferramentas": {
+        "organizador porta malas": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "painel"
+              "porta malas",
+              "porta-malas",
+              "carro"
             ]
           ],
           "missing": [
             [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
+              "organizador",
+              "bolsa de armazenamento"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 23898409317,
-      "productName": "Alça Subir no Caminhão Painel Direita Ford Cargo Cinza 6C45E045B15AA Alça Apoio Cabine",
-      "shopName": "AFM Auto Peças",
+      "itemId": 21897975967,
+      "productName": "Kit c/5 unidades- Estojo Necessaire -Organizador Multiuso - Ideal p/ Malas, Bolsa, Maletas de maquiagem  Porta objetos",
+      "shopName": "Plásticos GA-HO",
       "keywords": [
-        "painel ferramentas"
+        "organizador porta malas"
       ],
       "evaluations": {
-        "painel ferramentas": {
+        "organizador porta malas": {
           "accepted": false,
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "painel"
+              "organizador"
             ]
           ],
           "missing": [
             [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
+              "porta malas",
+              "porta-malas",
+              "carro",
+              "automotivo"
             ]
           ]
         }
       }
     },
     {
-      "itemId": 22026407417,
-      "productName": "Alavanca Para Remocao Molduras Multimidia Paineis",
-      "shopName": "Atlanta Auto Peças",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "painel",
-              "pegboard"
-            ],
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 43578618975,
-      "productName": "Alicate De Remoção De Clipe Automotivo Resistente , Ferramenta Removedora De Prendedor De Carro Para Painéis De Porta , ",
-      "shopName": "Choice Oficial",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "ferramenta"
-            ]
-          ],
-          "missing": [
-            [
-              "painel",
-              "pegboard"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23093702653,
-      "productName": "Alicate Amperimetro Digital Para Painel Solar Et-4710 Minipa",
-      "shopName": "CASA_E_FERRAMENTAS",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "painel"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 20498329066,
-      "productName": "Kit 100 Presilhas Automotivas Universais – Fixadores Plásticos para Painel, Para-choque e Forro",
-      "shopName": "BLACK LOCK OFICIAL",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "painel"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 24721994890,
-      "productName": "Um Conjunto De Painéis De Parede À Prova De Som De Espuma Acústica De Estúdio De 10 Pces , Esponja De Tratamento De Abso",
-      "shopName": "Choice Oficial",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "painel",
-              "pegboard"
-            ],
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 52506449459,
-      "productName": "Fita Dupla Face Extra Forte Fracionada Adesiva 9MM Cartela Tiras Placa PVC 3D Painel Cabeceira",
-      "shopName": "MAXELITE",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "painel"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 19499254712,
-      "productName": "Kit 5 Chave Espátula Porta Painéis Internos Rádio Forro",
-      "shopName": "Padroeira Oficial",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "painel",
-              "pegboard"
-            ],
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22497494357,
-      "productName": "Espátula De Plástico Remoção Painéis Rádio Forro 5 Peças",
-      "shopName": "Padroeira Oficial",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
-          "missing": [
-            [
-              "painel",
-              "pegboard"
-            ],
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 22398391373,
-      "productName": "Painel Instrumento Vw Golf Mk3 1991 Á 1998 1812012113b Orig Preto",
-      "shopName": "zg.autopecasusadas",
-      "keywords": [
-        "painel ferramentas"
-      ],
-      "evaluations": {
-        "painel ferramentas": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "painel"
-            ]
-          ],
-          "missing": [
-            [
-              "ferramenta",
-              "ferramentas",
-              "oficina"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 27289314855,
-      "productName": "Esfregona para lavagem de carros, escova de limpeza ajustável de duas cabeças, Super absorvente",
-      "shopName": "Viva Tudo",
+      "itemId": 22999661153,
+      "productName": "Kit 5 Pincéis Detailing Automotivo Escovas Cerdas Macias Limpeza Painel Rodas Carro",
+      "shopName": "magazine_imports",
       "keywords": [
         "escova limpeza automotiva"
       ],
@@ -1464,148 +1186,25 @@
           "score": 0.5,
           "reason": "nucleo_do_produto_ausente",
           "matched": [
-            [
-              "escova"
-            ]
-          ],
-          "missing": [
             [
               "automotivo",
               "carro",
-              "detalhamento",
-              "rodas",
-              "parabrisa",
-              "para-brisa"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 58202497481,
-      "productName": "Karbox 40x12cm Escova Microfibra Longa - Limpeza Vidros Automotivos e Residenciais",
-      "shopName": "bk8ksumioe",
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "evaluations": {
-        "escova limpeza automotiva": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "escova"
+              "rodas"
             ]
           ],
           "missing": [
-            [
-              "automotivo",
-              "carro",
-              "detalhamento",
-              "rodas",
-              "parabrisa",
-              "para-brisa"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 41268506402,
-      "productName": "Mop para lavagem de carros, escova de limpeza ajustável de cabeça dupla, superabsorvente",
-      "shopName": "Laicailai.br",
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "evaluations": {
-        "escova limpeza automotiva": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "escova"
-            ]
-          ],
-          "missing": [
-            [
-              "automotivo",
-              "carro",
-              "detalhamento",
-              "rodas",
-              "parabrisa",
-              "para-brisa"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 42810900370,
-      "productName": "Esfregona para lavagem de carros, escova de limpeza ajustável de duas cabeças, Super absorvente",
-      "shopName": "Zestify.br",
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "evaluations": {
-        "escova limpeza automotiva": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "escova"
-            ]
-          ],
-          "missing": [
-            [
-              "automotivo",
-              "carro",
-              "detalhamento",
-              "rodas",
-              "parabrisa",
-              "para-brisa"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23498288258,
-      "productName": "Kit 10 Peças Lavagem Automotiva Esponja + Escova de Pneu + Flanela + Aplicador de Cera + Luva Microfibra + Kit Pincel",
-      "shopName": "Vooma",
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "evaluations": {
-        "escova limpeza automotiva": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
             [
               "escova",
               "pincel"
             ]
-          ],
-          "missing": [
-            [
-              "automotivo",
-              "carro",
-              "detalhamento",
-              "rodas",
-              "parabrisa",
-              "para-brisa"
-            ]
           ]
         }
       }
     },
     {
-      "itemId": 56958740702,
-      "productName": "KIT 3 ESCOVA FURO DE RODA PEPINO ESCOVA CAIXA DE RODA MÉDIA CURTA ESCOVA LIMPEZA DE PNEU AUTOMOTIVA",
-      "shopName": "Lunvo.br",
+      "itemId": 58218163404,
+      "productName": "Kit 3 Escovas Zacs Detalhamento Automotivo Aço Inox Nylon Latão Limpeza Carro Painel Plástico Ferrugem Estofado",
+      "shopName": "VIXX CAR PRODUTOS AUTOMOTIVOS",
       "keywords": [
         "escova limpeza automotiva"
       ],
@@ -1616,91 +1215,38 @@
           "reason": "nucleo_do_produto_ausente",
           "matched": [
             [
-              "escova"
-            ]
-          ],
-          "missing": [
-            [
               "automotivo",
               "carro",
-              "detalhamento",
-              "rodas",
-              "parabrisa",
-              "para-brisa"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 41408438289,
-      "productName": "Limpeza De Filme De Óleo De Removedor De Escova De Vidro De Carro Com Pano De Esponja 120ml",
-      "shopName": "O céu azul",
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "evaluations": {
-        "escova limpeza automotiva": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "removedor",
-            "filme de oleo",
-            "filme de óleo"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 58262496410,
-      "productName": "Escova Multifuncional Ajustável 360 Graus e Ideal para Limpeza Automotiva Esfregão Mop Telescópico",
-      "shopName": "AS PLACE E-COMMERCE LTDA",
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "evaluations": {
-        "escova limpeza automotiva": {
-          "accepted": false,
-          "score": 0.5,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "escova"
+              "detalhamento"
             ]
           ],
-          "missing": [
-            [
-              "automotivo",
-              "carro",
-              "detalhamento",
-              "rodas",
-              "parabrisa",
-              "para-brisa"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 44431271745,
-      "productName": "Kit 15 Peças Lavagem Automotiva Escovas+Luva Microfibra+Aplicador de Cera+Completo para Limpeza e Estética Automotiva",
-      "shopName": "Starking.br",
-      "keywords": [
-        "escova limpeza automotiva"
-      ],
-      "evaluations": {
-        "escova limpeza automotiva": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [],
           "missing": [
             [
               "escova",
               "pincel"
-            ],
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22092843462,
+      "productName": "Kit 3pcs Escova Rotativa Encaixe Parafusadeira Furadeira Limpeza Automotiva Pesada Lavar Box Sofás Tecidos Couros Estofados Tapetes Chão Banheiro Multiuso Cerdas Média e Soft (Macia)",
+      "shopName": "VENDAS.VTO",
+      "keywords": [
+        "escova limpeza automotiva"
+      ],
+      "evaluations": {
+        "escova limpeza automotiva": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "escova"
+            ]
+          ],
+          "missing": [
             [
               "automotivo",
               "carro",
@@ -1714,9 +1260,163 @@
       }
     },
     {
-      "itemId": 22994179810,
-      "productName": "Óculos de Sol Redondo Soldador Steampunk Retrô com Proteção Lateral uv400 Masculino Feminino",
-      "shopName": "Fortuna Sunglasses",
+      "itemId": 58220340081,
+      "productName": "Kit 4 Escovas Limpeza Automotiva Escova Reta para Pneu+Escova Cônica Grande+Escova T para Pneu+Escova T Grande",
+      "shopName": "JESLUONE",
+      "keywords": [
+        "escova limpeza automotiva"
+      ],
+      "evaluations": {
+        "escova limpeza automotiva": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "escova"
+            ]
+          ],
+          "missing": [
+            [
+              "automotivo",
+              "carro",
+              "detalhamento",
+              "rodas",
+              "parabrisa",
+              "para-brisa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58270544067,
+      "productName": "Escova Limpadora de Vidros Automotivos Remove sujeira",
+      "shopName": "NexTche shope",
+      "keywords": [
+        "escova limpeza automotiva"
+      ],
+      "evaluations": {
+        "escova limpeza automotiva": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "escova"
+            ]
+          ],
+          "missing": [
+            [
+              "automotivo",
+              "carro",
+              "detalhamento",
+              "rodas",
+              "parabrisa",
+              "para-brisa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23994324503,
+      "productName": "Kit 3 Escovas para Detalhamento Automotivo Limpeza Detalhada Vonixx",
+      "shopName": "Cicampo Maquinas e Ferramentas",
+      "keywords": [
+        "escova limpeza automotiva"
+      ],
+      "evaluations": {
+        "escova limpeza automotiva": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "automotivo",
+              "detalhamento"
+            ]
+          ],
+          "missing": [
+            [
+              "escova",
+              "pincel"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58218169951,
+      "productName": "Escova para Carpete Detailer para Limpeza Automotiva",
+      "shopName": "Sosan Auto",
+      "keywords": [
+        "escova limpeza automotiva"
+      ],
+      "evaluations": {
+        "escova limpeza automotiva": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "escova"
+            ]
+          ],
+          "missing": [
+            [
+              "automotivo",
+              "carro",
+              "detalhamento",
+              "rodas",
+              "parabrisa",
+              "para-brisa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58218273028,
+      "productName": "Oculos para Vista Cansada Presbiopia Visão de Perto Descanso Com Proteção Uv 400 Anti Reflexo",
+      "shopName": "Viss.br",
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "oculos",
+              "óculos"
+            ],
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 51250897834,
+      "productName": " Óculos de sol redondos pequenos para homens e mulheres, proteção UV, proteção solar, moda ao ar livre, óculos para",
+      "shopName": "Choice Oficial",
       "keywords": [
         "oculos de protecao"
       ],
@@ -1727,273 +1427,17 @@
           "reason": "termo_bloqueado",
           "blocked": [
             "oculos de sol",
-            "óculos de sol"
+            "óculos de sol",
+            "moda"
           ],
           "matched": []
         }
       }
     },
     {
-      "itemId": 40674400581,
-      "productName": "Limpa Telas Petra 250ml + 10Flanelas – Limpa Lentes, Celulares e Óculos | Brilho, Proteção e Alta Eficiência",
-      "shopName": "Petra Conceito Sports",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.6667,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "oculos",
-              "óculos"
-            ],
-            [
-              "protecao",
-              "proteção"
-            ]
-          ],
-          "missing": [
-            [
-              "trabalho",
-              "seguranca",
-              "segurança",
-              "epi",
-              "industrial",
-              "obra",
-              "oficina",
-              "ca"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 43524384874,
-      "productName": "Kit 3 Limpa Telas Petra 250ml – Limpa Lentes, Celulares e Óculos | Brilho, Proteção e Alta Eficiência",
-      "shopName": "Petra Conceito Sports",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.6667,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "oculos",
-              "óculos"
-            ],
-            [
-              "protecao",
-              "proteção"
-            ]
-          ],
-          "missing": [
-            [
-              "trabalho",
-              "seguranca",
-              "segurança",
-              "epi",
-              "industrial",
-              "obra",
-              "oficina",
-              "ca"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 42174394366,
-      "productName": "Limpa Telas Petra 500ml – Limpa Lentes, Celulares e Óculos | Brilho, Proteção e Alta Eficiência",
-      "shopName": "Petra Conceito Sports",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.6667,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "oculos",
-              "óculos"
-            ],
-            [
-              "protecao",
-              "proteção"
-            ]
-          ],
-          "missing": [
-            [
-              "trabalho",
-              "seguranca",
-              "segurança",
-              "epi",
-              "industrial",
-              "obra",
-              "oficina",
-              "ca"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 40424394506,
-      "productName": "Kit 3 Limpa Telas Petra 500ml – Limpa Lentes, Celulares e Óculos | Brilho, Proteção e Alta Eficiência",
-      "shopName": "Petra Conceito Sports",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.6667,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "oculos",
-              "óculos"
-            ],
-            [
-              "protecao",
-              "proteção"
-            ]
-          ],
-          "missing": [
-            [
-              "trabalho",
-              "seguranca",
-              "segurança",
-              "epi",
-              "industrial",
-              "obra",
-              "oficina",
-              "ca"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 29843000770,
-      "productName": "Limpa Telas Petra 250ml – Limpa Lentes, Celulares e Óculos | Brilho, Proteção e Alta Eficiência",
-      "shopName": "Petra Conceito Sports",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.6667,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "oculos",
-              "óculos"
-            ],
-            [
-              "protecao",
-              "proteção"
-            ]
-          ],
-          "missing": [
-            [
-              "trabalho",
-              "seguranca",
-              "segurança",
-              "epi",
-              "industrial",
-              "obra",
-              "oficina",
-              "ca"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 20198960182,
-      "productName": "Óculos de Sol Escuro Aviador Clássico Feminino Masculino Proteção UV400 Doha",
-      "shopName": "DOHA GLASSES",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "oculos de sol",
-            "óculos de sol"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 21997734946,
-      "productName": "Óculos de Sol Escuro Aviador Clássico Masculino Proteção UV400 Moderno",
-      "shopName": "DOHA GLASSES",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.0,
-          "reason": "termo_bloqueado",
-          "blocked": [
-            "oculos de sol",
-            "óculos de sol"
-          ],
-          "matched": []
-        }
-      }
-    },
-    {
-      "itemId": 22992747047,
-      "productName": "Luva Pigmentada Bolinhas Tricotadas de Proteção EPI Multiuso Malha de Algodão Para Construção Industrial Jardim",
-      "shopName": "MULTIORIENTAL",
-      "keywords": [
-        "oculos de protecao"
-      ],
-      "evaluations": {
-        "oculos de protecao": {
-          "accepted": false,
-          "score": 0.6667,
-          "reason": "nucleo_do_produto_ausente",
-          "matched": [
-            [
-              "protecao",
-              "proteção",
-              "epi"
-            ],
-            [
-              "epi",
-              "industrial"
-            ]
-          ],
-          "missing": [
-            [
-              "oculos",
-              "óculos"
-            ]
-          ]
-        }
-      }
-    },
-    {
-      "itemId": 23598126384,
-      "productName": "LIMPY - PAR DE LUVAS MULTIUSO XG",
-      "shopName": "Bazar Dona Dirce",
+      "itemId": 18199355640,
+      "productName": "Photochromic Polarized Sunglasses for Men – Chameleon Driving Glasses, UV Protection & Light-Adaptive Lenses",
+      "shopName": "yanxia.br",
       "keywords": [
         "oculos de protecao"
       ],
@@ -2030,9 +1474,9 @@
       }
     },
     {
-      "itemId": 58217233532,
-      "productName": "Óculos de Sol Hexagonal Preto Fosco - Proteção UV400, Design Moderno, Unissex",
-      "shopName": "iolandasantos002",
+      "itemId": 58254860002,
+      "productName": "Óculos de Sol Masculino Casual com Proteção UV e Visual Estiloso",
+      "shopName": "AERO ADVENTURE",
       "keywords": [
         "oculos de protecao"
       ],
@@ -2050,9 +1494,30 @@
       }
     },
     {
-      "itemId": 23793850359,
-      "productName": "Óculos de Sol Escuro Feminino Blogueira Aviador Moderno Estiloso Original Proteção UV400 + Case Doha",
-      "shopName": "DOHA GLASSES",
+      "itemId": 22694714481,
+      "productName": "Óculos de Sol Unissex com Nariz Removível Plaan Tariss Proteção UV Verão Moda",
+      "shopName": "VYREON",
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "oculos de sol",
+            "óculos de sol",
+            "moda"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 22293918284,
+      "productName": "Óculos de Sol masculino e feminina Corrida Ciclismo Beach Tennis Praia Volei lente polarizada Proteção UV400",
+      "shopName": "OJF IMPORTS",
       "keywords": [
         "oculos de protecao"
       ],
@@ -2070,9 +1535,9 @@
       }
     },
     {
-      "itemId": 22997364925,
-      "productName": "Óculos de Sol Feminino Blogueira Retrô Tendencia Vintage Com Proteção UV400 Festival",
-      "shopName": "DOHA GLASSES",
+      "itemId": 24059944439,
+      "productName": "Óculos De Sol Sem Aro Com Lentes Gradientes Para Homens E Mulheres-Borda Cortada Templo Vazado Ao Ar Livre-Proteção UV400",
+      "shopName": "Zenoba.br",
       "keywords": [
         "oculos de protecao"
       ],
@@ -2090,9 +1555,126 @@
       }
     },
     {
-      "itemId": 23193850938,
-      "productName": "Óculos De Sol Feminino Lua Quadrado Gatinho Lente Policarbonato Proteção UV400 Elegante Resistente",
-      "shopName": "DOHA GLASSES",
+      "itemId": 58250376979,
+      "productName": "Óculos de Sol Infantil em Forma de Gatinho 😎 Proteção UV400 - Leve, Colorido e Estiloso",
+      "shopName": "óculos  ",
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "oculos de sol",
+            "óculos de sol",
+            "infantil"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 23992849911,
+      "productName": "Kit 2 Prs Luva De Segurança Multitato Tatil Tato Poliamida Com Banho PU Antiestática Mecânico Pedreiro Serviços Gerais",
+      "shopName": "Tubarão Epis",
+      "keywords": [
+        "oculos de protecao",
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "seguranca",
+              "segurança"
+            ],
+            [
+              "seguranca",
+              "segurança"
+            ]
+          ],
+          "missing": [
+            [
+              "oculos",
+              "óculos"
+            ]
+          ]
+        },
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ],
+            [
+              "seguranca",
+              "segurança"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 27195502837,
+      "productName": "Óculos Oval Armação Transparente Vintage Leopardo Feminino Luxo Moda Proteção UV400",
+      "shopName": "Olivello Home Center",
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "moda"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 49953222946,
+      "productName": "Óculos De Sol Triangulares Retrô Com Proteção UV400 Unissex Da Moda Para Homens E Mulheres",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "oculos de sol",
+            "óculos de sol",
+            "moda"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 58256981877,
+      "productName": "Óculos de Sol Masculino Hastes lateral em Madeira Bambu Premium com Proteção UV400 Alta Qualidade",
+      "shopName": "Atalaia Mix",
       "keywords": [
         "oculos de protecao"
       ],
@@ -2106,6 +1688,531 @@
             "óculos de sol"
           ],
           "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 27700492684,
+      "productName": "Óculos De Sol Sem Fio Bluetooth Proteção Para Fones De Ouvido Mulheres E Homens Acessórios De Áudio Vídeo Inteligentes",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "oculos de sol",
+            "óculos de sol"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 41373629478,
+      "productName": " 2 peças de óculos de sol com armação redonda pequena, estilo retrô coreano, proteção UV400, para homens e mulheres.",
+      "shopName": "Choice Oficial",
+      "keywords": [
+        "oculos de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "termo_bloqueado",
+          "blocked": [
+            "oculos de sol",
+            "óculos de sol"
+          ],
+          "matched": []
+        }
+      }
+    },
+    {
+      "itemId": 15456998394,
+      "productName": "Caixa de 50 Máscaras Descartáveis Tripla Camada para Proteção Facial",
+      "shopName": "GLOBALTERM",
+      "keywords": [
+        "oculos de protecao",
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "oculos de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "oculos",
+              "óculos"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        },
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "luva",
+              "luvas"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58201087340,
+      "productName": "Luva De Levantamento De Peso Grip Para Mãos Anti-Slip Silicone Musculação e Treino Ergonômico Ginastica Antiderrapante",
+      "shopName": "FENG .",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22098945621,
+      "productName": "Luva para Musculação Treino Grip Protetor de Mão Cross Fit Antiderrapante Halteres e Barras Max Grip Fitness",
+      "shopName": "Shop Frajola",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23794318196,
+      "productName": "Kit Luva Nitrilica Confortavel varias cores antialérgica resistente sem po protecão 100unid",
+      "shopName": "T-Pack embalagens",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ],
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22397344432,
+      "productName": "Kit 2 Prs Luva De Latex Amarela Multiuso Forrada Antiderrapante Impermeável Para Limpeza Louça Faxina Jardinagem Volk",
+      "shopName": "Tubarão Epis",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19298016383,
+      "productName": "Kit 50 Und. Luva Nitrílica Sensiflex Grip Proteção Química Laranja Ou Preta Mecânico Antiderrapante",
+      "shopName": "Americanvek Climatização e EPIs",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ],
+            [
+              "protecao",
+              "proteção"
+            ]
+          ],
+          "missing": [
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 14146303395,
+      "productName": "Luva Par De Treino Academia Unissex Crossfit Bike Confortável Para Peso",
+      "shopName": "Lays.Campos",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58252543364,
+      "productName": "Luva de Academia Para Levantamento De Peso Profissional Grip Musculação e Crossfit Protege as Mãos Zero Calos",
+      "shopName": "NETHENRY",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.3333,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ],
+            [
+              "trabalho",
+              "seguranca",
+              "segurança",
+              "mecanica",
+              "mecânica",
+              "epi",
+              "industrial",
+              "obra",
+              "oficina",
+              "ca"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21167672710,
+      "productName": "Óculos De Proteção Vonder EPI Ciclismo Tático Reforçado Antirrisco Conforto",
+      "shopName": "Prumari Distribuidora",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção",
+              "epi"
+            ],
+            [
+              "epi"
+            ]
+          ],
+          "missing": [
+            [
+              "luva",
+              "luvas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58250562421,
+      "productName": "Kit 3 Luva De Segurança Multitato Tatil Banhada Luva Pu Black P M G GG Mecanico Pedreiro Eletricista",
+      "shopName": "Kamaleão Distribuidora",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ],
+            [
+              "seguranca",
+              "segurança"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22698343205,
+      "productName": "Óculos De Proteção Sobrepor Óculos De Grau Protector Valeplast Segurança Epi Obra Indústria",
+      "shopName": "Tubarão Epis",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "protecao",
+              "proteção",
+              "epi"
+            ],
+            [
+              "seguranca",
+              "segurança",
+              "epi",
+              "obra"
+            ]
+          ],
+          "missing": [
+            [
+              "luva",
+              "luvas"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22397731317,
+      "productName": "Luva Nitril Wave Smart CA 46803 Ref 103015329 - VOLK",
+      "shopName": "7 Oliveiras",
+      "keywords": [
+        "luva de protecao"
+      ],
+      "evaluations": {
+        "luva de protecao": {
+          "accepted": false,
+          "score": 0.6667,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "luva"
+            ],
+            [
+              "ca"
+            ]
+          ],
+          "missing": [
+            [
+              "protecao",
+              "proteção",
+              "trabalho",
+              "mecanica",
+              "mecânica",
+              "epi"
+            ]
+          ]
         }
       }
     }
