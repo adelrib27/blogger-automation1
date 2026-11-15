@@ -27,6 +27,40 @@ class FeedAuditError(Exception):
     """Exception messages are static codes, never URL/headers/field values."""
 
 
+def probe_dialects(path: Path, source_name: str) -> None:
+    """Estatísticas estruturais apenas, sem imprimir campos do feed."""
+    candidates = [
+        ("COMMA_DOUBLEQUOTE", ",", '"'),
+        ("SEMICOLON_DOUBLEQUOTE", ";", '"'),
+        ("TAB_DOUBLEQUOTE", "\t", '"'),
+        ("PIPE_DOUBLEQUOTE", "|", '"'),
+    ]
+    for label, delimiter, quotechar in candidates:
+        checked=0
+        mismatches=0
+        first_bad=0
+        header_width=0
+        last_line=0
+        try:
+            with path.open("r",encoding="utf-8-sig",errors="strict",newline="") as stream:
+                reader=csv.reader(stream,delimiter=delimiter,quotechar=quotechar, doublequote=True, strict=True)
+                header=next(reader)
+                header_width=len(header)
+                for row in reader:
+                    checked+=1
+                    last_line=reader.line_num
+                    if len(row)!=header_width:
+                        mismatches+=1
+                        if not first_bad:
+                            first_bad=checked
+                    if checked>=50:
+                        break
+        except (UnicodeError, csv.Error, StopIteration, OSError):
+            mismatches+=1
+        print(f"V31_DIALECT_{source_name}_{label}: width={header_width}, "
+              f"checked={checked}, bad={mismatches}, first_bad={first_bad}, last_line={last_line}")
+
+
 def inspect_csv(path: Path, seen: set[str], source_name: str) -> dict:
     counters = Counter()
     niches = Counter()
@@ -122,6 +156,7 @@ def run() -> int:
             for index, url in enumerate(urls, 1):
                 path=folder/f"feed_{index}.csv"
                 size=download_feed(url, path)
+                probe_dialects(path, f"feed_{index}")
                 report=inspect_csv(path, seen, f"feed_{index}")
                 report["download_bytes"]=size
                 reports.append(report)
