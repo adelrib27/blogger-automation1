@@ -23,6 +23,26 @@ class RedirectNotAllowed(ValueError):
     """Um redirecionamento tentou sair do endereço permitido."""
 
 
+def redirect_category(raw: str) -> str:
+    """Retorna apenas uma classificação estática, nunca a URL ou o hostname."""
+    try:
+        address = urllib.parse.urlsplit(raw)
+        host = (address.hostname or "").lower()
+        if host == "affiliate.shopee.com.br" or host.endswith(".shopee.com.br"):
+            return "SHOPEE_BR"
+        if host == "storage.googleapis.com" or host.endswith(".storage.googleapis.com"):
+            return "CLOUD_STORAGE"
+        if host.endswith(".amazonaws.com"):
+            return "AWS_OBJECT_STORAGE"
+        if host.endswith(".cloudfront.net"):
+            return "CLOUDFRONT"
+        if host.endswith(".shopee.io") or host.endswith(".shopeemobile.com"):
+            return "SHOPEE_CDN"
+    except ValueError:
+        pass
+    return "OTHER_HOST"
+
+
 def check_feed_url(raw: str) -> None:
     if not isinstance(raw, str) or len(raw) > 1500 or any(c.isspace() for c in raw):
         raise ValueError("URL de feed inválida")
@@ -44,7 +64,7 @@ class RestrictRedirect(urllib.request.HTTPRedirectHandler):
         try:
             check_feed_url(newurl)
         except ValueError:
-            raise RedirectNotAllowed("REDIRECT_BLOCKED") from None
+            raise RedirectNotAllowed(redirect_category(newurl)) from None
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
@@ -78,7 +98,7 @@ def download_feed(raw_url: str, destination: Path | str, *, max_bytes=MAX_FEED_B
         # Suprimir URL/token/response do traceback e remover download parcial.
         dest.unlink(missing_ok=True)
         if isinstance(exc, RedirectNotAllowed):
-            code = "REDIRECT_BLOCKED"
+            code = "REDIRECT_BLOCKED_" + str(exc)
         elif isinstance(exc, urllib.error.HTTPError):
             code = "HTTP_" + str(exc.code) if 100 <= exc.code <= 599 else "HTTP_INVALID"
         elif isinstance(exc, urllib.error.URLError):
