@@ -232,9 +232,19 @@ def choose(profile: dict, by_category: dict[str, list[dict]]) -> list[dict]:
 def render(products: list[dict], *, lab_url: str) -> str:
     if len(products) != REQUIRED or len({p["item_id"] for p in products}) != REQUIRED:
         raise GateError("render exige 16 produtos únicos")
+    out = ("<!-- V31_R56_STORE_AUTO_START -->\n" + render_cards(products, lab_only=True)
+           + "\n<!-- V31_R56_STORE_AUTO_END -->")
+    if (out.count('class="ub-product-card"') != REQUIRED or
+            out.count('data-item-id="') != REQUIRED or
+            out.count('rel="nofollow sponsored noopener"') != REQUIRED * 2):
+        raise GateError("HTML não passou no contrato 16/16")
+    return out
+
+
+def render_cards(products: list[dict], *, lab_only: bool = False) -> str:
     esc = lambda x: html.escape(str(x), quote=True)
-    parts = ['<!-- V31_R56_STORE_AUTO_START -->',
-             '<section class="ub-store-r56" data-v31-source="shopee-api" data-lab-only="true">',
+    lab_attribute = ' data-lab-only="true"' if lab_only else ''
+    parts = ['<section class="ub-store-r56" data-v31-source="shopee-api"' + lab_attribute + '>',
              '<h2>Ofertas selecionadas da Shopee</h2>',
              '<p>Preços e disponibilidade podem mudar. Confira na Shopee antes de comprar.</p>']
     for cat in dict.fromkeys(p["category"] for p in products):
@@ -257,14 +267,12 @@ def render(products: list[dict], *, lab_url: str) -> str:
                 '<a class="ub-product-action" href="' + esc(p["offer_link"]) + '" target="_blank" rel="nofollow sponsored noopener">Ver oferta na Shopee</a>'
                 '</div></article>')
         parts += ['</div></section>']
-    parts += ['<p class="ub-store-note">Este laboratório pode receber comissão por compras elegíveis realizadas pelos links de afiliado, sem custo extra pela utilização do link.</p>',
-              '</section>', '<!-- V31_R56_STORE_AUTO_END -->']
-    out = "\n".join(parts)
-    if (out.count('class="ub-product-card"') != REQUIRED or
-            out.count('data-item-id="') != REQUIRED or
-            out.count('rel="nofollow sponsored noopener"') != REQUIRED * 2):
-        raise GateError("HTML não passou no contrato 16/16")
-    return out
+    disclosure = "Este laboratório" if lab_only else "Este blog"
+    parts += ['<p class="ub-store-note">' + disclosure
+              + ' pode receber comissão por compras elegíveis realizadas pelos links de afiliado, sem custo extra pela utilização do link.</p>',
+              '</section>']
+    return "\n".join(parts)
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()

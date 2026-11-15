@@ -54,3 +54,37 @@ A branch é somente para integração incremental. Não fazer merge na `main` ne
 ## Contato padrão para novos blogs do Sistema Mestre
 
 Use `blogbloggerautomation@gmail.com` como contato oficial nas novas páginas Contato. O endereço deve aparecer como texto e como link `mailto:`. Verifique a página publicada pelo Blogger. Registre a verificação de recebimento separadamente se houver um teste de envio autorizado. Não copie credenciais de e-mail para o repositório.
+
+## Publicador reutilizável da Loja Blogger V31
+
+O coletor comercial gera `v31_r2_products.json` com Blog ID, Page ID e URL.
+Em cada novo blog, o provisionamento deve criar a página Loja e colocar a
+mensagem temporária **entre** os marcadores universais:
+
+```html
+<!-- UNIVERSAL_V31_STORE_AUTO_START -->
+<p>Seleção em preparação.</p>
+<!-- UNIVERSAL_V31_STORE_AUTO_END -->
+```
+
+Com o catálogo real do coletor e o perfil do mesmo blog, rode primeiro:
+
+```bash
+python v31_master/blogger_store_publisher.py --profile perfil.json \
+  --catalog diretorio-safe/v31_r2_products.json --out-dir backup-loja
+```
+
+O publicador utiliza as credenciais OAuth Blogger já previstas no R57
+(`BLOGGER_CLIENT_ID`, `BLOGGER_CLIENT_SECRET`, `BLOGGER_REFRESH_TOKEN`).
+Para gravar, configure `BLOGGER_STORE_WRITE_TARGET` com o par autorizado
+`BlogID:PageID` e acrescente `--apply`. Use um diretório de backup novo por
+tentativa. O título, a página e tudo fora dos marcadores são preservados.
+O perfil legado de Cadeira Certa contém o hash da página temporária para
+migrar, uma única vez, o conteúdo gerado fora dos marcadores.
+
+O modo SAFE é somente leitura. No modo de publicação, o script guarda backup
+e releitura, faz um PUT e verifica os cards pela API e pela URL pública.
+Se o PUT falhar de forma ambígua ou o resultado público não for confirmado,
+verifique o estado real da página antes de qualquer nova tentativa. O script
+não agenda rotações e não substitui o coletor, responsável pela seleção e pela
+verificação comercial.
