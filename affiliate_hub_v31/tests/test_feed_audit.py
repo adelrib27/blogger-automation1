@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 from affiliate_hub_v31.feed_audit import FeedAuditError, inspect_csv
+from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.feed_download import redirect_allowed
 
 
@@ -44,6 +45,32 @@ class FeedAuditTests(unittest.TestCase):
         with self.assertRaises(FeedAuditError) as caught:
             inspect_csv(invalid,set(),"feed_1")
         self.assertTrue(str(caught.exception).startswith("CSV_COLUMN_COUNT_MISMATCH_feed_1_ROW_1"))
+
+    def test_real_csv_quoting_multiline_descriptions(self):
+        path = self.root / "multiline.csv"
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=[
+                "shopId", "itemId", "productName", "productLink",
+                "imageUrl", "productDescription"
+            ])
+            writer.writeheader()
+            for index in range(1, 9):
+                writer.writerow({
+                    "shopId": "10", "itemId": str(index),
+                    "productName": "Air Fryer Modelo " + str(index),
+                    "productLink": f"https://shopee.com.br/item-i.10.{index}",
+                    "imageUrl": "https://img.example.invalid/p.png",
+                    "productDescription": ('Descrição com vírgulas, aspas "internas" '
+                                           'e trechos em várias linhas.\\n'.replace('\\n', '\n')) * 40,
+                })
+        seen = set()
+        report = inspect_csv(path, seen, "feed_1")
+        self.assertEqual(report["rows"], 8)
+        self.assertEqual(report["columns"], 6)
+        with Catalog(self.root / "multiline.sqlite3") as catalog:
+            imported = catalog.import_csv(path, "feed1")
+            self.assertEqual(imported["rows"], 8)
+            self.assertEqual(catalog.stats()["products"], 8)
 
     def test_redirect_allowed_only_inside_https_shopee(self):
         self.assertTrue(redirect_allowed("https://download.shopee.com.br/path?token=private"))
