@@ -40,6 +40,16 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 - `affiliate_hub_v31/__init__.py`: pacote Python.
 - **Testes SAFE:** 14/14 passaram no GitHub Actions (push `8370a2d`, run `43722692312`), sem acesso a APIs reais nem secrets. **Ainda falta:** workflow de ingestão real, esquema real dos dois CSVs, estado persistente remoto, cadastro dos secrets, conversor Open API funcional, adaptadores Blogger/WordPress, agendamento e execução LIVE.
 
+### Marco C1.3 — Autenticação Shopee real (15/11/2026)
+
+- **PASS real:** GitHub Actions [execução 43725343531](https://github.com/adelrib27/blogger-automation1/actions/runs/43725343531), saída sanitizada `V31_SHOPEE_API_PASS`.
+- **Escopo exato:** consulta `productOfferV2` assinada com credenciais do GitHub Environment `v31-editorial-safe`, solicitando apenas 1 produto; sem publicar, sem converter, sem baixar CSV e sem expor respostas.
+- Gatilho transitório de branch criado para essa validação e removido imediatamente após PASS; mantido somente o workflow manual SAFE em draft.
+- A chave anteriormente exibida em captura ainda deve ser rotacionada; teste de autenticação **não prova** segurança da credencial.
+- Próximas dependências: esquema real dos feeds, credenciais de download, persistência privada e conversor validado por testes.
+
+**Código de continuidade:** `V31-EDITORIAL-C1-API-REAL-PASS-20261115`.
+
 ### Próximo marco de validação
 
 `V31-EDITORIAL-C1-20261115-SAFE`
