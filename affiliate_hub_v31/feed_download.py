@@ -1,0 +1,73 @@
+"""Download SAFE dos feeds oficiais, a partir de secrets de ambiente.
+
+Não armazena tokens em logs/relatórios; redirecionamentos de domínio não
+verificado são bloqueados. CSVs ficam apenas no diretório temporário privado.
+"""
+from __future__ import annotations
+
+import re
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+MAX_FEED_BYTES = 512 * 1024 * 1024
+BUFFER = 1024 * 1024
+
+
+def check_feed_url(raw: str) -> None:
+    if not isinstance(raw, str) or len(raw) > 1500 or any(c.isspace() for c in raw):
+        raise ValueError("URL de feed inválida")
+    try:
+        u = urllib.parse.urlsplit(raw)
+        q = urllib.parse.parse_qs(u.query, keep_blank_values=True)
+        if (u.scheme != "https" or u.hostname != "affiliate.shopee.com.br"
+                or u.port not in (None, 443) or u.username or u.password
+                or u.path != "/api/v1/datafeed/download" or u.fragment
+                or set(q) != {"id"} or len(q["id"]) != 1
+                or not re.fullmatch(r"[A-Za-z0-9_-]{20,512}", q["id"][0])):
+            raise ValueError("URL de feed fora da lista permitida")
+    except (ValueError, AttributeError):
+        raise ValueError("URL de feed inválida") from None
+
+
+class RestrictRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        check_feed_url(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def download_feed(raw_url: str, destination: Path | str, *, max_bytes=MAX_FEED_BYTES) -> int:
+    check_feed_url(raw_url)
+    if not 1024 <= max_bytes <= MAX_FEED_BYTES:
+        raise ValueError("Limite inválido")
+    dest = Path(destination)
+    if dest.exists() or dest.is_symlink():
+        raise ValueError("Destino já existe")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    opener = urllib.request.build_opener(RestrictRedirect())
+    request = urllib.request.Request(
+        raw_url, method="GET", headers={"User-Agent": "V31EditorialFeedImport/0.2"}
+    )
+    size = 0
+    try:
+        with opener.open(request, timeout=55) as response, dest.open("xb") as output:
+            content_length = response.headers.get("Content-Length")
+            if content_length and int(content_length) > max_bytes:
+                raise ValueError("Feed excede limite")
+            while True:
+                block = response.read(BUFFER)
+                if not block:
+                    break
+                size += len(block)
+                if size > max_bytes:
+                    raise ValueError("Feed excede limite")
+                output.write(block)
+    except Exception:
+        # Suprimir URL / token do traceback e remover download parcial.
+        dest.unlink(missing_ok=True)
+        raise ValueError("download_feed_failed") from None
+    if size < 10:
+        dest.unlink(missing_ok=True)
+        raise ValueError("Feed vazio ou inválido")
+    return size
