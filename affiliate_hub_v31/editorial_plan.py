@@ -41,6 +41,16 @@ def plan(catalog: Catalog, site_key: str, limit: int) -> dict:
             "unavailable_subjects": exhausted, "all_status": "REVIEW_REQUIRED"}
 
 
+def plan_network(catalog: Catalog, limit: int = 1) -> dict:
+    if not 1 <= limit <= 3:
+        raise ValueError("network_limit_invalid")
+    results = [plan(catalog, site_key, limit) for site_key in sorted(sites())]
+    return {"mode": "SAFE_NO_PUBLICATION", "sites": len(results),
+            "reserved_for_review": sum(r["reserved_for_review"] for r in results),
+            "unavailable_subjects": sum(r["unavailable_subjects"] for r in results),
+            "all_status": "REVIEW_REQUIRED"}
+
+
 def run_cloud(site_key: str, limit: int) -> dict:
     # Estado anterior é obrigatório: sem checkpoint a fila nunca reinicializa.
     storage = R2State.from_env()
@@ -49,7 +59,8 @@ def run_cloud(site_key: str, limit: int) -> dict:
         if not storage.restore_to(local):
             raise ValueError("catalog_not_initialized")
         with Catalog(local) as catalog:
-            result = plan(catalog, site_key, limit)
+            result = (plan_network(catalog, limit) if site_key == "all"
+                      else plan(catalog, site_key, limit))
             if not catalog.integrity():
                 raise ValueError("catalog_integrity_failed")
         if result["reserved_for_review"]:
@@ -71,7 +82,8 @@ def main() -> int:
             if not args.db:
                 raise ValueError("missing_db")
             with Catalog(Path(args.db)) as catalog:
-                result = plan(catalog, args.site, args.limit)
+                result = (plan_network(catalog, args.limit) if args.site == "all"
+                          else plan(catalog, args.site, args.limit))
         else:
             if args.db:
                 raise ValueError("cloud_db_not_allowed")
