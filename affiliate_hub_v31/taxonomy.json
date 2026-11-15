@@ -1,17 +1,43 @@
 {
-  "version": "v31-editorial-taxonomy-1",
+  "version": "v31-editorial-taxonomy-2",
   "purpose": "Rotas deterministicas para curadoria ANTES da conversao; nenhuma categoria desconhecida publicada automaticamente",
   "normalization": "Frases com limites de palavras; titulo do produto; categoria desconhecida ou conflitante implica revisao",
   "niches": [
     {
       "category": "cozinha",
-      "niche": "eletroportateis",
+      "niche": "air_fryers",
       "terms": [
         "air fryer",
         "airfryer",
         "fritadeira sem oleo",
-        "fritadeira eletrica",
-        "liquidificador",
+        "fritadeira eletrica"
+      ],
+      "exclude": [
+        "forma para air fryer",
+        "cesto para air fryer",
+        "papel para air fryer",
+        "capa para air fryer",
+        "acessorio para air fryer"
+      ]
+    },
+    {
+      "category": "cozinha",
+      "niche": "liquidificadores",
+      "terms": [
+        "liquidificador"
+      ],
+      "exclude": [
+        "capa para liquidificador",
+        "peca para liquidificador",
+        "lamina para liquidificador",
+        "copo para liquidificador",
+        "motor para liquidificador"
+      ]
+    },
+    {
+      "category": "cozinha",
+      "niche": "outros_eletroportateis",
+      "terms": [
         "mixer eletrico",
         "batedeira",
         "sanduicheira",
@@ -22,12 +48,9 @@
         "chaleira eletrica"
       ],
       "exclude": [
-        "forma para air fryer",
-        "cesto para air fryer",
-        "capa para liquidificador",
-        "peca para liquidificador",
         "acessorio para batedeira",
-        "lamina para liquidificador"
+        "haste para mixer",
+        "peca para sanduicheira"
       ]
     },
     {
