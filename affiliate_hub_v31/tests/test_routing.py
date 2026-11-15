@@ -39,6 +39,12 @@ class RouteTests(unittest.TestCase):
                 self.assertEqual(air["product_keys"],["shopee:20:2"])
                 self.assertEqual(liq["product_keys"],["shopee:20:1"])
                 self.assertIn("shopee:20:3",wp["product_keys"])
+                wp_diverse=plan_site(cat,"wordpress_radartechbr",limit=2)
+                self.assertIn("shopee:20:3",wp_diverse["product_keys"])
+                self.assertEqual(len(wp_diverse["product_keys"]),2)
+                self.assertTrue(any(p in wp_diverse["product_keys"]
+                                    for p in ("shopee:20:1","shopee:20:2")))
+
                 self.assertEqual(air["mode"],"SAFE_NO_PUBLICATION")
                 self.assertNotIn("shopee:20:4",air["product_keys"])
                 self.assertNotEqual(air["campaign"],liq["campaign"])
