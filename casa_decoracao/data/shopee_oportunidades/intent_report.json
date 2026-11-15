@@ -2,15 +2,11 @@
   "version": "2.3",
   "policy": "semantic intent -> extra commission priority -> search/performance score -> diversity -> standard commission reserve",
   "primarySemanticFilter": {
-    "input": 0,
-    "accepted": 0,
-    "rejected": 0
+    "input": 119,
+    "accepted": 84,
+    "rejected": 35
   },
-  "reserveSemanticFilter": {
-    "input": 0,
-    "accepted": 0,
-    "rejected": 0
-  },
+  "reserveSemanticFilter": null,
   "diversity": {
     "policy": {
       "enabled": true,
@@ -25,15 +21,1515 @@
       "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
     },
     "selectionPasses": {
-      "strict": 0,
-      "relaxed": 0,
-      "fallback": 0
+      "strict": 20,
+      "relaxed": 9,
+      "fallback": 3
     },
-    "shopDistribution": [],
-    "keywordDistribution": [],
-    "categoryDistribution": []
+    "shopDistribution": [
+      [
+        "344438002",
+        4
+      ],
+      [
+        "516620350",
+        2
+      ],
+      [
+        "1148571957",
+        2
+      ],
+      [
+        "1426423897",
+        1
+      ],
+      [
+        "1662989296",
+        1
+      ],
+      [
+        "322387387",
+        1
+      ],
+      [
+        "989926234",
+        1
+      ],
+      [
+        "988030305",
+        1
+      ],
+      [
+        "1464118632",
+        1
+      ],
+      [
+        "1612365622",
+        1
+      ],
+      [
+        "379684671",
+        1
+      ],
+      [
+        "290908815",
+        1
+      ],
+      [
+        "1450645014",
+        1
+      ],
+      [
+        "1295722140",
+        1
+      ],
+      [
+        "676690142",
+        1
+      ],
+      [
+        "1777086855",
+        1
+      ],
+      [
+        "391672269",
+        1
+      ],
+      [
+        "1590759802",
+        1
+      ],
+      [
+        "1446851090",
+        1
+      ],
+      [
+        "406969593",
+        1
+      ],
+      [
+        "1134696185",
+        1
+      ],
+      [
+        "378126486",
+        1
+      ],
+      [
+        "960960972",
+        1
+      ],
+      [
+        "304281474",
+        1
+      ],
+      [
+        "1278337792",
+        1
+      ],
+      [
+        "1062551370",
+        1
+      ],
+      [
+        "390566003",
+        1
+      ]
+    ],
+    "keywordDistribution": [
+      [
+        "lencol casal",
+        6
+      ],
+      [
+        "tapete banheiro",
+        3
+      ],
+      [
+        "organizador armario",
+        3
+      ],
+      [
+        "prateleira banheiro",
+        3
+      ],
+      [
+        "fatiador de legumes",
+        3
+      ],
+      [
+        "organizador guarda roupa",
+        3
+      ],
+      [
+        "varal de chao",
+        3
+      ],
+      [
+        "mesa lateral",
+        3
+      ],
+      [
+        "cadeira varanda",
+        3
+      ],
+      [
+        "travesseiro",
+        2
+      ]
+    ],
+    "categoryDistribution": [
+      [
+        "Banheiro",
+        6
+      ],
+      [
+        "Cama Mesa Banho",
+        6
+      ],
+      [
+        "Organizacao",
+        6
+      ],
+      [
+        "Quarto",
+        5
+      ],
+      [
+        "Cozinha",
+        3
+      ],
+      [
+        "Sala",
+        3
+      ],
+      [
+        "Area Externa",
+        3
+      ]
+    ]
   },
-  "ranking": [],
-  "rejectedSample": [],
-  "reserveRejectedSample": []
+  "ranking": [
+    {
+      "rank": 1,
+      "itemId": 23599671693,
+      "productName": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "tapete banheiro"
+      ],
+      "opportunityScore": 85.86,
+      "shopName": "Panos Rezini",
+      "offerLink": "https://s.shopee.com.br/40i5xCwWi9"
+    },
+    {
+      "rank": 2,
+      "itemId": 17740635467,
+      "productName": "Saco Embalagem Organizador para Toalha Lençol Casal Queen  De Pvc Com Ziper",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "opportunityScore": 77.42,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/40i4XrAVB2"
+    },
+    {
+      "rank": 3,
+      "itemId": 21173588648,
+      "productName": "Kit 10 Saco Organizador Multiuso Lençol Casal e Queen 55 X 49 De Pvc Com Ziper Guarda Roupa Armário",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "opportunityScore": 76.81,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/4B1UkA9rq5"
+    },
+    {
+      "rank": 4,
+      "itemId": 58200253216,
+      "productName": "Kit C/2 e KitC/4 Travesseiro Pluma de Ganso Confortavel e Macio Antiacaro 50x70cm",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "travesseiro"
+      ],
+      "opportunityScore": 72.5,
+      "shopName": "Debela Home",
+      "offerLink": "https://s.shopee.com.br/1gKCtgSMeU"
+    },
+    {
+      "rank": 5,
+      "itemId": 21034795993,
+      "productName": "Tapete de Banheiro Antiderrapante Bolinha Macarrão Várias Cores",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "tapete banheiro"
+      ],
+      "opportunityScore": 71.35,
+      "shopName": "MG Enxovais",
+      "offerLink": "https://s.shopee.com.br/4LKwLovG2F"
+    },
+    {
+      "rank": 6,
+      "itemId": 20197726295,
+      "productName": "Caixa Saco Organizador Cobertor Casaco Guarda Roupa Ecológico Anti-Poeira Umidade Insetos Multiuso",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador armario",
+        "organizador guarda roupa"
+      ],
+      "opportunityScore": 66.14,
+      "shopName": "TIKO SHOP",
+      "offerLink": "https://s.shopee.com.br/4qHEaIfXGA"
+    },
+    {
+      "rank": 7,
+      "itemId": 20299321793,
+      "productName": "1/2/3 Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio ES",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "prateleira banheiro"
+      ],
+      "opportunityScore": 65.98,
+      "shopName": "ES Official Shop",
+      "offerLink": "https://s.shopee.com.br/9zzKhOOvVP"
+    },
+    {
+      "rank": 8,
+      "itemId": 23798178107,
+      "productName": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador armario",
+        "organizador guarda roupa"
+      ],
+      "opportunityScore": 65.39,
+      "shopName": "Maison Plus",
+      "offerLink": "https://s.shopee.com.br/AAIl1HsM1l"
+    },
+    {
+      "rank": 9,
+      "itemId": 20798271105,
+      "productName": "COMBO 4 Cortador Ondulado de Batata Machadinho Fatiador Inox Legumes e Frutas multiuso linha Premium",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "fatiador de legumes"
+      ],
+      "opportunityScore": 64.9,
+      "shopName": "KIKA UTILIDADES",
+      "offerLink": "https://s.shopee.com.br/2BGOmS9JUL"
+    },
+    {
+      "rank": 10,
+      "itemId": 19599841056,
+      "productName": "Conjunto 4 Cortador Ondulado de Batata Machadinho Fatiador Inox Legumes e Frutas multiuso linha Premium",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "fatiador de legumes"
+      ],
+      "opportunityScore": 64.9,
+      "shopName": "KIKA UTILIDADES",
+      "offerLink": "https://s.shopee.com.br/2LZoyl8g9O"
+    },
+    {
+      "rank": 11,
+      "itemId": 58260399841,
+      "productName": "Estante Prateleira, Sapateira Organizadora Multiuso 2 a 7 Preta, Moderna, Banheiro, Cozinha, Quarto, Lavanderia, casa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "prateleira banheiro"
+      ],
+      "opportunityScore": 64.76,
+      "shopName": "Distribuidora Ind.Store",
+      "offerLink": "https://s.shopee.com.br/AUvbJWJC4g"
+    },
+    {
+      "rank": 12,
+      "itemId": 23395023935,
+      "productName": "Colmeia Organizadora Gavetas Divisórias Organizador de Guarda Roupas Peças Intimas Meias Gaveta",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador guarda roupa"
+      ],
+      "opportunityScore": 64.21,
+      "shopName": "LojiniHome",
+      "offerLink": "https://s.shopee.com.br/LopJEpS6v"
+    },
+    {
+      "rank": 13,
+      "itemId": 22098082869,
+      "productName": "Kit Saco A Vácuo Grande Organizador Edredom Coberto Mala Roupa Viagem De Cama com Bomba Manual Tamanho Grande",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador guarda roupa"
+      ],
+      "opportunityScore": 63.1,
+      "shopName": "Panda Max Brasil",
+      "offerLink": "https://s.shopee.com.br/114W6Smukz"
+    },
+    {
+      "rank": 14,
+      "itemId": 23499148138,
+      "productName": "Varal De Chão 3 Andares Dobrável Com Bandejas Cabideiro Preto Organizador Roupas",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "varal de chao"
+      ],
+      "opportunityScore": 62.25,
+      "shopName": "+QueAchados",
+      "offerLink": "https://s.shopee.com.br/6VPSZR21pa"
+    },
+    {
+      "rank": 15,
+      "itemId": 23794071024,
+      "productName": "Mesa Lateral Redonda Decorativa MDF 30cm para Sala Quarto Pé Palito",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "mesa lateral"
+      ],
+      "opportunityScore": 61.43,
+      "shopName": "VIVE ARTES",
+      "offerLink": "https://s.shopee.com.br/3B90bKaJTH"
+    },
+    {
+      "rank": 16,
+      "itemId": 43402363896,
+      "productName": "Mesa apoio e suporte lateral notebook cama sofa em aço tampo madeira Preta e Mel",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "mesa lateral"
+      ],
+      "opportunityScore": 61.34,
+      "shopName": "STORE AJL",
+      "offerLink": "https://s.shopee.com.br/40i7arX8mW"
+    },
+    {
+      "rank": 17,
+      "itemId": 58258649130,
+      "productName": "【Abranuv PRO2.0】Travesseiro Cervical Ergonômico Espuma Memory Sono Profundo Sem Insônia S-5431 TOP",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "travesseiro"
+      ],
+      "opportunityScore": 60.52,
+      "shopName": "ABRANUV",
+      "offerLink": "https://s.shopee.com.br/ql5u9VXLN"
+    },
+    {
+      "rank": 18,
+      "itemId": 58213253583,
+      "productName": "8 Cadeira Plástica Bistrô Empilhável Cozinha Varanda Festa Evento Restaurante",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "cadeira varanda"
+      ],
+      "opportunityScore": 60.36,
+      "shopName": "Gomes Home",
+      "offerLink": "https://s.shopee.com.br/4VeOBpPy9I"
+    },
+    {
+      "rank": 19,
+      "itemId": 23198744408,
+      "productName": "03 Almofadas Futton 95x45 Pérola Confort para Cadeira e Varanda Macia e Resistente",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "cadeira varanda"
+      ],
+      "opportunityScore": 59.1,
+      "shopName": "Pérola Comfort",
+      "offerLink": "https://s.shopee.com.br/gRfhsN2su"
+    },
+    {
+      "rank": 20,
+      "itemId": 23998002779,
+      "productName": "Varal de Chao Dobrável 3 Andares Retratil 4 Rodinhas e 5 Ou 10 Cabides De Plásticos Perfumados Casa",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "varal de chao"
+      ],
+      "opportunityScore": 59.0,
+      "shopName": "ARRUMA MIX",
+      "offerLink": "https://s.shopee.com.br/6L62N82fAZ"
+    },
+    {
+      "rank": 21,
+      "itemId": 20573590003,
+      "productName": "Saco Organizador Multiuso Lençol Casal e Queen 55 X 49 De Pvc Com Ziper Guarda Roupa Armário",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "opportunityScore": 75.25,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/4LKuwT9EV8"
+    },
+    {
+      "rank": 22,
+      "itemId": 21798317249,
+      "productName": "Caixa Saco Organizador Cobertor Casaco Guarda Roupa Ecológico Anti-Poeira Umidade Insetos Multiuso",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador armario",
+        "organizador guarda roupa"
+      ],
+      "opportunityScore": 64.02,
+      "shopName": "Salmão Store",
+      "offerLink": "https://s.shopee.com.br/3Vlqzqkby2"
+    },
+    {
+      "rank": 23,
+      "itemId": 22798317554,
+      "productName": "Conjunto Cortador De Legumes 14/15/16 Em 1 Multifuncional Fatiador De Vegetais",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "fatiador de legumes"
+      ],
+      "opportunityScore": 63.33,
+      "shopName": "XQW - ELETRÔNICOS E VARIEDADES",
+      "offerLink": "https://s.shopee.com.br/8Kr27mlpyc"
+    },
+    {
+      "rank": 24,
+      "itemId": 23298244757,
+      "productName": "Kit 5 ou 10 Saco A Vácuo Grande Organizador Edredom Coberto Mala Roupa De Cama com bomba elétrica Grande 110x70",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "organizador guarda roupa"
+      ],
+      "opportunityScore": 62.65,
+      "shopName": "MAXMULTI",
+      "offerLink": "https://s.shopee.com.br/ql5u9nY5y"
+    },
+    {
+      "rank": 25,
+      "itemId": 58213354507,
+      "productName": "Prateleira com cantos arredondados e suporte invisivel para quarto, cozinha, banheiro escritorio",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "prateleira banheiro"
+      ],
+      "opportunityScore": 62.26,
+      "shopName": "Orvani studio",
+      "offerLink": "https://s.shopee.com.br/3B90bMVRuq"
+    },
+    {
+      "rank": 26,
+      "itemId": 23598387487,
+      "productName": "Tapete para Banheiro de Secagem Rápida e Super Absorvente Ideal para Chuveiro Cozinha e Varanda",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "tapete banheiro"
+      ],
+      "opportunityScore": 61.48,
+      "shopName": "Global Mochilas CHL",
+      "offerLink": "https://s.shopee.com.br/50ad92sigR"
+    },
+    {
+      "rank": 27,
+      "itemId": 17518818895,
+      "productName": "Mesa Pé Palito De Apoio E Lateral Sofa Mdf ou Mdp E Madeira",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "mesa lateral"
+      ],
+      "opportunityScore": 60.41,
+      "shopName": "Kelan Móveis",
+      "offerLink": "https://s.shopee.com.br/3VlqzwZ2nN"
+    },
+    {
+      "rank": 28,
+      "itemId": 20097671686,
+      "productName": "Varal De Chão Roupa Calcinha Grade 3 Andares Dobrável Portátil Casa Utilidade Decoração Organização",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "varal de chao"
+      ],
+      "opportunityScore": 58.6,
+      "shopName": "ARRUMA MIX",
+      "offerLink": "https://s.shopee.com.br/5q9lmD4ZBW"
+    },
+    {
+      "rank": 29,
+      "itemId": 40179335828,
+      "productName": "Kit 04 Cadeira Allegra Escritório Área Interna/Externa Gourmert Varanda Sala de Jantar Promoção Envio Imediato",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "cadeira varanda"
+      ],
+      "opportunityScore": 57.75,
+      "shopName": "Wa Magazine PP",
+      "offerLink": "https://s.shopee.com.br/4LKxzWQbUH"
+    },
+    {
+      "rank": 30,
+      "itemId": 7886168933,
+      "productName": "Embalagem Para Jogo De Lençol Casal 45 X 37 Kit 20 Unidades Guarda Roupa Armário",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "opportunityScore": 75.25,
+      "shopName": "Isaplastic",
+      "offerLink": "https://s.shopee.com.br/4VeL8m8bAB"
+    },
+    {
+      "rank": 31,
+      "itemId": 22898771215,
+      "productName": "Lençol Plano Virol Algodão Penteado Estampado Sem Elastico Solteiro, Casal, Queen",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "opportunityScore": 68.63,
+      "shopName": "ALGOESTER (Cama-Mesa-Banho)",
+      "offerLink": "https://s.shopee.com.br/W8CNQNpHX"
+    },
+    {
+      "rank": 32,
+      "itemId": 5593900644,
+      "productName": "Lençol Casal Tamanho Queen 3 Peças Microfibra Importada  Estampado",
+      "priorityTier": "COMISSAO_EXTRA",
+      "semanticIntentScore": 1.0,
+      "intentMatchedKeywords": [
+        "lencol casal"
+      ],
+      "opportunityScore": 65.3,
+      "shopName": "BES SHOP",
+      "offerLink": "https://s.shopee.com.br/LomB7OScU"
+    }
+  ],
+  "rejectedSample": [
+    {
+      "itemId": 22699370464,
+      "productName": "Cômoda Miami 5 Gavetas 1 Porta Sapateira Organizadora Quarto Moderno Branco Off White - Blue Moby",
+      "shopName": "BLUE MOBY",
+      "keywords": [
+        "organizador armario"
+      ],
+      "evaluations": {
+        "organizador armario": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "organizador",
+              "colmeia",
+              "divisoria",
+              "prateleira"
+            ],
+            [
+              "armario",
+              "guarda roupa",
+              "gaveta",
+              "roupa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23093524071,
+      "productName": "Kit 2 Varais De Chão Roupa Calcinha Grande 3 Andares Vertical Dobrável Portátil Casa Utilidade",
+      "shopName": "ARRUMA MIX",
+      "keywords": [
+        "varal de chao"
+      ],
+      "evaluations": {
+        "varal de chao": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "chao",
+              "dobravel",
+              "roupa"
+            ]
+          ],
+          "missing": [
+            [
+              "varal"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 6350522045,
+      "productName": "Conjunto de Mesinha Lateral Redonda Sala Pe Madeira Retro Sala Quarto",
+      "shopName": "Kelan Móveis",
+      "keywords": [
+        "mesa lateral"
+      ],
+      "evaluations": {
+        "mesa lateral": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "lateral"
+            ]
+          ],
+          "missing": [
+            [
+              "mesa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23893640086,
+      "productName": "Mesas Laterais Monopé De Madeira Design Orgânico Canto Cama Alt. 45/55cm - Mel",
+      "shopName": "ALL Company",
+      "keywords": [
+        "mesa lateral"
+      ],
+      "evaluations": {
+        "mesa lateral": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "canto"
+            ]
+          ],
+          "missing": [
+            [
+              "mesa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23998836812,
+      "productName": "Kit 3 Mesas Lateral Forma Orgânica – Perfeitas para Sala, Quarto ou Escritório- Envio Imediato!",
+      "shopName": "Loja Decorata",
+      "keywords": [
+        "mesa lateral"
+      ],
+      "evaluations": {
+        "mesa lateral": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "lateral"
+            ]
+          ],
+          "missing": [
+            [
+              "mesa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22893738408,
+      "productName": "Jogo de Lençol 400 Fios Extra Macio c/ Fronhas Ponto Palito Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Nosso Lar Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22893873080,
+      "productName": "Jogo de Lençol 400 fios Toque Suave e Acetinado Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Nosso Lar Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23493849040,
+      "productName": "Lencol Queen 400 Fios Micropercal Cama Casal Solteiro Tecido Super Macio",
+      "shopName": "GUCASACONFORTO",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 27794250681,
+      "productName": "Jogo de Lençol 400 Fios ponto palito Tecido Leve Suave Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Nosso Lar Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 21497454288,
+      "productName": "Jogo De Lençol Solteiro Casal Queen 400 fios 3 Peças Micro Percal Toque Macio",
+      "shopName": "Gabi Pires Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 10220123465,
+      "productName": "Jogo de Lençol Queen 400 fios Luna 3 Peças  Casal Solteiro Ponto Palito Micro Percal",
+      "shopName": "Enxovais_Santana",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23393729993,
+      "productName": "Jogo De Lençol Todos os Tamanhos Berço Solteiro Casal Queen King 02 e 03 Peças",
+      "shopName": "Rhavi Enxovais",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23698029372,
+      "productName": "JOGO DE CAMA Queen 500 Fios Percal Toque Algodão + 2 Fronhas 50x70 | Cobre Leito Luxo Sem Elástico",
+      "shopName": "AS CONFECCOES TEXTIL",
+      "keywords": [
+        "travesseiro"
+      ],
+      "evaluations": {
+        "travesseiro": {
+          "accepted": false,
+          "score": 0.0,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [],
+          "missing": [
+            [
+              "travesseiro"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 27737247655,
+      "productName": "Kit 100 Cabides Preto Adulto Reforçado Slim Fino Economiza Espaço Guarda Roupa Closet Calça Camisa Blusa",
+      "shopName": "Apex Trade",
+      "keywords": [
+        "organizador guarda roupa"
+      ],
+      "evaluations": {
+        "organizador guarda roupa": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "guarda roupa",
+              "roupa"
+            ]
+          ],
+          "missing": [
+            [
+              "organizador",
+              "colmeia",
+              "divisoria",
+              "caixa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58265871339,
+      "productName": "Wardrobe Caixa Organizadora 94L para Roupas com Tampa Anti-Poeira/Umidade/Insetos | Ideal para Cobertores e Casacos",
+      "shopName": "Descubra Tesouro",
+      "keywords": [
+        "organizador guarda roupa"
+      ],
+      "evaluations": {
+        "organizador guarda roupa": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "caixa"
+            ]
+          ],
+          "missing": [
+            [
+              "guarda roupa",
+              "armario",
+              "gaveta",
+              "roupa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23392848442,
+      "productName": "Kit 100 Cabides Para Roupas Cabide Reforçado Organizador de Guarda Roupas Arara",
+      "shopName": "Jatobraz",
+      "keywords": [
+        "organizador guarda roupa"
+      ],
+      "evaluations": {
+        "organizador guarda roupa": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "organizador"
+            ]
+          ],
+          "missing": [
+            [
+              "guarda roupa",
+              "armario",
+              "gaveta",
+              "roupa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23293688263,
+      "productName": "Tesoura Fatiadora 2 em 1 Tábua de Corte Legumes e Verduras",
+      "shopName": "Mix Utilidades e Presentes",
+      "keywords": [
+        "fatiador de legumes"
+      ],
+      "evaluations": {
+        "fatiador de legumes": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "legumes",
+              "verduras"
+            ]
+          ],
+          "missing": [
+            [
+              "fatiador",
+              "cortador"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58212573737,
+      "productName": "Tapete Higiênico Cães Carvão Bambu Ativado Aroma Lavanda 30 Unidades Absorvente Anti Odor Tamanho 60x60cm / 80x60cm",
+      "shopName": "Newpet - marca",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 43763851612,
+      "productName": "Tapete Higiênico Pet 60x60 Descartável Alta Absorção Fralda Para Cães Pequeno e Médio Porte Kit",
+      "shopName": "A T E N A S",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 19699210101,
+      "productName": "Tapete Higiênico para Cães 80x60cm 50 ou 100 Unidades Pads Prime",
+      "shopName": "Pet Prime Br",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 26378312324,
+      "productName": "Kit 50 ou 100 Un Tapete Higiênico Para Cães De Qualidade 60x50cm Cachorros",
+      "shopName": "Pet Tobby",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22894053870,
+      "productName": "Jornal Papel Pet Limpo 2KG a 5KG, Tapete Pet Biodegradável FOLHAS GRANDES 64 ×58",
+      "shopName": "Print Park",
+      "keywords": [
+        "tapete banheiro"
+      ],
+      "evaluations": {
+        "tapete banheiro": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "tapete"
+            ]
+          ],
+          "missing": [
+            [
+              "banheiro",
+              "box",
+              "lavabo",
+              "antiderrapante"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22199451901,
+      "productName": "Conjunto 3 Almofadas Cheias 95x45cm P/Cadeiras Poltronas De Bambu Junco Jardim Varanda Sacada Lazer",
+      "shopName": "JaJ Almofadas",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda",
+              "jardim"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58259213105,
+      "productName": "Kit 8 Cadeiras Madeira Maciça Varanda Área Gourmet Repleta",
+      "shopName": "Repleta Comercial",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58209886728,
+      "productName": "Kit Cadeiras Design Branco Nude Com Braço Ergonômica Área Externa Jardim Varanda Sala Cozinha 140kg",
+      "shopName": "ACHADINHOS EM VG",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda",
+              "jardim",
+              "externa",
+              "area externa"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58259605459,
+      "productName": "Kit Confortável 2 Almofada Cheias P/Cadeira em geral Jardins Varandas",
+      "shopName": "JaJ Almofadas",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "cadeira"
+            ]
+          ],
+          "missing": [
+            [
+              "varanda",
+              "jardim",
+              "externa",
+              "area externa"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23699422680,
+      "productName": "01 Linda Almofada Cheia Direto da Fabrica 95x45cm P/Cadeiras Poltronas Jardim Varanda Sacada Lazer",
+      "shopName": "JaJ Almofadas",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda",
+              "jardim"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 50609385085,
+      "productName": "Kit 4 Cadeiras Allegra Preta — Varanda Gourmet e Cozinha Moderna Design Vazado",
+      "shopName": "GRUPODG",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58263641260,
+      "productName": "Kit 4 Cadeiras Junco + Mesinha Sintético para Jardim Piscina Área Externa Sacada Varanda Gourmet",
+      "shopName": "DelaMix",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda",
+              "jardim",
+              "externa",
+              "area externa"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58204663626,
+      "productName": "Kit 4 Cadeiras Gruvyer Preta Sala/Quarto/Varanda",
+      "shopName": "VERDAZZO COMERCIO",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 53561554063,
+      "productName": "KIT DUAS UNIDADES Cadeiras Allegra-Gruvyer-Nana Empilháveis para Casa, Escritório, Varanda e Área Gourmet",
+      "shopName": "Best Drop",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23298401648,
+      "productName": "Kit 8 Cadeiras Allegra Polipropileno Cozinha Área Gourmet e Varanda",
+      "shopName": "La Mobilia",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 58262637517,
+      "productName": "almofadas top elegante para cadeiras bambu vime balanço bancos poltronas varanda jardim pet espreguiçadeira estampada",
+      "shopName": "viviane atelier",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda",
+              "jardim"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 23199453069,
+      "productName": "Kit 4 Cadeiras Bistrô Preta Coqueiro Resistente Cozinha Varanda Eventos Bar",
+      "shopName": "Lar em Forma",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "itemId": 22094305893,
+      "productName": "Kit 4 Cadeiras Bistrô Coqueiro Plástica Resistente Empilhável Varanda Deck Praia Festas Eventos Bar Restaurante",
+      "shopName": "Plastic Chair",
+      "keywords": [
+        "cadeira varanda"
+      ],
+      "evaluations": {
+        "cadeira varanda": {
+          "accepted": false,
+          "score": 0.5,
+          "reason": "nucleo_do_produto_ausente",
+          "matched": [
+            [
+              "varanda"
+            ]
+          ],
+          "missing": [
+            [
+              "cadeira",
+              "poltrona"
+            ]
+          ]
+        }
+      }
+    }
+  ]
 }
