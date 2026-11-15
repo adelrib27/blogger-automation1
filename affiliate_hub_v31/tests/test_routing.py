@@ -42,6 +42,16 @@ class RouteTests(unittest.TestCase):
                 self.assertEqual(air["mode"],"SAFE_NO_PUBLICATION")
                 self.assertNotIn("shopee:20:4",air["product_keys"])
                 self.assertNotEqual(air["campaign"],liq["campaign"])
+                # A seleção editorial DEVE reaproveitar o link convertido.
+                self.assertTrue(cat.cache_link("shopee:20:2",air["campaign"],
+                                               "https://s.shopee.com.br/PRECONVERTED"))
+                air_again=plan_site(cat,"blogger_air_fryers")
+                self.assertEqual(air_again["product_keys"],["shopee:20:2"])
+                self.assertEqual(air_again["cached_affiliate_links"],1)
+                self.assertEqual(air_again["requiring_conversion"],0)
+                self.assertEqual(cat.candidates(air["campaign"],category="cozinha",
+                                                niche="air_fryers"),[])
+
 
     def test_unknown_site_fail_closed(self):
         with tempfile.TemporaryDirectory() as tmp, Catalog(Path(tmp)/"state.db") as cat:
