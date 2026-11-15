@@ -1,55 +1,58 @@
-name: V31 LAB - Comparar consulta Blogger e formato Radar
-
+name: V31 LAB - Catalogo real Cadeira Certa
 on:
   push:
     branches: [lab/v31-shopee-cadeira-probe-20261114]
     paths: [.github/workflows/v31_lab_cadeira_shopee_probe.yml]
-
 permissions:
   contents: read
-
+concurrency:
+  group: v31-cadeira-shopee-safe
+  cancel-in-progress: false
 jobs:
-  probe:
+  catalog:
     if: github.repository == 'adelrib27/blogger-automation1' && github.event.repository.private == false
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: d63363bd8f4b14292852030691969e6cb99e842b
+          ref: 7b86b0d8202b49b248399831da53ec155d448d44
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Comparar duas consultas Shopee sem publicar
+      - name: Preparar candidato de 16 ofertas reais sem publicacao
         env:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
         run: |
-          PYTHONPATH=v31_master python - <<'PY'
+          PYTHONPATH=v31_master python -u - <<'PY'
           import json
           import os
-          import time
-          from lab_shopee_graphql_diagnostic import send_query
+          import sys
+          from pathlib import Path
+          import shopee_r2_safe as store
 
-          app = os.environ.get("SHOPEE_APP_ID", "").strip()
-          secret = os.environ.get("SHOPEE_SECRET", "").strip()
-          if app != "18352820579" or not secret:
-              print("COMPARE_NO_CALL=CREDENTIALS_MISSING_OR_APP_ID_MISMATCH")
-              raise SystemExit(1)
-          fields = "itemId productName offerLink imageUrl priceMin shopId ratingStar sales commissionRate"
-          for index, (mode, args) in enumerate((
-              ("blogger", ""),
-              ("radar_search", ", listType: 1, sortType: 1, isAMSOffer: false"),
-          )):
-              if index:
-                  time.sleep(8)
-              query = ('query V31Probe { productOfferV2(keyword: "cadeira ergonomica"' +
-                       args + ', page: 1, limit: 5) { nodes { ' + fields + ' } } }')
-              result = send_query(mode, query, app, secret)
-              print("COMPARE_RESULT=" + json.dumps(result, sort_keys=True), flush=True)
-              if result.get("http_status") in (401, 403, 429) or any(
-                  code in (10020, 10030, 10035) for code in result.get("graphql_error_codes", [])
-              ):
-                  break
+          if os.environ.get("SHOPEE_APP_ID", "").strip() != "18352820579" or not os.environ.get("SHOPEE_SECRET", "").strip():
+              raise SystemExit("CREDENTIALS_MISSING_OR_APP_ID_MISMATCH")
+          profile_path = Path("v31_master/profiles/cadeira_certa_commercial_safe.json")
+          profile = store.load_commercial_profile(profile_path)
+          assert profile["target"]["blog_id"] == "7163624325768776034"
+          assert profile["store"]["page_id"] == "5014986967420563988"
+          assert sum(len(c["terms"]) for c in profile["store"]["categories"]) == 8
+          out = Path(os.environ["RUNNER_TEMP"]) / "cadeira-safe"
+          sys.argv = [store.__file__, "--commercial-profile", str(profile_path), "--out-dir", str(out)]
+          try:
+              store.main()
+          except store.GateError as error:
+              print("CATALOG_BLOCKED=" + str(error))
+              raise SystemExit(1) from None
+          catalog = json.loads((out / "v31_r2_products.json").read_text(encoding="utf-8"))
+          products = catalog["products"]
+          assert len(products) == len({p["item_id"] for p in products}) == 16
+          assert all(store.trusted(p["offer_link"], affiliate=True) and
+                     store.trusted(p["image"], affiliate=False) for p in products)
+          fields = ("item_id", "title", "offer_link", "image", "price", "category", "rating")
+          catalog["products"] = [{k: p[k] for k in fields} for p in products]
+          print("CATALOG_APPROVED_JSON=" + json.dumps(catalog, ensure_ascii=True, separators=(",", ":")))
           PY
