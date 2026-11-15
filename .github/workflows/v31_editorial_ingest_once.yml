@@ -1,0 +1,72 @@
+name: V31 Editorial - Primeira importacao REAL R2 SAFE (temporaria)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_editorial_ingest_once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  importar-e-restaurar-sem-publicar:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115' &&
+      github.event_name == 'push'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar cliente R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Validar codigo SAFE antes da importacao
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Importar 2 feeds Shopee reais e persistir snapshot privado
+        env:
+          V31_EDITORIAL_DATAFEED_URL_1: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_1 }}
+          V31_EDITORIAL_DATAFEED_URL_2: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_2 }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ALLOW_INIT: CONFIRM_NEW_PRIVATE_CATALOG
+        run: python -m affiliate_hub_v31.ingest_cli --mode cloud
+      - name: Verificar restauracao integral a partir do R2
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python - <<'PY'
+          import tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.r2_state import R2State
+          from affiliate_hub_v31.catalog import Catalog
+          try:
+              storage = R2State.from_env()
+              with tempfile.TemporaryDirectory() as dirname:
+                  destination=Path(dirname)/"restored.sqlite3"
+                  if not storage.restore_to(destination):
+                      raise RuntimeError("missing_state")
+                  with Catalog(destination) as catalog:
+                      stats=catalog.stats()
+                      if not catalog.integrity() or stats["products"] < 1:
+                          raise RuntimeError("invalid_catalog")
+                      print("V31_C3_REAL_RESTORE_PASS", "products="+str(stats["products"]),
+                            "eligible="+str(stats["eligible"]), "review="+str(stats["review"]))
+          except Exception:
+              print("V31_C3_REAL_RESTORE_FAILED")
+              raise SystemExit(3)
+          PY
