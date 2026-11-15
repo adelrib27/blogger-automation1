@@ -15,6 +15,15 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. O cadastro efetivo dos secrets/variables no GitHub Environment `v31-editorial-safe` ainda é obrigatório e não foi executado.
 
+### C4/C5 — Pilotos REAIS: conversão e originalidade de pautas
+
+- **C4** [run 43771181969](https://github.com/adelrib27/blogger-automation1/actions/runs/43771181969): uma conversão `generateShortLink` real aprovada, link salvo no R2 e cache reutilizado sem nova API; restauração validada.
+- **C5** [run 43771386845](https://github.com/adelrib27/blogger-automation1/actions/runs/43771386845): o **mesmo produto real** usado em **dois blogs Blogger**, com dois títulos/ângulos diferentes mantendo `air fryer`; ambos em `REVIEW_REQUIRED`, sem artigo/publicação.
+- R2 restringe snapshots ao **atual + anterior**, e limpeza na execução real completada sem pendência.
+- Todos os workflows transitórios de teste foram removidos após sucesso.
+- **Checkpoint:** [C4/C5 — conversão real e pautas originais](CHECKPOINT_C4_C5_2026-11-15.md), código `V31-EDITORIAL-C5-ORIGINALIDADE-REAL-PASS-20261115`.
+- Ainda faltam: publicar **rascunhos reais** nas plataformas, revisar textos completos e regras de agendamento/ativação gradual; credenciais LIVE e rotação da App Secret exposta precisam ser verificadas.
+
 ### C3 — Cloudflare R2 privado criado e verificado
 
 - **Bucket existente:** `v31-editorial-shopee`, na conta selecionada pelo proprietário, classe **Standard**, sem domínio público `r2.dev` ou domínio personalizado.
