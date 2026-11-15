@@ -15,7 +15,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .catalog import ALIASES, classify, fields, normalized
-from .feed_download import download_feed
+from .feed_download import DownloadFeedError, download_feed
 from .taxonomy import classify_title
 
 LIMIT_ROWS_PER_FEED = 250_000
@@ -146,6 +146,9 @@ def run() -> int:
         return 3
     except UnicodeDecodeError:
         print("V31_C2_REAL_FEEDS_FAILED_CSV_ENCODING")
+        return 3
+    except DownloadFeedError as exc:
+        print("V31_C2_REAL_FEEDS_FAILED_" + str(exc))
         return 3
     except ValueError:
         print("V31_C2_REAL_FEEDS_FAILED_DOWNLOAD_OR_CSV")
