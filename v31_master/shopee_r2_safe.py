@@ -299,10 +299,20 @@ def main() -> int:
 
     query = query_commercial if args.commercial_profile else signed_query
     groups = {}
+    successful_searches = 0
+    skipped_searches = 0
     for cat in profile["store"]["categories"]:
         seen, all_nodes = set(), []
         for keyword in cat["terms"]:
-            for raw in query(keyword, app_id, secret):
+            try:
+                nodes = query(keyword, app_id, secret)
+            except ShopeeGraphQLError as error:
+                if not args.commercial_profile or not error.system_error:
+                    raise
+                skipped_searches += 1
+                continue
+            successful_searches += 1
+            for raw in nodes:
                 if not isinstance(raw, dict):
                     raise GateError("Oferta Shopee inválida")
                 rid = str(raw.get("itemId", ""))
@@ -312,6 +322,12 @@ def main() -> int:
                     all_nodes.append(raw)
                     seen.add(rid)
         groups[cat["name"]] = all_nodes
+    if args.commercial_profile:
+        print(json.dumps({"status": "SHOPEE_COLLECTION_SUMMARY",
+                          "successful_searches": successful_searches,
+                          "skipped_system_errors": skipped_searches}))
+        if not successful_searches:
+            raise GateError("Nenhuma resposta válida da Shopee")
     # Gate comercial V31: comissao positiva verificada no retorno da API
     # sem taxa percentual minima e sem exigir comissao extra do vendedor.
     products = select_verified(profile, groups)

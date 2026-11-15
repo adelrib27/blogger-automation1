@@ -13,6 +13,10 @@ PROFILE = ROOT / "profiles" / "cadeira_certa_commercial_safe.json"
 
 
 class TestCommercialProfile(unittest.TestCase):
+    @staticmethod
+    def search_count(profile):
+        return sum(len(c["terms"]) for c in profile["store"]["categories"])
+
     def test_pilot_exports_only_eligible_offers_for_its_own_destination(self):
         profile = store.load_commercial_profile(PROFILE)
         categories = profile["store"]["categories"]
@@ -39,7 +43,7 @@ class TestCommercialProfile(unittest.TestCase):
                 "SHOPEE_APP_ID": "1234", "SHOPEE_SECRET": "mock-only",
             }), patch.object(store, "signed_query", side_effect=query) as signed_query:
                 self.assertEqual(store.main(), 0)
-            self.assertEqual(signed_query.call_count, 4)
+            self.assertEqual(signed_query.call_count, sum(len(c["terms"]) for c in categories))
             catalog = json.loads((Path(directory) / "v31_r2_products.json").read_text())
             self.assertEqual(catalog["blog_id"], "7163624325768776034")
             self.assertEqual(catalog["page_id"], "5014986967420563988")
@@ -47,6 +51,51 @@ class TestCommercialProfile(unittest.TestCase):
                              {str(i * 10 + j) for i in range(4) for j in range(1, 5)})
             page = (Path(directory) / "v31_r2_store.html").read_text()
             self.assertEqual(page.count('rel="nofollow sponsored noopener"'), 32)
+
+    def test_commercial_skips_system_error_and_requires_a_complete_catalog(self):
+        profile = store.load_commercial_profile(PROFILE)
+        category = profile["store"]["categories"][0]
+        category["terms"].insert(0, "consulta intermitente")
+        system_error = store.ShopeeGraphQLError([{"code": 10000}])
+
+        def query(keyword, app_id, secret):
+            if keyword == "consulta intermitente":
+                raise system_error
+            index, config = next(
+                (i, c) for i, c in enumerate(profile["store"]["categories"]) if keyword in c["terms"]
+            )
+            return [{
+                "itemId": str(index * 10 + j),
+                "productName": config["include"][0] + " modelo teste",
+                "offerLink": "https://s.shopee.com.br/teste",
+                "imageUrl": "https://img.susercontent.com/teste.jpg",
+                "priceMin": "550",
+                "commissionRate": "0.001",
+            } for j in range(1, 5)]
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "profile.json"
+            path.write_text(json.dumps(profile))
+            output = root / "catalog"
+            args = ["shopee_r2_safe.py", "--commercial-profile", str(path), "--out-dir", str(output)]
+            with patch.object(sys, "argv", args), patch.dict("os.environ", {
+                "SHOPEE_APP_ID": "1234", "SHOPEE_SECRET": "mock-only",
+            }), patch.object(store, "query_commercial", side_effect=query) as request:
+                self.assertEqual(store.main(), 0)
+                self.assertEqual(request.call_count, self.search_count(profile))
+                self.assertEqual(json.loads((output / "v31_r2_products.json").read_text())["count"], 16)
+
+            category["terms"] = ["consulta intermitente"]
+            path.write_text(json.dumps(profile))
+            args[-1] = str(root / "incomplete")
+            with patch.object(sys, "argv", args), patch.dict("os.environ", {
+                "SHOPEE_APP_ID": "1234", "SHOPEE_SECRET": "mock-only",
+            }), patch.object(store, "query_commercial", side_effect=query) as request:
+                with self.assertRaisesRegex(store.GateError, "Categoria sem quatro ofertas"):
+                    store.main()
+                self.assertEqual(request.call_count, self.search_count(profile))
+                self.assertFalse((root / "incomplete").exists())
 
     def test_duplicate_category_cannot_pass_preflight(self):
         profile = json.loads(PROFILE.read_text())
