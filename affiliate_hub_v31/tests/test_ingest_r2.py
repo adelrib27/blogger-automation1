@@ -1,14 +1,17 @@
 """Regressões da importação atômica, feed URL e persistência R2 fake."""
 import csv
 import io
+import os
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.feed_download import check_feed_url
 from affiliate_hub_v31.ingest import ingest_two
+from affiliate_hub_v31 import ingest_cli
 from affiliate_hub_v31.r2_state import R2State, StorageError, POINTER, validate_manifest
 
 
@@ -142,6 +145,46 @@ class IngestAndStorageTests(unittest.TestCase):
                                "created_utc":"2026-11-15"})
         with self.assertRaises(ValueError):
             R2State(FakeS3(),"../bucket")
+
+
+    def test_empty_second_feed_preserves_existing_catalog(self):
+        first=self.root/"first.csv";second=self.root/"second.csv"
+        db=self.root/"database.sqlite3"
+        feed(first,[(1,"Air Fryer")])
+        feed(second,[(2,"Liquidificador")])
+        ingest_two(db,first,second)
+        baseline=db.read_bytes()
+        feed(second,[])
+        with self.assertRaises(ValueError):
+            ingest_two(db,first,second)
+        self.assertEqual(db.read_bytes(),baseline)
+
+    def test_r2_missing_pointer_needs_explicit_first_run_approval(self):
+        cloud=FakeS3()
+        state=R2State(cloud,"v31-private-hub")
+        urls={"V31_EDITORIAL_DATAFEED_URL_1":
+              "https://affiliate.shopee.com.br/api/v1/datafeed/download?id="+"a"*40,
+              "V31_EDITORIAL_DATAFEED_URL_2":
+              "https://affiliate.shopee.com.br/api/v1/datafeed/download?id="+"b"*40}
+        def fake_download(_url, destination):
+            target=Path(destination)
+            feed(target, [(1 if target.name=="first.csv" else 2,
+                           "Air Fryer" if target.name=="first.csv" else "Liquidificador")])
+            return target.stat().st_size
+        with patch.dict(os.environ, urls, clear=True), \
+             patch.object(ingest_cli.R2State, "from_env", return_value=state), \
+             patch.object(ingest_cli, "download_feed", side_effect=fake_download):
+            with self.assertRaisesRegex(ValueError,"initialization_not_authorized"):
+                ingest_cli.run_cloud()
+            self.assertNotIn(POINTER,cloud.objects)
+        urls["V31_EDITORIAL_R2_ALLOW_INIT"]="CONFIRM_NEW_PRIVATE_CATALOG"
+        with patch.dict(os.environ, urls, clear=True), \
+             patch.object(ingest_cli.R2State, "from_env", return_value=state), \
+             patch.object(ingest_cli, "download_feed", side_effect=fake_download):
+            result=ingest_cli.run_cloud()
+            self.assertEqual(result["catalog"]["products"],2)
+            self.assertTrue(result["state_saved"])
+            self.assertIn(POINTER,cloud.objects)
 
 
 if __name__=="__main__":
