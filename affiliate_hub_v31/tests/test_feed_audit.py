@@ -43,7 +43,7 @@ class FeedAuditTests(unittest.TestCase):
         invalid.write_text("productName,productLink\nAir Fryer\n",encoding="utf-8")
         with self.assertRaises(FeedAuditError) as caught:
             inspect_csv(invalid,set(),"feed_1")
-        self.assertEqual(str(caught.exception),"CSV_COLUMN_COUNT_MISMATCH")
+        self.assertTrue(str(caught.exception).startswith("CSV_COLUMN_COUNT_MISMATCH_feed_1_ROW_1"))
 
     def test_redirect_allowed_only_inside_https_shopee(self):
         self.assertTrue(redirect_allowed("https://download.shopee.com.br/path?token=private"))
