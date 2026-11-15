@@ -200,9 +200,10 @@ def choose(profile: dict, by_category: dict[str, list[dict]]) -> list[dict]:
     categories = profile["store"]["categories"]
     if set(by_category) != {x["name"] for x in categories}:
         raise GateError("Categorias não correspondem ao perfil")
+    commercial = profile.get("schema") == "v31-shopee-commercial/v1"
     for category in categories:
         name = category["name"]
-        criteria = category if profile.get("schema") == "v31-shopee-commercial/v1" else None
+        criteria = category if commercial else None
         candidates = [p for x in by_category[name] if (p := normalize(x, name, criteria=criteria))]
         candidates.sort(key=lambda a: (-a["sales"], a["item_id"]))
         selected = []
@@ -220,6 +221,8 @@ def choose(profile: dict, by_category: dict[str, list[dict]]) -> list[dict]:
             if len(selected) == 4:
                 break
         if len(selected) != 4:
+            if commercial:
+                raise GateError(f"Categoria sem quatro ofertas verificadas: {name} ({len(selected)}/4)")
             raise GateError("Categoria sem quatro ofertas verificadas")
         chosen.extend(selected)
     if len(chosen) != REQUIRED or len(seen_items) != REQUIRED:
@@ -303,6 +306,7 @@ def main() -> int:
     skipped_searches = 0
     for cat in profile["store"]["categories"]:
         seen, all_nodes = set(), []
+        category_searches = category_errors = received_nodes = 0
         for keyword in cat["terms"]:
             try:
                 nodes = query(keyword, app_id, secret)
@@ -310,8 +314,11 @@ def main() -> int:
                 if not args.commercial_profile or not error.system_error:
                     raise
                 skipped_searches += 1
+                category_errors += 1
                 continue
             successful_searches += 1
+            category_searches += 1
+            received_nodes += len(nodes)
             for raw in nodes:
                 if not isinstance(raw, dict):
                     raise GateError("Oferta Shopee inválida")
@@ -321,7 +328,16 @@ def main() -> int:
                 if rid not in seen:
                     all_nodes.append(raw)
                     seen.add(rid)
-        groups[cat["name"]] = all_nodes
+        name = cat["name"]
+        groups[name] = all_nodes
+        if args.commercial_profile:
+            valid = sum(normalize(row, name, criteria=cat) is not None for row in all_nodes)
+            print(json.dumps({"status": "SHOPEE_CATEGORY_SUMMARY", "category": name,
+                              "successful_searches": category_searches,
+                              "skipped_system_errors": category_errors,
+                              "received_nodes": received_nodes,
+                              "unique_positive_commission": len(all_nodes),
+                              "eligible_before_catalog_selection": valid}))
     if args.commercial_profile:
         print(json.dumps({"status": "SHOPEE_COLLECTION_SUMMARY",
                           "successful_searches": successful_searches,
