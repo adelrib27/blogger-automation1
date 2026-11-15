@@ -78,7 +78,7 @@ def inspect_csv(path: Path, seen: set[str], source_name: str) -> dict:
                 dialect=csv.Sniffer().sniff(sample, delimiters=",;\t|")
             except csv.Error:
                 dialect=csv.excel
-            reader=csv.DictReader(stream, dialect=dialect)
+            reader=csv.DictReader(stream, delimiter=dialect.delimiter, quotechar='"', doublequote=True, strict=True)
             names=reader.fieldnames
             if not names or len(names)>MAX_COLUMNS or any(not name for name in names):
                 raise FeedAuditError("CSV_HEADERS_INVALID")
