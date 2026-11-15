@@ -62,7 +62,12 @@ def inspect_csv(path: Path, seen: set[str], source_name: str) -> dict:
                 if counters["rows"]>LIMIT_ROWS_PER_FEED:
                     raise FeedAuditError("MAX_ROWS_EXCEEDED")
                 if None in raw_row or any(v is None for v in raw_row.values()):
-                    raise FeedAuditError("CSV_COLUMN_COUNT_MISMATCH")
+                    # Apenas métricas estruturais, nunca valores do CSV.
+                    raise FeedAuditError(
+                        f"CSV_COLUMN_COUNT_MISMATCH_{source_name}_ROW_{counters['rows']}"
+                        f"_PHYSICAL_LINE_{reader.line_num}_EXPECTED_{len(names)}"
+                        f"_KEYS_{len(raw_row)}_EXTRA_{int(None in raw_row)}"
+                    )
                 if any(len(v)>MAX_CELL_CHARS for v in raw_row.values()):
                     raise FeedAuditError("MAX_CELL_LENGTH_EXCEEDED")
                 row=fields(raw_row)
@@ -120,6 +125,7 @@ def run() -> int:
                 report=inspect_csv(path, seen, f"feed_{index}")
                 report["download_bytes"]=size
                 reports.append(report)
+                print(f"V31_{report['source'].upper()}_STRUCTURE_PASS: rows={report['rows']}, columns={report['columns']}")
                 # Descarta o CSV antes da próxima etapa; nenhum artifact produzido.
                 path.unlink()
         print("V31_C2_REAL_FEEDS_PASS")
