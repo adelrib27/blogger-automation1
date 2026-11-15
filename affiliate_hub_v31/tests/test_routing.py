@@ -1,0 +1,55 @@
+"""Rotas separadas por blog e plataforma; C2 não faz publicação."""
+import csv
+import tempfile
+import unittest
+from pathlib import Path
+
+from affiliate_hub_v31.catalog import Catalog
+from affiliate_hub_v31.routing import plan_site, sites
+
+
+class RouteTests(unittest.TestCase):
+    def test_routes_cover_18_blogger_and_two_wordpress_by_verified_ids(self):
+        mapping=sites()
+        self.assertEqual(len(mapping),20)
+        self.assertEqual(sum(x["platform"]=="blogger" for x in mapping.values()),18)
+        self.assertEqual(sum(x["platform"]=="wordpress" for x in mapping.values()),2)
+        self.assertTrue(all(x["publish_enabled"] is False for x in mapping.values()))
+        self.assertEqual(mapping["blogger_air_fryers"]["identifier"],"9113728635217260884")
+        self.assertEqual(mapping["blogger_liquidificadores"]["identifier"],"5271798990390532475")
+        self.assertEqual(mapping["wordpress_casa_decoracao"]["identifier"],
+                         "https://casaedecoracao.radartechbr.com.br/")
+
+    def test_liquidificador_not_routed_to_air_fryers_and_vice_versa(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            feed=root/"f.csv"
+            with feed.open("w",encoding="utf-8",newline="") as f:
+                w=csv.DictWriter(f,fieldnames=["shopId","itemId","productName","productLink","imageUrl"])
+                w.writeheader()
+                for idx,title in enumerate(["Liquidificador potente","Air Fryer digital","Furadeira 12V","Produto Premium"],1):
+                    w.writerow({"shopId":"20","itemId":str(idx),"productName":title,
+                                "productLink":f"https://shopee.com.br/item-i.20.{idx}",
+                                "imageUrl":"https://cdn.example/image.jpg"})
+            with Catalog(root/"db.sqlite3") as cat:
+                cat.import_csv(feed,"feed")
+                air=plan_site(cat,"blogger_air_fryers")
+                liq=plan_site(cat,"blogger_liquidificadores")
+                wp=plan_site(cat,"wordpress_radartechbr")
+                self.assertEqual(air["product_keys"],["shopee:20:2"])
+                self.assertEqual(liq["product_keys"],["shopee:20:1"])
+                self.assertIn("shopee:20:3",wp["product_keys"])
+                self.assertEqual(air["mode"],"SAFE_NO_PUBLICATION")
+                self.assertNotIn("shopee:20:4",air["product_keys"])
+                self.assertNotEqual(air["campaign"],liq["campaign"])
+
+    def test_unknown_site_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp, Catalog(Path(tmp)/"state.db") as cat:
+            with self.assertRaises(ValueError):
+                plan_site(cat,"unknown_blog")
+            with self.assertRaises(ValueError):
+                plan_site(cat,"blogger_air_fryers",limit=0)
+
+
+if __name__=="__main__":
+    unittest.main()
