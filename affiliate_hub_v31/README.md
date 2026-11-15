@@ -6,6 +6,15 @@ Este projeto opera **exclusivamente para blogs Blogger e WordPress**. Pinterest 
 
 Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma branch isolada. Nenhuma automação de produção foi modificada.
 
+### Secrets e variáveis do Hub (centralizado)
+
+**Registro oficial de nomes e instruções:** [SECRETS.md](SECRETS.md)  
+**Manifesto legível por máquina:** [credentials_registry.json](credentials_registry.json)  
+**Verificação sem revelar valores:** `python -m affiliate_hub_v31.credentials --profile manifest`  
+**Workflow manual SAFE:** `.github/workflows/v31_editorial_secret_inventory_safe.yml` (disponível para execução manual após inclusão na branch padrão).
+
+Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. O cadastro efetivo dos secrets/variables no GitHub Environment `v31-editorial-safe` ainda é obrigatório e não foi executado.
+
 ### Objetivo
 
 1. Receber os dois feeds CSV da Shopee em área privada de armazenamento. A contagem histórica relatada é de 100.000 + 10.000 linhas **antes** da deduplicação; esta branch ainda não baixou os arquivos atuais.
