@@ -64,16 +64,19 @@ def plan_site(catalog: Catalog, site_key: str, limit: int = 20) -> dict:
         raise ValueError("Site não cadastrado para o hub")
     selected = []
     seen = set()
+    cached_count = 0
     for pair in route["allowed_niches"]:
         category, niche = pair.split("/",1)
-        for product in catalog.candidates(route["campaign"],limit,category=category,niche=niche):
+        for product in catalog.select_products(route["campaign"],limit,category=category,niche=niche):
             if product[0] not in seen:
                 selected.append(product[0])
                 seen.add(product[0])
+                cached_count += int(product[4])
             if len(selected) >= limit:
                 break
         if len(selected) >= limit:
             break
     return {"mode":"SAFE_NO_PUBLICATION", "site_key":site_key,
             "platform":route["platform"], "campaign":route["campaign"],
-            "eligible_selected":len(selected), "product_keys":selected}
+            "eligible_selected":len(selected), "cached_affiliate_links":cached_count,
+            "requiring_conversion":len(selected)-cached_count, "product_keys":selected}
