@@ -26,6 +26,8 @@ CSV 1 + CSV 2
     ↓ ADAPTADORES BLOGGER E WORDPRESS (ainda não ligados)
 ```
 
+**Seleção por site:** `routing.plan_site` alterna categorias/nichos (round-robin) e retorna produtos com links em cache **e** sem links. O inventário de conversão `Catalog.candidates` permanece separado e considera apenas os que ainda faltam converter. Campanhas continuam distintas por site para rastreamento sem sobreposição.
+
 **Antes da conversão:** classificar e restringir o site/nicho, sem fazer chamadas para itens suspeitos ou sem match. **Depois da conversão:** validar domínio do link, reconsultar estado do produto e persistir sem sobrescrever conversões da mesma campanha. A aprovação automática de artigo permanece desligada.
 
 ### Arquivos principais
