@@ -44,9 +44,9 @@ def host_allowed(url: str, *, allow_short: bool = False) -> bool:
         if u.scheme != "https" or u.username or u.password or u.port not in (None, 443):
             return False
         host = (u.hostname or "").lower().rstrip(".")
-        if host == "shopee.com.br" or host.endswith(".shopee.com.br"):
-            return True
-        return allow_short and host in {"shope.ee", "s.shopee.com.br"}
+        if host in {"shope.ee", "s.shopee.com.br"}:
+            return allow_short
+        return host == "shopee.com.br" or host.endswith(".shopee.com.br")
     except (ValueError, AttributeError):
         return False
 
