@@ -87,6 +87,17 @@ O App Secret anterior foi exposto em uma captura. Antes de qualquer execução a
 
 **Proteção adicional no GitHub Environment:** em `Deployment branches and tags`, substituir `No restriction` por regra de branches selecionadas, permitindo inicialmente apenas `main` (quando o workflow for aprovado e integrado). Isso reduz o risco de outro workflow em branch livre acessar os segredos. A regra do workflow é adicional, não substitui essa restrição. Se usar `Required reviewers`, conferir que a conta/nível do repositório suporta a regra; não presumir que self-approval será permitido.
 
+### C1.3 — autenticação real Shopee validada (15/11/2026)
+
+- **Prova concreta:** GitHub Actions [run 43725343531](https://github.com/adelrib27/blogger-automation1/actions/runs/43725343531), job `uma-consulta-sem-publicacao`, status **SUCCESS**.
+- Resposta registrada (sem dados sensíveis): `V31_SHOPEE_API_PASS`.
+- Escopo: **uma única consulta assinada read-only** `productOfferV2` (`limit: 1`) usando os secrets `V31_EDITORIAL_SHOPEE_APP_ID` e `V31_EDITORIAL_SHOPEE_APP_SECRET` do Environment. Nenhum blog ou WordPress foi alterado.
+- Foi utilizado um gatilho temporário de branch para execução controlada; o arquivo `.github/workflows/v31_editorial_shopee_api_probe_once.yml` **foi removido imediatamente após o PASS**. O workflow manual de produção continua não executado.
+- Os testes offline do módulo, catálogo e nomenclatura de credenciais seguem independentes. **Não confundir:** autenticação validada NÃO implica conversão de links, ingestão de feeds, persistência cloud ou publicação.
+- **Segurança:** não foi comprovado que a chave exposta anteriormente foi rotacionada. Sua rotação continua obrigatória, com sincronização dos outros fluxos que a compartilhem. O GitHub Environment deve ter proteção de branches antes de qualquer etapa LIVE.
+
+**Código de continuidade:** `V31-EDITORIAL-C1-API-REAL-PASS-20261115`.
+
 ### Código de continuidade
 
 `V31-EDITORIAL-C1-API-PROBE-20261115-SAFE` — credenciais agora aparecem em Secrets segundo captura, teste automático de autenticação preparado, mas não executado e aguardando rotação da chave e proteção do Environment.
