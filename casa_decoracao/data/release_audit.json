@@ -2,9 +2,9 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 10,
-    "draft_ready": 5,
-    "rejected": 5,
+    "total": 7,
+    "draft_ready": 1,
+    "rejected": 6,
     "not_generated": 0,
     "published_history": 46,
     "rotation_cycle": 5,
@@ -14,76 +14,107 @@
   },
   "items": [
     {
-      "id": 8,
-      "shopee_item_id": "58213253583",
-      "category": "Área Externa",
-      "product": "8 Cadeira Plástica Bistrô Empilhável Cozinha Varanda Festa Evento Restaurante",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 298,
+      "id": 16,
+      "shopee_item_id": "58271032456",
+      "category": "Decoração",
+      "product": "Caminho de Mesa de Renda Decorativo Para Mesa Balcão E Armário Com Longa Duração",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
       "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
+        "status": "REJECTED",
+        "reasons": [
+          "alegacao_absoluta_nao_sustentada",
+          "alegacao_medica_ou_terapeutica_nao_sustentada"
+        ],
         "warnings": [],
         "metrics": {
-          "word_count": 563,
+          "word_count": 716,
           "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 49,
+          "meta_description_length": 151,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 14,
+      "shopee_item_id": "58259961185",
+      "category": "Decoração",
+      "product": "Kit até 6 Unidades Enchimento 45x45 Almofada de Flocos Macia Antialérgica p/ Sofá Cama Decorativa",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:4",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 909,
+          "h2_count": 4,
           "internal_links": 1,
           "seo_title_length": 46,
-          "meta_description_length": 152,
-          "cta_count": 2
+          "meta_description_length": 124,
+          "cta_count": 1
         },
         "safety_class": "STANDARD"
       }
     },
     {
-      "id": 10,
-      "shopee_item_id": "7886168933",
-      "category": "Cama, Mesa e Banho",
-      "product": "Embalagem Para Jogo De Lençol Casal 45 X 37 Kit 20 Unidades Guarda Roupa Armário",
+      "id": 11,
+      "shopee_item_id": "58251353658",
+      "category": "Organização",
+      "product": "Varal De Chão Com Abas Dobrável Aço Secalux 12kg Varal de Apartamento Retratil",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
+        "status": "REJECTED",
+        "reasons": [
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:3",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
         "warnings": [],
         "metrics": {
-          "word_count": 582,
-          "h2_count": 5,
+          "word_count": 862,
+          "h2_count": 3,
           "internal_links": 1,
           "seo_title_length": 45,
-          "meta_description_length": 148,
-          "cta_count": 2
+          "meta_description_length": 123,
+          "cta_count": 1
         },
         "safety_class": "STANDARD"
       }
     },
     {
-      "id": 3,
-      "shopee_item_id": "23798178107",
+      "id": 15,
+      "shopee_item_id": "23193427076",
       "category": "Organização",
-      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 661,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 42,
-          "meta_description_length": 152,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 5,
-      "shopee_item_id": "23499148138",
-      "category": "Organização",
-      "product": "Varal De Chão 3 Andares Dobrável Com Bandejas Cabideiro Preto Organizador Roupas",
+      "product": "Armário Carrinho Organizador Multiuso com Rodinhas Banheiro Lavanderia Cozinha Quarto",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -95,6 +126,7 @@
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
+          "poucos_h2:3",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
@@ -104,58 +136,21 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 973,
-          "h2_count": 5,
+          "word_count": 708,
+          "h2_count": 3,
           "internal_links": 1,
-          "seo_title_length": 49,
-          "meta_description_length": 127,
+          "seo_title_length": 51,
+          "meta_description_length": 129,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
       }
     },
     {
-      "id": 6,
-      "shopee_item_id": "23794071024",
+      "id": 12,
+      "shopee_item_id": "9369604116",
       "category": "Sala",
-      "product": "Mesa Lateral Redonda Decorativa MDF 30cm para Sala Quarto Pé Palito",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "especificacao_numerica_nao_confirmada:400 g",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 878,
-          "h2_count": 3,
-          "internal_links": 1,
-          "seo_title_length": 49,
-          "meta_description_length": 127,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 4,
-      "shopee_item_id": "23395023935",
-      "category": "Quarto",
-      "product": "Colmeia Organizadora Gavetas Divisórias Organizador de Guarda Roupas Peças Intimas Meias Gaveta",
+      "product": "Manta Cobertinha Microfibra Lisa Casal Solteiro Cobertor Soft Veludo Cama Casal Sofá",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -167,7 +162,7 @@
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
+          "poucos_h2:2",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
@@ -177,69 +172,12 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 756,
-          "h2_count": 3,
+          "word_count": 766,
+          "h2_count": 2,
           "internal_links": 1,
-          "seo_title_length": 38,
-          "meta_description_length": 149,
+          "seo_title_length": 45,
+          "meta_description_length": 123,
           "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 7,
-      "shopee_item_id": "58258649130",
-      "category": "Quarto",
-      "product": "【Abranuv PRO2.0】Travesseiro Cervical Ergonômico Espuma Memory Sono Profundo Sem Insônia S-5431 TOP",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 831,
-          "h2_count": 6,
-          "internal_links": 1,
-          "seo_title_length": 41,
-          "meta_description_length": 154,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 9,
-      "shopee_item_id": "22798317554",
-      "category": "Cozinha",
-      "product": "Conjunto Cortador De Legumes 14/15/16 Em 1 Multifuncional Fatiador De Vegetais",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 620,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 54,
-          "meta_description_length": 155,
-          "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
@@ -267,10 +205,10 @@
       }
     },
     {
-      "id": 2,
-      "shopee_item_id": "20299321793",
-      "category": "Banheiro",
-      "product": "1/2/3 Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio ES",
+      "id": 13,
+      "shopee_item_id": "40179335828",
+      "category": "Área Externa",
+      "product": "Kit 04 Cadeira Allegra Escritório Área Interna/Externa Gourmert Varanda Sala de Jantar Promoção Envio Imediato",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -278,6 +216,7 @@
         "reasons": [
           "chamada_consulta_contextual_quantidade_invalida:0",
           "disclosure_afiliado_quantidade_invalida:0",
+          "focus_keyword_ausente_ou_invalida",
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
@@ -291,11 +230,11 @@
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 786,
+          "word_count": 800,
           "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 58,
-          "meta_description_length": 153,
+          "seo_title_length": 44,
+          "meta_description_length": 122,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
