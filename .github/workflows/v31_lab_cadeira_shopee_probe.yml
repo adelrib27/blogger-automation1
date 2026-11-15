@@ -1,4 +1,4 @@
-name: V31 LAB - V31 LAB - Uma busca Shopee por palavra-chave
+name: V31 LAB - Comparar consulta Blogger e formato Radar
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Consultar cadeira sem filtros opcionais
+      - name: Comparar duas consultas Shopee sem publicar
         env:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
@@ -29,16 +29,27 @@ jobs:
           PYTHONPATH=v31_master python - <<'PY'
           import json
           import os
+          import time
           from lab_shopee_graphql_diagnostic import send_query
 
           app = os.environ.get("SHOPEE_APP_ID", "").strip()
           secret = os.environ.get("SHOPEE_SECRET", "").strip()
           if app != "18352820579" or not secret:
-              print("KEYWORD_PROBE_NO_CALL=CREDENTIALS_MISSING_OR_APP_ID_MISMATCH")
+              print("COMPARE_NO_CALL=CREDENTIALS_MISSING_OR_APP_ID_MISMATCH")
               raise SystemExit(1)
-          query = ('query V31Probe { productOfferV2(keyword: "cadeira", page: 1, limit: 5) '
-                   '{ nodes { itemId productName } } }')
-          result = send_query("cadeira", query, app, secret)
-          print("KEYWORD_PROBE_RESULT=" + json.dumps(result, sort_keys=True))
-          raise SystemExit(0 if result["status"] == "GRAPHQL_OK" and result.get("offers_count") is not None else 1)
+          fields = "itemId productName offerLink imageUrl priceMin shopId ratingStar sales commissionRate"
+          for index, (mode, args) in enumerate((
+              ("blogger", ""),
+              ("radar_search", ", listType: 1, sortType: 1, isAMSOffer: false"),
+          )):
+              if index:
+                  time.sleep(8)
+              query = ('query V31Probe { productOfferV2(keyword: "cadeira ergonomica"' +
+                       args + ', page: 1, limit: 5) { nodes { ' + fields + ' } } }')
+              result = send_query(mode, query, app, secret)
+              print("COMPARE_RESULT=" + json.dumps(result, sort_keys=True), flush=True)
+              if result.get("http_status") in (401, 403, 429) or any(
+                  code in (10020, 10030, 10035) for code in result.get("graphql_error_codes", [])
+              ):
+                  break
           PY
