@@ -15,6 +15,20 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. O cadastro efetivo dos secrets/variables no GitHub Environment `v31-editorial-safe` ainda é obrigatório e não foi executado.
 
+### C2 — Categorias, nichos, feeds e R2 SAFE
+
+**Checkpoint de continuidade:** [C2-2026-11-15](CHECKPOINT_C2_2026-11-15.md)  
+**Código:** `V31-EDITORIAL-C2-TAXONOMIA-R2-20261115-SAFE`
+
+- Taxonomia de **20 nichos/15 categorias** em [taxonomy.json](taxonomy.json), com bloqueio de desconhecidos, acessórios e ambiguidades antes da conversão.
+- [site_routes.json](site_routes.json): rotas de seleção para **18 blogs Blogger** e **2 WordPress** verificadas no repositório; todas com `publish_enabled=false`.
+- [converter.py](converter.py): cliente `generateShortLink` sob demanda, cache por campanha, verificação de domínio e rechecagem após conversão; mutation testada **somente com mocks**.
+- [ingest.py](ingest.py): importação de dois CSVs de forma atômica em banco local; [r2_state.py](r2_state.py) versiona backups privados. [ingest_cli.py](ingest_cli.py) pode ser executado na nuvem quando os secrets dos feeds e storage estiverem disponíveis.
+- [workflow de importação SAFE](../.github/workflows/v31_editorial_ingest_r2_safe.yml): **manual, apenas main, sem schedule e sem publicação**.
+- Testes de integração offline devem passar antes de C2 ficar pronto para revisão.
+
+**Ainda não executados:** download real dos feeds, provisionamento/acesso real ao R2, conversão real `generateShortLink`, publicação Blogger/WordPress. Nenhum serviço LIVE foi alterado. É obrigatória a rotação da chave Shopee anteriormente exposta.
+
 ### Objetivo
 
 1. Receber os dois feeds CSV da Shopee em área privada de armazenamento. A contagem histórica relatada é de 100.000 + 10.000 linhas **antes** da deduplicação; esta branch ainda não baixou os arquivos atuais.
@@ -38,7 +52,7 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 
 - `affiliate_hub_v31/catalog.py`: banco SQLite local e importador CSV, deduplicação, revisão básica, cache por campanha, consultas.
 - `affiliate_hub_v31/__init__.py`: pacote Python.
-- **Testes SAFE:** 14/14 passaram no GitHub Actions (push `8370a2d`, run `43722692312`), sem acesso a APIs reais nem secrets. **Ainda falta:** workflow de ingestão real, esquema real dos dois CSVs, estado persistente remoto, cadastro dos secrets, conversor Open API funcional, adaptadores Blogger/WordPress, agendamento e execução LIVE.
+- **C1:** 20 testes offline aprovados, e a autenticação Shopee real passou em uma consulta somente leitura; veja C1.3. **C2:** módulo de importação, classificação, conversão por demanda e persistência R2 preparado e coberto por testes offline. Falta cadastrar credenciais de feeds/R2, comprovar o esquema CSV real, testar a mutation de conversão real, conectar os adaptadores e agendar a publicação após aprovação.
 
 ### Marco C1.3 — Autenticação Shopee real (15/11/2026)
 
