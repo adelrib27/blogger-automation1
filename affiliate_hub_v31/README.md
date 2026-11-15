@@ -25,7 +25,7 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 - [converter.py](converter.py): cliente `generateShortLink` sob demanda, cache por campanha, verificação de domínio e rechecagem após conversão; mutation testada **somente com mocks**.
 - [ingest.py](ingest.py): importação de dois CSVs de forma atômica em banco local; [r2_state.py](r2_state.py) versiona backups privados. [ingest_cli.py](ingest_cli.py) pode ser executado na nuvem quando os secrets dos feeds e storage estiverem disponíveis.
 - [workflow de importação SAFE](../.github/workflows/v31_editorial_ingest_r2_safe.yml): **manual, apenas main, sem schedule e sem publicação**.
-- Testes de integração offline devem passar antes de C2 ficar pronto para revisão.
+- **Validação C2:** 45/45 testes offline aprovados. Benchmark isolado com 110.000 linhas **sintéticas** passou em 18,41 s no GitHub Actions [run 43728505370](https://github.com/adelrib27/blogger-automation1/actions/runs/43728505370); 105.000 produtos únicos e 5.000 duplicatas planejadas. Isso **não comprova** comportamento ou esquema dos feeds reais. O gatilho temporário de benchmark foi removido.
 
 **Ainda não executados:** download real dos feeds, provisionamento/acesso real ao R2, conversão real `generateShortLink`, publicação Blogger/WordPress. Nenhum serviço LIVE foi alterado. É obrigatória a rotação da chave Shopee anteriormente exposta.
 
