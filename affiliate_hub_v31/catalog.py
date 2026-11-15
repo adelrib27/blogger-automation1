@@ -148,7 +148,7 @@ class Catalog:
                 dialect = csv.Sniffer().sniff(sample, delimiters=",;\t|")
             except csv.Error:
                 dialect = csv.excel
-            reader = csv.DictReader(stream, dialect=dialect)
+            reader=csv.DictReader(stream, delimiter=dialect.delimiter, quotechar='"', doublequote=True, strict=True)
             if not reader.fieldnames or not any(normalized(c) in ALIASES["title"] for c in reader.fieldnames):
                 raise ValueError("CSV sem coluna reconhecida de título")
             if not any(normalized(c) in ALIASES["url"] for c in reader.fieldnames):
