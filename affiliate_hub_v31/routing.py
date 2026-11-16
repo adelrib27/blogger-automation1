@@ -10,6 +10,9 @@ from .catalog import Catalog
 from .taxonomy import rules
 
 ROUTES_PATH = Path(__file__).with_name("site_routes.json")
+# Cadastro extensível: cada blog novo acrescenta somente um arquivo JSON.
+# Não há lista de domínios/IDs fixada em Python nem limite de 20 ou 50 blogs.
+SITES_DIRECTORY = Path(__file__).with_name("sites.d")
 
 
 @lru_cache(maxsize=1)
@@ -17,11 +20,22 @@ def sites() -> dict:
     doc = json.loads(ROUTES_PATH.read_text(encoding="utf-8"))
     if doc.get("version") != "v31-editorial-site-routes-1" or doc.get("state") is None:
         raise ValueError("Contrato de rotas incompatível")
+    extra_routes = []
+    if SITES_DIRECTORY.exists():
+        if not SITES_DIRECTORY.is_dir() or SITES_DIRECTORY.is_symlink():
+            raise ValueError("Diretório de cadastro de blogs inválido")
+        for file in sorted(SITES_DIRECTORY.glob("*.json")):
+            if file.is_symlink() or not file.is_file():
+                raise ValueError("Cadastro de blog inválido")
+            entry = json.loads(file.read_text(encoding="utf-8"))
+            if not isinstance(entry, dict):
+                raise ValueError("Cadastro de blog deve ser um objeto JSON")
+            extra_routes.append(entry)
     known = {f"{cat}/{niche}" for cat, niche, *_ in rules()[1]}
     mappings = {}
     campaigns = set()
     identities = set()
-    for route in doc.get("sites", []):
+    for route in [*doc.get("sites", []), *extra_routes]:
         if set(route) != {"site_key","platform","identifier","campaign","allowed_niches","publish_enabled"}:
             raise ValueError("Chaves inesperadas em rota")
         key, campaign = route["site_key"], route["campaign"]
