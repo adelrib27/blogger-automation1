@@ -15,6 +15,16 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+### C8 — Shadow read-only e cache multi-site com orçamento (16/11/2026)
+
+- **Observação REAL do R2:** [run 43886181941](https://github.com/adelrib27/blogger-automation1/actions/runs/43886181941), **PASS** (94 testes); `shadow_audit.py` compara links utilizáveis com reservas de 3 dias, com perfis expansíveis em `shadow.d/*.json`.
+- **Reposição REAL controlada:** [run 43887349902](https://github.com/adelrib27/blogger-automation1/actions/runs/43887349902), **PASS** (101 testes): **3 mutations / 3 links novos**, um por campanha WordPress, único snapshot R2, restauração validada, nenhum artigo/publicação.
+- **Estado atual:** Casa **2/9**, Oficina **2/6**, Radar **2/15** links utilizáveis. No Radar, **2/5 categorias** obrigatórias cobertas. Todos `NOT_READY` para uso automático LIVE.
+- `cache_replenish.py`: rodízio de campanhas, máxima global de **3 tentativas por execução**; prioriza categorias ainda sem link. `--execute` explicitamente necessário para mutations; sem isso a operação é dry-run. **NUNCA publica**.
+- Novos workflows `v31_c8_shadow_safe.yml` e `v31_c8_cache_replenish_safe.yml`: em `main` somente após PR revisado, schedules protegidos por `V31_EDITORIAL_SHADOW_ENABLED` e `V31_EDITORIAL_CACHE_WARMUP_ENABLED` (ambos **desligados por padrão**), manual com confirmação para conversão.
+- Workflows temporários de teste removidos, **workflows comerciais antigos intocados**.
+- [Checkpoint C8](CHECKPOINT_C8_SHADOW_REPLENISH_2026-11-16.md), código `V31-EDITORIAL-C8-SHADOW-REPLENISH-REAL-PASS-20261116`. Próxima etapa: integração por blog com rollback, expansão de cache e fila Radar completa.
+
 ### C7 — R2 REAL integrado às filas dos três WordPress (16/11/2026)
 
 - **Casa e Decoração:** [run 43878643279](https://github.com/adelrib27/blogger-automation1/actions/runs/43878643279) PASS. Uma conversão Shopee REAL (`casaedecoracaowp`), cache R2, construtor de fila original validado sem publicação.
