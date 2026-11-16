@@ -66,7 +66,7 @@ def replenish(storage: R2State, selected: str = "all", budget: int = 3,
         mutation_attempts=0
         with Catalog(file) as catalog:
             for key in names:
-                if len(plan)>=len(configs) or actual>=budget:
+                if len(plan)>=len(configs) or mutation_attempts>=budget:
                     break
                 profile=configs[key]
                 current=audit_site(file,profile)
@@ -80,7 +80,7 @@ def replenish(storage: R2State, selected: str = "all", budget: int = 3,
                 config,rules=load_configuration(profile["_config_file"],
                                                 profile["_rules_file"])
                 candidates=warmup_candidates(catalog,key,config,rules,
-                           min(per_site,budget-actual))
+                           min(per_site,budget-mutation_attempts))
                 if not candidates:
                     plan.append({"site_key":key,"status":"NO_MATCHING_PRODUCT",
                                  "eligible_for_next_conversion":0,"converted":0})
@@ -95,7 +95,7 @@ def replenish(storage: R2State, selected: str = "all", budget: int = 3,
                         break
                     continue
                 for product_key in candidates:
-                    if actual>=budget:
+                    if mutation_attempts>=budget:
                         break
                     mutation_attempts+=1
                     try:
