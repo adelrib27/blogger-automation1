@@ -19,7 +19,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  v31_casa_discovery:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
+    uses: ./.github/workflows/v31_c9_discovery_reusable.yml
+    with:
+      site_key: wordpress_casa_decoracao
+      scanner: casa_decoracao/src/shopee_oportunidades_casa.py
+      config: casa_decoracao/config/shopee_oportunidades.json
+      rules: casa_decoracao/config/shopee_intent_rules.json
+      output: casa_decoracao/data/shopee_oportunidades
+      artifact_name: v31-c9-casa_decoracao-${{ github.run_id }}
+      limit: 32
+      min_fallback: 3
+
   autonomo:
+    needs: [v31_casa_discovery]
+    if: >-
+      always() &&
+      !cancelled() &&
+      (
+        (vars.V31_CASA_R2_FALLBACK_ENABLED != 'true' && needs.v31_casa_discovery.result == 'skipped') ||
+        (vars.V31_CASA_R2_FALLBACK_ENABLED == 'true' && needs.v31_casa_discovery.result == 'success')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
@@ -91,7 +115,15 @@ jobs:
             "https://casaedecoracao.radartechbr.com.br/wp-json/wp/v2/users/me?context=edit" >/dev/null
 
       - name: Descobrir produtos reais na Shopee
+        if: vars.V31_CASA_R2_FALLBACK_ENABLED != 'true'
         run: python -u casa_decoracao/src/shopee_oportunidades_casa.py
+      - name: C9 — Receber ranking da descoberta compartilhada (apenas quando habilitada)
+        if: vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-c9-casa_decoracao-${{ github.run_id }}
+          path: casa_decoracao/data/shopee_oportunidades
+
 
       - name: Montar fila editorial com rotação por categoria
         run: python -u casa_decoracao/src/build_editorial_queue.py
