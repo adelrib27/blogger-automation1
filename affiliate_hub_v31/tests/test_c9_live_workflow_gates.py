@@ -63,6 +63,19 @@ class WorkflowGatesTests(unittest.TestCase):
         self.assertIn("python -m affiliate_hub_v31.radar_legacy_adapter",radar)
         self.assertIn("Validar fila completa de cinco categorias",radar)
 
+    def test_reuse_requires_three_independent_flags(self):
+        for path,blog_flag in (
+            ("casa_editorial_generate_schedule.yml", "V31_CASA_R2_FALLBACK_ENABLED"),
+            ("oficina_editorial_autonomous.yml","V31_OFICINA_R2_FALLBACK_ENABLED"),
+        ):
+            with self.subTest(path=path):
+                content=(ROOT/".github/workflows"/path).read_text()
+                self.assertIn("V31_EDITORIAL_PRODUCT_REUSE_ENABLED:",content)
+                self.assertIn("vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&",content)
+                self.assertIn("vars."+blog_flag+" == 'true' &&",content)
+                self.assertIn("vars.V31_EDITORIAL_PRODUCT_REUSE_ENABLED == 'true'",content)
+                self.assertIn("&& 'true' || 'false'",content)
+
     def test_no_fallback_flags_pre_enabled_in_any_workflow(self):
         for path in (ROOT/".github/workflows").glob("v31_c9_*.yml"):
             contents=path.read_text()
