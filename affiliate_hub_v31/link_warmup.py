@@ -23,12 +23,21 @@ MAX_WARMUP_PER_RUN = 3
 
 def warmup_candidates(catalog: Catalog, site_key: str, config: dict,
                       rules: dict, limit: int) -> list[str]:
+    """Distribui novas conversões pelas categorias ainda sem cobertura.
+
+    Categoria nova tem prioridade; dentro dela mantém as regras semânticas
+    originais do blog. Para sites com uma só categoria, permite vários
+    produtos distintos na mesma execução. Não deduplica produto entre blogs.
+    """
+    from .fallback_v23 import candidates_from_catalog
     site=sites().get(site_key)
     if site is None:
         raise FallbackUnavailable("site_not_registered")
-    if not 1 <= limit <= MAX_WARMUP_PER_RUN:
+    if not isinstance(limit,int) or not 1 <= limit <= MAX_WARMUP_PER_RUN:
         raise FallbackUnavailable("warmup_limit_invalid")
     allowed=set(site["allowed_niches"])
+    if not isinstance(config.get("categories"),dict) or not config["categories"]:
+        raise FallbackUnavailable("categories_invalid")
     all_rows=catalog.db.execute("""
       SELECT p.product_key,p.title,p.item_id,p.image_url,p.origin_url,t.category,t.niche
       FROM products p JOIN product_taxonomy t ON t.product_key=p.product_key
@@ -37,25 +46,39 @@ def warmup_candidates(catalog: Catalog, site_key: str, config: dict,
         AND l.product_key IS NULL
       ORDER BY p.product_key
     """,(site["campaign"],)).fetchall()
+    already=candidates_from_catalog(catalog.path,site_key,config,rules,limit=100)
+    covered={cat for row in already for cat in row.get("categories",[])}
+    categories=list(config["categories"])
+    ordered=[cat for cat in categories if cat not in covered] + [
+        cat for cat in categories if cat in covered]
     selected=[]
     used=set()
-    for category,keywords in config["categories"].items():
-        for keyword in keywords:
-            for key,title,item_id,image,origin,cat,niche in all_rows:
-                if (key in used or f"{cat}/{niche}" not in allowed
-                    or not str(item_id).isdigit()
-                    or not str(image).startswith("https://")
-                    or not host_allowed(origin)):
-                    continue
-                if semantic_score(title,keyword,rules)<=0:
-                    continue
-                selected.append(key)
-                used.add(key)
-                break
+    while len(selected)<limit:
+        before_round=len(used)
+        added=False
+        for category in ordered:
+            for keyword in config["categories"][category]:
+                for key,title,item_id,image,origin,cat,niche in all_rows:
+                    if (key in used or f"{cat}/{niche}" not in allowed
+                            or not str(item_id).isdigit()
+                            or not str(image).startswith("https://")
+                            or not host_allowed(origin)):
+                        continue
+                    if semantic_score(title,keyword,rules)<=0:
+                        continue
+                    selected.append(key)
+                    used.add(key)
+                    added=True
+                    break
+                if added:
+                    break
             if len(selected)>=limit:
-                return selected
+                break
+            # Cada categoria recebe no máximo um produto por rodada.
+            added=False
+        if len(used) == before_round:
+            break
     return selected
-
 
 def warmup(site_key: str, config_file: Path, rules_file: Path,
            limit: int, dry_run: bool) -> dict:
