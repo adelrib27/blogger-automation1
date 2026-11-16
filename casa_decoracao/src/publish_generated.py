@@ -13,7 +13,7 @@ from zoneinfo import ZoneInfo
 from category_rotation import load_state, mark_published, order_items, save_state
 from cta_context import CTA_PRODUCT_TITLE_CLASS
 from quality_gate import quality
-from affiliate_hub_v31.reuse_policy import history_has_publication, validate_publication
+from affiliate_hub_v31.reuse_policy import history_has_publication, validate_publication, validate_prior_editorial_body
 
 ROOT = Path(__file__).resolve().parents[2]
 QUEUE = ROOT / "casa_decoracao" / "data" / "editorial_queue.json"
@@ -316,6 +316,10 @@ def main():
                 if not REUSE_ENABLED:
                     raise RuntimeError("reutilização editorial não habilitada")
                 validate_publication(history, item, article)
+                validate_prior_editorial_body(
+                    history, item, article, GENERATED,
+                    ROOT / "config" / "editorial_cross_blog_guard.json"
+                )
             category = str(article.get("category") or item.get("category") or "")
             if category not in rotation.get("pending_categories", []):
                 raise RuntimeError("categoria já coberta no ciclo atual de rotação")
