@@ -1,4 +1,4 @@
-name: V31 C9 - Radar diversidade 5 categorias READONLY (one-shot)
+name: V31 C9 - Radar corrigir duplicidade de loja (one-shot SAFE)
 
 on:
   push:
@@ -31,6 +31,23 @@ jobs:
         run: python -m pip install 'boto3>=1.35,<2'
       - name: Regressoes antes das API calls
         run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Confirmar outra loja adequada para categoria duplicada (somente R2)
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.c9_radar_shop_diversify
+      - name: Converter um unico link de loja ALTERNATIVA para Radar sem publicar
+        env:
+          V31_C9_DRY_RUN: "false"
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.c9_radar_shop_diversify
       - name: Diagnosticar filtros originais Radar sem mutacoes
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
