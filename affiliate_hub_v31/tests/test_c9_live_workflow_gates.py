@@ -51,6 +51,8 @@ class WorkflowGatesTests(unittest.TestCase):
                 self.assertIn("needs."+job+".result == 'success'",text)
                 self.assertIn("vars."+flag+" == 'true'",text)
                 self.assertIn("vars."+flag+" != 'true'",text)
+                self.assertIn("vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true'",text)
+                self.assertIn("vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true'",text)
                 self.assertIn("actions/download-artifact@v4",text)
                 self.assertIn("min_fallback: "+str(minimum),text)
                 self.assertIn(source,text)
