@@ -1,0 +1,88 @@
+name: V31 C9 - Descoberta Shopee API com fallback R2 (reutilizavel)
+
+on:
+  workflow_call:
+    inputs:
+      site_key:
+        required: true
+        type: string
+      scanner:
+        required: true
+        type: string
+      config:
+        required: true
+        type: string
+      rules:
+        required: true
+        type: string
+      output:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
+      limit:
+        required: false
+        type: number
+        default: 30
+      min_fallback:
+        required: true
+        type: number
+
+permissions:
+  contents: read
+
+jobs:
+  v31-opportunities:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    concurrency:
+      group: v31-editorial-catalog-single-writer
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cliente R2 boto3
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Validar motor, formato e gates offline
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: API Shopee prioritária; R2 somente em erro 1000 confirmado
+        env:
+          SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_C9_SITE: ${{ inputs.site_key }}
+          V31_C9_SCANNER: ${{ inputs.scanner }}
+          V31_C9_CONFIG: ${{ inputs.config }}
+          V31_C9_RULES: ${{ inputs.rules }}
+          V31_C9_OUTPUT: ${{ inputs.output }}
+          V31_C9_LIMIT: ${{ inputs.limit }}
+          V31_C9_MINIMUM: ${{ inputs.min_fallback }}
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.opportunity_router \
+            --site "$V31_C9_SITE" \
+            --scanner "$V31_C9_SCANNER" \
+            --config "$V31_C9_CONFIG" \
+            --rules "$V31_C9_RULES" \
+            --output "$V31_C9_OUTPUT" \
+            --limit "$V31_C9_LIMIT" \
+            --min-fallback "$V31_C9_MINIMUM"
+      - name: Transferir somente artefatos de descoberta, nenhum artigo
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ inputs.output }}/
+          if-no-files-found: error
+          retention-days: 1
