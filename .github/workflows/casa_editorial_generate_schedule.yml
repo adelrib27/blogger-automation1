@@ -23,6 +23,7 @@ jobs:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
+      vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
       vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
     uses: ./.github/workflows/v31_c9_discovery_reusable.yml
     with:
@@ -41,8 +42,8 @@ jobs:
       always() &&
       !cancelled() &&
       (
-        (vars.V31_CASA_R2_FALLBACK_ENABLED != 'true' && needs.v31_casa_discovery.result == 'skipped') ||
-        (vars.V31_CASA_R2_FALLBACK_ENABLED == 'true' && needs.v31_casa_discovery.result == 'success')
+        ((vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' || vars.V31_CASA_R2_FALLBACK_ENABLED != 'true') && needs.v31_casa_discovery.result == 'skipped') ||
+        (vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_CASA_R2_FALLBACK_ENABLED == 'true' && needs.v31_casa_discovery.result == 'success')
       )
     runs-on: ubuntu-latest
     timeout-minutes: 55
@@ -115,10 +116,14 @@ jobs:
             "https://casaedecoracao.radartechbr.com.br/wp-json/wp/v2/users/me?context=edit" >/dev/null
 
       - name: Descobrir produtos reais na Shopee
-        if: vars.V31_CASA_R2_FALLBACK_ENABLED != 'true'
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' ||
+          vars.V31_CASA_R2_FALLBACK_ENABLED != 'true'
         run: python -u casa_decoracao/src/shopee_oportunidades_casa.py
       - name: C9 — Receber ranking da descoberta compartilhada (apenas quando habilitada)
-        if: vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
         uses: actions/download-artifact@v4
         with:
           name: v31-c9-casa_decoracao-${{ github.run_id }}
