@@ -34,7 +34,7 @@ class WarmupSelectionTests(unittest.TestCase):
         rules={"rules":{"luminaria solar jardim":{
             "require_groups":[["luminaria"],["solar"],["jardim"]],"block_phrases":[]}}}
         result=warmup_candidates(self.catalog,"wordpress_casa_decoracao",cfg,rules,3)
-        self.assertEqual(result,["shopee:123:1"])
+        self.assertEqual(result,["shopee:123:1","shopee:123:2"])
         self.catalog.cache_link("shopee:123:1","casaedecoracaowp",
                                 "https://s.shopee.com.br/cached")
         self.assertEqual(warmup_candidates(self.catalog,"wordpress_casa_decoracao",
