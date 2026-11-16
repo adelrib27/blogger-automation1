@@ -21,6 +21,7 @@ jobs:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
+      vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
       vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true'
     uses: ./.github/workflows/v31_c9_discovery_reusable.yml
     with:
@@ -40,8 +41,8 @@ jobs:
       !cancelled() &&
       github.ref == 'refs/heads/main' &&
       (
-        (vars.V31_OFICINA_R2_FALLBACK_ENABLED != 'true' && needs.v31_oficina_discovery.result == 'skipped') ||
-        (vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true' && needs.v31_oficina_discovery.result == 'success')
+        ((vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' || vars.V31_OFICINA_R2_FALLBACK_ENABLED != 'true') && needs.v31_oficina_discovery.result == 'skipped') ||
+        (vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true' && needs.v31_oficina_discovery.result == 'success')
       )
     runs-on: ubuntu-latest
     timeout-minutes: 50
@@ -103,10 +104,14 @@ jobs:
           PY
 
       - name: Descobrir oportunidades reais na Shopee
-        if: vars.V31_OFICINA_R2_FALLBACK_ENABLED != 'true'
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' ||
+          vars.V31_OFICINA_R2_FALLBACK_ENABLED != 'true'
         run: python -u oficina_garagem/src/shopee_oportunidades_oficina.py
       - name: C9 — Receber ranking da descoberta compartilhada (apenas quando habilitada)
-        if: vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true'
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true'
         uses: actions/download-artifact@v4
         with:
           name: v31-c9-oficina_garagem-${{ github.run_id }}
