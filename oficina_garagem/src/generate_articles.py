@@ -173,9 +173,9 @@ def editorial_plan_prompt(item):
         titles = [str(x).strip()[:100] for x in item.get("prior_titles") or [] if str(x).strip()]
         if not titles:
             raise RuntimeError("reutilização sem histórico editorial confiável")
-        exclusion = ("\\nTÍTULOS ANTERIORES DESTE PRODUTO (NÃO REPETIR NEM PARAFRASEAR):\\n"
-                     + "\\n".join("- " + t for t in titles)
-                     + "\\nEscolha uma dúvida, necessidade e abordagem editorial DIFERENTES.")
+        exclusion = ("\nTÍTULOS ANTERIORES DESTE PRODUTO (NÃO REPETIR NEM PARAFRASEAR):\n"
+                     + "\n".join("- " + t for t in titles)
+                     + "\nEscolha uma dúvida, necessidade e abordagem editorial DIFERENTES.")
     return f"""Você é editor de um blog brasileiro chamado Oficina & Garagem.
 
 Use o produto real da Shopee apenas como ponto de partida para escolher UM ÚNICO TÍTULO EDITORIAL útil ao leitor. Neste sistema, tema e título são a mesma coisa: não crie um campo de tema separado.
