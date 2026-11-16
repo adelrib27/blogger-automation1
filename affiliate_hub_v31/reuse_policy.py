@@ -8,7 +8,9 @@ Este módulo NÃO chama API, NÃO cria posts, NÃO remove gates antigos.
 """
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 import unicodedata
 from difflib import SequenceMatcher
 
@@ -116,3 +118,71 @@ def history_has_publication(history: dict, item_id: str, title: str) -> bool:
         normalize(row.get("editorial_title") or row.get("title") or "")==name
         for row in published_for_product(history,item_id)
     )
+
+
+def validate_prior_editorial_body(history: dict, item: dict, article: dict,
+                                  generated_dir: Path, config_path: Path) -> None:
+    """Reuso só com texto anterior comprovado e corpo editorial ORIGINAL.
+
+    Verifica os artigos históricos pela combinação product_id + título
+    publicado. Falha fechada se um artigo antigo não tiver corpo local, em
+    vez de permitir a repetição de tema só porque o título mudou.
+    """
+    if not item.get("reuse_candidate"):
+        return
+    item_id=str(item.get("shopee_item_id") or "").strip()
+    records=published_for_product(history,item_id)
+    if not records or len(records)>=MAX_ARTICLES_PER_PRODUCT:
+        raise ReuseDenied("reuse_history_not_eligible")
+    expected={normalize(r.get("editorial_title") or r.get("title") or "")
+              for r in records}
+    if "" in expected or len(expected)!=len(records):
+        raise ReuseDenied("reuse_history_title_invalid")
+    folder=Path(generated_dir)
+    if not folder.is_dir() or folder.is_symlink():
+        raise ReuseDenied("reuse_historical_body_unavailable")
+    paths=sorted(folder.glob("*.json"))
+    if len(paths)>5000:
+        raise ReuseDenied("reuse_history_too_large")
+    prior={}
+    for path in paths:
+        if path.is_symlink() or not path.is_file():
+            raise ReuseDenied("reuse_untrusted_draft")
+        try:
+            draft=json.loads(path.read_text(encoding="utf-8"))
+        except (OSError,UnicodeError,ValueError):
+            raise ReuseDenied("reuse_unreadable_draft") from None
+        if not isinstance(draft,dict):
+            raise ReuseDenied("reuse_invalid_draft")
+        if str(draft.get("shopee_item_id") or "").strip()!=item_id:
+            continue
+        name=normalize(draft.get("editorial_title") or draft.get("seo_title") or "")
+        if name in expected:
+            body=str(draft.get("editorial_html") or "").strip()
+            if not body:
+                raise ReuseDenied("reuse_historical_body_unavailable")
+            prior[name]=(draft,body)
+    if set(prior)!=expected:
+        raise ReuseDenied("reuse_historical_body_unavailable")
+    current_body=str(article.get("editorial_html") or "").strip()
+    if not current_body:
+        raise ReuseDenied("reuse_body_missing")
+    try:
+        thresholds=json.loads(Path(config_path).read_text(encoding="utf-8"))["thresholds"]
+        from src.editorial_cross_blog_guard import (
+            similarity,is_collision,content_tokens
+        )
+    except (OSError,UnicodeError,ValueError,KeyError,ImportError):
+        raise ReuseDenied("reuse_similarity_config_unavailable") from None
+    if len(content_tokens(current_body))<120:
+        raise ReuseDenied("reuse_body_below_comparison_threshold")
+    title=str(article.get("seo_title") or "")
+    for draft,body in prior.values():
+        if len(content_tokens(body))<120:
+            raise ReuseDenied("reuse_historical_body_too_short")
+        sim=similarity(title,current_body,
+                       str(draft.get("editorial_title") or draft.get("seo_title") or ""),
+                       body)
+        collision,_=is_collision(sim,thresholds,body_available=True)
+        if collision:
+            raise ReuseDenied("reuse_body_or_title_too_similar")
