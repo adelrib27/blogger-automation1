@@ -1,4 +1,4 @@
-name: V31 C7 - Descoberta cache Casa (temporario SAFE)
+name: V31 C7 - Warmup 1 link e fila Casa (temporario SAFE)
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  diagnostico-casa-somente-leitura:
+  preaquecer-um-link-e-testar-fila-sem-publicar:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115' &&
@@ -40,3 +40,19 @@ jobs:
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
         run: |
           python -m affiliate_hub_v31.link_warmup --site wordpress_casa_decoracao --config casa_decoracao/config/shopee_oportunidades.json --rules casa_decoracao/config/shopee_intent_rules.json --limit 3 --dry-run
+      - name: Converter NO MAXIMO um link Shopee para a campanha Casa e persistir em R2
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.link_warmup --site wordpress_casa_decoracao --config casa_decoracao/config/shopee_oportunidades.json --rules casa_decoracao/config/shopee_intent_rules.json --limit 1
+      - name: Testar R2 real no construtor da fila editorial Casa sem publicacao
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.c7_casa_queue_probe
