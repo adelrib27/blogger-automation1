@@ -32,11 +32,13 @@ def analyze(storage: R2State) -> dict:
             mapping,_=legacy.category_maps(policy)
             blockers=legacy.history_blockers(policy)
             reports={}
+            all_accepted=[]
             for category in policy["allowed_categories"]:
                 source=next((s for s,d in mapping.items() if d==category),"")
                 raw=[r for r in rows if source in r.get("categories",[])]
                 accepted=legacy.candidate_options(
                     rows,category,source,cfg,mapping,blockers,policy)
+                all_accepted.extend(accepted)
                 reports[category]={
                     "cached_category_products":len(raw),
                     "surviving_original_editorial_filters":len(accepted),
@@ -49,6 +51,9 @@ def analyze(storage: R2State) -> dict:
             return {
                 "site_key":"wordpress_radartechbr",
                 "cached_ranked_products":len(rows),
+                "unique_shops_across_five_categories":len(set(str(p.get("shopId") or p.get("shopName") or "") for p,_ in all_accepted)),
+                "unique_keywords_across_five_categories":len(set(str(kw).casefold() for _,kw in all_accepted)),
+                "unique_item_ids_across_five_categories":len(set(str(p.get("itemId") or "") for p,_ in all_accepted)),
                 "category_diagnostics":reports,
                 "categories_with_zero_filtered_candidates":[
                     key for key,info in reports.items()
