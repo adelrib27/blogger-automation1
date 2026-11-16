@@ -24,6 +24,7 @@ from .routing import sites
 MAX_SELECT = 100
 MAX_CATEGORIES = 60
 MAX_KEYWORDS = 500
+MAX_ALTERNATIVES_PER_KEYWORD = 3  # lojas alternativas quando a primeira estiver bloqueada
 
 
 class FallbackUnavailable(ValueError):
@@ -137,6 +138,7 @@ def candidates_from_catalog(db_path: Path, site_key: str,
     used=set()
     for category, keywords in config_categories.items():
         for keyword in keywords:
+            alternatives=0
             for key,item_id,title,image,shop,origin,offer,cat,niche in rows:
                 if (key in used or f"{cat}/{niche}" not in allowed or
                         not str(item_id).isdigit() or
@@ -172,7 +174,9 @@ def candidates_from_catalog(db_path: Path, site_key: str,
                     "ratingStar":None,
                     "sales":None,
                 })
-                break
+                alternatives+=1
+                if alternatives >= MAX_ALTERNATIVES_PER_KEYWORD or len(by_keyword)>=limit:
+                    break
             if len(by_keyword)>=limit:
                 break
         if len(by_keyword)>=limit:
