@@ -54,3 +54,16 @@ GitHub **Repository variables**, não Secrets; se ausentes, tratam-se como desli
 - [Checkpoint C9](CHECKPOINT_C9_3WP_R2_2026-11-16.md).
 
 **Nenhum workflow foi liberado ou agendado LIVE por este runbook.** Esta é a especificação de implantação reversível a ser aplicada após revisão.
+
+
+## Hipótese para etapa POSTERIOR — tráfego Shopee das páginas de loja
+
+**Decisão do usuário, registrada em 16/11/2026:** todos os blogs mantêm páginas de loja com atualização/rotação **diária** de produtos, possivelmente em horários distintos. Essas chamadas, somadas às buscas das automações editoriais (incluindo várias categorias e slots do Radar Tech BR), podem concentrar requisições na mesma API/credenciais e contribuir para a frequência de respostas Shopee `1000`.
+
+**É uma hipótese, NÃO uma causa comprovada.** Não equiparar automaticamente o erro `1000` ao `10030`, mesmo que o volume, horários e tempos de espera possam influenciar ambos. A documentação de um actor de terceiros (Apify) não prova a causa de `1000` nem estabelece uma cota oficial.
+
+**Proposta para análise futura, somente depois de concluir V31:** medir requisições reais e janelas de execução por blog, incluindo lojas, artigos, slots, testes e demais consumidores; avaliar substituir a atualização diária de cada página de loja por **uma rotação mensal distribuída entre os blogs**, mantendo as lojas ativas, a validade dos produtos e as URLs afiliadas.
+
+**Fora do escopo desta entrega:** não alterar agendas, cadência, scripts ou consultas das páginas de loja; não implementar por enquanto backoff indiscriminado, proxy ou roteamento baseado na suposição de que `1000` e `10030` são equivalentes.
+
+**Prioridade atual:** concluir o fallback CSV/R2, originalidade editorial, estoque por campanha, validação dos workflows existentes e rollout seguro; **depois** estudar a carga das lojas.
