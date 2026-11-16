@@ -240,6 +240,10 @@ def emit_v23_outputs(rows: list[dict], config: dict, output: Path) -> int:
         (staging/"intent_report.json").write_text(
             json.dumps(report_json,ensure_ascii=False,indent=2),encoding="utf-8")
         (staging/"search_signals.json").write_text("{}",encoding="utf-8")
+        (staging/"diversity_report.json").write_text(
+            json.dumps({"source":"csv_r2_verified_affiliate_cache",
+                        "note":"no live sales/commission/rating data",
+                        "selected":len(rows)},ensure_ascii=False),encoding="utf-8")
         with (staging/"ranking.csv").open("w",encoding="utf-8-sig",newline="") as handle:
             writer=csv.DictWriter(handle,fieldnames=fields)
             writer.writeheader()
@@ -249,7 +253,8 @@ def emit_v23_outputs(rows: list[dict], config: dict, output: Path) -> int:
                 for name in ("categories","keywords","sourceModes"):
                     line[name]=" | ".join(row.get(name) or [])
                 writer.writerow(line)
-        for name in ("ranking.json","intent_report.json","search_signals.json","ranking.csv"):
+        for name in ("ranking.json","intent_report.json","search_signals.json",
+                     "diversity_report.json","ranking.csv"):
             os.replace(staging/name,folder/name)
     return len(rows)
 
