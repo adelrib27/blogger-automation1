@@ -13,7 +13,17 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 **Verificação sem revelar valores:** `python -m affiliate_hub_v31.credentials --profile manifest`  
 **Workflow manual SAFE:** `.github/workflows/v31_editorial_secret_inventory_safe.yml` (disponível para execução manual após inclusão na branch padrão).
 
-Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. O cadastro efetivo dos secrets/variables no GitHub Environment `v31-editorial-safe` ainda é obrigatório e não foi executado.
+Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
+
+### C6 — Fallback CSV/R2 universal para blogs atuais e futuros (16/11/2026)
+
+- **Objetivo corrigido:** os três WordPress existentes **já possuem geração de artigos**. O V31 fornece produtos: **API Shopee primeiro; erro 1000 confirmado sem ofertas úteis → CSV/R2**; sem modificar os publicadores.
+- [Cadastro extensível de blogs](sites.d/README.md): inclui `site_routes.json` e registros independentes em `sites.d/*.json`. Atualmente **18 Blogger e 3 WordPress**, com suporte a novos sites sem alterar o motor; teste com **60 blogs fictícios adicionais**.
+- [fallback_v23.py](fallback_v23.py): usa somente links de afiliado já convertidos na campanha de cada site; gera `ranking.json`, `intent_report.json`, CSV e relatórios compatíveis com as filas v2.3, sem inventar métricas comerciais.
+- [opportunity_router.py](opportunity_router.py): mantém o scanner antigo, observa código 1000, usa fallback quando necessário e só entrega artefatos completos. Outros erros bloqueiam a rotina.
+- **86 testes offline aprovados**, incluindo simulação do scanner real de Casa e Decoração com erro 1000. **Nenhum workflow de publicação LIVE foi alterado e o fallback REAL ainda não foi acionado nos blogs.**
+- **Próximo requisito:** pré-conversão de links por campanha enquanto a API estiver saudável, teste de compatibilidade das filas e adaptador adicional para Radar (fila por slots).
+- [Checkpoint C6 multisite](CHECKPOINT_C6_UNIVERSAL_FALLBACK_2026-11-16.md). Continuidade: `V31-EDITORIAL-C6-UNIVERSAL-FALLBACK-20261116-SAFE`.
 
 ### C4/C5 — Pilotos REAIS: conversão e originalidade de pautas
 
@@ -27,7 +37,7 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 ### C3 — Cloudflare R2 privado criado e verificado
 
 - **Bucket existente:** `v31-editorial-shopee`, na conta selecionada pelo proprietário, classe **Standard**, sem domínio público `r2.dev` ou domínio personalizado.
-- **Comprovado:** ativação da assinatura no painel e criação/consulta pela API Cloudflare. **Ainda não gravamos catálogo/objetos.**
+- **Comprovado:** ativação da assinatura no painel e criação/consulta pela API Cloudflare. **Marco histórico C3:** naquele momento ainda não havia objetos; o primeiro catálogo real foi gravado e restaurado posteriormente em C3.2.
 - **Pendente:** criar credenciais S3 limitadas ao bucket e cadastrá-las no Environment GitHub `v31-editorial-safe`, configurar `V31_EDITORIAL_R2_ACCOUNT_ID` e `V31_EDITORIAL_R2_BUCKET`; validar conexão real e só então importar os feeds.
 - **Checkpoint:** [C3 — bucket privado criado](CHECKPOINT_C3_R2_2026-11-15.md).
 - **Continuidade:** `V31-EDITORIAL-C3-R2-PRIVATE-20261115-CREATED`.
@@ -39,7 +49,7 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 - **4.758 registros** corresponderam a nichos na versão inicial da taxonomia, **105.242 ainda sem nicho aprovado**. Não significa descarte definitivo.
 - Bugs reais resolvidos: redirecionamento HTTPS interno Shopee e CSV com campos multilinha/aspas. O workflow temporário de auditoria foi removido; dados não foram persistidos.
 - **Checkpoint C2.1:** [leitura real, limitações e próximos passos](CHECKPOINT_C2_1_FEEDS_REAIS_2026-11-15.md). Código: `V31-EDITORIAL-C2.1-FEEDS-REAIS-20261115-PASS`.
-- R2, conversões comerciais e publicação ainda **não executados**.
+- **Marco histórico C2.1:** R2 e conversão comercial foram posteriormente validados em C3.2 e C4; a publicação automática nova permanece desativada.
 
 ### C2 — Categorias, nichos, feeds e R2 SAFE
 
