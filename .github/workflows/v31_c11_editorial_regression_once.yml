@@ -1,0 +1,34 @@
+name: V31 C11 - Validacao offline real dos geradores e publicadores (temporario)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_c11_editorial_regression_once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  retrocompatibilidade-sem-rede:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compilar scripts originais de Casa Oficina e V31
+        run: |
+          python -m py_compile casa_decoracao/src/build_editorial_queue.py casa_decoracao/src/generate_articles.py casa_decoracao/src/publish_generated.py
+          python -m py_compile oficina_garagem/src/build_editorial_queue.py oficina_garagem/src/generate_articles.py oficina_garagem/src/publish_generated.py
+          python -m compileall -q affiliate_hub_v31
+      - name: Regressao completa sem tokens ou chamadas externas
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Executar testes originais Casa, Oficina e cross-blog
+        run: |
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
