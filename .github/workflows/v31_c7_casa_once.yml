@@ -1,0 +1,42 @@
+name: V31 C7 - Descoberta cache Casa (temporario SAFE)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_c7_casa_once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  diagnostico-casa-somente-leitura:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115' &&
+      github.event_name == 'push'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar cliente R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Verificar regressões antes do R2
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: R2 real — candidatos Casa (somente contagem, sem conversão/publicação)
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.link_warmup --site wordpress_casa_decoracao --config casa_decoracao/config/shopee_oportunidades.json --rules casa_decoracao/config/shopee_intent_rules.json --limit 3 --dry-run
