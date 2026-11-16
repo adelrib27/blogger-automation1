@@ -120,11 +120,13 @@ def _publish_staged(staging: Path, destination: Path) -> None:
 
 
 def run_router(site_key: str, scanner: str, config: str, rules: str,
-               output: str, limit: int = 30) -> str:
+               output: str, limit: int = 30, min_fallback: int = 1) -> str:
     if site_key not in sites():
         raise RoutingError("site_not_registered")
     if not 1<=limit<=100:
         raise RoutingError("limit_invalid")
+    if not isinstance(min_fallback,int) or not 1<=min_fallback<=limit:
+        raise RoutingError("minimum_fallback_invalid")
     scanner_file=validate_scanner(scanner)
     destination=Path(output)
     destination.parent.mkdir(parents=True,exist_ok=True)
@@ -175,6 +177,9 @@ def run_router(site_key: str, scanner: str, config: str, rules: str,
             if source=="CSV_R2":
                 # Fallback somente com link afiliado verificado e cacheado.
                 run_cloud(site_key,config_file,rules_file,stage,limit)
+                verified=validate_api_ranking(stage/"ranking.json")
+                if verified < min_fallback:
+                    raise RoutingError("insufficient_verified_cached_offers")
             _publish_staged(stage,destination)
             return source
         finally:
@@ -194,9 +199,11 @@ def main() -> int:
     p.add_argument("--rules",required=True)
     p.add_argument("--output",required=True)
     p.add_argument("--limit",type=int,default=30)
+    p.add_argument("--min-fallback",type=int,default=1,
+                   help="Mínimo de links afiliados para liberar artefatos no erro 1000")
     args=p.parse_args()
     try:
-        source=run_router(args.site,args.scanner,args.config,args.rules,args.output,args.limit)
+        source=run_router(args.site,args.scanner,args.config,args.rules,args.output,args.limit,args.min_fallback)
         print("V31_C6_OPPORTUNITY_ROUTER_PASS_"+source)
         return 0
     except Exception as exc:
