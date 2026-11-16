@@ -1,4 +1,7 @@
 import json
+import os
+
+from affiliate_hub_v31.reuse_policy import can_queue_reuse
 import re
 import unicodedata
 from collections import Counter
@@ -11,6 +14,7 @@ CONFIG = ROOT / "oficina_garagem" / "config" / "shopee_oportunidades.json"
 OUT = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
 HISTORY = ROOT / "oficina_garagem" / "data" / "publication_history.json"
 MAX_PER_KEYWORD = 1
+REUSE_ENABLED = os.environ.get('V31_EDITORIAL_PRODUCT_REUSE_ENABLED', 'false').lower() == 'true'
 
 KEYWORD_LABELS = {
     "parafusadeira": "Parafusadeira",
@@ -117,6 +121,9 @@ def main():
     details = ranking_details()
     mapping = category_map(config)
     published_ids, published_fingerprints = publication_memory()
+    history_doc = load(HISTORY, {'items': []})
+    old_queue = load(OUT, {'items': []}) if REUSE_ENABLED else {'items': []}
+    next_id = max((int(row.get('id') or 0) for row in old_queue.get('items') or []), default=0)
     items = []
     seen_ids = set()
     seen_products = set()
@@ -131,14 +138,22 @@ def main():
         if not item_id or not product or not link.startswith("https://") or not keywords:
             skipped["incompleto"] += 1
             continue
+        reuse_candidate = False
+        prior_titles = []
         if item_id in published_ids:
-            skipped["produto_ja_publicado"] += 1
-            continue
+            if REUSE_ENABLED:
+                reuse_candidate, prior_titles = can_queue_reuse(history_doc, item_id)
+            if not reuse_candidate:
+                skipped["produto_ja_publicado"] += 1
+                continue
         if item_id in seen_ids:
             skipped["item_id_duplicado"] += 1
             continue
         fingerprint = product_fingerprint(product)
-        if fingerprint and fingerprint in published_fingerprints:
+        other_fingerprints = ({product_fingerprint(row.get("product")) for row in history_doc.get("items") or []
+                               if str(row.get("shopee_item_id") or "") != item_id}
+                              if reuse_candidate else published_fingerprints)
+        if fingerprint and fingerprint in other_fingerprints:
             skipped["produto_semelhante_ja_publicado"] += 1
             continue
         if fingerprint and fingerprint in seen_products:
@@ -161,8 +176,10 @@ def main():
             image_url = ""
 
         category = display_category(raw_category)
+        if REUSE_ENABLED:
+            next_id += 1
         items.append({
-            "id": len(items) + 1,
+            "id": next_id if REUSE_ENABLED else len(items) + 1,
             "shopee_item_id": item_id,
             "product": product,
             "affiliate_link": link,
@@ -174,6 +191,9 @@ def main():
             "opportunity_score": row.get("opportunityScore"),
             "priority_tier": row.get("priorityTier"),
             "status": "PENDING",
+            "reuse_candidate": reuse_candidate,
+            "prior_publication_count": len(prior_titles) if reuse_candidate else 0,
+            "prior_titles": prior_titles if reuse_candidate else [],
             "rules": {
                 "no_fake_testing": True,
                 "no_invented_specs": True,
