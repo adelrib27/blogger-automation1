@@ -43,6 +43,10 @@ def is_api_error_1000(response: dict) -> bool:
     return False
 
 
+class ApiError1000Detected(RuntimeError):
+    """Interrompe o scanner após a PRIMEIRA ocorrência, evitando mais chamadas."""
+
+
 class ErrorObserver:
     """Intercepta somente o resultado estruturado; não imprime payload ou token."""
     def __init__(self, post_graphql):
@@ -55,6 +59,7 @@ class ErrorObserver:
         result=self.original(*args,**kwargs)
         if is_api_error_1000(result):
             self.error_1000=True
+            raise ApiError1000Detected("shopee_api_error_1000")
         return result
 
 
