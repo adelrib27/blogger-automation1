@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 from category_rotation import load_state, mark_published, order_items, save_state
 from cta_context import CTA_PRODUCT_TITLE_CLASS
 from quality_gate import quality
+from affiliate_hub_v31.reuse_policy import history_has_publication, validate_publication
 
 ROOT = Path(__file__).resolve().parents[2]
 QUEUE = ROOT / "casa_decoracao" / "data" / "editorial_queue.json"
@@ -21,6 +22,7 @@ HISTORY = ROOT / "casa_decoracao" / "data" / "publication_history.json"
 ROTATION = ROOT / "casa_decoracao" / "data" / "category_rotation.json"
 WP_URL = "https://casaedecoracao.radartechbr.com.br"
 ENABLED = os.getenv("CASA_LIVE_PUBLISH_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+REUSE_ENABLED = os.getenv('V31_EDITORIAL_PRODUCT_REUSE_ENABLED', 'false').lower() == 'true'
 LIMIT = max(1, min(int(os.getenv("CASA_PUBLISH_LIMIT", "1")), 3))
 DAILY_CAP = max(1, min(int(os.getenv("CASA_DAILY_PUBLISH_CAP", "3")), 3))
 STATUS = os.getenv("CASA_WORDPRESS_STATUS", "draft").strip().lower()
@@ -245,7 +247,11 @@ def publications_today(history):
 
 def append_history(history, item, article, post_id, url, source="automatic_gate"):
     item_id = str(item.get("shopee_item_id") or "").strip()
-    if item_id and item_id in history_ids(history):
+    if REUSE_ENABLED and item.get("reuse_candidate"):
+        if history_has_publication(history, item_id, article.get("seo_title") or ""):
+            return
+        validate_publication(history, item, article)
+    elif item_id and item_id in history_ids(history):
         return
     history.setdefault("version", 2)
     history.setdefault("project", "Casa e Decoração")
@@ -292,7 +298,7 @@ def main():
             break
         item = candidates[0]
         item_id = str(item.get("shopee_item_id") or "").strip()
-        if item_id and item_id in published:
+        if item_id and item_id in published and not (REUSE_ENABLED and item.get("reuse_candidate")):
             item["status"] = "PUBLISHED"
             item["last_error"] = ""
             continue
@@ -306,6 +312,10 @@ def main():
             continue
 
         try:
+            if item.get("reuse_candidate"):
+                if not REUSE_ENABLED:
+                    raise RuntimeError("reutilização editorial não habilitada")
+                validate_publication(history, item, article)
             category = str(article.get("category") or item.get("category") or "")
             if category not in rotation.get("pending_categories", []):
                 raise RuntimeError("categoria já coberta no ciclo atual de rotação")
