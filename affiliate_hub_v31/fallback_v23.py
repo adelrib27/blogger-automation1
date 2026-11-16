@@ -122,7 +122,7 @@ def candidates_from_catalog(db_path: Path, site_key: str,
         with closing(sqlite3.connect(uri,uri=True)) as conn:
             rows=conn.execute("""
                 SELECT p.product_key,p.item_id,p.title,p.image_url,p.shop_id,
-                       l.affiliate_url,t.category,t.niche
+                       p.origin_url,l.affiliate_url,t.category,t.niche
                 FROM affiliate_links l
                 JOIN products p ON p.product_key=l.product_key
                 JOIN product_taxonomy t ON t.product_key=p.product_key
@@ -137,10 +137,12 @@ def candidates_from_catalog(db_path: Path, site_key: str,
     used=set()
     for category, keywords in config_categories.items():
         for keyword in keywords:
-            for key,item_id,title,image,shop,offer,cat,niche in rows:
+            for key,item_id,title,image,shop,origin,offer,cat,niche in rows:
                 if (key in used or f"{cat}/{niche}" not in allowed or
                         not str(item_id).isdigit() or
+                        not str(shop).isdigit() or
                         not str(image).startswith("https://") or
+                        not host_allowed(origin) or
                         not host_allowed(offer,allow_short=True)):
                     continue
                 score=semantic_score(title,keyword,intent_rules)
@@ -149,6 +151,8 @@ def candidates_from_catalog(db_path: Path, site_key: str,
                 used.add(key)
                 by_keyword.append({
                     "itemId":str(item_id),
+                    "shopId":str(shop),
+                    "productLink":origin,
                     "productName":title,
                     "shopName":"",
                     "imageUrl":image,
