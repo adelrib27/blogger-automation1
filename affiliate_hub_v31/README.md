@@ -15,6 +15,13 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+### C10 — Liberação futura protegida por dois switches (16/11/2026)
+
+- **Novo interruptor global** `V31_EDITORIAL_C9_RELEASE_ENABLED` em conjunto com a flag de **cada blog**. **Ambos OFF/ausentes** => automações antigas continuam sem o roteador.
+- Somente após revisão do PR, auditoria de estoque, teste canário sem publicação e validação de originalidade por **pauta/título** será possível habilitar a execução comercial por blog. O antigo publicador poderá publicar posts ao ativar as flags; **NÃO ativar sem critérios cumpridos**.
+- **Rollback:** desabilitar a flag global para toda a rede ou a flag específica; cancelar manualmente runs já iniciados. Sem merge automático.
+- [Runbook operacional C10](C10_RELEASE_RUNBOOK_2026-11-16.md), código `V31-EDITORIAL-C10-CANARY-READY-BUT-OFF-20261116`.
+
 ### C9 — Ponte reversível API→R2 para 3 WordPress; 5 slots Radar REAIS (16/11/2026)
 
 - **Não substitui publicadores**: adiciona um workflow de descoberta reutilizável `v31_c9_discovery_reusable.yml` (somente API Shopee/R2, sem secrets WordPress) e integra por flags **OFF por padrão** os trabalhos já existentes de Casa, Oficina e fila diária Radar, somente na **branch do PR #52**. O branch `main` continua intocado.
