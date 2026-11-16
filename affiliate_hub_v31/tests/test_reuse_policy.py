@@ -1,8 +1,11 @@
 """C11: reutilização com título e intenção originais e histórico confiável."""
+import json
+import tempfile
 import unittest
+from pathlib import Path
 from affiliate_hub_v31.reuse_policy import (
     ReuseDenied, can_queue_reuse, validate_publication, title_is_distinct,
-    history_has_publication,
+    history_has_publication, validate_prior_editorial_body,
 )
 
 
@@ -73,6 +76,37 @@ class ReusePolicyTests(unittest.TestCase):
         x["shopee_item_id"]="456"
         with self.assertRaisesRegex(ReuseDenied,"mismatch"):
             validate_publication(self.history,self.item,x)
+
+    def test_reuse_requires_distinct_actual_body_not_only_new_title(self):
+        root=Path(__file__).resolve().parents[2]
+        config=root/"config/editorial_cross_blog_guard.json"
+        old_body=("<h2>Organização da sala</h2><p>Um ambiente doméstico compacto "
+                  "pode ser organizado com rotinas que valorizem a distribuição "
+                  "dos móveis, o espaço para circulação e os pontos de apoio "
+                  "para objetos usados durante o dia.</p>")*30
+        new_body=("<h2>Leitura sem reflexos</h2><p>Ao escolher iluminação "
+                  "para leitura, convém observar o posicionamento do foco "
+                  "luminoso, o contraste com a página, a luz natural disponível "
+                  "e a direção da luminária em relação aos olhos.</p>")*30
+        with tempfile.TemporaryDirectory() as dirname:
+            folder=Path(dirname)
+            old={
+                "shopee_item_id":"123",
+                "seo_title":self.old_title,
+                "editorial_title":self.old_title,
+                "editorial_html":old_body
+            }
+            (folder/"001.json").write_text(json.dumps(old),encoding="utf-8")
+            new=article(self.new_title)
+            new["editorial_html"]=new_body
+            self.assertIsNone(validate_prior_editorial_body(
+                self.history,self.item,new,folder,config))
+            new["editorial_html"]=old_body
+            with self.assertRaisesRegex(ReuseDenied,"too_similar"):
+                validate_prior_editorial_body(self.history,self.item,new,folder,config)
+            (folder/"001.json").unlink()
+            with self.assertRaisesRegex(ReuseDenied,"body_unavailable"):
+                validate_prior_editorial_body(self.history,self.item,new,folder,config)
 
     def test_new_product_remains_unaffected_in_default_mode(self):
         item={"reuse_candidate":False,"shopee_item_id":"124"}
