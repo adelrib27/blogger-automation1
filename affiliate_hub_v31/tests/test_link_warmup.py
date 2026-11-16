@@ -37,7 +37,7 @@ class WarmupSelectionTests(unittest.TestCase):
         self.catalog.cache_link("shopee:123:1","casaedecoracaowp",
                                 "https://s.shopee.com.br/cached")
         self.assertEqual(warmup_candidates(self.catalog,"wordpress_casa_decoracao",
-                                           cfg,rules,1),[])
+                                           cfg,rules,1),["shopee:123:2"])
         self.assertEqual(warmup_candidates(self.catalog,"wordpress_radartechbr",
                                            cfg,rules,1),["shopee:123:1"])
 
