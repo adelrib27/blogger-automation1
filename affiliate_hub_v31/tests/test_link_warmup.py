@@ -20,7 +20,8 @@ class WarmupSelectionTests(unittest.TestCase):
             for id,name in enumerate(["Luminária Solar LED para Jardim",
                                       "Luminária Solar LED de Jardim 2",
                                       "Broca para Furadeira",
-                                      "Furadeira de Impacto 12V"],1):
+                                      "Furadeira de Impacto 12V",
+                                      "Luminária de Mesa para Sala"],1):
                 writer.writerow({"shopId":"123","itemId":str(id),"productName":name,
                                  "productLink":f"https://shopee.com.br/item-i.123.{id}",
                                  "imageUrl":"https://images.example.invalid/p.png"})
@@ -40,6 +41,23 @@ class WarmupSelectionTests(unittest.TestCase):
                                            cfg,rules,1),["shopee:123:2"])
         self.assertEqual(warmup_candidates(self.catalog,"wordpress_radartechbr",
                                            cfg,rules,1),["shopee:123:1"])
+
+    def test_missing_category_is_prioritized_for_next_conversion(self):
+        cfg={"categories":{
+            "Area Externa":["luminaria solar jardim"],
+            "Sala":["luminaria mesa"]
+        }}
+        rules={"rules":{
+            "luminaria solar jardim":{
+                "require_groups":[["luminaria"],["solar"],["jardim"]],
+                "block_phrases":[]
+            }
+        }}
+        self.catalog.cache_link("shopee:123:1","casaedecoracaowp",
+                                "https://s.shopee.com.br/old-area")
+        result=warmup_candidates(self.catalog,"wordpress_casa_decoracao",cfg,rules,2)
+        self.assertEqual(result[0],"shopee:123:5")
+        self.assertEqual(len(result),2)
 
     def test_unknown_site_and_limits_fail_before_any_api(self):
         with self.assertRaisesRegex(FallbackUnavailable,"site_not_registered"):
