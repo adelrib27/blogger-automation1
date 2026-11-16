@@ -15,6 +15,16 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+### C7 — R2 REAL integrado às filas dos três WordPress (16/11/2026)
+
+- **Casa e Decoração:** [run 43878643279](https://github.com/adelrib27/blogger-automation1/actions/runs/43878643279) PASS. Uma conversão Shopee REAL (`casaedecoracaowp`), cache R2, construtor de fila original validado sem publicação.
+- **Oficina & Garagem:** [run 43879142065](https://github.com/adelrib27/blogger-automation1/actions/runs/43879142065) PASS. Uma conversão Shopee REAL (`oficinawp`), cache R2, construtor original validado sem publicação.
+- **Erro 1000:** [run 43879995986](https://github.com/adelrib27/blogger-automation1/actions/runs/43879995986) PASS com erro 1000 **simulado** nos scanners originais e recuperação de ofertas do R2 **real**; circuito interrompe novas chamadas no primeiro erro.
+- **Radar Tech BR:** [run 43880690866](https://github.com/adelrib27/blogger-automation1/actions/runs/43880690866) PASS. Uma conversão Shopee REAL (`radarwp`) e validação de **um slot** no `prepare_slot.py` original; **fila de 5 categorias ainda não validada**.
+- **89/89 testes SAFE aprovados**, sem publicar artigos ou modificar workflows LIVE. Gatilhos temporários removidos. Estoque de apenas **1 link afiliado por campanha** ainda é insuficiente para rotina diária de 50 blogs.
+- [Checkpoint C7 completo](CHECKPOINT_C7_REAL_3WP_2026-11-16.md), continuidade: `V31-EDITORIAL-C7-R2-3WP-FALLBACK-SAFE-20261116`.
+- Próximo passo C8: pré-conversão de lotes com limites/cotas e teste em shadow mode dos fluxos existentes, migrando controles de repetição de produto para originalidade de pauta/título.
+
 ### C6 — Fallback CSV/R2 universal para blogs atuais e futuros (16/11/2026)
 
 - **Objetivo corrigido:** os três WordPress existentes **já possuem geração de artigos**. O V31 fornece produtos: **API Shopee primeiro; erro 1000 confirmado sem ofertas úteis → CSV/R2**; sem modificar os publicadores.
