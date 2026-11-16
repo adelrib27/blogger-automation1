@@ -1,5 +1,6 @@
 """Contrato de roteamento API Shopee -> fallback R2 em erro 1000, sem rede."""
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -107,6 +108,40 @@ if not parsed.get('errors'):
         result=json.loads((self.output/"intent_report.json").read_text(encoding="utf-8"))
         self.assertEqual(result["ranking"][0]["itemId"],"43")
         self.assertEqual(result["ranking"][0]["offerLink"],"https://s.shopee.com.br/cache")
+
+    def test_real_casa_v23_wrapper_uses_generic_fallback_without_live_api(self):
+        """Usa o scanner de Casa REAL, mockando exclusivamente API e R2."""
+        script=router.ROOT/"casa_decoracao/src/shopee_oportunidades_casa.py"
+        config=router.ROOT/"casa_decoracao/config/shopee_oportunidades.json"
+        rules=router.ROOT/"casa_decoracao/config/shopee_intent_rules.json"
+        self.assertTrue(script.is_file())
+        self.assertTrue(config.is_file())
+        self.assertTrue(rules.is_file())
+        def fake_r2(site,config_path,rules_path,stage,limit):
+            self.assertEqual(site,"wordpress_casa_decoracao")
+            return emit_v23_outputs([{
+                "itemId":"123","productName":"Luminária Solar para Jardim",
+                "offerLink":"https://s.shopee.com.br/real-cached",
+                "imageUrl":"https://img.example.invalid/jardim.jpg",
+                "priorityTier":"CSV_R2_CACHE",
+                "categories":["Area Externa"],
+                "keywords":["luminaria solar jardim"],
+                "intentMatchedKeywords":["luminaria solar jardim"],
+                "sourceModes":["csv_r2_verified_affiliate_cache"],
+                "semanticIntentScore":1.0
+            }],json.loads(config_path.read_text(encoding="utf-8")),stage)
+        with patch.dict(os.environ,{"SHOPEE_APP_ID":"TEST","SHOPEE_SECRET":"TEST"}), \
+             patch.object(self.base,"post_graphql",
+                          return_value={"errors":[{"extensions":{"code":1000}}]}), \
+             patch.object(self.base,"google_suggestions",return_value=[]), \
+             patch.object(self.base.time,"sleep",return_value=None), \
+             patch.object(router,"run_cloud",side_effect=fake_r2):
+            source=router.run_router("wordpress_casa_decoracao",
+                    str(script.relative_to(router.ROOT)),str(config),str(rules),
+                    str(self.root/"casa_output"),limit=3)
+        self.assertEqual(source,"CSV_R2")
+        report=json.loads((self.root/"casa_output/intent_report.json").read_text(encoding="utf-8"))
+        self.assertEqual(report["ranking"][0]["itemId"],"123")
 
     def test_other_errors_stop_before_consumer_runs(self):
         with patch.object(self.base,"post_graphql",
