@@ -139,7 +139,16 @@ def run_router(site_key: str, scanner: str, config: str, rules: str,
         sys.path.insert(0,str(ROOT/"src"))
         try:
             import shopee_oportunidades as base
+            import shopee_oportunidades_v23 as v23
             original=base.post_graphql
+            old_config=base.CONFIG_PATH
+            old_output=base.OUTPUT_DIR
+            old_top=base.TOP_N_OVERRIDE
+            old_intent=v23.INTENT_RULES_PATH
+            base.CONFIG_PATH=config_file
+            base.OUTPUT_DIR=stage
+            base.TOP_N_OVERRIDE=str(limit)
+            v23.INTENT_RULES_PATH=rules_file
             observer=ErrorObserver(original)
             base.post_graphql=observer
             scanner_failed=False
@@ -152,6 +161,10 @@ def run_router(site_key: str, scanner: str, config: str, rules: str,
                 scanner_failed=True
             finally:
                 base.post_graphql=original
+                base.CONFIG_PATH=old_config
+                base.OUTPUT_DIR=old_output
+                base.TOP_N_OVERRIDE=old_top
+                v23.INTENT_RULES_PATH=old_intent
             rows=validate_api_ranking(stage/"ranking.json") if not scanner_failed else 0
             source=choose_source(rows,observer.error_1000)
             if source=="CSV_R2":
