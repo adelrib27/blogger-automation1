@@ -15,6 +15,18 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+### C9 — Ponte reversível API→R2 para 3 WordPress; 5 slots Radar REAIS (16/11/2026)
+
+- **Não substitui publicadores**: adiciona um workflow de descoberta reutilizável `v31_c9_discovery_reusable.yml` (somente API Shopee/R2, sem secrets WordPress) e integra por flags **OFF por padrão** os trabalhos já existentes de Casa, Oficina e fila diária Radar, somente na **branch do PR #52**. O branch `main` continua intocado.
+- **Rollback por blog:** `V31_CASA_R2_FALLBACK_ENABLED`, `V31_OFICINA_R2_FALLBACK_ENABLED`, `V31_RADAR_R2_FALLBACK_ENABLED`: ausente/`false` => scanner antigo; `true` => workflow compartilhado. Falha do novo job não libera o publicador.
+- **Fallback insuficiente bloqueado:** `--min-fallback` exige ao menos 3, 2 e 5 links válidos respectivamente; não interfere na prioridade da API Shopee quando ela funciona.
+- **Radar preservado:** `radar_legacy_adapter.py` usa o seletor ORIGINAL de 5 categorias, 5 lojas e 5 keywords. `fallback_v23.py` passou a carregar `shopId` e até 3 lojas alternativas por keyword.
+- **Catálogo real/Radar:** [run 43894290446](https://github.com/adelrib27/blogger-automation1/actions/runs/43894290446) PASS — corrigiu conflito de loja com **1 link Shopee REAL**, montou fila Radar completa em diretório temporário. [run 43894779041](https://github.com/adelrib27/blogger-automation1/actions/runs/43894779041) PASS — **scanner Radar original + erro 1000 simulado + R2 REAL + fila 5/5**, **114/114 testes offline** e zero publicações.
+- **Inventário:** [run 43892555790](https://github.com/adelrib27/blogger-automation1/actions/runs/43892555790), **113/113 testes**, Radar com oferta CSV nas 5 categorias. Casa: `Cama Mesa Banho` sem elegíveis; Oficina: `Seguranca e Protecao` sem elegíveis sob regras atuais, sem inventar produtos para completar.
+- Cache R2 atual: **Casa 2/9**, **Oficina 2/6**, **Radar 6/15** (cinco categorias cobertas), **Blogger Air Fryers 1**; **11 links** no total. Ainda insuficiente para a meta de 3 dias; todos `NOT_READY` no shadow. O sistema NÃO foi mesclado nem ativado em produção.
+- **Checkpoint:** [C9 — ponte 3WP + Radar completo](CHECKPOINT_C9_3WP_R2_2026-11-16.md), `V31-EDITORIAL-C9-3WP-API1000-R2-FULL-QUEUE-SAFE-20261116`.
+- **Próximo gate C10:** revisão/rollout canário por blog, estoque por campanha, reconciliação e originalidade de assunto/título. Nunca desativar dedup de conteúdo por causa da autorização de reutilizar produtos.
+
 ### C8 — Shadow read-only e cache multi-site com orçamento (16/11/2026)
 
 - **Observação REAL do R2:** [run 43886181941](https://github.com/adelrib27/blogger-automation1/actions/runs/43886181941), **PASS** (94 testes); `shadow_audit.py` compara links utilizáveis com reservas de 3 dias, com perfis expansíveis em `shadow.d/*.json`.
