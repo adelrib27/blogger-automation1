@@ -15,6 +15,16 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+### C11/C12 — Reuso editorial sem repetição de título nem corpo (16/11/2026)
+
+- **Recurso opt-in e desativado por padrão**: além de `V31_EDITORIAL_C9_RELEASE_ENABLED` e da flag de cada blog, exige `V31_EDITORIAL_PRODUCT_REUSE_ENABLED=true`. Reutilizar o produto NÃO equivale a repetir a matéria.
+- `reuse_policy.py`: limite-piloto de 2 artigos por produto no mesmo blog, checagem de histórico/tema/título e, na C12, comparação do **editorial_html** contra os arquivos antigos do mesmo produto e título publicado. Se faltar documento histórico, **bloquear antes do WordPress**.
+- Integrado apenas aos scripts existentes de **Casa e Oficina** (construtor de fila, Qwen3, publisher), sem novos geradores; todos os controles legados continuam quando as flags estão OFF. O Radar conserva os critérios próprios até canário específico.
+- [QA C11 real dos scripts originais](https://github.com/adelrib27/blogger-automation1/actions/runs/43910337180): **125 testes V31 + 24 Casa + 21 Oficina + cross-blog PASS**, sem publicação.
+- [QA C12](https://github.com/adelrib27/blogger-automation1/actions/runs/43911094183): **126/126 testes V31 PASS**, incluindo corpo igual/corpo realmente diferente/ausência de histórico. Código da etapa ainda não mesclado, nenhum post LIVE alterado.
+- [Checkpoint C11](CHECKPOINT_C11_EDITORIAL_REUSE_SAFE_2026-11-16.md) e [Checkpoint C12](CHECKPOINT_C12_BODY_ORIGINALITY_SAFE_2026-11-16.md). Próxima liberação depende de **estoque suficiente + histórico real + canário não publicável**.
+- **Hipótese futura registrada no Runbook C10:** as páginas de loja de todos os blogs fazem rotação diária e podem estar concentrando chamadas com os agendamentos editoriais; depois de concluir V31, medir consumo e avaliar rotação mensal distribuída. **Nada alterado nas lojas agora.**
+
 ### C10 — Liberação futura protegida por dois switches (16/11/2026)
 
 - **Novo interruptor global** `V31_EDITORIAL_C9_RELEASE_ENABLED` em conjunto com a flag de **cada blog**. **Ambos OFF/ausentes** => automações antigas continuam sem o roteador.
