@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 
 from .fallback_v23 import candidates_from_catalog,emit_v23_outputs,load_configuration
-from .radar_legacy_adapter import build_from_ranking
+from .radar_legacy_adapter import build_from_ranking,RadarQueueError
 from .r2_state import R2State,verify_database
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -58,6 +58,14 @@ def main()->int:
         print("V31_C9_RADAR_FULL_QUEUE_REAL_R2_PASS")
         print(json.dumps(result,sort_keys=True))
         return 0
+    except RadarQueueError as error:
+        safe={"ranking_size_invalid","ranking_item_invalid","ranking_input_invalid",
+              "unsafe_output","complete_daily_queue_invalid",
+              "legacy_builder_unavailable_or_incomplete"}
+        code=str(error)
+        print("V31_C9_RADAR_FULL_QUEUE_REAL_R2_NOT_READY_"+(
+            code if code in safe else "RADAR_CONTRACT"))
+        return 3
     except Exception:
         print("V31_C9_RADAR_FULL_QUEUE_REAL_R2_NOT_READY")
         return 3
