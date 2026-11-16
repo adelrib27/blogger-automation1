@@ -24,6 +24,18 @@ class ObserverTests(unittest.TestCase):
         self.assertFalse(router.is_api_error_1000({"errors":[{"message":"Produto 1000W"}]}))
         self.assertFalse(router.is_api_error_1000({"data":{"productOfferV2":{"nodes":[]}}}))
 
+    def test_circuit_breaker_stops_api_on_first_1000(self):
+        calls=[]
+        def source(*args,**kwargs):
+            calls.append(1)
+            return {"errors":[{"extensions":{"code":1000}}]}
+        observer=router.ErrorObserver(source)
+        with self.assertRaises(router.ApiError1000Detected):
+            observer("ignored")
+        self.assertEqual(observer.calls,1)
+        self.assertEqual(len(calls),1)
+        self.assertTrue(observer.error_1000)
+
     def test_api_first_and_fail_closed(self):
         self.assertEqual(router.choose_source(4,False),"API")
         self.assertEqual(router.choose_source(4,True),"API")
@@ -37,7 +49,8 @@ class ObserverTests(unittest.TestCase):
             calls.append((a,k))
             return {"errors":[{"extensions":{"code":"1000"}}]}
         watch=router.ErrorObserver(legacy)
-        self.assertIn("errors",watch("foo",timeout=3))
+        with self.assertRaises(router.ApiError1000Detected):
+            watch("foo",timeout=3)
         self.assertTrue(watch.error_1000)
         self.assertEqual(watch.calls,1)
         self.assertEqual(calls[0],(("foo",),{"timeout":3}))
