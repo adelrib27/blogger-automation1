@@ -1,4 +1,4 @@
-name: V31 C9 - Radar cinco categorias REAL R2 sem publicar (one-shot)
+name: V31 C9 - Radar diagnostico read-only REAL R2 (one-shot)
 
 on:
   push:
@@ -31,22 +31,13 @@ jobs:
         run: python -m pip install 'boto3>=1.35,<2'
       - name: Regressoes antes das API calls
         run: python -m unittest discover -s affiliate_hub_v31/tests -q
-      - name: Planejar sem mutation as tres categorias ainda nao cobertas
+      - name: Diagnosticar filtros originais Radar sem mutacoes
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
           V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
-        run: python -m affiliate_hub_v31.cache_replenish --site wordpress_radartechbr --budget 3
-      - name: Converter no maximo tres links reais para cache Radar (sem publicar)
-        env:
-          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
-          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
-          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
-          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
-          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
-          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
-        run: python -m affiliate_hub_v31.cache_replenish --site wordpress_radartechbr --budget 3 --execute
+        run: python -m affiliate_hub_v31.c9_radar_diagnostic
       - name: Montar fila de CINCO categorias usando o seletor original Radar em pasta temporaria
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
