@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 
 from cta_context import CTA_PRODUCT_TITLE_CLASS
 from quality_gate import quality
-from affiliate_hub_v31.reuse_policy import history_has_publication, validate_publication
+from affiliate_hub_v31.reuse_policy import history_has_publication, validate_publication, validate_prior_editorial_body
 
 ROOT = Path(__file__).resolve().parents[2]
 QUEUE = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
@@ -302,6 +302,10 @@ def main():
                 if not REUSE_ENABLED:
                     raise RuntimeError("reutilização editorial não habilitada")
                 validate_publication(history, item, article)
+                validate_prior_editorial_body(
+                    history, item, article, GENERATED,
+                    ROOT / "config" / "editorial_cross_blog_guard.json"
+                )
             validate_card_product_title(article)
             slug = slugify(article.get("topic") or article.get("seo_title"))
             old = existing(slug)
