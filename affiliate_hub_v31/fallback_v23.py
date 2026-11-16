@@ -8,6 +8,7 @@ Novos blogs são registrados por JSON em sites.d/, sem alterações neste módul
 from __future__ import annotations
 
 import csv
+from contextlib import closing
 import json
 import os
 import re
@@ -118,7 +119,7 @@ def candidates_from_catalog(db_path: Path, site_key: str,
         raise FallbackUnavailable("categories_invalid")
     uri="file:"+str(Path(db_path).resolve())+"?mode=ro"
     try:
-        with sqlite3.connect(uri,uri=True) as conn:
+        with closing(sqlite3.connect(uri,uri=True)) as conn:
             rows=conn.execute("""
                 SELECT p.product_key,p.item_id,p.title,p.image_url,p.shop_id,
                        l.affiliate_url,t.category,t.niche
@@ -183,6 +184,14 @@ def emit_v23_outputs(rows: list[dict], config: dict, output: Path) -> int:
     """
     if not rows:
         raise FallbackUnavailable("no_verified_cached_affiliate_link")
+    for row in rows:
+        if (not isinstance(row,dict) or
+                not str(row.get("itemId") or "").isdigit() or
+                not str(row.get("productName") or "").strip() or
+                not str(row.get("imageUrl") or "").startswith("https://") or
+                not host_allowed(str(row.get("offerLink") or ""),allow_short=True) or
+                not row.get("intentMatchedKeywords")):
+            raise FallbackUnavailable("invalid_verified_offer")
     folder=Path(output)
     if folder.is_symlink():
         raise FallbackUnavailable("unsafe_output")
@@ -191,11 +200,11 @@ def emit_v23_outputs(rows: list[dict], config: dict, output: Path) -> int:
         "rank":i,
         "itemId":row["itemId"],
         "productName":row["productName"],
-        "priorityTier":row["priorityTier"],
-        "semanticIntentScore":row["semanticIntentScore"],
+        "priorityTier":row.get("priorityTier"),
+        "semanticIntentScore":row.get("semanticIntentScore"),
         "intentMatchedKeywords":row["intentMatchedKeywords"],
-        "opportunityScore":row["opportunityScore"],
-        "shopName":row["shopName"],
+        "opportunityScore":row.get("opportunityScore"),
+        "shopName":row.get("shopName"),
         "offerLink":row["offerLink"],
     } for i,row in enumerate(rows,1)]
     ranking_json={
