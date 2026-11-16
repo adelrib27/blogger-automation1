@@ -31,6 +31,7 @@ O V31 é a camada **central e extensível** de produtos Shopee para blogs WordPr
 
 - [Run de QA integrado C11](https://github.com/adelrib27/blogger-automation1/actions/runs/43910337180) — **SUCCESS**: 125/125 testes V31; 24/24 testes originais Casa, 21/21 Oficina, cross-blog guard PASS; sem API nem publicação.
 - [Run de validação C12](https://github.com/adelrib27/blogger-automation1/actions/runs/43911094183) — **SUCCESS**: **126/126 testes V31** incluindo corpo igual, corpo diferente e ausência de texto histórico.
+- [QA final C12](https://github.com/adelrib27/blogger-automation1/actions/runs/43911737384): **SUCCESS** — 126 testes V31 + 24 Casa + 21 Oficina + cross-blog PASS, sem rede nem publicação; gatilho transitório removido.
 - Workflow de QA temporário eliminado após PASS. Nenhum secret, mutation Shopee, upload R2 ou publicação WordPress/Blogger neste marco.
 - **NÃO foi testado com dados históricos privados reais da publicação de cada blog.** O teste é isolamento SAFE/offline, válido para provar comportamentos de código, não para autorizar LIVE.
 
