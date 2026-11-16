@@ -136,6 +136,12 @@ jobs:
       - name: Gerar próximo artigo com Qwen3
         run: python -u casa_decoracao/src/generate_articles.py
 
+      - name: C10 — Gate de originalidade de título e corpo entre blogs no fallback
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
+        run: python -u src/editorial_cross_blog_guard.py --project casa_decoracao
+
       - name: Publicar pelo gate v3 com imagem destacada real
         run: python -u casa_decoracao/src/publish_generated.py
 
