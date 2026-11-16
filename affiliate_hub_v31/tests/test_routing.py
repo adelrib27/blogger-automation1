@@ -1,19 +1,23 @@
 """Rotas separadas por blog e plataforma; C2 não faz publicação."""
 import csv
+import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+
+import affiliate_hub_v31.routing as routing
 
 from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.routing import plan_site, sites
 
 
 class RouteTests(unittest.TestCase):
-    def test_routes_cover_18_blogger_and_two_wordpress_by_verified_ids(self):
+    def test_routes_cover_blogger_and_wordpress_by_verified_ids(self):
         mapping=sites()
-        self.assertEqual(len(mapping),20)
+        self.assertEqual(len(mapping),21)
         self.assertEqual(sum(x["platform"]=="blogger" for x in mapping.values()),18)
-        self.assertEqual(sum(x["platform"]=="wordpress" for x in mapping.values()),2)
+        self.assertEqual(sum(x["platform"]=="wordpress" for x in mapping.values()),3)
         self.assertTrue(all(x["publish_enabled"] is False for x in mapping.values()))
         self.assertEqual(mapping["blogger_air_fryers"]["identifier"],"9113728635217260884")
         self.assertEqual(mapping["blogger_liquidificadores"]["identifier"],"5271798990390532475")
@@ -58,6 +62,50 @@ class RouteTests(unittest.TestCase):
                 self.assertEqual(cat.candidates(air["campaign"],category="cozinha",
                                                 niche="air_fryers"),[])
 
+
+    def test_add_60_future_blogs_using_only_json_without_python_changes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            for number in range(60):
+                record={
+                    "site_key":f"wordpress_novo_{number:03d}",
+                    "platform":"wordpress",
+                    "identifier":f"https://blog-{number}.example.test/",
+                    "campaign":f"novo{number:03d}",
+                    "allowed_niches":["tecnologia/gadgets"],
+                    "publish_enabled":False
+                }
+                (root/f"novo-{number:03d}.json").write_text(
+                    json.dumps(record),encoding="utf-8")
+            routing.sites.cache_clear()
+            try:
+                with patch.object(routing,"SITES_DIRECTORY",root):
+                    mapping=routing.sites()
+                    self.assertEqual(len(mapping),80)
+                    self.assertIn("wordpress_novo_059",mapping)
+                    self.assertEqual(mapping["wordpress_novo_059"]["campaign"],"novo059")
+            finally:
+                routing.sites.cache_clear()
+
+    def test_duplicate_registration_rejected_safely(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            route={
+                "site_key":"wordpress_casa_decoracao",
+                "platform":"wordpress",
+                "identifier":"https://other.example.test/",
+                "campaign":"uniquecamp",
+                "allowed_niches":["tecnologia/gadgets"],
+                "publish_enabled":False
+            }
+            (root/"duplicate.json").write_text(json.dumps(route),encoding="utf-8")
+            routing.sites.cache_clear()
+            try:
+                with patch.object(routing,"SITES_DIRECTORY",root):
+                    with self.assertRaisesRegex(ValueError,"Rota ou campanha repetida"):
+                        routing.sites()
+            finally:
+                routing.sites.cache_clear()
 
     def test_unknown_site_fail_closed(self):
         with tempfile.TemporaryDirectory() as tmp, Catalog(Path(tmp)/"state.db") as cat:
