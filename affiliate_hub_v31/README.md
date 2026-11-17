@@ -17,6 +17,14 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 
 
 
+### C18 — Seleção comercial por tema de blogs futuros, sem adivinhar nichos (17/11/2026)
+
+- `curation_audit.py` identifica divergências entre feeds e categorias que exigem revisão reforçada. [R2 real 44177966028](https://github.com/adelrib27/blogger-automation1/actions/runs/44177966028): **424 itens em ambos os feeds, 0 divergências entre L1/L2**, 17 links antigos preservados, sem writes.
+- `product_discovery.py`: `suggest_category_paths(catalog,topic)` descobre rotas reais L1/L2 pelo **assunto informado pelo usuário**, sem blog predefinido; `discover(catalog,topic,category,subcategory,campaign,max_per_shop)` classifica pertinência textual, diversidade de lojas e estado do cache. **Só candidatos anteriormente aprovados** na seleção normal; revisão opcional separada. Links afiliados nunca são copiados entre campanhas; nenhuma avaliação/preço/comissão/venda é inventada e `can_publish=False` até gates editoriais futuros.
+- [Canário REAL 44179473566](https://github.com/adelrib27/blogger-automation1/actions/runs/44179473566) **175/175 testes PASS**: `Air Fryer → home appliances/kitchen appliances`, `Guarda Roupa → home living/furniture`, `Freio → spare parts and accessories for vehicles/spare parts for automobiles`; amostras com 12 lojas distintas e 0 links da campanha errada. Nenhuma API Shopee, escrita R2, blog criado ou artigo publicado.
+- **Não é garantia de conversão/venda**: o ranking atual usa correspondência textual, nunca métricas comerciais fabricadas. Para escala maior faltam índice de texto persistente (C19), curadoria segura ampliada e integração supervisionada dos geradores existentes.
+- [Checkpoint C18](CHECKPOINT_C18_SAFE_DISCOVERY_2026-11-17.md), `V31-EDITORIAL-C18-R2-SAFE-TOPIC-DISCOVERY-20261117`.
+
 ### C16/C17 — Biblioteca CUMULATIVA real + categorias oficiais L1/L2/L3 (17/11/2026)
 
 - **R2 real atualizado** em [GitHub Actions 44127603439](https://github.com/adelrib27/blogger-automation1/actions/runs/44127603439): agora **203.649 SKUs distintos**, incorporando **94.142 produtos novos** dos dois CSVs sem apagar os 109.507 antigos; **8.685 produtos aprovados** pelos critérios editoriais atuais, **194.964 continuam sob revisão**; os **17 links afiliados anteriores foram preservados** em suas respectivas campanhas. Um único snapshot privado foi salvo e restaurado, com hashes e integridade confirmados, sem publicação ou conversão de links.
