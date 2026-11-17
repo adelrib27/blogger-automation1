@@ -21,3 +21,15 @@
 - Não houve merge, alteração de crons de loja nem ativação de publicadores LIVE.
 
 **Atenção:** este checkpoint substitui a interpretação anterior de que converter produtos para além da demanda dos blogs atuais seria \"desnecessário\". É parte central do objetivo V31 manter um acervo pronto para os blogs **que ainda não foram imaginados ou criados**.
+
+
+## Retificação de escopo, confirmada pelo usuário: CATEGORIA e NICHO são a prioridade
+
+O pedido original era simples: **separar os produtos das duas URLs CSV em categorias e nichos para facilitar a busca**, sem antecipar quais blogs existirão, sem tentar escolher automaticamente produtos para blogs ainda não criados. A conversão de afiliados já funciona na integração existente; não criar segundo mecanismo de conversão como substituto. No momento de criar o blog, o hub encontra candidatos de seu tema no catálogo e, se a campanha do blog não possuir URL afiliada, usa o conversor existente para esse item/campanha quando a API estiver disponível.
+
+- **Novo índice `universal_index.py`** (read-only) agrupa 100% do acervo: produtos classificados sob categorias/nichos reais e pendentes sob `revisao_pendente/nao_classificado`. `lookup(category,niche,query,campaign)` localiza produtos aprovados sem exigir um blog cadastrado, com termos informados naquele momento. Quando uma campanha é fornecida, só retorna o link afiliado daquela campanha. Sem campanha não retorna URL afiliada, impedindo atribuição errada.
+- **Auditoria R2 real:** [run 44115748746](https://github.com/adelrib27/blogger-automation1/actions/runs/44115748746) PASS, **148 testes**, **109.507 produtos**, **4.674 aprovados/classificados**, **104.833 em revisão ou ainda sem classificação aprovada**. Os 104.833 não foram excluídos nem convertidos/publicados. A classificação de todos esses itens em nichos específicos ainda **NÃO** foi concluída. Foi corrigida a consolidação de estados de revisão num único bucket.
+- O índice atual cobre **18 grupos aprovados de categoria/nicho**, conforme taxonomia existente. Essa taxonomia é **extensível**; não deduzir nichos de futuros blogs nem tratar um produto não classificado como se já tivesse categoria conhecida.
+- **`library_pool.py` não é pré-requisito para indexação** e a eventual campanha de biblioteca só pode ser configurada explicitamente: links de subIDs próprios dos blogs não podem ser copiados entre campanhas. A execução geral de conversões em background deve reutilizar `converter.py`, respeitar as cotas e preservar o banco.
+- A afirmação sobre **Pins desativados** ou **persistência avançada do Worker v1.0** pertence a outro escopo: **não introduzir Pinterest nem pressupor que esse Worker esteja implantado ou seja dependência da categorização V31**. O catálogo SQLite já reside no Cloudflare R2 privado.
+- Próxima prioridade: **ampliar com critérios confiáveis a classificação dos 104.833 pendentes** por categorias/nichos reais e usar a busca do acervo como interface de seleção no fluxo de criação de blogs; sem gerar ou publicar posts de teste.
