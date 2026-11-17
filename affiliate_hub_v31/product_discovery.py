@@ -82,12 +82,14 @@ def discover(catalog: Catalog, *, topic: str,
              subcategory: str | None = None,
              campaign: str | None = None,
              limit: int = 12, max_per_shop: int = 2,
-             include_review: bool = False) -> list[dict]:
+             include_review: bool = False,
+             review_only: bool = False) -> list[dict]:
     """Retorna produtos por intenção editorial; não executa ação comercial.
 
     include_review habilita análise, nunca autorização para publicar.
     Produtos sob revisão não carregam URL afiliada. can_publish é False:
     SEO, redação, campanha e gates de publicação são etapas posteriores.
+    review_only só funciona com include_review=True e nunca aprova produtos.
     """
     if not isinstance(topic,str) or len(topic)>160:
         raise DiscoveryError("topic_invalid")
@@ -108,6 +110,8 @@ def discover(catalog: Catalog, *, topic: str,
             raise DiscoveryError("category_invalid")
     if campaign is not None:
         valid_campaign(campaign)
+    if not isinstance(review_only,bool) or (review_only and not include_review):
+        raise DiscoveryError("review_only_requires_review_mode")
 
     ranked=[]
     for row in _facet_rows(catalog,category=category,
@@ -128,6 +132,8 @@ def discover(catalog: Catalog, *, topic: str,
         approved=(moderation=="eligible" and tax_status=="matched" and
                   not source_protected)
         if not approved and not include_review:
+            continue
+        if review_only and approved:
             continue
         exact=normalize(topic) in normalize(title)
         semantic_score=100*matched+25*auxiliary+(35 if exact else 0)
