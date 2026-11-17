@@ -126,5 +126,48 @@ class FallbackV23Tests(unittest.TestCase):
         self.assertEqual(doc,self.rules)
 
 
+
+    def test_protected_legacy_cached_link_never_enters_wordpress_fallback(self):
+        from affiliate_hub_v31.source_category_index import create_source_category_schema
+        with Catalog(self.db) as cat:
+            create_source_category_schema(cat)
+            with cat.db:
+                cat.db.execute("""
+                    INSERT INTO product_source_categories
+                    (product_key,source,level1,level2,level3,status)
+                    VALUES(?,?,?,?,?,?)
+                """,("shopee:904:1","feed","health","vitamins","","matched"))
+            original=cat.cached_link("shopee:904:1","casaedecoracaowp")
+            self.assertEqual(original,"https://s.shopee.com.br/verified-one")
+        before=self.db.read_bytes()
+        blocked=candidates_from_catalog(self.db,"wordpress_casa_decoracao",
+                                        self.config,self.rules)
+        after=self.db.read_bytes()
+        self.assertEqual(blocked,[])
+        self.assertEqual(before,after)
+        radar=candidates_from_catalog(self.db,"wordpress_radartechbr",
+                                      {"categories":{"Sala":["luminaria mesa"]}},
+                                      self.rules)
+        self.assertEqual(len(radar),1)
+        self.assertEqual(radar[0]["itemId"],"2")
+
+    def test_conflicting_source_even_with_matched_feed_rejected_for_fallback(self):
+        from affiliate_hub_v31.source_category_index import create_source_category_schema
+        with Catalog(self.db) as cat:
+            create_source_category_schema(cat)
+            with cat.db:
+                cat.db.execute("""
+                    INSERT INTO product_source_categories
+                    (product_key,source,level1,level2,level3,status)
+                    VALUES(?,?,?,?,?,?)
+                """,("shopee:904:1","first","home living","decoration","","matched"))
+                cat.db.execute("""
+                    INSERT INTO product_source_categories
+                    (product_key,source,level1,level2,level3,status)
+                    VALUES(?,?,?,?,?,?)
+                """,("shopee:904:1","second","home living","decoration","","conflict"))
+        self.assertEqual(candidates_from_catalog(
+            self.db,"wordpress_casa_decoracao",self.config,self.rules),[])
+
 if __name__=="__main__":
     unittest.main()
