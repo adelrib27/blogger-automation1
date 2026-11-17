@@ -237,9 +237,7 @@ class Catalog:
     def for_conversion(self, key: str) -> tuple[str, str, str] | None:
         # Fonte protegida ou conflitante nunca chega à mutação Shopee.
         # Links já gravados são preservados; não se transfere campanha.
-        from .source_category_index import create_source_category_schema
         from .source_policy_gate import source_safe_for_use
-        create_source_category_schema(self)
         if not source_safe_for_use(self,key):
             return None
         row = self.db.execute("""SELECT p.origin_url,t.category,t.niche
