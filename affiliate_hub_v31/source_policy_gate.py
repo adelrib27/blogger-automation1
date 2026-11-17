@@ -21,6 +21,14 @@ def source_safe_for_use(catalog, product_key: str) -> bool:
     """
     if not isinstance(product_key, str) or not product_key:
         return False
+    # Bancos legados podem não possuir facetas oficiais. A falta da tabela
+    # não deve criar schema em uma consulta de conversão ou dry-run.
+    exists = catalog.db.execute("""
+        SELECT 1 FROM sqlite_master
+        WHERE type='table' AND name='product_source_categories'
+    """).fetchone()
+    if not exists:
+        return True
     protected = tuple(sorted(PROTECTED_ROOTS))
     placeholders = ",".join("?" for _ in protected)
     sql = """
