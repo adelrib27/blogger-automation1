@@ -1,0 +1,54 @@
+name: V31 - Atualizar Biblioteca Universal Shopee R2 SAFE
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_incremental_catalog:
+        description: "Confirmo atualizar somente o catalogo R2, preservando produtos/links antigos e sem publicar"
+        type: boolean
+        required: true
+        default: false
+  schedule:
+    - cron: '23 10 * * 2'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  atualizar-acervo-universal-sem-publicadores:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      (
+        (github.event_name == 'workflow_dispatch' &&
+         inputs.confirm_incremental_catalog == true) ||
+        (github.event_name == 'schedule' &&
+         vars.V31_EDITORIAL_CATALOG_REFRESH_ENABLED == 'true')
+      )
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cliente R2 privado sem credenciais Blogger ou WordPress
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Regressão offline completa da biblioteca
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Acrescentar SKUs dos DOIS feeds e categorias L1 L2 L3 sem apagar histórico
+        env:
+          V31_EDITORIAL_DATAFEED_URL_1: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_1 }}
+          V31_EDITORIAL_DATAFEED_URL_2: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_2 }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.catalog_expansion --execute
