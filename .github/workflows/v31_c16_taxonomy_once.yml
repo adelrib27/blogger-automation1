@@ -1,4 +1,4 @@
-name: V31 C16 - Diagnostico real de taxonomia e metadados CSV (SAFE one-shot)
+name: V31 C16 - Perfis reais de categorias Shopee CSV (SAFE one-shot)
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
         run: python -m affiliate_hub_v31.taxonomy_diagnostic
-      - name: Detectar somente a existencia de categorias nos CSVs oficiais
+      - name: Conferir nomes e frequencia das categorias nos CSVs oficiais
         env:
           V31_EDITORIAL_DATAFEED_URL_1: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_1 }}
           V31_EDITORIAL_DATAFEED_URL_2: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_2 }}
