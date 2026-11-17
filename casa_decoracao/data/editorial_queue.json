@@ -5,11 +5,177 @@
   "editorial_policy": "produto real -> rotação entre 8 categorias -> título editorial -> Qwen3 -> CTA contextual -> imagem real -> gate -> publicação",
   "category_rotation_cycle": 5,
   "category_rotation_pending": [
-    "Área Externa",
     "Cama, Mesa e Banho"
   ],
   "max_per_keyword": 1,
-  "total": 0,
-  "skipped": {},
-  "items": []
+  "total": 8,
+  "skipped": {
+    "produto_ja_publicado": 18,
+    "produto_semelhante_ja_publicado": 5,
+    "limite_por_intencao": 1
+  },
+  "items": [
+    {
+      "id": 46,
+      "shopee_item_id": "23993063722",
+      "product": "Jogo de Toalhas 4 Peças Banhão Gigante + Rosto Fio Penteado Lumina Karsten - Emcompre",
+      "affiliate_link": "https://s.shopee.com.br/5fqM92a92A",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820lg-mner7lyfkpac01",
+      "shop_name": "Bf Casa Oficial",
+      "source_keyword": "jogo de toalhas",
+      "category": "Cama, Mesa e Banho",
+      "opportunity_score": 58.34,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "QUARANTINE",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      },
+      "generation_attempts": 1,
+      "last_error": "geração editorial bloqueada após revisões: artigo curto: 443"
+    },
+    {
+      "id": 41,
+      "shopee_item_id": "20452224775",
+      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "affiliate_link": "https://s.shopee.com.br/2qWAlm4cwb",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8260p-mkcfopp4p5hc85",
+      "shop_name": "Haute Decor",
+      "source_keyword": "abajur quarto",
+      "category": "Quarto",
+      "opportunity_score": 63.58,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 44,
+      "shopee_item_id": "23398723658",
+      "product": "Ralador De Legumes Cortador Fatiador Legumes tabletop 3 Laminas Verduras Ralador Ralador Verdura Legumes Manivela",
+      "affiliate_link": "https://s.shopee.com.br/4LKzt8Fd8R",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-7rdw3-mdlapszyjzzwfc",
+      "shop_name": "Rio Shop Bazar",
+      "source_keyword": "fatiador de legumes",
+      "category": "Cozinha",
+      "opportunity_score": 59.81,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 45,
+      "shopee_item_id": "46360468172",
+      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "affiliate_link": "https://s.shopee.com.br/AKcD7JLyYF",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-822x5-mo74eg768t8m85",
+      "shop_name": "SELLNEEDS",
+      "source_keyword": "potes hermeticos",
+      "category": "Cozinha",
+      "opportunity_score": 58.53,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 26,
+      "shopee_item_id": "23599671693",
+      "product": "Kit 3 ou 6 Tapete De Banheiro 45x70cm Pezinho Piso Luxo Atoalhado 100% Algodão Premium",
+      "affiliate_link": "https://s.shopee.com.br/3LSR4iHPoN",
+      "image_url": "https://cf.shopee.com.br/file/br-11134201-820lf-mue1ofvyqghs42",
+      "shop_name": "Panos Rezini",
+      "source_keyword": "tapete banheiro",
+      "category": "Banheiro",
+      "opportunity_score": 72.13,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 43,
+      "shopee_item_id": "51511552034",
+      "product": "Kit 2 Porta Shampoo Sabonete Suporte De Canto Parede Banheiro Cozinha Prateleira Sem Furar Multifuncional Cor Preto",
+      "affiliate_link": "https://s.shopee.com.br/60TEI3zJSQ",
+      "image_url": "https://cf.shopee.com.br/file/br-11134207-820m5-mozlksradlhh02",
+      "shop_name": "vivendo de net",
+      "source_keyword": "prateleira banheiro",
+      "category": "Banheiro",
+      "opportunity_score": 60.74,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 42,
+      "shopee_item_id": "58207037675",
+      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
+      "affiliate_link": "https://s.shopee.com.br/AKcDS2MPh3",
+      "image_url": "https://cf.shopee.com.br/file/sg-11134201-8261c-mlwo86kczhn355",
+      "shop_name": "FGVITALFARMA",
+      "source_keyword": "vaso jardim",
+      "category": "Área Externa",
+      "opportunity_score": 61.1,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    },
+    {
+      "id": 47,
+      "shopee_item_id": "21999578406",
+      "product": "4 lED À Prova D'água Para Jardim Muro e Varanda Luminária Solar De Parede Promoção",
+      "affiliate_link": "https://s.shopee.com.br/BVRLLdBi1",
+      "image_url": "https://cf.shopee.com.br/file/br-11134201-7r98o-m4tyl6444nlxc8",
+      "shop_name": "IDEAL LIFE.br",
+      "source_keyword": "luminaria solar jardim",
+      "category": "Área Externa",
+      "opportunity_score": 57.76,
+      "priority_tier": "COMISSAO_EXTRA",
+      "status": "PENDING",
+      "rules": {
+        "no_fake_testing": true,
+        "no_invented_specs": true,
+        "publication_requires_gate": true,
+        "single_editorial_title": true,
+        "category_rotation_required": true
+      }
+    }
+  ]
 }
