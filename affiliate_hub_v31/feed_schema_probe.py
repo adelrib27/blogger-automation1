@@ -7,11 +7,14 @@ from __future__ import annotations
 
 import csv
 import json
+import re
+from collections import Counter
 import os
 import tempfile
 from pathlib import Path
 
 from .catalog import normalized
+from .taxonomy import normalize
 from .feed_download import download_feed,check_feed_url
 
 def schema(path: Path) -> dict:
@@ -34,22 +37,47 @@ def schema(path: Path) -> dict:
         # Não assumir que categoryId/categoryName já são uma taxonomia
         # editorial confiável. Apenas detectar disponibilidade.
         present=[0]*len(indices)
+        frequently_seen=[Counter() for _ in indices]
         sample_count=0
         for row in reader:
-            if sample_count>=1000:
+            if sample_count>=5000:
                 break
             if None in row or any(v is None for v in row.values()):
                 raise ValueError("csv_columns_invalid")
             sample_count+=1
             for j,i in enumerate(indices):
-                if str(row.get(headers[i]) or "").strip():
+                raw_value=str(row.get(headers[i]) or "").strip()
+                if raw_value:
                     present[j]+=1
+                    label=normalize(raw_value)
+                    # Analisar somente labels de grupo que se repetem;
+                    # um identificador ou título de produto nunca vira
+                    # saída de diagnóstico isolada.
+                    if (4<=len(label)<=65 and not label.isdigit() and
+                            re.fullmatch(r"[a-z0-9 /_-]+",label)):
+                        frequently_seen[j][label]+=1
+        fields=[]
+        for j,i in enumerate(indices):
+            identifier=normalized(headers[i])
+            if not re.fullmatch(r"[a-z]{3,35}",identifier):
+                identifier="category_metadata_field"
+            fields.append({
+                "column":identifier,
+                "nonempty_in_sample":present[j],
+                "distinct_safe_labels":len(frequently_seen[j]),
+                "frequent_labels":[
+                    {"label":name,"count":count}
+                    for name,count in frequently_seen[j].most_common(18)
+                    if count>=10
+                ]
+            })
         return {"has_csv_taxonomy_metadata":bool(indices),
                 "taxonomy_metadata_columns":len(indices),
                 "taxonomy_metadata_nonempty_per_column_first_1000":present,
                 "sample_rows_checked":sample_count,
-                "raw_headers_reported":0,
-                "raw_category_values_reported":0}
+                "fields":fields,
+                "raw_product_titles_reported":0,
+                "raw_product_urls_reported":0}
 
 def run()->dict:
     urls=[os.environ.get("V31_EDITORIAL_DATAFEED_URL_1",""),
