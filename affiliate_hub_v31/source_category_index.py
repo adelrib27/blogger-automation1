@@ -15,6 +15,7 @@ from pathlib import Path
 
 from .catalog import Catalog, classify, fields, normalized
 from .taxonomy import normalize
+from .source_policy_gate import source_safe_for_use
 
 LEVELS = {
     "globalcategory1": "level1",
@@ -211,6 +212,7 @@ def browse_source(catalog: Catalog, *, level1: str,
     """,args).fetchall()
     output=[]
     for key,title,origin,image,approved,first,second,third in rows:
+        approved = bool(approved) and source_safe_for_use(catalog,key)
         item={"product_key":key,"title":title,"product_url":origin,
               "image_url":image,"source_category_l1":first,
               "source_category_l2":second,"source_category_l3":third,
