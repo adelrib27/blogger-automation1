@@ -2,6 +2,7 @@ import json
 import os
 
 from affiliate_hub_v31.reuse_policy import can_queue_reuse
+from affiliate_hub_v31.queue_identity import highest_reserved_id
 import re
 import unicodedata
 from collections import Counter
@@ -123,7 +124,7 @@ def main():
     published_ids, published_fingerprints = publication_memory()
     history_doc = load(HISTORY, {'items': []})
     old_queue = load(OUT, {'items': []}) if REUSE_ENABLED else {'items': []}
-    next_id = max((int(row.get('id') or 0) for row in old_queue.get('items') or []), default=0)
+    next_id = highest_reserved_id(OUT,ROOT / "oficina_garagem" / "data" / "generated") if REUSE_ENABLED else 0
     items = []
     seen_ids = set()
     seen_products = set()
