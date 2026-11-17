@@ -1,0 +1,40 @@
+name: V31 C15 - Conferir categorias e nichos dos CSVs no R2 (one-shot SAFE)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_c15_universal_index_once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  indexar-categorias-read-only:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar cliente R2 (somente leitura)
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Validar busca universal antes do snapshot
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Auditar TODAS as categorias e nichos dos dois CSVs, inclusive revisao
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.universal_index
