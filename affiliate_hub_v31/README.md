@@ -1,5 +1,13 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C21 — Curadoria exaustiva e bloqueio de conversão por fonte (17/11/2026)
+
+- **Auditoria R2 real:** 203.649 produtos, 203.649 entradas FTS5, 17 URLs afiliadas comerciais preservadas. Os 194.964 pendentes agora se distribuem em **91.047 revisão de taxonomia**, **88.239 sem categoria oficial vinculada** e **15.678 retidos por política**; as outras quatro filas estão zeradas na fotografia atual. O resultado não promoveu ninguém.
+- **Segurança comercial:** **282 itens historicamente elegíveis** apresentaram categoria sensível ou conflito de origem; novos gates em \`source_policy_gate.py\`, \`Catalog.for_conversion\`, \`library_pool.library_candidates\`, \`universal_index.lookup\` e \`source_category_index.browse_source\` impedem seu uso comercial na nova rota, preservando URLs existentes e o legado. O gate é somente leitura e não cria schema em dry-run.
+- **[Canário R2 real 44191963790](https://github.com/adelrib27/blogger-automation1/actions/runs/44191963790): SUCCESS, 213 testes.** Integridade, contagem das 7 filas, C20, bloqueios de fontes, pool e consulta universal aprovados. Nenhuma chamada de conversão/API Shopee, nenhuma escrita R2, blog, post ou Pin.
+- Diagnóstico semanal está **preparado, mas OFF** por \`V31_EDITORIAL_C21_AUDIT_ENABLED\`, dependente de eventual merge revisado para \`main\`; a PR #52 continua DRAFT e os publicadores existentes não foram alterados. [Checkpoint C21](CHECKPOINT_C21_CURATION_TRIAGE_R2_2026-11-17.md), continuidade \`V31-EDITORIAL-C21-R2-203649-194964-282GUARDS-17LINKS-213TESTS-20261117\`.
+- Próxima etapa C22: propostas **não publicáveis** de revisão com evidência real por produto e tema, análise de falsos positivos, integração segura com planejadores Blogger/WordPress e observabilidade de conversão apenas com dados reais.
+
 ### C20 — Intake SAFE para blogs futuros e fila separada de revisão (17/11/2026)
 
 - O tema do próximo blog **não é antecipado**: `future_site_intake.py` recebe assunto e plataforma (Blogger ou WordPress) quando solicitados, consulta categorias L1/L2 e entrega separadamente candidatos já elegíveis e itens **pendentes de revisão**, com causas de bloqueio. `product_discovery.discover(..., include_review=True, review_only=True)` impede mistura entre os dois grupos.
