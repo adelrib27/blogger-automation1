@@ -245,5 +245,72 @@ class CurationTriageTests(unittest.TestCase):
                              "https://s.shopee.com.br/existing-real-link")
 
 
+    def test_conversion_queue_and_editorial_planner_filter_blocked_before_limit(self):
+        with Catalog(self.db) as cat:
+            # A chave protegida vem lexicalmente antes da chave segura; SQL LIMIT 1
+            # não pode mascarar o único produto seguro na mesma coleção.
+            with cat.db:
+                cat.db.execute("""
+                    INSERT INTO products
+                    (product_key,shop_id,item_id,title,description,origin_url,image_url,
+                     moderation,moderation_reason,first_source,last_seen_utc)
+                    VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                """,("shopee:001:0","001","0","Air Fryer de Raiz Protegida","",
+                     "https://shopee.com.br/product/001/0",
+                     "https://cf.shopee.com.br/file/p","eligible","",
+                     "feed","2026-11-17T00:00:00Z"))
+                cat.db.execute("""
+                    INSERT INTO product_taxonomy
+                    (product_key,category,niche,status,reason,version)
+                    VALUES(?,?,?,?,?,?)
+                """,("shopee:001:0","home","appliance","matched","fixture","v31-test"))
+                cat.db.execute("""
+                    INSERT INTO product_source_categories
+                    (product_key,source,level1,level2,level3,status)
+                    VALUES(?,?,?,?,?,?)
+                """,("shopee:001:0","feed","health","vitamins","","matched"))
+            chosen=cat.candidates("newcampaign",limit=1,category="home",niche="appliance")
+            planned=cat.select_products("newcampaign",limit=1,
+                                        category="home",niche="appliance")
+            self.assertEqual(chosen[0][0],"shopee:101:1")
+            self.assertEqual(planned[0][0],"shopee:101:1")
+            self.assertEqual(cat.candidates("newcampaign",limit=20,
+                                            category="home",niche="appliance"),
+                             [chosen[0]])
+            self.assertEqual(cat.select_products("newcampaign",limit=20,
+                                                 category="home",niche="appliance"),
+                             [planned[0]])
+            self.assertIsNone(cat.for_conversion("shopee:001:0"))
+            self.assertEqual(cat.cached_link("shopee:101:1","blogantigo"),
+                             "https://s.shopee.com.br/existing-real-link")
+
+    def test_no_source_table_pure_catalog_queries_do_not_create_it(self):
+        import sqlite3
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp, Catalog(Path(temp)/"old.sqlite3") as cat:
+            with cat.db:
+                cat.db.execute("""
+                    INSERT INTO products
+                    (product_key,shop_id,item_id,title,description,origin_url,image_url,
+                     moderation,moderation_reason,first_source,last_seen_utc)
+                    VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                """,("shopee:20:20","20","20","Produto Legacy","",
+                     "https://shopee.com.br/product/20/20",
+                     "https://cf.shopee.com.br/file/p","eligible","",
+                     "legacy","2026-11-17T00:00:00Z"))
+                cat.db.execute("""
+                    INSERT INTO product_taxonomy
+                    (product_key,category,niche,status,reason,version)
+                    VALUES(?,?,?,?,?,?)
+                """,("shopee:20:20","home","appliance","matched","fixture","v31-test"))
+            self.assertEqual(len(cat.candidates("new",limit=1)),1)
+            self.assertEqual(len(cat.select_products("new",limit=1)),1)
+            self.assertIsNotNone(cat.for_conversion("shopee:20:20"))
+            tables={r[0] for r in cat.db.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'")}
+            self.assertNotIn("product_source_categories",tables)
+
+
+
 if __name__=="__main__":
     unittest.main()
