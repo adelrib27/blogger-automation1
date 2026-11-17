@@ -1,4 +1,4 @@
-name: V31 C13 - Canary sem publicar, R2 real e historicos (one-shot SAFE)
+name: V31 C13 - Canary MAIN atual + R2 real sem publicar (one-shot SAFE)
 
 on:
   push:
@@ -37,6 +37,29 @@ jobs:
           python -m unittest discover -s affiliate_hub_v31/tests -q
       - name: Auditoria de historico real do checkout (sem rede)
         run: python -m affiliate_hub_v31.history_readiness --site all
+      - name: Conferir HISTORICO ATUAL da main em area temporaria (sem commits)
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin main:refs/remotes/origin/main
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          git archive origin/main \
+            casa_decoracao/data/generated casa_decoracao/data/publication_history.json \
+            oficina_garagem/data/generated oficina_garagem/data/publication_history.json \
+            | tar -xf - -C "$tmp"
+          export V31_C13_MAIN_ROOT="$tmp"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from affiliate_hub_v31.history_readiness import audit_project
+          root=Path(os.environ["V31_C13_MAIN_ROOT"])
+          out=[]
+          for name in ("casa_decoracao","oficina_garagem"):
+              report=audit_project(root/name)
+              out.append({"project":name,**report})
+          print("V31_C13_MAIN_LATEST_HISTORY_READONLY_PASS")
+          print(json.dumps({"sites":out,"publication_calls":0,"git_writes":0},sort_keys=True))
+          PY
       - name: Auditar R2 real por blog e reserva de 3 dias (somente leitura)
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
