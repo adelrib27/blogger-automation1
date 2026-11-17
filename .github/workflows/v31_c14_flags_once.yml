@@ -1,0 +1,39 @@
+name: V31 C14 - Verificar flags OFF de forma segura (one-shot)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_c14_flags_once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verificar-somente-flags-publicas-sem-publicar:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      C14_GLOBAL: ${{ vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && 'ON' || 'OFF' }}
+      C14_CASA: ${{ vars.V31_CASA_R2_FALLBACK_ENABLED == 'true' && 'ON' || 'OFF' }}
+      C14_OFICINA: ${{ vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true' && 'ON' || 'OFF' }}
+      C14_RADAR: ${{ vars.V31_RADAR_R2_FALLBACK_ENABLED == 'true' && 'ON' || 'OFF' }}
+      C14_REUSE: ${{ vars.V31_EDITORIAL_PRODUCT_REUSE_ENABLED == 'true' && 'ON' || 'OFF' }}
+      C14_CACHE_CRON: ${{ vars.V31_EDITORIAL_CACHE_WARMUP_ENABLED == 'true' && 'ON' || 'OFF' }}
+      C14_SHADOW_CRON: ${{ vars.V31_EDITORIAL_SHADOW_ENABLED == 'true' && 'ON' || 'OFF' }}
+    steps:
+      - name: Resumir APENAS se cada flag seria ativada (sem ler secrets)
+        run: |
+          python - <<'PY'
+          import json,os,sys
+          keys=("GLOBAL","CASA","OFICINA","RADAR","REUSE","CACHE_CRON","SHADOW_CRON")
+          result={key:os.environ.get("C14_"+key,"UNKNOWN") for key in keys}
+          print("V31_C14_PUBLIC_FLAGS_AUDIT")
+          print(json.dumps(result,sort_keys=True))
+          if result["GLOBAL"]=="ON" or result["REUSE"]=="ON":
+              print("V31_C14_CRITICAL_FLAGS_NOT_OFF")
+              sys.exit(3)
+          print("V31_C14_RELEASE_AND_REUSE_GLOBAL_OFF_PASS")
+          PY
