@@ -10,7 +10,7 @@ import tempfile
 from pathlib import Path
 
 from .catalog import Catalog
-from .product_discovery import discover
+from .product_discovery import discover,suggest_category_paths
 from .r2_state import R2State,verify_database
 
 SCENARIOS=(
@@ -35,6 +35,9 @@ def probe(storage: R2State)->dict:
                         "category":scenario["category"],
                         "campaign":"futureblogv31","limit":12,
                         "max_per_shop":1}
+                suggested=suggest_category_paths(cat,topic=scenario["topic"],limit=5)
+                if not suggested:
+                    raise ValueError("source_category_topic_suggestions_missing")
                 approved=discover(cat,**params)
                 reviewed=discover(cat,**params,include_review=True)
                 if not reviewed:
@@ -49,6 +52,9 @@ def probe(storage: R2State)->dict:
                     raise ValueError("shop_diversity_gate_failed")
                 summaries.append({
                     "theme":scenario["theme"],
+                    "top_suggested_category":suggested[0]["category"],
+                    "top_suggested_subcategory":suggested[0]["subcategory"],
+                    "suggested_category_paths":len(suggested),
                     "approved_candidates_in_top12":len(approved),
                     "all_candidates_for_editorial_review_in_top12":len(reviewed),
                     "different_shops_in_top12":len(reviewed),
