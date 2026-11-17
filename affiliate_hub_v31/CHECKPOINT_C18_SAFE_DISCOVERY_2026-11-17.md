@@ -52,3 +52,19 @@ C17 gravou e restaurou no R2 **203.649 produtos**, 109.576 com facetas oficiais 
 6. O usuário quer avaliar **mais tarde** se as páginas de loja, todas com refresh diário, somam requisições excessivas. Não modificar o cron das lojas agora; erros 1000 e 10030 **não são considerados causas idênticas**.
 
 **Estado:** busca semântica universal testada em modo read-only; classificação ampla e integração automática final com geradores ainda pendentes. PR continua DRAFT, switches OFF, nenhuma publicação.
+
+
+## C18.4 — Prova FINAL de inferência de caminhos L1/L2 pelo tema
+
+[Run 44179473566](https://github.com/adelrib27/blogger-automation1/actions/runs/44179473566) **SUCCESS — 175/175 testes + R2 REAL read-only**:
+
+| Tema novo | Categoria L1 sugerida por dados reais | Subcategoria L2 sugerida |
+|---|---|---|
+| `Air Fryer` | `home appliances` | `kitchen appliances` |
+| `Guarda Roupa` | `home living` | `furniture` |
+| `Freio` | `spare parts and accessories for vehicles` | `spare parts for automobiles` |
+
+Em cada cenário havia **5 caminhos sugeridos** para consideração; busca de produto comprovou **12 lojas diferentes** na amostra de candidatos para revisão, com **12/12 aprovados** para Air Fryer e Guarda Roupa e **4/12** para Freio. Zero vazamentos de URL para a campanha hipotética, zero novas conversões e zero publicação. `suggest_category_paths` trata até categorias não aprovadas apenas como pistas, nunca como permissão de publicar ou converter.
+
+O seletor atual ainda percorre os produtos/categorias existentes na busca contextual. **C19 deve avaliar um índice de busca textual persistente** para milhares de consultas sem varrer todo o catálogo; não alegar desempenho de alta escala antes de medir.
+
