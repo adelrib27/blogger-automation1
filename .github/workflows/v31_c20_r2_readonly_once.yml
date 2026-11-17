@@ -29,10 +29,10 @@ jobs:
           python -m unittest discover -s affiliate_hub_v31/tests -q
       - name: Consultar acervo R2 REAL sem gravar, converter ou publicar
         env:
-          V31_EDITORIAL_R2_ACCESS_KEY_ID: {{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
-          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: {{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
-          V31_EDITORIAL_R2_ACCOUNT_ID: {{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
-          V31_EDITORIAL_R2_BUCKET: {{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
         shell: bash
         run: |
           python - <<'PY'
