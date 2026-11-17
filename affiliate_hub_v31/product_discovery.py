@@ -59,10 +59,11 @@ def _facet_rows(catalog: Catalog, *, category: str | None,
         WITH facets AS (
           SELECT product_key,MIN(level1) AS level1,MIN(level2) AS level2,
             MAX(level3) AS level3,
-            COUNT(DISTINCT level1 || char(31) || level2) AS branches,
-            COUNT(DISTINCT CASE WHEN level3 != '' THEN level3 END) AS leaves
+            COUNT(DISTINCT CASE WHEN status='matched' THEN level1 || char(31) || level2 END) AS branches,
+            COUNT(DISTINCT CASE WHEN status='matched' AND level3 != '' THEN level3 END) AS leaves,
+            SUM(CASE WHEN status!='matched' THEN 1 ELSE 0 END) AS bad_sources
           FROM product_source_categories
-          WHERE status='matched' GROUP BY product_key
+          GROUP BY product_key
         )
         SELECT p.product_key,p.shop_id,p.title,p.description,p.origin_url,
                p.image_url,p.moderation,COALESCE(t.status,'review'),
@@ -71,7 +72,7 @@ def _facet_rows(catalog: Catalog, *, category: str | None,
         FROM products p
         LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
         LEFT JOIN facets f ON f.product_key=p.product_key
-        WHERE (f.branches IS NULL OR (f.branches=1 AND f.leaves<=1))
+        WHERE (f.branches IS NULL OR (f.branches=1 AND f.leaves<=1 AND f.bad_sources=0))
           AND """+" AND ".join(where)+"""
         ORDER BY p.product_key
     """,params)
@@ -199,14 +200,15 @@ def suggest_category_paths(catalog: Catalog, *, topic: str,
     rows=catalog.db.execute("""
         WITH facets AS (
           SELECT product_key,MIN(level1) AS l1,MIN(level2) AS l2,
-                 COUNT(DISTINCT level1 || char(31) || level2) AS branches
-          FROM product_source_categories WHERE status='matched'
+                 COUNT(DISTINCT CASE WHEN status='matched' THEN level1 || char(31) || level2 END) AS branches,
+                 SUM(CASE WHEN status!='matched' THEN 1 ELSE 0 END) AS bad_sources
+          FROM product_source_categories
           GROUP BY product_key
         )
         SELECT p.title,p.moderation,COALESCE(t.status,'review'),
                f.l1,f.l2
         FROM products p
-        JOIN facets f ON f.product_key=p.product_key AND f.branches=1
+        JOIN facets f ON f.product_key=p.product_key AND f.branches=1 AND f.bad_sources=0
         LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
     """+indexed_where,indexed_args)
     counts=Counter()
