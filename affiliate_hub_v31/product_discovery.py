@@ -161,3 +161,59 @@ def discover(catalog: Catalog, *, topic: str,
         if len(selected)>=limit:
             break
     return selected
+
+
+
+def suggest_category_paths(catalog: Catalog, *, topic: str,
+                           limit: int = 8) -> list[dict]:
+    """Descobre caminhos L1/L2 usando títulos REAIS; não prediz blogs futuros.
+
+    Se o usuário pedir um blog novo, o tema solicitado determina quais
+    subcategorias do CSV são pertinentes. Não cria/converte links nem posts.
+    Produtos pendentes ajudam a encontrar o ramo, sem serem liberados
+    para publicação. Categorias sensíveis permanecem marcadas.
+    """
+    if not isinstance(topic,str) or len(topic)>160:
+        raise DiscoveryError("topic_invalid")
+    terms=_terms(topic)
+    if not terms:
+        raise DiscoveryError("meaningful_topic_required")
+    if not isinstance(limit,int) or not 1<=limit<=30:
+        raise DiscoveryError("limit_invalid")
+    min_hits=1 if len(terms)==1 else max(2,(len(terms)*2+2)//3)
+    create_source_category_schema(catalog)
+    rows=catalog.db.execute("""
+        WITH facets AS (
+          SELECT product_key,MIN(level1) AS l1,MIN(level2) AS l2,
+                 COUNT(DISTINCT level1 || char(31) || level2) AS branches
+          FROM product_source_categories WHERE status='matched'
+          GROUP BY product_key
+        )
+        SELECT p.title,p.moderation,COALESCE(t.status,'review'),
+               f.l1,f.l2
+        FROM products p
+        JOIN facets f ON f.product_key=p.product_key AND f.branches=1
+        LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
+    """)
+    counts=Counter()
+    approved=Counter()
+    for title,moderation,status,l1,l2 in rows:
+        title_words=set(_terms(title))
+        hits=sum(word in title_words for word in terms)
+        if hits<min_hits:
+            continue
+        path=(l1,l2)
+        counts[path]+=1
+        if (moderation=="eligible" and status=="matched" and
+                l1 not in PROTECTED_ROOTS):
+            approved[path]+=1
+    ranked=sorted(counts,key=lambda path:(
+        -counts[path],-approved[path],path
+    ))[:limit]
+    return [{
+        "category":l1,"subcategory":l2,
+        "title_matches_in_catalog":counts[(l1,l2)],
+        "previously_approved_matching_products":approved[(l1,l2)],
+        "manual_review_required_for_root":l1 in PROTECTED_ROOTS,
+        "commercial_metrics_available":False,
+    } for l1,l2 in ranked]
