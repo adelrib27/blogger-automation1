@@ -14,12 +14,14 @@ import os
 import re
 import sqlite3
 import tempfile
+from types import SimpleNamespace
 import unicodedata
 from pathlib import Path
 from urllib.parse import urlsplit
 
 from .catalog import host_allowed
 from .routing import sites
+from .source_policy_gate import source_safe_for_use
 
 MAX_SELECT = 100
 MAX_CATEGORIES = 60
@@ -131,6 +133,10 @@ def candidates_from_catalog(db_path: Path, site_key: str,
                     AND t.status='matched'
                 ORDER BY p.product_key
             """,(campaign,)).fetchall()
+            # Gate tambem vale para links convertidos anteriormente.
+            # Usar a conexao somente leitura; nao instanciar Catalog.
+            source_view=SimpleNamespace(db=conn)
+            rows=[row for row in rows if source_safe_for_use(source_view,row[0])]
     except (sqlite3.Error,OSError):
         raise FallbackUnavailable("catalog_unavailable") from None
 
