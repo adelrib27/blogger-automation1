@@ -11,6 +11,7 @@ import tempfile
 from pathlib import Path
 
 from .catalog import Catalog
+from .title_index import has_index, rebuild_index
 
 
 def ingest_two(existing_db: Path | str, feed_one: Path | str,
@@ -31,6 +32,10 @@ def ingest_two(existing_db: Path | str, feed_one: Path | str,
             legacy_labeled = catalog.reclassify_missing()
             one = catalog.import_csv(feed_one, "feed1")
             two = catalog.import_csv(feed_two, "feed2")
+            # Se C19 já habilitou o índice FTS, feeds reimportados devem
+            # atualizar o texto pesquisável no mesmo snapshot staged.
+            if has_index(catalog):
+                rebuild_index(catalog)
             if one["rows"] < 1 or two["rows"] < 1:
                 raise ValueError("Feed sem produtos: banco anterior preservado")
             if not catalog.integrity():
