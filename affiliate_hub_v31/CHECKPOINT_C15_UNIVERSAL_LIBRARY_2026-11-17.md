@@ -33,3 +33,10 @@ O pedido original era simples: **separar os produtos das duas URLs CSV em catego
 - **`library_pool.py` não é pré-requisito para indexação** e a eventual campanha de biblioteca só pode ser configurada explicitamente: links de subIDs próprios dos blogs não podem ser copiados entre campanhas. A execução geral de conversões em background deve reutilizar `converter.py`, respeitar as cotas e preservar o banco.
 - A afirmação sobre **Pins desativados** ou **persistência avançada do Worker v1.0** pertence a outro escopo: **não introduzir Pinterest nem pressupor que esse Worker esteja implantado ou seja dependência da categorização V31**. O catálogo SQLite já reside no Cloudflare R2 privado.
 - Próxima prioridade: **ampliar com critérios confiáveis a classificação dos 104.833 pendentes** por categorias/nichos reais e usar a busca do acervo como interface de seleção no fluxo de criação de blogs; sem gerar ou publicar posts de teste.
+
+
+## Evidência final do agrupamento corrigido (17/11/2026)
+
+[Execução 44116308671](https://github.com/adelrib27/blogger-automation1/actions/runs/44116308671): **PASS**, **149/149 testes**, R2 REAL em modo READ-ONLY; **20 pares de categoria/nicho atualmente aprovados**, **4.674 produtos elegíveis**, e **um único grupo `revisao_pendente/nao_classificado` com 104.833 produtos**. O índice cobre **109.507/109.507 registros**, sem assumir um blog, sem mutações Shopee, escrita R2, conteúdo, Pins ou WordPress. A consolidação do grupo de revisão foi testada e corrigida. Workflow de prova excluído após sucesso.
+
+**Ainda NÃO classificamos concretamente os 104.833 pendentes**. O sistema os conserva para categorização posterior, sem inventar etiquetas nem descartar os registros. A interface de busca aceita categoria/nicho reais e assunto informado no momento da solicitação, mas a ampliação dos critérios de classificação é a próxima tarefa necessária para atingir cobertura substantiva de toda a base.
