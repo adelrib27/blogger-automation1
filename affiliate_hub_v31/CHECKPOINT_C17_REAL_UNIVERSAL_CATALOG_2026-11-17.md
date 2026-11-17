@@ -51,6 +51,10 @@ O usuário autorizou condução técnica autônoma para melhorar confiabilidade 
 
 [QA R2 real 44128121400](https://github.com/adelrib27/blogger-automation1/actions/runs/44128121400) — **SUCCESS**: catálogo 203.649, 29 categorias L1, 109.576 produtos indexados; buscas por `Home & Living/Furniture`, `Beauty/Hair Care` e `Spare Parts for Automobiles` retornaram resultados reais; simulação de uma campanha de blog **não cadastrado** provou zero links de outra campanha. Testou o Radar com erro 1000 **simulado**, R2 real e fila 5/5/5, PASS. Nenhuma chamada à Shopee, publicação ou escrita em R2.
 
+## Validação final de navegação em 3 níveis
+
+[GitHub Actions 44128756858](https://github.com/adelrib27/blogger-automation1/actions/runs/44128756858) — **SUCCESS, 166/166 testes**, R2 real: **29 categorias L1**, para `Home & Living` existem **17 subdivisões L2** e, em `Furniture`, **10 subdivisões L3**. Buscas reais de produtos por `Home & Living/Furniture`, `Beauty/Hair Care` e `Spare Parts for Automobiles` para um blog ainda não cadastrado passaram, com **zero links cruzados de campanha**. A mesma execução aprovou novamente `C9_RADAR_FULL_ROUTER_ERROR1000_PASS` usando erro 1000 SIMULADO e snapshot R2 REAL. **0 chamadas comerciais, 0 publicações, 0 gravações nesse teste de leitura.**
+
 ## Atualização cumulativa preparada, mas OFF
 
 `.github/workflows/v31_c17_catalog_refresh_safe.yml`:
