@@ -1,0 +1,63 @@
+name: V31 C14 - Trazer main atual para branch SAFE, protegendo dados (one-shot)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_c14_reconcile_branch_once.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v31-c14-reconcile-branch-single-writer
+  cancel-in-progress: false
+
+jobs:
+  merge-main-into-feature-safe:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115' &&
+      github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v31-affiliate-hub-c1-safe-20261115
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Mesclar main na feature e PROIBIR alteracao de dados editoriais
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "feature/v31-affiliate-hub-c1-safe-20261115"
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git merge --no-edit --no-ff -m 'chore(v31-c14): reconciliar main atual com feature V31 sem alterar publicacoes' refs/remotes/origin/main
+          changes="$(git diff --name-only origin/main HEAD -- ':(glob)**/data/**')"
+          if [ -n "$changes" ]; then
+            echo 'V31_C14_EDITORIAL_DATA_PRESERVATION_FAILED'
+            exit 4
+          fi
+          echo 'V31_C14_RECONCILED_LOCALLY_NO_DATA_DIFF_PASS'
+      - name: Regressao no ARVORE MESCLADA ANTES do push
+        run: |
+          set -euo pipefail
+          python -m compileall -q affiliate_hub_v31
+          python -m py_compile casa_decoracao/src/build_editorial_queue.py casa_decoracao/src/generate_articles.py casa_decoracao/src/publish_generated.py
+          python -m py_compile oficina_garagem/src/build_editorial_queue.py oficina_garagem/src/generate_articles.py oficina_garagem/src/publish_generated.py
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
+      - name: Publicar somente o merge na FEATURE, jamais main
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "feature/v31-affiliate-hub-c1-safe-20261115"
+          git push origin HEAD:refs/heads/feature/v31-affiliate-hub-c1-safe-20261115
+          echo 'V31_C14_BRANCH_RECONCILED_PASS'
