@@ -26,6 +26,11 @@ jobs:
         run: |
           python -m compileall -q affiliate_hub_v31
           python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Regressao dos geradores e originalidade WordPress legados sem publicar
+        run: |
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
       - name: Canario real triagem propostas planejador e bloqueio de fontes
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
