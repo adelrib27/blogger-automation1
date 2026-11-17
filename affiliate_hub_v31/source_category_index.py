@@ -222,3 +222,53 @@ def browse_source(catalog: Catalog, *, level1: str,
                 item["affiliate_url"]=link
         output.append(item)
     return output
+
+
+def category_hierarchy(catalog: Catalog, *, level1: str | None = None,
+                       level2: str | None = None, limit: int = 250) -> list[dict]:
+    """Navegação universal: L1 -> L2 -> L3 com contagens e curadoria separadas.
+
+    Não exige site_key ou nome de blog. Não pré-seleciona qual categoria
+    um blog futuro terá, apenas oferece os ramos reais do CSV.
+    """
+    if not isinstance(limit,int) or not 1<=limit<=1000:
+        raise SourceCategoryError("hierarchy_limit_invalid")
+    if level2 is not None and level1 is None:
+        raise SourceCategoryError("hierarchy_parent_required")
+    for item in (level1,level2):
+        if item is not None and (
+            not isinstance(item,str) or not 1<=len(item)<=120 or
+            not normalize(item)
+        ):
+            raise SourceCategoryError("hierarchy_label_invalid")
+    create_source_category_schema(catalog)
+    if level1 is None:
+        target="s.level1"
+        clauses=["s.status='matched'"]
+        params=[]
+        depth=1
+    elif level2 is None:
+        target="s.level2"
+        clauses=["s.status='matched'","s.level1=?","s.level2!=''"]
+        params=[normalize(level1)]
+        depth=2
+    else:
+        target="s.level3"
+        clauses=["s.status='matched'","s.level1=?","s.level2=?","s.level3!=''"]
+        params=[normalize(level1),normalize(level2)]
+        depth=3
+    rows=catalog.db.execute("""
+        SELECT """+target+""" AS label,
+               COUNT(DISTINCT s.product_key),
+               COUNT(DISTINCT CASE WHEN p.moderation='eligible'
+                    AND t.status='matched' THEN s.product_key END)
+        FROM product_source_categories s
+        JOIN products p ON p.product_key=s.product_key
+        LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
+        WHERE """+" AND ".join(clauses)+"""
+        GROUP BY """+target+"""
+        ORDER BY COUNT(DISTINCT s.product_key) DESC,label LIMIT ?
+    """,params+[limit]).fetchall()
+    return [{"depth":depth,"category":label,"products":total,
+             "currently_editorially_approved":approved}
+            for label,total,approved in rows]
