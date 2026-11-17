@@ -1,4 +1,4 @@
-name: V31 C19 - FTS5 real R2 performance e equivalencia SAFE (one-shot)
+name: V31 C19 - Persistir FTS5 no R2 e restaurar SAFE (one-shot)
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  comparar-busca-antes-e-depois-sem-salvar:
+  persistir-indice-apos-comparar:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115'
@@ -33,10 +33,10 @@ jobs:
         run: |
           python -m compileall -q affiliate_hub_v31
           python -m unittest discover -s affiliate_hub_v31/tests -q
-      - name: Comparar selecionador anterior e FTS5 REAL, sem gravar no R2
+      - name: Testar equivalencia, salvar um snapshot R2 e restaurar FTS5
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
           V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
-        run: python -m affiliate_hub_v31.title_index_migrate
+        run: python -m affiliate_hub_v31.title_index_migrate --execute
