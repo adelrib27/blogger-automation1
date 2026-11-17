@@ -17,6 +17,14 @@ Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aq
 
 
 
+### C19 — Índice FTS5 de alta escala no R2, com fallback e prova de equivalência (17/11/2026)
+
+- **Índice textual real persistido:** `v31_catalog_fts` no SQLite privado Cloudflare R2 com **203.649 produtos indexados** por título/descrição; `title_index.py` usa FTS5 somente quando disponível, com termos MATCH sanitizados e fallback ao modo anterior quando não há índice.
+- **Seleção editorial intacta:** `product_discovery.py` usa FTS5 como pré-filtro; a validação de aprovação, relevância, loja, campanha correta e `can_publish=False` permanece exatamente igual. [Migração R2 real 44181139736](https://github.com/adelrib27/blogger-automation1/actions/runs/44181139736) **SUCCESS, 195 testes**, confirmou rankings iguais em três temas, **17 links afiliados**, **8.685 itens elegíveis** e 203.649 produtos preservados; R2 salvo uma vez e restaurado sem retenção pendente.
+- **Medição em catálogo REAL:** [dry-run 44180894099](https://github.com/adelrib27/blogger-automation1/actions/runs/44180894099): 3 consultas **5,39 s → 1,16 s** (~4,7x); [gravação real 44181139736](https://github.com/adelrib27/blogger-automation1/actions/runs/44181139736): **7,55 s → 1,59 s** (~4,7x). São comparações de amostra, não promessa de throughput de produção.
+- **Manutenção automática do índice:** `ingest.py` e `catalog_expansion.py` recompõem FTS5 durante importações futuras se a tabela já existe, sem reindexar snapshots legados que ainda não o possuem. Testes para importação incremental e de 2 feeds foram adicionados.
+- Nenhum cron LIVE ativado, nenhuma chamada à Shopee, nenhum post ou alteração das lojas. [Checkpoint C19](CHECKPOINT_C19_FTS5_REAL_R2_2026-11-17.md), código `V31-EDITORIAL-C19-R2-FTS5-203649-17LINKS-20261117`.
+
 ### C18 — Seleção comercial por tema de blogs futuros, sem adivinhar nichos (17/11/2026)
 
 - `curation_audit.py` identifica divergências entre feeds e categorias que exigem revisão reforçada. [R2 real 44177966028](https://github.com/adelrib27/blogger-automation1/actions/runs/44177966028): **424 itens em ambos os feeds, 0 divergências entre L1/L2**, 17 links antigos preservados, sem writes.
