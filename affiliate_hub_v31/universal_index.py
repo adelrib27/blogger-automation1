@@ -19,6 +19,8 @@ from .catalog import Catalog, host_allowed
 from .converter import valid_campaign
 from .r2_state import R2State, verify_database
 from .taxonomy import normalize
+from .source_category_index import create_source_category_schema
+from .source_policy_gate import source_safe_for_use
 
 UNCLASSIFIED_CATEGORY = "revisao_pendente"
 UNCLASSIFIED_NICHE = "nao_classificado"
@@ -73,6 +75,7 @@ def lookup(catalog: Catalog, *, category: str | None = None,
         raise IndexErrorV31("search_constraint_required")
     if campaign is not None:
         valid_campaign(campaign)
+    create_source_category_schema(catalog)
     clauses=["p.moderation='eligible'","t.status='matched'"]
     args=[]
     if category is not None:
@@ -95,6 +98,8 @@ def lookup(catalog: Catalog, *, category: str | None = None,
                              for term in terms):
             continue
         if not host_allowed(origin) or not str(image).startswith("https://"):
+            continue
+        if not source_safe_for_use(catalog,key):
             continue
         row={"product_key":key,"title":title,"category":cat,"niche":subcat,
              "product_url":origin,"image_url":image}
