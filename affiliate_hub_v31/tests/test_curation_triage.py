@@ -166,5 +166,61 @@ class CurationTriageTests(unittest.TestCase):
                                             "source_l1":""}),"NO_OFFICIAL_CATEGORY")
 
 
+    def test_browse_source_hides_legacy_protected_and_conflicting_affiliate(self):
+        from affiliate_hub_v31.source_category_index import browse_source
+        from affiliate_hub_v31.source_policy_gate import source_safe_for_use
+        with Catalog(self.db) as cat:
+            self.assertTrue(source_safe_for_use(cat,"shopee:101:1"))
+            self.assertFalse(source_safe_for_use(cat,"shopee:808:8"))
+            self.assertFalse(source_safe_for_use(cat,"shopee:909:9"))
+            safe = browse_source(cat,level1="Home Appliances",campaign="blogantigo")
+            health = browse_source(cat,level1="Health",campaign="blogantigo")
+        by_key={x["product_key"]:x for x in safe}
+        self.assertTrue(by_key["shopee:101:1"]["editorial_approved"])
+        self.assertTrue(by_key["shopee:101:1"]["affiliate_ready"])
+        self.assertFalse(by_key["shopee:909:9"]["editorial_approved"])
+        self.assertFalse(by_key["shopee:909:9"]["affiliate_ready"])
+        self.assertNotIn("affiliate_url",by_key["shopee:909:9"])
+        for x in health:
+            self.assertFalse(x["editorial_approved"])
+            self.assertNotIn("affiliate_url",x)
+
+    def test_universal_lookup_does_not_promote_legacy_protected_source(self):
+        from affiliate_hub_v31.universal_index import lookup
+        with Catalog(self.db) as cat:
+            result=lookup(cat,category="home",limit=20,campaign="blogantigo")
+        self.assertEqual([x["product_key"] for x in result],["shopee:101:1"])
+        self.assertEqual(result[0]["affiliate_url"],
+                         "https://s.shopee.com.br/existing-real-link")
+
+    def test_without_source_record_old_approved_stays_eligible_under_other_gates(self):
+        from affiliate_hub_v31.universal_index import lookup
+        from affiliate_hub_v31.source_policy_gate import source_safe_for_use
+        with Catalog(self.db) as cat:
+            with cat.db:
+                cat.db.execute("""
+                    INSERT INTO products
+                    (product_key,shop_id,item_id,title,description,origin_url,
+                     image_url,moderation,moderation_reason,first_source,last_seen_utc)
+                    VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                """, ("shopee:1000:11","1000","11",
+                      "Cafeteira Eletrica Produto Legado","",
+                      "https://shopee.com.br/product/1000/11",
+                      "https://cf.shopee.com.br/file/test","eligible","",
+                      "legacy","2026-11-17T00:00:00Z"))
+                cat.db.execute("""
+                    INSERT INTO product_taxonomy
+                    (product_key,category,niche,status,reason,version)
+                    VALUES(?,?,?,?,?,?)
+                """, ("shopee:1000:11","cozinha","cafeteira",
+                      "matched","exact_phrase","v31-test"))
+            self.assertTrue(source_safe_for_use(cat,"shopee:1000:11"))
+            found=lookup(cat,category="cozinha",query="Cafeteira Eletrica")
+        self.assertEqual(len(found),1)
+        self.assertEqual(found[0]["product_key"],"shopee:1000:11")
+        self.assertNotIn("affiliate_url",found[0])
+
+
+
 if __name__=="__main__":
     unittest.main()
