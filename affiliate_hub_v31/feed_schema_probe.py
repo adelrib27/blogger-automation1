@@ -59,7 +59,7 @@ def schema(path: Path) -> dict:
         fields=[]
         for j,i in enumerate(indices):
             identifier=normalized(headers[i])
-            if not re.fullmatch(r"[a-z]{3,35}",identifier):
+            if not re.fullmatch(r"[a-z][a-z0-9]{2,49}",identifier):
                 identifier="category_metadata_field"
             fields.append({
                 "column":identifier,
