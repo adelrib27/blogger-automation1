@@ -2,6 +2,7 @@ import json
 import os
 
 from affiliate_hub_v31.reuse_policy import can_queue_reuse
+from affiliate_hub_v31.queue_identity import highest_reserved_id
 import re
 import unicodedata
 from collections import Counter
@@ -129,6 +130,8 @@ def main():
     published_ids, published_products = publication_memory()
     history_doc = load(HISTORY, {'items': []})
     previous, next_id = previous_state()
+    if REUSE_ENABLED:
+        next_id=max(next_id, highest_reserved_id(OUT,ROOT / "casa_decoracao" / "data" / "generated"))
     rotation = load_state(ROTATION)
 
     items = []
