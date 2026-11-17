@@ -9,6 +9,7 @@ from affiliate_hub_v31.catalog_expansion import (
     expand, fingerprint_original, install_original_keys,
 )
 from affiliate_hub_v31.source_category_index import browse_source,source_inventory
+from affiliate_hub_v31.title_index import rebuild_index,has_index
 
 
 class FakeR2:
@@ -107,6 +108,27 @@ class ExpansionSafeTests(unittest.TestCase):
             results=browse_source(cat,level1="Home & Living",level2="Furniture")
             self.assertEqual(len(results),1)
             self.assertFalse(results[0]["editorial_approved"])
+
+    def test_incremental_refresh_rebuilds_existing_fts_index(self):
+        with Catalog(self.db) as catalog:
+            rebuild_index(catalog)
+        self.storage=FakeR2(self.db.read_bytes())
+        result=expand(self.storage,(self.feed1,self.feed2),execute=True)
+        self.assertTrue(result["search_index_updated"])
+        check=self.root/"searchable-restored.sqlite3"
+        self.storage.restore_to(check)
+        with Catalog(check) as catalog:
+            self.assertTrue(has_index(catalog))
+            self.assertEqual(catalog.db.execute(
+                "SELECT COUNT(*) FROM v31_catalog_fts"
+            ).fetchone()[0],5)
+            matches=catalog.db.execute("""
+                SELECT product_key FROM v31_catalog_fts
+                WHERE v31_catalog_fts MATCH ?
+            """,('"guarda" OR "roupa"',)).fetchall()
+            self.assertIn(("shopee:321:2",),matches)
+            self.assertEqual(catalog.cached_link("shopee:321:1","campaignold"),
+                             "https://s.shopee.com.br/old-real-affiliate")
 
     def test_second_run_does_not_add_duplicate_products(self):
         expand(self.storage,(self.feed1,self.feed2),execute=True)
