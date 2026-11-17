@@ -15,6 +15,15 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+### C14 — Main reconciliada com segurança, 17 links reais e flags OFF (17/11/2026)
+
+- [Prova de merge seco](https://github.com/adelrib27/blogger-automation1/actions/runs/44089068660): YAML de 118 workflows e 137/137 testes PASS, sem conflitos.
+- [Sincronização real main → feature](https://github.com/adelrib27/blogger-automation1/actions/runs/44089292281): reconciliou branch V31 com a main, **zero arquivos de dados editoriais alterados em relação à main**, 137 V31 + 24 Casa + 21 Oficina + guard cross-blog PASS. `main` intocada, PR ainda DRAFT.
+- [Auditoria dos interruptores](https://github.com/adelrib27/blogger-automation1/actions/runs/44089682722): **todos OFF** (release global, Casa, Oficina, Radar, reutilização, cron de cache e shadow), nenhum fallback de publicação ativado.
+- [Novo lote real de 3 conversões](https://github.com/adelrib27/blogger-automation1/actions/runs/44089505226): 3/3 links afiliados Shopee reais, um por campanha, R2 salvo/restaurado sem pendências, 0 posts. **Casa 4/9, Oficina 4/6, Radar 8/15**; 5/5 categorias Radar, cache total **17 links** (incluindo 1 Blogger). Ainda faltam **14 links** para as reservas iniciais.
+- Todos os workflows transitórios de C14 foram excluídos depois da validação; não foi acionado nenhum schedule de lojas ou publicador V31.
+- [Checkpoint completo C14](CHECKPOINT_C14_BRANCH_SYNC_R2_17_2026-11-17.md), código `V31-EDITORIAL-C14-MAIN-SYNC-137-TESTS-R2-17LINKS-FLAGS-OFF-20261117`. **C15:** reserva gradual restante, revalidação da main, gate de release por blog com rollback.
+
 ### C13 — Canário R2 REAL, histórico atual da main e 14 links válidos (17/11/2026)
 
 - [Canário E2E C13](https://github.com/adelrib27/blogger-automation1/actions/runs/44086403960) **SUCCESS**: 137/137 testes V31, 24 Casa, 21 Oficina, guard cross-blog; construtores originais Casa/Oficina + Radar erro 1000 **simulado** com R2 real e 5 slots, **ZERO publicação**.
