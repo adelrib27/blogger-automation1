@@ -46,4 +46,15 @@ Arquivos:
 5. Integração supervisionada com orquestradores existentes de criação/geração Blogger/WordPress e publicação, preservando SEO, títulos originais e qualidade editorial. Não criar automaticamente novo blog ou posts de teste sem pedido específico.
 6. Estratégia de conversão real de afiliado: observabilidade por campanha, páginas/consultas/CTR e resultados **verificáveis**, nunca métricas inventadas; respeitar as cotas reais da Shopee ao dimensionar conversões.
 
-**Estado:** índice FTS5 persistido no R2 real com equivalência comprovada e cache histórico íntegro; consumidores antigos ainda precisam de prova adicional no canário pós-implantação. Só depois encerrar C19.
+## C19.4 — Regressão FINAL do R2 pós-indexação
+
+[GitHub Actions 44181357095](https://github.com/adelrib27/blogger-automation1/actions/runs/44181357095) — **SUCCESS** após salvar/restaurar R2:
+
+- **195 testes V31** PASS no SHA do workflow; C19 e novas regressões de atualização dos feeds também passaram no CI geral da branch.
+- `V31_C19_REAL_FTS_R2_PERSISTED_PASS`: **203.649 produtos indexados** e **17 links afiliados preservados** no snapshot R2 restaurado.
+- `V31_C18_TOPIC_DISCOVERY_R2_PASS`: busca de temas para um futuro blog, sem receber link de outra campanha e sem publicação.
+- `V31_C8_SHADOW_READONLY_PASS`: integridade das campanhas legadas Casa, Oficina e Radar preservada; shadow **não** ativa publicação.
+- `V31_C9_RADAR_FULL_ROUTER_ERROR1000_PASS`: Radar monta fila real de 5 categorias/5 lojas usando R2 com erro Shopee 1000 **SIMULADO**, sem publicação.
+- Nenhuma chamada comercial Shopee, nenhum post, nenhum novo Writer ou agendamento LIVE.
+
+**Estado final C19:** FTS5 persistido e pós-canário de consumidores antigos **PASS**, 203.649 produtos, 17 links e 8.685 aprovações anteriores preservados. A produção da `main` continua no modo antigo; só o R2 privado recebeu o índice, pois o PR não foi mesclado. Próximo marco: C20, curadoria de produtos pendentes e integração da descoberta ao orquestrador de novos blogs, sem ativar publicações prematuramente.
