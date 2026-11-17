@@ -43,6 +43,9 @@ jobs:
           from affiliate_hub_v31.future_site_intake import preview_future_site,summarize_preview
           from affiliate_hub_v31.r2_state import R2State,verify_database
           from affiliate_hub_v31.title_index import has_index
+          from affiliate_hub_v31.source_policy_gate import source_safe_for_use
+          from affiliate_hub_v31.source_category_index import browse_source
+          from affiliate_hub_v31.curation_audit import PROTECTED_ROOTS
 
           with tempfile.TemporaryDirectory(prefix='v31-c21-audit-') as td:
               path=Path(td)/'catalog.sqlite3'
@@ -65,6 +68,25 @@ jobs:
                   print('V31_C21_FUTURE_SITE_SAFE_PASS',json.dumps(summary,sort_keys=True))
                   count=catalog.db.execute('SELECT COUNT(*) FROM v31_catalog_fts').fetchone()[0]
                   assert count == 203649
+                  # Every legacy taxonomically approved SKU must obey source-level policy.
+                  approved = catalog.db.execute("""
+                      SELECT p.product_key FROM products p
+                      JOIN product_taxonomy t ON t.product_key=p.product_key
+                      WHERE p.moderation='eligible' AND t.status='matched'
+                  """).fetchall()
+                  blocked=sum(
+                      not source_safe_for_use(catalog,key) for (key,) in approved
+                  )
+                  assert blocked == report['prior_approvals_with_protected_or_conflicting_source'], 'source_guard_mismatch'
+                  for root in sorted(PROTECTED_ROOTS):
+                      for product in browse_source(catalog,level1=root,limit=20):
+                          assert product['editorial_approved'] is False, 'protected_browse_leak'
+                          assert not product.get('affiliate_url'), 'protected_campaign_link_leak'
+                  print('V31_C21_LEGACY_SOURCE_GUARD_PASS',json.dumps({
+                      'legacy_approved_but_source_blocked': blocked,
+                      'protected_roots_checked':len(PROTECTED_ROOTS),
+                      'publication_calls':0,'conversion_calls':0,'r2_writes':0
+                  },sort_keys=True))
                   print('V31_C21_R2_READONLY_FINAL_PASS',json.dumps({
                     'products':report['products'],
                     'fts_rows':count,
