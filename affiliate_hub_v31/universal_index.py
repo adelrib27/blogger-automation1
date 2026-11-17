@@ -31,18 +31,19 @@ class IndexErrorV31(ValueError):
 def grouped_inventory(catalog: Catalog) -> list[dict]:
     """Cobertura de 100% do acervo, incluindo produtos aguardando classificação."""
     rows=catalog.db.execute("""
-        SELECT
-          CASE WHEN p.moderation='eligible' AND t.status='matched'
-            THEN t.category ELSE ? END AS category,
-          CASE WHEN p.moderation='eligible' AND t.status='matched'
-            THEN t.niche ELSE ? END AS niche,
-          CASE WHEN p.moderation='eligible' AND t.status='matched'
-            THEN 'approved' ELSE 'review' END AS state,
-          COUNT(*)
-        FROM products p
-        LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
-        GROUP BY category,niche,state
-        ORDER BY category,niche,state
+        SELECT category,niche,state,COUNT(*) FROM (
+          SELECT
+            CASE WHEN p.moderation='eligible' AND t.status='matched'
+              THEN t.category ELSE ? END AS category,
+            CASE WHEN p.moderation='eligible' AND t.status='matched'
+              THEN t.niche ELSE ? END AS niche,
+            CASE WHEN p.moderation='eligible' AND t.status='matched'
+              THEN 'approved' ELSE 'review' END AS state
+          FROM products p
+          LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
+        ) AS universal_groups
+        GROUP BY universal_groups.category,universal_groups.niche,universal_groups.state
+        ORDER BY universal_groups.category,universal_groups.niche,universal_groups.state
     """, (UNCLASSIFIED_CATEGORY, UNCLASSIFIED_NICHE)).fetchall()
     return [{"category":category,"niche":niche,"state":state,"products":count}
             for category,niche,state,count in rows]
