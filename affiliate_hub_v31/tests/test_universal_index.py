@@ -51,6 +51,34 @@ class GlobalIndexTests(unittest.TestCase):
         self.assertEqual(next(x["niche"] for x in result
                          if x["category"]=="beleza"),"cabelos")
 
+    def test_reviewed_and_conflicting_taxonomies_share_one_review_bucket(self):
+        with Catalog(self.db) as c:
+            with c.db:
+                c.db.execute("""
+                    UPDATE product_taxonomy SET category='moda',niche='roupas'
+                    WHERE product_key='shopee:102:202'
+                """)
+                c.db.execute("""
+                    INSERT INTO products
+                    (product_key,shop_id,item_id,title,description,origin_url,
+                     image_url,moderation,moderation_reason,first_source,last_seen_utc)
+                    VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                """,("shopee:103:203","103","203","Outra classificação pendente","",
+                     "https://shopee.com.br/product/103/203",
+                     "https://cf.shopee.com.br/file/photo","review","",
+                     "csv_110k","2026-11-17T00:00:00Z"))
+                c.db.execute("""
+                    INSERT INTO product_taxonomy
+                    (product_key,category,niche,status,reason,version)
+                    VALUES(?,?,?,?,?,?)
+                """,("shopee:103:203","tecnologia","gadgets","review",
+                     "ambiguous","v31-test"))
+            rows=grouped_inventory(c)
+        self.assertEqual(sum(x["products"] for x in rows),4)
+        pending=[x for x in rows if x["state"]=="review"]
+        self.assertEqual(len(pending),1)
+        self.assertEqual(pending[0]["products"],2)
+
     def test_blog_that_does_not_exist_can_choose_category_and_query(self):
         with Catalog(self.db) as c:
             result=lookup(c,category="cozinha",query="cafeteira espresso")
