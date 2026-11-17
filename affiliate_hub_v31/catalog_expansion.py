@@ -23,6 +23,7 @@ from .feed_download import check_feed_url, download_feed
 from .r2_state import R2State, verify_database
 from .source_category_index import import_source_categories, source_inventory
 from .taxonomy import classify_title
+from .title_index import has_index, rebuild_index
 
 MAX_FEED_ROWS = 250_000
 
@@ -155,6 +156,9 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
                 import_source_categories(cat,files[1],"feed2"),
             ]
             categories=source_inventory(cat)
+            # Atualização cumulativa após C19: índice textual sempre
+            # coerente com TODOS os produtos novos do mesmo snapshot.
+            fts_result=rebuild_index(cat) if has_index(cat) else None
             after_stats=cat.stats()
             expected_new=sum(x["new_products"] for x in outputs)
             expected_approved=sum(x["new_editorially_approved"] for x in outputs)
@@ -190,6 +194,11 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
                 check=source_inventory(cat)
                 if check!=categories:
                     raise CatalogExpansionError("restored_source_categories_invalid")
+                if fts_result is not None:
+                    if not has_index(cat) or cat.db.execute(
+                        "SELECT COUNT(*) FROM v31_catalog_fts"
+                    ).fetchone()[0] != after_stats["products"]:
+                        raise CatalogExpansionError("restored_title_index_invalid")
         return {
             "mode":"EXPAND_EXECUTE" if execute else "EXPAND_DRY_RUN",
             "previous_catalog":old_stats,
@@ -204,6 +213,7 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
                 for x in source_reports
             ],
             "source_categories":categories,
+            "search_index_updated":fts_result is not None,
             "existing_products_links_and_review_states_preserved":True,
             "snapshot_saved_and_restored":saved,
             "retention_pending":pending,
