@@ -6,7 +6,7 @@ from pathlib import Path
 
 from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.source_category_index import (
-    browse_source,import_source_categories,source_inventory,
+    browse_source,import_source_categories,source_inventory,category_hierarchy,
     SourceCategoryError
 )
 
@@ -66,6 +66,25 @@ class OfficialCategoryIndexTests(unittest.TestCase):
             self.assertIn("computers accessories",categories)
             self.assertIn("home appliances",categories)
             self.assertTrue(cat.integrity())
+
+    def test_hierarchy_drills_down_level1_level2_level3_without_blogs(self):
+        with Catalog(self.db) as cat:
+            import_source_categories(cat,self.feed1,"feed1")
+            import_source_categories(cat,self.feed2,"feed2")
+            root=category_hierarchy(cat)
+            home=next(x for x in root if x["category"]=="home living")
+            self.assertEqual(home["depth"],1)
+            self.assertEqual(home["products"],1)
+            second=category_hierarchy(cat,level1="Home & Living")
+            self.assertEqual(len(second),1)
+            self.assertEqual(second[0]["category"],"furniture")
+            self.assertEqual(second[0]["currently_editorially_approved"],0)
+            third=category_hierarchy(cat,level1="Home & Living",
+                                     level2="Furniture")
+            self.assertEqual(third[0]["category"],"cupboards cabinets")
+            self.assertEqual(third[0]["depth"],3)
+            with self.assertRaisesRegex(SourceCategoryError,"parent_required"):
+                category_hierarchy(cat,level2="Furniture")
 
     def test_unclassified_product_browsable_but_not_publishable(self):
         with Catalog(self.db) as cat:
