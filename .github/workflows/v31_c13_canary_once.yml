@@ -1,0 +1,72 @@
+name: V31 C13 - Canary sem publicar, R2 real e historicos (one-shot SAFE)
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_c13_canary_once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  canario-end-to-end-sem-publicar:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar somente cliente R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Compilacao e regressao de todas as fontes originais
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m py_compile casa_decoracao/src/build_editorial_queue.py casa_decoracao/src/generate_articles.py casa_decoracao/src/publish_generated.py
+          python -m py_compile oficina_garagem/src/build_editorial_queue.py oficina_garagem/src/generate_articles.py oficina_garagem/src/publish_generated.py
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Auditoria de historico real do checkout (sem rede)
+        run: python -m affiliate_hub_v31.history_readiness --site all
+      - name: Auditar R2 real por blog e reserva de 3 dias (somente leitura)
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.shadow_audit --site all
+      - name: Casa — fila ORIGINAL construída em temp a partir do R2 REAL
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.c7_legacy_queue_probe --site wordpress_casa_decoracao --project casa_decoracao --limit 10
+      - name: Oficina — fila ORIGINAL construída em temp a partir do R2 REAL
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.c7_legacy_queue_probe --site wordpress_oficina_garagem --project oficina_garagem --limit 10
+      - name: Radar — scanner original erro 1000 SIMULADO, R2 real, fila completa em temp
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.c9_radar_router_probe
+      - name: Regressao de qualidade Casa Oficina e cross-blog (sem publicar)
+        run: |
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
