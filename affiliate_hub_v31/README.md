@@ -1,5 +1,12 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C20 — Intake SAFE para blogs futuros e fila separada de revisão (17/11/2026)
+
+- O tema do próximo blog **não é antecipado**: `future_site_intake.py` recebe assunto e plataforma (Blogger ou WordPress) quando solicitados, consulta categorias L1/L2 e entrega separadamente candidatos já elegíveis e itens **pendentes de revisão**, com causas de bloqueio. `product_discovery.discover(..., include_review=True, review_only=True)` impede mistura entre os dois grupos.
+- O seletor não cria blogs, não reserva pautas, não converte links, não atribui campanha a blogs inexistentes, não aprova automaticamente produtos e nunca publica. A saída de CI é agregada, sem títulos/URLs/IDs. Links de campanhas anteriores jamais são reutilizados em outro blog.
+- **203 testes offline PASS** no [run 44185865913](https://github.com/adelrib27/blogger-automation1/actions/runs/44185865913). **Canário R2 real PASS** no [run 44186244836](https://github.com/adelrib27/blogger-automation1/actions/runs/44186244836): 203.649 produtos + 203.649 índices FTS5 e 17 links preservados; consultas Air Fryer/Guarda-Roupa/Freio com 12 candidatos aprovados e 12 em fila de revisão cada, **0** escritas R2, conversões, posts ou blogs criados.
+- Os **194.964 pendentes do C19 não foram liberados**. Resta integrar o adaptador aos geradores existentes após autorização para um blog concreto, desenvolver curadoria adicional e controlar conversões reais por campanha. PR #52 continua DRAFT, main e flags LIVE intocadas. [Checkpoint C20](CHECKPOINT_C20_SAFE_FUTURE_SITE_R2_2026-11-17.md), código `V31-EDITORIAL-C20-R2-INTAKE-203649-17LINKS-203TESTS-20261117`.
+
 ## Escopo canônico (15/11/2026)
 
 Este projeto opera **exclusivamente para blogs Blogger e WordPress**. Pinterest e redes sociais têm projetos separados e **não fazem parte** deste módulo.
