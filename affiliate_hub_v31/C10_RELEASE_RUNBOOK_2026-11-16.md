@@ -68,3 +68,13 @@ GitHub **Repository variables**, não Secrets; se ausentes, tratam-se como desli
 **Fora do escopo desta entrega:** não alterar agendas, cadência, scripts ou consultas das páginas de loja; não implementar por enquanto backoff indiscriminado, proxy ou roteamento baseado na suposição de que `1000` e `10030` são equivalentes.
 
 **Prioridade atual:** concluir o fallback CSV/R2, originalidade editorial, estoque por campanha, validação dos workflows existentes e rollout seguro; **depois** estudar a carga das lojas.
+
+## Atualização C13 — 17/11/2026
+
+- [Canário C13](https://github.com/adelrib27/blogger-automation1/actions/runs/44086403960) concluiu **137/137 testes V31**, 24 Casa, 21 Oficina, guard cross-blog, R2 real e filas originais Casa/Oficina/Radar em diretórios temporários. **Nenhum post foi publicado.**
+- Para a reutilização editorial, o histórico **atual da main** tem Casa 46 publicações (41 produtos com corpo histórico verificável) e Oficina 12 (somente 1 com corpo verificável). Reuso dos demais **bloqueado**, sem inventar histórico.
+- `queue_identity.py` protege os JSONs existentes em `data/generated/` contra colisões de ID quando a fila antiga foi reiniciada. Mantém comportamento anterior quando opt-in está OFF.
+- [Lote real único C13](https://github.com/adelrib27/blogger-automation1/actions/runs/44086617987) gerou **3/3 links afiliados reais** (uma campanha por blog), com R2 íntegro e zero posts.
+- **Novo estoque**: Casa **3/9**, Oficina **3/6**, Radar **7/15**. Faltam **17 links** para metas de três dias, portanto todos `NOT_READY`. **Não repetir este lote automaticamente** nem ligar flags.
+- A branch difere da `main` em históricos e filas; reconciliar via revisão/rebase antes de qualquer merge. Evitar sobrescrever estado de publicações que continuaram rodando na `main`.
+- [Checkpoint C13](CHECKPOINT_C13_REAL_CANARY_2026-11-17.md).
