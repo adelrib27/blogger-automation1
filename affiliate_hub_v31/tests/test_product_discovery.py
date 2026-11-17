@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from affiliate_hub_v31.catalog import Catalog
-from affiliate_hub_v31.product_discovery import discover,DiscoveryError
+from affiliate_hub_v31.product_discovery import discover,suggest_category_paths,DiscoveryError
 from affiliate_hub_v31.source_category_index import import_source_categories
 
 
@@ -54,6 +54,25 @@ class DiscoveryTests(unittest.TestCase):
                     "globalCategory1":l1,"globalCategory2":l2,
                 })
         return f
+
+    def test_suggest_paths_without_predefining_new_blog(self):
+        with Catalog(self.db) as c:
+            wardrobe=suggest_category_paths(c,topic="Guarda Roupa")
+            air=suggest_category_paths(c,topic="Air Fryer")
+            unusual=suggest_category_paths(c,topic="Termo Inexistente")
+        self.assertEqual(wardrobe[0]["category"],"home living")
+        self.assertEqual(wardrobe[0]["subcategory"],"furniture")
+        self.assertEqual(wardrobe[0]["previously_approved_matching_products"],0)
+        self.assertEqual(air[0]["category"],"home appliances")
+        self.assertEqual(unusual,[])
+        self.assertNotIn("affiliate_url",str(air))
+
+    def test_protected_path_suggestion_is_not_automatic_approval(self):
+        with Catalog(self.db) as c:
+            paths=suggest_category_paths(c,topic="Air Fryer")
+        health=next(x for x in paths if x["category"]=="health")
+        self.assertTrue(health["manual_review_required_for_root"])
+        self.assertEqual(health["previously_approved_matching_products"],0)
 
     def test_new_blog_cannot_receive_old_campaign_link(self):
         with Catalog(self.db) as c:
