@@ -187,6 +187,8 @@ class EditorialLedger:
         """, (brief.product_key,)).fetchone()
         if row is None or row[1:] != (brief.category,brief.niche):
             raise EditorialError("product_not_eligible")
+        if self.catalog.for_conversion(brief.product_key) is None:
+            raise EditorialError("product_source_policy_blocked")
         return row
 
     def reserve(self, brief: Brief) -> str:
@@ -242,6 +244,8 @@ class EditorialLedger:
         """,(product_key,)).fetchone()
         if not row:
             raise EditorialError("product_not_eligible")
+        if self.catalog.for_conversion(product_key) is None:
+            raise EditorialError("product_source_policy_blocked")
         for angle_id,*_ in ANGLES:
             brief=make_brief(site_key,product_key,row[0],row[1],row[2],angle_id)
             try:
