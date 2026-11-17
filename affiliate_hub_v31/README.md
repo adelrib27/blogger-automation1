@@ -15,6 +15,17 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+
+
+### C15 — Índice universal por categoria e nicho (17/11/2026)
+
+- **Pedido central do usuário:** organizar o catálogo dos dois CSVs por categorias e nichos, para que um novo blog escolha os produtos adequados **quando o tema for solicitado**, não antecipar as demandas de blogs inexistentes. Não criar um segundo gerador de artigos nem substituir o conversor Shopee que já funciona.
+- **`universal_index.py`** fornece `grouped_inventory(catalog)` (todo o acervo, incluindo pendentes) e `lookup(catalog,category,niche,query,campaign)` (produtos aprovados para um tema informado; link afiliado somente da própria campanha). Integra-se à tabela `product_taxonomy` e ao SQLite já guardado no R2, sem dependência de um blog.
+- **Auditoria R2 REAL**: [run 44115748746](https://github.com/adelrib27/blogger-automation1/actions/runs/44115748746), **109.507 produtos**, **4.674 atualmente classificados/aprovados** e **104.833 ainda em revisão**. Isso comprova que **a classificação de toda a base ainda NÃO está concluída**; pendentes ficam no catálogo e nunca são publicados como classificados.
+- A pré-conversão geral `library_pool.py` é opcional e independente dos blogs, não uma obrigação de definir previamente novos nichos/campanhas. A geração de URL afiliada para cada blog exige a campanha correta. **Nenhuma campanha universal foi inventada/ativada.**
+- **Pinterest/Pins fora do escopo**; Worker v1.0 de outro fluxo não deve ser presumido como componente existente ou dependência do V31. Nenhuma página de loja alterada.
+- [Checkpoint C15](CHECKPOINT_C15_UNIVERSAL_LIBRARY_2026-11-17.md).
+
 ### C14 — Main reconciliada com segurança, 17 links reais e flags OFF (17/11/2026)
 
 - [Prova de merge seco](https://github.com/adelrib27/blogger-automation1/actions/runs/44089068660): YAML de 118 workflows e 137/137 testes PASS, sem conflitos.
