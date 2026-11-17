@@ -41,7 +41,7 @@ jobs:
           from affiliate_hub_v31.site_launch_plan import preview_site_launch,summarize_site_launch
           from affiliate_hub_v31.curation_triage import triage_backlog
           from affiliate_hub_v31.source_policy_gate import source_safe_for_use
-          from affiliate_hub_v31.shadow_audit import load_profiles
+          from affiliate_hub_v31.shadow_audit import load_profiles,audit_site
           from affiliate_hub_v31.fallback_v23 import candidates_from_catalog,load_configuration
           from affiliate_hub_v31.link_warmup import warmup_candidates
           from affiliate_hub_v31.r2_state import R2State,verify_database
@@ -98,13 +98,20 @@ jobs:
                           assert source_safe_for_use(c,key), 'fallback_unsafe_source'
                       warm=warmup_candidates(c,profile['site_key'],cfg,rules,limit=1)
                       assert all(source_safe_for_use(c,key) for key in warm), 'warmup_unsafe_source'
-                      consumers.append({'cached_fallback_candidates':len(rows),
-                                        'warmup_candidates':len(warm)})
+                      shadow=audit_site(local,profile)
+                      consumers.append({'site_key':profile['site_key'],
+                                        'cached_fallback_candidates':len(rows),
+                                        'warmup_candidates':len(warm),
+                                        'usable_cached_products':shadow['usable_cached_products'],
+                                        'target_usable_products':shadow['target_usable_products'],
+                                        'missing_categories':shadow['required_categories_missing'],
+                                        'shadow_state':shadow['state']})
                   assert len(consumers)>=3
                   print('V31_C22_WORDPRESS_CONSUMER_R2_SAFE_PASS',
                         json.dumps({'consumers_evaluated':len(consumers),
                                     'usables':sum(v['cached_fallback_candidates'] for v in consumers),
                                     'warmup_samples':sum(v['warmup_candidates'] for v in consumers),
+                                    'site_details':consumers,
                                     'publication_calls':0,'conversion_calls':0,'r2_writes':0},
                                    sort_keys=True))
                   assert c.stats()==before, 'catalog_mutated'
