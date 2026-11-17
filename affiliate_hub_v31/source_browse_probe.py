@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .catalog import Catalog
 from .r2_state import R2State,verify_database
-from .source_category_index import browse_source,source_inventory
+from .source_category_index import browse_source,source_inventory,category_hierarchy
 
 
 def probe(storage: R2State)->dict:
@@ -30,6 +30,12 @@ def probe(storage: R2State)->dict:
             facets=source_inventory(cat)
             if facets["products_with_official_source_categories"]<100000:
                 raise ValueError("source_categories_not_ready")
+            top=category_hierarchy(cat)
+            second=category_hierarchy(cat,level1="Home & Living")
+            third=category_hierarchy(cat,level1="Home & Living",
+                                     level2="Furniture")
+            if len(top)<20 or not second or not third:
+                raise ValueError("three_level_navigation_incomplete")
             examples_result=[]
             for category,niche in examples:
                 # Campanha de blog inexistente, nunca atribuir os links
@@ -54,6 +60,9 @@ def probe(storage: R2State)->dict:
             "products_with_official_categories":
                 facets["products_with_official_source_categories"],
             "category_level1_groups":len(facets["level1_facets"]),
+            "navigable_level1":len(top),
+            "navigable_level2_home_living":len(second),
+            "navigable_level3_furniture":len(third),
             "simulated_nonexistent_blog_campaign":"blogfuturotest",
             "searches":examples_result,
             "shopee_requests":0,
