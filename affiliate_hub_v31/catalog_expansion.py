@@ -54,10 +54,10 @@ def fingerprint_original(catalog: Catalog) -> str:
     )
     for table,alias in tables:
         sha.update(table.encode("ascii"))
-        keys="p.product_key" if table!="affiliate_links" else "p.product_key,l.campaign"
+        keys="orig.product_key" if table!="affiliate_links" else "orig.product_key,l.campaign"
         sql=(
             f"SELECT {alias}.* FROM {table} {alias} "
-            f"JOIN temp.v31_original_keys p ON p.product_key={alias}.product_key "
+            f"JOIN temp.v31_original_keys orig ON orig.product_key={alias}.product_key "
             f"ORDER BY {keys}"
         )
         for row in catalog.db.execute(sql):
