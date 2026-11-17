@@ -68,5 +68,31 @@ class WarmupSelectionTests(unittest.TestCase):
                                   {"categories":{}},{},count)
 
 
+
+    def test_warmup_filters_source_protected_and_conflict_before_api_selection(self):
+        from affiliate_hub_v31.source_category_index import create_source_category_schema
+        create_source_category_schema(self.catalog)
+        with self.catalog.db:
+            self.catalog.db.execute("""
+                INSERT INTO product_source_categories
+                (product_key,source,level1,level2,level3,status)
+                VALUES(?,?,?,?,?,?)
+            """,("shopee:123:1","feed1","health","nutrition","","matched"))
+            self.catalog.db.execute("""
+                INSERT INTO product_source_categories
+                (product_key,source,level1,level2,level3,status)
+                VALUES(?,?,?,?,?,?)
+            """,("shopee:123:2","feed1","home living","decoration","","conflict"))
+        cfg={"categories":{"Area Externa":["luminaria solar jardim"]}}
+        rules={"rules":{"luminaria solar jardim":{
+            "require_groups":[["luminaria"],["solar"],["jardim"]],
+            "block_phrases":[]}}}
+        result=warmup_candidates(self.catalog,"wordpress_casa_decoracao",
+                                 cfg,rules,3)
+        self.assertEqual(result,[])
+        self.assertEqual(self.catalog.stats()["cached_affiliate_links"],0)
+        self.assertIsNone(self.catalog.for_conversion("shopee:123:1"))
+        self.assertIsNone(self.catalog.for_conversion("shopee:123:2"))
+
 if __name__=="__main__":
     unittest.main()
