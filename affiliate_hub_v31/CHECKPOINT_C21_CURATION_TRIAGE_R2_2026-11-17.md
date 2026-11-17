@@ -52,4 +52,4 @@ Na fila editorial, os grupos com maior diversidade observada incluem peças auto
 4. Coletar métricas reais autorizadas de tráfego/cliques/vendas por campanha antes de alegar ganho de conversão. Não expandir ritmo de API Shopee nem pré-converter em massa sem verificar cotas e pertinência editorial.
 5. Para futura promoção, revisar \`main\` e histórico atual da PR #52, gates de concorrência, flags, publicadores, integridade e possibilidade de rollback; **não liberar LIVE automaticamente**.
 
-**Estado ao fechar o C21:** código + testes + auditoria R2 real aprovados. Catálogo e links comerciais preexistentes intactos, LIVE OFF, PR #52 em DRAFT. Workflows temporários de canário devem ser excluídos após a execução final; guardar somente links dos runs e este checkpoint.
+**Estado ao fechar o C21:** código + testes + auditoria R2 real aprovados. Catálogo e links comerciais preexistentes intactos, LIVE OFF, PR #52 em DRAFT. Workflows e marcadores temporários de canário foram **excluídos** após o PASS da execução final; permaneceram somente links dos runs, testes, motor permanente e este checkpoint.
