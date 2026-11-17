@@ -15,6 +15,16 @@ Repositório: `adelrib27/blogger-automation1`. A implantação reside em uma bra
 
 Namespace isolado: `V31_EDITORIAL_...`. Nenhuma credencial real é versionada aqui, e os workflows comerciais existentes permanecem intactos. **Status atualizado:** Secrets e Variables no GitHub Environment `v31-editorial-safe` foram cadastrados e validados pelos testes reais do R2; consulte os checkpoints C3.2 e C4/C5.
 
+### C13 — Canário R2 REAL, histórico atual da main e 14 links válidos (17/11/2026)
+
+- [Canário E2E C13](https://github.com/adelrib27/blogger-automation1/actions/runs/44086403960) **SUCCESS**: 137/137 testes V31, 24 Casa, 21 Oficina, guard cross-blog; construtores originais Casa/Oficina + Radar erro 1000 **simulado** com R2 real e 5 slots, **ZERO publicação**.
+- Auditoria do checkout da branch e do **histórico atual da `main`** em pasta temporária: Casa **46 publicações, 41 itens com corpo histórico verificável**, Oficina **12 publicações, apenas 1 item com corpo verificável**. Ausência do corpo proíbe reutilização do produto; o PR está divergente da `main` e precisa ser reconciliado antes do merge.
+- `queue_identity.py`: durante o opt-in editorial, IDs de fila são sempre maiores que os drafts já existentes em `data/generated`, mesmo quando fila antiga foi zerada. Protege os artigos antigos de sobrescrita.
+- [Lote real controlado](https://github.com/adelrib27/blogger-automation1/actions/runs/44086617987) **SUCCESS**: 3 tentativas/3 links afiliados Shopee convertidos (1 por campanha), 1 snapshot R2 persistido e restaurado/verificado, nenhum post.
+- **Novo estoque:** Casa **3/9**, Oficina **3/6**, Radar **7/15** links em cache, 5/5 categorias Radar cobertas; total **14 links incluindo 1 Blogger**. Faltam 17 links para a reserva inicial de três dias. Todos permanecem `NOT_READY` para fallback automático.
+- Workflows C13 temporários retirados; **nenhum agendamento de loja modificado e nenhum switch de publicação ativado**.
+- [Checkpoint C13](CHECKPOINT_C13_REAL_CANARY_2026-11-17.md), continuidade `V31-EDITORIAL-C13-CANARY-137-REAL-R2-14-LINKS-20261117`. Próximo passo: C14, reposição gradual e reconciliação de PR/produção.
+
 ### C11/C12 — Reuso editorial sem repetição de título nem corpo (16/11/2026)
 
 - **Recurso opt-in e desativado por padrão**: além de `V31_EDITORIAL_C9_RELEASE_ENABLED` e da flag de cada blog, exige `V31_EDITORIAL_PRODUCT_REUSE_ENABLED=true`. Reutilizar o produto NÃO equivale a repetir a matéria.
