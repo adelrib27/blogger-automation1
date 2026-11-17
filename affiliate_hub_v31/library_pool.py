@@ -23,7 +23,6 @@ from pathlib import Path
 from .catalog import Catalog
 from .converter import ConversionError, convert_one, valid_campaign
 from .r2_state import R2State, verify_database
-from .source_category_index import create_source_category_schema
 from .source_policy_gate import source_safe_for_use
 
 
@@ -57,7 +56,6 @@ def library_candidates(catalog: Catalog, campaign: str, limit: int = 3,
           AND l.product_key IS NULL
         ORDER BY t.category,t.niche,p.product_key
     """, (campaign,)).fetchall()
-    create_source_category_schema(catalog)
     pools: dict[tuple[str, str], list[str]] = defaultdict(list)
     for key, category, niche in rows:
         if source_safe_for_use(catalog,key):
