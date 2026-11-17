@@ -1,4 +1,4 @@
-name: V31 C18 - Auditar curadoria universal R2 e conflitos Shopee (SAFE once)
+name: V31 C18 - Validar selecao editorial R2 e categorias protegidas (SAFE once)
 
 on:
   push:
@@ -40,3 +40,10 @@ jobs:
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
         run: python -m affiliate_hub_v31.curation_audit
+      - name: Selecionar produtos reais por assunto de blog hipotetico, sem converter
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.discovery_probe
