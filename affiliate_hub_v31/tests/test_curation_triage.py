@@ -222,5 +222,28 @@ class CurationTriageTests(unittest.TestCase):
 
 
 
+    def test_conversion_and_library_preselection_fail_closed_for_bad_source(self):
+        from unittest.mock import patch
+        from affiliate_hub_v31.converter import ConversionError, convert_one
+        from affiliate_hub_v31.library_pool import library_candidates
+        with Catalog(self.db) as cat:
+            self.assertIsNone(cat.for_conversion("shopee:808:8"))
+            self.assertIsNone(cat.for_conversion("shopee:909:9"))
+            self.assertIsNotNone(cat.for_conversion("shopee:101:1"))
+            selected=library_candidates(cat,"newcampaign",3,rotation=0)
+            self.assertEqual(selected,["shopee:101:1"])
+            with patch("affiliate_hub_v31.converter.generate_shortlink",
+                       side_effect=AssertionError("API forbidden")) as mock:
+                with self.assertRaisesRegex(ConversionError,
+                                            "not_eligible_for_conversion"):
+                    convert_one(cat,"shopee:909:9","newcampaign","ID","SECRET")
+                with self.assertRaisesRegex(ConversionError,
+                                            "not_eligible_for_conversion"):
+                    convert_one(cat,"shopee:808:8","newcampaign","ID","SECRET")
+                self.assertEqual(mock.call_count,0)
+            self.assertEqual(cat.cached_link("shopee:101:1","blogantigo"),
+                             "https://s.shopee.com.br/existing-real-link")
+
+
 if __name__=="__main__":
     unittest.main()
