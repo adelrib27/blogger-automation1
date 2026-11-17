@@ -36,6 +36,40 @@ class SearchIndexTests(DiscoveryTests):
             self.assertEqual(first["index_rows"],second["index_rows"])
             self.assertEqual(second["index_rows"],7)
 
+    def test_two_feed_import_keeps_fts_synchronized(self):
+        import csv
+        from affiliate_hub_v31.ingest import ingest_two
+        with Catalog(self.db) as cat:
+            rebuild_index(cat)
+        feeds=[]
+        for number,title in (
+            ("900","Air Fryer Nova Para Cozinha"),
+            ("901","Guarda Roupa Moderno de Casal")
+        ):
+            path=self.root/("fresh_"+number+".csv")
+            with path.open("w",encoding="utf-8",newline="") as handle:
+                writer=csv.DictWriter(handle,fieldnames=[
+                    "shopId","itemId","productName","productLink","imageUrl"
+                ])
+                writer.writeheader()
+                writer.writerow({
+                    "shopId":"999","itemId":number,"productName":title,
+                    "productLink":f"https://shopee.com.br/product/999/{number}",
+                    "imageUrl":"https://cf.shopee.com.br/file/new"
+                })
+            feeds.append(path)
+        ingest_two(self.db,feeds[0],feeds[1])
+        with Catalog(self.db) as cat:
+            self.assertTrue(has_index(cat))
+            self.assertEqual(cat.db.execute(
+                "SELECT COUNT(*) FROM v31_catalog_fts"
+            ).fetchone()[0],9)
+            self.assertEqual(cat.stats()["cached_affiliate_links"],2)
+            self.assertEqual(cat.db.execute("""
+                SELECT COUNT(*) FROM v31_catalog_fts
+                WHERE v31_catalog_fts MATCH ?
+            """,('"nova" AND "cozinha"',)).fetchone()[0],1)
+
     def test_invalid_fts_query_fails_to_nonindexed_fallback(self):
         with Catalog(self.db) as cat:
             self.assertIsNone(safe_match_expression(('x" OR 1=1 --',)))
