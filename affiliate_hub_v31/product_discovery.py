@@ -15,6 +15,7 @@ from .converter import valid_campaign
 from .curation_audit import PROTECTED_ROOTS
 from .source_category_index import create_source_category_schema
 from .taxonomy import normalize
+from .title_index import fts_condition
 
 STOPWORDS = frozenset((
     "com","sem","para","como","que","uma","uns","umas","por","sobre",
@@ -33,7 +34,8 @@ def _terms(text: str) -> tuple[str,...]:
 
 
 def _facet_rows(catalog: Catalog, *, category: str | None,
-                subcategory: str | None, include_review: bool):
+                subcategory: str | None, include_review: bool,
+                terms: tuple[str,...]):
     create_source_category_schema(catalog)
     where=["1=1"]
     params=[]
@@ -45,6 +47,10 @@ def _facet_rows(catalog: Catalog, *, category: str | None,
         params.append(normalize(subcategory))
     if not include_review:
         where+=["p.moderation='eligible'","t.status='matched'"]
+    indexed_condition,indexed_args=fts_condition(catalog,terms)
+    if indexed_condition:
+        where.append(indexed_condition)
+        params.extend(indexed_args)
     # Rejeitar divergências L1/L2/L3 entre feeds; não escolher um produto
     # com classificação contraditória somente por uma das fontes.
     # Sem faceta oficial, produto antigo aprovado ainda pode aparecer no
@@ -106,7 +112,7 @@ def discover(catalog: Catalog, *, topic: str,
     ranked=[]
     for row in _facet_rows(catalog,category=category,
                            subcategory=subcategory,
-                           include_review=include_review):
+                           include_review=include_review,terms=terms):
         (key,shop,title,description,origin,image,moderation,tax_status,
          l1,l2,l3)=row
         if not host_allowed(origin) or not str(image).startswith("https://"):
@@ -182,6 +188,8 @@ def suggest_category_paths(catalog: Catalog, *, topic: str,
         raise DiscoveryError("limit_invalid")
     min_hits=1 if len(terms)==1 else max(2,(len(terms)*2+2)//3)
     create_source_category_schema(catalog)
+    indexed_condition,indexed_args=fts_condition(catalog,terms)
+    indexed_where=(" WHERE "+indexed_condition) if indexed_condition else ""
     rows=catalog.db.execute("""
         WITH facets AS (
           SELECT product_key,MIN(level1) AS l1,MIN(level2) AS l2,
@@ -194,7 +202,7 @@ def suggest_category_paths(catalog: Catalog, *, topic: str,
         FROM products p
         JOIN facets f ON f.product_key=p.product_key AND f.branches=1
         LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
-    """)
+    """+indexed_where,indexed_args)
     counts=Counter()
     approved=Counter()
     for title,moderation,status,l1,l2 in rows:
