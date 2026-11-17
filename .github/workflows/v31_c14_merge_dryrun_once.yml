@@ -1,0 +1,60 @@
+name: V31 C14 - Prova de merge seco com main e contratos YAML
+
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - '.github/workflows/v31_c14_merge_dryrun_once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validar-merge-sem-escrever:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar sintaxe YAML de todos os workflows SEM executar
+        run: |
+          python -m pip install 'PyYAML>=6,<7'
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          workflows=list(Path(".github/workflows").glob("*.yml"))
+          for path in workflows:
+              with path.open(encoding="utf-8") as stream:
+                  data=yaml.load(stream,yaml.BaseLoader)
+              assert isinstance(data,dict) and "jobs" in data, str(path)
+          print("V31_C14_WORKFLOWS_YAML_PASS",len(workflows))
+          PY
+      - name: Simular merge no Git sem checkout, sem push e sem alterar main
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          set +e
+          git merge-tree --write-tree origin/main HEAD > /tmp/v31_merge_result.txt
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo "V31_C14_MERGE_DRY_RUN_PASS"
+          elif [ "$rc" -eq 1 ]; then
+            echo "V31_C14_MERGE_DRY_RUN_CONFLICT"
+            grep '^CONFLICT ' /tmp/v31_merge_result.txt | sed -E 's/^CONFLICT /CONFLICT_DETECTED /' | head -n 30 || true
+            exit 4
+          else
+            echo "V31_C14_MERGE_DRY_RUN_TOOL_ERROR"
+            exit 5
+          fi
+      - name: Validar testes de segurança e interface offline
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
