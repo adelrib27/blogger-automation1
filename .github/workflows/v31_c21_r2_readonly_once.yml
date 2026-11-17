@@ -46,6 +46,8 @@ jobs:
           from affiliate_hub_v31.source_policy_gate import source_safe_for_use
           from affiliate_hub_v31.source_category_index import browse_source
           from affiliate_hub_v31.curation_audit import PROTECTED_ROOTS
+          from affiliate_hub_v31.library_pool import library_candidates
+          from affiliate_hub_v31.universal_index import lookup
 
           with tempfile.TemporaryDirectory(prefix='v31-c21-audit-') as td:
               path=Path(td)/'catalog.sqlite3'
@@ -82,6 +84,14 @@ jobs:
                       for product in browse_source(catalog,level1=root,limit=20):
                           assert product['editorial_approved'] is False, 'protected_browse_leak'
                           assert not product.get('affiliate_url'), 'protected_campaign_link_leak'
+                  # None of the legacy source-blocked SKUs can be reconverted.
+                  for (key,) in approved:
+                      if not source_safe_for_use(catalog,key):
+                          assert catalog.for_conversion(key) is None, 'conversion_guard_leak'
+                  planned=library_candidates(catalog,'v31c21auditonly',3,rotation=0)
+                  assert all(source_safe_for_use(catalog,key) for key in planned)
+                  candidates=lookup(catalog,query='Air Fryer',limit=12)
+                  assert all(source_safe_for_use(catalog,x['product_key']) for x in candidates)
                   print('V31_C21_LEGACY_SOURCE_GUARD_PASS',json.dumps({
                       'legacy_approved_but_source_blocked': blocked,
                       'protected_roots_checked':len(PROTECTED_ROOTS),
