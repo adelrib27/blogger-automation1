@@ -17,6 +17,7 @@ from .converter import ConversionError, convert_one
 from .fallback_v23 import FallbackUnavailable, load_configuration, semantic_score
 from .r2_state import R2State
 from .routing import sites
+from .source_policy_gate import source_safe_for_use
 
 MAX_WARMUP_PER_RUN = 3
 
@@ -46,6 +47,9 @@ def warmup_candidates(catalog: Catalog, site_key: str, config: dict,
         AND l.product_key IS NULL
       ORDER BY p.product_key
     """,(site["campaign"],)).fetchall()
+    # Filtrar antes de distribuir keywords evita tentativas Shopee em SKU
+    # que eram aprovados apenas pelos gates legados.
+    all_rows=[row for row in all_rows if source_safe_for_use(catalog,row[0])]
     already=candidates_from_catalog(catalog.path,site_key,config,rules,limit=100)
     covered={cat for row in already for cat in row.get("categories",[])}
     categories=list(config["categories"])
