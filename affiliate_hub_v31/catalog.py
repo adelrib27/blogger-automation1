@@ -283,6 +283,25 @@ class Catalog:
         row = self.db.execute("SELECT affiliate_url FROM affiliate_links WHERE product_key=? AND campaign=?", (key, campaign)).fetchone()
         return row[0] if row else None
 
+    def _safe_catalog_rows(self, cursor, limit: int) -> list[tuple]:
+        """Filtra fontes antes do limite; nenhum acesso remoto ou escrita.
+
+        A filtragem tardia com SQL LIMIT perderia candidatos corretos caso
+        os primeiros SKUs estivessem bloqueados por categoria de origem.
+        """
+        from .source_policy_gate import source_safe_for_use
+        selected = []
+        for row in cursor:
+            key, _title, origin, image = row[:4]
+            if not host_allowed(origin) or not str(image).startswith("https://"):
+                continue
+            if not source_safe_for_use(self, key):
+                continue
+            selected.append(tuple(row))
+            if len(selected) >= limit:
+                break
+        return selected
+
     def candidates(self, campaign: str, limit: int = 20, *, category: str | None = None,
                    niche: str | None = None):
         if not re.fullmatch(r"[a-z0-9_-]{1,32}", campaign):
@@ -300,11 +319,11 @@ class Catalog:
         if niche is not None:
             clauses.append("t.niche=?")
             params.append(niche)
-        params.append(limit)
-        return self.db.execute("""SELECT p.product_key,p.title,p.origin_url,p.image_url
+        cursor = self.db.execute("""SELECT p.product_key,p.title,p.origin_url,p.image_url
             FROM products p JOIN product_taxonomy t ON t.product_key=p.product_key
             LEFT JOIN affiliate_links l ON l.product_key=p.product_key AND l.campaign=?
-            WHERE """ + " AND ".join(clauses) + " ORDER BY p.product_key LIMIT ?", params).fetchall()
+            WHERE """ + " AND ".join(clauses) + " ORDER BY p.product_key", params)
+        return self._safe_catalog_rows(cursor,limit)
 
     def select_products(self, campaign: str, limit: int = 20, *, category: str | None = None,
                         niche: str | None = None):
@@ -328,13 +347,13 @@ class Catalog:
         if niche is not None:
             clauses.append("t.niche=?")
             params.append(niche)
-        params.append(limit)
-        return self.db.execute("""SELECT p.product_key,p.title,p.origin_url,p.image_url,
+        cursor = self.db.execute("""SELECT p.product_key,p.title,p.origin_url,p.image_url,
               CASE WHEN l.product_key IS NULL THEN 0 ELSE 1 END AS has_cached
             FROM products p JOIN product_taxonomy t ON t.product_key=p.product_key
             LEFT JOIN affiliate_links l ON l.product_key=p.product_key AND l.campaign=?
             WHERE """ + " AND ".join(clauses) +
-            " ORDER BY has_cached DESC,p.product_key LIMIT ?", params).fetchall()
+            " ORDER BY has_cached DESC,p.product_key", params)
+        return self._safe_catalog_rows(cursor,limit)
 
     def integrity(self) -> bool:
         return self.db.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
