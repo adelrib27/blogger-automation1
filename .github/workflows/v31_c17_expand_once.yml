@@ -1,4 +1,4 @@
-name: V31 C17 - Expandir biblioteca histórica R2 (dry-run SAFE)
+name: V31 C17 - Persistir biblioteca cumulativa R2 (SAFE one-shot)
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  conservar-historico-antes-de-expandir:
+  persistir-historico-conservado:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115'
@@ -33,7 +33,7 @@ jobs:
         run: |
           python -m compileall -q affiliate_hub_v31
           python -m unittest discover -s affiliate_hub_v31/tests -q
-      - name: Acrescentar novos produtos e categorias apenas em arquivo TEMPORARIO
+      - name: Acrescentar novos produtos, verificar hashes, salvar E restaurar 1 snapshot R2
         env:
           V31_EDITORIAL_DATAFEED_URL_1: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_1 }}
           V31_EDITORIAL_DATAFEED_URL_2: ${{ secrets.V31_EDITORIAL_DATAFEED_URL_2 }}
@@ -41,4 +41,4 @@ jobs:
           V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
-        run: python -m affiliate_hub_v31.catalog_expansion
+        run: python -m affiliate_hub_v31.catalog_expansion --execute
