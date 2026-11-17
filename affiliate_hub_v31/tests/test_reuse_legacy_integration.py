@@ -70,6 +70,9 @@ class ReuseIntegrations(unittest.TestCase):
             with self.subTest(project=project):
                 paths,old_title=self.prepare(project)
                 module=load_script(project,"build_editorial_queue")
+                # Isolar também a raiz dos drafts para que o teste nunca
+                # examine os 101+ artigos reais versionados da branch.
+                module.ROOT=self.root
                 for key,path in paths.items():
                     setattr(module,key,path)
                 with patch.object(module,"REUSE_ENABLED",False):
@@ -89,6 +92,25 @@ class ReuseIntegrations(unittest.TestCase):
                 self.assertTrue(items[0]["reuse_candidate"])
                 self.assertEqual(items[0]["prior_publication_count"],1)
                 self.assertEqual(items[0]["prior_titles"],[old_title])
+
+    def test_reuse_never_overwrites_previously_generated_article(self):
+        for project in ("casa_decoracao","oficina_garagem"):
+            with self.subTest(project=project):
+                paths,_=self.prepare(project)
+                generated=self.root/project/"data/generated"
+                generated.mkdir(parents=True)
+                original=generated/"099.json"
+                original.write_text('{"immutable":true}',encoding="utf-8")
+                module=load_script(project,"build_editorial_queue")
+                module.ROOT=self.root
+                for key,path in paths.items():
+                    setattr(module,key,path)
+                with patch.object(module,"REUSE_ENABLED",True):
+                    module.main()
+                items=json.loads(paths["OUT"].read_text(encoding="utf-8"))["items"]
+                self.assertEqual(items[0]["id"],100)
+                self.assertEqual(original.read_text(encoding="utf-8"),
+                                 '{"immutable":true}')
 
     def test_actual_publishers_history_append_allows_different_title_only(self):
         for project in ("casa_decoracao","oficina_garagem"):
