@@ -1,5 +1,13 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C56 — Artigo afiliado V31 completo: foto real, links e CTA + geração Blogger SAFE (18/11/2026)
+
+- **Três posts LIVE** do Blogger Móveis para Cada Canto receberam foto original do produto via URL dos CSVs/R2, CTA Shopee verificado para sua campanha, âncora em palavra-chave, aviso de afiliado e **2 links internos reais por artigo**, confirmados por releitura da Blogger API.
+- [PR #71](https://github.com/adelrib27/blogger-automation1/pull/71) (C54) padronizou fotos, CTA e links internos nos adaptadores Blogger e WordPress, com gates de produto, origem, campanha e URL da imagem.
+- [PR #72](https://github.com/adelrib27/blogger-automation1/pull/72) (C55) configurou novo gerador agendado de **até um rascunho Blogger por dia**, usando conteúdo original do Workers AI, imagem CSV, links reais, quota total do pedido e nenhum post LIVE. [PR #73](https://github.com/adelrib27/blogger-automation1/pull/73) corrigiu a API Blogger; [canário real](https://github.com/adelrib27/blogger-automation1/actions/runs/44394545587) confirmou **3/3 artigos já publicados → nenhum quarto post**.
+- [PR #74](https://github.com/adelrib27/blogger-automation1/pull/74) (C56) migrou geração IA para modelo Workers AI compatível com JSON estruturado; [teste REAL C56](https://github.com/adelrib27/blogger-automation1/actions/runs/44395785068) produziu 8 parágrafos/635 palavras válidas sem postagens; [CI](https://github.com/adelrib27/blogger-automation1/actions/runs/44395583618) **330 V31 +24 Casa +21 Oficina +cross-blog PASS**.
+- [Checkpoint C56](CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md). **Primeiro cron agendado futuro e primeiro novo draft com quota aberta ainda não observados**; WordPress recebeu renderizador C54, mas cron C55 é especificamente Blogger. Publicação LIVE automática continua desligada.
+
 ### C49 — Três guias originais de móveis no Blogger, prontos para revisão (18/11/2026)
 
 - O proprietário solicitou **3 artigos iniciais**, sem obrigatoriedade de depender da API Shopee. No Blogger real [Móveis para Cada Canto](https://moveisparacadacanto.blogspot.com/) foram criados e verificados **três rascunhos** separados por ambiente: sala (sofá), quarto (guarda-roupa) e home office (mesa/cadeira). **Nenhum publicado** e nenhum link comercial inserido sem verificar pertinência.
