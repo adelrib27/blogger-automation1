@@ -2,12 +2,12 @@ name: V31 Mala Pronta - Shopee Loja mensal (isolado)
 on:
   pull_request:
     paths:
+      - ".github/workflows/mala_pronta_rotation_daily_v31.yml"
       - "mala_pronta_viagem_pratica/rotation_daily_v31.py"
   push:
     branches: [main]
     paths:
       - "mala_pronta_viagem_pratica/rotation_daily_v31.py"
-      - ".github/workflows/mala_pronta_rotation_daily_v31.yml"
   workflow_dispatch:
   schedule:
     # 09:17 UTC = 06:17 Recife (GMT-3); GitHub pode atrasar.
@@ -27,7 +27,7 @@ jobs:
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
-      # PR/manual = SAFE; push main e schedule = LIVE.
+      # PR, push e manual: SAFE. Somente schedule mensal executa LIVE.
       MALA_STORE_DRY_RUN: ${{ (github.event_name == 'schedule') && 'false' || 'true' }}
     steps:
       - uses: actions/checkout@v4
