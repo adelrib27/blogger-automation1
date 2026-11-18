@@ -1,0 +1,70 @@
+name: V31 C31 TEMP MAIN - E2E 3 WordPress fallback R2 sem posts
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - affiliate_hub_v31/C31_FINAL_FALLBACK_E2E_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  e2e-cached-ranking-no-posts:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar R2 boto3
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Testes V31, Casa, Oficina e guard sem rede
+        run: |
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
+      - name: Auditoria de reservas reais no R2 3x SHADOW_READY
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.shadow_audit --site all
+          python - <<'PY'
+          import json,tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.fallback_v23 import run_cloud
+          from affiliate_hub_v31.radar_legacy_adapter import build_from_ranking
+          from affiliate_hub_v31.shadow_audit import load_profiles
+          keys=['wordpress_casa_decoracao','wordpress_oficina_garagem','wordpress_radartechbr']
+          profiles=load_profiles()
+          with tempfile.TemporaryDirectory(prefix='v31-c31-real-e2e-') as t:
+              root=Path(t)
+              for key in keys:
+                  p=profiles[key]
+                  out=root/key
+                  count=run_cloud(key,p['_config_file'],p['_rules_file'],out,limit=100)
+                  expected=p['daily_slots']*p['reserve_days']
+                  doc=json.loads((out/'ranking.json').read_text(encoding='utf-8'))
+                  rows=doc['ranking']
+                  if count < expected or count != len(rows):
+                      raise SystemExit('V31_C31_E2E_RESERVE_NOT_READY:'+key)
+                  if any(row.get('sourceModes') != ['csv_r2_verified_affiliate_cache'] for row in rows):
+                      raise SystemExit('V31_C31_E2E_UNVERIFIED_LINK:'+key)
+                  if any((row.get('commission') is not None or row.get('sales') is not None) for row in rows):
+                      raise SystemExit('V31_C31_E2E_UNVERIFIED_METRICS:'+key)
+                  if key=='wordpress_radartechbr':
+                      result=build_from_ranking(out/'ranking.json',root/'radar_queue.json')
+                      if not (result['complete'] and result['slots']==5 and result['unique_shops']==5 and result['unique_keywords']==5):
+                          raise SystemExit('V31_C31_E2E_RADAR_QUEUE_FAILED')
+                      print('V31_C31_RADAR_ORIGINAL_QUEUE_5_SLOTS_5_SHOPS_PASS')
+                  print('V31_C31_R2_FALLBACK_PASS:'+key+':'+str(count)+'/'+str(expected))
+          print('V31_C31_3WP_E2E_R2_NO_POSTS_PASS')
+          PY
