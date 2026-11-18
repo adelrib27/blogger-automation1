@@ -117,6 +117,7 @@ def candidates_from_catalog(db_path: Path, site_key: str,
         raise FallbackUnavailable("limit_invalid")
     campaign=site["campaign"]
     allowed=set(site["allowed_niches"])
+    source_paths=set(site.get("allowed_source_paths",[]))
     config_categories=config.get("categories")
     if not isinstance(config_categories,dict):
         raise FallbackUnavailable("categories_invalid")
@@ -137,6 +138,24 @@ def candidates_from_catalog(db_path: Path, site_key: str,
             # Usar a conexao somente leitura; nao instanciar Catalog.
             source_view=SimpleNamespace(db=conn)
             rows=[row for row in rows if source_safe_for_use(source_view,row[0])]
+            source_keys=set()
+            if source_paths:
+                exists=conn.execute("""
+                  SELECT 1 FROM sqlite_master
+                  WHERE type='table' AND name='product_source_categories'
+                """).fetchone()
+                if exists:
+                    for row in rows:
+                        key=row[0]
+                        matched=conn.execute("""
+                          SELECT 1 FROM product_source_categories
+                          WHERE product_key=? AND status='matched'
+                            AND (level1 || '/' || level2) IN (
+                        """ + ",".join("?" for _ in source_paths) + """
+                            ) LIMIT 1
+                        """,(key,*sorted(source_paths))).fetchone()
+                        if matched:
+                            source_keys.add(key)
     except (sqlite3.Error,OSError):
         raise FallbackUnavailable("catalog_unavailable") from None
 
@@ -146,7 +165,8 @@ def candidates_from_catalog(db_path: Path, site_key: str,
         for keyword in keywords:
             alternatives=0
             for key,item_id,title,image,shop,origin,offer,cat,niche in rows:
-                if (key in used or f"{cat}/{niche}" not in allowed or
+                if (key in used or
+                        (f"{cat}/{niche}" not in allowed and key not in source_keys) or
                         not str(item_id).isdigit() or
                         not str(shop).isdigit() or
                         not str(image).startswith("https://") or
