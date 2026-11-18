@@ -43,10 +43,15 @@ def valid_product_photo(url: str) -> bool:
 
 
 def _single_verified_offer(catalog: Catalog, *, site_key: str,
-                           product_key: str) -> tuple[str, str, str]:
+                           product_key: str,
+                           verified_site_route: dict | None = None
+                           ) -> tuple[str, str, str]:
     """Confere origem, moderação, catálogo, imagem e campanha EXATA."""
-    route = sites().get(site_key)
-    if not route or route.get("platform") not in ("blogger", "wordpress"):
+    # Adaptadores já verificam a rota real; não reconsultar outro registry.
+    route = verified_site_route if verified_site_route is not None else sites().get(site_key)
+    if (not isinstance(route, dict) or
+        route.get("site_key") != site_key or
+        route.get("platform") not in ("blogger", "wordpress")):
         raise CommerceArticleError("registered_site_required")
     if not isinstance(product_key, str) or not re.fullmatch(
             r"shopee:[0-9]+:[0-9]+", product_key):
@@ -66,10 +71,12 @@ def _single_verified_offer(catalog: Catalog, *, site_key: str,
 
 
 def product_offer_html(catalog: Catalog, *, site_key: str,
-                       product_key: str, topic: str) -> str:
+                       product_key: str, topic: str,
+                       verified_site_route: dict | None = None) -> str:
     """Foto da URL no CSV, âncora de palavra-chave e CTA para mesma oferta."""
     title, image, affiliate = _single_verified_offer(
-        catalog, site_key=site_key, product_key=product_key)
+        catalog, site_key=site_key, product_key=product_key,
+        verified_site_route=verified_site_route)
     if not isinstance(topic, str) or not 3 <= len(topic.strip()) <= 120:
         raise CommerceArticleError("article_topic_invalid")
     # Relevância básica adicional; a escolha editorial não é inferida do link.
@@ -93,7 +100,7 @@ def product_offer_html(catalog: Catalog, *, site_key: str,
     name = html.escape(title, quote=True)
     topic_escaped = html.escape(topic.strip(), quote=True)
     key = html.escape(product_key, quote=True)
-    attrs = 'rel="sponsored nofollow noopener noreferrer" target="_blank"'
+    attrs = 'rel="nofollow sponsored noopener noreferrer" target="_blank"'
     # Botão em CSS inline simples, compatível com Blogger e WordPress.
     button_style = (
         "display:inline-block;padding:12px 20px;"
