@@ -27,6 +27,13 @@ Construir uma biblioteca **UNIVERSAL**, permanente e independente de blogs/nicho
 
 Os números acima são o último estado comprovado nas execuções citadas, não alegações de que o R2/Jobs continuam idênticos hoje.
 
+## C58–C59 — WordPress universal validado em produção SAFE (18/11/2026)
+
+- **C58:** os agendamentos WordPress Casa/Oficina/Radar foram auditados, com Casa/Oficina inicialmente quebrando por importação do núcleo V31. [PR #75](https://github.com/adelrib27/blogger-automation1/pull/75) corrigiu imports dos geradores e incluiu links internos para posts REAIS do mesmo WordPress. [R2 + IA + WP C58](https://github.com/adelrib27/blogger-automation1/actions/runs/44407697822) PASS: Casa **9**, Oficina **6**, Radar **15** ofertas aprovadas com imagem real/campanha correta, Casa criou prévia efêmera 8 parágrafos/537 palavras, 2 links internos, 0 posts.
+- **C59:** [PR #76](https://github.com/adelrib27/blogger-automation1/pull/76) substituiu o Qwen3 antigo dos 3 fluxos WP por cliente Llama 3.3 JSON/HTML com gate. Primeira tentativa real bloqueou título curto; [PR #77](https://github.com/adelrib27/blogger-automation1/pull/77) retenta o plano sem baixar exigência. [C59 AI real 44410047121](https://github.com/adelrib27/blogger-automation1/actions/runs/44410047121) PASS: artigo Casa 743 palavras, `DRAFT_READY`, foto R2, Shopee campanha exata, CTA e 2 links internos, **0 posts**. [PR #78](https://github.com/adelrib27/blogger-automation1/pull/78) corrigiu imports também nos publicadores WordPress.
+- **Três workflows SAFE EXISTENTES passaram depois dos patches:** [Casa](https://github.com/adelrib27/blogger-automation1/actions/runs/44410965031), [Oficina](https://github.com/adelrib27/blogger-automation1/actions/runs/44410976595), [Radar](https://github.com/adelrib27/blogger-automation1/actions/runs/44410496620). Nenhum deles habilitou LIVE. Radar LIVE anterior bloqueou alegação de acessibilidade não comprovada e esse veto foi preservado.
+- [Checkpoint C58](affiliate_hub_v31/CHECKPOINT_C58_AUDITORIA_UNIVERSAL_ARTIGOS_WP_BLOGGER_2026-11-18.md) · [Checkpoint C59](affiliate_hub_v31/CHECKPOINT_C59_WORDPRESS_AI_UNIVERSAL_SAFE_2026-11-18.md). **Ainda não houve nova publicação WordPress comprovada após os patches nem writer universal para um NOVO WordPress**, pois um novo site precisa de credenciais e pedido reais. A próxima fase C60 trabalha esse caminho genérico em rascunho, com políticas de autorização separadas.
+
 ## 3. Blog piloto existente: sem recriar e sem novos posts por conta própria
 
 [Móveis para Cada Canto](https://moveisparacadacanto.blogspot.com/) — Blogger ID `1439741542627895062`, rota `affiliate_hub_v31/sites.d/blogger_moveis_para_cada_canto.json`, campanha `moveisparacadacanto`. Três artigos já publicados:
