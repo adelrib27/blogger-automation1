@@ -10,7 +10,11 @@ original dos SKUs e a campanha dos links não são alterados.
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+import argparse
+import json
 import sqlite3
+import tempfile
+from pathlib import Path
 
 from .curation_audit import PROTECTED_ROOTS
 from .taxonomy import normalize
@@ -179,3 +183,59 @@ def suggested_path_counts(sidecar: sqlite3.Connection, *,
          "approved_for_publication":False}
         for l1,l2,count in rows
     ]
+
+
+def review_dashboard(db: sqlite3.Connection, *, limit: int=20) -> dict:
+    """Relatório agregado sem títulos, IDs, URLs, campanhas ou status LIVE."""
+    paths=suggested_path_counts(db,limit=limit)
+    if not _exists(db,"v31_universal_inventory"):
+        raise ReviewHintsError("universal_inventory_missing")
+    total=db.execute("""
+       SELECT COUNT(*) FROM v31_universal_inventory
+       WHERE source_l1=? AND review_lane='NO_OFFICIAL_CATEGORY'
+         AND decision='review_required' AND can_convert=0
+    """,(NO_SOURCE,)).fetchone()[0]
+    confirmed=db.execute("""
+       SELECT COUNT(*) FROM v31_unclassified_review_hints WHERE review_only=1
+    """).fetchone()[0]
+    if confirmed>total:
+        raise ReviewHintsError("review_hint_count_exceeds_source")
+    return {
+        "mode":"C47_AGGREGATED_REVIEW_DASHBOARD_READONLY",
+        "unclassified_review_products":total,
+        "review_path_hint_products":confirmed,
+        "remaining_without_safe_hint":total-confirmed,
+        "most_represented_review_paths":paths,
+        "review_only":True,
+        "new_approvals":0,
+        "affiliate_conversion_calls":0,
+        "publication_calls":0,
+        "r2_writes":0,
+    }
+
+
+def main() -> int:
+    p=argparse.ArgumentParser(
+       description="Resumo privado de pistas L1/L2; nunca publicável")
+    p.add_argument("--limit",type=int,default=20)
+    args=p.parse_args()
+    try:
+        from .universal_index_storage import UniversalIndexStorage
+        with tempfile.TemporaryDirectory(prefix="v31-c47-review-") as td:
+            path=Path(td)/"review-index.sqlite3"
+            if not UniversalIndexStorage.from_env().restore_to(path):
+                raise ReviewHintsError("universal_index_missing")
+            with sqlite3.connect(f"file:{path.resolve()}?mode=ro",
+                                 uri=True) as db:
+                result=review_dashboard(db,limit=args.limit)
+        print("V31_C47_PRIVATE_REVIEW_DASHBOARD_READONLY_PASS")
+        print(json.dumps(result,sort_keys=True,ensure_ascii=False))
+        return 0
+    except Exception as exc:
+        print("V31_C47_PRIVATE_REVIEW_DASHBOARD_FAILED_"+
+              type(exc).__name__)
+        return 3
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
