@@ -1,9 +1,9 @@
-name: Cozinha Sem Complicação — Loja Shopee diária
+name: Cozinha Sem Complicação — Loja Shopee mensal
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "5 11 * * *"
+    - cron: "5 11 11 * *"
       timezone: "America/Recife"
 
 permissions:
