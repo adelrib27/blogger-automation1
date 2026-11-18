@@ -3,7 +3,7 @@ name: Estilo no Dia a Dia — Loja Shopee LIVE Controlada
 on:
   workflow_dispatch:
   schedule:
-    - cron: "50 7 * * *"
+    - cron: "50 7 14 * *"
       timezone: "America/Recife"
   push:
     paths:
