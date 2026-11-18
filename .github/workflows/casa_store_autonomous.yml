@@ -6,8 +6,8 @@ on:
     paths:
       - "casa_decoracao/store_live_kickoff.txt"
   schedule:
-    # America/Recife (UTC-3): 08:10 diariamente, antes do editorial das 09:17.
-    - cron: "10 11 * * *"
+    # America/Recife (UTC-3): 08:10 mensalmente, antes do editorial das 09:17.
+    - cron: "10 11 9 * *"
 
 permissions:
   contents: write
