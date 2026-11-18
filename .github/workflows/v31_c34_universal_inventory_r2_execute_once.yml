@@ -32,5 +32,22 @@ jobs:
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
         run: |
-          python -m affiliate_hub_v31.universal_inventory --execute
-          echo 'V31_C34_UNIVERSAL_INVENTORY_REAL_R2_PERSIST_RESTORE_PASS'
+          python - <<'PY'
+          import json
+          from affiliate_hub_v31.r2_state import StorageError
+          from affiliate_hub_v31.universal_inventory import run_r2
+          try:
+              status=run_r2(execute=True)
+              print('V31_C34_UNIVERSAL_INVENTORY_REAL_R2_PERSIST_RESTORE_PASS')
+              print(json.dumps(status,sort_keys=True,ensure_ascii=False))
+          except StorageError as e:
+              # Apenas código fixo do módulo R2, não incluir resposta HTTP/credenciais.
+              allow={'r2_snapshot_upload_failed','r2_snapshot_verification_failed',
+                     'r2_pointer_update_failed','r2_snapshot_download_failed',
+                     'snapshot_sha256_mismatch','sqlite_corruption','invalid_local_state',
+                     'r2_pointer_read_failed','retention_list_limit'}
+              reason=str(e)
+              print('V31_C34_STORAGE_DIAGNOSTIC_'+
+                    (reason if reason in allow else 'STORAGE_UNEXPECTED'))
+              raise SystemExit(3)
+          PY
