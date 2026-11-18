@@ -30,7 +30,7 @@ from .site_launch_plan import preview_site_launch
 from .taxonomy import normalize
 
 MAX_DRAFTS_PER_RUN=1
-WORKERS_MODEL="@cf/qwen/qwen3-30b-a3b-fp8"
+WORKERS_MODEL="@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 KEY_PATTERN=re.compile(r'data-v31-product-key="(shopee:[0-9]+:[0-9]+)"')
 
 
@@ -142,6 +142,9 @@ def _ai_response_text(response:dict)->str:
         raise AutoDraftError("ai_invalid_response")
     result=response.get("result")
     if isinstance(result,dict):
+        # JSON Mode may return a parsed object rather than a JSON string.
+        if isinstance(result.get("response"),dict):
+            return json.dumps(result["response"],ensure_ascii=False)
         text=result.get("response") or result.get("text")
         if isinstance(text,str) and text.strip():
             return text.strip()
@@ -216,7 +219,19 @@ def generate_original_paragraphs(*,product_name:str,topic:str,
        "messages":[
           {"role":"system","content":"Redator neutro de guias de compra. JSON puro; fatos não verificados são proibidos."},
           {"role":"user","content":prompt},
-       ],"max_tokens":3400,"temperature":0.4},timeout=150)
+       ],
+       "response_format":{
+          "type":"json_schema",
+          "json_schema":{
+             "type":"object",
+             "properties":{"paragraphs":{
+                "type":"array","items":{"type":"string"},
+                "minItems":7,"maxItems":9,
+             }},
+             "required":["paragraphs"],
+          },
+       },
+       "max_tokens":4200,"temperature":0.35},timeout=150)
     if response.status_code!=200:
         raise AutoDraftError("workers_ai_unavailable")
     return validate_generated_paragraphs(

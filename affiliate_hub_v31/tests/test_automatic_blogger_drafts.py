@@ -111,6 +111,17 @@ class AutoBloggerDraftTests(unittest.TestCase):
                 request=m.load_requests()[0],existing_posts=article_list(1))
         self.assertEqual(result["status"],"NO_VERIFIED_CAMPAIGN_PRODUCT_YET")
 
+    def test_worker_json_mode_parsed_response_and_supported_model(self):
+        self.assertEqual(m.WORKERS_MODEL,
+            "@cf/meta/llama-3.3-70b-instruct-fp8-fast")
+        response={"result":{"response":{
+            "paragraphs":worker_paragraphs()
+        }}}
+        text=m._ai_response_text(response)
+        paragraphs=m.validate_generated_paragraphs(
+            text,keyword="sofá retrátil")
+        self.assertEqual(len(paragraphs),7)
+
     def test_validates_blogger_id_and_blog_url(self):
         good={"id":ROUTE["identifier"],"url":URL}
         self.assertEqual(m.validate_remote_identity(ROUTE,good),URL)
