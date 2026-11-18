@@ -130,6 +130,26 @@ class ExpansionSafeTests(unittest.TestCase):
             self.assertEqual(catalog.cached_link("shopee:321:1","campaignold"),
                              "https://s.shopee.com.br/old-real-affiliate")
 
+    def test_universal_inventory_persists_on_refresh_without_approving_old_review(self):
+        report=expand(self.storage,(self.feed1,self.feed2),execute=True)
+        self.assertEqual(report["universal_inventory"]["products_indexed"],5)
+        self.assertEqual(report["universal_inventory"]["new_approvals"],0)
+        restored=self.root/"inventory_check.sqlite3"
+        self.storage.restore_to(restored)
+        with Catalog(restored) as cat:
+            rows=cat.db.execute("""
+              SELECT product_key,source_l1,source_l2,decision,can_convert
+              FROM v31_universal_inventory ORDER BY product_key
+            """).fetchall()
+            self.assertEqual(len(rows),5)
+            old=cat.db.execute("""
+              SELECT moderation FROM products WHERE product_key='shopee:321:9'
+            """).fetchone()[0]
+            self.assertEqual(old,"review")
+            self.assertEqual(cat.db.execute(
+                "SELECT count(*) FROM affiliate_links").fetchone()[0],1)
+        self.assertEqual(self.storage.writes,1)
+
     def test_second_run_does_not_add_duplicate_products(self):
         expand(self.storage,(self.feed1,self.feed2),execute=True)
         again=expand(self.storage,(self.feed1,self.feed2),execute=False)

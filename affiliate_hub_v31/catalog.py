@@ -355,5 +355,46 @@ class Catalog:
             " ORDER BY has_cached DESC,p.product_key", params)
         return self._safe_catalog_rows(cursor,limit)
 
+    def select_by_source_path(self, campaign: str, level1: str,
+                              level2: str, *, limit: int = 20):
+        """Novos nichos por categoria OFICIAL, mas só itens já aprovados.
+
+        Rota L1/L2 é descoberta na hora, não adicionada à taxonomia fixa.
+        Outros bloqueios (categorias sensíveis ou origem conflitante) nunca
+        são ignorados e o link de outra campanha não fica disponível.
+        """
+        from .taxonomy import normalize
+        if not re.fullmatch(r"[a-z0-9_-]{1,32}",campaign):
+            raise ValueError("Campanha inválida")
+        if not 1<=limit<=100:
+            raise ValueError("Limite inválido")
+        for path in (level1,level2):
+            if (not isinstance(path,str) or len(path)>120 or
+                not re.fullmatch(r"[a-z0-9][a-z0-9 ]{0,119}",path) or
+                normalize(path)!=path):
+                raise ValueError("Categoria oficial inválida")
+        exists=self.db.execute("""
+          SELECT 1 FROM sqlite_master WHERE type='table'
+          AND name='product_source_categories'
+        """).fetchone()
+        if not exists:
+            return []
+        cursor=self.db.execute("""
+          SELECT p.product_key,p.title,p.origin_url,p.image_url,
+            CASE WHEN l.product_key IS NULL THEN 0 ELSE 1 END AS has_cached
+          FROM products p
+          JOIN product_taxonomy t ON t.product_key=p.product_key
+          LEFT JOIN affiliate_links l
+            ON l.product_key=p.product_key AND l.campaign=?
+          WHERE p.moderation='eligible' AND t.status='matched'
+            AND EXISTS (
+              SELECT 1 FROM product_source_categories s
+              WHERE s.product_key=p.product_key AND s.status='matched'
+                AND s.level1=? AND s.level2=?
+            )
+          ORDER BY has_cached DESC,p.product_key
+        """,(campaign,level1,level2))
+        return self._safe_catalog_rows(cursor,limit)
+
     def integrity(self) -> bool:
         return self.db.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
