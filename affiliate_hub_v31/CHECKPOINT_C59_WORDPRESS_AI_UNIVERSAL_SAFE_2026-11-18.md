@@ -21,3 +21,15 @@
 5. Runner tema #70 foi adiado pelo proprietário. Blogger Móveis 3/3 já LIVE, não criar quarto.
 
 **Nenhum dado sensível ou token deve entrar em checkpoints e logs.** 
+
+
+## C59 conclusão comprovada na MAIN (adendo)
+
+- [x] [**Run C59 real 44410047121 — SUCCESS**](https://github.com/adelrib27/blogger-automation1/actions/runs/44410047121). WordPress piloto **Casa e Decoração**: produto autorizado R2, chamada REAL Llama com plano JSON estruturado, artigo HTML real original de **743 palavras**, `quality= DRAFT_READY`, imagem CSV HTTPS, link Shopee da campanha exata, CTA e 2 links internos reais de publicações WordPress; **0 WordPress posts, 0 Shopee mutations, 0 R2 writes**. A primeira falha de título curto do run #44409264710 foi corrigida pelo PR #77 sem relaxar quality gate.
+- [x] Workflows temporários `v31_c59_wp_real_ai_safe_once.yml` e `C59_WP_AI_REAL_ONCE_TRIGGER.txt` **removidos** após SUCCESS.
+- [x] Safe workflows originais disparados via kickoffs reais em `main`: primeira rodada Casa [44410470835](https://github.com/adelrib27/blogger-automation1/actions/runs/44410470835) e Oficina [44410482290](https://github.com/adelrib27/blogger-automation1/actions/runs/44410482290) falharam apenas na importação do núcleo universal em **`publish_generated.py`** depois de concluírem o gerador OFF. Radar [44410496620](https://github.com/adelrib27/blogger-automation1/actions/runs/44410496620) **SUCCESS**.
+- [x] [**PR #78 MERGED**](https://github.com/adelrib27/blogger-automation1/pull/78) corrigiu imports em publicadores Casa/Oficina, mantendo status `LIVE_ENABLED=false` nos testes. [CI 44410794453](https://github.com/adelrib27/blogger-automation1/actions/runs/44410794453): **357 V31+24 Casa+21 Oficina+crossblog PASS**.
+- [x] Repetição **REAL dos workflows SAFE existentes**: [Casa 44410965031](https://github.com/adelrib27/blogger-automation1/actions/runs/44410965031) **SUCCESS**, [Oficina 44410976595](https://github.com/adelrib27/blogger-automation1/actions/runs/44410976595) **SUCCESS**, [Radar 44410496620](https://github.com/adelrib27/blogger-automation1/actions/runs/44410496620) **SUCCESS**. Não publicaram artigos; isso valida os gates e imports do fluxo real em modo seguro.
+- [x] Run de qualidade Radar LIVE anterior **foi QUARENTENA** por `alegacao_de_acessibilidade_nao_sustentada` — resultado protetivo esperado, não foi alterado nem forçado.
+
+**C59 CONCLUÍDA** quanto à migração de IA WordPress, cliente universal, regressões, canário R2/AI/WordPress sem publicação e três workflows SAFE. Próxima fase **C60**: construir o caminho universal de rascunhos WordPress para QUALQUER site registrado, distinto dos três blogs legados com writers próprios. Para novos WordPress será indispensável identidade/credenciais reais da instalação; não inventar senhas ou domínios. Eventos futuros dos cron LIVE já existentes ainda necessitam observação posterior; o teste SAFE não equivale a autorização nem comprovação de nova publicação automática.
