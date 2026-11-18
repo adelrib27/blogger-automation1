@@ -9,7 +9,7 @@
   "last_updated_date": "2026-11-18",
   "last_updated_source": "conferencia_conectada_github",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C58_AUDITORIA_UNIVERSAL_ARTIGOS_WP_BLOGGER_2026-11-18.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C59_WORDPRESS_AI_UNIVERSAL_SAFE_2026-11-18.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -37,14 +37,15 @@
   "active_work": {
     "objective": "C59: atualizar os geradores WordPress existentes para o modelo Workers AI suportado e integrar respostas JSON estruturadas para plano/CTA, sem mexer nas proteções de qualidade nem publicar durante canários; validar todos os blogs com CI e Casa real.",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C58 PR #75 MERGED, CI 347 V31+24 Casa+21 Oficina+crossblog PASS; canário real 44407697822 PASS: 9/6/15 ofertas R2 nos 3 WP e Casa 8 parágrafos/537 palavras, foto/CTA/2 internos, zero writes.",
-    "next_safe_step": "Criar C59 branch para migrar chamada Workers AI dos 3 geradores WP, executar testes e canário de geração editorial real sem posts; em seguida avaliar base para qualquer novo WP.",
+    "latest_verified_step": "C59 PR#76 MERGED IA Llama WordPress 3 sites, PR#77 MERGED retry plano curto 35-65 sem relaxar gates; CI 356 V31+24 Casa+21 Oficina+crossblog PASS; run real #44409264710 bloqueado por título 22; reteste #44410047121 em execução.",
+    "next_safe_step": "Verificar run 44410047121 e logs; corrigir eventuais falhas sem publicar, retirar canário temporário, concluir checkpoint C59 e seguir pipeline universal C60.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/75",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44407697822"
+      "https://github.com/adelrib27/blogger-automation1/pull/76",
+      "https://github.com/adelrib27/blogger-automation1/pull/77",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410047121"
     ]
   },
   "next_priorities": [
