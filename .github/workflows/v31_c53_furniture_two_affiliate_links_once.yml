@@ -1,0 +1,143 @@
+name: V31 C53 TEMP - 2 links reais sofa e guarda-roupa para 3 artigos
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C53_FURNITURE_TWO_LINKS_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  verified-assets:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Converter dois links na campanha EXATA e salvar R2, zero posts
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,tempfile,unicodedata,re
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          from affiliate_hub_v31.catalog import Catalog,host_allowed
+          from affiliate_hub_v31.r2_state import R2State,verify_database
+          from affiliate_hub_v31.converter import convert_one,ConversionError
+          from affiliate_hub_v31.routing import sites
+          import os
+          key='blogger_moveis_para_cada_canto'
+          campaign=sites()[key]['campaign']
+          assert campaign=='moveisparacadacanto'
+          def fold(x):
+              return ' '.join(re.findall(r'[a-z0-9]+',''.join(
+               c for c in unicodedata.normalize('NFKD',x.lower())
+               if not unicodedata.combining(c))))
+          def image_host_ok(url):
+              try:
+                  p=urlsplit(url)
+                  host=(p.hostname or '').lower()
+                  return (p.scheme=='https' and not p.username and not p.password
+                   and p.port in (None,443) and any(host==root or
+                   host.endswith('.'+root) for root in
+                   ('susercontent.com','shopee.com.br','shopeeusercontent.com')))
+              except ValueError: return False
+          with tempfile.TemporaryDirectory(prefix='v31-c53-products-') as td:
+              core=Path(td)/'core.sqlite3'
+              store=R2State.from_env()
+              if not store.restore_to(core): raise SystemExit('V31_C53_MISSING_CATALOG')
+              verify_database(core)
+              with Catalog(core) as cat:
+                  rows=cat.db.execute("""
+                  SELECT p.product_key,p.title,p.image_url,p.origin_url
+                  FROM products p JOIN product_taxonomy t
+                    ON t.product_key=p.product_key
+                  WHERE p.moderation='eligible' AND t.status='matched'
+                    AND t.category='casa' AND t.niche='moveis'
+                  """).fetchall()
+                  groups={'sofa':[],'guarda_roupa':[]}
+                  for k,title,image,origin in rows:
+                      n=fold(title)
+                      if not image_host_ok(image) or not host_allowed(origin) or cat.for_conversion(k) is None: continue
+                      if 'sofa' in n and not any(w in n for w in ('capa','miniatura','almofada','brinquedo','cobertura')):
+                          score=10*(('2 lugares' in n) or ('3 lugares' in n))+4*('retratil' in n)+2*('suede' in n)
+                          groups['sofa'].append((score,k,title,image,origin))
+                      if ('guarda roupa' in n or 'roupeiro' in n) and not any(w in n for w in ('academia','aco','escolar','guarda volume','locker','infantil','miniatura','sapateira','organizadores','capa','puxador')):
+                          score=15*('casal' in n)+10*('6 portas' in n)+7*('quarto' in n)+2*('espelho' in n)+1*('mdp' in n)
+                          groups['guarda_roupa'].append((score,k,title,image,origin))
+                  selections={}
+                  for name,items in groups.items():
+                      items.sort(key=lambda x:(-x[0],x[2].casefold(),x[1]))
+                      if not items: raise SystemExit('V31_C53_NO_SUITABLE_'+name)
+                      selected=items[0]
+                      if name=='guarda_roupa' and selected[0]<7:
+                          raise SystemExit('V31_C53_NO_BEDROOM_WARDROBE')
+                      selections[name]=selected
+                  before=cat.stats()
+                  newly=[]
+                  try:
+                      for name,(score,k,title,image,origin) in selections.items():
+                          link=cat.cached_link(k,campaign)
+                          if not link:
+                              _,created=convert_one(cat,k,campaign,
+                                 os.environ['V31_EDITORIAL_SHOPEE_APP_ID'],
+                                 os.environ['V31_EDITORIAL_SHOPEE_APP_SECRET'])
+                              if created: newly.append(k)
+                          link=cat.cached_link(k,campaign)
+                          if not link or not host_allowed(link,allow_short=True):
+                              raise SystemExit('V31_C53_UNVERIFIED_CAMPAIGN_LINK')
+                  finally:
+                      if newly:
+                          receipt=store.save_from(core)
+                          if receipt.get('state_saved') is not True:
+                              raise SystemExit('V31_C53_PERSISTENCE_FAILED')
+                  after=cat.stats()
+                  if (after['products']!=before['products'] or
+                      after['eligible']!=before['eligible'] or
+                      after['review']!=before['review']):
+                      raise SystemExit('V31_C53_CATALOG_CHANGED')
+              restored=Path(td)/'verified.sqlite3'
+              if not store.restore_to(restored): raise SystemExit('V31_C53_RESTORE_FAILED')
+              verify_database(restored)
+              with Catalog(restored) as cat:
+                  for name,(score,k,title,image,origin) in selections.items():
+                      link=cat.cached_link(k,campaign)
+                      if (not link or not host_allowed(link,allow_short=True) or
+                          cat.for_conversion(k) is None):
+                          raise SystemExit('V31_C53_LINK_MISMATCH_'+name)
+                      print('V31_C53_VERIFIED_PRODUCT '+json.dumps({
+                        'category':name,'product_key':k,'product_title':title,
+                        'image_url':image,'product_url':origin,
+                        'affiliate_url':link,'campaign':campaign},ensure_ascii=False))
+                  # Third article uses previously converted exact-campaign desk.
+                  desk_key='shopee:1083800536:58206340427'
+                  desk=cat.db.execute("""
+                    SELECT title,image_url,origin_url FROM products
+                    WHERE product_key=?""",(desk_key,)).fetchone()
+                  desk_link=cat.cached_link(desk_key,campaign)
+                  if (not desk or not desk_link or
+                      not host_allowed(desk_link,allow_short=True) or
+                      not image_host_ok(desk[1]) or cat.for_conversion(desk_key) is None):
+                      raise SystemExit('V31_C53_DESK_CAMPAIGN_INVALID')
+                  print('V31_C53_VERIFIED_PRODUCT '+json.dumps({
+                    'category':'home_office','product_key':desk_key,
+                    'product_title':desk[0],'image_url':desk[1],
+                    'product_url':desk[2],'affiliate_url':desk_link,
+                    'campaign':campaign},ensure_ascii=False))
+              print('V31_C53_THREE_FURNITURE_ASSETS_AND_AFFILIATE_URLS_VERIFIED_PASS')
+          PY
