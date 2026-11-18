@@ -1,9 +1,8 @@
-name: V31 Atelie Criativo - Shopee Loja diaria (isolado)
+name: V31 Atelie Criativo - Shopee Loja mensal (isolado)
 on:
   pull_request:
     paths:
       - "atelie_criativo/rotation_v31.py"
-      - ".github/workflows/atelie_criativo_rotation_v31.yml"
   push:
     branches: [main]
     paths:
@@ -12,13 +11,13 @@ on:
   workflow_dispatch:
   schedule:
     # 09:00 UTC = 06:00 America/Recife; GitHub pode atrasar a execução.
-    - cron: "0 9 * * *"
+    - cron: "0 9 5 * *"
 
 permissions:
   contents: read
 
 concurrency:
-  group: v31-atelie-criativo-8888519348129960729-loja-diaria
+  group: v31-atelie-criativo-8888519348129960729-loja-mensal
   cancel-in-progress: false
 
 jobs:
@@ -31,7 +30,7 @@ jobs:
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
-      ATELIE_STORE_DRY_RUN: ${{ (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && 'false' || 'true' }}
+      ATELIE_STORE_DRY_RUN: ${{ (github.event_name == 'schedule') && 'false' || 'true' }}
 
     steps:
       - uses: actions/checkout@v4
