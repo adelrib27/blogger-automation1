@@ -26,6 +26,7 @@ from .taxonomy import classify_title
 from .title_index import has_index, rebuild_index
 from .universal_inventory import rebuild_universal_inventory
 from .universal_index_storage import UniversalIndexStorage
+from .universal_lexicon import build_lexicon
 
 MAX_FEED_ROWS = 250_000
 
@@ -164,6 +165,7 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
             with sqlite3.connect(universal_file) as sidecar:
                 universal_inventory=rebuild_universal_inventory(
                     cat,sidecar=sidecar)
+                universal_title_lexicon=build_lexicon(cat.db,sidecar)
             # Atualização cumulativa após C19: índice textual sempre
             # coerente com TODOS os produtos novos do mesmo snapshot.
             fts_result=rebuild_index(cat) if has_index(cat) else None
@@ -236,6 +238,7 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
             ],
             "source_categories":categories,
             "universal_inventory":universal_inventory,
+            "universal_title_lexicon":universal_title_lexicon,
             "universal_index_location":"R2_SIDECAR",
             "universal_sidecar_saved_and_restored":sidecar_saved,
             "search_index_updated":fts_result is not None,

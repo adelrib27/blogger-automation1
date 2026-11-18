@@ -1,5 +1,11 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C35 — Busca de nichos a partir dos títulos dos CSVs, não da lista de blogs
+
+- `universal_lexicon.py` cria, no sidecar R2 C34, **termos agregados dos títulos associados às categorias oficiais L1/L2** (>=25 produtos e >=8 lojas por termo). Registra as palavras sem nomes, IDs ou URLs individuais, permitindo sugerir caminhos por assunto quando o blog for solicitado — sem antecipar seu nicho.
+- A busca CLI `python -m affiliate_hub_v31.universal_lexicon --topic "mesa de madeira"` retorna caminhos oficiais com evidências agregadas e `publication_approved=false`; produto em revisão não gera link. Categorias protegidas/termos regulados são excluídos; os demais passam pelos gates normais antes de qualquer publicação.
+- O fluxo de atualização incremental dos **dois CSVs** também renova o vocabulário no sidecar. [Prioridade universal Issue #54](https://github.com/adelrib27/blogger-automation1/issues/54). Automações de posts/pins/flags comerciais permanecem OFF; sem aprovações em massa ou estimativas inventadas.
+
 ## OBJETIVO MESTRE — Biblioteca universal primeiro (C33+)
 
 **Não limitar o V31 aos três WordPress existentes.** O objetivo principal é o acervo cumulativo e pesquisável dos dois feeds Shopee, com organização por categoria L1/L2/L3, nicho e assunto de todos os produtos (inclusive em revisão). Quando surgir um novo blog Blogger/WordPress de assunto não antecipado, descobrir candidatos pertinentes no acervo sem depender de site cadastrado, revisar e aprovar apenas os seguros, converter o link pela campanha REAL que só é conhecida após o registro do blog e conectar a escolha ao gerador/publicador apropriados. Não antecipar campanhas de blogs futuros, publicar produtos pendentes nem fabricar métricas comerciais.
