@@ -79,7 +79,7 @@ class CommerceArticleTests(unittest.TestCase):
         self.assertNotIn('s.shopee.com.br/OutroBlog',html)
         self.assertIn('>sofá retrátil</a>',html)
         self.assertIn('>Ver produto na Shopee</a>',html)
-        self.assertIn('rel="sponsored nofollow noopener noreferrer"',html)
+        self.assertIn('rel="nofollow sponsored noopener noreferrer"',html)
         self.assertIn('target="_blank"',html)
         self.assertIn('&lt;suede&gt;',html)
         self.assertNotIn('<suede>',html)
