@@ -19,10 +19,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  v31_casa_discovery:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+      vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
+    uses: ./.github/workflows/v31_c9_discovery_reusable.yml
+    with:
+      site_key: wordpress_casa_decoracao
+      scanner: casa_decoracao/src/shopee_oportunidades_casa.py
+      config: casa_decoracao/config/shopee_oportunidades.json
+      rules: casa_decoracao/config/shopee_intent_rules.json
+      output: casa_decoracao/data/shopee_oportunidades
+      artifact_name: v31-c9-casa_decoracao-${{ github.run_id }}
+      limit: 32
+      min_fallback: 3
+
   autonomo:
+    needs: [v31_casa_discovery]
+    if: >-
+      always() &&
+      !cancelled() &&
+      (
+        ((vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' || vars.V31_CASA_R2_FALLBACK_ENABLED != 'true') && needs.v31_casa_discovery.result == 'skipped') ||
+        (vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_CASA_R2_FALLBACK_ENABLED == 'true' && needs.v31_casa_discovery.result == 'success')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
+      # C11: reutilização permitida somente com os 3 switches explicitamente true.
+      V31_EDITORIAL_PRODUCT_REUSE_ENABLED: ${{ vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_CASA_R2_FALLBACK_ENABLED == 'true' && vars.V31_EDITORIAL_PRODUCT_REUSE_ENABLED == 'true' && 'true' || 'false' }}
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
       SHOPEE_OPPORTUNITIES_CONFIG: casa_decoracao/config/shopee_oportunidades.json
@@ -91,13 +118,31 @@ jobs:
             "https://casaedecoracao.radartechbr.com.br/wp-json/wp/v2/users/me?context=edit" >/dev/null
 
       - name: Descobrir produtos reais na Shopee
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' ||
+          vars.V31_CASA_R2_FALLBACK_ENABLED != 'true'
         run: python -u casa_decoracao/src/shopee_oportunidades_casa.py
+      - name: C9 — Receber ranking da descoberta compartilhada (apenas quando habilitada)
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-c9-casa_decoracao-${{ github.run_id }}
+          path: casa_decoracao/data/shopee_oportunidades
+
 
       - name: Montar fila editorial com rotação por categoria
         run: python -u casa_decoracao/src/build_editorial_queue.py
 
       - name: Gerar próximo artigo com Qwen3
         run: python -u casa_decoracao/src/generate_articles.py
+
+      - name: C10 — Gate de originalidade de título e corpo entre blogs no fallback
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_CASA_R2_FALLBACK_ENABLED == 'true'
+        run: python -u src/editorial_cross_blog_guard.py --project casa_decoracao
 
       - name: Publicar pelo gate v3 com imagem destacada real
         run: python -u casa_decoracao/src/publish_generated.py

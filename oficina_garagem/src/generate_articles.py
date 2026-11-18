@@ -168,6 +168,14 @@ def cut_text(value, limit):
 
 
 def editorial_plan_prompt(item):
+    exclusion = ""
+    if item.get("reuse_candidate"):
+        titles = [str(x).strip()[:100] for x in item.get("prior_titles") or [] if str(x).strip()]
+        if not titles:
+            raise RuntimeError("reutilização sem histórico editorial confiável")
+        exclusion = ("\nTÍTULOS ANTERIORES DESTE PRODUTO (NÃO REPETIR NEM PARAFRASEAR):\n"
+                     + "\n".join("- " + t for t in titles)
+                     + "\nEscolha uma dúvida, necessidade e abordagem editorial DIFERENTES.")
     return f"""Você é editor de um blog brasileiro chamado Oficina & Garagem.
 
 Use o produto real da Shopee apenas como ponto de partida para escolher UM ÚNICO TÍTULO EDITORIAL útil ao leitor. Neste sistema, tema e título são a mesma coisa: não crie um campo de tema separado.
@@ -175,7 +183,7 @@ Use o produto real da Shopee apenas como ponto de partida para escolher UM ÚNIC
 PRODUTO REAL: {item['product']}
 INTENÇÃO DA BUSCA: {item['source_keyword']}
 CATEGORIA: {item['category']}
-
+{exclusion}
 REGRAS:
 - O título editorial deve ter entre 35 e 65 caracteres.
 - Deve tratar de uma necessidade, dúvida, organização, escolha ou situação coerente com o produto.
@@ -204,6 +212,11 @@ def make_plan(item, raw=None):
     product_connection = re.sub(r"\s+", " ", str(data.get("product_connection") or "")).strip()
     if not 35 <= len(title) <= 65:
         raise RuntimeError(f"título editorial fora da faixa: {len(title)}")
+    if item.get("reuse_candidate"):
+        from affiliate_hub_v31.reuse_policy import title_is_distinct
+        old_titles = item.get("prior_titles") or []
+        if not old_titles or not all(title_is_distinct(title,old) for old in old_titles):
+            raise RuntimeError("reutilização recusada: título/abordagem muito semelhante")
     if not keyword:
         raise RuntimeError("palavra-chave editorial ausente")
     if not reader_need or not product_connection:

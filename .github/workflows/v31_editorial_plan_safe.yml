@@ -1,0 +1,49 @@
+name: V31 Editorial - Preparar pautas SAFE no R2 (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: "ID do site presente em affiliate_hub_v31/site_routes.json"
+        required: true
+        type: string
+      limit:
+        description: "Quantidade de pautas (1 a 20)"
+        required: true
+        type: choice
+        default: '1'
+        options: ['1', '2', '3', '5', '10', '20']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  plan-safe:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar biblioteca R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Verificar módulos e testes offline
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Planejar pautas para revisão (SEM Blogger, WordPress ou API Shopee)
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          EDITORIAL_SITE: ${{ inputs.site_key }}
+          EDITORIAL_LIMIT: ${{ inputs.limit }}
+        run: python -m affiliate_hub_v31.editorial_plan --mode cloud --site "$EDITORIAL_SITE" --limit "$EDITORIAL_LIMIT"

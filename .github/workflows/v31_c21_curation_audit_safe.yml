@@ -1,0 +1,48 @@
+name: V31 C21 - Diagnostico Semanal do Catalogo R2 (SAFE)
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_readonly:
+        description: "Confirmo auditoria SEM aprovar, converter ou publicar produtos"
+        required: true
+        type: boolean
+        default: false
+  schedule:
+    # Quarta-feira 08h13 America/Recife (UTC-3). Inativo ate liberacao da flag.
+    - cron: '13 11 * * 3'
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  diagnostico-editorial:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      (
+        (github.event_name == 'workflow_dispatch' && inputs.confirm_readonly == true) ||
+        (github.event_name == 'schedule' &&
+         vars.V31_EDITORIAL_C21_AUDIT_ENABLED == 'true')
+      )
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cliente R2 privado sem credenciais Blogger WordPress Shopee
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Testar contrato SAFE antes da auditoria
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Contabilizar filas de curadoria sem modificar o snapshot
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.curation_triage --mode r2 --max-categories 12

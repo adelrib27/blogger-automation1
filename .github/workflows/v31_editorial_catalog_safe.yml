@@ -1,0 +1,54 @@
+name: V31 Editorial Shopee - Testes SAFE Blogger WordPress
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'affiliate_hub_v31/**'
+      - '.github/workflows/v31_editorial_catalog_safe.yml'
+      - 'casa_decoracao/src/**'
+      - 'oficina_garagem/src/**'
+      - 'src/editorial_cross_blog_guard.py'
+
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - 'affiliate_hub_v31/**'
+      - '.github/workflows/v31_editorial_catalog_safe.yml'
+      - 'casa_decoracao/src/**'
+      - 'oficina_garagem/src/**'
+      - 'src/editorial_cross_blog_guard.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-safe-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tests-only-no-external-api:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compilar modulos sem importar segredos
+        run: python -m compileall -q affiliate_hub_v31
+      - name: Testes offline isolados, sem tokens nem rede
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python -m unittest discover -s affiliate_hub_v31/tests -v
+      - name: Regressao local dos geradores WordPress e deduplicacao entre blogs
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py

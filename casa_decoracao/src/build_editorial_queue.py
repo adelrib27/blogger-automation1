@@ -1,4 +1,8 @@
 import json
+import os
+
+from affiliate_hub_v31.reuse_policy import can_queue_reuse
+from affiliate_hub_v31.queue_identity import highest_reserved_id
 import re
 import unicodedata
 from collections import Counter
@@ -14,6 +18,7 @@ OUT = ROOT / "casa_decoracao" / "data" / "editorial_queue.json"
 HISTORY = ROOT / "casa_decoracao" / "data" / "publication_history.json"
 ROTATION = ROOT / "casa_decoracao" / "data" / "category_rotation.json"
 MAX_PER_KEYWORD = 1
+REUSE_ENABLED = os.environ.get('V31_EDITORIAL_PRODUCT_REUSE_ENABLED', 'false').lower() == 'true'
 
 CATEGORY_DISPLAY = {
     "Decoracao": "Decoração",
@@ -123,7 +128,10 @@ def main():
     details = ranking_details()
     mapping = category_map(config)
     published_ids, published_products = publication_memory()
+    history_doc = load(HISTORY, {'items': []})
     previous, next_id = previous_state()
+    if REUSE_ENABLED:
+        next_id=max(next_id, highest_reserved_id(OUT,ROOT / "casa_decoracao" / "data" / "generated"))
     rotation = load_state(ROTATION)
 
     items = []
@@ -140,13 +148,21 @@ def main():
         if not item_id or not product or not link.startswith("https://") or not keywords:
             skipped["incompleto"] += 1
             continue
+        reuse_candidate = False
+        prior_titles = []
         if item_id in published_ids:
-            skipped["produto_ja_publicado"] += 1
-            continue
+            if REUSE_ENABLED:
+                reuse_candidate, prior_titles = can_queue_reuse(history_doc, item_id)
+            if not reuse_candidate:
+                skipped["produto_ja_publicado"] += 1
+                continue
         if item_id in seen_ids:
             skipped["item_id_duplicado"] += 1
             continue
-        if any(token_similarity(product, old) >= 0.82 for old in published_products):
+        other_products = ([str(row.get("product") or "") for row in history_doc.get("items") or []
+                           if str(row.get("shopee_item_id") or "") != item_id]
+                          if reuse_candidate else published_products)
+        if any(token_similarity(product, old) >= 0.82 for old in other_products):
             skipped["produto_semelhante_ja_publicado"] += 1
             continue
         if any(token_similarity(product, old) >= 0.88 for old in seen_products):
@@ -169,7 +185,7 @@ def main():
             skipped["imagem_invalida"] += 1
             continue
 
-        old = previous.get(item_id) or {}
+        old = {} if reuse_candidate else (previous.get(item_id) or {})
         if old:
             stable_id = int(old.get("id") or 0)
             if stable_id <= 0:
@@ -191,6 +207,9 @@ def main():
             "opportunity_score": row.get("opportunityScore"),
             "priority_tier": row.get("priorityTier"),
             "status": str(old.get("status") or "PENDING"),
+            "reuse_candidate": reuse_candidate,
+            "prior_publication_count": len(prior_titles) if reuse_candidate else 0,
+            "prior_titles": prior_titles if reuse_candidate else [],
             "rules": {
                 "no_fake_testing": True,
                 "no_invented_specs": True,

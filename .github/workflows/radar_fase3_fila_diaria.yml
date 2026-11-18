@@ -17,7 +17,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  v31_radar_discovery:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+      vars.V31_RADAR_R2_FALLBACK_ENABLED == 'true'
+    uses: ./.github/workflows/v31_c9_discovery_reusable.yml
+    with:
+      site_key: wordpress_radartechbr
+      scanner: src/shopee_oportunidades_v23.py
+      config: config/shopee_oportunidades.json
+      rules: config/shopee_intent_rules.json
+      output: data/v31_radar_shopee_opportunities
+      artifact_name: v31-c9-radar-${{ github.run_id }}
+      limit: 50
+      min_fallback: 5
+
   montar-fila:
+    needs: [v31_radar_discovery]
+    if: >-
+      always() &&
+      !cancelled() &&
+      github.ref == 'refs/heads/main' &&
+      (
+        ((vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' || vars.V31_RADAR_R2_FALLBACK_ENABLED != 'true') && needs.v31_radar_discovery.result == 'skipped') ||
+        (vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_RADAR_R2_FALLBACK_ENABLED == 'true' && needs.v31_radar_discovery.result == 'success')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -44,8 +70,29 @@ jobs:
           python -m py_compile src/shopee_oportunidades_v23.py
           python -m py_compile src/fase3_fila_radar.py
 
-      - name: Montar fila diária qualificada
+      - name: Montar fila diária qualificada — fluxo antigo
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' ||
+          vars.V31_RADAR_R2_FALLBACK_ENABLED != 'true'
         run: python -u src/fase3_fila_radar.py build
+
+      - name: C9 — Baixar ranking API/R2 da descoberta compartilhada
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_RADAR_R2_FALLBACK_ENABLED == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-c9-radar-${{ github.run_id }}
+          path: data/v31_radar_shopee_opportunities
+
+      - name: C9 — Montar fila completa pelo seletor ORIGINAL do Radar
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_RADAR_R2_FALLBACK_ENABLED == 'true'
+        run: |
+          python -m affiliate_hub_v31.radar_legacy_adapter \
+            --ranking data/v31_radar_shopee_opportunities/ranking.json \
+            --output data/fase3/fila_dia.json
 
       - name: Validar fila completa de cinco categorias
         run: |

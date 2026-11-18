@@ -1,0 +1,367 @@
+{
+  "version": "v31-editorial-taxonomy-2",
+  "purpose": "Rotas deterministicas para curadoria ANTES da conversao; nenhuma categoria desconhecida publicada automaticamente",
+  "normalization": "Frases com limites de palavras; titulo do produto; categoria desconhecida ou conflitante implica revisao",
+  "niches": [
+    {
+      "category": "cozinha",
+      "niche": "air_fryers",
+      "terms": [
+        "air fryer",
+        "airfryer",
+        "fritadeira sem oleo",
+        "fritadeira eletrica"
+      ],
+      "exclude": [
+        "forma para air fryer",
+        "cesto para air fryer",
+        "papel para air fryer",
+        "capa para air fryer",
+        "acessorio para air fryer"
+      ]
+    },
+    {
+      "category": "cozinha",
+      "niche": "liquidificadores",
+      "terms": [
+        "liquidificador"
+      ],
+      "exclude": [
+        "capa para liquidificador",
+        "peca para liquidificador",
+        "lamina para liquidificador",
+        "copo para liquidificador",
+        "motor para liquidificador"
+      ]
+    },
+    {
+      "category": "cozinha",
+      "niche": "outros_eletroportateis",
+      "terms": [
+        "mixer eletrico",
+        "batedeira",
+        "sanduicheira",
+        "torradeira",
+        "panela eletrica",
+        "processador de alimentos",
+        "forno eletrico",
+        "chaleira eletrica"
+      ],
+      "exclude": [
+        "acessorio para batedeira",
+        "haste para mixer",
+        "peca para sanduicheira"
+      ]
+    },
+    {
+      "category": "cozinha",
+      "niche": "organizacao_utensilios",
+      "terms": [
+        "organizador de cozinha",
+        "porta temperos",
+        "porta condimentos",
+        "escorredor de loucas",
+        "escorredor de pratos",
+        "pote hermetico",
+        "suporte de pia",
+        "dispenser de detergente",
+        "organizador de geladeira",
+        "utensilios de cozinha",
+        "tabua de cortar"
+      ],
+      "exclude": [
+        "brinquedo de cozinha",
+        "miniatura de cozinha"
+      ]
+    },
+    {
+      "category": "cafe",
+      "niche": "preparo",
+      "terms": [
+        "moedor de cafe",
+        "filtro de cafe",
+        "cafeteira expresso",
+        "cafeteira espresso",
+        "cafeteira italiana",
+        "prensa francesa",
+        "coador de cafe",
+        "cafeteira eletrica"
+      ],
+      "exclude": [
+        "capa para cafeteira",
+        "pecas para cafeteira"
+      ]
+    },
+    {
+      "category": "casa",
+      "niche": "decoracao",
+      "terms": [
+        "luminaria",
+        "abajur",
+        "quadro decorativo",
+        "papel de parede",
+        "cortina blackout",
+        "capa de almofada",
+        "manta para sofa",
+        "vaso decorativo",
+        "tapete para sala",
+        "lustre"
+      ],
+      "exclude": [
+        "lampada automotiva",
+        "miniatura decorativa para bolo"
+      ]
+    },
+    {
+      "category": "casa",
+      "niche": "organizacao",
+      "terms": [
+        "organizador de armario",
+        "caixa organizadora",
+        "organizador de banheiro",
+        "prateleira de banheiro",
+        "cesto organizador",
+        "sapateira",
+        "organizador de gaveta",
+        "organizador de escritorio"
+      ],
+      "exclude": [
+        "organizador de porta malas",
+        "organizador de cozinha"
+      ]
+    },
+    {
+      "category": "limpeza",
+      "niche": "equipamentos",
+      "terms": [
+        "aspirador de po",
+        "robo aspirador",
+        "mop giratorio",
+        "vassoura eletrica",
+        "rodo magico",
+        "limpador a vapor",
+        "lavadora de alta pressao"
+      ],
+      "exclude": [
+        "filtro para aspirador",
+        "saco para aspirador",
+        "motor para aspirador",
+        "aspirador automotivo"
+      ]
+    },
+    {
+      "category": "climatizacao",
+      "niche": "ventilacao",
+      "terms": [
+        "ventilador",
+        "climatizador de ar",
+        "umidificador de ar",
+        "purificador de ar",
+        "ar condicionado portatil"
+      ],
+      "exclude": [
+        "motor ventilador",
+        "motor para ventilador",
+        "ventilador interno do carro",
+        "ventilador automotivo",
+        "ventoinha para radiador",
+        "peca para ventilador",
+        "capa para ventilador"
+      ]
+    },
+    {
+      "category": "beleza",
+      "niche": "cabelos",
+      "terms": [
+        "escova secadora",
+        "escova modeladora",
+        "chapinha",
+        "prancha de cabelo",
+        "secador de cabelo",
+        "babyliss",
+        "modelador de cachos",
+        "maquina de cortar cabelo"
+      ],
+      "exclude": [
+        "capa para escova secadora",
+        "refil escova secadora"
+      ]
+    },
+    {
+      "category": "beleza",
+      "niche": "maquiagem",
+      "terms": [
+        "estojo de maquiagem",
+        "pincel de maquiagem",
+        "esponja de maquiagem",
+        "base liquida maquiagem",
+        "batom",
+        "delineador",
+        "mascara de cilios"
+      ],
+      "exclude": []
+    },
+    {
+      "category": "moda",
+      "niche": "vestuario_calcados",
+      "terms": [
+        "vestido",
+        "calca jeans",
+        "saia midi",
+        "blusa feminina",
+        "camiseta masculina",
+        "tenis feminino",
+        "tenis masculino",
+        "sapato social",
+        "sandalia feminina",
+        "bolsa feminina",
+        "mochila casual"
+      ],
+      "exclude": [
+        "vestido para boneca",
+        "vestido fantasia infantil"
+      ]
+    },
+    {
+      "category": "ferramentas",
+      "niche": "eletricas_manuais",
+      "terms": [
+        "parafusadeira",
+        "furadeira",
+        "serra tico tico",
+        "esmerilhadeira",
+        "kit ferramentas",
+        "chave de impacto",
+        "multimetro",
+        "compressor de ar"
+      ],
+      "exclude": [
+        "bateria para furadeira",
+        "broca para furadeira",
+        "carregador para parafusadeira",
+        "suporte de furadeira",
+        "peca para compressor"
+      ]
+    },
+    {
+      "category": "automotivo",
+      "niche": "acessorios",
+      "terms": [
+        "scanner obd2",
+        "carregador veicular",
+        "suporte de celular para carro",
+        "camera de re automotiva",
+        "organizador de porta malas",
+        "aspirador automotivo"
+      ],
+      "exclude": [
+        "scanner obd2 de brinquedo"
+      ]
+    },
+    {
+      "category": "tecnologia",
+      "niche": "gadgets",
+      "terms": [
+        "smartwatch",
+        "relogio inteligente",
+        "fone bluetooth",
+        "caixa de som bluetooth",
+        "projetor portatil",
+        "carregador usb",
+        "teclado gamer",
+        "mouse gamer",
+        "ssd externo",
+        "roteador wifi",
+        "webcam"
+      ],
+      "exclude": [
+        "pulseira para smartwatch",
+        "capa para fone bluetooth",
+        "capa para projetor",
+        "suporte para projetor"
+      ]
+    },
+    {
+      "category": "pets",
+      "niche": "cuidados_acessorios",
+      "terms": [
+        "comedouro para gato",
+        "comedouro para cachorro",
+        "fonte para gato",
+        "areia para gato",
+        "cama para cachorro",
+        "arranhador para gato",
+        "brinquedo para cachorro",
+        "caixa de transporte pet",
+        "coleira para cachorro"
+      ],
+      "exclude": [
+        "coleira eletrica para cachorro"
+      ]
+    },
+    {
+      "category": "jardim",
+      "niche": "horta_jardinagem",
+      "terms": [
+        "mangueira jardim",
+        "regador",
+        "vaso para plantas",
+        "tesoura de poda",
+        "aparador de grama",
+        "semente de hortalica",
+        "horta vertical",
+        "jardinagem"
+      ],
+      "exclude": [
+        "veneno para jardim",
+        "pesticida"
+      ]
+    },
+    {
+      "category": "viagem",
+      "niche": "malas_acessorios",
+      "terms": [
+        "mala de viagem",
+        "mochila de viagem",
+        "organizador de mala",
+        "travesseiro de viagem",
+        "necessaire de viagem",
+        "cadeado de mala"
+      ],
+      "exclude": []
+    },
+    {
+      "category": "musica",
+      "niche": "violao_instrumentos",
+      "terms": [
+        "violao acustico",
+        "violao nylon",
+        "violao eletrico",
+        "cordas para violao",
+        "afinador de violao",
+        "pedaleira de guitarra",
+        "capotraste",
+        "violao infantil"
+      ],
+      "exclude": [
+        "miniatura de violao"
+      ]
+    },
+    {
+      "category": "ciclismo",
+      "niche": "equipamentos",
+      "terms": [
+        "bicicleta",
+        "capacete ciclismo",
+        "luva ciclismo",
+        "bomba de ar bicicleta",
+        "suporte bicicleta",
+        "farol bicicleta"
+      ],
+      "exclude": [
+        "bicicleta de brinquedo",
+        "miniatura bicicleta"
+      ]
+    }
+  ]
+}

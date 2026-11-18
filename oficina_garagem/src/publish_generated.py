@@ -12,6 +12,7 @@ from zoneinfo import ZoneInfo
 
 from cta_context import CTA_PRODUCT_TITLE_CLASS
 from quality_gate import quality
+from affiliate_hub_v31.reuse_policy import history_has_publication, validate_publication, validate_prior_editorial_body
 
 ROOT = Path(__file__).resolve().parents[2]
 QUEUE = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
@@ -19,6 +20,7 @@ GENERATED = ROOT / "oficina_garagem" / "data" / "generated"
 HISTORY = ROOT / "oficina_garagem" / "data" / "publication_history.json"
 WP_URL = "https://oficina.radartechbr.com.br"
 ENABLED = os.getenv("OFICINA_LIVE_PUBLISH_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+REUSE_ENABLED = os.getenv('V31_EDITORIAL_PRODUCT_REUSE_ENABLED', 'false').lower() == 'true'
 LIMIT = max(1, min(int(os.getenv("OFICINA_PUBLISH_LIMIT", "1")), 2))
 DAILY_CAP = max(1, min(int(os.getenv("OFICINA_DAILY_PUBLISH_CAP", "2")), 2))
 STATUS = os.getenv("OFICINA_WORDPRESS_STATUS", "draft").strip().lower()
@@ -231,7 +233,12 @@ def publications_today(history):
 
 
 def append_history(history, item, article, post_id, url, source="automatic_gate"):
-    if str(item.get("shopee_item_id") or "") in history_ids(history):
+    item_id = str(item.get("shopee_item_id") or "").strip()
+    if REUSE_ENABLED and item.get("reuse_candidate"):
+        if history_has_publication(history, item_id, article.get("seo_title") or ""):
+            return
+        validate_publication(history, item, article)
+    elif item_id in history_ids(history):
         return
     history.setdefault("version", 1)
     history.setdefault("project", "Oficina & Garagem")
@@ -273,7 +280,7 @@ def main():
         if item.get("status") != "GENERATED":
             continue
         item_id = str(item.get("shopee_item_id") or "").strip()
-        if item_id and item_id in published:
+        if item_id and item_id in published and not (REUSE_ENABLED and item.get("reuse_candidate")):
             item["status"] = "PUBLISHED"
             item["last_error"] = ""
             continue
@@ -291,6 +298,14 @@ def main():
             continue
 
         try:
+            if item.get("reuse_candidate"):
+                if not REUSE_ENABLED:
+                    raise RuntimeError("reutilização editorial não habilitada")
+                validate_publication(history, item, article)
+                validate_prior_editorial_body(
+                    history, item, article, GENERATED,
+                    ROOT / "config" / "editorial_cross_blog_guard.json"
+                )
             validate_card_product_title(article)
             slug = slugify(article.get("topic") or article.get("seo_title"))
             old = existing(slug)

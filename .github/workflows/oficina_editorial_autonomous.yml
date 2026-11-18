@@ -17,11 +17,38 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  v31_oficina_discovery:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+      vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true'
+    uses: ./.github/workflows/v31_c9_discovery_reusable.yml
+    with:
+      site_key: wordpress_oficina_garagem
+      scanner: oficina_garagem/src/shopee_oportunidades_oficina.py
+      config: oficina_garagem/config/shopee_oportunidades.json
+      rules: oficina_garagem/config/shopee_intent_rules.json
+      output: oficina_garagem/data/shopee_oportunidades
+      artifact_name: v31-c9-oficina_garagem-${{ github.run_id }}
+      limit: 30
+      min_fallback: 2
+
   publicar-um-slot:
-    if: github.ref == 'refs/heads/main'
+    needs: [v31_oficina_discovery]
+    if: >-
+      always() &&
+      !cancelled() &&
+      github.ref == 'refs/heads/main' &&
+      (
+        ((vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' || vars.V31_OFICINA_R2_FALLBACK_ENABLED != 'true') && needs.v31_oficina_discovery.result == 'skipped') ||
+        (vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true' && needs.v31_oficina_discovery.result == 'success')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
+      # C11: reutilização permitida somente com os 3 switches explicitamente true.
+      V31_EDITORIAL_PRODUCT_REUSE_ENABLED: ${{ vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true' && vars.V31_EDITORIAL_PRODUCT_REUSE_ENABLED == 'true' && 'true' || 'false' }}
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
       SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
       SHOPEE_CATEGORY: all
@@ -79,7 +106,19 @@ jobs:
           PY
 
       - name: Descobrir oportunidades reais na Shopee
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED != 'true' ||
+          vars.V31_OFICINA_R2_FALLBACK_ENABLED != 'true'
         run: python -u oficina_garagem/src/shopee_oportunidades_oficina.py
+      - name: C9 — Receber ranking da descoberta compartilhada (apenas quando habilitada)
+        if: >-
+          vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
+          vars.V31_OFICINA_R2_FALLBACK_ENABLED == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: v31-c9-oficina_garagem-${{ github.run_id }}
+          path: oficina_garagem/data/shopee_oportunidades
+
 
       - name: Montar fila sem repetir produtos já publicados
         run: python -u oficina_garagem/src/build_editorial_queue.py
