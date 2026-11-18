@@ -154,7 +154,7 @@ def related_articles_html(links: list[tuple[str, str]], *,
         return ""
     return (
         '<aside class="v31-related-articles" data-v31-related="1">'
-        '<h2>Leia também no Móveis para Cada Canto</h2>'
+        '<h2>Leia também neste blog</h2>'
         '<ul>' + "".join(entries) + '</ul></aside>'
     )
 
