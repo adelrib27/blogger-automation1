@@ -3,7 +3,7 @@ name: Achados que Valem — Loja Shopee LIVE Controlada
 on:
   workflow_dispatch:
   schedule:
-    - cron: "50 9 * * *"
+    - cron: "50 9 3 * *"
       timezone: "America/Recife"
 
 permissions:
