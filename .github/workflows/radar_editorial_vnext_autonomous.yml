@@ -39,7 +39,7 @@ jobs:
     env:
       RADAR_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.RADAR_CLOUDFLARE_ACCOUNT_ID }}
       RADAR_CLOUDFLARE_API_TOKEN: ${{ secrets.RADAR_CLOUDFLARE_API_TOKEN }}
-      RADAR_AI_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      RADAR_AI_MODEL: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
       RADAR_GENERATION_ENABLED: "true"
       RADAR_GENERATION_BATCH_SIZE: "1"
       RADAR_WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
