@@ -1,5 +1,12 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C46 — Curadoria universal contínua + sugestões privadas para sem categoria (18/11/2026)
+
+- **203.649 produtos no R2**, **194.370 ainda em REVIEW**; 594 históricos com título+fonte compatíveis foram reclassificados em C43/C44. Sidecar preserva todas as categorias, sem excluir futuros blogs.
+- [**C45 manutenção permanente**](https://github.com/adelrib27/blogger-automation1/pull/64) semanal independente de blogs, com limite 100, fontes/políticas protegidas e reparo de índice; [canário R2 C45](https://github.com/adelrib27/blogger-automation1/actions/runs/44369302157) no-op PASS, zero writes/posts. A primeira execução cron futura ainda precisa ocorrer.
+- [**C46**](https://github.com/adelrib27/blogger-automation1/pull/65) aproveitou o léxico anônimo dos dois feeds para propor **10.565 pistas de revisão** a partir de **88.239 SKUs sem faceta**, em **79 grupos L1/L2**, mantendo `review_only=1`, zero nova aprovação, conversão ou publicação. [R2 salvo e restaurado](https://github.com/adelrib27/blogger-automation1/actions/runs/44370697407). Os 77.674 sem pista seguem em revisão em vez de receber categorias inventadas.
+- [Checkpoint C46](CHECKPOINT_C46_UNIVERSAL_AUTONOMY_2026-11-18.md), continuação `V31-C46-203649-194370-10565REVIEW-HINTS-79PATHS-C45WEEKLY-20261118`. **Próxima dependência para primeiro blog futuro LIVE: tema, plataforma, quantidade, identidade/campanha reais e autorização**, nunca antecipados pelo sistema.
+
 ### C45 — Curadoria universal recorrente com reparo do índice R2 (18/11/2026)
 
 - **[C44 REAL](https://github.com/adelrib27/blogger-automation1/actions/runs/44352445875): 584 reclassificações verificadas**, além das 10 C43: **594 reclassificados por dupla evidência**, com **194.370** produtos ainda em revisão. Catálogo 203.649 e sidecar completo; nenhuma publicação ou conversão nesta curadoria.
