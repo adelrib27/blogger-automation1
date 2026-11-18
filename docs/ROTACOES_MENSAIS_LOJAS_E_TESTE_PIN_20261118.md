@@ -66,6 +66,12 @@ A conta WordPress.com também possui sites antigos, privados, em preparação ou
 - Pin **ainda não comprovadamente publicado** antes das 13h; verificação independente agendada às 13:15.
 - **Nenhuma alteração no Pinterest V83**: agendamento feito em ferramenta separada, sem acessar Worker, tokens, D1 ou cron do V83.
 
+## Auditoria posterior solicitada — teste antigo de alta frequência
+- Confirmado **novamente** em `.github/workflows/achados_da_rotina_rotation_v31.yml`: cron **`0 9 2 * *`** (dia 2 de cada mês, às 06:00 Recife) e o modo LIVE só para `schedule`. O antigo agendamento de **20 minutos está DESATIVADO**; não remover o cron mensal solicitado.
+- Localizado outro diagnóstico SAFE temporário, independente do teste 20min, em `.github/workflows/v31_lab_daily_autonomous_dispatch.yml`: `*/5 15-16 5 11 *` (5min no dia 5 de novembro). Isso voltaria anualmente por causa do campo ano ausente no cron. Foi **REMOVIDO** em 18/11/2026, commit `7ecf24baccbc8bd992b0316a3cd442289486c035`.
+- Os dois horários `17 10 * * *` e `23 15 * * *` da ponte editorial LAB foram preservados: **não são cron de Loja de 20 minutos**. Não desligar editoriais sem escopo explícito.
+- V83 auditado separadamente: às 14h Recife, cron executou mas `SHOPEE_QUERY_UNAVAILABLE` (6/6 falhas de descoberta), sem publicar novo Pin. Não reduzir esse erro automaticamente a `quota`; o secret Cloudflare V83 precisa ser conferido após rotação feita apenas no GitHub.
+
 ## Retomada
 Para validar alterações: reler cada YAML na branch `main`, consultar o estado de cada workflow e o próximo `schedule`. Para resultado do Pin, consultar ID `432975502` no Metricool após as 13h. Não confundir `PENDING` com publicado. Evitar duplicar Pin de teste.
 
