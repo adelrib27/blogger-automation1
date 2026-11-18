@@ -1,5 +1,15 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+## OBJETIVO MESTRE — Biblioteca universal primeiro (C33+)
+
+**Não limitar o V31 aos três WordPress existentes.** O objetivo principal é o acervo cumulativo e pesquisável dos dois feeds Shopee, com organização por categoria L1/L2/L3, nicho e assunto de todos os produtos (inclusive em revisão). Quando surgir um novo blog Blogger/WordPress de assunto não antecipado, descobrir candidatos pertinentes no acervo sem depender de site cadastrado, revisar e aprovar apenas os seguros, converter o link pela campanha REAL que só é conhecida após o registro do blog e conectar a escolha ao gerador/publicador apropriados. Não antecipar campanhas de blogs futuros, publicar produtos pendentes nem fabricar métricas comerciais.
+
+**C33 — gargalo real:** 194.964/203.649 SKUs continuam pendentes. `catalog_expansion.append_feed` pula produtos conhecidos; `Catalog.reclassify_missing` só cria taxonomia ausente; `Catalog.import_csv` mantém um `review` histórico. A atualização de regras **não resolve sozinha** a reclassificação. [Issue #54 — prioridade P0](https://github.com/adelrib27/blogger-automation1/issues/54) e [PR #55 C33](https://github.com/adelrib27/blogger-automation1/pull/55) tratam primeiro da reavaliação integral por evidência de título, faceta oficial e política, depois de transições auditáveis e da integração de blog futuro. As reservas C32 (31 links; Casa 9/9, Oficina 6/6, Radar 15/15) validam a infraestrutura mas **não encerram** o objetivo universal.
+
+O módulo `universal_reassessment.py` mede por lane e por categoria oficial a elegibilidade para **análise** do backlog inteiro. Os sinais de título + fonte são apenas propostas; **0 aprovações, 0 links, 0 R2 writes e 0 posts**. Em desenvolvimento seguro, sem alterar workflows LIVE. As flags de publicação permanecem OFF e sua ativação não é a próxima etapa necessária.
+
+---
+
 ### C32 — Deploy controlado + reservas reais completas + E2E PASS (18/11/2026)
 
 - [PR #52](https://github.com/adelrib27/blogger-automation1/pull/52) **MERGED** na `main` após rotação de ambas as chaves Shopee, restrição GitHub Environment a `main`, 10 flags V31 OFF e dry-merge que preservou 37 arquivos de estado de blogs na `main`.
