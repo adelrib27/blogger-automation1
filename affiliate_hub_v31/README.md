@@ -1,5 +1,12 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C48 — Primeiro blog NOVO real criado e convertido (18/11/2026)
+
+- **Blog:** [Móveis para Cada Canto](https://moveisparacadacanto.blogspot.com/) — Blogger ID `1439741542627895062`, descrição SEO, HTTPS e fuso Brasília configurados e conferidos.
+- [**PR #67 MERGED**](https://github.com/adelrib27/blogger-automation1/pull/67): cadastro universal `blogger_moveis_para_cada_canto`, nicho `casa/moveis`, origem `home living/furniture`, campanha exclusiva `moveisparacadacanto`; **`publish_enabled=false`**. Corrigida contagem fixa de 21 sites em teste histórico. [CI: 310 testes V31 PASS](https://github.com/adelrib27/blogger-automation1/actions/runs/44376082992).
+- [**C48 real no R2 e Shopee**](https://github.com/adelrib27/blogger-automation1/actions/runs/44376578794): seis consultas de móveis com 6 aprovados cada, **1 link real convertido** para a nova campanha, salvo/restaurado R2, **1 handoff para revisão**, 0 posts e nenhum link cruzado de outro blog. Gatilho/workflow temporários removidos.
+- **Pendências honestas:** Tema V31 não aplicado — Runner recusou a instalação para ID novo (`target_not_authorized`). É preciso autorizar o destino exato no Runner antes de instalar. Quantidade de artigos e permissão de publicação não foram solicitadas/fornecidas: nenhum artigo criado ou publicado. [Checkpoint C48](CHECKPOINT_C48_FIRST_REAL_FURNITURE_BLOGGER_2026-11-18.md).
+
 ### C47 — Índice universal verificado + relatório semanal de revisão (18/11/2026)
 
 - [PR #66](https://github.com/adelrib27/blogger-automation1/pull/66) **MERGED**; [CI 44372184412](https://github.com/adelrib27/blogger-automation1/actions/runs/44372184412) **307 testes V31 + 24 Casa + 21 Oficina + crossblog PASS**.
