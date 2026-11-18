@@ -142,7 +142,7 @@ class AutoBloggerDraftTests(unittest.TestCase):
             resp=Mock()
             st=params["status"]
             resp.execute.return_value={"items":article_list(count)
-                if "live" in st else []}
+                if "LIVE" in st else []}
             return resp
         service.posts.return_value.list.side_effect=listings
         service.posts.return_value.insert.return_value.execute.return_value={
