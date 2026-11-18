@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
+  "repository": "adelrib27/blogger-automation1",
+  "branch": "main",
+  "last_checkpoint_phase": "C56",
+  "continuity_protocol_phase": "C57",
+  "continuity_status": "EM_ANDAMENTO",
+  "last_updated_date": "2026-11-18",
+  "last_updated_source": "conferencia_conectada_github",
+  "start_here": "V31_CONTINUAR_AQUI.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md",
+  "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
+  "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
+  "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
+  "verified_last_seen": {
+    "catalog_products": 203649,
+    "products_in_review": 194370,
+    "review_hints": 10565,
+    "blogger_moveis_url": "https://moveisparacadacanto.blogspot.com/",
+    "blogger_moveis_id": "1439741542627895062",
+    "blogger_moveis_live_articles": 3,
+    "blogger_moveis_owner_requested_articles": 3,
+    "commercial_enrichment": "3_artigos_verificados_com_imagem_real_link_afiliado_cta_e_links_internos",
+    "v31_regression_tests": 330,
+    "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar"
+  },
+  "do_not_assume": {
+    "all_review_products_approved": false,
+    "first_automatic_daily_cron_observed": false,
+    "new_blogger_draft_created_end_to_end_with_quota_open": false,
+    "automatic_live_publication_enabled": false,
+    "wordpress_v31_publisher_end_to_end_verified": false,
+    "runner_lab_fix_deployed_on_windows": false,
+    "provisional_theme_installed_verified_independently": false
+  },
+  "active_work": {
+    "objective": "Criar protocolo de continuidade V31 com checkpoint PREVIO, parcial e final, identificado de forma estável no GitHub.",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "Projeto GitHub main e documentos C56 inspecionados; checkpoint legado e V31 distinguidos.",
+    "next_safe_step": "Criar documento de entrada, instrucoes AGENTS, verificador automatico e confirmar leitura; registrar fechamento neste JSON.",
+    "mutation_in_progress": false,
+    "remote_operation_in_progress": false,
+    "rollback_needed": false
+  },
+  "next_priorities": [
+    "Observar o primeiro cron real C55 e garantir que pedidos completos de artigos nao gerem extras.",
+    "Testar geracao de novo rascunho Blogger de ponta a ponta apenas quando houver nova quantidade autorizada num site real.",
+    "Verificar integracao dos adapters de artigos comerciais no fluxo WordPress, sem extrapolar testes Blogger.",
+    "Continuar curadoria universal das filas REVIEW sem aprovar produtos por faceta isolada.",
+    "Retomar correção do Blogger Local Runner somente quando o usuario solicitar (tema provisório instalado manualmente)."
+  ],
+  "continuity_contract": {
+    "must_update_at_start": true,
+    "must_checkpoint_after_each_milestone": true,
+    "must_finalize_before_ending_turn": true,
+    "should_validate_on_git_push": true,
+    "contains_secrets": false,
+    "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work."
+  }
+}
