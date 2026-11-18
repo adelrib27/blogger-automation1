@@ -1,0 +1,83 @@
+name: V31 C52 TEMP - examinar fotos reais e cache por assunto sem writes
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C52_REAL_PRODUCT_ASSET_PROBE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  assets-from-csv-r2:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Catalogar produtos e imagens por pauta sem chamadas Shopee
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python - <<'PY'
+          import json,tempfile,unicodedata,re
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          from affiliate_hub_v31.catalog import Catalog,host_allowed
+          from affiliate_hub_v31.r2_state import R2State,verify_database
+          campaign='moveisparacadacanto'
+          def fold(x):
+              x=unicodedata.normalize('NFKD',x.lower())
+              return re.sub(r'[^a-z0-9 ]',' ',''.join(c for c in x if not unicodedata.combining(c)))
+          terms=[
+            ('sofa',('sofa',),('capa','tecido para','miniatura','adesivo','almofada')),
+            ('guarda_roupa',('guarda roupa','roupeiro'),('puxador','capa','organizador','adesivo','dobradica')),
+            ('home_office',('mesa de escritorio','mesa para computador','cadeira de escritorio','cadeira gamer'),('rodizio','suporte','puxador','capa','rodinha','miniatura')),
+          ]
+          with tempfile.TemporaryDirectory(prefix='v31-assets-') as td:
+              p=Path(td)/'core.sqlite3'
+              if not R2State.from_env().restore_to(p):
+                  raise SystemExit('R2_CATALOG_MISSING')
+              verify_database(p)
+              with Catalog(p) as cat:
+                  records=cat.db.execute("""
+                  SELECT p.product_key,p.title,p.image_url,p.origin_url,
+                         l.affiliate_url
+                  FROM products p JOIN product_taxonomy t
+                    ON t.product_key=p.product_key
+                  LEFT JOIN affiliate_links l
+                    ON l.product_key=p.product_key AND l.campaign=?
+                  WHERE p.moderation='eligible' AND t.status='matched'
+                    AND t.category='casa' AND t.niche='moveis'
+                  """,(campaign,)).fetchall()
+                  for name,keywords,excluded in terms:
+                      matching=[]
+                      for key,title,image,origin,url in records:
+                          normalized=fold(title)
+                          if not any(w in normalized for w in keywords) or any(w in normalized for w in excluded):
+                              continue
+                          host=(urlsplit(image).hostname or '').lower() if image.startswith('https://') else ''
+                          image_ok=(host.endswith('.susercontent.com') or
+                                    host.endswith('.shopee.com.br') or
+                                    host.endswith('.shopeeusercontent.com') or
+                                    host in ('susercontent.com','shopee.com.br','shopeeusercontent.com'))
+                          if not image_ok or not host_allowed(origin) or cat.for_conversion(key) is None:
+                              continue
+                          matching.append({'key':key,'title':title,'image':image,
+                              'cached':bool(url),'affiliate_url':url or None,
+                              'origin':origin})
+                      matching.sort(key=lambda x:(not x['cached'],x['title'].casefold()))
+                      print('V31_C52_ASSET_TOPIC '+json.dumps(
+                          {'group':name,'candidate_count':len(matching),
+                           'top':matching[:6]},ensure_ascii=False))
+                  print('V31_C52_REAL_IMAGE_ASSET_PROBE_PASS')
+          PY
