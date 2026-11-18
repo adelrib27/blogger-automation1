@@ -9,7 +9,7 @@
   "last_updated_date": "2026-11-18",
   "last_updated_source": "conferencia_conectada_github",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C58_AUDITORIA_UNIVERSAL_ARTIGOS_WP_BLOGGER_2026-11-18.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -37,14 +37,16 @@
   "active_work": {
     "objective": "C58: auditar e testar o fluxo editorial UNIVERSAL (Blogger e WordPress), escolhendo um WordPress com automação ativa como piloto, validar seleção R2, produto/foto/link/campanha, geração, CTA, internos e gates do publicador.",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C57 na main conferido: checkpoint de continuidade e 8 testes PASS; início da C58 ainda sem alterações operacionais ou publicações.",
-    "next_safe_step": "Auditar workflows e código de geração/publicação dos WordPress, selecionar piloto existente, rodar canário SAFE sem POST LIVE e corrigir no núcleo universal com CI/evidências.",
+    "latest_verified_step": "C58 auditoria dos três WP: Casa run 44393128512 e Oficina 44390826656 falham em import affiliate_hub_v31; Radar run 44401956211 ficou em QUARENTENA por alegação não comprovada; WP 43/12/32 posts existentes, pilotos sem links internos; checkpoint INTERMEDIARIO salvo.",
+    "next_safe_step": "Criar PR único de correção universal: import PYTHONPATH, internos WP+Blogger e regressões; canário real R2→renderização WP SAFE no Casa e validação independente Radar sem burlar quality gate.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "scope": "Somente provas SAFE e drafts/preview; não criar publicação LIVE sem autorização específica.",
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44402787608"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44393128512",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44390826656",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44401956211"
     ],
     "preflight_sha": "ea7e91d18cc1a80d7e17afed25e0ac1efe09b710"
   },
