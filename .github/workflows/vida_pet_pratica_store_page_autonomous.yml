@@ -3,7 +3,7 @@ name: Vida Pet Prática — Loja Page 20+12
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 11 * * *"
+    - cron: "35 11 26 * *"
       timezone: "America/Recife"
 
 permissions:
