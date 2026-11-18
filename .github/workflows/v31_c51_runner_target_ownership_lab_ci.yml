@@ -1,0 +1,31 @@
+name: V31 C51 LAB - autorização dinâmica Blogger sem lista fixa de IDs
+on:
+  push:
+    branches:
+      - feature/v31-c51-runner-dynamic-target-ownership-safe-20261118
+    paths:
+      - 'lab_v31_runner_target_auth/**'
+      - 'affiliate_hub_v31/tests/test_c51_runner_dynamic_target_ownership.py'
+      - '.github/workflows/v31_c51_runner_target_ownership_lab_ci.yml'
+  pull_request:
+    paths:
+      - 'lab_v31_runner_target_auth/**'
+      - 'affiliate_hub_v31/tests/test_c51_runner_dynamic_target_ownership.py'
+      - '.github/workflows/v31_c51_runner_target_ownership_lab_ci.yml'
+permissions:
+  contents: read
+jobs:
+  lab-only-no-windows-writes:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar contrato de autorização de novos blogs, somente offline
+        run: |
+          python -m compileall -q lab_v31_runner_target_auth
+          python -m unittest affiliate_hub_v31.tests.test_c51_runner_dynamic_target_ownership -v
+          echo 'V31_C51_DYNAMIC_TARGET_OWNERSHIP_OFFLINE_PASS'
