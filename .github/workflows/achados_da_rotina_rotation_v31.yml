@@ -3,7 +3,6 @@ on:
   pull_request:
     paths:
       - "achados_da_rotina/rotation_v31.py"
-      - ".github/workflows/achados_da_rotina_rotation_v31.yml"
   push:
     branches: [main]
     paths:
@@ -12,7 +11,7 @@ on:
   workflow_dispatch:
   schedule:
     # Frequência de teste: 20 minutos; horários GitHub Actions podem sofrer atrasos.
-    - cron: "*/20 * * * *"
+    - cron: "0 9 2 * *"
 
 permissions:
   contents: read
@@ -32,7 +31,7 @@ jobs:
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
       # Em PR/manual somente SAFE. LIVE apenas push main ou schedule main.
-      ACHADOS_STORE_DRY_RUN: ${{ (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && 'false' || 'true' }}
+      ACHADOS_STORE_DRY_RUN: ${{ (github.event_name == 'schedule') && 'false' || 'true' }}
 
     steps:
       - uses: actions/checkout@v4
