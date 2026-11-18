@@ -1,0 +1,58 @@
+name: V31 C47 TEMP MAIN - validar 10565 pistas R2 e relatorio agregado
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C47_REAL_DASHBOARD_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  verify-private-review-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Restaurar R2 sidecar com contagem de pistas verificada, somente leitura
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,sqlite3,tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.universal_index_storage import UniversalIndexStorage
+          from affiliate_hub_v31.unclassified_review_hints import review_dashboard
+          with tempfile.TemporaryDirectory(prefix='v31-c47-verify-') as td:
+              path=Path(td)/'index.sqlite3'
+              if not UniversalIndexStorage.from_env().restore_to(
+                  path,expected_product_count=203649,
+                  expected_review_hint_count=10565):
+                  raise SystemExit('V31_C47_INDEX_NOT_RESTORED')
+              with sqlite3.connect(f'file:{path.resolve()}?mode=ro',
+                                   uri=True) as db:
+                  report=review_dashboard(db,limit=15)
+          if (report['unclassified_review_products']!=88239 or
+              report['review_path_hint_products']!=10565 or
+              report['remaining_without_safe_hint']!=77674 or
+              report['review_only'] is not True or
+              report['new_approvals']!=0 or
+              report['affiliate_conversion_calls']!=0 or
+              report['publication_calls']!=0 or
+              report['r2_writes']!=0):
+              raise SystemExit('V31_C47_REVIEW_ONLY_INTEGRITY_FAILED')
+          print('V31_C47_REAL_PRIVATE_REVIEW_DASHBOARD_VERIFIED_PASS')
+          print(json.dumps(report,sort_keys=True,ensure_ascii=False))
+          PY
