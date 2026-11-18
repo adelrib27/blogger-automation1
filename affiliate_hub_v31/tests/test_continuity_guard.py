@@ -20,9 +20,11 @@ class V31ContinuityTests(unittest.TestCase):
             shutil.copy2(actual/name, self.root/name)
         folder=self.root/"affiliate_hub_v31"
         folder.mkdir()
+        state=json.loads((actual/"affiliate_hub_v31"/
+                          "CONTINUIDADE_ESTADO.json").read_text(encoding="utf-8"))
+        checkpoint=Path(state["checkpoint_detail"]).name
         for name in ("CONTINUIDADE_ESTADO.json",
-                     "CONTINUIDADE_PROTOCOLO.md",
-                     "CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md"):
+                     "CONTINUIDADE_PROTOCOLO.md", checkpoint):
             shutil.copy2(actual/"affiliate_hub_v31"/name,folder/name)
         self.state_path=folder/"CONTINUIDADE_ESTADO.json"
 
@@ -35,9 +37,10 @@ class V31ContinuityTests(unittest.TestCase):
 
     def test_checkpoint_entrypoint_is_valid_and_can_resume(self):
         result=check_repository(self.root)
-        self.assertEqual(result["status"],"EM_ANDAMENTO")
-        self.assertEqual(result["phase"],"C57")
-        self.assertEqual(result["latest_checkpoint"],"C56")
+        state=json.loads(self.state_path.read_text(encoding="utf-8"))
+        self.assertEqual(result["status"],state["continuity_status"])
+        self.assertEqual(result["phase"],state["continuity_protocol_phase"])
+        self.assertEqual(result["latest_checkpoint"],state["last_checkpoint_phase"])
         self.assertEqual(result["gate_check"],"PASS")
         self.assertEqual(result["external_mutations"],0)
         self.assertTrue(result["next_safe_step"])
