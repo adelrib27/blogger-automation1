@@ -163,7 +163,7 @@ def related_articles_html(links: list[tuple[str, str]], *,
             r"/(?:[a-z0-9][a-z0-9-]{0,119}/){1,6}", u.path, re.I))
         blogger_path = bool(re.fullmatch(
             r"/(?:[a-z0-9][a-z0-9-]{0,119}/){0,5}"
-            r"[a-z0-9][a-z0-9-]{0,119}\\.html", u.path, re.I))
+            r"[a-z0-9][a-z0-9-]{0,119}\.html", u.path, re.I))
         if (u.scheme != "https" or
             (u.hostname or "").lower().rstrip(".") != hostname or
             u.username or u.password or u.port not in (None, 443) or
