@@ -1,0 +1,61 @@
+name: V31 Universal — reclassificação histórica por evidência dupla (SAFE)
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_evidence_approval:
+        description: 'Confirmo promoção limitada somente de SKUs com título + faceta oficial + policy gate, SEM posts'
+        required: true
+        type: boolean
+        default: false
+      limit:
+        description: 'Máximo de promoções auditáveis no lote'
+        required: true
+        type: choice
+        default: '10'
+        options: ['1','10','50','100']
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  evidence-classification:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.confirm_evidence_approval == true
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Testes SAFE antes de reclassificar
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Prévia integral das propostas seguras no R2 sem mudanças
+        env:
+          V31_LIMIT: ${{ inputs.limit }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.safe_reclassification --limit "$V31_LIMIT"
+      - name: Atualizar histórico somente com evidência dupla; preservar links/recuperar R2
+        env:
+          V31_LIMIT: ${{ inputs.limit }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.safe_reclassification --limit "$V31_LIMIT" --execute
+      - name: Sincronizar o inventário universal e léxico L1/L2 com a nova moderação
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: python -m affiliate_hub_v31.universal_inventory --execute
