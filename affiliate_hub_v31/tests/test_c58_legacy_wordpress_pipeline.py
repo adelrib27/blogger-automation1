@@ -52,6 +52,11 @@ print("V31_LEGACY_WP_IMPORT_PASS")
             "<h2>Cuidados</h2><p>Compare os anúncios.</p>"
             "<h2>Conclusão</h2><p>Resumo.</p>"
         )
+        hosts={
+            "casa_decoracao":"https://casaedecoracao.radartechbr.com.br",
+            "oficina_garagem":"https://oficina.radartechbr.com.br",
+            "radar_tech_br":"https://radartechbr.com.br",
+        }
         for folder in FOLDERS:
             path=ROOT/folder/"src"/"generate_articles.py"
             # Importar pelo arquivo sem executar CLI e com diretório src local.
@@ -65,7 +70,8 @@ print("V31_LEGACY_WP_IMPORT_PASS")
             finally:
                 sys.path[:]=old
             # CTA é mockado: não precisa criar link/insumo comercial.
-            with patch.object(module,"cta_block",return_value="<p>CTA seguro</p>"):
+            with patch.object(module,"SITE_URL",hosts[folder]), \
+                 patch.object(module,"cta_block",return_value="<p>CTA seguro</p>"):
                 html=module.insert_contextual_blocks(
                     editorial,{"category":"Sala","editorial_title":
                     "Título novo, único, ainda não publicado"},
