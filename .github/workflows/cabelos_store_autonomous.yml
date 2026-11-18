@@ -3,7 +3,7 @@ name: Cabelos em Foco — Loja Shopee LIVE
 on:
   workflow_dispatch:
   schedule:
-    - cron: "50 8 * * *"
+    - cron: "50 8 7 * *"
       timezone: "America/Recife"
   push:
     paths:
