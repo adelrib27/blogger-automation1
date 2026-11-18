@@ -30,3 +30,11 @@ Estratégia: iniciar com **três guias evergreen originais**, independentes de v
 Verificar CI e canário R2 de fila SAFE, conservar 3 rascunhos. Para lançamento visual completo, autorizar o ID Blogger exato no Runner e instalar tema V31. Publicar os textos só depois da etapa de revisão/editoria e da autorização de publicação para o novo blog. Categoria editorial de ambiente pode virar marcador Blogger via um recurso que efetivamente aceite labels, mas **não é impeditivo** para o conteúdo.
 
 **Código de continuidade:** `V31-C49-MOVEIS-3DRAFTS-SALA-QUARTO-HOMEOFFICE-CACHEONLY-20261118`.
+
+## Validação CI e R2 real após registro C49
+
+- [PR #68](https://github.com/adelrib27/blogger-automation1/pull/68) **MERGED**: registra pedido REAL de três artigos em `site_requests.d`, `enabled=true`, sem modificar nenhum publicador e mantendo `publish_enabled=false` na rota Blogger.
+- [CI C49 44380233726](https://github.com/adelrib27/blogger-automation1/actions/runs/44380233726): **310 testes V31**, **24 Casa**, **21 Oficina**, anti-repetição/originalidade crossblog PASS.
+- [**R2 real C49 44380494099**](https://github.com/adelrib27/blogger-automation1/actions/runs/44380494099): 1 pedido de blog real avaliado, **3 slots editoriais** com **1 link já disponível** na campanha `moveisparacadacanto` e **2 candidatos aprovados aguardando conversão**; 12 produtos em revisão separados, sem aprovar. A execução foi **DRY_RUN**: `converted=0`, `shopee_mutation_attempts=0`, `publication_calls=0`, `r2_snapshot_saved_and_verified=false` (não gravou, comportamento esperado). `V31_C49_REAL_SITE_REQUEST_R2_DRY_RUN_PASS`.
+- Workflows/gatilhos temporários C49 removidos após sucesso. O cron diário permanente pode preparar até 3 URLs oficiais globais por execução com a campanha real, mas **não publica artigos**, e a execução agendada futura ainda não foi observada.
+- **Três textos continuam como drafts no Blogger**; nenhum conteúdo comercial afirmado como oferta verificada. Sem marcas, preços ou avaliações inventadas. A organização Sala/Quarto/Home Office é editorial, **não labels da API Blogger**.
