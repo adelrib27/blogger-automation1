@@ -1,5 +1,12 @@
 import json
 import os
+import sys
+from pathlib import Path
+
+# Compatível tanto com "python -m" quanto execução direta no GitHub Actions.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 from affiliate_hub_v31.reuse_policy import can_queue_reuse
 from affiliate_hub_v31.queue_identity import highest_reserved_id
