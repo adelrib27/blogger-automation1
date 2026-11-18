@@ -3,7 +3,7 @@ name: Guia de Achados & Ofertas — Loja Shopee LIVE Controlada
 on:
   workflow_dispatch:
   schedule:
-    - cron: "5 10 * * *"
+    - cron: "5 10 15 * *"
       timezone: "America/Recife"
 
 permissions:
