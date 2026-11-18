@@ -3,8 +3,8 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C58",
-  "continuity_protocol_phase": "C59",
+  "last_checkpoint_phase": "C59",
+  "continuity_protocol_phase": "C60",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-18",
   "last_updated_source": "conferencia_conectada_github",
@@ -35,17 +35,18 @@
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "C59: atualizar os geradores WordPress existentes para o modelo Workers AI suportado e integrar respostas JSON estruturadas para plano/CTA, sem mexer nas proteções de qualidade nem publicar durante canários; validar todos os blogs com CI e Casa real.",
+    "objective": "C60 — projetar writer universal WordPress em DRAFT para qualquer novo blog real do V31: site registrado + pedido explícito + credenciais daquele site + produto R2 + imagem real + affiliate CTA + internos + IA original, sem LIVE",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C59 PR#76 MERGED IA Llama WordPress 3 sites, PR#77 MERGED retry plano curto 35-65 sem relaxar gates; CI 356 V31+24 Casa+21 Oficina+crossblog PASS; run real #44409264710 bloqueado por título 22; reteste #44410047121 em execução.",
-    "next_safe_step": "Verificar run 44410047121 e logs; corrigir eventuais falhas sem publicar, retirar canário temporário, concluir checkpoint C59 e seguir pipeline universal C60.",
+    "latest_verified_step": "C59 CI 357 V31+24 Casa+21 Oficina+crossblog PASS; R2+AI real Casa DRAFT_READY 743 palavras (run 44410047121), 3 SAFE WordPress Casa 44410965031, Oficina 44410976595, Radar 44410496620 PASS; PR #75-78 merged, 0 posts causados por testes.",
+    "next_safe_step": "Implementar núcleo C60 sem sites fixos nem segredos no repositório; testes REST em fake WP e dry-run R2+WP real; não publicar LIVE ou criar novos artigos sem pedido de site real.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/76",
-      "https://github.com/adelrib27/blogger-automation1/pull/77",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410047121"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410047121",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410965031",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410976595",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410496620"
     ]
   },
   "next_priorities": [
