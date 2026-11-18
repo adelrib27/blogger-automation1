@@ -156,11 +156,18 @@ def related_articles_html(links: list[tuple[str, str]], *,
             raise CommerceArticleError("related_post_invalid")
         title, url = item
         u = urlsplit(url)
+        # Blogger: /2026/11/post.html. WordPress: /post-slug/.
+        # Conferir o permalink real de um post; não permitir redireções,
+        # paths duplos/encodados ou páginas de sistema.
+        wp_path = bool(re.fullmatch(
+            r"/(?:[a-z0-9][a-z0-9-]{0,119}/){1,6}", u.path, re.I))
+        blogger_path = bool(re.fullmatch(
+            r"/(?:[a-z0-9][a-z0-9-]{0,119}/){0,5}"
+            r"[a-z0-9][a-z0-9-]{0,119}\.html", u.path, re.I))
         if (u.scheme != "https" or
             (u.hostname or "").lower().rstrip(".") != hostname or
             u.username or u.password or u.port not in (None, 443) or
-            u.fragment or u.query or not u.path.startswith("/") or
-            not u.path.endswith(".html")):
+            u.fragment or u.query or not (wp_path or blogger_path)):
             raise CommerceArticleError("related_post_not_same_blog")
         normalized_url = "https://" + hostname + u.path
         if normalized_url in seen or normalized_url == current_url:
