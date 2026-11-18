@@ -68,3 +68,10 @@ A conta WordPress.com também possui sites antigos, privados, em preparação ou
 
 ## Retomada
 Para validar alterações: reler cada YAML na branch `main`, consultar o estado de cada workflow e o próximo `schedule`. Para resultado do Pin, consultar ID `432975502` no Metricool após as 13h. Não confundir `PENDING` com publicado. Evitar duplicar Pin de teste.
+
+## Correção de escopo do teste Pinterest — 18/11/2026, após 13h
+- **Resultado real:** Metricool post ID `432975502`, rede Pinterest `ERROR`, HTTP `400`, resposta `Sorry! We blocked this link because it may lead to spam.`. **Nenhum Pin foi publicado.**
+- **Falha de metodologia admitida:** este teste usou destino WordPress, que NÃO integra o contrato comercial AR VARIEDADES PFE. O erro do Pinterest não deve ser extrapolado para todos os blogs ou para links de produtos Shopee.
+- **Contrato canônico de fontes:** a fonte primária é **Shopee Affiliate Open API**; os dois CSVs são a **fonte alternativa de catálogo** quando a busca pela API falha ou não apresenta ofertas adequadas. `product_short link` / `shope.ee` do CSV é apenas candidato comercial, não atribuição afiliada automaticamente comprovada. Selecionar produto elegível → converter via `generateShortLink` ou revalidar link previamente verificado → revisão e gates editoriais → publicação pelo publicador autorizado. Se a API falhar sem um link verificável, reter o Pin.
+- Não usar URL de artigo Blogger/WordPress como substituto automático do destino de produto afiliado. O publicador Pinterest V83 permaneceu **não modificado**; nenhuma tentativa adicional foi criada.
+- **Não reprogramar o mesmo post nem trocar destino só para contornar o bloqueio.** A próxima prova comercial precisa do pipeline original, aprovação editorial, link afiliado confirmado e autorização de publicação distinta.
