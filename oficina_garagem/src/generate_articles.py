@@ -16,9 +16,10 @@ import sys
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from affiliate_hub_v31.wordpress_related_posts import from_published_history
+from affiliate_hub_v31.wordpress_ai import request_workers_text, DEFAULT_MODEL
 QUEUE = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
 OUT_DIR = ROOT / "oficina_garagem" / "data" / "generated"
-MODEL = os.getenv("OFICINA_AI_MODEL", "@cf/qwen/qwen3-30b-a3b-fp8").strip()
+MODEL = os.getenv("OFICINA_AI_MODEL", DEFAULT_MODEL).strip()
 BATCH_SIZE = max(1, min(int(os.getenv("OFICINA_GENERATION_BATCH_SIZE", "2")), 10))
 ENABLED = os.getenv("OFICINA_GENERATION_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
 BODY_ATTEMPTS = max(1, min(int(os.getenv("OFICINA_GENERATION_BODY_ATTEMPTS", "3")), 3))
@@ -84,45 +85,12 @@ def extract_text(payload):
     return ""
 
 
-def ai(prompt, retries=3):
+def ai(prompt, retries=3, kind="html"):
+    """Cliente compartilhado; JSON Schema para plano/CTA, HTML para artigo."""
     account, token = creds()
-    prompt = str(prompt or "").strip()
-    if MODEL.startswith("@cf/qwen/qwen3") and not prompt.startswith("/no_think"):
-        prompt = "/no_think\n" + prompt
-    req_body = json.dumps(
-        {
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 8192,
-            "temperature": 0.2,
-        },
-        ensure_ascii=False,
-    ).encode()
-    endpoint = f"https://api.cloudflare.com/client/v4/accounts/{account}/ai/run/{MODEL}"
-    last = ""
-    for attempt in range(retries):
-        req = urllib.request.Request(
-            endpoint,
-            data=req_body,
-            method="POST",
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "User-Agent": "OficinaGaragem-Editorial/2.6",
-            },
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=120) as response:
-                payload = json.loads(response.read().decode("utf-8", "replace"))
-            text = extract_text(payload)
-            if text:
-                return text
-            last = "resposta vazia ou em formato não reconhecido"
-        except Exception as exc:
-            last = str(exc)
-        if attempt + 1 < retries:
-            time.sleep(5 if attempt == 0 else 15)
-    raise RuntimeError("Falha Workers AI: " + last)
+    return request_workers_text(
+        prompt=prompt,account_id=account,api_token=token,
+        model=MODEL,kind=kind,retries=retries)
 
 
 def clean(raw):
@@ -210,7 +178,7 @@ Responda SOMENTE em JSON válido:
 
 
 def make_plan(item, raw=None):
-    data = parse_json(ai(editorial_plan_prompt(item)) if raw is None else raw)
+    data = parse_json(ai(editorial_plan_prompt(item),kind="plan") if raw is None else raw)
     title = re.sub(r"\s+", " ", str(data.get("title") or "")).strip()
     keyword = re.sub(r"\s+", " ", str(data.get("keyword") or "")).strip()
     reader_need = re.sub(r"\s+", " ", str(data.get("reader_need") or "")).strip()
@@ -390,7 +358,7 @@ def generate_article(item, plan):
             if attempt + 1 >= BODY_ATTEMPTS:
                 raise RuntimeError("geração editorial bloqueada após revisões: " + last_error)
             raw = ai(repair_prompt(item, plan, raw, last_error))
-    cta_lead, cta_mode = generate_cta_lead(item, plan, ai, attempts=CTA_ATTEMPTS)
+    cta_lead, cta_mode = generate_cta_lead(item, plan, lambda text: ai(text, kind="cta"), attempts=CTA_ATTEMPTS)
     return build(item, plan, editorial, enforce=True, cta_lead=cta_lead, cta_generation_mode=cta_mode)
 
 

@@ -60,7 +60,7 @@ jobs:
       SHOPEE_TOP_N: "32"
       CASA_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CASA_CLOUDFLARE_ACCOUNT_ID }}
       CASA_CLOUDFLARE_API_TOKEN: ${{ secrets.CASA_CLOUDFLARE_API_TOKEN }}
-      CASA_AI_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      CASA_AI_MODEL: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
       CASA_GENERATION_ENABLED: "true"
       CASA_GENERATION_BATCH_SIZE: "1"
       CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
@@ -136,7 +136,7 @@ jobs:
       - name: Montar fila editorial com rotação por categoria
         run: python -u casa_decoracao/src/build_editorial_queue.py
 
-      - name: Gerar próximo artigo com Qwen3
+      - name: Gerar próximo artigo com Workers AI JSON + HTML validado
         run: python -u casa_decoracao/src/generate_articles.py
 
       - name: C10 — Gate de originalidade de título e corpo entre blogs no fallback
