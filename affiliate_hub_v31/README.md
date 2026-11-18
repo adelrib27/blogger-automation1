@@ -1,5 +1,12 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C47 — Índice universal verificado + relatório semanal de revisão (18/11/2026)
+
+- [PR #66](https://github.com/adelrib27/blogger-automation1/pull/66) **MERGED**; [CI 44372184412](https://github.com/adelrib27/blogger-automation1/actions/runs/44372184412) **307 testes V31 + 24 Casa + 21 Oficina + crossblog PASS**.
+- [R2 real C47 44372472666](https://github.com/adelrib27/blogger-automation1/actions/runs/44372472666): sidecar restaurado e **10.565 pistas de revisão confirmadas** com `review_only=1`, de 88.239 SKUs sem categoria; 77.674 ainda sem evidência suficiente. Relatório por categoria L1/L2 em agregado; **0 links/0 writes/0 posts**.
+- Permanentes na `main`: refresh dos 2 CSVs terça, curadoria C45 quarta, qualidade C47 quinta, fila por pedidos reais diária, conversor on-demand por campanha exata. Todos funcionam independentemente dos nichos de blogs futuros; **eventos agendados futuros ainda não foram observados**. Os canários temporários C44–C47 foram removidos.
+- [Checkpoint C47](CHECKPOINT_C47_UNIVERSAL_READY_FOR_REAL_NEW_BLOG_2026-11-18.md) — continuidade `V31-C47-203649-194370REVIEW-10565HINTS-79PATHS-C45C47CRONS-20261118`. Primeiro novo blog LIVE ainda exige tema/plataforma/quantidade e autorização de ID/campanha reais; não inventar e não ativar os três WordPress como substituto.
+
 ### C46 — Curadoria universal contínua + sugestões privadas para sem categoria (18/11/2026)
 
 - **203.649 produtos no R2**, **194.370 ainda em REVIEW**; 594 históricos com título+fonte compatíveis foram reclassificados em C43/C44. Sidecar preserva todas as categorias, sem excluir futuros blogs.
