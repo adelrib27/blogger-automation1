@@ -1,5 +1,13 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C42 — Biblioteca universal operacional e auditada, 33 links reais; publicação futura separada (18/11/2026)
+
+- **Missão central**: os dois CSVs alimentam biblioteca universal R2 (203.649 SKUs; hierarquia oficial L1/L2/L3, incluindo sem categoria), léxico 1.399 termos/118 caminhos agregados e busca por tema novo na hora. O refresh é semanal independente de blogs; sem inventar nichos/campanhas antecipadamente.
+- **Conversor e fila independentes dos 3 WordPress**: blog real registrado + pedido `site_requests.d/<site_key>.json` → seletor de itens aprovados → até 3 conversões oficiais Shopee globais/dia → cache por campanha exata R2 verificado → envelope editorial privado por site com SHA256. Sem pedidos, zero API. C38 e C40 demonstraram 2 links reais novos Blogger; [C42](https://github.com/adelrib27/blogger-automation1/actions/runs/44349324574) confirmou **33 links reais** no R2 e 3 propostas com links no envelope Blogger. Pedido de canário removido.
+- **Rascunhos universais Blogger/WordPress**: `universal_draft_adapter.py` exige aprovação editorial, corpo original e link da campanha correta, produz apenas `isDraft=true`/ `status=draft`, não publica. [CI C41](https://github.com/adelrib27/blogger-automation1/actions/runs/44349000904): **285 V31 +24 Casa +21 Oficina + guard originalidade PASS**.
+- **Pendente, sem contornar política:** 194.964 SKUs em revisão continuam separados e pesquisáveis; C39 reclassifica apenas com dois sinais verificáveis, mas [R2 real 44347031902](https://github.com/adelrib27/blogger-automation1/actions/runs/44347031902) encontrou 0 novos aprováveis nas regras atuais. Primeiro novo blog completo em LIVE depende de solicitação real (tema/plataforma/quantidade), ID/campanha/autorização do site e geração/revisão do artigo. **A implementação não alegou publicar nem inventar vendas/comissões**. Pinterest e publicadores legados intocados.
+- [Checkpoint técnico C42](CHECKPOINT_C42_UNIVERSAL_AUTONOMY_REAL_R2_2026-11-18.md) · [Issue-mestra #54](https://github.com/adelrib27/blogger-automation1/issues/54) · código de continuidade `V31-C42-UNIVERSAL-203649-33REAL-L1399-285TESTS-20261118`.
+
 ### C41 — Adaptador de rascunho universal para Blogger/WordPress (18/11/2026)
 
 - `universal_draft_adapter.py` consome envelope editorial privado `REVIEW_REQUIRED` de um site REAL; exige **aprovação explícita de pauta** e **corpo original com pelo menos 250 palavras** fornecido pelo gerador autorizado. O link afiliado é reconferido no catálogo R2 para a **campanha exata**. Rejeita produtos reprovados, envelope de outro site, URL manipulada, pauta sem palavra-chave, corpo insuficiente ou HTML injetado.
