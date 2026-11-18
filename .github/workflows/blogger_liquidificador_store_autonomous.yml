@@ -3,7 +3,7 @@ name: Liquidificadores em Foco — Loja Shopee LIVE
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 8 * * *"
+    - cron: "35 8 6 * *"
       timezone: "America/Recife"
   push:
     paths:
