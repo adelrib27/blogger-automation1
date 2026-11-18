@@ -221,7 +221,9 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
                 raise CatalogExpansionError("universal_sidecar_save_failed")
             verified=Path(td)/"restored_universal.sqlite3"
             if not index_store.restore_to(
-                verified,expected_product_count=after_stats["products"]):
+                verified,expected_product_count=after_stats["products"],
+                expected_review_hint_count=
+                    review_hints["review_path_hints_created"]):
                 raise CatalogExpansionError("universal_sidecar_restore_failed")
             sidecar_saved=True
             pending=pending or receipt.get("retention_pending",False)
