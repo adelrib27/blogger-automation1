@@ -1,6 +1,6 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Para um novo chat do projeto:** leia ESTE arquivo no GitHub `main`, depois [estado estruturado](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint técnico C57](affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md) (o histórico comercial anterior está em [C56](affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md)) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Confirme os dados atuais nos serviços antes de executar. **Não confundir com `CHECKPOINT_ATUAL.md`**, que conserva o histórico/canon legado da rede Blogger em 02/11 e não descreve o V31 atual.
+> **Para um novo chat do projeto:** leia ESTE arquivo no GitHub `main`, depois [estado estruturado](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint técnico atual C60](affiliate_hub_v31/CHECKPOINT_C60_WORDPRESS_UNIVERSAL_DRAFT_SAFE_2026-11-18.md) (histórico em [C57](affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md) e [C56](affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md)) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Confirme os dados atuais nos serviços antes de executar. **Não confundir com `CHECKPOINT_ATUAL.md`**, que conserva o histórico/canon legado da rede Blogger em 02/11 e não descreve o V31 atual.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
 **Última conferência contextual:** 18/11/2026. O JSON de estado é atualizado por fase; dados e números nele são observações históricas, NÃO leitura ao vivo.  
@@ -32,7 +32,7 @@ Os números acima são o último estado comprovado nas execuções citadas, não
 - **C58:** os agendamentos WordPress Casa/Oficina/Radar foram auditados, com Casa/Oficina inicialmente quebrando por importação do núcleo V31. [PR #75](https://github.com/adelrib27/blogger-automation1/pull/75) corrigiu imports dos geradores e incluiu links internos para posts REAIS do mesmo WordPress. [R2 + IA + WP C58](https://github.com/adelrib27/blogger-automation1/actions/runs/44407697822) PASS: Casa **9**, Oficina **6**, Radar **15** ofertas aprovadas com imagem real/campanha correta, Casa criou prévia efêmera 8 parágrafos/537 palavras, 2 links internos, 0 posts.
 - **C59:** [PR #76](https://github.com/adelrib27/blogger-automation1/pull/76) substituiu o Qwen3 antigo dos 3 fluxos WP por cliente Llama 3.3 JSON/HTML com gate. Primeira tentativa real bloqueou título curto; [PR #77](https://github.com/adelrib27/blogger-automation1/pull/77) retenta o plano sem baixar exigência. [C59 AI real 44410047121](https://github.com/adelrib27/blogger-automation1/actions/runs/44410047121) PASS: artigo Casa 743 palavras, `DRAFT_READY`, foto R2, Shopee campanha exata, CTA e 2 links internos, **0 posts**. [PR #78](https://github.com/adelrib27/blogger-automation1/pull/78) corrigiu imports também nos publicadores WordPress.
 - **Três workflows SAFE EXISTENTES passaram depois dos patches:** [Casa](https://github.com/adelrib27/blogger-automation1/actions/runs/44410965031), [Oficina](https://github.com/adelrib27/blogger-automation1/actions/runs/44410976595), [Radar](https://github.com/adelrib27/blogger-automation1/actions/runs/44410496620). Nenhum deles habilitou LIVE. Radar LIVE anterior bloqueou alegação de acessibilidade não comprovada e esse veto foi preservado.
-- [Checkpoint C58](affiliate_hub_v31/CHECKPOINT_C58_AUDITORIA_UNIVERSAL_ARTIGOS_WP_BLOGGER_2026-11-18.md) · [Checkpoint C59](affiliate_hub_v31/CHECKPOINT_C59_WORDPRESS_AI_UNIVERSAL_SAFE_2026-11-18.md). **Ainda não houve nova publicação WordPress comprovada após os patches nem writer universal para um NOVO WordPress**, pois um novo site precisa de credenciais e pedido reais. A próxima fase C60 trabalha esse caminho genérico em rascunho, com políticas de autorização separadas.
+- [Checkpoint C58](affiliate_hub_v31/CHECKPOINT_C58_AUDITORIA_UNIVERSAL_ARTIGOS_WP_BLOGGER_2026-11-18.md) · [Checkpoint C59](affiliate_hub_v31/CHECKPOINT_C59_WORDPRESS_AI_UNIVERSAL_SAFE_2026-11-18.md). **Estado superado pela C60:** o writer universal WordPress já existe em `main` e passou em CI/preview real (veja abaixo). Ainda não há comprovação de novo POST de rascunho ou publicação LIVE após os patches; criação remota depende de pedido real e credenciais daquele site.
 
 ## C60 — WordPress FUTURO genérico, em rascunho (18/11/2026)
 
@@ -54,18 +54,18 @@ O pedido persistido em `affiliate_hub_v31/site_requests.d/blogger_moveis_para_ca
 
 - A fila REVIEW (último resultado: **194.370**) não equivale a produtos publicáveis; **10.565** pistas taxonômicas são apenas sugestões privadas.
 - O primeiro disparo **agendado** do workflow C55 e um **ciclo completo de novo rascunho com quota aberta** ainda não tinham sido observados ao final C56. Job e código na `main` não provam que o cron já ocorreu.
-- O fluxo comercial C54 existe nos adaptadores V31 WordPress, mas a publicação/integração WordPress real ponta a ponta ainda carece de teste específico.
+- A prévia R2 + WordPress REAL da C60 foi confirmada, inclusive imagem/CTA/2 links internos; **a criação autenticada de novo rascunho WordPress não foi testada em produção** por ausência de pedido e credenciais específicos.
 - Nenhum pedido de publicação LIVE irrestrita foi autorizado. A autorização C50 foi pontual aos três artigos.
 - Não publicar Pins, não modificar Worker v1.0, não habilitar crons LIVE só para acelerar resultado.
 - Relatórios de vendas, cliques e comissões só com dados verificáveis.
 
 ## 5. Próximas ações permitidas, em prioridade
 
-1. **Continuar do `active_work` no JSON:** se `EM_ANDAMENTO`/falha, verificar no GitHub os commits e ações já feitas, completar a etapa ou registrar bloqueio antes de iniciar algo novo.
-2. Verificar a primeira execução programada dos workflows V31, o conjunto exato de variáveis/credenciais necessárias e mensagens de falha (sem expor segredos).
-3. Testar ponta a ponta a criação de novo **rascunho** Blogger em um pedido REAL que tenha quota disponível e autorização específica; nunca alterar silenciosamente `articles=3` do piloto.
-4. Validar end-to-end a mesma renderização comercial e o publicador WordPress sem extrapolar testes Blogger.
-5. Continuar classificação e curadoria da biblioteca universal por evidências, sem aprovação indiscriminada.
+1. **Retomar do `active_work` do JSON em `main`**, atualmente C60 `PRONTO_PARA_PROXIMA_ETAPA`; conferir HEAD, PRs, Actions e serviço antes de qualquer nova mutação.
+2. **Observar próximos crons reais** Blogger C55, WordPress universal C60 (PREVIEW por padrão) e os três WordPress legados: workflow configurado não prova execução agendada.
+3. **Validar primeiro POST de rascunho WordPress universal** apenas quando existir pedido real de tema/quantidade para site registrado, credenciais próprias no GitHub secret protegido e autorização de DRAFT. Confirmar `status=draft` via REST sem habilitar LIVE.
+4. Testar próximo rascunho Blogger apenas com pedido novo que disponibilize quota; piloto Móveis 3/3, sem quarto artigo por conta própria.
+5. Continuar reclassificação conservadora do acervo completo R2 dos dois CSVs; preservar produtos REVIEW e campanhas isoladas.
 6. Runner/tema apenas quando o proprietário retomar o assunto.
 
 ## 6. Regra para QUALQUER novo chat ou execução longa
