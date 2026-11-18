@@ -1,0 +1,58 @@
+name: V31 Universal — tema livre, artigos e handoff SAFE
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'Tema fornecido agora, sem prever nichos futuros'
+        required: true
+        type: string
+      platform:
+        description: 'Destino Blogger ou WordPress'
+        required: true
+        type: choice
+        options: ['blogger','wordpress']
+      articles:
+        description: 'Quantidade de artigos pretendidos neste lote (1-24)'
+        required: true
+        type: number
+        default: 6
+      site_key:
+        description: 'Opcional: site real cadastrado. Sem ele, faz apenas pesquisa universal'
+        required: false
+        type: string
+        default: ''
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  preview-handoff:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Regressao antes de R2
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Buscar biblioteca universal por tema real — sem posts nem conversões
+        env:
+          V31_TOPIC: ${{ inputs.topic }}
+          V31_PLATFORM: ${{ inputs.platform }}
+          V31_ARTICLES: ${{ inputs.articles }}
+          V31_SITE: ${{ inputs.site_key }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--topic "$V31_TOPIC" --platform "$V31_PLATFORM" --articles "$V31_ARTICLES")
+          if [[ -n "$V31_SITE" ]]; then args+=(--site-key "$V31_SITE"); fi
+          python -m affiliate_hub_v31.universal_editorial_handoff "${args[@]}"
