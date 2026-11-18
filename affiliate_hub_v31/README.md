@@ -1,5 +1,13 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C32 — Deploy controlado + reservas reais completas + E2E PASS (18/11/2026)
+
+- [PR #52](https://github.com/adelrib27/blogger-automation1/pull/52) **MERGED** na `main` após rotação de ambas as chaves Shopee, restrição GitHub Environment a `main`, 10 flags V31 OFF e dry-merge que preservou 37 arquivos de estado de blogs na `main`.
+- **14 novas conversões afiliadas reais** (C29+C30), 1–3 por execução, R2 salvo/restaurado e integridade auditada, sem posts. **31 URLs reais** no catálogo (30 WP + 1 Blogger), 203.649 produtos. Reservas: **Casa 9/9, Oficina 6/6, Radar 15/15; 3/3 `SHADOW_READY`**.
+- [**E2E real C31 44311466391**](https://github.com/adelrib27/blogger-automation1/actions/runs/44311466391) **SUCCESS**: 230 V31 +24 Casa +21 Oficina + crossblog; três rankings R2 reais e fila original Radar 5 slots/5 lojas/5 keywords; zero publicação. [**C32 flag audit 44312075462**](https://github.com/adelrib27/blogger-automation1/actions/runs/44312075462): **10 flags OFF** em `main`. Workflows temporários removidos.
+- **Próxima dependência manual para modo autônomo:** proprietário habilitar `V31_EDITORIAL_SHADOW_ENABLED=true` e `V31_EDITORIAL_CACHE_WARMUP_ENABLED=true` em GitHub **Repository variables**; para rollout editorial LIVE, somente após revisão, habilitar `V31_EDITORIAL_C9_RELEASE_ENABLED=true` e primeiro `V31_CASA_R2_FALLBACK_ENABLED=true` (Oficina/Radar posteriores). Flags LIVE atualmente OFF. Não ativar reutilização de produto ou publicação em massa sem canário supervisionado.
+- [Checkpoint C32](CHECKPOINT_C32_POSTMERGE_R2_RESERVE_E2E_2026-11-18.md) — continuidade `V31-EDITORIAL-C32-MAIN-31LINKS-3SHADOWREADY-14REALCONVERSIONS-230TESTS-20261118`. Pinterest isolado; vendas/comissões reais não são pré-requisito para software e não foram fabricadas.
+
 ### C26 — Segurança salva e dez flags comerciais OFF (18/11/2026)
 
 - O usuário confirmou **Save protection rules** da regra `main`-only no Environment `v31-editorial-safe`. Credenciais Shopee V31 e legada autenticadas após rotação nos canários C23/C24.
