@@ -3,7 +3,7 @@ name: Achadinhos de Beleza — Loja Shopee 10:35
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 10 * * *"
+    - cron: "35 10 1 * *"
       timezone: "America/Recife"
 
 permissions:
