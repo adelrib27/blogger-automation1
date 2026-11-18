@@ -260,7 +260,7 @@ def _get_blogger_service():
 
 def _list_posts(service,blog_id:str)->list[dict]:
     result=[]
-    for status in ("live","draft"):
+    for status in ("LIVE","DRAFT"):
         token=None
         for _ in range(3): # max 300 posts each state; owner quota max 24
             args={"blogId":blog_id,"status":[status],
