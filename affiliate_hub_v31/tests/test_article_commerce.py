@@ -85,6 +85,15 @@ class CommerceArticleTests(unittest.TestCase):
         self.assertNotIn('<suede>',html)
         self.assertNotIn("R$",html)
 
+    def test_unrelated_product_cannot_be_used_for_other_article(self):
+        with Catalog(self.path) as cat:
+            with self.assertRaisesRegex(CommerceArticleError,
+                                        "topic_product_mismatch"):
+                product_offer_html(cat,
+                    site_key="blogger_moveis_para_cada_canto",
+                    product_key=self.key,
+                    topic="guarda roupa de casal")
+
     def test_photo_domain_whitelist(self):
         self.assertTrue(valid_product_photo(
             "https://cf.shopee.com.br/file/br-111342"))
