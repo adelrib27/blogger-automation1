@@ -342,11 +342,21 @@ def draft_next(*,site_key:str,execute:bool=False,
 
 def main()->int:
     p=argparse.ArgumentParser(description="V31 Blogger: gerar NO MÁXIMO 1 draft original, nunca LIVE")
-    p.add_argument("--site-key",required=True)
+    p.add_argument("--site-key",default=None)
     p.add_argument("--execute-draft",action="store_true")
     args=p.parse_args()
     try:
-        result=draft_next(site_key=args.site_key,
+        if args.site_key is not None:
+            target=args.site_key
+        else:
+            from datetime import date
+            eligible=sorted(r["site_key"] for r in load_requests()
+                            if r["platform"]=="blogger")
+            if not eligible:
+                print("V31_C55_NO_REAL_BLOGGER_REQUESTS")
+                return 0
+            target=eligible[date.today().toordinal()%len(eligible)]
+        result=draft_next(site_key=target,
                           execute=args.execute_draft)
         print("V31_C55_BLOGGER_DRAFT_AUTOMATION_SAFE_PASS")
         # IDs de drafts e produtos não vão para logs públicos de CI.
