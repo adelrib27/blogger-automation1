@@ -1,5 +1,12 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C45 — Curadoria universal recorrente com reparo do índice R2 (18/11/2026)
+
+- **[C44 REAL](https://github.com/adelrib27/blogger-automation1/actions/runs/44352445875): 584 reclassificações verificadas**, além das 10 C43: **594 reclassificados por dupla evidência**, com **194.370** produtos ainda em revisão. Catálogo 203.649 e sidecar completo; nenhuma publicação ou conversão nesta curadoria.
+- Novo `universal_maintenance.py` e workflow `v31_universal_safe_maintenance_weekly.yml`: atualização independente de blogs às quartas (~09h13 Recife), limitada a **100 revisões históricas seguras por execução**; 0 operações se não houver alterações, ou reparo automático do sidecar quando o snapshot principal estiver mais novo. Mantém veto por risco e origem, links anteriores e gates comerciais. Nenhum token Blogger/WordPress/Shopee no job.
+- [CI C45](https://github.com/adelrib27/blogger-automation1/actions/runs/44368472242): **298 testes V31 +24 Casa +21 Oficina + originalidade PASS**. A execução cron futura ainda precisa ser observada; não confundir código testado com postagem LIVE.
+- [Checkpoint C45](CHECKPOINT_C45_AUTONOMOUS_UNIVERSAL_MAINTENANCE_2026-11-18.md). O objetivo permanece universal: novos temas e blogs são definidos pelo usuário **na hora**, com campanha/identidade reais e integração por plataforma após aprovação.
+
 ### C42 — Biblioteca universal operacional e auditada, 33 links reais; publicação futura separada (18/11/2026)
 
 - **Missão central**: os dois CSVs alimentam biblioteca universal R2 (203.649 SKUs; hierarquia oficial L1/L2/L3, incluindo sem categoria), léxico 1.399 termos/118 caminhos agregados e busca por tema novo na hora. O refresh é semanal independente de blogs; sem inventar nichos/campanhas antecipadamente.
