@@ -48,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
+      PYTHONPATH: .
       # C11: reutilização permitida somente com os 3 switches explicitamente true.
       V31_EDITORIAL_PRODUCT_REUSE_ENABLED: ${{ vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' && vars.V31_CASA_R2_FALLBACK_ENABLED == 'true' && vars.V31_EDITORIAL_PRODUCT_REUSE_ENABLED == 'true' && 'true' || 'false' }}
       SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
