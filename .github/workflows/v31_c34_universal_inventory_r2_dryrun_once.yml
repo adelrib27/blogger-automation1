@@ -1,0 +1,36 @@
+name: V31 C34 TEMP MAIN - universal inventory R2 dry-run no writes
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - affiliate_hub_v31/C34_INVENTORY_DRYRUN_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  dryrun-all-products:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install R2 client
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: All offline V31 tests
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Rebuild 203649 universal facets IN MEMORY LOCAL ONLY, R2 readonly
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.universal_inventory
+          echo 'V31_C34_ALL_PRODUCTS_DRYRUN_R2_READONLY_PASS'
