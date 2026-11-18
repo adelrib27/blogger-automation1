@@ -3,7 +3,7 @@ name: Escolha Certa Online — Loja Shopee LIVE Controlada
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 8 * * *"
+    - cron: "20 8 13 * *"
       timezone: "America/Recife"
 
 permissions:
