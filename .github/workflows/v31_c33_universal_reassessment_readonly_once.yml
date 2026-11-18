@@ -1,0 +1,43 @@
+name: V31 C33 TEMP MAIN - biblioteca universal triagem integral R2 SAFE
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - affiliate_hub_v31/C33_REASSESSMENT_R2_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  all-products-readonly:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar cliente de leitura R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Validar regressões SAFE antes de ler backlog
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Reavaliar TODO backlog do R2 sem gravar, aprovar, converter ou postar
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.universal_reassessment --mode r2 --max-paths 24
+          echo 'V31_C33_REAL_R2_ALL_SKUS_REVIEW_ONLY_PASS'
