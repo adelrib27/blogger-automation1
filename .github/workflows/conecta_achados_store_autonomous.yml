@@ -3,7 +3,7 @@ name: Conecta Achados — Loja Shopee LIVE Controlada
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 7 * * *"
+    - cron: "35 7 10 * *"
       timezone: "America/Recife"
   push:
     paths:
