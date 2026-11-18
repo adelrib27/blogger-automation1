@@ -1,0 +1,140 @@
+name: V31 C58 TEMP main - piloto WordPress R2 imagem CTA internos IA SAFE
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C58_REAL_WP_PREVIEW_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  wordpress-universal-preview-safe:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2' requests
+      - name: Testar núcleo universal e scripts reais, SEM criar posts
+        run: |
+          set -euo pipefail
+          python -m unittest affiliate_hub_v31.tests.test_article_commerce affiliate_hub_v31.tests.test_wordpress_related_posts affiliate_hub_v31.tests.test_c58_legacy_wordpress_pipeline -q
+      - name: Ler R2 e WordPress públicos, produzir artigo HTML efêmero completo (nenhum POST WordPress)
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import html,json,re,tempfile,urllib.request
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          from affiliate_hub_v31.catalog import Catalog,host_allowed
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.r2_state import R2State,verify_database
+          from affiliate_hub_v31.article_commerce import (
+            product_offer_html,related_articles_html,valid_product_photo
+          )
+          from affiliate_hub_v31.automatic_blogger_drafts import generate_original_paragraphs
+          import os
+          cases=('wordpress_casa_decoracao','wordpress_oficina_garagem','wordpress_radartechbr')
+          ready={}
+          with tempfile.TemporaryDirectory(prefix='v31-c58-safe-') as td:
+            path=Path(td)/'catalog.sqlite3'
+            if not R2State.from_env().restore_to(path):
+              raise SystemExit('V31_C58_R2_RESTORE_FAILED')
+            verify_database(path)
+            with Catalog(path) as cat:
+              for key in cases:
+                route=sites()[key]
+                if route['publish_enabled'] is not False or route['platform']!='wordpress':
+                  raise SystemExit('V31_C58_SITE_GATE_FAILED')
+                rows=cat.db.execute("""
+                  SELECT p.product_key,p.title,p.image_url,p.origin_url
+                  FROM products p JOIN affiliate_links a
+                    ON a.product_key=p.product_key
+                  WHERE a.campaign=? AND p.moderation='eligible'
+                  ORDER BY p.title LIMIT 150
+                """,(route['campaign'],)).fetchall()
+                valid=[]
+                for product_key,title,image,origin in rows:
+                  if (cat.for_conversion(product_key) is None or
+                      not valid_product_photo(image) or not host_allowed(origin)):
+                    continue
+                  try:
+                    markup=product_offer_html(
+                      cat,site_key=key,product_key=product_key,
+                      topic=str(title)[:110],verified_site_route=route)
+                  except Exception:
+                    continue
+                  if ('Ver produto na Shopee' not in markup or
+                      'rel="nofollow sponsored' not in markup or
+                      'data-v31-product-key=' not in markup):
+                    raise SystemExit('V31_C58_COMMERCIAL_GATE_FAILED')
+                  valid.append((product_key,title,markup))
+                print('V31_C58_SITE_AGGREGATE '+json.dumps({
+                  'site_key':key,'eligible_cached_products_with_real_photo':len(valid),
+                  'safety_gate':True,'wordpress_posts_created':0,
+                  'r2_writes':0},sort_keys=True))
+                if valid: ready[key]=valid
+              pilot='wordpress_casa_decoracao'
+              if pilot not in ready:
+                raise SystemExit('V31_C58_CASA_NO_VERIFIED_CACHED_PRODUCT')
+              route=sites()[pilot]
+              home=route['identifier']
+              url=home+'wp-json/wp/v2/posts?status=publish&per_page=6&_fields=id,link,title'
+              req=urllib.request.Request(url,headers={'User-Agent':'V31-SAFE-ReadOnly/1.0'})
+              with urllib.request.urlopen(req,timeout=25) as response:
+                public_posts=json.loads(response.read())
+              if not isinstance(public_posts,list) or len(public_posts)<2:
+                raise SystemExit('V31_C58_WP_PUBLIC_POSTS_UNAVAILABLE')
+              validated=[]
+              for post in public_posts:
+                if not isinstance(post,dict) or not post.get('id'):
+                  continue
+                title=html.unescape(str(post.get('title',{}).get('rendered') or ''))
+                link=post.get('link')
+                try:
+                  frag=related_articles_html([(title,link)],blog_home_url=home)
+                except Exception:
+                  continue
+                validated.append((title,link))
+              if len(validated)<2:
+                raise SystemExit('V31_C58_REAL_WP_INTERNAL_LINKS_MISSING')
+              related=related_articles_html(validated[:2],blog_home_url=home)
+              sk,title,offer=ready[pilot][0]
+              paragraphs=generate_original_paragraphs(
+                product_name=title,topic=str(title)[:100],
+                account_id=os.getenv('CLOUDFLARE_ACCOUNT_ID',''),
+                api_token=os.getenv('CLOUDFLARE_API_TOKEN',''))
+              parts=['<h2>Orientação '+str(i+1)+'</h2><p>'+html.escape(p)+'</p>'
+                     for i,p in enumerate(paragraphs)]
+              document='<article lang="pt-BR">'+''.join(parts)+offer+related+'</article>'
+              if (len(paragraphs)<6 or
+                  document.count('<li>')!=2 or
+                  '<img src="https://' not in document or
+                  'Ver produto na Shopee' not in document or
+                  'data-v31-related="1"' not in document or
+                  'data-v31-product-key=' not in document or
+                  'rel="nofollow sponsored' not in document):
+                raise SystemExit('V31_C58_END_TO_END_PREVIEW_INVALID')
+              print('V31_C58_WP_CASA_E2E_READONLY_PASS '+json.dumps({
+                'real_wordpress_posts_for_links':len(validated),
+                'internal_links':2,'real_csv_image':True,
+                'shopee_cta_verified_for_campaign':True,
+                'ai_original_paragraphs':len(paragraphs),
+                'word_count':sum(len(p.split()) for p in paragraphs),
+                'wordpress_post_created':0,'r2_writes':0,
+                'shopee_mutations':0},sort_keys=True))
+          PY
