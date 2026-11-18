@@ -3,7 +3,7 @@ name: Portal Radar Tech Blogger — Loja Shopee 10:50
 on:
   workflow_dispatch:
   schedule:
-    - cron: "50 10 * * *"
+    - cron: "50 10 22 * *"
       timezone: "America/Recife"
 
 permissions:
