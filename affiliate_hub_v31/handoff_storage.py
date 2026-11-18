@@ -68,10 +68,10 @@ def validate_report(report:dict,site_key:str)->None:
     for item in report.get("future_review_plans",[]):
         raise HandoffStorageError("future_blog_must_not_persist")
     for item in report.get("conversion_review_plans",[]):
-        if not isinstance(item,dict) or
+        if (not isinstance(item,dict) or
             item.get("campaign")!=route["campaign"] or
             item.get("affiliate_url") is not None or
-            item.get("can_publish") is not False:
+            item.get("can_publish") is not False):
             raise HandoffStorageError("invalid_conversion_plan")
 
 
@@ -125,8 +125,8 @@ def read_private_handoff(storage,*,site_key:str)->dict:
         meta=json.loads(storage.s3.get_object(Bucket=storage.bucket,
                           Key=pointer)["Body"].read(4096))
         expected=f"{PREFIX}{site_key}/versions/{meta['sha256']}.json"
-        if meta.get("schema")!=SCHEMA or meta.get("key")!=expected or
-           meta.get("publication_allowed") is not False:
+        if (meta.get("schema")!=SCHEMA or meta.get("key")!=expected or
+            meta.get("publication_allowed") is not False):
             raise HandoffStorageError("invalid_handoff_pointer")
         data=storage.s3.get_object(Bucket=storage.bucket,
                                   Key=expected)["Body"].read(1_000_001)
@@ -138,9 +138,9 @@ def read_private_handoff(storage,*,site_key:str)->dict:
     except Exception:
         raise HandoffStorageError("handoff_unavailable") from None
     route=sites().get(site_key)
-    if not route or result.get("campaign")!=route["campaign"] or
-       result.get("site_key")!=site_key or
-       result.get("publication_allowed") is not False or
-       result.get("status")!="REVIEW_REQUIRED":
+    if (not route or result.get("campaign")!=route["campaign"] or
+        result.get("site_key")!=site_key or
+        result.get("publication_allowed") is not False or
+        result.get("status")!="REVIEW_REQUIRED"):
         raise HandoffStorageError("handoff_route_mismatch")
     return result
