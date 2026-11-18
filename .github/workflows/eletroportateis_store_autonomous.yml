@@ -3,7 +3,7 @@ name: Eletroportáteis na Cozinha — Loja Shopee LIVE
 on:
   workflow_dispatch:
   schedule:
-    - cron: "5 9 * * *"
+    - cron: "5 9 12 * *"
       timezone: "America/Recife"
   push:
     paths:
