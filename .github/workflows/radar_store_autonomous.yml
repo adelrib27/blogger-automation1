@@ -6,8 +6,8 @@ on:
     paths:
       - "radar_tech_br/store_live_kickoff.txt"
   schedule:
-    # America/Sao_Paulo (UTC-3): 07:40 diariamente.
-    - cron: "40 10 * * *"
+    # America/Sao_Paulo (UTC-3): 07:40 mensalmente.
+    - cron: "40 10 21 * *"
 
 permissions:
   contents: write
