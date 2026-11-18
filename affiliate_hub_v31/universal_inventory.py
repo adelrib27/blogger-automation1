@@ -21,6 +21,7 @@ from .curation_audit import PROTECTED_ROOTS
 from .curation_triage import lane_for_record
 from .r2_state import R2State, verify_database
 from .universal_index_storage import UniversalIndexStorage
+from .universal_lexicon import build_lexicon
 
 SCHEMA_VERSION = "v31-universal-inventory-1"
 NO_OFFICIAL_CATEGORY = "sem_categoria_oficial"
@@ -229,6 +230,7 @@ def run_r2(*,execute:bool=False) -> dict:
             initial=catalog.stats()
             with sqlite3.connect(index) as sidecar:
                 summary=rebuild_universal_inventory(catalog,sidecar=sidecar)
+                lexicon=build_lexicon(catalog.db,sidecar)
             if catalog.stats()!=initial:
                 raise UniversalInventoryError("original_catalog_modified")
         saved=False
@@ -242,7 +244,8 @@ def run_r2(*,execute:bool=False) -> dict:
                      expected_product_count=summary["products_indexed"]):
                 raise UniversalInventoryError("index_r2_restore_failed")
             saved=True
-        return {**summary,"r2_snapshot_saved_and_verified":saved,
+        return {**summary,"dynamic_title_lexicon":lexicon,
+                "r2_snapshot_saved_and_verified":saved,
                 "r2_writes":int(saved),"index_storage":"R2_SIDECAR",
                 "core_catalog_untouched":True}
 
