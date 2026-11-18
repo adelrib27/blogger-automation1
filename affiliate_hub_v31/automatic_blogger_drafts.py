@@ -242,6 +242,7 @@ def compose_draft_html(plan:dict,paragraphs:list[str],*,
         "Como comparar anúncios com atenção",
         "Erros comuns na escolha",
         "Checklist para tomar uma decisão",
+        "Perguntas para confirmar com o vendedor",
         "Conclusão",
     )
     blocks=[]
