@@ -4,7 +4,7 @@ import sqlite3
 import unittest
 
 from affiliate_hub_v31.unclassified_review_hints import (
-    ReviewHintsError, build_review_path_hints, suggested_path_counts,
+    ReviewHintsError, build_review_path_hints, suggested_path_counts, review_dashboard,
 )
 
 
@@ -96,6 +96,19 @@ class ReviewHintsTests(unittest.TestCase):
         self.assertTrue(all(x["approved_for_publication"] is False
                             for x in counts))
         self.assertNotIn("p1",json.dumps(counts))
+
+    def test_aggregated_dashboard_has_no_skus_or_campaigns(self):
+        build_review_path_hints(self.db,self.side)
+        report=review_dashboard(self.side,limit=10)
+        self.assertEqual(report["unclassified_review_products"],5)
+        self.assertEqual(report["review_path_hint_products"],2)
+        self.assertEqual(report["remaining_without_safe_hint"],3)
+        self.assertEqual(report["publication_calls"],0)
+        self.assertEqual(report["r2_writes"],0)
+        self.assertEqual(report["new_approvals"],0)
+        self.assertTrue(report["review_only"])
+        for key in ("p1","p4","Pistola","s.shopee.com.br"):
+            self.assertNotIn(key,json.dumps(report))
 
     def test_empty_lexicon_yields_zero_approvals_or_hints(self):
         self.side.execute("DELETE FROM v31_universal_title_lexicon")

@@ -243,7 +243,9 @@ def run_r2(*,execute:bool=False) -> dict:
                 raise UniversalInventoryError("index_r2_save_failed")
             check=Path(temp)/"restored_index.sqlite3"
             if not store.restore_to(check,
-                     expected_product_count=summary["products_indexed"]):
+                     expected_product_count=summary["products_indexed"],
+                     expected_review_hint_count=
+                         hints["review_path_hints_created"]):
                 raise UniversalInventoryError("index_r2_restore_failed")
             saved=True
         return {**summary,"dynamic_title_lexicon":lexicon,

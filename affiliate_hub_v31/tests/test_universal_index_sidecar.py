@@ -113,6 +113,40 @@ class UniversalSidecarTests(unittest.TestCase):
             self.store.restore_to(self.root/"stale.sqlite3",
                                   expected_product_count=3)
 
+    def test_review_hint_count_is_verified_after_restore(self):
+        sidecar=self.root/"hint-index.sqlite3"
+        with Catalog(self.catalog) as cat, sqlite3.connect(sidecar) as db:
+            rebuild_universal_inventory(cat,sidecar=db)
+            db.execute("""
+              CREATE TABLE v31_unclassified_review_hints(
+                product_key TEXT PRIMARY KEY,review_only INTEGER NOT NULL
+                CHECK(review_only=1))
+            """)
+            db.execute("""
+              INSERT INTO v31_unclassified_review_hints VALUES(?,1)
+            """,("shopee:100:2",))
+        self.store.save_from(sidecar,product_count=2)
+        good=self.root/"hint-good.sqlite3"
+        self.assertTrue(self.store.restore_to(
+            good,expected_product_count=2,expected_review_hint_count=1))
+        with self.assertRaisesRegex(StorageError,
+                                    "universal_index_hint_count_mismatch"):
+            self.store.restore_to(
+                self.root/"hint-wrong.sqlite3",
+                expected_product_count=2,expected_review_hint_count=2)
+        self.assertFalse((self.root/"hint-wrong.sqlite3").exists())
+
+    def test_explicit_hint_expectation_rejects_legacy_without_table(self):
+        sidecar=self.root/"legacy-index.sqlite3"
+        with Catalog(self.catalog) as cat, sqlite3.connect(sidecar) as db:
+            rebuild_universal_inventory(cat,sidecar=db)
+        self.store.save_from(sidecar,product_count=2)
+        with self.assertRaisesRegex(StorageError,
+                                    "universal_index_invalid_schema"):
+            self.store.restore_to(
+                self.root/"legacy-hints.sqlite3",
+                expected_product_count=2,expected_review_hint_count=0)
+
     def test_restore_hash_tamper_is_blocked(self):
         sidecar=self.root/"sidecar.sqlite3"
         with Catalog(self.catalog) as cat,sqlite3.connect(sidecar) as i:
