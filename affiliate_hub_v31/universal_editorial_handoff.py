@@ -16,6 +16,7 @@ from pathlib import Path
 from .catalog import Catalog, host_allowed
 from .r2_state import R2State, verify_database
 from .routing import sites
+from .universal_brief import create_universal_brief
 from .site_launch_plan import preview_site_launch
 
 
@@ -55,9 +56,11 @@ def plan_editorial_handoff(
         raise HandoffError("unsafe_preview")
     jobs=[]
     conversions=[]
+    future_plans=[]
+    conversion_plans=[]
     used_shops=set()
     campaign=real_site["campaign"] if real_site else None
-    for item in preview["approved_catalog_candidates"]:
+    for article_index,item in enumerate(preview["approved_catalog_candidates"],1):
         key=item["product_key"]
         shop=item["shop_id"]
         if shop in used_shops:
@@ -65,13 +68,22 @@ def plan_editorial_handoff(
         used_shops.add(shop)
         if catalog.for_conversion(key) is None:
             raise HandoffError("item_not_approved_for_conversion")
+        dynamic=create_universal_brief(topic=topic,
+            product_title=item["title"],product_key=key,
+            article_index=article_index)
         if campaign is None:
             if item["affiliate_url"] is not None:
                 raise HandoffError("hypothetical_campaign_link")
+            future_plans.append({"product_key":key,"editorial_brief":dynamic,
+                "affiliate_url":None,"campaign":None,"can_publish":False})
             continue
         official=catalog.cached_link(key,campaign)
         if official is None:
             conversions.append(key)
+            conversion_plans.append({"product_key":key,
+                "editorial_brief":item.get("editorial_brief") or dynamic,
+                "affiliate_url":None,"campaign":campaign,
+                "can_publish":False})
             continue
         if not host_allowed(official,allow_short=True):
             raise HandoffError("affiliate_link_invalid")
@@ -99,7 +111,7 @@ def plan_editorial_handoff(
                 "productLink":row[4], "offerLink":official,
                 "sourceModes":["csv_r2_verified_affiliate_cache"],
             },
-            "editorial_brief":item["editorial_brief"],
+            "editorial_brief":item.get("editorial_brief") or dynamic,
             "status":"REVIEW_REQUIRED",
             "publication_allowed":False,
         })
@@ -116,6 +128,8 @@ def plan_editorial_handoff(
         "review_candidates":preview["review_queue_count"],
         "ready_review_jobs":jobs,
         "conversion_required_keys":conversions,
+        "future_review_plans":future_plans,
+        "conversion_review_plans":conversion_plans,
         "missing_product_slots":articles-len(jobs)-len(conversions)
             if real_site is not None else
             articles-len(preview["approved_catalog_candidates"]),
@@ -143,6 +157,7 @@ def safe_summary(report: dict) -> dict:
         "approved_catalog_candidates":report["discovered_approved"],
         "review_candidates":report["review_candidates"],
         "ready_review_jobs":len(report["ready_review_jobs"]),
+        "future_review_plans":len(report["future_review_plans"]),
         "conversion_required":len(report["conversion_required_keys"]),
         "missing_product_slots":report["missing_product_slots"],
         "editorial_approval_required":True,
