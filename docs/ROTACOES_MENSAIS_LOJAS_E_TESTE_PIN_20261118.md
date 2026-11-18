@@ -43,6 +43,23 @@
 - **Limitação:** esta auditoria comprova a configuração mensal dos 26 workflows, **não** uma execução mensal real já concluída; futuras execuções dependem de GitHub Actions e das respectivas credenciais. Alguns testes SAFE V31 disparados por mudanças em YAML apresentaram `failure`, mas os logs mostram `*_STORE_DRY_RUN: true`; não são comprovação de atualização LIVE nem razão para afirmar que os crons não foram alterados. Auditorias gerais do Blogger também falharam/cancelaram por múltiplos commits, a investigar separadamente.
 - Eventos adicionais `push` de arquivos de kickoff continuam disponíveis para ações explícitas; não são agendamentos diários.
 
+## Cobertura de blogs com Loja mas SEM rotação diária localizada
+
+Uma leitura adicional da conta Blogger via API listou páginas `Loja` ou `LOJA` nos seguintes blogs **sem correspondência com workflow de Loja diário no inventário GitHub verificado**:
+
+| Blog | Blog ID | Observação |
+|---|---|---|
+| Cadeira Certa no Home Office | `7163624325768776034` | Página Loja existe; sem cron de Loja localizado |
+| Café na Medida | `4820923154548273510` | Página Loja existe; sem cron de Loja localizado |
+| Violão do Começo — Acordes e Cuidados | `370856880185231084` | Página LOJA existe; sem cron de Loja localizado |
+| Casa Leve e Funcional | `4739187376492839837` | Página LOJA existe; sem cron de Loja localizado |
+| Jardim e Horta na Prática | `3644898524310766003` | Página LOJA existe; sem cron de Loja localizado |
+| Achados para Casa | `1426630233929943394` | Página LOJA existe, mantida fora da V31 (blog backup) |
+
+**Importante:** nenhuma dessas seis páginas foi alterada; a solicitação de converter frequências diárias não justifica inventar um novo writer para blogs sem rotina de Loja agendada localizada. Para cobrir as cinco não-backup, é necessário primeiro identificar/validar a origem de dados e o writer real. Outros dois blogs da conta não tinham páginas publicadas. Portanto, **26 schedules mensais modificados ≠ todas as páginas Loja da conta com um sistema de atualização mensal ativo**.
+
+A conta WordPress.com também possui sites antigos, privados, em preparação ou desconectados que **não têm rotação comercial identificada** neste repositório. Os três WordPress self-hosted com `store_autonomous.yml` foram modificados.
+
 ## Teste único Pinterest independente
 - **Uma publicação de teste**, agendada via **Metricool** na conta Pinterest conectada `ar_variedades` às **13:00, 18/11/2026, Recife**.
 - Post Metricool `432975502`, board Pinterest resolvido `1131811018795306537`, `autoPublish=true`, `status=PENDING` na confirmação. Fonte pública: artigo `Como escolher a cadeira ideal para sua varanda` no WordPress `Casa e Decoração`, usando imagem de destaque do próprio blog (media ID `299`). Não utiliza link novo da API Shopee.
