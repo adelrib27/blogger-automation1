@@ -1,0 +1,39 @@
+name: V31 C26 TEMP Release flags OFF audit - sem segredos
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - affiliate_hub_v31/C26_FLAG_AUDIT_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+jobs:
+  release-flags-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verificar que todas as flags de opt-in estao OFF; sem acessar secrets ou Environment
+        env:
+          V31_EDITORIAL_C9_RELEASE_ENABLED: ${{ vars.V31_EDITORIAL_C9_RELEASE_ENABLED }}
+          V31_EDITORIAL_PRODUCT_REUSE_ENABLED: ${{ vars.V31_EDITORIAL_PRODUCT_REUSE_ENABLED }}
+          V31_CASA_R2_FALLBACK_ENABLED: ${{ vars.V31_CASA_R2_FALLBACK_ENABLED }}
+          V31_OFICINA_R2_FALLBACK_ENABLED: ${{ vars.V31_OFICINA_R2_FALLBACK_ENABLED }}
+          V31_RADAR_R2_FALLBACK_ENABLED: ${{ vars.V31_RADAR_R2_FALLBACK_ENABLED }}
+          V31_EDITORIAL_SHADOW_ENABLED: ${{ vars.V31_EDITORIAL_SHADOW_ENABLED }}
+          V31_EDITORIAL_CACHE_WARMUP_ENABLED: ${{ vars.V31_EDITORIAL_CACHE_WARMUP_ENABLED }}
+          V31_EDITORIAL_CATALOG_REFRESH_ENABLED: ${{ vars.V31_EDITORIAL_CATALOG_REFRESH_ENABLED }}
+          V31_EDITORIAL_C21_AUDIT_ENABLED: ${{ vars.V31_EDITORIAL_C21_AUDIT_ENABLED }}
+          V31_EDITORIAL_PLANNER_ENABLED: ${{ vars.V31_EDITORIAL_PLANNER_ENABLED }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for key in V31_EDITORIAL_C9_RELEASE_ENABLED V31_EDITORIAL_PRODUCT_REUSE_ENABLED V31_CASA_R2_FALLBACK_ENABLED V31_OFICINA_R2_FALLBACK_ENABLED V31_RADAR_R2_FALLBACK_ENABLED V31_EDITORIAL_SHADOW_ENABLED V31_EDITORIAL_CACHE_WARMUP_ENABLED V31_EDITORIAL_CATALOG_REFRESH_ENABLED V31_EDITORIAL_C21_AUDIT_ENABLED V31_EDITORIAL_PLANNER_ENABLED; do
+            value="${!key:-}"
+            if [ "$value" = "true" ]; then
+              echo "V31_C26_UNSAFE_RELEASE_FLAG_ENABLED:$key"
+              exit 1
+            fi
+            echo "V31_C26_FLAG_OFF:$key"
+          done
+          echo "V31_C26_ALL_RELEASE_FLAGS_OFF_PASS"
