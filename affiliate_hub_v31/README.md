@@ -1,5 +1,11 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C25 — Branch permitida `main` apenas, liberação em preflight (18/11/2026)
+
+- O proprietário mostrou a configuração `v31-editorial-safe`: **Selected branches and tags**, **1 branch / 0 tags**, padrão **`main`**. A opção de bypass por administradores aparece desmarcada; clicar **Save protection rules** se ainda não foi salva a alteração dessa proteção. Required reviewers está desmarcado; aprovação humana adicional pode ser habilitada antes de LIVE.
+- Secret V31 e secret legado Shopee foram ambos rotacionados e autenticados em [C23](CHECKPOINT_C23_SHOPEE_SECRET_ROTATED_2026-11-18.md) e [C24](CHECKPOINT_C24_LEGACY_SHOPEE_SECRET_ROTATED_2026-11-18.md). A CI permanente no [HEAD anterior 44304085557](https://github.com/adelrib27/blogger-automation1/actions/runs/44304085557) passou.
+- [Checkpoint C25](CHECKPOINT_C25_ENV_MAIN_ONLY_RELEASE_PREFLIGHT_2026-11-18.md): review do PR #52 com 149 arquivos, três WP condicionados a flags GLOBAL e SITE OFF por padrão, mecanismo de reposição de 1–3 mutations por execução e reserva ainda com déficit de 14 links; **sem merge ou LIVE**, `main`/Pinterest intactos. A confirmação visual não substitui revisão dos gates/rollback.
+
 ### C23 — Nova chave Shopee validada após rotação (18/11/2026)
 
 - Proprietário confirmou rotação e atualização de `V31_EDITORIAL_SHOPEE_APP_SECRET` no GitHub Environment. [Canário autenticado 44302637196](https://github.com/adelrib27/blogger-automation1/actions/runs/44302637196) **SUCCESS**, uma única consulta de leitura `productOfferV2` (`V31_SHOPEE_API_PASS`) e **230 testes PASS**, sem mutações, R2 writes ou posts. Workflow temporário removido.
