@@ -1,5 +1,5 @@
 {
-  "version": "v31-editorial-taxonomy-2",
+  "version": "v31-editorial-taxonomy-3",
   "purpose": "Rotas deterministicas para curadoria ANTES da conversao; nenhuma categoria desconhecida publicada automaticamente",
   "normalization": "Frases com limites de palavras; titulo do produto; categoria desconhecida ou conflitante implica revisao",
   "niches": [
@@ -361,6 +361,47 @@
       "exclude": [
         "bicicleta de brinquedo",
         "miniatura bicicleta"
+      ]
+    },
+    {
+      "category": "casa",
+      "niche": "moveis",
+      "terms": [
+        "mesa de jantar",
+        "mesa de escritorio",
+        "mesa para computador",
+        "cadeira de escritorio",
+        "cadeira gamer",
+        "sofa retratil",
+        "sofa reclinavel",
+        "guarda roupa",
+        "roupeiro",
+        "rack para tv",
+        "painel para tv",
+        "estante de livros",
+        "mesa de cabeceira",
+        "comoda de quarto",
+        "armario multiuso"
+      ],
+      "exclude": [
+        "capa para sofa",
+        "capa de sofa",
+        "protetor de sofa",
+        "capa para cadeira",
+        "rodizio para cadeira",
+        "peca para cadeira",
+        "capa para guarda roupa",
+        "cabide para guarda roupa",
+        "puxador para armario",
+        "dobradica para armario",
+        "pe para mesa",
+        "tampo avulso",
+        "miniatura",
+        "brinquedo",
+        "adesivo para moveis",
+        "organizador para guarda roupa",
+        "para casa de boneca",
+        "suporte para tv"
       ]
     }
   ]
