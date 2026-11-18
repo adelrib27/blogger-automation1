@@ -130,22 +130,21 @@ class ExpansionSafeTests(unittest.TestCase):
             self.assertEqual(catalog.cached_link("shopee:321:1","campaignold"),
                              "https://s.shopee.com.br/old-real-affiliate")
 
-    def test_universal_inventory_persists_on_refresh_without_approving_old_review(self):
+    def test_refresh_builds_separate_universal_sidecar_without_bloating_catalog(self):
         report=expand(self.storage,(self.feed1,self.feed2),execute=True)
         self.assertEqual(report["universal_inventory"]["products_indexed"],5)
         self.assertEqual(report["universal_inventory"]["new_approvals"],0)
-        restored=self.root/"inventory_check.sqlite3"
+        self.assertEqual(report["universal_index_location"],"R2_SIDECAR")
+        restored=self.root/"base_check.sqlite3"
         self.storage.restore_to(restored)
         with Catalog(restored) as cat:
-            rows=cat.db.execute("""
-              SELECT product_key,source_l1,source_l2,decision,can_convert
-              FROM v31_universal_inventory ORDER BY product_key
-            """).fetchall()
-            self.assertEqual(len(rows),5)
-            old=cat.db.execute("""
+            self.assertEqual(cat.db.execute("""
+              SELECT count(*) FROM sqlite_master
+              WHERE type='table' AND name='v31_universal_inventory'
+            """).fetchone()[0],0)
+            self.assertEqual(cat.db.execute("""
               SELECT moderation FROM products WHERE product_key='shopee:321:9'
-            """).fetchone()[0]
-            self.assertEqual(old,"review")
+            """).fetchone()[0],"review")
             self.assertEqual(cat.db.execute(
                 "SELECT count(*) FROM affiliate_links").fetchone()[0],1)
         self.assertEqual(self.storage.writes,1)
