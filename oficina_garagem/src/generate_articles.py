@@ -8,9 +8,14 @@ from pathlib import Path
 
 from cta_context import cta_block, default_cta_lead, generate_cta_lead, validate_cta_lead
 from editorial_normalizer import normalize_editorial
-from quality_gate import quality, word_count
+from quality_gate import quality, word_count, SITE_URL
 
 ROOT = Path(__file__).resolve().parents[2]
+# Execução como script também deve encontrar o núcleo universal na raiz.
+import sys
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from affiliate_hub_v31.wordpress_related_posts import from_published_history
 QUEUE = ROOT / "oficina_garagem" / "data" / "editorial_queue.json"
 OUT_DIR = ROOT / "oficina_garagem" / "data" / "generated"
 MODEL = os.getenv("OFICINA_AI_MODEL", "@cf/qwen/qwen3-30b-a3b-fp8").strip()
@@ -325,6 +330,16 @@ def insert_contextual_blocks(editorial, item, cta_lead):
     pieces = [first_part, cta, second_part]
     if internal:
         pieces.append(internal)
+    # Links de posts reais do MESMO WordPress, verificados no histórico
+    # após resposta da API no momento da publicação anterior. Nenhuma
+    # URL externa ou de campanha é aceita aqui.
+    related = from_published_history(
+        ROOT / "oficina_garagem" / "data" / "publication_history.json",
+        blog_home_url=SITE_URL.rstrip("/")+"/",
+        article_title=str(item.get("editorial_title") or item.get("topic") or ""),
+        category=str(item.get("category") or ""),limit=2)
+    if related:
+        pieces.append(related)
     pieces.append(cta)
     return "\n\n".join(x for x in pieces if x)
 
