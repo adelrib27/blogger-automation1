@@ -79,7 +79,8 @@ def prepare_draft(catalog: Catalog, site_key: str, brief_id: str,
     body="".join("<p>"+html.escape(p,quote=True)+"</p>" for p in cleaned)
     try:
         commercial = product_offer_html(
-            catalog, site_key=site_key, product_key=key, topic=keyword)
+            catalog, site_key=site_key, product_key=key, topic=keyword,
+            verified_site_route=site)
         related = related_articles_html(related_posts or [],
             blog_home_url=blog_home_url) if related_posts else ""
     except CommerceArticleError as exc:
