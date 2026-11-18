@@ -1,0 +1,68 @@
+name: V31 Universal Blogger — 1 novo rascunho original/dia com foto e CTA
+
+on:
+  schedule:
+    # Depois da fila comercial de 08:47 Recife; 09:18 Recife.
+    - cron: '18 12 * * *'
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: 'Opcional: blog já registrado no V31 (vazio escolhe rodízio)'
+        required: false
+        type: string
+      execute_draft:
+        description: 'Autoriza criar apenas RASCUNHO, nunca publicar'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  criar-so-rascunho:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bibliotecas oficiais R2 Blogger e Workers AI
+        run: python -m pip install 'boto3>=1.35,<2' requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - name: Testes regressivos e bloqueio de postagem LIVE
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
+      - name: Um novo artigo ORIGINAL somente em RASCUNHO e respeitando a quantidade pedida
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          V31_SITE_KEY: ${{ inputs.site_key || '' }}
+          V31_DRAFT_EXECUTE: ${{ github.event_name == 'schedule' && 'true' || inputs.execute_draft }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=()
+          if [[ -n "$V31_SITE_KEY" ]]; then args+=(--site-key "$V31_SITE_KEY"); fi
+          if [[ "$V31_DRAFT_EXECUTE" == "true" ]]; then args+=(--execute-draft); fi
+          python -m affiliate_hub_v31.automatic_blogger_drafts "${args[@]}"
+          echo 'V31_C55_BLOGGER_AUTODRAFT_SAFE_PASS_NO_LIVE_POSTS'
