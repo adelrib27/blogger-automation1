@@ -1,0 +1,55 @@
+name: V31 C45 TEMP MAIN - validar manutencao universal R2 sem posts
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C45_REAL_R2_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  verify-real-maintenance:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Regressão V31 antes de inspecionar R2
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Uma verificação real limitada a 10, mais reparo se necessário
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.universal_maintenance --execute --limit 10 | tee /tmp/v31c45-result
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          lines=Path("/tmp/v31c45-result").read_text().splitlines()
+          if not lines or "V31_C45_UNIVERSAL_MAINTENANCE_PASS" not in lines:
+              raise SystemExit("C45_PASS_MARKER_MISSING")
+          d=json.loads(lines[-1])
+          if (d.get("mode")!="C45_UNIVERSAL_MAINTENANCE_EXECUTE" or
+              d.get("products")!=203649 or
+              not 0 <= d.get("approved_this_batch",-1) <= 10 or
+              d.get("publication_calls")!=0 or
+              d.get("affiliate_conversion_calls")!=0 or
+              d.get("existing_affiliate_links_preserved") is not True):
+              raise SystemExit("V31_C45_REAL_MAINTENANCE_GATE_FAILED")
+          print("V31_C45_REAL_R2_MAINTENANCE_INTEGRITY_PASS")
+          PY
