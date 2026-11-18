@@ -1,6 +1,6 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Para um novo chat do projeto:** leia ESTE arquivo no GitHub `main`, depois [estado estruturado](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint técnico mais recente](affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Confirme os dados atuais nos serviços antes de executar. **Não confundir com `CHECKPOINT_ATUAL.md`**, que conserva o histórico/canon legado da rede Blogger em 02/11 e não descreve o V31 atual.
+> **Para um novo chat do projeto:** leia ESTE arquivo no GitHub `main`, depois [estado estruturado](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint técnico C57](affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md) (o histórico comercial anterior está em [C56](affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md)) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Confirme os dados atuais nos serviços antes de executar. **Não confundir com `CHECKPOINT_ATUAL.md`**, que conserva o histórico/canon legado da rede Blogger em 02/11 e não descreve o V31 atual.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
 **Última conferência contextual:** 18/11/2026. O JSON de estado é atualizado por fase; dados e números nele são observações históricas, NÃO leitura ao vivo.  
@@ -23,7 +23,7 @@ Construir uma biblioteca **UNIVERSAL**, permanente e independente de blogs/nicho
 | C49–C50 | Dono pediu 3 artigos (sala, quarto, home office) e autorizou publicá-los; Blogger API confirmou os **3 LIVE** | [Checkpoint C49+C50](affiliate_hub_v31/CHECKPOINT_C49_MOVEIS_FIRST_THREE_DRAFTS_2026-11-18.md) |
 | C52–C54 | Corrigida a lacuna comercial: nos 3 artigos, **foto REAL do SKU**, link afiliado da campanha exata, link em palavra-chave, botão Shopee, aviso de afiliado e 2 links internos por artigo | [PR #71](https://github.com/adelrib27/blogger-automation1/pull/71), [canário C53](https://github.com/adelrib27/blogger-automation1/actions/runs/44389838537) |
 | C55–C56 | Gerador agendado de **até 1 rascunho Blogger/dia** para pedido real, quota respeitada, publicação LIVE OFF; Workers AI modelo com JSON Mode testado com 8 parágrafos/635 palavras; 330 testes V31 passaram | [PR #72](https://github.com/adelrib27/blogger-automation1/pull/72), [PR #73](https://github.com/adelrib27/blogger-automation1/pull/73), [PR #74](https://github.com/adelrib27/blogger-automation1/pull/74), [C56 AI real](https://github.com/adelrib27/blogger-automation1/actions/runs/44395785068) |
-| C57 | **Protocolo de continuidade iniciado:** checkpoint ANTES e DURANTE execução, índice fixo e registro legível por máquina | [Status C57](affiliate_hub_v31/CONTINUIDADE_ESTADO.json) |
+| C57 | **CONTINUIDADE C57 VALIDADA:** prévia gravada ANTES do trabalho, índice fixo e registro legível por máquina, verificador automático diário, 8 testes aprovados | [Checkpoint C57](affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md) · [Action PASS](https://github.com/adelrib27/blogger-automation1/actions/runs/44402454026) |
 
 Os números acima são o último estado comprovado nas execuções citadas, não alegações de que o R2/Jobs continuam idênticos hoje.
 
