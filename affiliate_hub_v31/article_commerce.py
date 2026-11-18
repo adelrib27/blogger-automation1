@@ -75,6 +75,19 @@ def product_offer_html(catalog: Catalog, *, site_key: str,
     # Relevância básica adicional; a escolha editorial não é inferida do link.
     if not normalize(topic) or not normalize(title):
         raise CommerceArticleError("article_topic_invalid")
+    # Não usar imagem/CTA de produto de outro assunto apenas por existir link.
+    ignored = {"para","como","onde","comprar","melhor","melhores",
+               "produto","oferta","guia","sobre","com","sem","uma",
+               "mais","novo","nova","este","esse","esta","de","do",
+               "da","em","por","dos","das","um","os","as","ou"}
+    topic_tokens = {t for t in normalize(topic).split()
+                    if len(t) >= 3 and t not in ignored}
+    product_tokens = set(normalize(title).split())
+    matches = {t for t in topic_tokens
+               if t in product_tokens or (t.endswith("s") and
+                   t[:-1] in product_tokens)}
+    if not matches:
+        raise CommerceArticleError("topic_product_mismatch")
     a = html.escape(affiliate, quote=True)
     img = html.escape(image, quote=True)
     name = html.escape(title, quote=True)
