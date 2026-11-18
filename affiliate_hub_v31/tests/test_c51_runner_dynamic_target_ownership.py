@@ -101,7 +101,7 @@ class DynamicBloggerTargetTests(unittest.TestCase):
     def test_protection_against_bad_request_id_and_url(self):
         with self.assertRaisesRegex(TargetAuthorizationError, "invalid_blog_id"):
             self.authorize(expected_blog_id="https://blogger.com/blog")
-        with self.assertRaisesRegex(TargetAuthorizationError, "invalid_blog_url"):
+        with self.assertRaisesRegex(TargetAuthorizationError, "invalid_blog_host"):
             self.authorize(expected_url="https://localhost/")
         with self.assertRaisesRegex(TargetAuthorizationError, "invalid_blog_url"):
             self.authorize(expected_url="http://moveisparacadacanto.blogspot.com/")
