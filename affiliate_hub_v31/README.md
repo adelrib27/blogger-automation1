@@ -1,5 +1,12 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C49 — Três guias originais de móveis no Blogger, prontos para revisão (18/11/2026)
+
+- O proprietário solicitou **3 artigos iniciais**, sem obrigatoriedade de depender da API Shopee. No Blogger real [Móveis para Cada Canto](https://moveisparacadacanto.blogspot.com/) foram criados e verificados **três rascunhos** separados por ambiente: sala (sofá), quarto (guarda-roupa) e home office (mesa/cadeira). **Nenhum publicado** e nenhum link comercial inserido sem verificar pertinência.
+- [PR #68](https://github.com/adelrib27/blogger-automation1/pull/68) registrou `site_requests.d/blogger_moveis_para_cada_canto.json` com `articles=3`, assunto fornecido após pedido, campanha exclusiva e fila de cache `enabled=true`; `publish_enabled=false` permanece. [CI 310 V31 + regressões](https://github.com/adelrib27/blogger-automation1/actions/runs/44380233726) passou.
+- [R2 real C49](https://github.com/adelrib27/blogger-automation1/actions/runs/44380494099) **DRY_RUN PASS**: 1 link cacheado da campanha correta, 2 candidatos aprovados aguardando conversão, 12 em revisão separados, zero mutações Shopee/posts/escritas. O cron diário permanente poderá preparar links, mas **não publica**; não exige API para os guias já escritos.
+- As categorias são **seções editoriais**, não marcadores técnicos do Blogger (conector create_post não permite labels); o blog existe mesmo sem eles. Tema visual V31 ainda pede autorização do ID exato no Runner, sem atalho. [Checkpoint C49](CHECKPOINT_C49_MOVEIS_FIRST_THREE_DRAFTS_2026-11-18.md).
+
 ### C48 — Primeiro blog NOVO real criado e convertido (18/11/2026)
 
 - **Blog:** [Móveis para Cada Canto](https://moveisparacadacanto.blogspot.com/) — Blogger ID `1439741542627895062`, descrição SEO, HTTPS e fuso Brasília configurados e conferidos.
