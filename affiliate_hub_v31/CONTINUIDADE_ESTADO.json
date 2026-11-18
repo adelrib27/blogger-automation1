@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C56",
+  "last_checkpoint_phase": "C57",
   "continuity_protocol_phase": "C57",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-18",
   "last_updated_source": "conferencia_conectada_github",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -35,10 +35,10 @@
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "Criar protocolo de continuidade V31 com checkpoint PREVIO, parcial e final, identificado de forma estável no GitHub.",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "Projeto GitHub main e documentos C56 inspecionados; checkpoint legado e V31 distinguidos.",
-    "next_safe_step": "Criar documento de entrada, instrucoes AGENTS, verificador automatico e confirmar leitura; registrar fechamento neste JSON.",
+    "objective": "Protocolo C57 de continuidade PREVIA/DURANTE/FIM versionado no GitHub, com indice raiz, estado JSON, AGENTS e auditoria Action.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "C57: indice raiz e estado JSON publicados em main; GitHub Actions run 44402454026 SUCCESS, 8 testes do verificador PASS. Checkpoint C57 salvo.",
+    "next_safe_step": "No novo chat: ler V31_CONTINUAR_AQUI.md e CONTINUIDADE_ESTADO.json, conferir dados reais e registrar C58 EM_ANDAMENTO ANTES de executar novo trabalho. Prioridade: observar cron C55 e validar ciclo completo de rascunho quando existir pedido real com quota.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false
@@ -56,6 +56,9 @@
     "must_finalize_before_ending_turn": true,
     "should_validate_on_git_push": true,
     "contains_secrets": false,
-    "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work."
+    "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44402454026",
+    "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
+    "schedule_claim": "Guard diário configurado, primeira execução programada futura não observada"
   }
 }
