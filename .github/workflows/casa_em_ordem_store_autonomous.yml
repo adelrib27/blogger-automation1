@@ -3,7 +3,7 @@ name: Casa em Ordem — Loja Shopee LIVE Controlada
 on:
   workflow_dispatch:
   schedule:
-    - cron: "5 8 * * *"
+    - cron: "5 8 8 * *"
       timezone: "America/Recife"
   push:
     paths:
