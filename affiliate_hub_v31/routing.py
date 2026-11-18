@@ -8,6 +8,8 @@ from pathlib import Path
 
 from .catalog import Catalog
 from .taxonomy import rules
+from .taxonomy import normalize
+from .curation_audit import PROTECTED_ROOTS
 
 ROUTES_PATH = Path(__file__).with_name("site_routes.json")
 # Cadastro extensível: cada blog novo acrescenta somente um arquivo JSON.
@@ -36,8 +38,12 @@ def sites() -> dict:
     campaigns = set()
     identities = set()
     for route in [*doc.get("sites", []), *extra_routes]:
-        if set(route) != {"site_key","platform","identifier","campaign","allowed_niches","publish_enabled"}:
+        required={"site_key","platform","identifier","campaign","allowed_niches","publish_enabled"}
+        if not required.issubset(route) or set(route)-required-{"allowed_source_paths"}:
             raise ValueError("Chaves inesperadas em rota")
+        # Nichos futuros sao descobertos na hora. A lista opcional de caminhos
+        # L1/L2 oficiais NAO transforma itens em revisao em produtos aprovados.
+        route.setdefault("allowed_source_paths",[])
         key, campaign = route["site_key"], route["campaign"]
         if (not re.fullmatch(r"[a-z0-9_]{3,50}", key)
                 or not re.fullmatch(r"[a-z0-9_]{1,32}", campaign)):
@@ -59,9 +65,25 @@ def sites() -> dict:
         if route["publish_enabled"] is not False:
             raise ValueError("Publicação não permitida no C2 SAFE")
         niches = route["allowed_niches"]
-        if (not isinstance(niches, list) or not niches or len(niches) != len(set(niches))
-                or not set(niches).issubset(known)):
-            raise ValueError("Nicho ausente/duplicado/inválido")
+        source_paths=route["allowed_source_paths"]
+        if (not isinstance(source_paths,list) or
+            any(not isinstance(x,str) for x in source_paths) or
+            len(source_paths)!=len(set(source_paths)) or
+            len(source_paths)>60):
+            raise ValueError("Caminhos de origem invalidos")
+        for path in source_paths:
+            parts=path.split("/")
+            if (len(parts)!=2 or
+                not all(re.fullmatch(r"[a-z0-9][a-z0-9 ]{0,119}",p)
+                        for p in parts) or
+                any(normalize(p)!=p for p in parts) or
+                parts[0] in PROTECTED_ROOTS):
+                raise ValueError("Caminho de origem protegido ou invalido")
+        if (not isinstance(niches,list) or
+            len(niches)!=len(set(niches)) or
+            not set(niches).issubset(known) or
+            (not niches and not source_paths)):
+            raise ValueError("Nicho ou caminho de origem ausente/duplicado/invalido")
         mappings[key] = route
         campaigns.add(campaign)
         identities.add((route["platform"], identity))
@@ -85,6 +107,10 @@ def plan_site(catalog: Catalog, site_key: str, limit: int = 20) -> dict:
         category, niche = pair.split("/", 1)
         pools.append(iter(catalog.select_products(route["campaign"], limit,
                                                  category=category, niche=niche)))
+    for source_path in route["allowed_source_paths"]:
+        l1,l2=source_path.split("/",1)
+        pools.append(iter(catalog.select_by_source_path(
+            route["campaign"],l1,l2,limit=limit)))
     while len(selected) < limit:
         progressed = False
         for pool in pools:
