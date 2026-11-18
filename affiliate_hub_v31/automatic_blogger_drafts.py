@@ -174,9 +174,10 @@ def validate_generated_paragraphs(text:str,*,keyword:str)->list[str]:
         any(not isinstance(p,str) or
             not 110<=len(p.strip())<=2200 for p in paragraphs)):
         raise AutoDraftError("ai_paragraphs_invalid")
+    normalized_body = set(normalize(" ".join(paragraphs)).split())
+    meaningful_keyword = {t for t in normalize(keyword).split() if len(t)>=3}
     if (len(" ".join(paragraphs).split())<420 or
-        not any(t in normalize(" ".join(paragraphs))
-                for t in normalize(keyword).split() if len(t)>=5)):
+        not meaningful_keyword or not meaningful_keyword.intersection(normalized_body)):
         raise AutoDraftError("ai_content_insufficient_or_offtopic")
     if any("http://" in p or "https://" in p or
            "<script" in p.lower() or
