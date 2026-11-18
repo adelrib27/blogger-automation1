@@ -3,7 +3,7 @@ name: Moda e Ofertas — Loja Shopee 10:20
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 10 * * *"
+    - cron: "20 10 18 * *"
       timezone: "America/Recife"
 
 permissions:
