@@ -1,10 +1,9 @@
-name: V31 Pedal Leve - Rotacao Shopee diaria isolada
+name: V31 Pedal Leve - Rotacao Shopee mensal isolada
 on:
   pull_request:
     paths:
       - "pedal_leve/rotation_v31.py"
       - "pedal_leve/shopee_catalog_safe.py"
-      - ".github/workflows/pedal_leve_rotation_v31.yml"
   push:
     branches: [main]
     paths:
@@ -12,7 +11,7 @@ on:
       - ".github/workflows/pedal_leve_rotation_v31.yml"
   workflow_dispatch:
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 9 20 * *"
 permissions:
   contents: read
 concurrency:
@@ -28,7 +27,7 @@ jobs:
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
-      PEDAL_STORE_DRY_RUN: ${{ (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && 'false' || 'true' }}
+      PEDAL_STORE_DRY_RUN: ${{ (github.event_name == 'schedule') && 'false' || 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
