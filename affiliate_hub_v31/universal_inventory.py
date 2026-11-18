@@ -80,7 +80,7 @@ def rebuild_universal_inventory(catalog: Catalog) -> dict:
         FROM product_source_categories
         GROUP BY product_key
       )
-      SELECT p.product_key,p.shop_id,p.title,p.origin_url,p.image_url,
+      SELECT p.product_key,p.shop_id,p.item_id,p.title,p.origin_url,p.image_url,
         p.moderation,p.moderation_reason,
         COALESCE(t.status,'review'),COALESCE(t.category,''),
         COALESCE(t.niche,''),COALESCE(f.l1,''),COALESCE(f.l2,''),
@@ -98,13 +98,14 @@ def rebuild_universal_inventory(catalog: Catalog) -> dict:
     with catalog.db:
         catalog.db.execute("DELETE FROM v31_universal_inventory")
         for row in rows:
-            (key,shop,title,origin,image,moderation,reason,
+            (key,shop,item,title,origin,image,moderation,reason,
              tax_status,category,niche,l1,l2,l3,
              source_count,branches,leaves,bad) = row
             unsafe=bad>0 or branches>1 or leaves>1 or l1 in PROTECTED_ROOTS
             historical_approved=moderation=="eligible" and tax_status=="matched"
             if historical_approved and not unsafe and host_allowed(origin) \
-                    and str(image).startswith("https://"):
+                    and str(image).startswith("https://") \
+                    and str(shop).isdigit() and str(item).isdigit():
                 decision="approved"
                 lane="APPROVED"
                 can_convert=1
