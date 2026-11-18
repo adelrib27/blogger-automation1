@@ -107,9 +107,9 @@ jobs:
             src/editorial_cross_blog_guard.py \
             src/editorial_cross_blog_guard_self_test.py \
             radar_tech_br/src/*.py
-          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/self_test.py
-          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/cta_card_self_test.py
-          PYTHONPATH=radar_tech_br/src:src python radar_tech_br/src/semantic_self_test.py
+          PYTHONPATH=.:radar_tech_br/src:src python radar_tech_br/src/self_test.py
+          PYTHONPATH=.:radar_tech_br/src:src python radar_tech_br/src/cta_card_self_test.py
+          PYTHONPATH=.:radar_tech_br/src:src python radar_tech_br/src/semantic_self_test.py
           python src/editorial_cross_blog_guard_self_test.py
 
       - name: Validar fila atual e detectar slot já publicado
@@ -158,11 +158,11 @@ jobs:
 
       - name: Preparar produto do slot
         if: env.RADAR_SKIP != 'true'
-        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/prepare_slot.py
+        run: PYTHONPATH=.:radar_tech_br/src:src python -u radar_tech_br/src/prepare_slot.py
 
       - name: Gerar artigo com Qwen3
         if: env.RADAR_SKIP != 'true'
-        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/generate_articles.py
+        run: PYTHONPATH=.:radar_tech_br/src:src python -u radar_tech_br/src/generate_articles.py
 
       - name: Gate anti-repetição entre blogs
         if: env.RADAR_SKIP != 'true'
@@ -170,7 +170,7 @@ jobs:
 
       - name: Publicar somente após gates e imagem destacada
         if: env.RADAR_SKIP != 'true'
-        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/publish_generated.py
+        run: PYTHONPATH=.:radar_tech_br/src:src python -u radar_tech_br/src/publish_generated.py
 
       - name: Confirmar publicação do slot
         if: env.RADAR_SKIP != 'true'
@@ -193,7 +193,7 @@ jobs:
 
       - name: Auditar estado final
         if: always() && env.RADAR_SKIP != 'true'
-        run: PYTHONPATH=radar_tech_br/src:src python -u radar_tech_br/src/audit_release_candidates.py || true
+        run: PYTHONPATH=.:radar_tech_br/src:src python -u radar_tech_br/src/audit_release_candidates.py || true
 
       - name: Verificar saúde pública
         if: always()
