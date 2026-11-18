@@ -93,7 +93,8 @@ def prepare_universal_draft(
     body="".join("<p>"+html.escape(p,quote=True)+"</p>" for p in cleaned)
     try:
         commercial=product_offer_html(catalog,site_key=site_key,
-            product_key=product_key,topic=keyword)
+            product_key=product_key,topic=keyword,
+            verified_site_route=route)
         related=related_articles_html(related_posts or [],
             blog_home_url=blog_home_url) if related_posts else ""
     except CommerceArticleError as exc:
