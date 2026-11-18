@@ -1,0 +1,57 @@
+name: V31 C27 TEMP Simular merge de main atual sem publicar
+on:
+  push:
+    branches:
+      - feature/v31-affiliate-hub-c1-safe-20261115
+    paths:
+      - affiliate_hub_v31/C27_MERGE_DRYRUN_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+jobs:
+  merge-dryrun-against-current-main:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/feature/v31-affiliate-hub-c1-safe-20261115'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Simular merge em workspace descartavel, preservar dados historicos
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          base="$(git merge-base HEAD origin/main)"
+          git diff --name-only "$base" origin/main > /tmp/main_paths.txt
+          git diff --name-only "$base" HEAD > /tmp/feature_paths.txt
+          python - <<'PY'
+          from pathlib import Path
+          main=set(Path('/tmp/main_paths.txt').read_text().splitlines())
+          feature=set(Path('/tmp/feature_paths.txt').read_text().splitlines())
+          overlap=sorted(main&feature)
+          state_main={p for p in main if '/data/' in p or p.startswith('data/')}
+          state_overlap=sorted(state_main&feature)
+          print(f"V31_C27_MAIN_PATHS={len(main)} FEATURE_PATHS={len(feature)} SHARED_PATHS={len(overlap)} MAIN_STATE_PATHS={len(state_main)}")
+          if overlap or state_overlap:
+              print("V31_C27_MERGE_OVERLAP_BLOCKED")
+              raise SystemExit(4)
+          print("V31_C27_MAIN_STATE_HISTORY_PRESERVED_PASS")
+          PY
+          git config user.name 'v31-safe-merge-dryrun'
+          git config user.email 'v31-merge-dryrun@users.noreply.github.com'
+          git merge --no-edit --no-commit --no-ff origin/main
+          echo 'V31_C27_MERGE_WITH_CURRENT_MAIN_PASS'
+      - name: Regressao V31 e publicadores WordPress em arvore combinada sem secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
+          echo 'V31_C27_COMBINED_MAIN_BRANCH_REGRESSION_PASS'
