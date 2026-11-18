@@ -1,0 +1,70 @@
+name: V31 Universal — converter links para campanha REAL (sem publicar)
+on:
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: 'Site já cadastrado em sites.d ou site_routes.json'
+        required: true
+        type: string
+      topic:
+        description: 'Tema escolhido no momento do pedido'
+        required: true
+        type: string
+      budget:
+        description: 'Máximo de conversões Shopee nesta execução'
+        required: true
+        type: choice
+        options: ['1','2','3']
+        default: '1'
+      confirm_real_conversion:
+        description: 'Confirmo conversões oficiais Shopee limitadas; nenhum post será publicado'
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  convert-registered-campaign:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.confirm_real_conversion == true
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name:  Regressoes antes de mutation
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Dry-run lista de candidatos autorizados por campanha real
+        env:
+          V31_SITE: ${{ inputs.site_key }}
+          V31_TOPIC: ${{ inputs.topic }}
+          V31_BUDGET: ${{ inputs.budget }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.universal_conversion --site-key "$V31_SITE" --topic "$V31_TOPIC" --budget "$V31_BUDGET"
+      - name: Converter ate 3 URLs na campanha do site, salvar e verificar R2
+        env:
+          V31_SITE: ${{ inputs.site_key }}
+          V31_TOPIC: ${{ inputs.topic }}
+          V31_BUDGET: ${{ inputs.budget }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.universal_conversion --site-key "$V31_SITE" --topic "$V31_TOPIC" --budget "$V31_BUDGET" --execute
