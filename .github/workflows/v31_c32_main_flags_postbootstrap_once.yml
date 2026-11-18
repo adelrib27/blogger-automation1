@@ -1,0 +1,38 @@
+name: V31 C32 TEMP MAIN - release flag audit post-bootstrap sem secrets
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - affiliate_hub_v31/C32_FLAGS_MAIN_AFTER_BOOTSTRAP_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+jobs:
+  verify-off:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Confirmar 10 vars V31 OFF, sem acessar Environment ou Secrets
+        env:
+          V31_EDITORIAL_C9_RELEASE_ENABLED: ${{ vars.V31_EDITORIAL_C9_RELEASE_ENABLED }}
+          V31_EDITORIAL_PRODUCT_REUSE_ENABLED: ${{ vars.V31_EDITORIAL_PRODUCT_REUSE_ENABLED }}
+          V31_CASA_R2_FALLBACK_ENABLED: ${{ vars.V31_CASA_R2_FALLBACK_ENABLED }}
+          V31_OFICINA_R2_FALLBACK_ENABLED: ${{ vars.V31_OFICINA_R2_FALLBACK_ENABLED }}
+          V31_RADAR_R2_FALLBACK_ENABLED: ${{ vars.V31_RADAR_R2_FALLBACK_ENABLED }}
+          V31_EDITORIAL_SHADOW_ENABLED: ${{ vars.V31_EDITORIAL_SHADOW_ENABLED }}
+          V31_EDITORIAL_CACHE_WARMUP_ENABLED: ${{ vars.V31_EDITORIAL_CACHE_WARMUP_ENABLED }}
+          V31_EDITORIAL_CATALOG_REFRESH_ENABLED: ${{ vars.V31_EDITORIAL_CATALOG_REFRESH_ENABLED }}
+          V31_EDITORIAL_C21_AUDIT_ENABLED: ${{ vars.V31_EDITORIAL_C21_AUDIT_ENABLED }}
+          V31_EDITORIAL_PLANNER_ENABLED: ${{ vars.V31_EDITORIAL_PLANNER_ENABLED }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for key in V31_EDITORIAL_C9_RELEASE_ENABLED V31_EDITORIAL_PRODUCT_REUSE_ENABLED V31_CASA_R2_FALLBACK_ENABLED V31_OFICINA_R2_FALLBACK_ENABLED V31_RADAR_R2_FALLBACK_ENABLED V31_EDITORIAL_SHADOW_ENABLED V31_EDITORIAL_CACHE_WARMUP_ENABLED V31_EDITORIAL_CATALOG_REFRESH_ENABLED V31_EDITORIAL_C21_AUDIT_ENABLED V31_EDITORIAL_PLANNER_ENABLED; do
+            if [ "${!key:-}" = "true" ]; then
+              echo "V31_C32_RELEASE_FLAG_UNEXPECTEDLY_ON:$key"
+              exit 3
+            fi
+            echo "V31_C32_FLAG_OFF:$key"
+          done
+          echo "V31_C32_MAIN_ALL_TEN_FLAGS_OFF_PASS"
