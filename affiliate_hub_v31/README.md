@@ -1,5 +1,12 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C41 — Adaptador de rascunho universal para Blogger/WordPress (18/11/2026)
+
+- `universal_draft_adapter.py` consome envelope editorial privado `REVIEW_REQUIRED` de um site REAL; exige **aprovação explícita de pauta** e **corpo original com pelo menos 250 palavras** fornecido pelo gerador autorizado. O link afiliado é reconferido no catálogo R2 para a **campanha exata**. Rejeita produtos reprovados, envelope de outro site, URL manipulada, pauta sem palavra-chave, corpo insuficiente ou HTML injetado.
+- Prepara exclusivamente metadados de **rascunho**: Blogger `isDraft=true` ou WordPress `status=draft`. Não cria blogs, não chama as APIs de postagem, não permite publicação automática, não inventa atributos/avaliações ou métricas comerciais.
+- [C41 PR #62](https://github.com/adelrib27/blogger-automation1/pull/62), [CI 44348740799](https://github.com/adelrib27/blogger-automation1/actions/runs/44348740799): **285 testes V31 + 24 Casa + 21 Oficina + controle de originalidade PASS**. A publicação LIVE permanece sob os publicadores originais, as credenciais das plataformas e os gates editoriais, não autorizada pela existência de links.
+- Esta etapa completa o **contrato técnico** pedido → produto aprovado → campanha real → URL R2 → envelope por site → rascunho seguro, mas **não é um canário de publicação de blog futuro**. Isso só pode ser executado quando existir solicitação real com tema, plataforma, identidade, campanha e autorização do blog, sem fabricar blog hipotético.
+
 ### C39 — Reclassificação histórica idempotente por título + origem, sem autoaprovação em massa (18/11/2026)
 
 - `safe_reclassification.py` corrige a limitação de reimportações: revê produtos `review` históricos **quando a taxonomia editorial evoluir**, sem apagar dados antigos. Exige simultaneamente motivo histórico apenas `taxonomy_*`, título com regra editorial explícita, compatibilidade com mapeamento L1/L2 previamente revisado, ausência de origem protegida/conflitante, URL/imagem/IDs válidos e política de risco limpa.
