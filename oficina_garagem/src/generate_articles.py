@@ -178,7 +178,26 @@ Responda SOMENTE em JSON válido:
 
 
 def make_plan(item, raw=None):
-    data = parse_json(ai(editorial_plan_prompt(item),kind="plan") if raw is None else raw)
+    # Uma resposta da IA com título inválido não autoriza baixar o gate:
+    # recuperar o plano até três vezes, cada uma revalidada integralmente.
+    if raw is None:
+        failure = ""
+        for attempt in range(3):
+            prompt = editorial_plan_prompt(item)
+            if attempt:
+                prompt += ("\\nCORREÇÃO OBRIGATÓRIA: a resposta anterior "
+                    "foi recusada (" + failure[:120] + "). Gere NOVO JSON "
+                    "com título editorial de 35 a 65 caracteres (conte "
+                    "espaços), keyword, reader_need e product_connection, "
+                    "sem inventar fatos, preços ou avaliações. "
+                    "Não repita o título curto anterior.")
+            try:
+                return make_plan(item, raw=ai(prompt, kind="plan"))
+            except RuntimeError as exc:
+                failure = str(exc)
+        raise RuntimeError("planejamento bloqueado após 3 tentativas: " +
+                           failure[:200])
+    data = parse_json(raw)
     title = re.sub(r"\s+", " ", str(data.get("title") or "")).strip()
     keyword = re.sub(r"\s+", " ", str(data.get("keyword") or "")).strip()
     reader_need = re.sub(r"\s+", " ", str(data.get("reader_need") or "")).strip()
