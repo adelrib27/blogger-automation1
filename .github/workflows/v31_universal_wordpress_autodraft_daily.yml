@@ -1,0 +1,68 @@
+name: V31 Universal WordPress — rascunho seguro por blog real
+
+on:
+  schedule:
+    # 09:41 America/Recife, após fila afiliada e Blogger.
+    - cron: '41 12 * * *'
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: 'Blog WordPress já cadastrado no V31 (opcional)'
+        required: false
+        type: string
+      preview_topic:
+        description: 'Somente prévia, nunca autoriza escrever artigos'
+        required: false
+        type: string
+      execute_draft:
+        description: 'Criar APENAS rascunho, sujeito a pedido real e credenciais'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  validar-ou-rascunhar-wordpress:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2' requests
+      - name: Testes de contratos Blogger/WordPress antes de qualquer mutação
+        run: |
+          set -euo pipefail
+          python -m unittest affiliate_hub_v31.tests.test_automatic_wordpress_drafts affiliate_hub_v31.tests.test_article_commerce affiliate_hub_v31.tests.test_wordpress_related_posts -q
+      - name: Selecionar tema real, site real e campanha isolada, status DRAFT ONLY
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          V31_WP_SITE_KEY: ${{ inputs.site_key || '' }}
+          V31_WP_PREVIEW_TOPIC: ${{ inputs.preview_topic || '' }}
+          V31_WP_EXECUTE: ${{ github.event_name == 'schedule' && vars.V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED == 'true' && 'true' || inputs.execute_draft }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=()
+          if [[ -n "$V31_WP_SITE_KEY" ]]; then args+=(--site-key "$V31_WP_SITE_KEY"); fi
+          if [[ -n "$V31_WP_PREVIEW_TOPIC" ]]; then args+=(--topic "$V31_WP_PREVIEW_TOPIC"); fi
+          if [[ "$V31_WP_EXECUTE" == "true" ]]; then args+=(--execute-draft); fi
+          python -m affiliate_hub_v31.automatic_wordpress_drafts "${args[@]}"
+          echo 'V31_C60_GENERIC_WORDPRESS_WRITER_SAFE_NO_LIVE_POSTS'
