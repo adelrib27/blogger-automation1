@@ -3,9 +3,9 @@
   "policy_version": 3,
   "summary": {
     "total": 8,
-    "draft_ready": 4,
-    "rejected": 3,
-    "not_generated": 1,
+    "draft_ready": 2,
+    "rejected": 1,
+    "not_generated": 5,
     "published_history": 46,
     "rotation_cycle": 5,
     "rotation_pending": [
@@ -30,97 +30,19 @@
       }
     },
     {
-      "id": 56,
-      "shopee_item_id": "20199547395",
+      "id": 62,
+      "shopee_item_id": "58271032456",
       "category": "Decoração",
-      "product": "Kit 4 capa de almofada Decorativa Feliz Natal Alta Qualidade",
+      "product": "Caminho de Mesa de Renda Decorativo Para Mesa Balcão E Armário Com Longa Duração",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "REJECTED",
+        "status": "NOT_GENERATED",
         "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:3",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
+          "arquivo_gerado_ausente"
         ],
         "warnings": [],
-        "metrics": {
-          "word_count": 843,
-          "h2_count": 3,
-          "internal_links": 1,
-          "seo_title_length": 42,
-          "meta_description_length": 150,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 57,
-      "shopee_item_id": "58253704479",
-      "category": "Decoração",
-      "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 694,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 41,
-          "meta_description_length": 153,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 52,
-      "shopee_item_id": "23794071024",
-      "category": "Sala",
-      "product": "Mesa Lateral Redonda Decorativa MDF 30cm para Sala Quarto Pé Palito",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "focus_keyword_ausente_ou_invalida",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 891,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 38,
-          "meta_description_length": 140,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
       }
     },
     {
@@ -146,10 +68,10 @@
       }
     },
     {
-      "id": 50,
-      "shopee_item_id": "3273437960",
+      "id": 61,
+      "shopee_item_id": "23398723658",
       "category": "Cozinha",
-      "product": "Escorredor de Pratos 440x335x50mm Plástico Resistente Ideal para Pia Cozinha e Lavagem de Louças",
+      "product": "Ralador De Legumes Cortador Fatiador Legumes tabletop 3 Laminas Verduras Ralador Ralador Verdura Legumes Manivela",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -157,14 +79,30 @@
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 555,
-          "h2_count": 6,
+          "word_count": 634,
+          "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 42,
-          "meta_description_length": 148,
+          "seo_title_length": 46,
+          "meta_description_length": 154,
           "cta_count": 2
         },
         "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 63,
+      "shopee_item_id": "46360468172",
+      "category": "Cozinha",
+      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
       }
     },
     {
@@ -204,25 +142,35 @@
       }
     },
     {
-      "id": 48,
-      "shopee_item_id": "58203212212",
-      "category": "Área Externa",
-      "product": "Vaso Polietileno + Planta Artificial Jiboia Follhas Grande Decoracao Jardim",
+      "id": 60,
+      "shopee_item_id": "51511552034",
+      "category": "Banheiro",
+      "product": "Kit 2 Porta Shampoo Sabonete Suporte De Canto Parede Banheiro Cozinha Prateleira Sem Furar Multifuncional Cor Preto",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
         "warnings": [],
-        "metrics": {
-          "word_count": 640,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 153,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
+      }
+    },
+    {
+      "id": 59,
+      "shopee_item_id": "58207037675",
+      "category": "Área Externa",
+      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
       }
     }
   ]
