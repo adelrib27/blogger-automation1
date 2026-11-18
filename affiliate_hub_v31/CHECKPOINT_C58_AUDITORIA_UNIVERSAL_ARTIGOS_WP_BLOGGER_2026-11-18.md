@@ -29,3 +29,20 @@ Testar e concluir o fluxo de artigo com produto REAL do catálogo universal R2 e
 - [ ] CI regressiva + canário seguro real; atualizar estados e encerrar de maneira verificável.
 
 **Regra:** nenhum novo LIVE nem alteração da revisão de produtos; mutações de código GitHub passam por CI, e qualquer canário de publicação deve ser segregado e controlado.
+
+## C58 — Implementação + validação concluídas (complemento)
+
+- [x] [**PR #75 MERGED**](https://github.com/adelrib27/blogger-automation1/pull/75) em `main`: importação de `affiliate_hub_v31` corrigida em scripts de fila Casa/Oficina e em workflows; Radar mantido protegido, com PYTHONPATH também apropriado.
+- [x] `related_articles_html` C54 agora aceita URLs Blogger `/2026/11/x.html` **e** WordPress `/slug/` sob o MESMO host, com proteção contra caminhos externos/encodados/redirects.
+- [x] `wordpress_related_posts.py` é o seletor universal de até dois artigos internos anteriormente confirmados pela API WordPress no histórico local; usado pelos geradores Casa, Oficina e Radar. Não inventa URLs e não toca em produtos/links Shopee.
+- [x] [**CI PR #75 44407154200 SUCCESS**](https://github.com/adelrib27/blogger-automation1/actions/runs/44407154200) — **347 testes V31**, 24 Casa, 21 Oficina + crossblog PASS.
+- [x] [**Canário R2 + WordPress + Workers AI REAL C58 44407697822 SUCCESS**](https://github.com/adelrib27/blogger-automation1/actions/runs/44407697822). Campanhas/site exatos e estoque de fotos:
+  - `wordpress_casa_decoracao`: **9** produtos aprovados com imagem real e link convertido nesta campanha.
+  - `wordpress_oficina_garagem`: **6**.
+  - `wordpress_radartechbr`: **15**.
+  - Piloto Casa: API WordPress REST pública devolveu **6 posts reais válidos para links internos**; montada em memória prévia HTML com **8 parágrafos originais / 537 palavras**, foto Shopee via CSV/R2, keyword/CTA da campanha exata e **2 links para posts do próprio WordPress**. **0 posts WordPress, 0 links novos Shopee, 0 writes R2**. A geração da IA foi chamada de fato; não é um mock.
+- [x] Workflow/gatilho C58 temporários deletados da main após canário PASS.
+
+**Limites de evidência:** a correção dos geradores está em main e a prévia REAL de artigo foi validada. A CI e a prévia não demonstram que o próximo cron Casa/Oficina já rodou depois do patch, nem que um novo post WordPress foi publicado; Radar continuou bloqueando alegação não comprovada corretamente. Geradores LIVE antigos ainda usam modelo Qwen3 perto da descontinuação e não foram migrados na C58.
+
+**Próxima fase sugerida C59:** migrar o modelo dos três geradores WordPress para modelo Workers AI sustentado (com teste HTML/JSON por formato), validar o próximo ciclo em modo seguro, observabilidade de falhas e publicação LIVE só pelo próprio gate existente. Depois trabalhar rota universal WordPress de novos blogs e publicação com liberação própria, sem criar blog/ID fictício.
