@@ -1,5 +1,13 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C39 — Reclassificação histórica idempotente por título + origem, sem autoaprovação em massa (18/11/2026)
+
+- `safe_reclassification.py` corrige a limitação de reimportações: revê produtos `review` históricos **quando a taxonomia editorial evoluir**, sem apagar dados antigos. Exige simultaneamente motivo histórico apenas `taxonomy_*`, título com regra editorial explícita, compatibilidade com mapeamento L1/L2 previamente revisado, ausência de origem protegida/conflitante, URL/imagem/IDs válidos e política de risco limpa.
+- `DRY_RUN` por padrão; aplicação limitada a **100 aprovações por execução**, com `v31_taxonomy_reclassification_audit` por SKU, sem modificar títulos, URLs comerciais ou campanha. Verifica fingerprint das URLs afiliadas e restaura snapshot R2 após qualquer promoção.
+- [Workflow de reclassificação supervisionada](https://github.com/adelrib27/blogger-automation1/actions/workflows/v31_safe_historical_reclassification.yml) exige confirmação `workflow_dispatch` para alterações de moderação. Depois reconstrói o índice universal separado/lexicon, mantendo consistência com os novos status. **Não cria links nem publica artigos.**
+- A prova R2 da C33 encontrou **zero** novas correspondências de título+categoria com a taxonomia **atual**; portanto **não prometer** ampliação imediata dos 8.685 itens elegíveis, nem aprovar os 194.964 pendentes sem evidência. C35 fornece vocabulário dinâmico de 1.399 termos agregados para propor caminhos que possam receber novas regras revisadas.
+- [C39 PR #61](https://github.com/adelrib27/blogger-automation1/pull/61): regressões C39 e legados, CI `279 testes V31 +24 Casa +21 Oficina` após o último código, com flags LIVE e Pinterest intocados. Ausência de comissões/vendas não bloqueia o fluxo técnico.
+
 ### C37 — Pedidos reais em fila diária e handoffs privados por site/campanha (18/11/2026)
 
 - `site_requests.d/<site_key>.json` só nasce **quando um novo blog REAL for cadastrado**; armazena tema escolhido nesse momento e quantidade de artigos (lote até 24), não uma lista antecipada de temas. Nenhum pedido hipotético foi criado. A validação exige `site_key` registrado com plataforma/campanha reais, nichos ou caminhos oficiais autorizados e `publish_enabled=false`.
