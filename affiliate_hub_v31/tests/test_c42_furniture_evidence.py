@@ -11,7 +11,7 @@ from affiliate_hub_v31.taxonomy import classify_title
 
 class FurnitureEvidenceTests(unittest.TestCase):
     def test_specific_phrases_and_accessories(self):
-        for title in ("Mesa de Jantar 6 Lugares", "Sofá Retrátil 3 Lugares",
+        for title in ("Mesa de Jantar Madeira Macica 6 Lugares", "Sofá Retrátil 3 Lugares",
                       "Guarda Roupa Casal 6 Portas", "Cadeira de Escritório Ergonômica"):
             with self.subTest(title=title):
                 route=classify_title(title)
@@ -24,15 +24,15 @@ class FurnitureEvidenceTests(unittest.TestCase):
 
     def test_furniture_only_promoted_with_two_independent_signals(self):
         rows=[
-            ("Mesa de Jantar 6 Lugares","home living","furniture",
+            ("Mesa de Jantar Madeira Macica 6 Lugares","home living","furniture",
              "taxonomy_unclassified","matched"),
-            ("Mesa de Jantar 6 Lugares","home living","kitchenware",
+            ("Mesa de Jantar Madeira Macica 6 Lugares","home living","kitchenware",
              "taxonomy_unclassified","matched"),
-            ("Mesa de Jantar 6 Lugares","health","vitamins",
+            ("Mesa de Jantar Madeira Macica 6 Lugares","health","vitamins",
              "taxonomy_unclassified","matched"),
-            ("Mesa de Jantar 6 Lugares","home living","furniture",
+            ("Mesa de Jantar Madeira Macica 6 Lugares","home living","furniture",
              "manual_review","matched"),
-            ("Mesa de Jantar 6 Lugares","home living","furniture",
+            ("Mesa de Jantar Madeira Macica 6 Lugares","home living","furniture",
              "taxonomy_unclassified","conflict"),
             ("Capa para Sofá Retrátil","home living","furniture",
              "taxonomy_unclassified","matched"),
