@@ -3,7 +3,7 @@ name: Ventiladores em Foco — Loja Shopee LIVE
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 9 * * *"
+    - cron: "35 9 23 * *"
       timezone: "America/Recife"
   push:
     paths:
