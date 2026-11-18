@@ -58,9 +58,8 @@ def build_review_path_hints(catalog_db: sqlite3.Connection,
             continue
         inverted[term].add((l1,l2))
 
-    if not inverted:
-        raise ReviewHintsError("insufficient_safe_source_vocabulary")
-
+    # Em catálogos pequenos/de teste o léxico pode legitimamente estar vazio.
+    # Isso produz ZERO sugestões, jamais aprovação inferida.
     # Inclui SOMENTE a lane sem categoria oficial: conflitos, política, dados
     # inválidos e aprovações existentes não podem entrar nesta tabela.
     keys={x[0] for x in sidecar.execute("""
