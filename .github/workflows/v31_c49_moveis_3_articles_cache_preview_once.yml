@@ -1,0 +1,51 @@
+name: V31 C49 TEMP MAIN - pedido 3 moveis R2 preview sem Shopee
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - affiliate_hub_v31/C49_MOVEIS_THREE_DRAFTS_PREVIEW_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  preview-moveis-campaign-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Validar regressões V31 SAFE
+        run: python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Prévia da fila real do Blogger de móveis - zero mutations/posts
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.site_request_queue --budget 3 | tee /tmp/v31-c49-preview.txt
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('/tmp/v31-c49-preview.txt').read_text().splitlines()[-1])
+          if (d.get("mode")!="DRY_RUN" or
+              d.get("requests_active",0)<1 or
+              d.get("requests_evaluated",0)<1 or
+              not 0<=d.get("conversion_candidates",-1)<=3 or
+              d.get("shopee_mutation_attempts")!=0 or
+              d.get("converted")!=0 or
+              d.get("publication_calls")!=0 or
+              d.get("r2_snapshot_saved_and_verified") is not False):
+              raise SystemExit("V31_C49_PREVIEW_SECURITY_GATE_FAILED")
+          print("V31_C49_REAL_SITE_REQUEST_R2_DRY_RUN_PASS")
+          PY
