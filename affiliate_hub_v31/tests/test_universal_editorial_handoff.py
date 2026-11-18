@@ -63,6 +63,8 @@ class HandoffTests(unittest.TestCase):
         with patch("affiliate_hub_v31.universal_editorial_handoff.sites",
                    return_value={"blog_novo_real":ROUTE}), \
              patch("affiliate_hub_v31.site_launch_plan.sites",
+                   return_value={"blog_novo_real":ROUTE}), \
+             patch("affiliate_hub_v31.editorial.sites",
                    return_value={"blog_novo_real":ROUTE}):
             with Catalog(self.path) as cat:
                 result=plan_editorial_handoff(cat,topic="Air Fryer",
@@ -83,6 +85,8 @@ class HandoffTests(unittest.TestCase):
         with patch("affiliate_hub_v31.universal_editorial_handoff.sites",
                    return_value={"blog_novo_real":ROUTE}), \
              patch("affiliate_hub_v31.site_launch_plan.sites",
+                   return_value={"blog_novo_real":ROUTE}), \
+             patch("affiliate_hub_v31.editorial.sites",
                    return_value={"blog_novo_real":ROUTE}):
             with Catalog(self.path) as cat:
                 result=plan_editorial_handoff(cat,topic="Air Fryer",
@@ -104,8 +108,8 @@ class HandoffTests(unittest.TestCase):
                 dict(topic=" "),
             ):
                 with self.subTest(opts=opts), self.assertRaises(HandoffError):
-                    plan_editorial_handoff(cat,topic="Air Fryer",
-                        platform="blogger",articles=3,**opts)
+                    plan_editorial_handoff(cat,**(dict(topic="Air Fryer",
+                        platform="blogger",articles=3)|opts))
         with patch("affiliate_hub_v31.universal_editorial_handoff.sites",
                    return_value={"blog_novo_real":ROUTE}):
             with Catalog(self.path) as cat:
@@ -118,6 +122,8 @@ class HandoffTests(unittest.TestCase):
         with patch("affiliate_hub_v31.universal_editorial_handoff.sites",
                    return_value={"blog_novo_real":ROUTE}), \
              patch("affiliate_hub_v31.site_launch_plan.sites",
+                   return_value={"blog_novo_real":ROUTE}), \
+             patch("affiliate_hub_v31.editorial.sites",
                    return_value={"blog_novo_real":ROUTE}):
             with Catalog(self.path) as cat:
                 with cat.db:
