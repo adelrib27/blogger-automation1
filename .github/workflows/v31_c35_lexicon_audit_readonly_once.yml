@@ -1,0 +1,84 @@
+name: V31 C35 TEMP - vocabulario L1 L2 dos 91k em revisao
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C35_LEXICON_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  lexicon-audit:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Mapear somente terminais agregados de 20 caminhos oficiais
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python - <<'PY'
+          from collections import Counter,defaultdict
+          import json,sqlite3,tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.r2_state import R2State
+          from affiliate_hub_v31.taxonomy import normalize
+          from affiliate_hub_v31.curation_audit import PROTECTED_ROOTS
+          STOP=set(('para','com','sem','por','de','do','da','das','dos','em',
+                    'uma','novo','nova','modelo','kit','pecas','peca','premium',
+                    'original','universal','produto','unidade','tamanho','cor',
+                    'black','branco','preto','azul','vermelho','marca','tipo',
+                    'alta','baixo','melhor','uso','grande','pequeno','pack',
+                    'mais','super','profissional','acessorio','acessorios'))
+          with tempfile.TemporaryDirectory() as tmp:
+              p=Path(tmp)/'catalog.sqlite3'
+              if not R2State.from_env().restore_to(p):
+                  raise SystemExit('R2_MISSING')
+              con=sqlite3.connect(f'file:{p.resolve()}?mode=ro',uri=True)
+              rows=con.execute("""
+                SELECT p.title,p.shop_id,s.level1,s.level2
+                FROM products p
+                JOIN product_taxonomy t ON t.product_key=p.product_key
+                JOIN product_source_categories s ON s.product_key=p.product_key
+                WHERE p.moderation='review' AND t.status!='matched'
+                  AND s.status='matched' AND s.level1!='' AND s.level2!=''
+                GROUP BY p.product_key
+              """)
+              counts=Counter(); tokens=defaultdict(Counter)
+              stores=defaultdict(lambda:defaultdict(set))
+              for title,shop,l1,l2 in rows:
+                  if l1 in PROTECTED_ROOTS: continue
+                  path=(l1,l2); counts[path]+=1
+                  terms=[t for t in normalize(title).split()
+                         if len(t)>=4 and not t.isdigit() and t not in STOP]
+                  seen=set(terms)
+                  seen.update(a+' '+b for a,b in zip(terms,terms[1:])
+                              if len(a)>=4 and len(b)>=4)
+                  for term in seen:
+                      tokens[path][term]+=1
+                      if len(stores[path][term])<30:
+                          stores[path][term].add(shop)
+              result=[]
+              for path,num in counts.most_common(18):
+                  candidates=[{'term':term,'products':n,
+                               'shops_at_least':len(stores[path][term])}
+                      for term,n in tokens[path].most_common(80)
+                      if n>=30 and len(stores[path][term])>=10][:9]
+                  result.append({'source_path':list(path),
+                                 'pending_count':num,'aggregated_terms':candidates})
+              con.close()
+              print('V31_C35_OFFICIAL_SOURCE_TITLE_AGGREGATES_PASS')
+              print(json.dumps({'groups':len(counts),'sample':result,
+                                'zero_approvals':True,'zero_publications':True,
+                                'no_product_titles_or_ids':True},ensure_ascii=False))
+          PY
