@@ -201,10 +201,10 @@ def _check_history(posts:list[dict],*,site_key:str,
     prior_links=set()
     public=[]
     for post in posts:
-        if not isinstance(post,dict) or
-           not isinstance(post.get("id"),int) or
-           post.get("status") not in (
-               "publish","draft","pending","future","private"):
+        if (not isinstance(post,dict) or
+            not isinstance(post.get("id"),int) or
+            post.get("status") not in (
+                "publish","draft","pending","future","private")):
             raise WordPressAutoDraftError("wordpress_history_invalid")
         slug=str(post.get("slug") or "")
         if slug.startswith(prefix):
