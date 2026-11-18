@@ -1,0 +1,60 @@
+name: V31 C38 TEMP MAIN - conversor universal Blogger e fila vazia
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - affiliate_hub_v31/C38_REAL_BLOGGER_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  integration:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Regressões integrais antes de qualquer mutation
+        run: |
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
+      - name: Fila de sites futuros sem requests, zero API e zero handoffs
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.site_request_queue --budget 3 --execute
+          python -m affiliate_hub_v31.handoff_dispatch --execute
+          echo 'V31_C38_NO_HYPOTHETICAL_SITE_REQUEST_MUTATIONS_PASS'
+      - name: Dry-run conversão universal Blogger registrado, 1 link no máximo
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.universal_conversion --site-key blogger_air_fryers --topic 'air fryer' --budget 1
+      - name: UM link afiliado oficial de campanha Blogger salva R2, nenhum post
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.universal_conversion --site-key blogger_air_fryers --topic 'air fryer' --budget 1 --execute
+          python -m affiliate_hub_v31.universal_editorial_handoff --topic 'air fryer' --platform blogger --articles 6 --site-key blogger_air_fryers
+          echo 'V31_C38_REAL_BLOGGER_CAMPAIGN_CONVERSION_AND_REVIEW_HANDOFF_PASS'
