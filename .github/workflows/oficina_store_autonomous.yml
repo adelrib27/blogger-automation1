@@ -6,8 +6,8 @@ on:
     paths:
       - "oficina_garagem/store_live_kickoff.txt"
   schedule:
-    # America/Recife (UTC-3): 08:30 diariamente, antes do editorial das 09:07.
-    - cron: "30 11 * * *"
+    # America/Recife (UTC-3): 08:30 mensalmente, antes do editorial das 09:07.
+    - cron: "30 11 19 * *"
 
 permissions:
   contents: write
