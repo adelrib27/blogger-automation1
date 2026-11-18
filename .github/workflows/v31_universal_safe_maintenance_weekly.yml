@@ -1,0 +1,69 @@
+name: V31 Universal — curadoria e reparo de indice R2 semanal SAFE
+
+on:
+  schedule:
+    # Quarta-feira 09:13 America/Recife, depois do refresh de terça.
+    # Independe de quais blogs existem ou existirão.
+    - cron: '13 12 * * 3'
+  workflow_dispatch:
+    inputs:
+      confirm_safe_maintenance:
+        description: 'Confirmar revisão segura do catálogo e sidecar; nenhuma publicação'
+        type: boolean
+        required: true
+        default: false
+      repair_index:
+        description: 'Forçar reconstrução/verificação do índice universal'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  curar-acervo-universal-sem-blogs:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' ||
+       (github.event_name == 'workflow_dispatch' &&
+        inputs.confirm_safe_maintenance == true))
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar cliente R2; sem credenciais Shopee, Blogger ou WordPress
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Verificar regressões antes de qualquer alteração
+        run: |
+          set -euo pipefail
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+          python casa_decoracao/src/self_test.py
+          python oficina_garagem/src/self_test.py
+          python src/editorial_cross_blog_guard_self_test.py
+      - name: Reclassificar no máximo 100 históricos com evidência dupla e reconciliar sidecar R2
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_FORCE_REPAIR: ${{ inputs.repair_index || 'false' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--execute --limit 100)
+          if [[ "$V31_FORCE_REPAIR" == "true" ]]; then
+            args+=(--repair-index)
+          fi
+          python -m affiliate_hub_v31.universal_maintenance "${args[@]}"
+          echo 'V31_C45_WEEKLY_UNIVERSAL_SAFE_MAINTENANCE_PASS'
