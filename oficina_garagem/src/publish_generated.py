@@ -12,6 +12,11 @@ from zoneinfo import ZoneInfo
 
 from cta_context import CTA_PRODUCT_TITLE_CLASS
 from quality_gate import quality
+# Permite execução direta python pasta/src/publish_generated.py em GitHub Actions.
+import sys
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPOSITORY_ROOT))
 from affiliate_hub_v31.reuse_policy import history_has_publication, validate_publication, validate_prior_editorial_body
 
 ROOT = Path(__file__).resolve().parents[2]
