@@ -1,0 +1,110 @@
+name: V31 C48 TEMP MAIN - primeiro Blogger real moveis campanha correta
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C48_FIRST_REAL_FURNITURE_LINK_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  furniture-first-campaign-e2e:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cliente R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Regressão completa antes de converter
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Buscar produtos móveis aprovados, converter UM link e validar handoff privado (sem posts)
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.catalog import Catalog
+          from affiliate_hub_v31.r2_state import R2State,verify_database
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.site_launch_plan import preview_site_launch,summarize_site_launch
+          from affiliate_hub_v31.universal_conversion import convert_for_registered_blog
+          from affiliate_hub_v31.universal_editorial_handoff import plan_editorial_handoff,safe_summary
+          key='blogger_moveis_para_cada_canto'
+          route=sites()[key]
+          if (route['identifier']!='1439741542627895062' or
+              route['campaign']!='moveisparacadacanto' or
+              route['publish_enabled'] is not False):
+              raise SystemExit('V31_C48_REAL_SITE_ROUTE_GATE_FAILED')
+          storage=R2State.from_env()
+          topics=('mesa de escritorio','sofa retratil','cadeira de escritorio',
+                  'guarda roupa casal 6 portas','rack para tv',
+                  'mesa de jantar madeira macica')
+          choice=None
+          with tempfile.TemporaryDirectory(prefix='v31-c48-select-') as tmp:
+              path=Path(tmp)/'catalog.sqlite3'
+              if not storage.restore_to(path):
+                  raise SystemExit('V31_C48_CATALOG_MISSING')
+              verify_database(path)
+              with Catalog(path) as cat:
+                  for topic in topics:
+                      report=summarize_site_launch(preview_site_launch(
+                          cat,topic=topic,platform='blogger',
+                          site_key=key,max_items=6))
+                      print('V31_C48_FURNITURE_TOPIC_COUNTS '+json.dumps({
+                          'approved':report['selected_catalog_candidates'],
+                          'requiring_conversion':report[
+                              'items_requiring_conversion_for_exact_campaign'],
+                          'registered':report['registered_site'],
+                          'publication_calls':report['publication_calls'],
+                          'can_publish':report['can_publish']
+                      },sort_keys=True))
+                      if choice is None and report[
+                          'items_requiring_conversion_for_exact_campaign']>0:
+                          choice=topic
+          if choice is None:
+              raise SystemExit('V31_C48_NO_APPROVED_FURNITURE_FOR_CAMPAIGN')
+          conv=convert_for_registered_blog(storage,site_key=key,topic=choice,
+              budget=1,execute=True,
+              app_id=os.getenv('V31_EDITORIAL_SHOPEE_APP_ID',''),
+              app_secret=os.getenv('V31_EDITORIAL_SHOPEE_APP_SECRET',''))
+          print('V31_C48_CONVERSION_COUNTS '+json.dumps(conv,sort_keys=True))
+          if (conv['converted']!=1 or conv['api_interrupted'] is not False or
+              conv['r2_snapshot_saved_and_verified'] is not True or
+              conv['publication_calls']!=0 or
+              conv['no_cross_campaign_links'] is not True):
+              raise SystemExit('V31_C48_REAL_CONVERSION_GATE_FAILED')
+          with tempfile.TemporaryDirectory(prefix='v31-c48-handoff-') as tmp:
+              new=Path(tmp)/'catalog.sqlite3'
+              if not storage.restore_to(new):
+                  raise SystemExit('V31_C48_RESTORE_FAILED')
+              verify_database(new)
+              with Catalog(new) as cat:
+                  handoff=plan_editorial_handoff(cat,topic=choice,
+                      platform='blogger',articles=1,site_key=key)
+                  summary=safe_summary(handoff)
+                  print('V31_C48_REVIEW_HANDOFF_COUNTS '+json.dumps(summary,
+                      sort_keys=True))
+                  if (summary['ready_review_jobs']!=1 or
+                      summary['publication_calls']!=0 or
+                      summary['site_registered'] is not True or
+                      summary['can_publish'] is not False):
+                      raise SystemExit('V31_C48_HANDOFF_GATE_FAILED')
+          print('V31_C48_FIRST_REAL_FURNITURE_BLOGGER_CACHE_E2E_PASS')
+          PY
