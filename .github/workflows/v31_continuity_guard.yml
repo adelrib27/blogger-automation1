@@ -1,0 +1,41 @@
+name: V31 — checkpoint de continuidade e diagnóstico seguro
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - V31_CONTINUAR_AQUI.md
+      - AGENTS.md
+      - affiliate_hub_v31/CONTINUIDADE_ESTADO.json
+      - affiliate_hub_v31/CONTINUIDADE_PROTOCOLO.md
+      - affiliate_hub_v31/continuity_guard.py
+      - affiliate_hub_v31/tests/test_continuity_guard.py
+      - .github/workflows/v31_continuity_guard.yml
+  schedule:
+    # Inspeciona diariamente o ponto de retomada. Não altera status.
+    - cron: '7 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-canonical-v31-continuity:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testar protocolo de checkpoints e proteção contra dados privados
+        run: |
+          set -euo pipefail
+          python -m compileall -q affiliate_hub_v31/continuity_guard.py
+          python -m unittest affiliate_hub_v31.tests.test_continuity_guard -q
+      - name: Validar ponteiro fixo e publicar resumo da continuação nesta Action
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.continuity_guard --summary
+          echo 'V31_C57_CONTINUITY_INDEX_VERIFIED_PASS'
