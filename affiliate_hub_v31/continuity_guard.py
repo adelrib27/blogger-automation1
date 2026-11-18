@@ -127,7 +127,7 @@ def main() -> int:
                     "## V31 — ponto de continuidade GitHub\n\n"
                     f"- Estado: **{report['status']}**; fase: "
                     f"**{report['phase']}**\n"
-                    f"- Checkpoint: \`{report['checkpoint_detail']}\`\n"
+                    f"- Checkpoint: `{report['checkpoint_detail']}`\n"
                     f"- Última evidência: {report['latest_verified_step']}\n"
                     f"- Próximo passo: {report['next_safe_step']}\n"
                     "- Entrada: [V31_CONTINUAR_AQUI.md]"
