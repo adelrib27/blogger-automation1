@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C59",
+  "last_checkpoint_phase": "C60",
   "continuity_protocol_phase": "C60",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-18",
   "last_updated_source": "conferencia_conectada_github",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C60_WRITER_WORDPRESS_UNIVERSAL_2026-11-18.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C60_WORDPRESS_UNIVERSAL_DRAFT_SAFE_2026-11-18.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -35,27 +35,28 @@
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "C60 — implementar writer universal WordPress DRAFT, com site real e pedido explícito, produto aprovado R2 e imagem real, CTA/afiliado/links internos e gates separados de LIVE",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "HEAD main 310e0d4c antes da prévia; checkpoint C60 criado no commit 6e98ce641a9a42d8c791c07aeb244fa15306b95c; C59 três SAFE PASS e canário AI/R2 DRAFT_READY sem posts.",
-    "next_safe_step": "Inspecionar contratos e construir código C60 em branch de trabalho, com testes REST fake WP e dry-run; criar PR e validar CI antes de qualquer merge; evitar LIVE.",
+    "objective": "C58-C60: concluir núcleo universal de geração Blogger+WordPress, validar R2 + IA + fotos + link afiliado + CTA + internos e WordPress SAFE, com checkpoints versionados.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "C60 PR#79 MERGED, CI #44412438334 365 V31+24 Casa+21 Oficina+crossblog PASS; R2+WordPress Casa REAL preview #44412775615 PASS (43 posts, foto+campanha+2 internos, 0 POST); Casa/Oficina/Radar SAFE todos PASS após PR#78.",
+    "next_safe_step": "Acompanhar próximos crons reais do Blogger e WordPress. Para primeiro novo WP draft de ponta a ponta: registrar pedido real tema/quantidade, cadastrar credenciais específicas no GitHub secret protegido e autorizar execução DRAFT; não inventar blog/campanha nem ativar LIVE genérico. Correções Runner tema ficam adiadas conforme decisão do proprietário.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C60_WRITER_WORDPRESS_UNIVERSAL_2026-11-18.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410047121",
+      "https://github.com/adelrib27/blogger-automation1/pull/79",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44412438334",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44412775615",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44410965031",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44410976595",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44410496620"
     ]
   },
   "next_priorities": [
-    "Observar o primeiro cron real C55 e garantir que pedidos completos de artigos nao gerem extras.",
-    "Testar geracao de novo rascunho Blogger de ponta a ponta apenas quando houver nova quantidade autorizada num site real.",
-    "Verificar integracao dos adapters de artigos comerciais no fluxo WordPress, sem extrapolar testes Blogger.",
-    "Continuar curadoria universal das filas REVIEW sem aprovar produtos por faceta isolada.",
-    "Retomar correção do Blogger Local Runner somente quando o usuario solicitar (tema provisório instalado manualmente)."
+    "Verificar próximos cron agendados Blogger C55 e WordPress legados após as correções C58/C59; não considerar cron configurado igual a executado.",
+    "Registrar um primeiro pedido de artigos WordPress real para o writer universal C60, com identidade/campanha reais e credenciais em GitHub secret protegido; comprovar 1 draft REST sem publicação LIVE.",
+    "Manter acervo universal R2 dos 2 CSVs e ampliar curadoria de REVIEW com evidências; nunca aprovar em massa.",
+    "Quando houver demanda de novo blog Blogger/WordPress, permitir tema e quantidade no momento do pedido, selecionar SKUs adequados com imagem+CTA+links internos e publicar apenas com aprovação.",
+    "Blogger Runner tema continua adiado a pedido do proprietário; não reabrir sem solicitação."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -64,7 +65,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44402454026",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44412438334",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "Guard diário configurado, primeira execução programada futura não observada"
   }
