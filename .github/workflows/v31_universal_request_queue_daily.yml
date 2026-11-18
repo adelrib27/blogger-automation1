@@ -61,3 +61,12 @@ jobs:
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
           V31_BUDGET: ${{ github.event_name == 'schedule' && '3' || inputs.budget }}
         run: python -m affiliate_hub_v31.site_request_queue --budget "$V31_BUDGET" --execute
+      - name: Materializar envelopes editoriais privados no R2; apenas REVIEW_REQUIRED
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          python -m affiliate_hub_v31.handoff_dispatch
+          python -m affiliate_hub_v31.handoff_dispatch --execute
