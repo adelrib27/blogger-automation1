@@ -56,3 +56,4 @@ jobs:
           args=(--topic "$V31_TOPIC" --platform "$V31_PLATFORM" --articles "$V31_ARTICLES")
           if [[ -n "$V31_SITE" ]]; then args+=(--site-key "$V31_SITE"); fi
           python -m affiliate_hub_v31.universal_editorial_handoff "${args[@]}"
+          python -m affiliate_hub_v31.universal_lexicon --topic "$V31_TOPIC" --limit 12
