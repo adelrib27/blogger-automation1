@@ -47,8 +47,9 @@ jobs:
                   initial_bytes=f.stat().st_size
                   pages=con.execute("PRAGMA page_count").fetchone()[0]
                   page_size=con.execute("PRAGMA page_size").fetchone()[0]
+                  free_pages=con.execute("PRAGMA freelist_count").fetchone()[0]
                   con.close()
-                  print('V31_C34_R2_CURRENT_STATE_READONLY_PASS products=%d links=%d inventory_count=%d bytes=%d page_count=%d page_size=%d'%(products,links,count,initial_bytes,pages,page_size))
+                  print('V31_C34_R2_CURRENT_STATE_READONLY_PASS products=%d links=%d inventory_count=%d bytes=%d page_count=%d page_size=%d free_pages=%d'%(products,links,count,initial_bytes,pages,page_size,free_pages))
               except StorageError as exc:
                   safe={'r2_snapshot_download_failed','snapshot_sha256_mismatch','r2_pointer_read_failed','invalid_manifest','r2_catalog_missing','sqlite_corruption'}
                   code=str(exc)
