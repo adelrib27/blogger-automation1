@@ -33,10 +33,18 @@ class FurnitureBloggerLaunchTests(unittest.TestCase):
         self.assertNotIn("CASAED", query)
         self.assertIn("generateShortLink", query)
 
-    def test_no_unrequested_scheduled_conversions(self):
-        # Registration alone does not populate site_requests.d.
-        self.assertFalse(any(x["site_key"] == KEY
-                             for x in load_requests()))
+    def test_three_articles_requested_for_real_blog_cache_only(self):
+        # C49: usuário pediu 3 artigos, por ambientes; fila só armazena
+        # links oficiais da campanha real e NÃO publica nem cria posts.
+        requests=[x for x in load_requests() if x["site_key"] == KEY]
+        self.assertEqual(len(requests),1)
+        request=requests[0]
+        self.assertEqual(request["articles"],3)
+        self.assertEqual(request["platform"],"blogger")
+        self.assertTrue(request["enabled"])
+        for keyword in ("sofá","guarda-roupa","mesa","escritório"):
+            self.assertIn(keyword,request["topic"])
+        self.assertIs(sites()[KEY]["publish_enabled"],False)
 
 
 if __name__ == "__main__":
