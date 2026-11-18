@@ -15,9 +15,15 @@ from affiliate_hub_v31.routing import plan_site, sites
 class RouteTests(unittest.TestCase):
     def test_routes_cover_blogger_and_wordpress_by_verified_ids(self):
         mapping=sites()
-        self.assertEqual(len(mapping),21)
-        self.assertEqual(sum(x["platform"]=="blogger" for x in mapping.values()),18)
-        self.assertEqual(sum(x["platform"]=="wordpress" for x in mapping.values()),3)
+        # O catálogo universal aceita novos blogs declarativos.
+        # Não fixar a quantidade histórica (18 Blogger + 3 WordPress).
+        base=json.loads(routing.ROUTES_PATH.read_text(encoding="utf-8"))["sites"]
+        extras=list(routing.SITES_DIRECTORY.glob("*.json"))
+        self.assertEqual(len(mapping),len(base)+len(extras))
+        self.assertGreaterEqual(
+            sum(x["platform"]=="blogger" for x in mapping.values()),18)
+        self.assertGreaterEqual(
+            sum(x["platform"]=="wordpress" for x in mapping.values()),3)
         self.assertTrue(all(x["publish_enabled"] is False for x in mapping.values()))
         self.assertEqual(mapping["blogger_air_fryers"]["identifier"],"9113728635217260884")
         self.assertEqual(mapping["blogger_liquidificadores"]["identifier"],"5271798990390532475")
