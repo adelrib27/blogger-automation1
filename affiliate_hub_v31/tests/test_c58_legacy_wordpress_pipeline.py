@@ -33,7 +33,7 @@ print("V31_LEGACY_WP_IMPORT_PASS")
             for name in (
                 ("build_editorial_queue.py",) if folder!="radar_tech_br"
                 else ()
-            ) + ("generate_articles.py",):
+            ) + ("generate_articles.py","publish_generated.py"):
                 file=ROOT/folder/"src"/name
                 result=subprocess.run(
                     [sys.executable,"-I","-c",loader,str(file)],
@@ -42,6 +42,17 @@ print("V31_LEGACY_WP_IMPORT_PASS")
                     self.assertEqual(result.returncode,0,
                                      result.stderr[-1500:])
                     self.assertIn("V31_LEGACY_WP_IMPORT_PASS",result.stdout)
+
+    def test_safe_publishers_noop_without_external_writes(self):
+        env={"PATH": __import__("os").environ.get("PATH","")}
+        for folder in FOLDERS:
+            script=ROOT/folder/"src"/"publish_generated.py"
+            result=subprocess.run(
+                [sys.executable,str(script)],cwd=str(ROOT),
+                env=env,capture_output=True,text=True,timeout=20)
+            with self.subTest(site=folder):
+                self.assertEqual(result.returncode,0,result.stderr[-1800:])
+                self.assertIn("desativada",result.stdout.lower())
 
     def test_each_legacy_article_gets_real_internal_post_links(self):
         # A origem é o histórico de URLs devolvidas pelo WordPress após
