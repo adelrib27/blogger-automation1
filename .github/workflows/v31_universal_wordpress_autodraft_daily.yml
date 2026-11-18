@@ -1,0 +1,66 @@
+name: V31 Universal WordPress — rascunho original por pedido real, nunca LIVE
+
+on:
+  schedule:
+    # 12:43 Recife: depois da fila R2 e do Blogger. OFF por default.
+    - cron: '43 15 * * *'
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: 'Site WordPress real com site_requests.d válido; vazio usa rodízio'
+        required: false
+        type: string
+      execute_draft:
+        description: 'Solicita apenas um DRAFT, nunca LIVE (também exige gate do Environment)'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  wordpress-universal-draft:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bibliotecas de R2, WordPress REST e Workers AI
+        run: python -m pip install 'boto3>=1.35,<2' requests
+      - name: Testes C60 e núcleo universal sem acessar blogs
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Verificar pedido, quota e gerar no máximo um DRAFT
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          V31_WP_CREDENTIALS_JSON: ${{ secrets.V31_WP_CREDENTIALS_JSON }}
+          V31_WP_DRAFT_EXECUTE_ENABLED: ${{ vars.V31_WP_DRAFT_EXECUTE_ENABLED || 'false' }}
+          V31_WP_RUN_REQUESTED: ${{ github.event_name == 'schedule' && 'true' || inputs.execute_draft }}
+          V31_SITE_KEY: ${{ inputs.site_key || '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=()
+          if [[ -n "$V31_SITE_KEY" ]]; then args+=(--site-key "$V31_SITE_KEY"); fi
+          if [[ "$V31_WP_DRAFT_EXECUTE_ENABLED" == "true" && "$V31_WP_RUN_REQUESTED" == "true" ]]; then
+            args+=(--execute-draft)
+          fi
+          python -m affiliate_hub_v31.automatic_wordpress_drafts "${args[@]}"
+          echo 'V31_C60_WORDPRESS_SAFE_NO_LIVE_POSTS'
