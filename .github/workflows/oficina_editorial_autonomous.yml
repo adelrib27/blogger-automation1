@@ -61,7 +61,7 @@ jobs:
       OFICINA_CLOUDFLARE_API_TOKEN: ${{ secrets.CASA_CLOUDFLARE_API_TOKEN }}
       OFICINA_WORDPRESS_USERNAME: "admin"
       OFICINA_WORDPRESS_APP_PASSWORD: ${{ secrets.OFICINA_WORDPRESS_APP_PASSWORD }}
-      OFICINA_AI_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      OFICINA_AI_MODEL: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
       OFICINA_GENERATION_ENABLED: "true"
       OFICINA_GENERATION_BATCH_SIZE: "1"
       OFICINA_GENERATION_BODY_ATTEMPTS: "3"
@@ -124,7 +124,7 @@ jobs:
       - name: Montar fila sem repetir produtos já publicados
         run: python -u oficina_garagem/src/build_editorial_queue.py
 
-      - name: Gerar um artigo com Qwen3 e gates
+      - name: Gerar um artigo com Workers AI suportado e gates
         run: python -u oficina_garagem/src/generate_articles.py
 
       - name: Gate anti-repetição entre blogs
