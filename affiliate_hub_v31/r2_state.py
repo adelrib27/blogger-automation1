@@ -16,7 +16,10 @@ from pathlib import Path
 
 PREFIX = "v31-editorial"
 POINTER = PREFIX + "/CURRENT.json"
-MAX_STATE_BYTES = 1024 * 1024 * 1024
+# O histórico já ocupa ~1.053 GB; ampliar cap com verificação SHA/integridade
+# permite crescimento cumulativo dos feeds sem anexar o índice universal.
+# A indexação de facetas é um arquivo R2 separado, não eleva este limite.
+MAX_STATE_BYTES = 2 * 1024 * 1024 * 1024
 SNAPSHOT_RE = re.compile(r"v31-editorial/snapshots/\d{8}T\d{6}Z-[0-9a-f]{16}\.sqlite3")
 
 
