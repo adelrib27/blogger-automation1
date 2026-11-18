@@ -1,5 +1,11 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C26 — Segurança salva e dez flags comerciais OFF (18/11/2026)
+
+- O usuário confirmou **Save protection rules** da regra `main`-only no Environment `v31-editorial-safe`. Credenciais Shopee V31 e legada autenticadas após rotação nos canários C23/C24.
+- [GitHub Actions 44306017629](https://github.com/adelrib27/blogger-automation1/actions/runs/44306017629): **10/10 variáveis de release e crons V31 efetivamente não `true`**, sem leitura de segredos; auditoria temporária removida. [CI pós-limpeza 44306252175](https://github.com/adelrib27/blogger-automation1/actions/runs/44306252175): **PASS**.
+- [Checkpoint C26](CHECKPOINT_C26_SECURITY_OFF_FLAGS_RELEASE_PREFLIGHT_2026-11-18.md): PR #52 em preflight para merge controlado, WordPress original preservado no default OFF, reserva R2 ainda com **14 links a completar**. Sem habilitar LIVE, tocar Pinterest ou inventar métricas comerciais. Código `V31-EDITORIAL-C26-SECURITY-SAVED-10FLAGS-OFF-PREFLIGHT-20261118`.
+
 ### C25 — Branch permitida `main` apenas, liberação em preflight (18/11/2026)
 
 - O proprietário mostrou a configuração `v31-editorial-safe`: **Selected branches and tags**, **1 branch / 0 tags**, padrão **`main`**. A opção de bypass por administradores aparece desmarcada; clicar **Save protection rules** se ainda não foi salva a alteração dessa proteção. Required reviewers está desmarcado; aprovação humana adicional pode ser habilitada antes de LIVE.
