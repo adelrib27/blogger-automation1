@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from urllib.parse import urlsplit
 
 from .catalog import Catalog, host_allowed
+from .article_commerce import product_offer_html, related_articles_html, CommerceArticleError
 from .editorial import EditorialError, fold, title_key
 from .routing import sites
 
@@ -31,7 +32,9 @@ class DraftPayload:
 
 
 def prepare_draft(catalog: Catalog, site_key: str, brief_id: str,
-                  paragraphs: list[str]) -> DraftPayload:
+                  paragraphs: list[str],
+                  related_posts: list[tuple[str,str]] | None = None,
+                  blog_home_url: str | None = None) -> DraftPayload:
     """Somente dados estruturados para um futuro cliente autenticado.
 
     Requer aprovação explícita do briefing antes de preparar rascunho.
@@ -74,9 +77,15 @@ def prepare_draft(catalog: Catalog, site_key: str, brief_id: str,
     if not affiliate or not host_allowed(affiliate,allow_short=True):
         raise DraftError("affiliate_link_not_verified")
     body="".join("<p>"+html.escape(p,quote=True)+"</p>" for p in cleaned)
-    disclaimer="<p><small>Este conteúdo pode conter links de afiliado. Podemos receber comissão por compras elegíveis, sem custo adicional para você.</small></p>"
-    action='<p><a rel="nofollow sponsored noopener noreferrer" target="_blank" href="'+html.escape(affiliate,quote=True)+'">Ver produto na Shopee</a></p>'
-    output=body+disclaimer+action
+    try:
+        commercial = product_offer_html(
+            catalog, site_key=site_key, product_key=key, topic=keyword,
+            verified_site_route=site)
+        related = related_articles_html(related_posts or [],
+            blog_home_url=blog_home_url) if related_posts else ""
+    except CommerceArticleError as exc:
+        raise DraftError("verified_product_commerce_required") from exc
+    output = body + commercial + related
     platform=site["platform"]
     if platform=="blogger":
         metadata={"kind":"blogger#post","blog":{"id":site["identifier"]},"title":title,

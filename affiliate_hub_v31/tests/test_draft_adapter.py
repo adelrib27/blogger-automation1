@@ -25,10 +25,10 @@ class DraftAdapterTests(unittest.TestCase):
             writer.writeheader()
             writer.writerow({"shopId":"10","itemId":"45","productName":"Air Fryer 5L",
                              "productLink":"https://shopee.com.br/item-i.10.45",
-                             "imageUrl":"https://img.example.invalid/product.png"})
+                             "imageUrl":"https://cf.shopee.com.br/file/valid-product-photo"})
             writer.writerow({"shopId":"10","itemId":"46","productName":"Liquidificador 1000W",
                              "productLink":"https://shopee.com.br/item-i.10.46",
-                             "imageUrl":"https://img.example.invalid/product.png"})
+                             "imageUrl":"https://cf.shopee.com.br/file/valid-product-photo"})
         self.cat=Catalog(base/"state.sqlite3")
         self.addCleanup(self.cat.close)
         self.cat.import_csv(feed,"feed1")

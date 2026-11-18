@@ -11,6 +11,7 @@ import html
 import re
 
 from .catalog import Catalog,host_allowed
+from .article_commerce import (CommerceArticleError, product_offer_html, related_articles_html)
 from .draft_adapter import DraftPayload
 from .editorial import fold
 from .routing import sites
@@ -23,6 +24,8 @@ class UniversalDraftError(ValueError):
 def prepare_universal_draft(
     catalog:Catalog, *, site_key:str, envelope:dict,
     product_key:str, paragraphs:list[str], approved:bool=False,
+    related_posts:list[tuple[str,str]]|None=None,
+    blog_home_url:str|None=None,
 )->DraftPayload:
     if approved is not True:
         raise UniversalDraftError("human_editorial_approval_required")
@@ -88,10 +91,15 @@ def prepare_universal_draft(
         fold(keyword) not in fold(" ".join(cleaned))):
         raise UniversalDraftError("body_insufficient_or_keyword_missing")
     body="".join("<p>"+html.escape(p,quote=True)+"</p>" for p in cleaned)
-    disclaimer="<p><small>Este conteúdo pode conter links de afiliado. Podemos receber comissão por compras elegíveis, sem custo adicional para você.</small></p>"
-    action=('<p><a rel="nofollow sponsored noopener noreferrer" target="_blank" href="'
-            +html.escape(cached,quote=True)+'">Ver produto na Shopee</a></p>')
-    article=body+disclaimer+action
+    try:
+        commercial=product_offer_html(catalog,site_key=site_key,
+            product_key=product_key,topic=keyword,
+            verified_site_route=route)
+        related=related_articles_html(related_posts or [],
+            blog_home_url=blog_home_url) if related_posts else ""
+    except CommerceArticleError as exc:
+        raise UniversalDraftError("product_commerce_or_internal_links_invalid") from exc
+    article=body+commercial+related
     brief_id=hashlib.sha256(
         (site_key+"|"+product_key+"|"+slug).encode()).hexdigest()[:32]
     if route["platform"]=="blogger":
