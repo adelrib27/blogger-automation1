@@ -38,3 +38,16 @@ Verificar CI e canário R2 de fila SAFE, conservar 3 rascunhos. Para lançamento
 - [**R2 real C49 44380494099**](https://github.com/adelrib27/blogger-automation1/actions/runs/44380494099): 1 pedido de blog real avaliado, **3 slots editoriais** com **1 link já disponível** na campanha `moveisparacadacanto` e **2 candidatos aprovados aguardando conversão**; 12 produtos em revisão separados, sem aprovar. A execução foi **DRY_RUN**: `converted=0`, `shopee_mutation_attempts=0`, `publication_calls=0`, `r2_snapshot_saved_and_verified=false` (não gravou, comportamento esperado). `V31_C49_REAL_SITE_REQUEST_R2_DRY_RUN_PASS`.
 - Workflows/gatilhos temporários C49 removidos após sucesso. O cron diário permanente pode preparar até 3 URLs oficiais globais por execução com a campanha real, mas **não publica artigos**, e a execução agendada futura ainda não foi observada.
 - **Três textos continuam como drafts no Blogger**; nenhum conteúdo comercial afirmado como oferta verificada. Sem marcas, preços ou avaliações inventadas. A organização Sala/Quarto/Home Office é editorial, **não labels da API Blogger**.
+
+
+## C50 — Publicação dos 3 artigos AUTORIZADA e concluída (18/11/2026)
+
+O proprietário solicitou expressamente **"PUBLIQUE OS 3 ARTIGOS"**, autorizando a mudança de rascunho para publicado **somente nos três artigos existentes** do Blogger real `1439741542627895062`. A API oficial Blogger Bridge V2 publicou cada post por ID e uma listagem posterior confirmou `status=live` para os três, **total de 3 posts publicados e 0 drafts remanescentes**.
+
+1. **Sala**: `5467343028388246916` — [Sofá para sala pequena: como escolher tamanho, formato e tecido](https://moveisparacadacanto.blogspot.com/2026/11/sofa-para-sala-pequena-como-escolher.html)
+2. **Quarto**: `3460803458877796795` — [Guarda-roupa para quarto: portas, medidas e divisões que fazem diferença](https://moveisparacadacanto.blogspot.com/2026/11/guarda-roupa-para-quarto-portas-medidas.html)
+3. **Home office**: `361914172841959603` — [Home office confortável: como escolher mesa e cadeira para trabalhar em casa](https://moveisparacadacanto.blogspot.com/2026/11/home-office-confortavel-como-escolher.html)
+
+**Escopo e limitações:** textos originais publicados como guias editoriais, sem preços, métricas inventadas ou links afiliados inseridos. Não há marcadores de categoria no Blogger (a ferramenta de publicação não aceita labels), embora a organização editorial seja Sala/Quarto/Home Office. A permissão de publicação foi **pontual**, não alterou `publish_enabled=false` do roteador V31 nem as flags LIVE. O tema visual V31 continua pendente de autorização do Blogger ID pelo Runner; não contornar. A fila `site_requests.d` permanece habilitada apenas para preparação futura de links Shopee aprovados e não altera posts já publicados.
+
+**Código de continuidade C50:** `V31-C50-MOVEIS-3ARTIGOS-PUBLICADOS-BLOGGER-1439741542627895062-20261118`.
