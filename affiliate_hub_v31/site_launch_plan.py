@@ -72,7 +72,11 @@ def preview_site_launch(
             continue
         category,niche=row
         route=f"{category}/{niche}"
-        if registered is not None and route not in registered["allowed_niches"]:
+        official=f"{item['source_category_l1']}/{item['source_category_l2']}"
+        legacy_allowed=registered is not None and route in registered["allowed_niches"]
+        official_allowed=(registered is not None and
+                          official in registered.get("allowed_source_paths",[]))
+        if registered is not None and not (legacy_allowed or official_allowed):
             continue
 
         # Reforço da autorização de origem na última milha.
@@ -86,12 +90,20 @@ def preview_site_launch(
                 brief=make_brief(site_key,item["product_key"],item["title"],
                                 category,niche,"criterios")
             except EditorialError:
-                continue
-            editorial={
-                "proposed_title":brief.title,
-                "keyword":brief.keyword,"topic":brief.topic,
-                "slug":brief.slug,"status":"REVIEW_REQUIRED",
-            }
+                if not official_allowed:
+                    continue
+                # Nicho futuro pode nao possuir template editorial registrado.
+                # Uma proposta para o gerador apropriado, sem inventar titulo.
+                editorial={
+                    "proposed_title":None,"keyword":None,
+                    "topic":topic,"slug":None,"status":"REVIEW_REQUIRED",
+                }
+            else:
+                editorial={
+                    "proposed_title":brief.title,
+                    "keyword":brief.keyword,"topic":brief.topic,
+                    "slug":brief.slug,"status":"REVIEW_REQUIRED",
+                }
         selected.append({
             "product_key":item["product_key"],
             "shop_id":item["shop_id"],
