@@ -1,5 +1,11 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C23 — Nova chave Shopee validada após rotação (18/11/2026)
+
+- Proprietário confirmou rotação e atualização de `V31_EDITORIAL_SHOPEE_APP_SECRET` no GitHub Environment. [Canário autenticado 44302637196](https://github.com/adelrib27/blogger-automation1/actions/runs/44302637196) **SUCCESS**, uma única consulta de leitura `productOfferV2` (`V31_SHOPEE_API_PASS`) e **230 testes PASS**, sem mutações, R2 writes ou posts. Workflow temporário removido.
+- **Pendente ação manual GitHub:** restringir `Settings → Environments → v31-editorial-safe → Deployment branches and tags` para apenas `main` e revisar aprovações. A chave foi validada, mas o segredo ainda pôde ser usado em canário da branch feature, então não é prudente habilitar operações LIVE antes da proteção. [Issue #53](https://github.com/adelrib27/blogger-automation1/issues/53).
+- [Checkpoint C23](CHECKPOINT_C23_SHOPEE_SECRET_ROTATED_2026-11-18.md). Código `V31-EDITORIAL-C23-SHOPEE-ROTATED-AUTH-PASS-230TESTS-20261118`. PR #52 permanece DRAFT, `main` e Pinterest intocados. Falta de métricas de vendas/comissões não é bloqueio técnico.
+
 ### C22 — E2E de seleção por nicho e campanha, pronto para liberação supervisionada (17/11/2026)
 
 - **230 testes V31 PASS + self-tests Casa, Oficina e originalidade cross-blog PASS**, [canário R2 real 44196154349](https://github.com/adelrib27/blogger-automation1/actions/runs/44196154349). 203.649 SKUs, 17 links reais anteriores intactos, 8.403 historicamente elegíveis que passam no gate adicional de origem, 194.964 ainda em revisão e zero conversões/publicações nessa prova.
