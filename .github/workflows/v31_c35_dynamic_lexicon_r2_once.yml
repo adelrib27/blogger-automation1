@@ -1,0 +1,62 @@
+name: V31 C35 TEMP MAIN — R2 lexicon universal + queries
+on:
+  push:
+    branches: [main]
+    paths:
+      - affiliate_hub_v31/C35_R2_PERSIST_ONCE_TRIGGER.txt
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  persist-index-lexicon-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install private R2 dependency
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Safe tests before any R2 index write
+        run: |
+          python -m compileall -q affiliate_hub_v31
+          python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: Rebuild and persist isolated universal sidecar lexicon, no core writes
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.universal_inventory --execute
+          echo 'V31_C35_DYNAMIC_R2_INDEX_PERSIST_PASS'
+          python - <<'PY'
+          import sqlite3,tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.universal_index_storage import UniversalIndexStorage
+          from affiliate_hub_v31.universal_lexicon import paths_for_topic
+          with tempfile.TemporaryDirectory() as td:
+              path=Path(td)/'index.sqlite3'
+              if not UniversalIndexStorage.from_env().restore_to(path,expected_product_count=203649):
+                  raise SystemExit('INDEX_NOT_FOUND')
+              with sqlite3.connect(f'file:{path.resolve()}?mode=ro',uri=True) as db:
+                  rows=db.execute('SELECT count(*) FROM v31_universal_title_lexicon').fetchone()[0]
+                  if rows<50: raise SystemExit('INSUFFICIENT_DYNAMIC_VOCABULARY')
+                  for topic in ('mesa','furadeira','shampoo','pneu','carabina'):
+                      matches=paths_for_topic(db,topic)
+                      if topic in ('mesa','furadeira','shampoo','pneu') and not matches:
+                          raise SystemExit('EXPECTED_TOPIC_NOT_INDEXED')
+                      if topic=='carabina' and matches:
+                          raise SystemExit('SENSITIVE_TOPIC_MUST_NOT_BE_SUGGESTED')
+                      if any(x['publication_approved'] for x in matches):
+                          raise SystemExit('UNAPPROVED_CURATION_RELEASE')
+                      print('V31_C35_TOPIC_QUERY_PASS:%s:%d'%(topic,len(matches)))
+                  print('V31_C35_DYNAMIC_LEXICON_TOTAL_TERMS=%d'%rows)
+          print('V31_C35_REAL_R2_LEXICON_INDEX_READY_NO_POSTS_PASS')
+          PY
