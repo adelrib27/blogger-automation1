@@ -2,12 +2,12 @@ name: V31 Atelie Criativo - Shopee Loja mensal (isolado)
 on:
   pull_request:
     paths:
+      - ".github/workflows/atelie_criativo_rotation_v31.yml"
       - "atelie_criativo/rotation_v31.py"
   push:
     branches: [main]
     paths:
       - "atelie_criativo/rotation_v31.py"
-      - ".github/workflows/atelie_criativo_rotation_v31.yml"
   workflow_dispatch:
   schedule:
     # 09:00 UTC = 06:00 America/Recife; GitHub pode atrasar a execução.
