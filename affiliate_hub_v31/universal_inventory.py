@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import json
+import sqlite3
 import tempfile
 from pathlib import Path
 
@@ -19,6 +20,7 @@ from .catalog import Catalog, host_allowed
 from .curation_audit import PROTECTED_ROOTS
 from .curation_triage import lane_for_record
 from .r2_state import R2State, verify_database
+from .universal_index_storage import UniversalIndexStorage
 
 SCHEMA_VERSION = "v31-universal-inventory-1"
 NO_OFFICIAL_CATEGORY = "sem_categoria_oficial"
@@ -50,7 +52,24 @@ def create_schema(catalog: Catalog) -> None:
     """)
 
 
-def rebuild_universal_inventory(catalog: Catalog) -> dict:
+def create_sidecar_schema(db: sqlite3.Connection) -> None:
+    """Tabela compacta independente do grande banco de catálogo."""
+    db.executescript("""
+      CREATE TABLE IF NOT EXISTS v31_universal_inventory (
+        product_key TEXT PRIMARY KEY,source_l1 TEXT NOT NULL,
+        source_l2 TEXT NOT NULL,source_l3 TEXT NOT NULL,
+        editorial_category TEXT NOT NULL,editorial_niche TEXT NOT NULL,
+        review_lane TEXT NOT NULL,decision TEXT NOT NULL
+          CHECK(decision IN ('approved','review_required','legacy_source_blocked')),
+        can_convert INTEGER NOT NULL CHECK(can_convert IN (0,1)),
+        schema_version TEXT NOT NULL
+      );
+    """)
+
+
+def rebuild_universal_inventory(
+    catalog: Catalog, *, sidecar: sqlite3.Connection | None = None,
+) -> dict:
     """Mapeia todo o acervo (inclusive review) sem PROMOVER nenhum SKU.
 
     Nenhuma heurística editorial nova é aplicada aqui. A única origem de
@@ -64,7 +83,11 @@ def rebuild_universal_inventory(catalog: Catalog) -> dict:
     if not facets:
         raise UniversalInventoryError("source_category_index_missing")
     before = catalog.stats()
-    create_schema(catalog)
+    if sidecar is None:
+        create_schema(catalog)
+    else:
+        create_sidecar_schema(sidecar)
+    target = catalog.db if sidecar is None else sidecar
     rows = catalog.db.execute("""
       WITH facets AS (
         SELECT product_key,
@@ -95,8 +118,8 @@ def rebuild_universal_inventory(catalog: Catalog) -> dict:
     agg=Counter()
     source_counts=Counter()
     batch=[]
-    with catalog.db:
-        catalog.db.execute("DELETE FROM v31_universal_inventory")
+    with target:
+        target.execute("DELETE FROM v31_universal_inventory")
         for row in rows:
             (key,shop,item,title,origin,image,moderation,reason,
              tax_status,category,niche,l1,l2,l3,
@@ -139,24 +162,34 @@ def rebuild_universal_inventory(catalog: Catalog) -> dict:
             agg["lanes_"+lane]+=1
             source_counts[path_l1]+=1
             if len(batch)>=1000:
-                catalog.db.executemany("""
+                target.executemany("""
                   INSERT INTO v31_universal_inventory VALUES
                   (?,?,?,?,?,?,?,?,?,?)
                 """,batch)
                 batch.clear()
         if batch:
-            catalog.db.executemany("""
+            target.executemany("""
               INSERT INTO v31_universal_inventory VALUES
               (?,?,?,?,?,?,?,?,?,?)
             """,batch)
     after=catalog.stats()
-    stored=catalog.db.execute(
+    stored=target.execute(
         "SELECT count(*) FROM v31_universal_inventory").fetchone()[0]
+    if sidecar is not None:
+        target.executescript("""
+          CREATE INDEX IF NOT EXISTS idx_v31_inventory_source
+            ON v31_universal_inventory(source_l1,source_l2,source_l3,decision);
+          CREATE INDEX IF NOT EXISTS idx_v31_inventory_review
+            ON v31_universal_inventory(review_lane,source_l1,source_l2);
+          CREATE INDEX IF NOT EXISTS idx_v31_inventory_editorial
+            ON v31_universal_inventory(editorial_category,editorial_niche,decision);
+        """)
     if before!=after or stored!=before["products"] or \
         sum(agg[decision] for decision in
             ("approved","review_required","legacy_source_blocked"))!=stored:
         raise UniversalInventoryError("catalog_preservation_failed")
-    if not catalog.integrity():
+    if not catalog.integrity() or \
+       target.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
         raise UniversalInventoryError("sqlite_integrity_failed")
     return {
         "mode":"C34_UNIVERSAL_INVENTORY_REBUILD",
@@ -182,32 +215,36 @@ def rebuild_universal_inventory(catalog: Catalog) -> dict:
 
 
 def run_r2(*,execute:bool=False) -> dict:
-    """Dry-run padrão. Um snapshot somente após integridade e contagem."""
+    """O banco comercial quase tem 1 GiB; gravar FACETAS EM SIDECAR R2.
+
+    Nunca sobrescreve CURRENT.json nem aumenta o SQLite dos links Shopee.
+    """
     with tempfile.TemporaryDirectory(prefix="v31-c34-inventory-") as temp:
         origin=Path(temp)/"catalog.sqlite3"
         if not R2State.from_env().restore_to(origin):
             raise UniversalInventoryError("r2_catalog_missing")
         verify_database(origin)
+        index=Path(temp)/"universal_index.sqlite3"
         with Catalog(origin) as catalog:
             initial=catalog.stats()
-            summary=rebuild_universal_inventory(catalog)
+            with sqlite3.connect(index) as sidecar:
+                summary=rebuild_universal_inventory(catalog,sidecar=sidecar)
+            if catalog.stats()!=initial:
+                raise UniversalInventoryError("original_catalog_modified")
         saved=False
         if execute:
-            out=R2State.from_env().save_from(origin)
-            if not out.get("state_saved"):
-                raise UniversalInventoryError("r2_save_failed")
-            check=Path(temp)/"restored.sqlite3"
-            if not R2State.from_env().restore_to(check):
-                raise UniversalInventoryError("r2_restore_failed")
-            verify_database(check)
-            with Catalog(check) as c:
-                if c.stats()!=initial or c.db.execute(
-                    "SELECT count(*) FROM v31_universal_inventory"
-                ).fetchone()[0]!=summary["products_indexed"]:
-                    raise UniversalInventoryError("restored_inventory_incomplete")
+            store=UniversalIndexStorage.from_env()
+            result=store.save_from(index,product_count=initial["products"])
+            if not result.get("index_saved"):
+                raise UniversalInventoryError("index_r2_save_failed")
+            check=Path(temp)/"restored_index.sqlite3"
+            if not store.restore_to(check,
+                     expected_product_count=summary["products_indexed"]):
+                raise UniversalInventoryError("index_r2_restore_failed")
             saved=True
         return {**summary,"r2_snapshot_saved_and_verified":saved,
-                "r2_writes":int(saved)}
+                "r2_writes":int(saved),"index_storage":"R2_SIDECAR",
+                "core_catalog_untouched":True}
 
 
 def main()->int:

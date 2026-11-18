@@ -25,6 +25,7 @@ from .source_category_index import import_source_categories, source_inventory
 from .taxonomy import classify_title
 from .title_index import has_index, rebuild_index
 from .universal_inventory import rebuild_universal_inventory
+from .universal_index_storage import UniversalIndexStorage
 
 MAX_FEED_ROWS = 250_000
 
@@ -157,9 +158,12 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
                 import_source_categories(cat,files[1],"feed2"),
             ]
             categories=source_inventory(cat)
-            # Facetas universais de TODO o acervo, inclusive produtos em revisão.
-            # Nunca converte produtos ou promove/modifica taxonomia historica.
-            universal_inventory=rebuild_universal_inventory(cat)
+            # Facetas universais SAEM PARA SIDECAR: o catálogo comercial
+            # já ocupa ~1 GiB e não pode carregar outra tabela de 203k SKUs.
+            universal_file=Path(td)/"universal_index.sqlite3"
+            with sqlite3.connect(universal_file) as sidecar:
+                universal_inventory=rebuild_universal_inventory(
+                    cat,sidecar=sidecar)
             # Atualização cumulativa após C19: índice textual sempre
             # coerente com TODOS os produtos novos do mesmo snapshot.
             fts_result=rebuild_index(cat) if has_index(cat) else None
@@ -198,16 +202,25 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
                 check=source_inventory(cat)
                 if check!=categories:
                     raise CatalogExpansionError("restored_source_categories_invalid")
-                indexed=cat.db.execute(
-                    "SELECT count(*) FROM v31_universal_inventory"
-                ).fetchone()[0]
-                if indexed!=after_stats["products"]:
-                    raise CatalogExpansionError("restored_universal_inventory_incomplete")
                 if fts_result is not None:
                     if not has_index(cat) or cat.db.execute(
                         "SELECT COUNT(*) FROM v31_catalog_fts"
                     ).fetchone()[0] != after_stats["products"]:
                         raise CatalogExpansionError("restored_title_index_invalid")
+        sidecar_saved=False
+        if execute and isinstance(storage,R2State):
+            # Ponteiro próprio; nunca atualiza CURRENT.json do catálogo aqui.
+            index_store=UniversalIndexStorage(storage)
+            receipt=index_store.save_from(
+                universal_file,product_count=after_stats["products"])
+            if not receipt.get("index_saved"):
+                raise CatalogExpansionError("universal_sidecar_save_failed")
+            verified=Path(td)/"restored_universal.sqlite3"
+            if not index_store.restore_to(
+                verified,expected_product_count=after_stats["products"]):
+                raise CatalogExpansionError("universal_sidecar_restore_failed")
+            sidecar_saved=True
+            pending=pending or receipt.get("retention_pending",False)
         return {
             "mode":"EXPAND_EXECUTE" if execute else "EXPAND_DRY_RUN",
             "previous_catalog":old_stats,
@@ -223,6 +236,8 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
             ],
             "source_categories":categories,
             "universal_inventory":universal_inventory,
+            "universal_index_location":"R2_SIDECAR",
+            "universal_sidecar_saved_and_restored":sidecar_saved,
             "search_index_updated":fts_result is not None,
             "existing_products_links_and_review_states_preserved":True,
             "snapshot_saved_and_restored":saved,
