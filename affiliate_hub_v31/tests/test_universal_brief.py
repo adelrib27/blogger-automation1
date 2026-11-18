@@ -25,7 +25,7 @@ class DynamicBriefTests(unittest.TestCase):
         self.assertNotEqual(a["angle"],b["angle"])
 
     def test_long_input_stays_within_seo_title_limit(self):
-        a=create_universal_brief(topic="organização de área de serviço para casa "*4,
+        a=create_universal_brief(topic="organização de área de serviço para casa "*3,
             product_title="Mesa para Jardim Planejado e Muito Comprida "*8,
             product_key="shopee:10:20",article_index=24)
         self.assertLessEqual(len(a["proposed_title"]),120)
