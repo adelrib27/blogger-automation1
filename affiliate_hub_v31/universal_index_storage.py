@@ -62,7 +62,13 @@ class UniversalIndexStorage:
         except (KeyError,ValueError,TypeError):
             raise StorageError("universal_index_manifest_invalid") from None
 
-    def restore_to(self,path:Path|str,*,expected_product_count:int|None=None)->bool:
+    def restore_to(self,path:Path|str,*,expected_product_count:int|None=None,
+                   expected_review_hint_count:int|None=None)->bool:
+        # Contagem opcional: snapshots anteriores ao C46 não tinham pistas.
+        if (expected_review_hint_count is not None and
+            (type(expected_review_hint_count)is not int or
+             expected_review_hint_count<0)):
+            raise StorageError("universal_index_hint_count_invalid")
         file=Path(path)
         if file.exists() or file.is_symlink():
             raise StorageError("universal_index_destination_exists")
@@ -88,6 +94,19 @@ class UniversalIndexStorage:
                 n=db.execute("SELECT count(*) FROM v31_universal_inventory").fetchone()[0]
                 if n!=meta["product_count"]:
                     raise StorageError("universal_index_count_mismatch")
+                if expected_review_hint_count is not None:
+                    row=db.execute("""
+                      SELECT count(*),sum(CASE WHEN review_only=1
+                        THEN 1 ELSE 0 END)
+                      FROM v31_unclassified_review_hints
+                    """).fetchone()
+                    total,valid=row[0],row[1] or 0
+                    if (total!=expected_review_hint_count or valid!=total or
+                        total>meta["product_count"]):
+                        raise StorageError("universal_index_hint_count_mismatch")
+        except StorageError:
+            file.unlink(missing_ok=True)
+            raise
         except sqlite3.Error:
             file.unlink(missing_ok=True)
             raise StorageError("universal_index_invalid_schema") from None
