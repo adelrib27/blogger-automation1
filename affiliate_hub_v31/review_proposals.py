@@ -26,7 +26,7 @@ PATH_ROUTE_HINTS: dict[tuple[str,str], frozenset[str]] = {
     ("home living","decoration"):
         frozenset(("casa/decoracao",)),
     ("home living","furniture"):
-        frozenset(("casa/organizacao",)),
+        frozenset(("casa/moveis",)),
     ("home living","tools home improvement"):
         frozenset(("ferramentas/eletricas_manuais",)),
     ("home living","home care supplies"):
