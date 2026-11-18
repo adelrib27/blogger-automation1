@@ -3,8 +3,8 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C57",
-  "continuity_protocol_phase": "C58",
+  "last_checkpoint_phase": "C58",
+  "continuity_protocol_phase": "C59",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-18",
   "last_updated_source": "conferencia_conectada_github",
@@ -35,20 +35,17 @@
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "C58: auditar e testar o fluxo editorial UNIVERSAL (Blogger e WordPress), escolhendo um WordPress com automação ativa como piloto, validar seleção R2, produto/foto/link/campanha, geração, CTA, internos e gates do publicador.",
+    "objective": "C59: atualizar os geradores WordPress existentes para o modelo Workers AI suportado e integrar respostas JSON estruturadas para plano/CTA, sem mexer nas proteções de qualidade nem publicar durante canários; validar todos os blogs com CI e Casa real.",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C58 auditoria dos três WP: Casa run 44393128512 e Oficina 44390826656 falham em import affiliate_hub_v31; Radar run 44401956211 ficou em QUARENTENA por alegação não comprovada; WP 43/12/32 posts existentes, pilotos sem links internos; checkpoint INTERMEDIARIO salvo.",
-    "next_safe_step": "Criar PR único de correção universal: import PYTHONPATH, internos WP+Blogger e regressões; canário real R2→renderização WP SAFE no Casa e validação independente Radar sem burlar quality gate.",
+    "latest_verified_step": "C58 PR #75 MERGED, CI 347 V31+24 Casa+21 Oficina+crossblog PASS; canário real 44407697822 PASS: 9/6/15 ofertas R2 nos 3 WP e Casa 8 parágrafos/537 palavras, foto/CTA/2 internos, zero writes.",
+    "next_safe_step": "Criar C59 branch para migrar chamada Workers AI dos 3 geradores WP, executar testes e canário de geração editorial real sem posts; em seguida avaliar base para qualquer novo WP.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "scope": "Somente provas SAFE e drafts/preview; não criar publicação LIVE sem autorização específica.",
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44393128512",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44390826656",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44401956211"
-    ],
-    "preflight_sha": "ea7e91d18cc1a80d7e17afed25e0ac1efe09b710"
+      "https://github.com/adelrib27/blogger-automation1/pull/75",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44407697822"
+    ]
   },
   "next_priorities": [
     "Observar o primeiro cron real C55 e garantir que pedidos completos de artigos nao gerem extras.",
