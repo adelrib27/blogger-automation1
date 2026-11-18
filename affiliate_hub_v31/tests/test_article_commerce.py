@@ -155,6 +155,29 @@ class CommerceArticleTests(unittest.TestCase):
             with self.subTest(url=url),self.assertRaises(CommerceArticleError):
                 related_articles_html([("Fraude",url)],blog_home_url=HOME)
 
+    def test_wordpress_real_post_permalinks_are_supported(self):
+        wp="https://casaedecoracao.radartechbr.com.br/"
+        posts=[
+            ("Cadeira para varanda",
+             wp+"como-escolher-a-cadeira-ideal-para-sua-varanda/"),
+            ("Organização de alimentos",
+             wp+"como-organizar-alimentos-em-pequenas-quantidades/"),
+        ]
+        result=related_articles_html(posts,blog_home_url=wp)
+        self.assertEqual(result.count("<li>"),2)
+        self.assertIn('data-v31-related="1"',result)
+        self.assertIn("como-escolher-a-cadeira-ideal-para-sua-varanda/",result)
+        for url in (
+            "https://evil.tld/oferta/",
+            wp+"//evil/",
+            wp+"..%2fadmin/",
+            wp+"wp-admin/?action=edit",
+            wp+"wp-json/wp/v2/posts",
+            wp+"some-slug/?next=https://evil.tld/",
+        ):
+            with self.subTest(url=url),self.assertRaises(CommerceArticleError):
+                related_articles_html([("Link externo",url)],blog_home_url=wp)
+
     def test_current_url_is_not_linked_to_itself(self):
         links=related_articles_html(RELATED,blog_home_url=HOME,
             current_url=RELATED[0][1])
