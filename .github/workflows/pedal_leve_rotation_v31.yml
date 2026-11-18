@@ -2,13 +2,13 @@ name: V31 Pedal Leve - Rotacao Shopee mensal isolada
 on:
   pull_request:
     paths:
+      - ".github/workflows/pedal_leve_rotation_v31.yml"
       - "pedal_leve/rotation_v31.py"
       - "pedal_leve/shopee_catalog_safe.py"
   push:
     branches: [main]
     paths:
       - "pedal_leve/rotation_v31.py"
-      - ".github/workflows/pedal_leve_rotation_v31.yml"
   workflow_dispatch:
   schedule:
     - cron: "0 9 20 * *"
