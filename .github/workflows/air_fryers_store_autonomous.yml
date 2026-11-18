@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # 09:05 America/Recife (UTC-3)
-    - cron: "5 12 * * *"
+    - cron: "5 12 4 * *"
   push:
     paths:
       - "air_fryers_store/store_live_kickoff.txt"
