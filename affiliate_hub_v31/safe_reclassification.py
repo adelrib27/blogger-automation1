@@ -222,9 +222,9 @@ def run_r2(*,execute:bool=False,limit:int=MAX_PER_RUN)->dict:
             verify_database(restored)
             with Catalog(restored) as cat:
                 s=cat.stats()
-                if s["review"]!=report["remaining_review"] or
-                   s["cached_affiliate_links"]!=before_link_count or
-                   not cat.integrity():
+                if (s["review"]!=report["remaining_review"] or
+                    s["cached_affiliate_links"]!=before_link_count or
+                    not cat.integrity()):
                     raise ReclassificationError("r2_reclassification_verify_failed")
             saved=True
         report["r2_writes"]=int(saved)
