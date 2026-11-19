@@ -3,9 +3,9 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C60",
+  "last_checkpoint_phase": "C61",
   "continuity_protocol_phase": "C61",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
   "last_updated_source": "conferencia_conectada_github",
   "start_here": "V31_CONTINUAR_AQUI.md",
@@ -20,41 +20,45 @@
     "blogger_moveis_url": "https://moveisparacadacanto.blogspot.com/",
     "blogger_moveis_id": "1439741542627895062",
     "blogger_moveis_live_articles": 3,
-    "blogger_moveis_owner_requested_articles": 3,
+    "blogger_moveis_owner_requested_articles": null,
     "commercial_enrichment": "3_artigos_verificados_com_imagem_real_link_afiliado_cta_e_links_internos",
-    "v31_regression_tests": 330,
-    "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar"
+    "v31_regression_tests": 372,
+    "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar",
+    "blogger_moveis_draft_articles": 1,
+    "blogger_moveis_draft_id": "3612281866616913629"
   },
   "do_not_assume": {
     "all_review_products_approved": false,
     "first_automatic_daily_cron_observed": false,
-    "new_blogger_draft_created_end_to_end_with_quota_open": false,
+    "new_blogger_draft_created_end_to_end_with_quota_open": true,
     "automatic_live_publication_enabled": false,
     "wordpress_v31_publisher_end_to_end_verified": false,
     "runner_lab_fix_deployed_on_windows": false,
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "C61 — realizar teste de criação de rascunho real e remover limite TOTAL de 3 artigos do Blogger piloto e da arquitetura Blogger/WordPress (modo contínuo com artigos:null)",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C61 prévia gravada em 12ef22240a966bc7880f0821ad1064d258851aca; Blogger Móveis 3 LIVE/0 DRAFT; WP agendado Casa/Oficina SUCCESS e Radar FAILURE; C60 real só PREVIEW WP.",
-    "next_safe_step": "Implementar schema articles:null, geradores e fila compatíveis, atualizar pedido piloto, testes fakes + CI; depois canário R2+API em DRAFT se SKU/link aprovados e credenciais válidas.",
+    "objective": "C61 — retirar teto total de artigos Blogger/WordPress e criar canário real de Blogger só em DRAFT com foto real, afiliado, CTA e links internos.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "PR #81 merge, articles:null em main, C61 1 link Shopee convertido+R2 verificado (run 44535276120); Blogger draft 3612281866616913629 criado (run 44535723037); detectado e corrigido link interno pelo PR #82; read-after-write Blogger confirmou 3 LIVE+1 DRAFT, foto, CTA, disclosure e 2 links internos; CI 44536428588 372 V31+24 Casa+21 Oficina+crossblog PASS; temporários removidos.",
+    "next_safe_step": "Observar primeiro cron agendado C55 após articles:null e garantir no máximo 1 rascunho por ciclo/sem duplicata. C60 WordPress REST DRAFT real continua pendente de pedido/credenciais por site; investigar Radar cron FAILURE 44447410967 em escopo próprio. Nunca ativar LIVE genérico.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44451960384",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44444741047",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967"
+      "https://github.com/adelrib27/blogger-automation1/pull/81",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535276120",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037",
+      "https://github.com/adelrib27/blogger-automation1/pull/82",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44536428588",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "Verificar próximos cron agendados Blogger C55 e WordPress legados após as correções C58/C59; não considerar cron configurado igual a executado.",
-    "Registrar um primeiro pedido de artigos WordPress real para o writer universal C60, com identidade/campanha reais e credenciais em GitHub secret protegido; comprovar 1 draft REST sem publicação LIVE.",
-    "Manter acervo universal R2 dos 2 CSVs e ampliar curadoria de REVIEW com evidências; nunca aprovar em massa.",
-    "Quando houver demanda de novo blog Blogger/WordPress, permitir tema e quantidade no momento do pedido, selecionar SKUs adequados com imagem+CTA+links internos e publicar apenas com aprovação.",
-    "Blogger Runner tema continua adiado a pedido do proprietário; não reabrir sem solicitação."
+    "Observar cron Blogger C55 posterior a C61 e ciclo sem teto total (articles:null), mantendo DRAFT, anti-repetição e estoque afiliado real em R2.",
+    "Testar primeiro POST autenticado de DRAFT WordPress C60 com pedido real e credenciais de site registradas no GitHub, mantendo 0 LIVE por teste.",
+    "Diagnosticar cron Radar Tech BR 44447410967 que falhou na confirmação de publicação sem afrouxar os gates.",
+    "Manter acervo universal R2 dos 2 CSVs e ampliar curadoria segura de REVIEW, sem aprovação em massa.",
+    "Retomar Runner/tema somente se proprietário solicitar."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -63,8 +67,8 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44412438334",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44536428588",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
-    "schedule_claim": "Guard diário configurado, primeira execução programada futura não observada"
+    "schedule_claim": "Rotinas diárias configuradas; primeiro cron C55 após C61 ainda não observado."
   }
 }
