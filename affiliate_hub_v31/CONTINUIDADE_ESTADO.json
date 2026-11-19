@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C68",
   "continuity_protocol_phase": "C68",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C68_FICHA_TECNICA_SEO_NOVOS_BLOGS",
+  "last_updated_source": "C68_FICHA_SEO_NOVOS_BLOGS_PR95_CI427",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C68_SEO_NOVOS_BLOGS_FICHA_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -51,7 +51,13 @@
     "c67_live_workflow_run_id": 44583376909,
     "c67_live_public_url_http": 200,
     "c67_manifest_approved": true,
-    "c67_temporary_dispatcher_deleted": true
+    "c67_temporary_dispatcher_deleted": true,
+    "c68_pr": 95,
+    "c68_ci_run_id": 44588998921,
+    "c68_tests_passed": 427,
+    "c68_future_seo_status": "SAFE_LIBRARY_READY_NOT_LIVE_WIRED",
+    "c68_new_blogs_created": 0,
+    "c68_existing_writers_changed": false
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -65,24 +71,27 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C68 — incorporar exclusivamente aos PRÓXIMOS blogs Blogger/WordPress padrão SEO/links internos e todas diretrizes de nova estratégia Shopee, sem modificar automatizações dos blogs existentes",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C67 LIVE WordPress Casa #305 confirmado (44 publish/58 draft); usuário anexou ficha técnica v1.0 12/11/2026 para novos projetos e solicitou regras SEO completas. Ficha lida, Google Search Central atual consultado, checkpoint de prévia C68 main b4a7ac1b555a768c9cdbf31dcd804f73e7d5432e.",
-    "next_safe_step": "Criar guia SEO e estratégia canônica a partir da ficha; módulo offline de seleção/validação de links internos e qualidade SEO para novos blogs; testes, CI e PR; preservar workflows/credenciais/sites atuais, nenhuma escrita CMS, cron pendente 20/11.",
+    "objective": "C68 — incorporar SEO e linkagem interna orientada à intenção de compra para PRÓXIMOS BLOGS Blogger/WordPress, extraindo 11 seções da ficha Shopee v1.0 de 12/11/2026; nenhum blog real novo escolhido e nenhum writer legado alterado",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "PR95 MERGED cfb54ad24fe688087f497713247dea6b52d51f9c, CI #44588998921 SUCCESS 427 testes V31 +24 Casa +21 Oficina +15 Radar +crossblog guard. Norma C68 ESTRATEGIA_NOVOS_BLOGS_SEO_SHOPEE_V1.md extrai 11 capítulos ficha, SEO on/off/technical/local condicional, comissão positiva sem 3% mínimo e sem extra vendedor, SEO de intenção comercial/cluster; future_blog_seo.py offline com planejador linkagem publicada same-host, primeiros blogs sem inventar links, auditoria schema/keyword e dados não medidos UNKNOWN; template future_blog_onboarding.template.json não executável; sites.d/README aponta guia. Nenhuma mudança nos crons e publicadores atuais. WordPress Casa #305 LIVE C67 permanece 44 LIVE+58 DRAFT último estado verificado.",
+    "next_safe_step": "C69 — na checagem read-only programada 20/11/2026 10:10 America/Recife, investigar event=schedule genuíno dos 3 workflows V31: fila 08:47, Blogger 09:18, WordPress 09:41; distinguir dispatch/push. Quando proprietário solicitar um NOVO blog real, pesquisar nicho/demanda e aplicar obrigatoriamente ficha C68 com evidências externas, novo repo/secrets/rota/campanha, SEO cluster, links publicados e DRAFT SAFE; integrar módulo ao provisionador desse novo blog com testes, sem alterar sites atuais nem liberar LIVE sem autorização específica.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C68_SEO_NOVOS_BLOGS_FICHA_2026-11-19.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44583376909"
+      "https://github.com/adelrib27/blogger-automation1/pull/95",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44588998921",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/ESTRATEGIA_NOVOS_BLOGS_SEO_SHOPEE_V1.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/future_blog_seo.py",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C68_SEO_NOVOS_BLOGS_FICHA_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "C68: verificar em 20/11/2026 10h10 America/Recife a execução real `event=schedule` dos 3 workflows GitHub V31: fila R2 08h47, Blogger 09h18 e WordPress 09h41; não declarar cron homologado antes de evidência.",
-    "Preservar LIVE WordPress Casa post #305 já publicado (44 LIVE+58 DRAFT) e WP #303 ainda draft; não republicar #305 nem habilitar LIVE automático em massa. Blogger Móveis mantém 3 LIVE+2 DRAFT sem alteração.",
-    "Se `event=schedule` faltar novamente para múltiplos workflows ativos, investigar scheduler GitHub e alternativa confiável externa sem publicar LIVE sem autorização real.",
-    "Manter acervo R2 universal dos 2 CSVs Shopee e seleção/links de campanha isolados por blog, sem teto total 3; curadoria dos REVIEW permanece conservadora.",
-    "Novo LIVE exige post individual diferente com revisão real, link SKU na campanha, manifesto hash título+HTML e autorização expressa correspondente; evitar mutações globais de publicação."
+    "C69: verificar em 20/11/2026 10h10 America/Recife a ocorrência verdadeira event=schedule de filas V31 08:47, Blogger 09:18 e WordPress 09:41. Checagem read-only da C65 já criada; nenhuma publicação/reexecução automática sem permissão.",
+    "Em QUALQUER novo blog futuro: aplicar norma C68, extrair intenção de busca/cluster por pesquisa real antes da escolha de produto/nicho; comissão positiva verificável, SEM mínimo 3% e sem extra obrigatória; relink de posts verdadeiramente LIVE do mesmo domínio, cold-start sem links; SEO técnico/social/local conforme evidência, sem fabricar reviews/schema/métricas.",
+    "Preferir cada blog real com repositório/secret/campaign/workflow individual, preservando V31 como acervo R2 e motor universal de código; template não executável e linkagem offline demandam integração no provisionamento real, não ativados em sites existentes.",
+    "Não republicar WordPress Casa #305 já LIVE (44 LIVE+58 DRAFT na última conferência) nem WP303/2 Blogger drafts; qualquer novo LIVE precisa revisão/consentimento individual real.",
+    "Continuar curadoria conservadora de SKUs R2 e monitoramento WordPress legados, sem ativação em massa LIVE nem falsas comissões/vendas, preservando separação API erro 10000 e ausência de ofertas."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
