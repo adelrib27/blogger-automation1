@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C64",
-  "continuity_protocol_phase": "C64",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C65",
+  "continuity_protocol_phase": "C65",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
   "last_updated_source": "C64_R2_3_links_e_Blogger_1_DRAFT_real_sem_esperar_cron_PR86_CI384",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C64_HOMOLOGACAO_SEM_ESPERAR_CRON_2026-11-19.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C65_TRES_PENDENCIAS_HOMOLOGACAO_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -46,22 +46,17 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C64 — homologação funcional acelerada no mesmo dia: fila universal Shopee converte 3 links reais e persiste no R2; escritor Blogger C55 cria um DRAFT novo com campaign/photo/CTA/links sem LIVE; quality gate Blogger PR86 CI384",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "Actions #44551256082 PASS 3 candidatos, #44551595546 SUCCESS converted=3 R2 verified, #44552150160 READY, #44552501661 DRAFT_CREATED=1/0 LIVE, API Blogger 3 LIVE+2 DRAFT incluindo 2990403416970116294. PR86 MERGED b44110d, CI #44553367508 384 V31 PASS. TEMP workflow e mode file removidos.",
-    "next_safe_step": "C65: observar evento schedule real após C61/C64; preparar cenário de prova não mutável se deseja validar sem esperar, ou consultar próximo ciclo 20/11, distinguindo push manual de schedule autônomo. Garantir abastecimento contínuo por fila C37 antes C55 e por novos pedidos WordPress reais; WP C60 sem solicitação permanente segue PREVIEW. Revisão editorial dos DRAFTs antes de LIVE; não repetir Blogger 2990403416970116294 nem WP 303.",
+    "objective": "C65 — homologar execução schedule real, abastecimento contínuo multi-blog Blogger/WordPress e fluxo universal de aprovação/publicação LIVE com segurança e testes, sem publicação irrestrita",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C64 3 conversões Shopee oficiais e R2 verificado #44551595546; um DRAFT Blogger #2990403416970116294 #44552501661; C62 WordPress Casa DRAFT #303; CI384 PR86; Blogger 3 LIVE+2 DRAFT, Casa 43 LIVE+58 DRAFT. Nenhum evento schedule universal C55/C60 confirmado.",
+    "next_safe_step": "Criar canário schedule somente leitura para 19/11 com horário UTC iminente e sem posts, inspecionar fluxo de pedidos WordPress/credenciais antes de habilitar ciclo. Implementar contrato de aprovação LIVE separado e verificável com CI, nunca publish automático de drafts ainda não revisados.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44550783543",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551256082",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551595546",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44552150160",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44552501661",
-      "https://github.com/adelrib27/blogger-automation1/pull/86",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44553367508",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C64_HOMOLOGACAO_SEM_ESPERAR_CRON_2026-11-19.md"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551595546",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44553367508"
     ]
   },
   "next_priorities": [
