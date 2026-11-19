@@ -62,8 +62,9 @@ class FakeWP:
             "slug": "v31-test", "content": {"raw": content or article()},
         }
         self.writes = []
+        self.url = WP_URL
     def site_settings(self):
-        return {"url": WP_URL}
+        return {"url": self.url}
     def get_post(self, post_id):
         assert post_id == 303
         return {**self.post, "content": dict(self.post["content"])}
