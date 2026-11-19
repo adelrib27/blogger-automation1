@@ -88,14 +88,15 @@ def select_next(catalog:Catalog,*,site_key:str,request:dict,
     if (request.get("site_key")!=site_key or
         request.get("platform")!="blogger" or
         request.get("enabled") is not True or
-        type(request.get("articles")) is not int or
-        not 1<=request["articles"]<=24):
+        not (request.get("articles") is None or
+             (type(request["articles"]) is int and 1<=request["articles"]<=24))):
         raise AutoDraftError("real_request_required")
     if (not isinstance(existing_posts,list) or
         any(not isinstance(p,dict) for p in existing_posts)):
         raise AutoDraftError("blogger_history_required")
-    # Quota is the owner's requested TOTAL, not daily number of unlimited posts.
-    if len({str(p["id"]) for p in existing_posts if p.get("id")}) >= request["articles"]:
+    # Quota finita opcional: articles=null significa geração contínua (1 rascunho por ciclo).
+    if (request["articles"] is not None and
+        len({str(p["id"]) for p in existing_posts if p.get("id")}) >= request["articles"]):
         return {"status":"OWNER_QUOTA_REACHED","publication_calls":0,
                 "draft_creation_calls":0,"product_key":None}
     seen=set()
@@ -277,7 +278,7 @@ def _list_posts(service,blog_id:str)->list[dict]:
     result=[]
     for status in ("LIVE","DRAFT"):
         token=None
-        for _ in range(3): # max 300 posts each state; owner quota max 24
+        for _ in range(100): # paginar histórico completo, sem teto de 3/24 artigos
             args={"blogId":blog_id,"status":[status],
                   "maxResults":100,"fetchBodies":True}
             if token: args["pageToken"]=token
@@ -285,6 +286,8 @@ def _list_posts(service,blog_id:str)->list[dict]:
             result.extend(batch.get("items",[]))
             token=batch.get("nextPageToken")
             if not token: break
+        else:
+            raise AutoDraftError("blogger_history_pagination_limit")
     return result
 
 
