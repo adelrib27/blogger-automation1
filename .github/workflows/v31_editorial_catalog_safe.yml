@@ -10,6 +10,7 @@ on:
       - '.github/workflows/v31_editorial_catalog_safe.yml'
       - 'casa_decoracao/src/**'
       - 'oficina_garagem/src/**'
+      - 'radar_tech_br/src/**'
       - 'src/editorial_cross_blog_guard.py'
 
   push:
@@ -20,6 +21,7 @@ on:
       - '.github/workflows/v31_editorial_catalog_safe.yml'
       - 'casa_decoracao/src/**'
       - 'oficina_garagem/src/**'
+      - 'radar_tech_br/src/**'
       - 'src/editorial_cross_blog_guard.py'
 
 permissions:
@@ -51,4 +53,5 @@ jobs:
         run: |
           python casa_decoracao/src/self_test.py
           python oficina_garagem/src/self_test.py
+          python radar_tech_br/src/self_test.py
           python src/editorial_cross_blog_guard_self_test.py
