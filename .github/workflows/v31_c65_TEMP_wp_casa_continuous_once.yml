@@ -47,6 +47,54 @@ jobs:
             echo 'V31_C65_CASA_WP_SINGLE_DRAFT_START_NO_LIVE'
             python -m affiliate_hub_v31.automatic_wordpress_drafts --site-key wordpress_casa_decoracao --execute-draft
             echo 'V31_C65_CASA_WP_SINGLE_DRAFT_COMPLETE_NO_LIVE'
+          elif [[ "$mode" == "diagnose_readonly" ]]; then
+            echo 'V31_C65_WP_DIAGNOSTIC_READ_ONLY_START'
+            python - <<'PY'
+          import os,re,sys,tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.automatic_wordpress_drafts import (
+              credentials_for, WordPressRestClient,site_route,select_next,
+              generate_original_paragraphs,compose_article,WordPressAutoDraftError)
+          from affiliate_hub_v31.r2_state import R2State,verify_database
+          from affiliate_hub_v31.catalog import Catalog
+          from affiliate_hub_v31.site_request_queue import load_requests
+          site="wordpress_casa_decoracao"
+          try:
+              route=site_route(site)
+              username,password=credentials_for(site)
+              print("V31_C65_CREDENTIALS_FOR_REGISTERED_WP_OK")
+              client=WordPressRestClient(base_url=route["identifier"],
+                                         username=username,application_password=password)
+              identity=client.site_settings()
+              print("V31_C65_WP_IDENTITY_AUTH_OK")
+              history=client.list_posts(include_unpublished=True)
+              print("V31_C65_WP_HISTORY_OK "+str(len(history)))
+              request=next(r for r in load_requests() if r["site_key"]==site)
+              with tempfile.TemporaryDirectory() as td:
+                  dest=Path(td)/"catalog.sqlite3"
+                  if not R2State.from_env().restore_to(dest):
+                      raise WordPressAutoDraftError("r2_missing")
+                  verify_database(dest)
+                  with Catalog(dest) as cat:
+                      plan=select_next(cat,site_key=site,topic=request["topic"],
+                                       posts=history,requested_total=request["articles"])
+                      print("V31_C65_WP_PLAN_"+plan["status"])
+                      if plan["status"]=="READY_FOR_DRAFT_REVIEW":
+                          paragraphs=generate_original_paragraphs(
+                              product_name=plan["title"],topic=request["topic"],
+                              account_id=os.getenv("CLOUDFLARE_ACCOUNT_ID",""),
+                              api_token=os.getenv("CLOUDFLARE_API_TOKEN",""))
+                          print("V31_C65_WP_WORKERS_AI_GENERATED_"+str(len(paragraphs)))
+                          content=compose_article(plan,paragraphs,site_url=route["identifier"])
+                          print("V31_C65_WP_ARTICLE_VALIDATED_"+str(len(content)))
+              print("V31_C65_WP_DIAG_PASS_NO_POST")
+          except Exception as err:
+              code=str(err)
+              if not re.fullmatch(r"[a-z0-9_]{3,100}",code):
+                  code=type(err).__name__
+              print("V31_C65_WP_DIAG_FAILED_"+code)
+              sys.exit(3)
+          PY
           else
             echo 'V31_C65_UNAUTHORIZED_MODE_NO_WRITES'
             exit 3
