@@ -22,17 +22,18 @@
     "blogger_moveis_live_articles": 3,
     "blogger_moveis_owner_requested_articles": null,
     "commercial_enrichment": "3_artigos_verificados_com_imagem_real_link_afiliado_cta_e_links_internos",
-    "v31_regression_tests": 384,
+    "v31_regression_tests": 400,
     "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar",
     "blogger_moveis_draft_articles": 2,
     "blogger_moveis_draft_id": "3612281866616913629",
     "wordpress_casa_published_posts": 43,
-    "wordpress_casa_draft_posts": 58,
+    "wordpress_casa_draft_posts": 59,
     "wordpress_casa_v31_draft_post_id": 303,
     "wordpress_casa_v31_draft_slug": "v31-31856a8a43a1-22298915336",
     "radar_offline_self_tests": 15,
     "blogger_moveis_second_draft_id": "2990403416970116294",
-    "c64_shopee_links_converted_and_r2_verified": 3
+    "c64_shopee_links_converted_and_r2_verified": 3,
+    "wordpress_casa_c65_draft_post_id": 305
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -48,10 +49,10 @@
   "active_work": {
     "objective": "C65 — homologar execução schedule real, abastecimento contínuo multi-blog Blogger/WordPress e fluxo universal de aprovação/publicação LIVE com segurança e testes, sem publicação irrestrita",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C65 PR87/88/89/90/91 MERGED, CI #44563478449 400 tests PASS; WP Casa continuous request preview READY #44561958056; first WP attempt #44562234398 FAILED 0 remote posts (API WP 43 LIVE+58 DRAFT); read-only #44562743524 PASS auth, 101 history, Workers AI 8 paragraphs/6782 article. PR91 permits up to 3 AI rewrites on editorial gate only, no POST retry; API WP rechecked 43+58 just before new isolated canary.",
-    "next_safe_step": "Uma nova tentativa explicitamente separada de 1 DRAFT WP Casa após revisão remota e patch PR91. Não repetir automaticamente se falhar: ler código de erro, consulta WP API 43/58 e slug. Em seguida limpar todos TEMP e registrar evidências. Sem LIVE.",
-    "mutation_in_progress": true,
-    "remote_operation_in_progress": true,
+    "latest_verified_step": "C65 PR87/88/89/90/91 MERGED CI400; WordPress Casa PR88 pedido contínuo `articles:null`, API preview #44561958056 READY. WP first attempt #44562234398 fail closed 0 post, diagnóstico #44562743524 101-history/AI/content PASS, patch PR91; #44563725746 SUCCESS DRAFT_CREATED=1/publication_calls=0. Readback API WordPress 43 LIVE +59 DRAFT, novo ID305 com 1 foto, 3 URLs afiliadas, CTA/disclosure/2 links internos. Blogger Móveis 3 LIVE+2 DRAFT.",
+    "next_safe_step": "C65 read-only `manual_live_release` audit do DRAFT WP305 sem manifesto e sem --execute; verificar cron GitHub `event=schedule` (canários 16:15/16:17/16:20/16:22/16:25/16:27 UTC). Remover workflows/arquivos-modo temporários após; finalizar estado e índice. NÃO publicar LIVE sem aprovação por post.",
+    "mutation_in_progress": false,
+    "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44552501661",
@@ -61,7 +62,8 @@
       "https://github.com/adelrib27/blogger-automation1/pull/88",
       "https://github.com/adelrib27/blogger-automation1/pull/89",
       "https://github.com/adelrib27/blogger-automation1/pull/91",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44562743524"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44562743524",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44563725746"
     ]
   },
   "next_priorities": [
