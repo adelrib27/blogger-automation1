@@ -46,3 +46,26 @@
 - Blogger API read-after-write: rascunho ID `3612281866616913629`, título `Guia de compra: Guarda Roupa Casal 6 Portas 2 Gavetas Porto Preto com Escrivaninha`, **3 LIVE + 1 DRAFT**. HTML conferido: imagem/URL Shopee/aviso/CTA presentes.
 - **FALHA parcial de qualidade detectada:** `internal_links_from_real_posts=false`; rascunho contém **0 links internos**. Não chamar E2E comercial completo até corrigir. Possível origem: `_list_posts` Blogger não atribui `status=live` aos posts recuperados pela listagem com filtro `LIVE` quando a API omite a propriedade em cada item.
 - **PRÓXIMA AÇÃO:** corrigir normalização do status no adaptador sem confundir draft com live; regressão fakes, PR+CI, corrigir **o mesmo rascunho** (não criar outro), confirmar dois links internos e status DRAFT via API.
+
+
+## Encerramento C61 — sucesso comprovado, 19/11/2026
+
+**Status: PRONTO_PARA_PROXIMA_ETAPA — geração Blogger de rascunho real comprovada, sem teto total e com os 2 links internos reparados.**
+
+- [PR #81 MERGED](https://github.com/adelrib27/blogger-automation1/pull/81), `articles:null` significa **sem limite total** para pedidos de Blogger/WordPress, sem liberar LIVE; finite 1-24 continua opcional; 24 ofertas é só lote de busca. Novo pedido real piloto salvo em `site_requests.d/blogger_moveis_para_cada_canto.json` com `null`.
+- [CI C61 #44534635387](https://github.com/adelrib27/blogger-automation1/actions/runs/44534635387): PASS da implementação de quota contínua.
+- [Blogger real #44534753873](https://github.com/adelrib27/blogger-automation1/actions/runs/44534753873): sem 4º SKU em cache, falha **segura**, sem novo artigo. [Fila preview #44535072335](https://github.com/adelrib27/blogger-automation1/actions/runs/44535072335): 1 candidato. [Conversão #44535276120](https://github.com/adelrib27/blogger-automation1/actions/runs/44535276120): 1 oferta aprovada convertida na campanha exata, R2 persistido+verificado, 0 posts.
+- [Blogger real DRAFT #44535723037](https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037): 1 novo rascunho Google API `isDraft=True`, `publication_calls=0`; conferido diretamente no Blogger ID `1439741542627895062`: rascunho ID `3612281866616913629`, título `Guia de compra: Guarda Roupa Casal 6 Portas 2 Gavetas Porto Preto com Escrivaninha`. O PDF/HTML não foi divulgado, nenhuma publicação LIVE.
+- Achado no teste: 0 links internos por `status` ausente nos itens da listagem Blogger mesmo com filtro `LIVE`. [PR #82 MERGED](https://github.com/adelrib27/blogger-automation1/pull/82) normaliza status pelo filtro autorizado, rejeita contradições e adiciona regressão. [CI #44536428588](https://github.com/adelrib27/blogger-automation1/actions/runs/44536428588) **372 V31 +24 Casa +21 Oficina+crossblog PASS**.
+- O **MESMO rascunho** foi atualizado pela conexão Blogger V2, nunca duplicado. Read-after-write verificado: HTML possui **foto HTTPS do SKU, link afiliado da Shopee, CTA, aviso comercial e exatamente dois links internos** para posts publicados do próprio blog; status continua `draft`. Leitura final do Blogger: **3 LIVE + 1 DRAFT**.
+- Workflow temporário C61 e trigger removidos da `main` após os testes, mantendo o workflow diário permanente `v31_universal_blogger_autodraft_daily.yml` no projeto.
+- **Não comprovado:** execução de cron diário C55 posterior a esta mudança, primeiro POST autenticado de DRAFT pelo writer **WordPress** C60 (precisa de pedido/site/credenciais reais no GitHub), nova publicação LIVE (não autorizada). Radar Tech BR teve [cron 44447410967](https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967) FAILURE na etapa de confirmar publicação; não ignorar nem remover quality gates. Casa e Oficina crons recentes passaram, mas sucesso não é confirmação de novo post.
+
+### Próximo passo técnico
+1. Verificar o próximo cron real Blogger após `articles:null`: sem criar rascunhos em excesso, sem repetir SKU, no máximo 1 por execução; se não houver novo link convertido, terminar com status seguro.
+2. Conferir disponibilidade do cache afiliado para geração contínua e funcionamento da fila sem ultrapassar orçamento diário de conversão.
+3. Fazer primeiro teste autenticado WordPress C60 quando houver credenciais específicas daquele site e pedido real (ou se o proprietário nomear um destino seguro), sempre DRAFT; nunca improvisar token.
+4. Investigar falha recorrente de confirmação do workflow Radar em seu próprio escopo, sem publicar por fora de seus gates.
+5. Conservar biblioteca dos dois CSVs e curadoria REVIEWS; Runner/tema permanece adiado.
+
+**Sem segredo em checkpoints. Sem rascunho extra na finalização.**
