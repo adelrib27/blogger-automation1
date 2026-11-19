@@ -184,6 +184,36 @@ class AutoBloggerDraftTests(unittest.TestCase):
             "id":"987654321","status":"draft"}
         return service
 
+    def test_real_blogger_listing_without_item_status_still_has_live_links(self):
+        # A API Google pode omitir status em cada post apesar de filtrar LIVE.
+        api=Mock()
+        def listing(**params):
+            resp=Mock()
+            if "LIVE" in params["status"]:
+                items=[{k:v for k,v in post.items() if k!="status"}
+                       for post in article_list(3)]
+            else:
+                items=[]
+            resp.execute.return_value={"items":items}
+            return resp
+        api.posts.return_value.list.side_effect=listing
+        history=m._list_posts(api,ROUTE["identifier"])
+        self.assertEqual(len(history),3)
+        self.assertTrue(all(p["status"]=="live" for p in history))
+        links=m.relevant_live_links(history,blog_home_url=URL,
+                   current_title="Guia de compra novo",limit=2)
+        self.assertEqual(len(links),2)
+        self.assertTrue(all(link[1].startswith(URL) for link in links))
+
+    def test_inconsistent_api_status_fails_closed(self):
+        api=Mock()
+        response=Mock()
+        response.execute.return_value={"items":[{**article_list(1)[0],
+                                                "status":"draft"}]}
+        api.posts.return_value.list.return_value=response
+        with self.assertRaisesRegex(m.AutoDraftError,"status_mismatch"):
+            m._list_posts(api,ROUTE["identifier"])
+
     def test_dry_run_respects_owner_quota_and_no_api_writes(self):
         api=self._service(3)
         with Catalog(self.path) as cat:
