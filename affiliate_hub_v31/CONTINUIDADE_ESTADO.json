@@ -4,12 +4,12 @@
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
   "last_checkpoint_phase": "C61",
-  "continuity_protocol_phase": "C61",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "continuity_protocol_phase": "C62",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
   "last_updated_source": "conferencia_conectada_github",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -37,20 +37,17 @@
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "C61 — retirar teto total de artigos Blogger/WordPress e criar canário real de Blogger só em DRAFT com foto real, afiliado, CTA e links internos.",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "PR #81 merge, articles:null em main, C61 1 link Shopee convertido+R2 verificado (run 44535276120); Blogger draft 3612281866616913629 criado (run 44535723037); detectado e corrigido link interno pelo PR #82; read-after-write Blogger confirmou 3 LIVE+1 DRAFT, foto, CTA, disclosure e 2 links internos; CI 44536428588 372 V31+24 Casa+21 Oficina+crossblog PASS; temporários removidos.",
-    "next_safe_step": "Observar primeiro cron agendado C55 após articles:null e garantir no máximo 1 rascunho por ciclo/sem duplicata. C60 WordPress REST DRAFT real continua pendente de pedido/credenciais por site; investigar Radar cron FAILURE 44447410967 em escopo próprio. Nunca ativar LIVE genérico.",
+    "objective": "C62 — testar WordPress Casa real em DRAFT via writer V31 C60 com credenciais do próprio Casa no GitHub, sem LIVE",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C61 concluído e documentado, Blogger 3 LIVE+1 DRAFT com 2 links; C62 prévia commit 20a97ee084b471a70de22bf90dab6501616db6ad",
+    "next_safe_step": "Primeiro canário de identidade/autorização WP e histórico com 0 POST; somente se PASS + SKU afiliado novo disponível testar 1 draft real com read-after-write.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/81",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535276120",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037",
-      "https://github.com/adelrib27/blogger-automation1/pull/82",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44536428588",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44412775615",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037"
     ]
   },
   "next_priorities": [
