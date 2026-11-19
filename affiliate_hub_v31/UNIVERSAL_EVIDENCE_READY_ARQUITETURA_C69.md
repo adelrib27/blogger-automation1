@@ -39,6 +39,12 @@ O módulo recebe um `site_key` **já registrado** em `routing.sites()` com `publ
 
 `candidate_target=5` é orientação de dimensão da seleção; `candidate_attempt_limit=20` é teto de falhas examinadas na chamada, não teto global de SKUs. Limites monetários e quotas do provider não devem ser deduzidos desses números.
 
+## 3.1 Cache de evidências persistente SAFE (extensão C69.2)
+
+A `SQLiteReadyLabStore` mantém agora também a tabela `verified_evidence_cache` **por `site_key + product_key`** (não R2 nem D1 produtivo). Só grava pacote após passar `evidence_whitelist`: status VERIFIED, SKU exato, nome coerente, fonte externa autorizada e host aprovado, duas evidências exatas, timestamps válidos/TTL. `get_verified_evidence` reidrata em execução independente; se a data venceu, fonte mudou, arquivo foi adulterado ou nome/SKU não corresponde, retorna **MISS**, sem aceitar a informação e **sem estender TTL**. Falta de saldo Firecrawl não impede leitura de cache ainda válido; se faltar cache válido, `safe_refill_preview` encerra fail-closed e **não tenta** pesquisa paga automaticamente.
+
+O `safe_refill_preview` pode usar evidência de entrada validada ou o cache já armazenado, sempre verificando novamente título do catálogo, produto e campanha. Os testes C69.2 provam reabertura de SQLite entre sessões, cache miss vencido, isolamento entre blogs, atualização inválida que preserva versão anterior e zero publicação/rede. O SQLite local **não** é a fonte de verdade para D1/R2 de produção nem elimina a necessidade de lock distribuído e captura de custo real.
+
 ## 4. Persistência futura — desenho seguro D1/R2 sem alterar estado vivo
 
 **Separar**: R2 existente guarda **biblioteca de produtos**, URLs de origem e links de cada campanha; D1/SQLite novo guardaria apenas **metadados de evidência e fila editorial por site**. Não duplicar os ~203k SKUs e não substituir catálogo central por D1 do Vida Pet.

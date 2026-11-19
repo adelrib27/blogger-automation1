@@ -303,10 +303,76 @@ class SQLiteReadyLabStore:
             CREATE INDEX IF NOT EXISTS idx_ready_site
             ON ready_entries(site_key, campaign, status)
         """)
+        self.db.execute("""
+            CREATE TABLE IF NOT EXISTS verified_evidence_cache (
+                site_key TEXT NOT NULL,
+                product_key TEXT NOT NULL,
+                product_title TEXT NOT NULL,
+                package_json TEXT NOT NULL,
+                verified_utc TEXT NOT NULL,
+                PRIMARY KEY (site_key, product_key)
+            )
+        """)
         self.db.commit()
 
     def close(self) -> None:
         self.db.close()
+
+    def cache_verified_evidence(
+        self, *, site_key: str, product_key: str, product_title: str,
+        package: dict, now: datetime,
+        policy: UniversalReadyPolicy = UniversalReadyPolicy()
+    ) -> dict:
+        """Grava somente pacote já VALIDADO. Nunca renova carimbo do cache."""
+        if not isinstance(site_key, str) or not SITE_PATTERN.fullmatch(site_key):
+            raise UniversalReadyError("evidence_site_key_invalid")
+        audit = evidence_whitelist(
+            package=package, product_key=product_key,
+            product_title=product_title, now=now, policy=policy)
+        raw = json.dumps(package, ensure_ascii=False, sort_keys=True)
+        if len(raw) > 100_000:
+            raise UniversalReadyError("evidence_cache_payload_too_large")
+        with self.db:
+            self.db.execute("""
+                INSERT INTO verified_evidence_cache (
+                    site_key,product_key,product_title,package_json,verified_utc
+                ) VALUES (?,?,?,?,?)
+                ON CONFLICT(site_key,product_key) DO UPDATE SET
+                    product_title=excluded.product_title,
+                    package_json=excluded.package_json,
+                    verified_utc=excluded.verified_utc
+            """, (site_key,product_key,product_title,raw,audit["verified_utc"]))
+        return {"cached":True,"fact_count":audit["fact_count"],
+                "verified_utc":audit["verified_utc"],
+                "network_calls":0,"publication_calls":0}
+
+    def get_verified_evidence(
+        self, *, site_key: str, product_key: str, product_title: str,
+        now: datetime, policy: UniversalReadyPolicy = UniversalReadyPolicy()
+    ) -> dict | None:
+        """Reidrata sem alterar TTL; cache expirado ou identidade alterada -> MISS."""
+        if (not isinstance(site_key, str) or
+                not SITE_PATTERN.fullmatch(site_key) or
+                not isinstance(product_key,str) or
+                not SKU_PATTERN.fullmatch(product_key)):
+            raise UniversalReadyError("evidence_cache_lookup_invalid")
+        row = self.db.execute("""
+            SELECT package_json,verified_utc FROM verified_evidence_cache
+            WHERE site_key=? AND product_key=?
+        """, (site_key,product_key)).fetchone()
+        if not row:
+            return None
+        try:
+            doc=json.loads(row[0])
+            if (not isinstance(doc,dict) or
+                    doc.get("verified_utc") != row[1]):
+                return None
+            evidence_whitelist(package=doc,product_key=product_key,
+                               product_title=product_title,now=now,
+                               policy=policy)
+        except (ValueError,TypeError,UniversalReadyError):
+            return None
+        return doc
 
     def ready_count(self, site_key: str, campaign: str) -> int:
         return int(self.db.execute(
@@ -458,15 +524,28 @@ def safe_refill_preview(
                 seo.get("blockers") != []):
             reject("SEO_SAFE_GATE_REQUIRED")
             continue
+        direct_package = item.get("evidence")
+        package = direct_package
+        cached = False
+        if package is None:
+            package = store.get_verified_evidence(
+                site_key=site_key,product_key=key,product_title=title,
+                now=clock,policy=policy)
+            cached = package is not None
         try:
             evidence = evidence_whitelist(
-                package=item.get("evidence"), product_key=key,
+                package=package, product_key=key,
                 product_title=title, now=clock, policy=policy)
         except UniversalReadyError as exc:
             if budget:
                 budget.event("CACHE_MISS")
             reject(str(exc))
             continue
+        if direct_package is not None:
+            # Escrita APENAS no SQLite do LAB: nunca R2/D1/CMS.
+            store.cache_verified_evidence(
+                site_key=site_key,product_key=key,product_title=title,
+                package=direct_package,now=clock,policy=policy)
         if budget:
             budget.event("CACHE_HIT")
         used = item.get("used_evidence_ids")

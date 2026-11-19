@@ -163,6 +163,105 @@ class EvidenceReadyUniversalTests(unittest.TestCase):
         self.assertEqual(report["shopee_conversions"],0)
         return report
 
+    def test_cache_persists_verified_sources_between_independent_sessions(self):
+        saved=self.store.cache_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],product_title=TITLES[0],
+            package=package(0),now=NOW)
+        self.assertTrue(saved["cached"])
+        self.assertEqual(saved["network_calls"],0)
+        second=core.SQLiteReadyLabStore(self.ready_path)
+        self.addCleanup(second.close)
+        restored=second.get_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],product_title=TITLES[0],
+            now=NOW)
+        self.assertEqual(restored["verified_utc"],STAMP)
+        self.assertEqual(len(restored["sources"]),2)
+
+    def test_cache_does_not_cross_blog_or_copy_campaign(self):
+        self.store.cache_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],product_title=TITLES[0],
+            package=package(0),now=NOW)
+        self.assertIsNone(self.store.get_verified_evidence(
+            site_key="wordpress_novo_exemplo",product_key=KEYS[0],
+            product_title=TITLES[0],now=NOW))
+
+    def test_cache_lookup_never_refreshes_ttl_even_when_read_repeatedly(self):
+        self.store.cache_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],product_title=TITLES[0],
+            package=package(0),now=NOW)
+        for t in (NOW, NOW+timedelta(days=3), NOW+timedelta(days=6)):
+            restored=self.store.get_verified_evidence(
+                site_key=self.site,product_key=KEYS[0],
+                product_title=TITLES[0],now=t)
+            self.assertEqual(restored["verified_utc"],STAMP)
+        expired=self.store.get_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],product_title=TITLES[0],
+            now=NOW+timedelta(days=8))
+        self.assertIsNone(expired)
+        row=self.store.db.execute(
+            "SELECT verified_utc FROM verified_evidence_cache WHERE site_key=?",
+            (self.site,)).fetchone()
+        self.assertEqual(row[0],STAMP)
+
+    def test_cache_name_changed_is_miss_not_false_matching_evidence(self):
+        self.store.cache_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],product_title=TITLES[0],
+            package=package(0),now=NOW)
+        self.assertIsNone(self.store.get_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],
+            product_title="Outro modelo com nome diferente",now=NOW))
+
+    def test_cache_rejects_unverified_sources_at_write(self):
+        with self.assertRaises(core.UniversalReadyError):
+            self.store.cache_verified_evidence(
+                site_key=self.site,product_key=KEYS[0],
+                product_title=TITLES[0],
+                package=package(0,identity="SIMILAR_PRODUCT"),now=NOW)
+        count=self.store.db.execute(
+            "SELECT COUNT(*) FROM verified_evidence_cache").fetchone()[0]
+        self.assertEqual(count,0)
+
+    def test_cached_evidence_can_fill_ready_without_new_research(self):
+        self.store.cache_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],
+            product_title=TITLES[0],package=package(0),now=NOW)
+        c=candidate(0)
+        c["evidence"]=None  # cache hit de EXECUÇÃO INDEPENDENTE
+        b=core.SearchBudget()  # saldo externo desconhecido não será usado
+        report=self.run_safe([c],budget=b)
+        self.assertEqual(report["created"],1)
+        self.assertEqual(report["status"],"LOW_READY_FAIL_CLOSED")
+        self.assertEqual(b.public_report()["cache_hits"],1)
+        self.assertEqual(b.public_report()["search_calls"],0)
+
+    def test_cache_miss_expired_is_fail_closed_without_paid_search(self):
+        self.store.cache_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],
+            product_title=TITLES[0],package=package(0),now=NOW)
+        c=candidate(0)
+        c["evidence"]=None
+        b=core.SearchBudget()
+        report=self.run_safe([c],budget=b,now=NOW+timedelta(days=9))
+        self.assertEqual(report["created"],0)
+        self.assertIn("evidence_package_missing",report["rejected_reasons"])
+        self.assertEqual(b.public_report()["cache_misses"],1)
+        self.assertEqual(b.public_report()["search_calls"],0)
+
+    def test_invalid_cache_update_does_not_destroy_prior_verified_package(self):
+        self.store.cache_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],
+            product_title=TITLES[0],package=package(0),now=NOW)
+        with self.assertRaises(core.UniversalReadyError):
+            self.store.cache_verified_evidence(
+                site_key=self.site,product_key=KEYS[0],
+                product_title=TITLES[0],package=package(0,authorized=False),
+                now=NOW)
+        old=self.store.get_verified_evidence(
+            site_key=self.site,product_key=KEYS[0],
+            product_title=TITLES[0],now=NOW)
+        self.assertEqual(old["verified_utc"],STAMP)
+        self.assertEqual(old["sources"][0]["authorized"],True)
+
     def test_evidence_exact_product_two_authorized_claims_one_external(self):
         r=core.evidence_whitelist(package=package(0),
              product_key=KEYS[0],product_title=TITLES[0],now=NOW)
