@@ -49,7 +49,7 @@ class PlanRetrySafetyTests(unittest.TestCase):
                     result=module.make_plan(self._record())
                 self.assertEqual(result["title"],VALID["title"])
                 self.assertEqual(len(prompts),2)
-                self.assertIn("35 a 60" if folder=="radar_tech_br" else "35 a 65",prompts[1])
+                self.assertIn("35 e 60" if folder=="radar_tech_br" else "35 a 65",prompts[1])
 
     def test_three_invalid_responses_block_without_publishing(self):
         for folder in PROJECTS:
