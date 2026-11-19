@@ -247,6 +247,19 @@ class WordPressUniversalDraftTests(unittest.TestCase):
             with self.assertRaisesRegex(m.WordPressAutoDraftError,"pagination_unverified"):
                 client.list_posts(include_unpublished=True)
 
+    def test_draft_title_never_cuts_word_or_ends_in_conjunction(self):
+        raw = ("Escorredor de Louças Dobrável Compacto – Plástico "
+               "Resistente Dr Util para Pratos, Xícaras e Talheres")
+        title = m._draft_title(raw)
+        self.assertTrue(title.startswith("Guia prático: Escorredor de Louças"))
+        self.assertLessEqual(len(title),75)
+        self.assertNotRegex(title.lower(),r"\b(?:e|de|para|com|em|ou)$")
+        self.assertNotEqual(title[-1], " ")
+        self.assertEqual(m._draft_title("  Vaso   decorativo para sala  "),
+                         "Guia prático: Vaso decorativo para sala")
+        self.assertRaises(m.WordPressAutoDraftError,
+                          m._draft_title,"PalavraSemEspacos"*20)
+
     def test_rest_client_posts_only_draft(self):
         client=m.WordPressRestClient(base_url=HOME,
             username="editor",application_password="fake-test-secret")

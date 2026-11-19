@@ -198,6 +198,30 @@ class WordPressRestClient:
         return result
 
 
+
+def _draft_title(product_title: str) -> str:
+    """Título legível: nunca cortar uma palavra nem terminar em conectivo."""
+    if not isinstance(product_title, str):
+        raise WordPressAutoDraftError("draft_title_invalid")
+    cleaned = re.sub(r"\s+", " ", product_title).strip()
+    prefix = "Guia prático: "
+    max_length = 75
+    room = max_length - len(prefix)
+    if len(cleaned) > room:
+        fragment = cleaned[:room + 1]
+        if " " not in fragment:
+            raise WordPressAutoDraftError("draft_title_untrimmable")
+        cleaned = fragment.rsplit(" ", 1)[0]
+    cleaned = cleaned.rstrip(" -–:;,.")
+    endings = {"a", "as", "o", "os", "de", "da", "das", "do", "dos",
+               "e", "em", "ou", "com", "para", "por", "sem", "um", "uma"}
+    while cleaned and cleaned.split()[-1].casefold() in endings:
+        cleaned = cleaned.rsplit(" ", 1)[0].rstrip(" -–:;,.")
+    title = prefix + cleaned
+    if not 20 <= len(title) <= max_length:
+        raise WordPressAutoDraftError("draft_title_invalid")
+    return title
+
 def _html_text(post:dict)->str:
     value=post.get("content",{})
     if isinstance(value,str):
@@ -402,7 +426,7 @@ def run(*,site_key:str,preview_topic:str|None=None,
             or last.get("product_key")!=plan["product_key"]):
             raise WordPressAutoDraftError("wordpress_draft_race_detected")
         created=wp_client.create_draft(
-            title=("Guia prático: "+plan["title"])[:105],
+            title=_draft_title(plan["title"]),
             slug=plan["slug"],content=content)
         reread=wp_client.get_post(created["id"])
         raw_html=_html_text(reread)
