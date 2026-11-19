@@ -29,7 +29,7 @@ from pathlib import Path
 from .article_commerce import (
     CommerceArticleError,product_offer_html,related_articles_html
 )
-from .automatic_blogger_drafts import generate_original_paragraphs
+from .automatic_blogger_drafts import generate_original_paragraphs, editorial_headings
 from .catalog import Catalog
 from .r2_state import R2State,verify_database
 from .routing import sites
@@ -390,13 +390,7 @@ def compose_article(plan:dict,paragraphs:list[str], *,
         raise WordPressAutoDraftError("original_article_required")
     paragraphs=validate_wordpress_paragraphs(
         paragraphs,product_title=str(plan.get("title") or ""))
-    headings=[
-      "O que considerar antes da escolha","Medidas e espaço disponível",
-      "Materiais e manutenção","Uso diário e compatibilidade",
-      "Cuidados antes da compra","Comparação de especificações",
-      "Possíveis erros de escolha","Perguntas para o anúncio",
-      "Checklist final","Conclusão",
-    ]
+    headings=editorial_headings(len(paragraphs))
     body="".join("<h2>"+html.escape(headings[i])+"</h2><p>"+
                  html.escape(text)+"</p>"
                  for i,text in enumerate(paragraphs))
