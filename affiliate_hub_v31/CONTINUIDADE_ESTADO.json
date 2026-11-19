@@ -46,16 +46,17 @@
   "active_work": {
     "objective": "C64 — homologação acelerada hoje dos workflows Blogger C55 e WordPress C60 sem aguardar cron; executar canário seguro por push em main com modo prévia e uma tentativa Blogger DRAFT somente se prévia validar",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C64 preview #44550783543 SUCCESS 49 tests, Blogger NO_VERIFIED_CAMPAIGN_PRODUCT_YET e WP NO_APPROVED_CACHED_PRODUCT_FOR_TOPIC, 0 posts; fila C37 preview #44551256082 SUCCESS: requests_active=1, conversion_candidates=3, ready_review_jobs=3, needs_curation=12, 0 R2 writes.",
-    "next_safe_step": "Acionar modo queue_execute 1 única vez; URL/R2 até 3 conversões, consultar run e recibo antes de QUALQUER repetição. Se PASS com converted>0, testar Blogger DRY_RUN e criar no máximo 1 DRAFT após prova de elegibilidade; não publicar LIVE.",
-    "mutation_in_progress": true,
-    "remote_operation_in_progress": true,
+    "latest_verified_step": "C64 Action #44551595546 SUCCESS (job 135656491310): queue preview 3 candidates e execução Shopee converted=3/attempts=3, api_interrupted=false, R2 snapshot_saved_and_verified=true, publication_calls=0; writer previews #44550783543 PASS 49 tests mas antes de conversão não tinham SKU adicional pronto.",
+    "next_safe_step": "Disparar modo PREVIEW após conversão e verificar Blogger READY_FOR_ORIGINAL_DRAFT_REVIEW; somente então acionar UMA tentativa de Blogger DRAFT em modo blogger_draft_once, com sinalização de mutação ativa e read-after-write Blogger. Não repetir por ambiguidade.",
+    "mutation_in_progress": false,
+    "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/85",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44550783543",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551256082"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551256082",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551595546"
     ]
   },
   "next_priorities": [
