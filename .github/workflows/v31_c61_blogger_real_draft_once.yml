@@ -42,6 +42,8 @@ jobs:
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
         shell: bash
         run: |
           set -euo pipefail
@@ -50,6 +52,14 @@ jobs:
             preview)
               python -m affiliate_hub_v31.automatic_blogger_drafts --site-key blogger_moveis_para_cada_canto
               echo 'V31_C61_BLOGGER_PREVIEW_REAL_PASS_NO_POST'
+              ;;
+            cache_preview)
+              python -m affiliate_hub_v31.site_request_queue --budget 1
+              echo 'V31_C61_CACHE_PREVIEW_NO_MUTATION'
+              ;;
+            cache_execute)
+              python -m affiliate_hub_v31.site_request_queue --budget 1 --execute
+              echo 'V31_C61_CACHE_CONVERSION_ATTEMPTED_NO_POST'
               ;;
             execute_draft)
               # Somente uma criação de DRAFT, após seleção de SKU R2 real.
