@@ -19,3 +19,7 @@
 ## Marcos
 - **FEITO:** estado C64 em andamento persistido.
 - **PENDENTE:** setup do TEMP, teste prévia, canário Blogger, evidências reais, limpeza e guard.
+
+## C64 — execução imediata disparada
+- **FEITO:** workflow TEMP `.github/workflows/v31_c64_TEMP_immediate_homologation.yml` commit `d5fbbb9`; arquivo-modo `affiliate_hub_v31/C64_TEST_MODE.txt=preview` commit `3e397ff` acionou [Action #44550783543](https://github.com/adelrib27/blogger-automation1/actions/runs/44550783543), `event=push`, job `135653613424`. Testes instalados no environment seguro, sem writes; **não reexecutar** enquanto o job estiver pendente ou em andamento.
+- **DISTINÇÃO:** isso aciona agora o próprio código dos escritores Blogger C55 e WordPress C60, mas não é `event=schedule` dos workflows permanentes. Cron continua prova separada.
