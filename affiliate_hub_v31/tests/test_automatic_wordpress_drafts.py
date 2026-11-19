@@ -24,12 +24,15 @@ REQUEST={"site_key":KEY,"topic":"vaso decorativo","platform":"wordpress",
 
 
 def paras(**kwargs):
-    return [(
+    base = (
         "Para escolher um vaso decorativo, observe as medidas do ambiente, "
         "a estabilidade, o acabamento e a rotina de limpeza. "
-        "Verifique os materiais no anúncio para evitar suposições. "*3
-    )]*8
-
+        "Verifique os materiais no anúncio para evitar suposições. " * 3
+    )
+    return [
+        base + f"Na seção {i+1}, compare critérios de escolha antes de decidir."
+        for i in range(8)
+    ]
 
 class FakeWP:
     def __init__(self):
