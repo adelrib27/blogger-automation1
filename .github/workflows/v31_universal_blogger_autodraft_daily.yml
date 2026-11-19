@@ -4,8 +4,6 @@ on:
   schedule:
     # Depois da fila comercial de 08:47 Recife; 09:18 Recife.
     - cron: '18 12 * * *'
-    # C65 canário 19/11/2026 UTC SOMENTE DRY_RUN; remover após evidência.
-    - cron: '15,20,25 16 19 11 *'
   workflow_dispatch:
     inputs:
       site_key:
