@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C67",
   "continuity_protocol_phase": "C67",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C67_OWNER_EXPLICIT_POST305_PERMISSION_CHECKPOINT",
+  "last_updated_source": "C67_WORDPRESS_CASA_305_LIVE_CONFIRMED_ONCE",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C67_PUBLICACAO_LIVE_AUTORIZADA_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -26,8 +26,8 @@
     "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar",
     "blogger_moveis_draft_articles": 2,
     "blogger_moveis_draft_id": "3612281866616913629",
-    "wordpress_casa_published_posts": 43,
-    "wordpress_casa_draft_posts": 59,
+    "wordpress_casa_published_posts": 44,
+    "wordpress_casa_draft_posts": 58,
     "wordpress_casa_v31_draft_post_id": 303,
     "wordpress_casa_v31_draft_slug": "v31-31856a8a43a1-22298915336",
     "radar_offline_self_tests": 15,
@@ -43,7 +43,15 @@
     "c65_one_time_read_only_schedule_check": "2026-11-20T10:10:00-03:00",
     "wordpress_casa_c66_reviewed_draft_post_id": 305,
     "wordpress_casa_c66_draft_title": "Como escolher um vaso decorativo âmbar para sua sala",
-    "c66_live_preview": "AWAITING_OWNER_APPROVAL_0_POSTS"
+    "c66_live_preview": "AWAITING_OWNER_APPROVAL_0_POSTS",
+    "wordpress_casa_post_305_status": "publish",
+    "wordpress_casa_post_305_url": "https://casaedecoracao.radartechbr.com.br/v31-31856a8a43a1-58259898640/",
+    "wordpress_casa_post_303_status": "draft",
+    "c67_live_status": "LIVE_CONFIRMED_ONCE",
+    "c67_live_workflow_run_id": 44583376909,
+    "c67_live_public_url_http": 200,
+    "c67_manifest_approved": true,
+    "c67_temporary_dispatcher_deleted": true
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -57,25 +65,27 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C67 — publicar LIVE UMA VEZ o WordPress Casa post #305 com autorização expressa do proprietário, após verificação anúncio/affiliate SKU exato; manifesto por post e workflow manual gated",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "Dono respondeu 'sim! Autorizo' à pergunta explícita publicar exclusivamente Casa WP #305 após checagem. WordPress CMS #305 draft, Casa 43 LIVE/59 DRAFT; URL Shopee produto exato SKU 1718605288/58259898640 pesquisada hoje; redirecionamento live do afiliado s.shopee.com.br/8pnOgLent4 aponta a mesmo SKU com mmp_pid, seguido de login/antibot. Checkpoint C67 prévio commit 8f8f4167. Gate preflight C66 digest ccc848b143a51235dba21b89be4b5dad92c538300678b9b8854347a5297d9b63.",
-    "next_safe_step": "Validar #305 draft e SHA, criar manifesto único wordpress_casa_decoracao__305.json com três aprovações genuínas e timestamp UTC, acionar SOMENTE uma vez workflow permanente V31 LIVE com execute_live=true/PUBLISH:wordpress_casa_decoracao:305; acompanhar terminal e readback API. Se incerteza, NUNCA retry POST. Limpar trigger TEMP e fechar JSON/índice.",
+    "objective": "C67 — uma publicação LIVE legítima WordPress Casa #305 concluída com autorização individual do dono, manifesto exato, workflow permanente e verificação pública; somente cron GitHub event=schedule segue sem homologação de disparo autônomo",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "Usuário respondeu 'sim! Autorizo' ao pedido específico WordPress Casa post #305; link afiliado Shopee s.shopee.com.br/8pnOgLent4 redirecionou SKU exato product/1718605288/58259898640 e página pública Shopee exibia SKU/título. Manifesto aprovado por post salvo main commit efabd779; temp dispatch #44583355252 SUCCESS HTTP204; workflow PERMANENTE LIVE #44583376909 SUCCESS: LIVE_CONFIRMED, publication_calls=1, owner_approval_loaded=true, approved_sku=true, exact_campaign=true, 46 testes, digest título+HTML ccc848b143a51235dba21b89be4b5dad92c538300678b9b8854347a5297d9b63. Readback API WordPress post305 status=publish URL /v31-31856a8a43a1-58259898640/, Casa 44 LIVE+58 DRAFT, post303 draft; Firecrawl public URL HTTP200 título e CTA presentes. Blogger Móveis dois DRAFTs intactos. TEMP C67 workflow/trigger removidos e árvore confirmada zero; manifesto único auditável preservado.",
+    "next_safe_step": "C68: na checagem somente leitura já criada para 20/11/2026 10h10 America/Recife, observar event=schedule de filas R2 08:47, Blogger 09:18 e WordPress 09:41; distinguir de workflow_dispatch. Se não houver eventos agendados genuínos, investigar suporte GitHub ou fallback externo sem habilitar LIVE em cron. NÃO repetir publicação #305 nem alterar outros posts sem autorização. Verificar contagens por CMS antes de novas mutações.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C67_PUBLICACAO_LIVE_AUTORIZADA_2026-11-19.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44577760603",
-      "https://shopee.com.br/Vaso-Decorativo-R%C3%B4mulo-%C3%82mbar-30cm-%E2%80%93-Design-Moderno-e-Elegante-i.1718605288.58259898640"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44583355252",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44583376909",
+      "https://github.com/adelrib27/blogger-automation1/commit/efabd77941d4bccf0cc2e375429b968b84b7078f",
+      "https://casaedecoracao.radartechbr.com.br/v31-31856a8a43a1-58259898640/",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C67_PUBLICACAO_LIVE_AUTORIZADA_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "Aprovação individual verdadeira do proprietário para publicar WordPress Casa post #305 (título e HTML revisados, digest C66), após conferir produto/anúncio atual Shopee; sem manifesto antes desse consentimento e sem LIVE em massa.",
-    "GitHub Actions event=schedule: consultar no monitor read-only de 20/11 às 10h10 Recife os crons R2 08h47, Blogger 09h18, WordPress 09h41; não confundir workflow_dispatch com schedule nem reexecutar writers automaticamente.",
-    "Preservar no WordPress Casa 43 LIVE +59 DRAFT (incluindo 303 e 305) e no Blogger Móveis 3 LIVE +2 DRAFT; não gerar duplicatas ou publicar conteúdos não aprovados.",
-    "Manter biblioteca universal R2 dos dois CSVs e campanhas individuais sem limite TOTAL de artigos; revisão de SKUs continua fail-closed, apenas aprovados/com foto/afiliado real elegíveis.",
-    "Monitorar Radar Tech BR/legados após PR85; não suprimir quarentena, não mexer em Pins/tema/Worker v1.0 enquanto escopo editorial não requerer."
+    "C68: verificar em 20/11/2026 10h10 America/Recife a execução real `event=schedule` dos 3 workflows GitHub V31: fila R2 08h47, Blogger 09h18 e WordPress 09h41; não declarar cron homologado antes de evidência.",
+    "Preservar LIVE WordPress Casa post #305 já publicado (44 LIVE+58 DRAFT) e WP #303 ainda draft; não republicar #305 nem habilitar LIVE automático em massa. Blogger Móveis mantém 3 LIVE+2 DRAFT sem alteração.",
+    "Se `event=schedule` faltar novamente para múltiplos workflows ativos, investigar scheduler GitHub e alternativa confiável externa sem publicar LIVE sem autorização real.",
+    "Manter acervo R2 universal dos 2 CSVs Shopee e seleção/links de campanha isolados por blog, sem teto total 3; curadoria dos REVIEW permanece conservadora.",
+    "Novo LIVE exige post individual diferente com revisão real, link SKU na campanha, manifesto hash título+HTML e autorização expressa correspondente; evitar mutações globais de publicação."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
