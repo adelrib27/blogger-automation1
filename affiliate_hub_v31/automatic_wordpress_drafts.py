@@ -203,7 +203,7 @@ def _draft_title(product_title: str) -> str:
     """Título legível: nunca cortar uma palavra nem terminar em conectivo."""
     if not isinstance(product_title, str):
         raise WordPressAutoDraftError("draft_title_invalid")
-    cleaned = re.sub(r"\\s+", " ", product_title).strip()
+    cleaned = re.sub(r"\s+", " ", product_title).strip()
     prefix = "Guia prático: "
     max_length = 75
     room = max_length - len(prefix)
