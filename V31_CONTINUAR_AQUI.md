@@ -1,6 +1,6 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Para um novo chat do projeto:** leia ESTE arquivo no GitHub `main`, depois [estado estruturado](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint técnico atual C62](affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md) (histórico em [C61](affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md), [C57](affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md) e [C56](affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md)) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Confirme os dados atuais nos serviços antes de executar. **Não confundir com `CHECKPOINT_ATUAL.md`**, que conserva o histórico/canon legado da rede Blogger em 02/11 e não descreve o V31 atual.
+> **Para um novo chat do projeto:** leia ESTE arquivo no GitHub `main`, depois [estado estruturado](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint técnico atual C63](affiliate_hub_v31/CHECKPOINT_C63_CRONS_RADAR_QUALITY_2026-11-19.md) (histórico em [C62](affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md), [C61](affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md), [C57](affiliate_hub_v31/CHECKPOINT_C57_CONTINUIDADE_GITHUB_2026-11-18.md) e [C56](affiliate_hub_v31/CHECKPOINT_C56_ARTIGOS_AFILIADOS_AUTOMACAO_2026-11-18.md)) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Confirme os dados atuais nos serviços antes de executar. **Não confundir com `CHECKPOINT_ATUAL.md`**, que conserva o histórico/canon legado da rede Blogger em 02/11 e não descreve o V31 atual.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
 **Última conferência contextual:** 19/11/2026. O JSON de estado é atualizado por fase; dados e números nele são observações históricas, NÃO leitura ao vivo.  
@@ -54,6 +54,13 @@ Os números acima são o último estado comprovado nas execuções citadas, não
 - Falha de qualidade detectada após POST: título truncado em conectivo. [PR #84 MERGED](https://github.com/adelrib27/blogger-automation1/pull/84) corrige gerador para só cortar palavras inteiras; [CI #44543354220](https://github.com/adelrib27/blogger-automation1/actions/runs/44543354220) PASS (**376 V31 +24 Casa +21 Oficina +crossblog**). O **mesmo post 303** recebeu título corrigido por API WordPress, permanecendo DRAFT e sem mudar HTML/slug.
 - Workflow/trigger temporários C62 removidos da `main`. Cron genérico WordPress permanente continua configurado em **PREVIEW por padrão**; o canário **não prova cron agendado**. Conteúdo precisa de revisão editorial antes de LIVE. [Checkpoint C62](affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md).
 
+## C63 — Radar + gate universal WordPress, crons ainda não observados (19/11/2026)
+
+- **[PR #85 MERGED](https://github.com/adelrib27/blogger-automation1/pull/85)**: Radar agora usa faixa consistente **35–60 caracteres** e instruções de correção mais precisas quando o planejamento falha; 3 respostas inválidas continuam em QUARENTENA, sem bypass. O workflow de CI passou a testar mudanças no Radar.
+- **Proteção antes do POST WordPress para QUALQUER site V31**: parágrafos duplicados, linguagem comercial/HTML fora do contrato, cópia integral de título comercial e padrões de alegações sem comprovação bloqueiam o DRAFT. Isso não substitui revisão factual/humana antes de LIVE.
+- **[CI #44546604810](https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810) PASS**: 383 V31, 24 Casa, 21 Oficina, 15 Radar e crossblog. Verificação independente no fim: Blogger Móveis **3 LIVE +1 DRAFT**, Casa WordPress **43 LIVE +58 DRAFT**, sem novas postagens nesta fase.
+- **Cron ainda pendente de prova:** agendas Blogger C55 09:18 e WordPress C60 09:41 (Recife), próximas janelas configuradas para **20/11/2026**; os cron jobs do dia 19 passaram ANTES da implementação C61/C63. Não confundir agenda configurada com execução comprovada; verificar Actions `event=schedule`, logs e destino. Radar #44447410967 foi bloqueado por título curto, não por credencial. [Checkpoint C63](affiliate_hub_v31/CHECKPOINT_C63_CRONS_RADAR_QUALITY_2026-11-19.md).
+
 ## 3. Blog piloto existente: três LIVE entregues e mais um DRAFT de teste
 
 [Móveis para Cada Canto](https://moveisparacadacanto.blogspot.com/) — Blogger ID `1439741542627895062`, rota `affiliate_hub_v31/sites.d/blogger_moveis_para_cada_canto.json`, campanha `moveisparacadacanto`. Três artigos já publicados:
@@ -75,7 +82,7 @@ O pedido persistido em `affiliate_hub_v31/site_requests.d/blogger_moveis_para_ca
 
 ## 5. Próximas ações permitidas, em prioridade
 
-1. **Retomar do `active_work` do JSON em `main`**, atualmente C60 `PRONTO_PARA_PROXIMA_ETAPA`; conferir HEAD, PRs, Actions e serviço antes de qualquer nova mutação.
+1. **Retomar do `active_work` do JSON em `main`**, atualmente C63 `PRONTO_PARA_PROXIMA_ETAPA`; conferir HEAD, PRs, Actions e serviço antes de qualquer nova mutação.
 2. **Observar próximos crons reais** Blogger C55, WordPress universal C60 (PREVIEW por padrão) e os três WordPress legados: workflow configurado e canário manual C62 não provam execução agendada.
 3. **C62 já validou primeiro POST de DRAFT WordPress** no Casa, ID 303. Próximos novos sites WordPress ainda exigem pedido real, credenciais próprias e validação específica; não reproduzir o canário nem criar pedido permanente sem autorização.
 4. **Observar próximo cron Blogger C55** já sem teto total (`articles:null`), com limite de 1 DRAFT por ciclo, SKU novo e campanhas isoladas; não repetir rascunho de guarda-roupa C61. Diagnosticar Radar cron #44447410967 (título curto em QUARENTENA, sem bypass de gate).
