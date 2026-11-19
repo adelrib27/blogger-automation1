@@ -15,7 +15,7 @@ from .catalog import Catalog
 from .handoff_storage import persist_private_handoff
 from .r2_state import R2State,verify_database
 from .site_request_queue import REQUESTS_DIR,load_requests
-from .universal_editorial_handoff import plan_editorial_handoff
+from .universal_editorial_handoff import MAX_ARTICLES_PER_BATCH,plan_editorial_handoff
 
 
 class DispatchError(ValueError):
@@ -43,7 +43,10 @@ def dispatch(storage:R2State,*,directory:Path=REQUESTS_DIR,
                 report=plan_editorial_handoff(
                     cat,site_key=request["site_key"],
                     platform=request["platform"],topic=request["topic"],
-                    articles=request["articles"])
+                    # articles=None means an unlimited TOTAL request. C36 only
+                    # plans a finite selection batch (not a lifetime quota).
+                    articles=(MAX_ARTICLES_PER_BATCH if request["articles"] is None
+                              else request["articles"]))
                 if not report["site_registered"] or report["can_publish"] is not False:
                     raise DispatchError("unsafe_or_unregistered_plan")
                 ready+=len(report["ready_review_jobs"])
