@@ -28,3 +28,10 @@ O proprietário pediu o teste das automações de artigos e remover o teto de tr
 
 - [Teste #44538164537](https://github.com/adelrib27/blogger-automation1/actions/runs/44538164537) **FALHOU fechado antes de POST**: credenciais Casa disponíveis, `site_settings()` foi aceito; `list_posts(include_unpublished=True)` retornou `wordpress_http_HTTPError` ao consultar múltiplos status no mesmo filtro REST. 0 WordPress writes, 0 Shopee/R2 writes.
 - Próximo passo: diagnóstico GET somente com variantes de status (`any`, `publish`, `draft` e lista), expondo apenas códigos HTTP; corrigir contrato REST com teste fake se necessário antes de POST.
+
+
+## C62 atualização — paginação corrigida e prévia autenticada
+
+- [Diagnóstico #44538971324](https://github.com/adelrib27/blogger-automation1/actions/runs/44538971324): API WordPress Casa respondeu 200 para filtros e revelou **43 publicados + 57 rascunhos = 100 posts**, header `X-WP-TotalPages=1`. O C60 anterior tratava página cheia como paginação adicional e falhava no GET página 2, sem POST.
+- [PR #83 MERGED](https://github.com/adelrib27/blogger-automation1/pull/83) corrige `list_posts` para respeitar X-WP-TotalPages, inclusive 100 posts exatos, várias páginas e histórico inconsistente, CI [#44539480674](https://github.com/adelrib27/blogger-automation1/actions/runs/44539480674) PASS.
+- [Canário WP PREVIEW autenticado #44539669937](https://github.com/adelrib27/blogger-automation1/actions/runs/44539669937) **SUCCESS**: identidade via `/wp-json/wp/v2/settings`, **100 posts lidos com permissão**, SKU novo aprovado da campanha Casa, foto/link exatos R2, `V31_C62_R2_CASA_READY`, **0 POST, 0 Shopee/R2 writes**. Próximo passo: execução única `execute_draft` sob esses mesmos gates, confirmar status draft e evitar repetição caso resposta inconclusiva.
