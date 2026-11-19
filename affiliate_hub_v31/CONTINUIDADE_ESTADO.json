@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C62",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "conferencia_conectada_github",
+  "last_updated_source": "conferencia_conectada_github_2026-11-19_c62_preview_validado",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -37,17 +37,19 @@
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "C62 — testar WordPress Casa real em DRAFT via writer V31 C60 com credenciais do próprio Casa no GitHub, sem LIVE",
+    "objective": "C62 — completar um canário autenticado de 1 novo RASCUNHO real WordPress Casa e Decoração, sem publicar LIVE, sem duplicar e com verificação REST",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C61 concluído e documentado, Blogger 3 LIVE+1 DRAFT com 2 links; C62 prévia commit 20a97ee084b471a70de22bf90dab6501616db6ad",
-    "next_safe_step": "Primeiro canário de identidade/autorização WP e histórico com 0 POST; somente se PASS + SKU afiliado novo disponível testar 1 draft real com read-after-write.",
+    "latest_verified_step": "C62 preview WordPress Casa #44539669937 SUCCESS: identidade REST, 100 posts (43 publicados + 57 rascunhos), 1 SKU novo elegível na campanha R2 Casa, 0 POST; PR #83 paginacao MERGED e CI #44539480674 PASS.",
+    "next_safe_step": "Verificar primeiro que workflow C62 modo execute_draft ainda não foi disparado; autorizar somente 1 POST DRAFT via trigger C62, conferir run e GET de status, se resposta inconclusiva NÃO repetir POST sem investigar WordPress.",
     "mutation_in_progress": false,
-    "remote_operation_in_progress": false,
+    "remote_operation_in_progress": true,
     "rollback_needed": false,
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44412775615",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44539669937",
+      "https://github.com/adelrib27/blogger-automation1/pull/83"
     ]
   },
   "next_priorities": [
