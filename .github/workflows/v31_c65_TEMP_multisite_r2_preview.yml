@@ -1,0 +1,38 @@
+name: V31 C65 TEMP — cobertura R2 Casa WordPress sem POSTS
+on:
+  push:
+    paths:
+      - 'affiliate_hub_v31/C65_R2_DIAGNOSTIC_MODE.txt'
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  casa-readonly-r2:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.35,<2'
+      - name: Inspecionar temas reais por filtros de campanha sem conversão/POST
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$(cat affiliate_hub_v31/C65_R2_DIAGNOSTIC_MODE.txt)" == 'preview' ]] || exit 3
+          for topic in 'decoração' 'vaso decorativo' 'escorredor de louças' 'organização' 'cozinha'; do
+            echo "V31_C65_TOPIC_START $(printf '%s' "$topic" | sha256sum | cut -c1-8)"
+            python -m affiliate_hub_v31.site_launch_plan --mode r2 --platform wordpress --site-key wordpress_casa_decoracao --topic "$topic"
+            echo 'V31_C65_TOPIC_END'
+          done
+          echo 'V31_C65_WP_R2_PREVIEW_ONLY_ZERO_MUTATIONS'
