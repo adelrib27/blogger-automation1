@@ -1,5 +1,6 @@
 """C60 — WordPress universal: Blogger/WP separam LIVE, mas compartilham R2."""
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -302,6 +303,23 @@ class WordPressUniversalDraftTests(unittest.TestCase):
         with self.assertRaisesRegex(m.WordPressAutoDraftError,
                                     "html_or_sales"):
             m.validate_wordpress_paragraphs(unsafe,product_title=TITLE)
+
+    def test_c65_casa_legacy_credentials_bridge_is_strictly_isolated(self):
+        with patch.dict(os.environ, {
+            "CASA_WORDPRESS_USERNAME": "casa_editor",
+            "CASA_WORDPRESS_APP_PASSWORD": "test-legacy-secret",
+        }):
+            self.assertEqual(m.credentials_for(KEY, raw=""),
+                             ("casa_editor", "test-legacy-secret"))
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                        "wordpress_credentials_not_configured"):
+                m.credentials_for("wordpress_other_site", raw="")
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                        "wordpress_site_credentials_missing"):
+                m.credentials_for("wordpress_other_site", raw=json.dumps({
+                    KEY: {"username": "casa_editor",
+                          "application_password": "test-legacy-secret"}
+                }))
 
     def test_rest_client_posts_only_draft(self):
         client=m.WordPressRestClient(base_url=HOME,
