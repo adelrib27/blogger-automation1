@@ -36,9 +36,16 @@ O GitHub Actions deve ter em segredo `V31_WORDPRESS_SITE_CREDENTIALS_JSON` um ob
 
 ## Agendamento seguro e controles
 
-- `.github/workflows/v31_universal_wordpress_autodraft_daily.yml`: cron ~09:41 Recife. **Por padrão é somente prévia**, enquanto a variável GitHub `V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED` não for `true`. Com opt-in e credenciais reais, no máximo 1 rascunho por execução para um WordPress da fila; `workflow_dispatch` também exige `execute_draft=true` e pedido real.
+- `.github/workflows/v31_universal_wordpress_autodraft_daily.yml`: cron 09:41 Recife. **C65:** quando existe pedido real `enabled:true`, o cron normal pode criar **somente 1 DRAFT por execução**; a variável GitHub `V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED=false` pausa o agendamento em modo prévia. Independentemente dessa variável, sem pedido real, identidade, SKU/afiliado e credenciais corretas, a publicação não ocorre. `workflow_dispatch` continua exigindo `execute_draft=true`. O fluxo LIVE é separado e exige aprovação por post.
 - Rascunho é etapa de revisão, não publicação automática. A aprovação e a publicação futura exigem gate/publisher específico, identidade WordPress e autorização apropriada.
 - O sistema continua universal para Blogger pelo C55 e WordPress pelo C60, mas o cron WordPress **não pode provar uma nova publicação/draft REAL em site sem pedido e credencial**, e isso deve constar no checkpoint até existir essa demanda.
 - Para testar sem alterar blog, usar `--site-key wordpress_casa_decoracao --topic "decoração"` (é preview, nunca autorização para novo artigo) e verificar JSON agregado com 0 posts.
 
 **Nunca afirmar que o primeiro cron futuro já ocorreu só porque está presente em main.** 
+
+## C65 — piloto WordPress Casa real, sem antecipar outros blogs
+
+- O piloto já existente `wordpress_casa_decoracao` recebeu o pedido persistente `site_requests.d/wordpress_casa_decoracao.json` com assunto correspondente à sua rota cadastrada (`vaso decorativo`) e `articles:null`, sem teto total. O R2 real mostrou 12 candidatos aprovados para o tema, com 1 link da campanha em cache e 11 aguardando conversão, antes de verificar duplicação contra todo o histórico WordPress. Isso não aprova produtos sob REVIEW.
+- O cron V31 WordPress usa prioritariamente o segredo universal `V31_WORDPRESS_SITE_CREDENTIALS_JSON`. Somente para o Casa já autenticado pela C62, existe ponte das credenciais **já presentes** no GitHub Environment `CASA_WORDPRESS_USERNAME`/`CASA_WORDPRESS_APP_PASSWORD`; nenhum outro WordPress herda esse login.
+- `V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED=false` é o botão de pausa de criação; o modo padrão permite DRAFT apenas para pedidos habilitados. Não usar essa variável para autorização de LIVE.
+- O canário de cron C65 usa horário extra separado e modo DRY_RUN, não deve criar rascunhos; deve ser removido após o teste.
