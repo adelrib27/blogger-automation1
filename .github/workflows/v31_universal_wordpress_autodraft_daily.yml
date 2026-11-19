@@ -5,7 +5,7 @@ on:
     # 09:41 America/Recife, após fila afiliada e Blogger.
     - cron: '41 12 * * *'
     # C65 canário 19/11/2026 UTC SOMENTE DRY_RUN; remover após evidência.
-    - cron: '52,57 15 19 11 *'
+    - cron: '17,22,27 16 19 11 *'
   workflow_dispatch:
     inputs:
       site_key:
