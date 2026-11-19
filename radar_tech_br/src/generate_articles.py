@@ -178,12 +178,20 @@ def make_plan(item, raw=None):
         for attempt in range(3):
             prompt = editorial_plan_prompt(item)
             if attempt:
-                prompt += ("\\nCORREÇÃO OBRIGATÓRIA: a resposta anterior "
-                    "foi recusada (" + failure[:120] + "). Gere NOVO JSON "
-                    "com título editorial de 35 a 65 caracteres (conte "
-                    "espaços), keyword, reader_need e product_connection, "
-                    "sem inventar fatos, preços ou avaliações. "
-                    "Não repita o título curto anterior.")
+                # A rejeição deve chegar à IA como instrução separada,
+                # sempre na MESMA faixa de 35–60 caracteres do prompt.
+                prompt += (
+                    "\n\nCORREÇÃO OBRIGATÓRIA DO PLANO EDITORIAL.\n"
+                    "A resposta anterior foi recusada: " + failure[:120] + ".\n"
+                    "Crie OUTRO título entre 35 e 60 caracteres, inclusive "
+                    "(conte letras, espaços e pontuação antes de responder). "
+                    "Não repita o título anterior e não complete o texto com "
+                    "expressões vazias para atingir a faixa. "
+                    "Mantenha keyword, reader_need e product_connection "
+                    "coerentes com o novo título, sem inventar uso, "
+                    "qualidades, avaliações, preços ou dados técnicos. "
+                    "Responda somente JSON válido com os quatro campos."
+                )
             try:
                 return make_plan(item, raw=ai(prompt, kind="plan"))
             except RuntimeError as exc:
@@ -195,7 +203,7 @@ def make_plan(item, raw=None):
     keyword = re.sub(r"\s+", " ", str(data.get("keyword") or "")).strip()
     reader_need = re.sub(r"\s+", " ", str(data.get("reader_need") or "")).strip()
     product_connection = re.sub(r"\s+", " ", str(data.get("product_connection") or "")).strip()
-    if not 35 <= len(title) <= 65:
+    if not 35 <= len(title) <= 60:
         raise RuntimeError(f"título editorial fora da faixa: {len(title)}")
     if not keyword:
         raise RuntimeError("palavra-chave editorial ausente")
