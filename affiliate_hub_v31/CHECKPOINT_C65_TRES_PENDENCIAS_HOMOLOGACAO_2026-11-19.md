@@ -66,3 +66,22 @@
 
 - Documento [REVIEW_LIVE_C65_CASA_305_2026-11-19.md](REVIEW_LIVE_C65_CASA_305_2026-11-19.md) gerado na `main` com ID 305, SHA256 bruto, evidência técnica e checklist editorial/comercial. **Não é aprovação nem gatilho LIVE**. Os três campos de revisão/verificação permanecem sem manifesto real; não foi publicado um único artigo no fluxo LIVE C65.
 - O publicador LIVE separado está apto tecnicamente: tests mock Blogger/WordPress e read-only API real WordPress #305 confirmaram SKU/URL/campanha/foto/texto, mas ainda falta revisão humana de factualidade e consentimento explícito de publicar aquela peça individual. Não chamar LIVE até existir aprovação verdadeira no arquivo por post e `PUBLISH:<site_key>:<post_id>`.
+
+## C65.10 — fechamento de testes e limpeza
+
+- Os workflows temporários C65 (`v31_c65_TEMP_multisite_r2_preview.yml`, `v31_c65_TEMP_wp_casa_continuous_once.yml`, `v31_c65_TEMP_schedule_state_probe.yml`) foram removidos da `main`, juntamente com seus 3 arquivos modo, sempre primeiro o workflow e depois o trigger. Nenhuma possibilidade de reexecução por `push` do arquivo-modo restante.
+- [PR #92 MERGED](https://github.com/adelrib27/blogger-automation1/pull/92), commit `811d2684f3d13ae5780cc5a28d01c1852f84e167`. CI [#44566538648](https://github.com/adelrib27/blogger-automation1/actions/runs/44566538648) SUCCESS: **400 testes V31 +24 Casa +21 Oficina +15 Radar + cross-blog PASS**. O canário temporal foi removido dos workflows permanentes: Blogger tem somente `cron: '18 12 * * *'` (09:18 Recife); WordPress somente `cron: '41 12 * * *'` (09:41 Recife). Fila R2/Shopee mantém `cron: '47 11 * * *'` (08:47 Recife). Preservado o gate que restringe DRAFT em `event=schedule` aos horários diários originais, com pausa WordPress via variável `V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED=false`.
+- Consulta independente pós-`workflow_dispatch`: WordPress Casa **43 LIVE +59 DRAFT** (novos IDs 303 e 305 preservados); Blogger Móveis **3 LIVE +2 DRAFT** (IDs 3612281866616913629 e 2990403416970116294 preservados). Os dois disparos manuais dos workflows permanentes foram PREVIEW, portanto nenhum post a mais.
+- **Verificação futura criada com confirmação da ferramenta de automações:** task `V31 — checar crons reais`, ID `6aff240c7e7c819187f63d152c3283d1`, 20/11/2026 às **10h10 America/Recife**, exclusivamente leitura de runs GitHub `event=schedule` e totais de posts remotos. Instruções vetam POST, conversões, publicação LIVE ou reexecução sem autorização.
+
+## Situação de homologação — não declarar 100% antes da prova
+
+| Frente | Resultado C65 | Evidência e condição final |
+|---|---|---|
+| 1. Entrega do cron GitHub `event=schedule` | **PENDENTE: não houve evento agendado comprovado após C61/C65**; múltiplas janelas de teste não dispararam, inclusive crons legados. Todos 6 workflows consultados estão `active` | Próxima janela regular 20/11, check de leitura 10h10; se continuar ausente, dependência do scheduler GitHub fora do código V31; investigar suporte GitHub/alternativa externa sem acionar LIVE |
+| 2. Multi-site Blogger/WordPress sem teto de 3 | **HOMOLOGADO para DRAFT** em ambiente real | C64 Blogger 3 links Shopee reais +1 DRAFT; C65 Casa WP pedido contínuo, preview READY e novo DRAFT #305, 43 LIVE/59 DRAFT; campanhas separadas, texto/CTA/foto/links. Cron diário R2 continua de até 3 **conversões por ciclo**, não quota total de artigos |
+| 3. LIVE universal | **TECNOLOGIA E GATE REAL PREVALIDADOS, mas nenhuma publicação LIVE nova autorizada** | PR #89 testes simulados Blogger/WordPress; API WordPress #305 read-only `AWAITING_OWNER_APPROVAL`, SHA256 registrado; requer revisão factual/comercial e aprovação expressa do post/conteúdo, não autorização genérica para todas as futuras peças |
+
+**Escopo do produto:** O V31 é universal em código e registro para Blogger e WordPress; cada novo site ainda precisa ser REAL, com rota/campanha/credenciais e pedido, caso contrário falha fechada. Produtos ainda em REVIEW ficam inelegíveis, independentemente de sugestões taxonômicas. A capacidade DRAFT-first do ciclo end-to-end foi comprovada; LIVE irrestrita não faz parte da homologação segura até existir aprovação suficiente.
+
+**Estado recomendado ao encerrar C65:** `PRONTO_PARA_PROXIMA_ETAPA`, nenhum POST/R2 write pendente, sem rollback, logs/códigos de erro preservados. Próximo objetivo C66: observar prova genuína de schedule de 20/11/2026, tratar caso a plataforma não entregue eventos; revisão editorial do DRAFT WP #305 e Blogger antes de aprovar um LIVE real específico, sem inventar consentimento.
