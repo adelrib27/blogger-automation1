@@ -6,6 +6,26 @@ sem alteração de código Python. É um **cadastro declarativo**: um blog novo
 precisa informar dados reais, mas não precisa de uma nova implementação do
 catálogo, conversor ou fallback.
 
+## C68 — novo blog exige estratégia SEO e linkagem contextual
+
+Antes de cadastrar um novo site real em `sites.d`, leia a
+[estratégia editorial e técnica C68](../ESTRATEGIA_NOVOS_BLOGS_SEO_SHOPEE_V1.md),
+extraída da ficha técnica de 12/11/2026 e das regras SEO do proprietário.
+Use a [ficha de onboarding NÃO executável](../future_blog_onboarding.template.json)
+para coletar demandas reais, intenção de compra, prova da palavra-chave,
+cluster pilar/satélites, comissão positiva verificável sem mínimo de 3%,
+identidade/campanha/segredos separados e gates SAFE.
+
+A biblioteca offline [future_blog_seo.py](../future_blog_seo.py) valida
+links internos **somente de posts publicados no mesmo hostname** e audita
+SEO por artigo **para futuros projetos**. Blog novo com zero posts não pode
+inventar links: programa-se relink quando houver artigos correlatos reais.
+Ela NÃO está ligada aos escritores legados e não publica nada, não acessa
+rede nem valida Core Web Vitals ou comissões atuais. Preferir repositório
+independente por blog, conforme ficha; preservar Hub V31 como motor
+reutilizável e R2 central, sem copiar credenciais de um site para outro.
+**Não instalar automaticamente em blogs existentes sem testes dedicados.**
+
 ## Novo blog — formato do arquivo
 
 Exemplo `wordpress_novo_portal.json`:
