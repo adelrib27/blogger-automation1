@@ -1,0 +1,39 @@
+name: V31 C65 TEMP — diagnostico do estado Actions schedule
+on:
+  push:
+    paths:
+      - 'affiliate_hub_v31/C65_SCHEDULE_PROBE_MODE.txt'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  read-only-workflow-state:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Ler estado GitHub de workflows SAFE e legados, sem alterações
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'V31_C65_ACTIONS_STATE_READ_ONLY_BEGIN'
+          for workflow in \
+            v31_universal_request_queue_daily.yml \
+            v31_universal_blogger_autodraft_daily.yml \
+            v31_universal_wordpress_autodraft_daily.yml \
+            casa_editorial_generate_schedule.yml \
+            oficina_editorial_autonomous.yml \
+            radar_editorial_vnext_autonomous.yml; do
+            code=$(curl -sS --max-time 25 -o /tmp/v31-workflow.json -w '%{http_code}' \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/adelrib27/blogger-automation1/actions/workflows/$workflow")
+            if [[ "$code" != "200" ]]; then
+              echo "V31_C65_STATE_QUERY_HTTP_$code FOR_$workflow"
+              continue
+            fi
+            python -c 'import json,sys; j=json.load(open("/tmp/v31-workflow.json")); print("V31_C65_WORKFLOW_STATE",j.get("path","").split("/")[-1],j.get("state","unknown"),j.get("id"))'
+          done
+          echo 'V31_C65_ACTIONS_STATE_READ_ONLY_END'
