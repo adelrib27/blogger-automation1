@@ -5,7 +5,7 @@ on:
       - 'affiliate_hub_v31/C65_SCHEDULE_PROBE_MODE.txt'
 permissions:
   contents: read
-  actions: read
+  actions: write
 jobs:
   read-only-workflow-state:
     if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
@@ -37,3 +37,33 @@ jobs:
             python -c 'import json,sys; j=json.load(open("/tmp/v31-workflow.json")); print("V31_C65_WORKFLOW_STATE",j.get("path","").split("/")[-1],j.get("state","unknown"),j.get("id"))'
           done
           echo 'V31_C65_ACTIONS_STATE_READ_ONLY_END'
+
+      - name: Disparar somente PREVIEW nos workflows PERMANENTES (evento workflow_dispatch)
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mode=$(cat affiliate_hub_v31/C65_SCHEDULE_PROBE_MODE.txt)
+          if [[ "$mode" == 'read_only' ]]; then
+            echo 'V31_C65_ACTIONS_DISPATCH_SKIPPED_READ_ONLY'
+            exit 0
+          fi
+          if [[ "$mode" != 'dispatch_preview' ]]; then
+            echo 'V31_C65_MODE_INVALID_NO_DISPATCH'
+            exit 3
+          fi
+          for spec in \
+            'v31_universal_blogger_autodraft_daily.yml|{"ref":"main","inputs":{"site_key":"blogger_moveis_para_cada_canto","execute_draft":"false"}}' \
+            'v31_universal_wordpress_autodraft_daily.yml|{"ref":"main","inputs":{"site_key":"wordpress_casa_decoracao","preview_topic":"vaso decorativo","execute_draft":"false"}}'; do
+            workflow="${spec%%|*}"
+            payload="${spec#*|}"
+            code=$(curl -sS --max-time 25 -o /tmp/v31-dispatch-result -w '%{http_code}' \
+              -X POST -H "Authorization: Bearer $GH_TOKEN" \
+              -H 'Accept: application/vnd.github+json' \
+              -H 'Content-Type: application/json' \
+              -d "$payload" \
+              "https://api.github.com/repos/adelrib27/blogger-automation1/actions/workflows/$workflow/dispatches")
+            echo "V31_C65_PERMANENT_WORKFLOW_PREVIEW_DISPATCH $workflow HTTP_$code"
+            [[ "$code" == "204" ]] || exit 4
+          done
+          echo 'V31_C65_BOTH_PERMANENT_WORKFLOWS_DISPATCHED_PREVIEW_NO_LIVE'
