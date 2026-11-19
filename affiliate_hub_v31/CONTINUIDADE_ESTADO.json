@@ -48,8 +48,8 @@
   "active_work": {
     "objective": "C65 — homologar execução schedule real, abastecimento contínuo multi-blog Blogger/WordPress e fluxo universal de aprovação/publicação LIVE com segurança e testes, sem publicação irrestrita",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C65 PR87 cron canary nos workflows permanentes MERGED; PR88 WordPress Casa pedido real contínuo MERGED; PR89 LIVE gate de aprovação individual MERGED, CI395 PASS. WP Casa C65 preview #44561958056 READY_FOR_DRAFT_REVIEW 0 POST, API atual 43 LIVE+58 DRAFT com #303; Blogger Móveis 3 LIVE+2 DRAFT.",
-    "next_safe_step": "Uma única tentativa WordPress Casa DRAFT pelo modo C65_WP_TEST_MODE.txt=draft_once. Após run conferir status+contagem via API WP e conteúdo/detalhes; se falha/não confirmação, jamais repetir sem leitura remota. Depois remover workflows temporários e fechar C65, preservar LIVE não aprovado.",
+    "latest_verified_step": "C65 PR87/88/89/90/91 MERGED, CI #44563478449 400 tests PASS; WP Casa continuous request preview READY #44561958056; first WP attempt #44562234398 FAILED 0 remote posts (API WP 43 LIVE+58 DRAFT); read-only #44562743524 PASS auth, 101 history, Workers AI 8 paragraphs/6782 article. PR91 permits up to 3 AI rewrites on editorial gate only, no POST retry; API WP rechecked 43+58 just before new isolated canary.",
+    "next_safe_step": "Uma nova tentativa explicitamente separada de 1 DRAFT WP Casa após revisão remota e patch PR91. Não repetir automaticamente se falhar: ler código de erro, consulta WP API 43/58 e slug. Em seguida limpar todos TEMP e registrar evidências. Sem LIVE.",
     "mutation_in_progress": true,
     "remote_operation_in_progress": true,
     "rollback_needed": false,
@@ -59,7 +59,9 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44553367508",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44561958056",
       "https://github.com/adelrib27/blogger-automation1/pull/88",
-      "https://github.com/adelrib27/blogger-automation1/pull/89"
+      "https://github.com/adelrib27/blogger-automation1/pull/89",
+      "https://github.com/adelrib27/blogger-automation1/pull/91",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44562743524"
     ]
   },
   "next_priorities": [
