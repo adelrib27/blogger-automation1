@@ -52,7 +52,7 @@ jobs:
           site="wordpress_casa_decoracao"
           route=sites()[site]
           mode=Path("affiliate_hub_v31/C62_WP_TEST_MODE.txt").read_text().strip()
-          if mode not in ("preview","execute_draft","diagnose"):
+          if mode not in ("preview","execute_draft","diagnose","diagnose2"):
               raise SystemExit("V31_C62_MODE_INVALID")
           username=os.getenv("CASA_WORDPRESS_USERNAME","")
           passwd=os.getenv("CASA_WORDPRESS_APP_PASSWORD","")
@@ -62,7 +62,7 @@ jobs:
                                     username=username,application_password=passwd)
           # Identity before any R2 lookup or write.
           client.site_settings()
-          if mode=="diagnose":
+          if mode in ("diagnose","diagnose2"):
               import requests
               outcomes={}
               for index,status in enumerate(("any","publish","draft",
@@ -72,7 +72,17 @@ jobs:
                           auth=(username,passwd),params={"status":status,
                           "per_page":100,"page":1,"context":"edit"},
                           timeout=25,allow_redirects=False)
-                      outcomes[status]=resp.status_code
+                      outcomes[status]={
+                          "code":resp.status_code,
+                          "count":len(resp.json()) if isinstance(resp.json(),list) else -1,
+                          "pages":resp.headers.get("X-WP-TotalPages","?")}
+                      if mode=="diagnose2" and resp.status_code==200 and int(resp.headers.get("X-WP-TotalPages","1"))>=2:
+                          more=requests.get(route["identifier"]+"wp-json/wp/v2/posts",
+                              auth=(username,passwd),params={"status":status,
+                              "per_page":100,"page":2,"context":"edit"},
+                              timeout=25,allow_redirects=False)
+                          outcomes[status]["page2_code"]=more.status_code
+
                   except Exception:
                       outcomes[status]="TRANSPORT_FAILURE"
               print("V31_C62_WP_REST_READ_ONLY_DIAGNOSTIC "+
