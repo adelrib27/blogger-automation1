@@ -283,7 +283,17 @@ def _list_posts(service,blog_id:str)->list[dict]:
                   "maxResults":100,"fetchBodies":True}
             if token: args["pageToken"]=token
             batch=service.posts().list(**args).execute()
-            result.extend(batch.get("items",[]))
+            items=batch.get("items",[])
+            if (not isinstance(items,list) or
+                any(not isinstance(item,dict) for item in items)):
+                raise AutoDraftError("blogger_history_invalid")
+            for item in items:
+                # A resposta do Blogger pode omitir status por item. O filtro
+                # LIVE/DRAFT enviado à API é a fonte autoritativa do estado.
+                detected=str(item.get("status") or status).upper()
+                if detected!=status:
+                    raise AutoDraftError("blogger_history_status_mismatch")
+                result.append({**item,"status":status.lower()})
             token=batch.get("nextPageToken")
             if not token: break
         else:
