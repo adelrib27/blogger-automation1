@@ -38,13 +38,26 @@ jobs:
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
         shell: bash
         run: |
           set -euo pipefail
           mode=$(cat affiliate_hub_v31/C64_TEST_MODE.txt)
-          if [[ "$mode" != "preview" && "$mode" != "blogger_draft_once" ]]; then
+          if [[ "$mode" != "preview" && "$mode" != "blogger_draft_once" && "$mode" != "queue_preview" && "$mode" != "queue_execute" ]]; then
             echo 'V31_C64_MODE_NOT_AUTHORIZED_NO_WRITES'
             exit 3
+          fi
+          if [[ "$mode" == "queue_preview" || "$mode" == "queue_execute" ]]; then
+            echo 'V31_C64_UNIVERSAL_REAL_REQUEST_QUEUE_CANDIDATE_DIAGNOSTIC'
+            python -m affiliate_hub_v31.site_request_queue --budget 3
+            if [[ "$mode" == "queue_execute" ]]; then
+              echo 'V31_C64_UNIVERSAL_REAL_REQUEST_QUEUE_CONVERSION_START_NO_POST'
+              python -m affiliate_hub_v31.site_request_queue --budget 3 --execute
+              echo 'V31_C64_UNIVERSAL_REAL_REQUEST_QUEUE_CONVERSION_END_NO_POST'
+            fi
+            echo 'V31_C64_QUEUE_MODE_COMPLETE_NO_PUBLICATION'
+            exit 0
           fi
           if [[ "$mode" == "preview" ]]; then
             echo 'V31_C64_BLOGGER_REAL_PREVIEW_START_NO_POST'
