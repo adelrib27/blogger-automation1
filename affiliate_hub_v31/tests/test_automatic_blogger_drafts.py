@@ -169,6 +169,29 @@ class AutoBloggerDraftTests(unittest.TestCase):
                 "Para escolher","https://malicious.example Para escolher"),
                 keyword="sofá")
 
+    def test_blogger_rejects_full_commercial_product_title_in_body(self):
+        long_name=("Guarda-Roupa Casal 6 Portas 2 Gavetas Peroba/Off White "
+                   "RP154 Rei Móveis")
+        clean=worker_paragraphs()
+        payload=json.dumps({"paragraphs":clean},ensure_ascii=False)
+        self.assertEqual(len(m.validate_generated_paragraphs(
+            payload,keyword="sofá",product_name=long_name)),7)
+        bad=list(clean)
+        bad[0]+=" Antes de escolher, confira "+long_name+"."
+        copied=json.dumps({"paragraphs":bad},ensure_ascii=False)
+        with self.assertRaisesRegex(m.AutoDraftError,
+                                    "product_title_copied_into_editorial_body"):
+            m.validate_generated_paragraphs(
+                copied,keyword="sofá",product_name=long_name)
+        with Catalog(self.path) as cat:
+            plan=m.select_next(cat,site_key=KEY,
+                request=m.load_requests()[0],existing_posts=article_list(2))
+        plan["product_title"]=long_name
+        with self.assertRaisesRegex(m.AutoDraftError,
+                                    "product_title_copied_into_editorial_body"):
+            m.compose_draft_html(plan,bad,blog_home_url=URL,
+                                 published_posts=article_list(2))
+
     def _service(self,count=3):
         service=Mock()
         service.blogs.return_value.get.return_value.execute.return_value={

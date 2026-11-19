@@ -156,7 +156,20 @@ def _ai_response_text(response:dict)->str:
     raise AutoDraftError("ai_output_missing")
 
 
-def validate_generated_paragraphs(text:str,*,keyword:str)->list[str]:
+def _reject_commercial_title_in_body(paragraphs:list[str], product_name:str)->None:
+    """Não deixar o texto editorial virar repetição do título comercial.
+
+    Produto permanece no bloco de oferta verificado da campanha; corpo usa
+    classe genérica e critérios de escolha. Sem afirmação de performance.
+    """
+    if not isinstance(product_name,str):
+        raise AutoDraftError("ai_product_title_invalid")
+    canonical=normalize(product_name)
+    if len(canonical)>=40 and canonical in normalize(" ".join(paragraphs)):
+        raise AutoDraftError("ai_product_title_copied_into_editorial_body")
+
+
+def validate_generated_paragraphs(text:str,*,keyword:str,product_name:str="")->list[str]:
     """Worker AI never supplies HTML/links/product imagery; those come from R2."""
     if not isinstance(text,str) or len(text)>24000:
         raise AutoDraftError("ai_text_length_invalid")
@@ -189,6 +202,7 @@ def validate_generated_paragraphs(text:str,*,keyword:str)->list[str]:
            "compre agora" in normalize(p)
            for p in paragraphs):
         raise AutoDraftError("ai_unverified_commercial_claim")
+    _reject_commercial_title_in_body(paragraphs, product_name)
     return [" ".join(p.split()) for p in paragraphs]
 
 
@@ -209,6 +223,9 @@ def generate_original_paragraphs(*,product_name:str,topic:str,
         "informadas, certificados, relatos pessoais ou marcas distintas. "
         "Não insira links nem chamadas para comprar (serão agregados "
         "com dados verificados do catálogo). "
+        "Use o nome do produto somente como contexto para entender a categoria: "
+        "NUNCA repita o título comercial completo nos parágrafos. "
+        "Explique critérios da classe genérica de produto em linguagem original. "
         "O nome abaixo é copiado do anúncio, não representa avaliação. "
         "Produto: "+product_name+"; tema: "+topic+"."
     )
@@ -236,7 +253,8 @@ def generate_original_paragraphs(*,product_name:str,topic:str,
     if response.status_code!=200:
         raise AutoDraftError("workers_ai_unavailable")
     return validate_generated_paragraphs(
-        _ai_response_text(response.json()),keyword=topic)
+        _ai_response_text(response.json()),keyword=topic,
+        product_name=product_name)
 
 
 def compose_draft_html(plan:dict,paragraphs:list[str],*,
@@ -245,6 +263,7 @@ def compose_draft_html(plan:dict,paragraphs:list[str],*,
         raise AutoDraftError("approved_product_plan_required")
     if not 6<=len(paragraphs)<=10:
         raise AutoDraftError("original_body_required")
+    _reject_commercial_title_in_body(paragraphs, str(plan.get("product_title") or ""))
     related=relevant_live_links(
         published_posts,blog_home_url=blog_home_url,
         current_title=plan["title"],limit=2)
