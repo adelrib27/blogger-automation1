@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C70",
   "continuity_protocol_phase": "C70",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C70_SCHEDULE_REAL_QUEUE3_R2_HANDOFF_FAILED_PREVIEW",
+  "last_updated_source": "C70_HANDOFF_ARTICLES_NULL_PR98_CI471_REAL_R2_PREVIEW_AND_REVIEW_SIDECARS_SUCCESS",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C70_SCHEDULE_REAL_HANDOFF_SAFE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -77,7 +77,21 @@
     "c70_queue_schedule_event": "schedule",
     "c70_queue_schedule_result": "failure_after_3_affiliate_conversions_cache_r2_verified_handoff_preview_failed_no_posts",
     "c70_queue_shopee_mutation_attempts": 3,
-    "c70_queue_publication_calls": 0
+    "c70_queue_publication_calls": 0,
+    "c70_pr_merged": 98,
+    "c70_ci_run_id": 44606961972,
+    "c70_v31_tests_passed": 471,
+    "c70_handoff_preview_run_id": 44607319448,
+    "c70_handoff_preview_result": "SUCCESS_R2_REAL_DRY_RUN_TWO_REQUESTS_TEN_READY_REVIEW_ZERO_WRITES_OR_POSTS",
+    "c70_private_handoff_run_id": 44607864589,
+    "c70_private_handoff_result": "SUCCESS_TWO_PRIVATE_REVIEW_REQUIRED_ENVELOPES_READBACK_10_JOBS_0_POSTS_0_ADDITIONAL_CONVERSIONS",
+    "c70_private_envelopes_saved": 2,
+    "c70_ready_review_jobs": 10,
+    "c70_new_shopee_conversions_in_handoff": 0,
+    "c70_temporary_workflows_removed": true,
+    "c70_live_publication_calls": 0,
+    "c70_blogger_wordpress_schedule_next_check": "2026-11-20T10:10:00-03:00",
+    "c70_blogger_wordpress_schedule_verified": false
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -91,26 +105,28 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C70 — diagnóstico e correção SAFE da falha handoff pós-conversão no primeiro schedule REAL da fila V31; verificação Blogger/WP schedule e engenharia factual/D1 offline sem LIVE",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "main 9ef571d... C69 CI467. V31 fila schedule #44600350780 às 19:38Z de 19/11 falhou em handoff_dispatch preview após 467 testes PASS, 3 links Shopee convertidos/cache R2 confirmado e 0 posts. Cron queue 47 11 UTC; Blogger/WP schedules V31 ainda não observados. Checkpoint C70 prévio gravado antes de código.",
-    "next_safe_step": "Analisar handoff_dispatch e testes sem repetir conversões. Patch isolado com testes em PR SAFE; preservar R2/CMS, verificar CI; documentar 20/11 schedule read-only. D1/Firecrawl/writers só depois de gates reais e saldo comprovado.",
+    "objective": "C70 concluída SAFE: corrigir articles:null em handoff de pedidos universais, CI471 e confirmar execução real de leitura e gravação REVIEW_REQUIRED em R2 para dois sites sem LIVE; próximo Evidence/READY D1 e fact gate",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "PR98 MERGED 252a38084f8498bd9cc3e71557ceed1d606695a5 CI #44606961972 SUCCESS 471 V31+Casa24+Oficina21+Radar15+crossblog. V31 fila schedule #44600350780 FAILURE em 19/11 19:38Z após 3 links cache R2 verificados e 0 posts; causa articles:null no handoff corrigida. Canário R2 leitura #44607319448 SUCCESS 2 pedidos/10 ofertas/0 R2 writes/posts. Recuperação isolada #44607864589 SUCCESS 2 envelopes privados REVIEW_REQUIRED, readback, 10 ofertas, 0 Shopee novas, 0 posts. Workflows TEMP C70 removidos, Blogger/WordPress e Vida Pet preservados.",
+    "next_safe_step": "20/11/2026 às 10h10 Recife: automação READ-ONLY existente verificar event=schedule específico de fila 08h47, Blogger 09h18, WordPress 09h41, inspecionar logs e CMS. Independente: projetar D1 namespace site_key/campaign, lock/lease/idempotência e fact gate pós-IA em SAFE offline; só Firecrawl cache miss real após saldo mesma chave GitHub e orçamento durável; writers não conectados e LIVE não autorizado.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
+      "https://github.com/adelrib27/blogger-automation1/pull/98",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44606961972",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44600350780",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C70_SCHEDULE_REAL_HANDOFF_SAFE_2026-11-19.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44598880655"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44607319448",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44607864589",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C70_SCHEDULE_REAL_HANDOFF_SAFE_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "C70: investigar HandoffError do schedule real #44600350780 (fila V31, 3 links Shopee convertidos e R2 gravado/verificado, 0 posts); não repetir --execute de conversão já confirmada. Corrigir de forma SAFE e homologar após testes.",
-    "C70 (20/11/2026 10h10 Recife): comprovar no GitHub por leitura evento `schedule` DOS TRÊS workflows V31 reais: request_queue 08h47, Blogger 09h18, WordPress 09h41. Outros `schedule` legados já ocorreram em 19/11; isso não homologa os três novos. Não confundir push/dispatch/schedule.",
-    "V31 C69 Evidence/READY já integrado ao pacote universal como SAFE e testado 467 CI, mas NÃO conectado ao publisher: antes de ativar exigir fontes reais Firecrawl com saldo da chave GitHub, custo 1 cache miss real, fact gate do texto IA, D1 com namespaces site_key/locks/idempotência e canário DRAFT por site sem publicação LIVE. LAB Vida Pet R28 permanece isolado e sem writer.",
-    "Na criação de blogs novos aplicar a ficha SEO C68 com intenção comercial real, links internos publicados por mesmo host, comissão positiva sem mínimo 3%, campanha exata, e agora perfil de evidência/READY C69 com entradas verificadas. Preferir repo separado por blog e núcleo V31 reutilizável sem copiar dados/credenciais.",
-    "Preservar estado WordPress Casa LIVE post305 já publicado 1 vez (44 LIVE+58 DRAFT), WP303 ainda draft, Blogger Móveis 2 DRAFT; jamais LIVE novo sem autorização individual.",
-    "Biblioteca R2 dos dois CSV universal sem teto TOTAL de artigos (`articles:null`); `min_ready:3` é buffer operacional e não limitação de artigos, curadoria conservadora e produtos em REVIEW ainda bloqueados."
+    "C70 SAFE CONCLUÍDA: PR98 CI471, 2 envelopes privados REVIEW_REQUIRED R2 readback e zero posts; não repetir 3 conversões Shopee originais (#44600350780).",
+    "20/11/2026 10h10 Recife: conferir event=schedule dos 3 workflows V31 no GitHub, suas conclusões e leitura de Blogger Móveis/WordPress Casa. A fila já disparou schedule em 19/11 e falhou no handoff antes do patch; Blogger e WordPress schedule ainda sem evidência.",
+    "PR futuro SAFE: adaptador D1 com isolamento por site_key/campaign, locking/lease/idempotência, gate final factual IA HTML e canário DRAFT; nunca ligar LIVE ou usar banco/credencial Vida Pet.",
+    "Firecrawl real: antes de cache miss/pesquisa comprovar saldo e chave exata utilizada no GitHub e contador de custo durável; C69 SearchBudget é simulação offline.",
+    "Biblioteca R2 universal dos dois CSVs; artigos=null é contínuo sem teto total e min_ready=3 é reserva; REVIEW não é oferta autorizada."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -119,8 +135,8 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44598880655",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44607864589",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
-    "schedule_claim": "C70: V31 request_queue schedule REAL em 19/11 19:38Z #44600350780, terminou FAILURE no handoff preview após 3 conversões cache R2 e 0 posts. Blogger e WordPress V31 event=schedule ainda não comprovados; verificar 20/11."
+    "schedule_claim": "C70: fila V31 event=schedule real 19/11 19:38Z #44600350780 failure após 3 conversões/cache R2; correção PR98 CI471, handoff R2 verificado em canários #44607319448 e #44607864589. Blogger/WP schedule V31 pendentes de 20/11 às 10h10 Recife."
   }
 }
