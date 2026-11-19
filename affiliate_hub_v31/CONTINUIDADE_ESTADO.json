@@ -3,11 +3,11 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C62",
+  "last_checkpoint_phase": "C63",
   "continuity_protocol_phase": "C63",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "conferencia_github_actions_e_wordpress_c62_final",
+  "last_updated_source": "C63_PR85_CI_validada_e_apis_blogger_wordpress",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C63_CRONS_RADAR_QUALITY_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -22,14 +22,15 @@
     "blogger_moveis_live_articles": 3,
     "blogger_moveis_owner_requested_articles": null,
     "commercial_enrichment": "3_artigos_verificados_com_imagem_real_link_afiliado_cta_e_links_internos",
-    "v31_regression_tests": 376,
+    "v31_regression_tests": 383,
     "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar",
     "blogger_moveis_draft_articles": 1,
     "blogger_moveis_draft_id": "3612281866616913629",
     "wordpress_casa_published_posts": 43,
     "wordpress_casa_draft_posts": 58,
     "wordpress_casa_v31_draft_post_id": 303,
-    "wordpress_casa_v31_draft_slug": "v31-31856a8a43a1-22298915336"
+    "wordpress_casa_v31_draft_slug": "v31-31856a8a43a1-22298915336",
+    "radar_offline_self_tests": 15
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -43,25 +44,26 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C63 — verificar eventos schedule reais Blogger C55/WordPress C60; corrigir planejamento Radar que gerou título de 31 caracteres; reforçar gates editoriais do WordPress universal antes de qualquer novo draft ou LIVE",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C62 PR #84 MERGED e CI #44543354220 PASS; WP Casa 43 publicados +58 rascunhos. GitHub Actions últimos 100 registros não mostram schedule V31 Blogger ou WordPress após C61; Radar schedule #44447410967 falhou fechado por título 31 após 3 tentativas.",
-    "next_safe_step": "Criar checkpoint C63 e examinar código dos geradores/crons, depois patch em branch com testes. Não repetir POST WP 303, não publicar LIVE e não alterar cron sem validar.",
+    "objective": "C63 — Radar recupera planos editoriais curtos sem relaxar gate; WordPress universal bloqueia alegações não verificadas antes do POST; cron diário C55/C60 ainda precisa de observação real",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "PR #85 MERGED commit 06998c96692a5345f911c36c6c883e7495b459f7, CI #44546604810 PASS: 383 V31 +24 Casa +21 Oficina +15 Radar +crossblog. APIs: Blogger Móveis 3 LIVE+1 DRAFT, WP Casa 43 LIVE+58 DRAFT; 0 posts da C63.",
+    "next_safe_step": "C64 observar os primeiros schedule reais de 20/11/2026 após C61/C63 nos cron Blogger 09:18 e WordPress 09:41 Recife; confirmar event=schedule, resultado, quota/SKU e estado remoto. Não repetir os DRAFT Blogger 3612281866616913629 ou WP 303. Radar #44447410967 QUARENTENA; corrigir somente se novo cron mostrar falha, mantendo veto LIVE de itens rejeitados.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44543354220",
+      "https://github.com/adelrib27/blogger-automation1/pull/85",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CONTINUIDADE_ESTADO.json"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C63_CRONS_RADAR_QUALITY_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "Observar primeiro cron real Blogger C55 posterior a C61; não confundir manual com schedule.",
-    "Observar cron WordPress universal C60 (preview por padrão); pedido e credenciais reais específicos exigidos para novo site.",
-    "Radar Tech BR cron #44447410967 falhou por título editorial 31 caracteres após 3 tentativas; melhorar recuperação de plano sem desativar quality gates ou publicar slot em QUARENTENA.",
-    "Revisar gate semântico e qualidade de rascunhos WordPress V31 antes de autorizar qualquer LIVE; post 303 permanece draft.",
-    "Ampliar curadoria R2 dos dois CSV sem aprovação em massa; Runner/tema continua adiado."
+    "Observar primeiro cron real Blogger C55 após articles:null, com 1 DRAFT por execução, SKU novo e publicação LIVE desativada. Próxima janela configurada: 20/11/2026 09:18 Recife.",
+    "Observar cron WordPress C60 programado para 20/11/2026 09:41 Recife (PREVIEW por padrão); confirmar se rodada ou não e não confundir SUCCESS sem POST com novo rascunho.",
+    "Checar próximas execuções Radar Tech BR: a falha #44447410967 veio de título de 31 chars após 3 tentativas; novo retry 35–60 foi testado offline, não homologado por novo cron live. Preservar QUARENTENA.",
+    "Reforçar revisão factual de rascunhos antes de qualquer publicação LIVE; gate C63 impede padrões conhecidos, não garante veracidade total, e WP Casa post 303 segue draft.",
+    "Curadoria segura dos dois CSV Shopee no R2 e universalidade para temas/blogs futuros, sem aprovação em massa nem campanhas inventadas; Runner/tema permanece adiado."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -70,8 +72,8 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44543354220",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
-    "schedule_claim": "Rotinas diárias configuradas; primeiro cron C55 após C61 ainda não observado."
+    "schedule_claim": "Blogger C55 e WordPress C60 têm crons diários configurados; primeira ocorrência depois C61/C63 aguardada em 20/11/2026."
   }
 }
