@@ -22,6 +22,7 @@ import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
+import unicodedata
 from datetime import date
 from pathlib import Path
 
@@ -318,12 +319,77 @@ def select_next(catalog:Catalog, *,site_key:str,topic:str,
             "posts_created":0,"publication_calls":0}
 
 
+def _normalized_editorial_text(value: str) -> str:
+    folded = unicodedata.normalize("NFKD", value.casefold())
+    folded = "".join(ch for ch in folded if not unicodedata.combining(ch))
+    return re.sub(r"\s+", " ", re.sub(r"[^\w]+", " ", folded)).strip()
+
+
+# Padrões deliberadamente conservadores: alegações extraordinárias não
+# comprovadas pelo catálogo são recusadas antes de escrever no WordPress.
+# Um gate regex não é validação factual completa; a publicação LIVE ainda
+# exige aprovação separada.
+_UNSUPPORTED_EDITORIAL_CLAIMS = (
+    r"\b(?:nos testamos|testamos o produto|em nossos testes|comprovamos)\b",
+    r"\b(?:100\s*% seguro|totalmente seguro|seguranca garantida)\b",
+    r"\b(?:antibacterian[oa]s?|bactericidas?|resistente[s]? a bacterias)\b",
+    r"\b(?:garante|garantem)\s+(?:a\s+)?(?:durabilidade|seguranca|resultado)\b",
+    r"\b(?:reduz|economiza|elimina|evita)\w*\b.{0,65}\b(?:tempo|esforco|bacterias|odores|acidentes)\b",
+    r"\b(?:tem se destacado|opcao popular|mais vendido|melhor do mercado)\b",
+    r"\b(?:instalacao|montagem|fixacao)\s+(?:e|ser[aá])\s+(?:facil|simples|segura)\b",
+)
+
+
+def validate_wordpress_paragraphs(paragraphs: list[str], *,
+                                   product_title: str) -> list[str]:
+    """Gate editorial universal de DRAFT, anterior a qualquer POST.
+
+    Confirma estrutura, legibilidade e padrões de risco explícitos.
+    Não finge comprovação factual: qualquer lançamento LIVE requer revisão.
+    """
+    if (not isinstance(paragraphs, list)
+            or not 6 <= len(paragraphs) <= 10
+            or not isinstance(product_title, str)):
+        raise WordPressAutoDraftError("wordpress_editorial_structure_invalid")
+    cleaned = []
+    folded_seen = set()
+    for paragraph in paragraphs:
+        if not isinstance(paragraph, str):
+            raise WordPressAutoDraftError("wordpress_editorial_structure_invalid")
+        text = " ".join(paragraph.split())
+        if not 110 <= len(text) <= 2200:
+            raise WordPressAutoDraftError("wordpress_editorial_paragraph_invalid")
+        fold = _normalized_editorial_text(text)
+        if fold in folded_seen:
+            raise WordPressAutoDraftError("wordpress_editorial_duplicate_paragraph")
+        folded_seen.add(fold)
+        if ("<" in text or ">" in text or "http://" in text.lower()
+                or "https://" in text.lower() or "R$" in text
+                or re.search(r"\bcompre agora\b", fold)):
+            raise WordPressAutoDraftError("wordpress_editorial_html_or_sales")
+        if any(re.search(pattern, fold) for pattern in _UNSUPPORTED_EDITORIAL_CLAIMS):
+            raise WordPressAutoDraftError("wordpress_editorial_claim_unverified")
+        cleaned.append(text)
+    full_text = " ".join(cleaned)
+    if not 420 <= len(full_text.split()) <= 1250:
+        raise WordPressAutoDraftError("wordpress_editorial_word_count_invalid")
+    # Nome comercial exato no corpo não deve virar endosso repetido.
+    # Nomes curtos podem ser linguagem genérica; proteger só títulos
+    # comerciais suficientemente específicos.
+    product_fold = _normalized_editorial_text(product_title)
+    if len(product_fold) >= 40 and product_fold in _normalized_editorial_text(full_text):
+        raise WordPressAutoDraftError("wordpress_editorial_copied_offer_title")
+    return cleaned
+
+
 def compose_article(plan:dict,paragraphs:list[str], *,
                     site_url:str)->str:
     if (plan.get("status")!="READY_FOR_DRAFT_REVIEW"
         or not isinstance(paragraphs,list)
         or not 6<=len(paragraphs)<=10):
         raise WordPressAutoDraftError("original_article_required")
+    paragraphs=validate_wordpress_paragraphs(
+        paragraphs,product_title=str(plan.get("title") or ""))
     headings=[
       "O que considerar antes da escolha","Medidas e espaço disponível",
       "Materiais e manutenção","Uso diário e compatibilidade",
