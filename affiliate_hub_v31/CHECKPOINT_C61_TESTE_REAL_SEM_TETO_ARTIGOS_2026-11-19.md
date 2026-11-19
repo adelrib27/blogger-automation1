@@ -38,3 +38,11 @@
 - **FEITO:** [C61 fila R2 preview #44535072335](https://github.com/adelrib27/blogger-automation1/actions/runs/44535072335): 1 candidato de conversão, 2 ofertas cacheadas já existentes, 0 mutações.
 - **FEITO:** [C61 conversão REAL controlada #44535276120](https://github.com/adelrib27/blogger-automation1/actions/runs/44535276120) SUCCESS: **1 chamada Shopee, 1 link convertido, R2 salvo e read-after-write verificado**, 0 publicações, 12 itens ainda pendentes de curadoria.
 - **PRÓXIMA MUTACÃO REMOTA**: disparar canário no Blogger piloto com `--execute-draft`, APENAS `isDraft=True`, fonte R2; **confirmar no Blogger conectado read-after-write** antes de considerar novo teste, nunca repetir POST cegamente.
+
+
+## C61 canário DRAFT real — achado de qualidade (necessita patch)
+
+- [Workflow C61 #44535723037](https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037) **SUCCESS**: `DRAFT_CREATED`, `draft_creation_calls=1`, `publication_calls=0`, imagem+CTA, campanha correta, após 1 conversão real.
+- Blogger API read-after-write: rascunho ID `3612281866616913629`, título `Guia de compra: Guarda Roupa Casal 6 Portas 2 Gavetas Porto Preto com Escrivaninha`, **3 LIVE + 1 DRAFT**. HTML conferido: imagem/URL Shopee/aviso/CTA presentes.
+- **FALHA parcial de qualidade detectada:** `internal_links_from_real_posts=false`; rascunho contém **0 links internos**. Não chamar E2E comercial completo até corrigir. Possível origem: `_list_posts` Blogger não atribui `status=live` aos posts recuperados pela listagem com filtro `LIVE` quando a API omite a propriedade em cada item.
+- **PRÓXIMA AÇÃO:** corrigir normalização do status no adaptador sem confundir draft com live; regressão fakes, PR+CI, corrigir **o mesmo rascunho** (não criar outro), confirmar dois links internos e status DRAFT via API.
