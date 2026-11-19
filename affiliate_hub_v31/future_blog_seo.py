@@ -159,6 +159,7 @@ def plan_internal_links(
     )
     return {
         "status": status, "links": selected,
+        "verified_site_host": host,
         "verified_published_posts": verified,
         "related_published_posts": len(ranked),
         "recommended_max_links": limit,
@@ -172,6 +173,9 @@ def render_related_links(plan: dict) -> str:
     if not isinstance(plan, dict) or not isinstance(plan.get("links"), list):
         raise FutureSEOError("seo_link_plan_invalid")
     entries = plan["links"]
+    host = plan.get("verified_site_host")
+    if not isinstance(host, str) or not re.fullmatch(r"[a-z0-9.-]+", host):
+        raise FutureSEOError("seo_link_plan_site_missing")
     if not entries:
         return ""
     out = []
@@ -180,7 +184,8 @@ def render_related_links(plan: dict) -> str:
         if (not isinstance(entry, dict) or
                 not isinstance(entry.get("anchor_text"), str) or
                 len(entry["anchor_text"].strip()) < 10 or
-                _url(entry.get("url")) is None):
+                _url(entry.get("url")) is None or
+                _url(entry["url"])[0] != host):
             raise FutureSEOError("seo_link_plan_invalid")
         url = html.escape(entry["url"], quote=True)
         anchor = html.escape(entry["anchor_text"], quote=True)
@@ -331,6 +336,7 @@ def audit_future_article(
             "IMAGE_FILE_BYTES_AND_RENDERED_LCP",
             "CMS_OR_THEME_SCHEMA_AND_META_RENDERED",
             "LIVE_SHOPEE_COMMISSION_STOCK_AND_OFFER",
+            "CATALOG_PRODUCT_IMAGE_SKU_MATCH",
         ],
         "manual_quality_review_required": True,
         "publication_calls": 0,
