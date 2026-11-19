@@ -253,7 +253,7 @@ class WordPressUniversalDraftTests(unittest.TestCase):
         title = m._draft_title(raw)
         self.assertTrue(title.startswith("Guia prático: Escorredor de Louças"))
         self.assertLessEqual(len(title),75)
-        self.assertNotRegex(title.lower(),r"\\b(?:e|de|para|com|em|ou)$")
+        self.assertNotRegex(title.lower(),r"\b(?:e|de|para|com|em|ou)$")
         self.assertNotEqual(title[-1], " ")
         self.assertEqual(m._draft_title("  Vaso   decorativo para sala  "),
                          "Guia prático: Vaso decorativo para sala")
