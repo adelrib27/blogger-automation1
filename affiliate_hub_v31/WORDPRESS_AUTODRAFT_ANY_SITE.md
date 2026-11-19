@@ -6,10 +6,10 @@ O V31 deve aceitar QUALQUER blog WordPress registrado em `site_routes.json` ou `
 
 O proprietário indica nome/tema/plataforma/quantidade. Após existir o WordPress REAL, criar `site_requests.d/<site_key>.json` no esquema que o V31 já usa:
 ```json
-{"site_key":"wordpress_site_real","topic":"assunto solicitado","platform":"wordpress","articles":3,"enabled":true}
+{"site_key":"wordpress_site_real","topic":"assunto solicitado","platform":"wordpress","articles":null,"enabled":true}
 ```
 
-**Este é um EXEMPLO, não uma solicitação real nem um site já cadastrado.** Não adicionar a pasta sem site real do usuário. `articles` representa o limite total de rascunhos criados pelo **escritor WordPress universal** com o prefixo de slug `v31-<hash-da-rota>-`; não substitui nem sobrescreve os 43/12/32 artigos legados dos três WordPress já existentes. Um pedido de novo lote requer aumentar o limite explicitamente.
+**Este é um EXEMPLO, não uma solicitação real nem um site já cadastrado.** Não adicionar a pasta sem site real do usuário. Desde a C61, `articles:null` significa **rascunhos contínuos, sem limite total**; `articles` inteiro entre 1 e 24 continua disponível para pedidos com quantidade finita. Cada execução cria no máximo **um novo rascunho**, com anti-duplicação por identidade do produto e pelo prefixo `v31-<hash-da-rota>-`. Isso não substitui nem sobrescreve os artigos legados de qualquer WordPress já existente. Publicação LIVE exige autorização e fluxo separados.
 
 ## Credenciais WordPress (separadas por site)
 
