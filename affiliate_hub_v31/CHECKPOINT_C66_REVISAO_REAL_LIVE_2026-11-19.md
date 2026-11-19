@@ -50,3 +50,8 @@
 3. **PENDÊNCIA EXTERNA INDEPENDENTE:** `event=schedule` real em GitHub, verificar 20/11 via automação de leitura criada C65; não alegar prova de cron autônomo nesta C66.
 
 **Encerramento operacional C66:** `PRONTO_PARA_APROVACAO_INDIVIDUAL`, `mutation_in_progress=false`, `remote_operation_in_progress=false`, `rollback_needed=false`. Não repetir draft, não publicar em massa, não alterar cron. Atualizar JSON e índice após este checkpoint.
+
+### Continuidade C66 conferida após fechamento
+- Índice `V31_CONTINUAR_AQUI.md` apontando checkpoint C66: commit `deab375580e7aac56bc7a7cf1b80fbe66e9b3911`; [guard #44578481753](https://github.com/adelrib27/blogger-automation1/actions/runs/44578481753) **SUCCESS**.
+- JSON `CONTINUIDADE_ESTADO.json` fechado `C66` `PRONTO_PARA_PROXIMA_ETAPA` no commit `8ef924880fff4ce23cb8ca3156f21b4829a321f2`; [guard #44578599819](https://github.com/adelrib27/blogger-automation1/actions/runs/44578599819) **SUCCESS**. `mutation_in_progress=false`, `remote_operation_in_progress=false`, `rollback_needed=false`.
+- Código e aprovação separados: autorizações LIVE continuam **0**; WordPress Casa #305 está em `draft`; dado comercial R2 verificado, anúncio ao vivo não inspecionado externamente. Nenhuma operação remota pendente. A checagem de agendamentos externos continua marcada para 20/11 10h10 Recife.
