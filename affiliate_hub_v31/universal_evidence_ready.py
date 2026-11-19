@@ -146,9 +146,17 @@ def evidence_whitelist(
             continue
         if e.get("product_key") != product_key or e.get("authorized") is not True:
             continue
+        # approved_host vem do verificador que revisou a URL, NÃO de
+        # heurística em uma URL parecida. Comparar hostname exato.
+        try:
+            actual_host = urlsplit(e.get("source_url")).hostname
+        except (ValueError, TypeError):
+            actual_host = None
         if (e.get("source_kind") != "external" or
                 e.get("review_status") != "AUTHORIZED" or
-                not _external_https(e.get("source_url"))):
+                not _external_https(e.get("source_url")) or
+                not isinstance(e.get("approved_host"), str) or
+                actual_host != e["approved_host"]):
             continue
         try:
             verified = _instant(e.get("checked_utc"), now=clock)
