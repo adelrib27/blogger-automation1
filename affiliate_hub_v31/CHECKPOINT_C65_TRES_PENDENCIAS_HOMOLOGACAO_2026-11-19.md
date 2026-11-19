@@ -18,3 +18,7 @@
 ## Status
 - **FEITO**: JSON C65 prévia antes dos trabalhos.
 - **PENDENTE**: cron programado, auditoria multi-site, gate LIVE, CI/PR, fechamento.
+
+## C65.1 — agendamento real, instrumentação temporária
+- [PR #87](https://github.com/adelrib27/blogger-automation1/pull/87) **MERGED**, merge `0d7b2ac7a4b6b69a013ac84446d9ec895d8deca1`, CI [#44558975514](https://github.com/adelrib27/blogger-automation1/actions/runs/44558975514) SUCCESS. Workflows **permanentes** Blogger e WordPress agora também têm crons de homologação datados para **19/11 15:50/15:55 UTC** e **15:52/15:57 UTC**. Novos horários explicitamente acionam somente DRY_RUN; horários normais seguem 12:18 e 12:41 UTC. Verificar `event=schedule` e log real; se nenhuma ocorrência, marcar não comprovado. Remover linhas temporárias depois.
+- A falha do guard no commit de prévia C65 `4a297fab` é transitória: o ponteiro JSON foi criado antes do checkpoint. O arquivo C65 já existe; verificar novamente no fechamento.
