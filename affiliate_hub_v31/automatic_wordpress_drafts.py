@@ -486,12 +486,25 @@ def run(*,site_key:str,preview_topic:str|None=None,
                 "internal_links":len(plan["related"]),
                 "wordpress_posts_created":0,"publication_calls":0}
         generator=writer or generate_original_paragraphs
-        paragraphs=generator(
-            product_name=plan["title"],topic=topic,
-            account_id=os.getenv("CLOUDFLARE_ACCOUNT_ID",""),
-            api_token=os.getenv("CLOUDFLARE_API_TOKEN",""))
-        content=compose_article(plan,paragraphs,
-            site_url=route["identifier"])
+        # O modelo pode devolver alegação arriscada de forma intermitente.
+        # Só refazer a redação gerada por IA (nunca POST/afiliado/R2);
+        # manter TODOS os gates e recusar após no máximo 3 tentativas.
+        content=None
+        for attempt in range(3 if writer is None else 1):
+            try:
+                paragraphs=generator(
+                    product_name=plan["title"],topic=topic,
+                    account_id=os.getenv("CLOUDFLARE_ACCOUNT_ID",""),
+                    api_token=os.getenv("CLOUDFLARE_API_TOKEN",""))
+                content=compose_article(plan,paragraphs,
+                    site_url=route["identifier"])
+                break
+            except WordPressAutoDraftError as error:
+                if (writer is not None or attempt==2 or
+                        not str(error).startswith("wordpress_editorial_")):
+                    raise
+        if content is None:
+            raise WordPressAutoDraftError("wordpress_editorial_generation_blocked")
         # Evitar corrida com outra execução e alterações durante a geração.
         recent=wp_client.list_posts(include_unpublished=True)
         last=select_next(cat,site_key=site_key,topic=topic,
@@ -548,7 +561,12 @@ def main()->int:
         print(json.dumps(result,sort_keys=True,ensure_ascii=False))
         return 0
     except Exception as error:
-        print("V31_C60_WORDPRESS_SAFE_FAILED_"+type(error).__name__)
+        # Diagnóstico sem revelar body, URL de produto, token ou credenciais.
+        # Erros próprios do writer são somente códigos estáticos controlados.
+        code=str(error) if isinstance(error,WordPressAutoDraftError) else ""
+        if not re.fullmatch(r"[a-z0-9_]{3,100}",code):
+            code=type(error).__name__
+        print("V31_C60_WORDPRESS_SAFE_FAILED_"+code)
         return 3
 
 
