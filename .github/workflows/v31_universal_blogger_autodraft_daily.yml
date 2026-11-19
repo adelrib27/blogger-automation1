@@ -4,6 +4,8 @@ on:
   schedule:
     # Depois da fila comercial de 08:47 Recife; 09:18 Recife.
     - cron: '18 12 * * *'
+    # C65 canário 19/11/2026 UTC SOMENTE DRY_RUN; remover após evidência.
+    - cron: '50,55 15 19 11 *'
   workflow_dispatch:
     inputs:
       site_key:
@@ -57,7 +59,7 @@ jobs:
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
           V31_SITE_KEY: ${{ inputs.site_key || '' }}
-          V31_DRAFT_EXECUTE: ${{ github.event_name == 'schedule' && 'true' || inputs.execute_draft }}
+          V31_DRAFT_EXECUTE: ${{ github.event_name == 'schedule' && github.event.schedule == '18 12 * * *' && 'true' || github.event_name == 'workflow_dispatch' && inputs.execute_draft == true && 'true' || 'false' }}
         shell: bash
         run: |
           set -euo pipefail
