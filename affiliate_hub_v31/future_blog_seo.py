@@ -143,7 +143,7 @@ def plan_internal_links(
         score = 3 * len(matching) + (4 if related_cluster else 0)
         is_pillar = post.get("role") == "pillar" and related_cluster
         if is_pillar:
-            score += 4
+            score += 10
         ranked.append((score, index, title, link,
                        "pillar" if is_pillar else "related"))
     ranked.sort(key=lambda x: (-x[0], x[1]))
