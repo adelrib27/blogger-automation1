@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C65",
-  "continuity_protocol_phase": "C65",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C66",
+  "continuity_protocol_phase": "C66",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
   "last_updated_source": "C65_PR87_88_89_90_91_92_MERGED_CI400_WP305_DRAFT_GH_DISPATCH_OK_SCHEDULE_UNVERIFIED",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C65_TRES_PENDENCIAS_HOMOLOGACAO_2026-11-19.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C66_REVISAO_REAL_LIVE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -54,25 +54,17 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C65 — multi-site Blogger e WordPress com rascunhos contínuos reais homologado; publisher LIVE com aprovação exata por post e preflight real validado; agendamento GitHub event=schedule não entregou corrida comprovada apesar de workflows active e dispatch SAFE aprovado",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "PR87/88/89/90/91/92 MERGED; PR92 CI #44566538648 SUCCESS 400 testes V31, +24 Casa+21 Oficina+15 Radar+crossblog. WP Casa DRAFT 305 criado #44563725746 e auditoria LIVE read-only #44564287283 AWAITING_OWNER_APPROVAL/0 POST; API Casa 43 LIVE+59 DRAFT, Blogger Móveis 3 LIVE+2 DRAFT. Workflows permanentes Blogger #44565485711 e WordPress #44565490738 via workflow_dispatch SUCCESS 0 POST; os seis workflows incluindo legados estão active, mas último schedule repo observado #44451960384 03:30:52Z em 19/11. Artefatos C65 TEMP e crons canários removidos; 3 horários normais preservados.",
-    "next_safe_step": "C66: verificar na checagem read-only já criada para 20/11/2026 10:10 Recife (automation id 6aff240c7e7c819187f63d152c3283d1) se os crons reais R2 08:47, Blogger 09:18 e WordPress 09:41 produziram event=schedule. Se não, investigar scheduler GitHub via suporte ou alternativa externa; não confundir workflow_dispatch. Não repetir DRAFT Blogger 2990403416970116294 nem WP 303/305. LIVE #305 só após revisão factual/comercial e autorização individual real, manifesto SHA e confirmação PUBLISH exata.",
+    "objective": "C66 — revisão factual do WordPress Casa DRAFT305, consertar alinhamento semântico dos H2 no escritor universal, validar gate LIVE read-only sem falsa autorização; cron externo pendente de confirmação no dia 20/11",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C65 DRAFT305 WordPress Casa API= draft; 43 LIVE+59 DRAFT; conteúdo HTML ~6094 chars e oferta comercial SKU R2/CTA/disclosure; falha editorial visível H2 “Materiais e manutenção” cobre estilo, H2 “Perguntas para o anúncio” contém conclusão. Sem consentimento específico para LIVE. Checkpoint C66 prévio criado b430f27.",
+    "next_safe_step": "Preparar revisão de DRAFT305 sem alterar bloco comercial, implementar gate de seção semântica universal e regressões, realizar edição somente DRAFT com readback; testar LIVE read-only novamente. Não criar manifesto owner_authorized:true sem permissão específica nem publicar LIVE.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/88",
-      "https://github.com/adelrib27/blogger-automation1/pull/89",
-      "https://github.com/adelrib27/blogger-automation1/pull/91",
-      "https://github.com/adelrib27/blogger-automation1/pull/92",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44563725746",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44564287283",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44565037642",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44565485711",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44565490738",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44566538648",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C65_TRES_PENDENCIAS_HOMOLOGACAO_2026-11-19.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C66_REVISAO_REAL_LIVE_2026-11-19.md"
     ]
   },
   "next_priorities": [
