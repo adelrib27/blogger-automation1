@@ -1,6 +1,8 @@
 # C70 — verificação schedule real e reparo SAFE da fila universal (19/11/2026)
 
-**ESTADO: EM_ANDAMENTO / PRÉVIA GRAVADA ANTES DE QUALQUER MUDANÇA DE CÓDIGO.**
+**ESTADO: C70 CONCLUÍDA EM SAFE; CRONS BLOGGER/WORDPRESS E ENGENHARIA D1/FACT GATE AINDA PENDENTES.**
+
+*A prévia EM_ANDAMENTO abaixo foi gravada antes de qualquer alteração de código e é preservada como histórico.*
 
 ## Escopo e regras
 Retomada solicitada a partir de `main`, com leitura em ordem de `V31_CONTINUAR_AQUI.md`, `CONTINUIDADE_ESTADO.json` e checkpoint C69. Objetivo: investigar execução real `event=schedule`, corrigir de modo fail-closed apenas defeitos SAFE comprovados, validar testes e preservar estado Blogger, WordPress e `vida_pet_pratica/`. **NÃO publicar LIVE; NÃO repetir conversão Shopee já confirmada; NÃO ativar writer via Evidence/READY C69; NÃO copiar dados pet-specific.**
@@ -35,3 +37,19 @@ Retomada solicitada a partir de `main`, com leitura em ordem de `V31_CONTINUAR_A
 - Após o PR #98, criado canário efêmero `.github/workflows/v31_c70_TEMP_handoff_preview_readonly.yml` com `push` estritamente preso ao commit de criação; sem `--execute`, sem Shopee ou CMS.
 - [Action #44607319448](https://github.com/adelrib27/blogger-automation1/actions/runs/44607319448) **SUCCESS**. Log: 4 testes C70 PASS, `V31_C37_PRIVATE_EDITORIAL_HANDOFF_PASS`; payload resumido `mode=DRY_RUN`, `requests_evaluated=2`, `ready_review_jobs=10`, `conversion_needed=30` (posições dentre até 24 por pedido, NÃO conversões adicionais), `private_envelopes_saved=0`, `catalog_r2_writes=0`, `publication_calls=0`. Confirmada causa corrigida na leitura R2 de produção sem efeitos externos.
 - **Ação SAFE seguinte autorizada pelo escopo:** completar *somente* a etapa lateral já prevista no cron e que falhou: materializar os dois envelopes privados `REVIEW_REQUIRED` no R2 e conferir leitura, sem nova execução do `site_request_queue --execute`, sem Shopee e sem CMS. Gate de exatos dois pedidos reais cadastrados e invariantes de campanha/sem LIVE. Reverter caminho TEMP depois.
+
+
+## C70.3 — recuperação real do handoff, sem novos links ou posts
+
+- Workflow TEMP de escopo restrito por `push` executado uma única vez, preservando mutex `v31-editorial-catalog-single-writer`, com pré-teste de armazenamento e exatos dois pedidos ativos cadastrados.
+- [Action #44607864589](https://github.com/adelrib27/blogger-automation1/actions/runs/44607864589) **SUCCESS**, log `V31_C70_PRIVATE_REVIEW_HANDOFF_READBACK_PASS`, 8 testes isolados PASS: `requests_evaluated=2`, `private_envelopes_saved=2`, `ready_review_jobs=10`, `catalog_r2_writes=0`, `shopee_mutation_attempts=0`, `publication_calls=0`. Os dois envelopes privados foram gravados no R2 como `REVIEW_REQUIRED` e cada um lido de volta com identidade do site e `publication_allowed=false`; sem acesso a WordPress/Blogger/IA nem conversão Shopee. Não foi criada autorização LIVE.
+- **Ambos os workflows TEMP C70 foram removidos de `main`** após homologar, commits `fbac00b8b12bb30355f9a043b9c5727f51cc60f8` e `5c6ed542931cde4fa5a2809c0a8637401bfcabae`. Workflows permanentes não foram alterados nesta C70.
+- CI de patch [#44606961972](https://github.com/adelrib27/blogger-automation1/actions/runs/44606961972) SUCCESS 471 V31+legados; patch [PR #98 MERGED](https://github.com/adelrib27/blogger-automation1/pull/98). Execução inicial `schedule` da fila [#44600350780](https://github.com/adelrib27/blogger-automation1/actions/runs/44600350780) permanece historicamente `failure`; **não alterar seu registro para success**. O defeito foi corrigido no `main` e as etapas de R2 foram homologadas em workflows separados, não por reexecução do `schedule`.
+- **Estado de segurança C70:** zero publicações ou rascunhos criados durante a recuperação, zero novas conversões após as 3 confirmadas no run original; Blogger, WordPress e `vida_pet_pratica/` não foram alterados. Dois envelopes privados de revisão **não** são textos finais, posts, nem permissão LIVE.
+
+## Pendente depois de C70 (não confundir com conclusão acima)
+1. Em **20/11/2026 às 10h10 America/Recife**, a automação de **somente leitura já existente** deve verificar `event=schedule` dos três workflows V31 individualmente (fila 08h47, Blogger 09h18, WordPress 09h41), logs, atrasos e contagens reais nos CMS. Não criar automação duplicada. Fila **já recebeu** um `event=schedule` em 19/11 às 16h38 Recife, mas terminou `failure` antes do patch. Blogger e WordPress V31 ainda aguardam prova `schedule` própria.
+2. Núcleo C69 Evidence/READY permanece SAFE **não conectado aos writers**. Desenhar/implementar adaptador D1 site-specific com atomicidade/lease/locks/idempotência e verificação de fatos no HTML pós-IA sob PR e testes separados, sem usar o banco Pet; só acionar Firecrawl real após verificação de créditos da **mesma credencial GitHub**, orçamento durável e cache miss único medido. Canário CMS será DRAFT individual e protegido, nunca LIVE.
+3. Pedidos `articles:null` permanecem contínuos; o número 24 no handoff é lote local de seleção e o READY mínimo 3 é reserva, ambos **não** constituem teto global. Produtos em REVIEW não devem ser aprovados automaticamente.
+
+**FECHAMENTO C70 SAFE:** correção causal integrada, CI e R2 real comprovados, workflows temporários removidos, pendências externas separadas. `continuity_status=PRONTO_PARA_PROXIMA_ETAPA`, `mutation_in_progress=false`, `remote_operation_in_progress=false`, `rollback_needed=false`.
