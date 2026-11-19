@@ -85,3 +85,9 @@
 **Escopo do produto:** O V31 é universal em código e registro para Blogger e WordPress; cada novo site ainda precisa ser REAL, com rota/campanha/credenciais e pedido, caso contrário falha fechada. Produtos ainda em REVIEW ficam inelegíveis, independentemente de sugestões taxonômicas. A capacidade DRAFT-first do ciclo end-to-end foi comprovada; LIVE irrestrita não faz parte da homologação segura até existir aprovação suficiente.
 
 **Estado recomendado ao encerrar C65:** `PRONTO_PARA_PROXIMA_ETAPA`, nenhum POST/R2 write pendente, sem rollback, logs/códigos de erro preservados. Próximo objetivo C66: observar prova genuína de schedule de 20/11/2026, tratar caso a plataforma não entregue eventos; revisão editorial do DRAFT WP #305 e Blogger antes de aprovar um LIVE real específico, sem inventar consentimento.
+
+### Fechamento do protocolo e readback da `main`
+
+- Índice permanente `V31_CONTINUAR_AQUI.md` aponta C65; JSON `CONTINUIDADE_ESTADO.json` commit `d94f09138124d06b848f7cea79e0d794bf6386ed` indica `PRONTO_PARA_PROXIMA_ETAPA`, nenhum trabalho remoto pendente e rollback `false`. [Continuity guard #44567298884](https://github.com/adelrib27/blogger-automation1/actions/runs/44567298884) **SUCCESS**; guard do índice [#44567159888](https://github.com/adelrib27/blogger-automation1/actions/runs/44567159888) **SUCCESS**.
+- Leitura final da árvore `main`: **zero** workflows/arquivos de gatilho `C65_TEMP` ou `C65_*_MODE`. Apenas os crons permanentes `47 11 * * *` (fila R2), `18 12 * * *` (Blogger), `41 12 * * *` (WordPress). Nenhum writer regular inclui `--publish` ou `status: publish`. A pasta `live_approvals.d/` contém somente README, **zero autorizações LIVE reais**. A proposta de revisão #305 existe separadamente.
+- **Prova ainda não obtida:** `event=schedule` novo, de origem GitHub. O monitor de 20/11 10h10 Recife foi criado, mas sua existência é apenas garantia de leitura futura, não de funcionamento automático da plataforma.
