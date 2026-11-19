@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C65",
   "continuity_protocol_phase": "C65",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C64_R2_3_links_e_Blogger_1_DRAFT_real_sem_esperar_cron_PR86_CI384",
+  "last_updated_source": "C65_PR87_88_89_90_91_92_MERGED_CI400_WP305_DRAFT_GH_DISPATCH_OK_SCHEDULE_UNVERIFIED",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C65_TRES_PENDENCIAS_HOMOLOGACAO_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -33,7 +33,14 @@
     "radar_offline_self_tests": 15,
     "blogger_moveis_second_draft_id": "2990403416970116294",
     "c64_shopee_links_converted_and_r2_verified": 3,
-    "wordpress_casa_c65_draft_post_id": 305
+    "wordpress_casa_c65_draft_post_id": 305,
+    "wordpress_casa_c65_draft_slug": "v31-31856a8a43a1-58259898640",
+    "wordpress_casa_c65_release_review_status": "AWAITING_OWNER_APPROVAL",
+    "c65_permanent_workflow_dispatch_blogger_run": 44565485711,
+    "c65_permanent_workflow_dispatch_wordpress_run": 44565490738,
+    "c65_github_scheduled_repo_last_observed_run": 44451960384,
+    "c65_github_scheduled_repo_last_observed_utc": "2026-11-19T03:30:52Z",
+    "c65_one_time_read_only_schedule_check": "2026-11-20T10:10:00-03:00"
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -47,31 +54,33 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C65 — homologar execução schedule real, abastecimento contínuo multi-blog Blogger/WordPress e fluxo universal de aprovação/publicação LIVE com segurança e testes, sem publicação irrestrita",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C65 PR87/88/89/90/91 MERGED CI400; WordPress Casa PR88 pedido contínuo `articles:null`, API preview #44561958056 READY. WP first attempt #44562234398 fail closed 0 post, diagnóstico #44562743524 101-history/AI/content PASS, patch PR91; #44563725746 SUCCESS DRAFT_CREATED=1/publication_calls=0. Readback API WordPress 43 LIVE +59 DRAFT, novo ID305 com 1 foto, 3 URLs afiliadas, CTA/disclosure/2 links internos. Blogger Móveis 3 LIVE+2 DRAFT.",
-    "next_safe_step": "C65 read-only `manual_live_release` audit do DRAFT WP305 sem manifesto e sem --execute; verificar cron GitHub `event=schedule` (canários 16:15/16:17/16:20/16:22/16:25/16:27 UTC). Remover workflows/arquivos-modo temporários após; finalizar estado e índice. NÃO publicar LIVE sem aprovação por post.",
+    "objective": "C65 — multi-site Blogger e WordPress com rascunhos contínuos reais homologado; publisher LIVE com aprovação exata por post e preflight real validado; agendamento GitHub event=schedule não entregou corrida comprovada apesar de workflows active e dispatch SAFE aprovado",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "PR87/88/89/90/91/92 MERGED; PR92 CI #44566538648 SUCCESS 400 testes V31, +24 Casa+21 Oficina+15 Radar+crossblog. WP Casa DRAFT 305 criado #44563725746 e auditoria LIVE read-only #44564287283 AWAITING_OWNER_APPROVAL/0 POST; API Casa 43 LIVE+59 DRAFT, Blogger Móveis 3 LIVE+2 DRAFT. Workflows permanentes Blogger #44565485711 e WordPress #44565490738 via workflow_dispatch SUCCESS 0 POST; os seis workflows incluindo legados estão active, mas último schedule repo observado #44451960384 03:30:52Z em 19/11. Artefatos C65 TEMP e crons canários removidos; 3 horários normais preservados.",
+    "next_safe_step": "C66: verificar na checagem read-only já criada para 20/11/2026 10:10 Recife (automation id 6aff240c7e7c819187f63d152c3283d1) se os crons reais R2 08:47, Blogger 09:18 e WordPress 09:41 produziram event=schedule. Se não, investigar scheduler GitHub via suporte ou alternativa externa; não confundir workflow_dispatch. Não repetir DRAFT Blogger 2990403416970116294 nem WP 303/305. LIVE #305 só após revisão factual/comercial e autorização individual real, manifesto SHA e confirmação PUBLISH exata.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44552501661",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551595546",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44553367508",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44561958056",
       "https://github.com/adelrib27/blogger-automation1/pull/88",
       "https://github.com/adelrib27/blogger-automation1/pull/89",
       "https://github.com/adelrib27/blogger-automation1/pull/91",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44562743524",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44563725746"
+      "https://github.com/adelrib27/blogger-automation1/pull/92",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44563725746",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44564287283",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44565037642",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44565485711",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44565490738",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44566538648",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C65_TRES_PENDENCIAS_HOMOLOGACAO_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "Comprovar cron agendado real event=schedule (ainda não visto após C61/C64), sem criar rascunhos duplicados nem confundir run push manual; horários normais 09:18 Blogger e 09:41 WordPress Recife, podendo criar canário read-only em outra janela com segurança se indispensável.",
-    "Converter de forma contínua e conservadora novos SKUs já aprovados para cada campanha real conforme site_requests.d (fila C37 08:47 Recife) antes dos writers; a C64 provou 3 conversões e um DRAFT, não abastecimento infinito ou aprovação em massa.",
-    "O WordPress C60 já criou 1 DRAFT Casa na C62, mas a prévia C64 sem pedido WordPress permanente não achou novo SKU aprovado/cacheado para o tema testado; novo pedido real por site e credencial de GitHub continuam pré-requisitos para geração contínua.",
-    "Validar editorial/fact-check de todos DRAFTs antes de LIVE; Blogger C64 repetia título comercial, PR86 corrige gerações futuras. Publicação LIVE geral segue não habilitada/não homologada.",
-    "Observar próximas execuções Radar Tech BR após PR85 e manter quarentena de planos com títulos inválidos. Acervo de 203649 itens e 194370 sob REVIEW não deve sofrer aprovação automática em massa."
+    "Consultar automaticamente SOMENTE em leitura em 20/11/2026 10:10 Recife os três workflows diários V31 e o respectivo event=schedule, logs e efeitos reais: R2 Shopee 08:47, Blogger 09:18, WordPress 09:41. Se GitHub não entregar, status PENDENTE EXTERNO sem alegação falsa de homologação do cron.",
+    "Investigar em conjunto com suporte GitHub/alternativa externa a ausência de event=schedule em vários workflows apesar de estado active; não habilitar legacy LIVE ou executar POST para fazer aparecer cron. Workflows permanentes já provaram workflow_dispatch de preview sem writes.",
+    "Revisão editorial e factual/comercial do WordPress Casa DRAFT #305 conforme REVIEW_LIVE_C65_CASA_305_2026-11-19.md. Publisher manual LIVE só com revisão aprovada pelo proprietário por post, SHA256 do corpo original e confirmação textual; nenhuma autorização automática geral.",
+    "Conservar fila multi-site Blogger Móveis e WordPress Casa contínua (articles:null), 1 DRAFT/run e campanhas próprias; observar seleção de produtos curados R2 em novos ciclos sem aprovação em massa dos 194370 SKUs em REVIEW.",
+    "Observar WordPress legados/Radar com isolamento das automações existentes e gates; Runner/tema somente quando proprietário retomar o assunto."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -80,8 +89,8 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44553367508",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44566538648",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
-    "schedule_claim": "C64 homologou o caminho funcional por event=push sem esperar cron; event=schedule C55/C60 após C61 ainda não observado. Prova separada por próximo disparo agendado."
+    "schedule_claim": "C65: workflows permanentes Blogger e WordPress homologados por event=workflow_dispatch (SUCCESS/DRY_RUN), event=schedule NÂO observado após C61; último schedule de qualquer workflow foi 2026-11-19T03:30:52Z. Automação read-only para 20/11 às 10:10 Recife registrada."
   }
 }
