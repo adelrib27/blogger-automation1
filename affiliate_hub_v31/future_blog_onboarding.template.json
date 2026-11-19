@@ -60,5 +60,31 @@
     "credentials": "STORE_IN_REPOSITORY_SECRETS_ONLY",
     "email_publishing_forbidden": true
   },
-  "article_limit_total": null
+  "article_limit_total": null,
+  "evidence_engine": {
+    "version": "v31-c69-universal-ready-safe",
+    "identity_level_required": "EXACT_PRODUCT",
+    "external_evidence_status": "UNKNOWN",
+    "min_external_authorized_sources": 1,
+    "min_exact_product_claims": 2,
+    "evidence_ttl_days": 7,
+    "facts_whitelist_required": true,
+    "similar_product_spec_transfer_forbidden": true,
+    "research_only_after_credit_confirmation": true,
+    "budget_search_calls_per_lab_run": 2,
+    "budget_http_attempts_per_lab_run": 3,
+    "request_quota_429_circuit_breaker": true
+  },
+  "editorial_buffer": {
+    "status": "SAFE_NOT_DEPLOYED",
+    "min_ready_per_site": 3,
+    "candidate_target": 5,
+    "candidate_attempt_limit": 20,
+    "cooldown_days": 30,
+    "max_editorial_similarity": 0.72,
+    "fingerprint": "site_key+product+keyword+angle",
+    "persistence": "UNKNOWN_NEEDS_D1_OR_ISOLATED_DATABASE",
+    "ready_is_total_article_limit": false,
+    "manual_live_authorization_still_required": true
+  }
 }

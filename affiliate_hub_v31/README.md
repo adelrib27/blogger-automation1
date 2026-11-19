@@ -1,5 +1,11 @@
 # V31 Hub Editorial Shopee — Blogger & WordPress
 
+### C69 — fusão SAFE universal: Evidence Engine, READY, Evergreen e controle de pesquisa (19/11/2026)
+
+A arquitetura experimental documentada no relatório Vida Pet Prática foi **adaptada ao MOTOR UNIVERSAL**, não copiada como blog Pet. [Guia de arquitetura C69](UNIVERSAL_EVIDENCE_READY_ARQUITETURA_C69.md), módulo [universal_evidence_ready.py](universal_evidence_ready.py) e [testes C69](tests/test_c69_universal_evidence_ready.py) usam **qualquer site real Blogger/WordPress da rota**, catálogo/aprovação Shopee V31, campanha exclusiva e SEO C68. Os gates novos exigem identidade exata do SKU, prova externa autorizada com TTL, whitelist de fatos, histórico fingerprint, cooldown30, failover e buffer READY por site, orçamento de 2 buscas/3 HTTP e circuit breaker de 429 (apenas simulador).
+
+**Não confundir:** `READY 3` é reserva operacional por site, **não teto de 3 artigos**; `articles:null` permanece produção sem teto TOTAL. O C69 é código SAFE/offline com SQLite de teste e **não altera produção nem escritores**. Firecrawl/Groq/D1 reais, factual gate em HTML, lock multiworker e publicação via READY continuam pendentes de adaptação específica e autorização. O LAB Vida Pet R28 permanece intocado, WordPress.com privado sem writer/cron. Consulte [checkpoint C69](CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md).
+
 ### C56 — Artigo afiliado V31 completo: foto real, links e CTA + geração Blogger SAFE (18/11/2026)
 
 - **Três posts LIVE** do Blogger Móveis para Cada Canto receberam foto original do produto via URL dos CSVs/R2, CTA Shopee verificado para sua campanha, âncora em palavra-chave, aviso de afiliado e **2 links internos reais por artigo**, confirmados por releitura da Blogger API.
