@@ -4,12 +4,12 @@
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
   "last_checkpoint_phase": "C62",
-  "continuity_protocol_phase": "C62",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "continuity_protocol_phase": "C63",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
   "last_updated_source": "conferencia_github_actions_e_wordpress_c62_final",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C63_CRONS_RADAR_QUALITY_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -43,18 +43,17 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C62 — 1 DRAFT WordPress Casa com read-after-write e reparo de título sem duplicata",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "Action #44542052615 SUCCESS, WordPress Casa post 303 status=draft, 43 LIVE+58 DRAFT, 1 imagem Shopee/CTA/disclosure/2 links internos. Título corrigido no mesmo post após PR #84 e CI #44543354220 376 V31 PASS. Workflow+trigger TEMP removidos.",
-    "next_safe_step": "C63: observar os crons Blogger C55/WordPress C60 reais; diagnosticar falha Radar #44447410967 por título editorial curto sem baixar quality gates; melhorar segurança editorial do writer WP, com DRAFT somente. Nunca repetir post 303.",
+    "objective": "C63 — verificar eventos schedule reais Blogger C55/WordPress C60; corrigir planejamento Radar que gerou título de 31 caracteres; reforçar gates editoriais do WordPress universal antes de qualquer novo draft ou LIVE",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C62 PR #84 MERGED e CI #44543354220 PASS; WP Casa 43 publicados +58 rascunhos. GitHub Actions últimos 100 registros não mostram schedule V31 Blogger ou WordPress após C61; Radar schedule #44447410967 falhou fechado por título 31 após 3 tentativas.",
+    "next_safe_step": "Criar checkpoint C63 e examinar código dos geradores/crons, depois patch em branch com testes. Não repetir POST WP 303, não publicar LIVE e não alterar cron sem validar.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44542052615",
-      "https://github.com/adelrib27/blogger-automation1/pull/84",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44543354220",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CONTINUIDADE_ESTADO.json"
     ]
   },
   "next_priorities": [
