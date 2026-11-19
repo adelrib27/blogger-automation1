@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C66",
   "continuity_protocol_phase": "C66",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C65_PR87_88_89_90_91_92_MERGED_CI400_WP305_DRAFT_GH_DISPATCH_OK_SCHEDULE_UNVERIFIED",
+  "last_updated_source": "C66_PREVIA_LIVE_CASA_WP305_REVISADA_PR93_PR94",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C66_REVISAO_REAL_LIVE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -22,7 +22,7 @@
     "blogger_moveis_live_articles": 3,
     "blogger_moveis_owner_requested_articles": null,
     "commercial_enrichment": "3_artigos_verificados_com_imagem_real_link_afiliado_cta_e_links_internos",
-    "v31_regression_tests": 400,
+    "v31_regression_tests": 407,
     "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar",
     "blogger_moveis_draft_articles": 2,
     "blogger_moveis_draft_id": "3612281866616913629",
@@ -40,7 +40,10 @@
     "c65_permanent_workflow_dispatch_wordpress_run": 44565490738,
     "c65_github_scheduled_repo_last_observed_run": 44451960384,
     "c65_github_scheduled_repo_last_observed_utc": "2026-11-19T03:30:52Z",
-    "c65_one_time_read_only_schedule_check": "2026-11-20T10:10:00-03:00"
+    "c65_one_time_read_only_schedule_check": "2026-11-20T10:10:00-03:00",
+    "wordpress_casa_c66_reviewed_draft_post_id": 305,
+    "wordpress_casa_c66_draft_title": "Como escolher um vaso decorativo âmbar para sua sala",
+    "c66_live_preview": "AWAITING_OWNER_APPROVAL_0_POSTS"
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -54,25 +57,29 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C66 — revisão factual do WordPress Casa DRAFT305, consertar alinhamento semântico dos H2 no escritor universal, validar gate LIVE read-only sem falsa autorização; cron externo pendente de confirmação no dia 20/11",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C65 DRAFT305 WordPress Casa API= draft; 43 LIVE+59 DRAFT; conteúdo HTML ~6094 chars e oferta comercial SKU R2/CTA/disclosure; falha editorial visível H2 “Materiais e manutenção” cobre estilo, H2 “Perguntas para o anúncio” contém conclusão. Sem consentimento específico para LIVE. Checkpoint C66 prévio criado b430f27.",
-    "next_safe_step": "Preparar revisão de DRAFT305 sem alterar bloco comercial, implementar gate de seção semântica universal e regressões, realizar edição somente DRAFT com readback; testar LIVE read-only novamente. Não criar manifesto owner_authorized:true sem permissão específica nem publicar LIVE.",
+    "objective": "C66 — WordPress Casa DRAFT305 com revisão editorial real concluída, writer universal Blogger/WP H2 alinhado PR93, LIVE gate título+HTML e identidade WP PR94, workflow LIVE permanente em PREVIEW #44577760603 SUCCESS; aguarda aprovação INDIVIDUAL do conteúdo e anúncio, sem LIVE",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "PR93 MERGED CI #44576259629 405 testes V31; PR94 MERGED CI #44577475073 407 testes V31+24 Casa+21 Oficina+15 Radar+crossblog PASS. CMS WP Casa DRAFT305 revisado 753 palavras/8 H2 e oferta original SKU R2/3 URLs afiliadas/CTA/disclosure/2 links internos preservada; 43 LIVE+59 DRAFT. Workflow LIVE PERMANENTE #44577760603 workflow_dispatch execute_live=false SUCCESS: AWAITING_OWNER_APPROVAL, content_sha256 ccc848b143a51235dba21b89be4b5dad92c538300678b9b8854347a5297d9b63 título+HTML, approved_sku=true, exact_campaign=true, publication_calls=0, owner_approval_loaded=false. TEMP C66 e trigger excluídos, GitHub live_approvals.d somente README, sem aprovação; Blogger Móveis 3 LIVE+2 DRAFT.",
+    "next_safe_step": "Solicitar autorização INDIVIDUAL do proprietário para WordPress Casa post #305, título 'Como escolher um vaso decorativo âmbar para sua sala', após conferir anúncio atual no site Shopee (destino não acessível por navegador externo). Somente depois de consentimento concreto criar manifesto `wordpress_casa_decoracao__305.json` com SHA C66 e checks verdadeiros, e executar uma única publicação LIVE manual com readback. NÃO inferir consentimento da frase genérica 'pode avançar'. Independente: verificar event=schedule real 20/11/2026 via automação de leitura C65 10:10 Recife. Não repetir DRAFTs WordPress 303/305 ou Blogger.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44563725746",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44564287283",
+      "https://github.com/adelrib27/blogger-automation1/pull/93",
+      "https://github.com/adelrib27/blogger-automation1/pull/94",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44576259629",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44577475073",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44577760603",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/REVIEW_LIVE_C66_CASA_POST305_2026-11-19.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C66_REVISAO_REAL_LIVE_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "Consultar automaticamente SOMENTE em leitura em 20/11/2026 10:10 Recife os três workflows diários V31 e o respectivo event=schedule, logs e efeitos reais: R2 Shopee 08:47, Blogger 09:18, WordPress 09:41. Se GitHub não entregar, status PENDENTE EXTERNO sem alegação falsa de homologação do cron.",
-    "Investigar em conjunto com suporte GitHub/alternativa externa a ausência de event=schedule em vários workflows apesar de estado active; não habilitar legacy LIVE ou executar POST para fazer aparecer cron. Workflows permanentes já provaram workflow_dispatch de preview sem writes.",
-    "Revisão editorial e factual/comercial do WordPress Casa DRAFT #305 conforme REVIEW_LIVE_C65_CASA_305_2026-11-19.md. Publisher manual LIVE só com revisão aprovada pelo proprietário por post, SHA256 do corpo original e confirmação textual; nenhuma autorização automática geral.",
-    "Conservar fila multi-site Blogger Móveis e WordPress Casa contínua (articles:null), 1 DRAFT/run e campanhas próprias; observar seleção de produtos curados R2 em novos ciclos sem aprovação em massa dos 194370 SKUs em REVIEW.",
-    "Observar WordPress legados/Radar com isolamento das automações existentes e gates; Runner/tema somente quando proprietário retomar o assunto."
+    "Aprovação individual verdadeira do proprietário para publicar WordPress Casa post #305 (título e HTML revisados, digest C66), após conferir produto/anúncio atual Shopee; sem manifesto antes desse consentimento e sem LIVE em massa.",
+    "GitHub Actions event=schedule: consultar no monitor read-only de 20/11 às 10h10 Recife os crons R2 08h47, Blogger 09h18, WordPress 09h41; não confundir workflow_dispatch com schedule nem reexecutar writers automaticamente.",
+    "Preservar no WordPress Casa 43 LIVE +59 DRAFT (incluindo 303 e 305) e no Blogger Móveis 3 LIVE +2 DRAFT; não gerar duplicatas ou publicar conteúdos não aprovados.",
+    "Manter biblioteca universal R2 dos dois CSVs e campanhas individuais sem limite TOTAL de artigos; revisão de SKUs continua fail-closed, apenas aprovados/com foto/afiliado real elegíveis.",
+    "Monitorar Radar Tech BR/legados após PR85; não suprimir quarentena, não mexer em Pins/tema/Worker v1.0 enquanto escopo editorial não requerer."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
