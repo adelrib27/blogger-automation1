@@ -263,6 +263,46 @@ class WordPressUniversalDraftTests(unittest.TestCase):
         self.assertRaises(m.WordPressAutoDraftError,
                           m._draft_title,"PalavraSemEspacos"*20)
 
+    def test_wp_editorial_gate_accepts_distinct_cautious_paragraphs(self):
+        result=m.validate_wordpress_paragraphs(paras(),product_title=TITLE)
+        self.assertEqual(len(result),8)
+
+    def test_wp_editorial_gate_rejects_duplicate_before_post(self):
+        wp=FakeWP()
+        invalid=lambda **kwargs: [paras()[0]]*8
+        with Catalog(self.dbpath) as cat:
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                        "duplicate_paragraph"):
+                m.run(site_key=KEY,execute_draft=True,wp_client=wp,
+                      writer=invalid,catalog=cat)
+        self.assertEqual(wp.writes,[])
+
+    def test_wp_editorial_gate_rejects_unverified_claim_before_post(self):
+        wp=FakeWP()
+        def invalid(**kwargs):
+            rows=paras()
+            rows[0]+=" Materiais resistentes a bactérias impedem odores."
+            return rows
+        with Catalog(self.dbpath) as cat:
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                        "claim_unverified"):
+                m.run(site_key=KEY,execute_draft=True,wp_client=wp,
+                      writer=invalid,catalog=cat)
+        self.assertEqual(wp.writes,[])
+
+    def test_wp_editorial_gate_rejects_unverified_product_title_and_html(self):
+        unsafe=paras()
+        long_title="Escorredor de Louças Dobrável Compacto Plástico Resistente Dr Util"
+        unsafe[2]+=" O produto é "+long_title+"."
+        with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                    "copied_offer_title"):
+            m.validate_wordpress_paragraphs(unsafe,product_title=long_title)
+        unsafe=paras()
+        unsafe[1]+=' <a href="https://exemplo.com">Comprar</a>'
+        with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                    "html_or_sales"):
+            m.validate_wordpress_paragraphs(unsafe,product_title=TITLE)
+
     def test_rest_client_posts_only_draft(self):
         client=m.WordPressRestClient(base_url=HOME,
             username="editor",application_password="fake-test-secret")
