@@ -1,0 +1,32 @@
+name: V31 C66 TEMP — testar workflow LIVE permanente SOMENTE PREVIEW
+on:
+  push:
+    paths:
+      - 'affiliate_hub_v31/C66_PREVIEW_MODE.txt'
+permissions:
+  contents: read
+  actions: write
+jobs:
+  dispatch-safe-preview:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirmar modo read-only, acionar LIVE workflow com execute_live=false
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$(cat affiliate_hub_v31/C66_PREVIEW_MODE.txt)" == "preview_only_305" ]] || exit 3
+          payload='{"ref":"main","inputs":{"site_key":"wordpress_casa_decoracao","post_id":"305","execute_live":"false","confirm_exact_post":""}}'
+          code=$(curl -sS --max-time 25 -o /tmp/v31-c66-dispatch.json -w '%{http_code}' \
+            -X POST -H "Authorization: Bearer $GH_TOKEN" \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'Content-Type: application/json' \
+            -d "$payload" \
+            "https://api.github.com/repos/adelrib27/blogger-automation1/actions/workflows/v31_manual_live_release.yml/dispatches")
+          echo "V31_C66_LIVE_PERMANENT_PREVIEW_DISPATCH_HTTP_$code"
+          [[ "$code" == "204" ]] || exit 4
+          echo 'V31_C66_RELEASE_DRY_RUN_ONLY_NO_OWNER_APPROVAL_NO_PUBLICATION'
