@@ -28,3 +28,13 @@
 ## Marcos
 - **FEITO:** prévia C61 gravada com pedido e estado inicial.
 - **PENDENTE:** commits de código, CI, prova do teste real, encerramento.
+
+
+## Marcos adicionais — evidência conectada
+
+- **FEITO:** [PR #81](https://github.com/adelrib27/blogger-automation1/pull/81) MERGED commit `ede7a41001c40840f80900112d33ce6f43f7f5c6`: `articles:null` para Blogger e WordPress; piloto mudou de 3 para contínuo, mantendo modo DRAFT, limite por ciclo e anti-repetição.
+- **FEITO:** [CI C61 #44534635387](https://github.com/adelrib27/blogger-automation1/actions/runs/44534635387) SUCCESS, testes regressivos.
+- **FEITO:** [C61 Blogger PREVIEW real #44534753873](https://github.com/adelrib27/blogger-automation1/actions/runs/44534753873) PASS de execução, status `NO_VERIFIED_CAMPAIGN_PRODUCT_YET` (3 LIVE, nenhum novo SKU cacheado), 0 posts.
+- **FEITO:** [C61 fila R2 preview #44535072335](https://github.com/adelrib27/blogger-automation1/actions/runs/44535072335): 1 candidato de conversão, 2 ofertas cacheadas já existentes, 0 mutações.
+- **FEITO:** [C61 conversão REAL controlada #44535276120](https://github.com/adelrib27/blogger-automation1/actions/runs/44535276120) SUCCESS: **1 chamada Shopee, 1 link convertido, R2 salvo e read-after-write verificado**, 0 publicações, 12 itens ainda pendentes de curadoria.
+- **PRÓXIMA MUTACÃO REMOTA**: disparar canário no Blogger piloto com `--execute-draft`, APENAS `isDraft=True`, fonte R2; **confirmar no Blogger conectado read-after-write** antes de considerar novo teste, nunca repetir POST cegamente.
