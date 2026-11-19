@@ -112,6 +112,7 @@ class WordPressRestClient:
             url,headers=headers,method=method,data=data)
         try:
             with urllib.request.urlopen(request,timeout=35) as resp:
+                self._last_wp_total_pages=resp.headers.get("X-WP-TotalPages")
                 payload=json.loads(resp.read().decode("utf-8","replace"))
         except Exception as exc:
             # Não imprimir senha, URL completa, headers nem corpo.
@@ -135,19 +136,39 @@ class WordPressRestClient:
             raise WordPressAutoDraftError("wordpress_credentials_required")
         statuses="publish,draft,pending,private,future" if include_unpublished else "publish"
         result=[]
+        expected_pages=None
         for page in range(1,21):
+            # A API pode devolver EXATAMENTE 100 posts em uma única página.
+            # Um lote cheio não implica outra página: conferir total REST.
+            self._last_wp_total_pages=None
             q=urllib.parse.urlencode({
                 "status":statuses,"per_page":100,"page":page,
                 "context":"edit" if include_unpublished else "view",
             })
             batch=self._call("GET","/wp-json/wp/v2/posts?"+q)
-            if not isinstance(batch,list):
-                raise WordPressAutoDraftError("wordpress_posts_schema_invalid")
-            if any(not isinstance(post,dict) for post in batch):
+            if (not isinstance(batch,list) or len(batch)>100 or
+                any(not isinstance(post,dict) for post in batch)):
                 raise WordPressAutoDraftError("wordpress_posts_schema_invalid")
             result.extend(batch)
-            if len(batch)<100:
+            raw_pages=self._last_wp_total_pages
+            if raw_pages is not None:
+                try:
+                    pages=int(raw_pages)
+                except (ValueError,TypeError):
+                    raise WordPressAutoDraftError("wordpress_pages_invalid") from None
+                if (pages<1 or pages>20 or page>pages or
+                    (expected_pages is not None and pages!=expected_pages)):
+                    raise WordPressAutoDraftError("wordpress_pages_invalid")
+                expected_pages=pages
+                if page==pages:
+                    return result
+                if len(batch)!=100:
+                    raise WordPressAutoDraftError("wordpress_pages_incomplete")
+            elif len(batch)<100:
                 return result
+            else:
+                # Não arriscar duplicação com histórico incompleto.
+                raise WordPressAutoDraftError("wordpress_pagination_unverified")
         raise WordPressAutoDraftError("wordpress_posts_pagination_limit")
 
     def get_post(self,post_id:int)->dict:
