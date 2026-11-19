@@ -25,3 +25,8 @@
 - Nenhum LIVE na C67 até readback positivo. Nenhuma edição de título/HTML após aprovação sem novo digest.
 - Não ativar `publish_enabled` global nem editar outros blogs/links/CSV.
 - Motivo de qualquer bloqueio será registrado com status `PENDENTE` e readback, nunca simular sucesso.
+
+## C67.1 — manifesto de aprovação REAL e conferência pré-POST
+- API WordPress antes de qualquer publicação: **#305 = draft**, título exato “Como escolher um vaso decorativo âmbar para sua sala”, slug `v31-31856a8a43a1-58259898640`, 7249 caracteres, SKU exato, fotografia, link afiliado, CTA e disclosure presentes. Nenhum run Actions prévio estava executando.
+- Manifesto criado **uma única vez** em `live_approvals.d/wordpress_casa_decoracao__305.json`, commit [`efabd77941d4bccf0cc2e375429b968b84b7078f`](https://github.com/adelrib27/blogger-automation1/commit/efabd77941d4bccf0cc2e375429b968b84b7078f). `owner_authorized=true` apoiado pelo “sim! Autorizo” do proprietário ao post específico. `editorial_reviewed=true` pela revisão manual C66; `commercial_reviewed=true` limitado à prova do SKU na Shopee, redirecionamento para mesmo SKU e programa afiliado cadastrado em R2 (antibot Shopee impediu checkout; não inferir comissão ou estoque). `approved_utc=2026-11-19T17:58:58.214Z`; `content_sha256=ccc848b143a51235dba21b89be4b5dad92c538300678b9b8854347a5297d9b63` (título+HTML conforme PR94).
+- **NÃO PUBLICADO AINDA** ao gravar manifesto: a publicação exige execução separada do workflow manual, confirmação literal e readback CMS. Próxima mutação: dispatch de execução individual apenas.
