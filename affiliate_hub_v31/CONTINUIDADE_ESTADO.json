@@ -39,8 +39,8 @@
   "active_work": {
     "objective": "C62 — completar um canário autenticado de 1 novo RASCUNHO real WordPress Casa e Decoração, sem publicar LIVE, sem duplicar e com verificação REST",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C62 preview WordPress Casa #44539669937 SUCCESS: identidade REST, 100 posts (43 publicados + 57 rascunhos), 1 SKU novo elegível na campanha R2 Casa, 0 POST; PR #83 paginacao MERGED e CI #44539480674 PASS.",
-    "next_safe_step": "Verificar primeiro que workflow C62 modo execute_draft ainda não foi disparado; autorizar somente 1 POST DRAFT via trigger C62, conferir run e GET de status, se resposta inconclusiva NÃO repetir POST sem investigar WordPress.",
+    "latest_verified_step": "C62 1 POST DRAFT WordPress Casa DISPARADO, ainda não confirmado: Action #44542052615 job 135622693623 in_progress; regressões PASS, antes do POST WordPress 43 publicados+57 drafts. Radar #44447410967 bloqueado por título 31 chars após 3 tentativas; 0 posts confirmados.",
+    "next_safe_step": "Consultar Action C62 #44542052615 (NÃO disparar novamente); depois confirmar WordPress Casa 1 draft slug v31-* com conteúdo, produto, status draft, 43 publicados. Se failure, pesquisar posts no destino antes de qualquer retry. Remover workflow/trigger temporários depois.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": true,
     "rollback_needed": false,
@@ -49,7 +49,9 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44412775615",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44539669937",
-      "https://github.com/adelrib27/blogger-automation1/pull/83"
+      "https://github.com/adelrib27/blogger-automation1/pull/83",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44542052615",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967"
     ]
   },
   "next_priorities": [
