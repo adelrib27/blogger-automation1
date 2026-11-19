@@ -28,3 +28,10 @@ O usuário enviou `RELATORIO_MESTRE_VIDA_PET_PRATICA_CONTINUIDADE_2026-11-19.md`
 
 ## Limitações
 O PDF e o MD são duas representações do mesmo relatório; conteúdo de tabelas, figuras e riscos considerado pelo arquivo Markdown recebido. Vida Pet WordPress.com Simple é privado/não lançado e **fora do escopo de escrita**. Status lab R28 ≠ implantação editorial V31 de produção. Não inferir crédito Firecrawl ou declarar teste de cache miss real sem evidência.
+
+## C69.1 — primeiro núcleo universal aprovado, independente de cron
+- [PR #96 MERGED](https://github.com/adelrib27/blogger-automation1/pull/96), merge `7c6bfde9e31eea515f7567ad4d5b7cfe0784cc0d`. [CI #44598058674](https://github.com/adelrib27/blogger-automation1/actions/runs/44598058674) **SUCCESS**: **459 testes V31** (32 novos C69) + Casa 24/24 + Oficina 21/21 + Radar 15/15 + crossblog PASS. Nenhum writer/cron/R2/D1/LAB existente editado.
+- Módulo `universal_evidence_ready.py` valida catálogo real injetado `Catalog` (moderação, foto, campanha exata), SEO real C68 de fixture, pacote de evidência exato/autorizado/TTL, failover, anti-dup, cooldown30, READY min3/por site e SearchBudget 2/3 com 429 em simulador; **0 publicação, 0 rede**.
+- [Guia de arquitetura](UNIVERSAL_EVIDENCE_READY_ARQUITETURA_C69.md) e template C68 com Evidence/READY documentados; `vida_pet_pratica/` mantém R28 sem escrita ou cron.
+- **Nova evidência externa relevante ao scheduler:** em 19/11 foram observadas execuções `event=schedule` **de workflows legados** (Radar Tech BR fila #44593351294 SUCCESS, sombra V31 C8 #44595622511 SKIPPED conforme configuração, Radar Editorial #44597661599 FAILURE). Logo GitHub **consegue entregar alguns schedules do repo**; isso não demonstra os três crons novos V31, cuja homologação específica segue para 20/11. Não declarar problema global de scheduler como causa conclusiva.
+- **Extensão SAFE C69.2 ainda por implementar:** persistência local de cache de evidência com reuso entre sessões e TTL que não é renovado ao ler, mais testes; nenhuma obrigação de API/conta real nesta fase.
