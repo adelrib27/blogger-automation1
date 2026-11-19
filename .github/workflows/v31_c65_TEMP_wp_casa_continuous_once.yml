@@ -47,6 +47,10 @@ jobs:
             echo 'V31_C65_CASA_WP_SINGLE_DRAFT_START_NO_LIVE'
             python -m affiliate_hub_v31.automatic_wordpress_drafts --site-key wordpress_casa_decoracao --execute-draft
             echo 'V31_C65_CASA_WP_SINGLE_DRAFT_COMPLETE_NO_LIVE'
+          elif [[ "$mode" == "live_preview_305" ]]; then
+            echo 'V31_C65_LIVE_RELEASE_REAL_WP_DRAFT_READ_ONLY_START'
+            python -m affiliate_hub_v31.manual_live_release --site-key wordpress_casa_decoracao --post-id 305
+            echo 'V31_C65_LIVE_RELEASE_REAL_WP_DRAFT_READ_ONLY_COMPLETE_ZERO_PUBLICATIONS'
           elif [[ "$mode" == "diagnose_readonly" ]]; then
             echo 'V31_C65_WP_DIAGNOSTIC_READ_ONLY_START'
             python - <<'PY'
