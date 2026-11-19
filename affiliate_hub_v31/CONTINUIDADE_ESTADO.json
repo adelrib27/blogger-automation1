@@ -3,11 +3,11 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C61",
+  "last_checkpoint_phase": "C62",
   "continuity_protocol_phase": "C62",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "conferencia_conectada_github_2026-11-19_c62_preview_validado",
+  "last_updated_source": "conferencia_github_actions_e_wordpress_c62_final",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -22,10 +22,14 @@
     "blogger_moveis_live_articles": 3,
     "blogger_moveis_owner_requested_articles": null,
     "commercial_enrichment": "3_artigos_verificados_com_imagem_real_link_afiliado_cta_e_links_internos",
-    "v31_regression_tests": 372,
+    "v31_regression_tests": 376,
     "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar",
     "blogger_moveis_draft_articles": 1,
-    "blogger_moveis_draft_id": "3612281866616913629"
+    "blogger_moveis_draft_id": "3612281866616913629",
+    "wordpress_casa_published_posts": 43,
+    "wordpress_casa_draft_posts": 58,
+    "wordpress_casa_v31_draft_post_id": 303,
+    "wordpress_casa_v31_draft_slug": "v31-31856a8a43a1-22298915336"
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -34,32 +38,31 @@
     "automatic_live_publication_enabled": false,
     "wordpress_v31_publisher_end_to_end_verified": false,
     "runner_lab_fix_deployed_on_windows": false,
-    "provisional_theme_installed_verified_independently": false
+    "provisional_theme_installed_verified_independently": false,
+    "wordpress_v31_draft_writer_end_to_end_verified": true,
+    "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C62 — completar um canário autenticado de 1 novo RASCUNHO real WordPress Casa e Decoração, sem publicar LIVE, sem duplicar e com verificação REST",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C62 1 POST DRAFT WordPress Casa DISPARADO, ainda não confirmado: Action #44542052615 job 135622693623 in_progress; regressões PASS, antes do POST WordPress 43 publicados+57 drafts. Radar #44447410967 bloqueado por título 31 chars após 3 tentativas; 0 posts confirmados.",
-    "next_safe_step": "Consultar Action C62 #44542052615 (NÃO disparar novamente); depois confirmar WordPress Casa 1 draft slug v31-* com conteúdo, produto, status draft, 43 publicados. Se failure, pesquisar posts no destino antes de qualquer retry. Remover workflow/trigger temporários depois.",
+    "objective": "C62 — 1 DRAFT WordPress Casa com read-after-write e reparo de título sem duplicata",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "Action #44542052615 SUCCESS, WordPress Casa post 303 status=draft, 43 LIVE+58 DRAFT, 1 imagem Shopee/CTA/disclosure/2 links internos. Título corrigido no mesmo post após PR #84 e CI #44543354220 376 V31 PASS. Workflow+trigger TEMP removidos.",
+    "next_safe_step": "C63: observar os crons Blogger C55/WordPress C60 reais; diagnosticar falha Radar #44447410967 por título editorial curto sem baixar quality gates; melhorar segurança editorial do writer WP, com DRAFT somente. Nunca repetir post 303.",
     "mutation_in_progress": false,
-    "remote_operation_in_progress": true,
+    "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44412775615",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44535723037",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44539669937",
-      "https://github.com/adelrib27/blogger-automation1/pull/83",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44542052615",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967"
+      "https://github.com/adelrib27/blogger-automation1/pull/84",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44543354220",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C62_WORDPRESS_REAL_DRAFT_ONCE_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "Observar cron Blogger C55 posterior a C61 e ciclo sem teto total (articles:null), mantendo DRAFT, anti-repetição e estoque afiliado real em R2.",
-    "Testar primeiro POST autenticado de DRAFT WordPress C60 com pedido real e credenciais de site registradas no GitHub, mantendo 0 LIVE por teste.",
-    "Diagnosticar cron Radar Tech BR 44447410967 que falhou na confirmação de publicação sem afrouxar os gates.",
-    "Manter acervo universal R2 dos 2 CSVs e ampliar curadoria segura de REVIEW, sem aprovação em massa.",
-    "Retomar Runner/tema somente se proprietário solicitar."
+    "Observar primeiro cron real Blogger C55 posterior a C61; não confundir manual com schedule.",
+    "Observar cron WordPress universal C60 (preview por padrão); pedido e credenciais reais específicos exigidos para novo site.",
+    "Radar Tech BR cron #44447410967 falhou por título editorial 31 caracteres após 3 tentativas; melhorar recuperação de plano sem desativar quality gates ou publicar slot em QUARENTENA.",
+    "Revisar gate semântico e qualidade de rascunhos WordPress V31 antes de autorizar qualquer LIVE; post 303 permanece draft.",
+    "Ampliar curadoria R2 dos dois CSV sem aprovação em massa; Runner/tema continua adiado."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -68,7 +71,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44536428588",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44543354220",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "Rotinas diárias configuradas; primeiro cron C55 após C61 ainda não observado."
   }
