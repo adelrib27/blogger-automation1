@@ -206,6 +206,35 @@ def validate_generated_paragraphs(text:str,*,keyword:str,product_name:str="")->l
     return [" ".join(p.split()) for p in paragraphs]
 
 
+# Sequência universal: corresponde à ordem obrigatória do prompt Workers AI.
+EDITORIAL_EIGHT_HEADINGS = (
+    "O que observar antes da escolha",
+    "Medidas e espaço disponível",
+    "Compatibilidade com o ambiente e o uso",
+    "Materiais e acabamento",
+    "Cuidados e manutenção",
+    "Erros comuns na escolha",
+    "Como conferir as informações do anúncio",
+    "Conclusão",
+)
+
+
+def editorial_headings(count: int) -> tuple[str, ...]:
+    """O último parágrafo é conclusivo, nunca um checklist ou perguntas."""
+    if type(count) is not int or not 6 <= count <= 10:
+        raise AutoDraftError("editorial_headings_count_invalid")
+    if count <= 8:
+        return EDITORIAL_EIGHT_HEADINGS[:count - 1] + ("Conclusão",)
+    if count == 9:
+        return EDITORIAL_EIGHT_HEADINGS[:7] + (
+            "Checklist antes da compra", "Conclusão",
+        )
+    return EDITORIAL_EIGHT_HEADINGS[:7] + (
+        "Dúvidas para confirmar com o vendedor",
+        "Checklist antes da compra", "Conclusão",
+    )
+
+
 def generate_original_paragraphs(*,product_name:str,topic:str,
                                  account_id:str,api_token:str)->list[str]:
     if not account_id.strip() or not api_token.strip():
@@ -215,10 +244,15 @@ def generate_original_paragraphs(*,product_name:str,topic:str,
         "Redija um guia de compra original, educativo e prudente em "
         "português do Brasil sobre o assunto a seguir. Produza JSON puro "
         'exatamente {"paragraphs":["...",...]}, sem Markdown e sem HTML. '
-        "Escreva 7 a 9 parágrafos independentes de pelo menos 70 palavras "
-        "cada, total 500 a 900 palavras, abordando identificação da "
-        "necessidade, medidas, compatibilidade, materiais, cuidados, "
-        "erros comuns, avaliação do anúncio e conclusão. Não invente "
+        "Escreva EXATAMENTE 8 parágrafos independentes de pelo menos "
+        "70 palavras cada, total 500 a 900 palavras. Cada parágrafo deve "
+        "cobrir APENAS sua seção, na ORDEM OBRIGATÓRIA: "
+        "1) objetivo e necessidade; 2) medidas e espaço disponível; "
+        "3) compatibilidade com o ambiente e o uso; 4) materiais e "
+        "acabamento; 5) cuidados e manutenção; 6) erros comuns; "
+        "7) como conferir as informações do anúncio; 8) conclusão. "
+        "Não troque a posição das seções nem antecipe a conclusão. "
+        "Não invente "
         "preço, descontos, avaliações, estoque, especificações não "
         "informadas, certificados, relatos pessoais ou marcas distintas. "
         "Não insira links nem chamadas para comprar (serão agregados "
@@ -244,7 +278,7 @@ def generate_original_paragraphs(*,product_name:str,topic:str,
              "type":"object",
              "properties":{"paragraphs":{
                 "type":"array","items":{"type":"string"},
-                "minItems":7,"maxItems":9,
+                "minItems":8,"maxItems":8,
              }},
              "required":["paragraphs"],
           },
@@ -268,18 +302,7 @@ def compose_draft_html(plan:dict,paragraphs:list[str],*,
         published_posts,blog_home_url=blog_home_url,
         current_title=plan["title"],limit=2)
     links=related_articles_html(related,blog_home_url=blog_home_url)
-    headings=(
-        "O que observar antes de escolher",
-        "Medidas e instalação no ambiente",
-        "Materiais e acabamento",
-        "Funcionalidade no uso diário",
-        "Cuidados e manutenção",
-        "Como comparar anúncios com atenção",
-        "Erros comuns na escolha",
-        "Checklist para tomar uma decisão",
-        "Perguntas para confirmar com o vendedor",
-        "Conclusão",
-    )
+    headings=editorial_headings(len(paragraphs))
     blocks=[]
     for i,text in enumerate(paragraphs):
         blocks.append("<h2>"+html.escape(headings[i])+"</h2><p>"+
