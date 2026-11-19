@@ -17,6 +17,8 @@ Formato `<site_key>__<post_id>.json` (EXEMPLO INVÁLIDO ATÉ QUE SEJA INSPECIONA
 }
 ```
 
+**C66:** o campo `content_sha256` deve ser o SHA-256 (UTF-8) de `título decodificado + "\\n" + HTML bruto`, exatamente conforme a API autenticada do CMS. Não é mais somente o checksum do HTML. Isso evita que uma alteração de título passe por uma aprovação anterior. O workflow de PREVIEW fornece o hash correto atual, mas **não** cria nem autoriza o manifesto automaticamente. Se o título ou corpo mudar, o hash precisa ser recalculado após nova revisão.
+
 A pessoa responsável precisa conferir título, texto integral, factualidade, produto/imagem, disclosure, link convertido na campanha EXATA, URLs internas e limites de nicho. O SHA256 deve corresponder ao HTML bruto recuperado por API autenticada no momento da aprovação. Definir as três revisões verdadeiras, só depois de sua realização. Alterar o DRAFT depois invalida o manifesto. No workflow, informar `site_key`, `post_id`, marcar `execute_live` e digitar exatamente `PUBLISH:<site_key>:<post_id>`. Sem manifesto aprovado, tudo é DRY_RUN ou BLOQUEADO.
 
 A publicação LIVE não é um cron diário, não altera `publish_enabled=false` no cadastro V31 nem habilita publicações em massa. O escritor continua produzindo apenas rascunhos. Um erro após a tentativa de publicação exige leitura remota manual antes de tentar novamente.

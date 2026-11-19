@@ -23,6 +23,7 @@ from .automatic_blogger_drafts import (
 )
 from .automatic_wordpress_drafts import (
     WordPressRestClient, credentials_for, validate_wordpress_paragraphs,
+    _verify_blog_url,
 )
 from .catalog import Catalog
 from .r2_state import R2State, verify_database
@@ -106,6 +107,12 @@ def _title(post: dict, platform: str) -> str:
     return html.unescape(val)
 
 
+def _approval_digest(post: dict, platform: str) -> str:
+    """Hash do TÍTULO + HTML bruto: mudar qualquer um cancela a aprovação."""
+    payload = _title(post, platform) + "\n" + _content(post, platform)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 def _plain(value: str) -> str:
     return html.unescape(re.sub(r"<[^>]+>", " ", value)).strip()
 
@@ -157,7 +164,7 @@ def audit_draft(post: dict, *, route: dict, catalog: Catalog) -> dict:
         "post_id": str(post["id"]),
         "site_key": route["site_key"],
         "platform": platform,
-        "content_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
+        "content_sha256": _approval_digest(post, platform),
         "approved_sku": True,
         "exact_campaign": True,
         "sections": len(paragraphs),
@@ -186,7 +193,10 @@ def preview_or_publish(*, site_key: str, post_id: str,
             wp_client = WordPressRestClient(
                 base_url=route["identifier"], username=username,
                 application_password=password)
-        wp_client.site_settings()
+        settings = wp_client.site_settings()
+        if (not isinstance(settings, dict) or
+                not _verify_blog_url(settings.get("url"), route["identifier"])):
+            raise LiveReleaseError("release_wordpress_site_identity_mismatch")
         post = wp_client.get_post(int(post_id))
     else:
         service = blogger_service or _get_blogger_service()
@@ -229,8 +239,7 @@ def preview_or_publish(*, site_key: str, post_id: str,
                                     postId=post_id).execute()
         correct_status = str(after.get("status", "")).lower() == "live"
     if (not correct_status or str(after.get("id")) != post_id or
-            hashlib.sha256(_content(after, route["platform"]).encode("utf-8")).hexdigest()
-            != a["content_sha256"]):
+            _approval_digest(after, route["platform"]) != a["content_sha256"]):
         # Não fazer retry automático: o POST pode ter aplicado parcialmente.
         raise LiveReleaseError("release_readback_requires_manual_investigation")
     return {**audit, "status": "LIVE_CONFIRMED", "publication_calls": 1,

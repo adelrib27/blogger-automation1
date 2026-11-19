@@ -62,8 +62,9 @@ class FakeWP:
             "slug": "v31-test", "content": {"raw": content or article()},
         }
         self.writes = []
+        self.url = WP_URL
     def site_settings(self):
-        return {"url": WP_URL}
+        return {"url": self.url}
     def get_post(self, post_id):
         assert post_id == 303
         return {**self.post, "content": dict(self.post["content"])}
@@ -115,7 +116,8 @@ class LiveGateTests(unittest.TestCase):
             "site_key": site, "platform": route["platform"],
             "post_id": post_id,
             "content_sha256": sha_override or hashlib.sha256(
-                (content or article()).encode()).hexdigest(),
+                ("Guia de compra: vaso decorativo para sua sala" + "\n" +
+                 (content or article())).encode()).hexdigest(),
             "approved_utc": "2026-11-18T12:00:00Z",
             "owner_authorized": True, "editorial_reviewed": True,
             "commercial_reviewed": True,
@@ -132,12 +134,38 @@ class LiveGateTests(unittest.TestCase):
         self.assertEqual(result["status"], "AWAITING_OWNER_APPROVAL")
         self.assertEqual(result["publication_calls"], 0)
         self.assertEqual(result["content_sha256"],
-                         hashlib.sha256(article().encode()).hexdigest())
+                         hashlib.sha256((
+                             "Guia de compra: vaso decorativo para sua sala" +
+                             "\n" + article()).encode()).hexdigest())
         self.assertEqual(wp.writes, [])
 
     def test_missing_owner_approval_fails_before_wp_post(self):
         wp = FakeWP()
         with self.assertRaisesRegex(live.LiveReleaseError, "approval_missing"):
+            live.preview_or_publish(
+                site_key=WP_KEY, post_id="303", catalog=self.catalog,
+                wp_client=wp, approval_directory=self.approvals,
+                execute=True, confirm="PUBLISH:" + WP_KEY + ":303")
+        self.assertEqual(wp.writes, [])
+
+    def test_mismatched_wordpress_site_identity_blocks_before_post(self):
+        self.approve()
+        wp=FakeWP()
+        wp.url="https://wrong-wordpress.example/"
+        with self.assertRaisesRegex(live.LiveReleaseError,
+                                    "release_wordpress_site_identity_mismatch"):
+            live.preview_or_publish(
+                site_key=WP_KEY, post_id="303", catalog=self.catalog,
+                wp_client=wp, approval_directory=self.approvals,
+                execute=True, confirm="PUBLISH:" + WP_KEY + ":303")
+        self.assertEqual(wp.writes, [])
+
+    def test_title_change_invalidates_content_approval_even_if_body_same(self):
+        self.approve()
+        wp=FakeWP()
+        wp.post["title"]["raw"]="Guia revisado para vaso decorativo em casa"
+        with self.assertRaisesRegex(live.LiveReleaseError,
+                                    "content_changed_after_approval"):
             live.preview_or_publish(
                 site_key=WP_KEY, post_id="303", catalog=self.catalog,
                 wp_client=wp, approval_directory=self.approvals,
