@@ -131,6 +131,27 @@ class WordPressUniversalDraftTests(unittest.TestCase):
         self.assertIn('data-v31-related="1"',body["content"])
         self.assertEqual(body["content"].count("<li>"),2)
 
+    def test_continuous_wp_request_has_no_three_or_24_total_cap(self):
+        wp=FakeWP()
+        # Muitos posts legados não devem impedir geração contínua.
+        for i in range(1,29):
+            wp.posts.append({"id":50+i,"status":"publish",
+                             "slug":"legacy-"+str(i),
+                             "title":{"rendered":"Artigo antigo "+str(i)},
+                             "link":HOME+"legacy-"+str(i)+"/",
+                             "content":{"rendered":"<p>Conteúdo antigo</p>"}})
+        with patch.object(m,"load_requests",return_value=[
+             {**REQUEST,"articles":None}]):
+            with Catalog(self.dbpath) as cat:
+                one=m.run(site_key=KEY,execute_draft=True,
+                          wp_client=wp,writer=paras,catalog=cat)
+                again=m.run(site_key=KEY,execute_draft=True,
+                            wp_client=wp,writer=paras,catalog=cat)
+        self.assertEqual(one["status"],"DRAFT_CREATED")
+        self.assertEqual(again["status"],"NO_APPROVED_CACHED_PRODUCT_FOR_TOPIC")
+        self.assertEqual(len(wp.writes),1)
+        self.assertEqual(wp.writes[0]["status"],"draft")
+
     def test_without_real_request_execution_fails_closed(self):
         wp=FakeWP()
         with patch.object(m,"load_requests",return_value=[]):

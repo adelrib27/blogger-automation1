@@ -221,14 +221,14 @@ def _check_history(posts:list[dict],*,site_key:str,
 
 
 def select_next(catalog:Catalog, *,site_key:str,topic:str,
-                posts:list[dict],requested_total:int=1)->dict:
+                posts:list[dict],requested_total:int|None=1)->dict:
     route=site_route(site_key)
     if (not isinstance(topic,str) or not topic.strip()
-        or len(topic)>160 or type(requested_total)is not int
-        or not 1<=requested_total<=24):
+        or len(topic)>160 or not (requested_total is None or
+            (type(requested_total) is int and 1<=requested_total<=24))):
         raise WordPressAutoDraftError("real_topic_or_quota_invalid")
     own,prior,used,related=_check_history(posts,site_key=site_key,limit=6)
-    if used>=requested_total:
+    if requested_total is not None and used>=requested_total:
         return {"status":"OWNER_QUOTA_REACHED","posts_created":0,
                 "publication_calls":0}
     plan=preview_site_launch(catalog,site_key=site_key,

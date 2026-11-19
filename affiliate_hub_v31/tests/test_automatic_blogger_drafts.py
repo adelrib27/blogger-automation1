@@ -78,6 +78,30 @@ class AutoBloggerDraftTests(unittest.TestCase):
         self.assertEqual(result["status"],"OWNER_QUOTA_REACHED")
         self.assertEqual(result["draft_creation_calls"],0)
 
+    def test_continuous_request_not_blocked_after_three_existing_live(self):
+        request={**m.load_requests()[0],"articles":None}
+        with Catalog(self.path) as cat:
+            result=m.select_next(cat,site_key=KEY,request=request,
+                 existing_posts=article_list(30))
+        self.assertEqual(result["status"],"READY_FOR_ORIGINAL_DRAFT_REVIEW")
+
+    def test_continuous_writer_can_make_fourth_draft_never_live(self):
+        # Três LIVE já existentes não significam quota esgotada.
+        self.p4.stop()
+        patcher=patch.object(m,"load_requests",return_value=[
+            {"site_key":KEY,"platform":"blogger","topic":"sofá retrátil",
+             "articles":None,"enabled":True}])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        api=self._service(3)
+        with Catalog(self.path) as cat:
+            result=m.draft_next(site_key=KEY,execute=True,
+                blogger_service=api,catalog=cat,workers_writer=worker_paragraphs)
+        self.assertEqual(result["status"],"DRAFT_CREATED")
+        self.assertEqual(result["publication_calls"],0)
+        api.posts.return_value.insert.assert_called_once()
+        self.assertTrue(api.posts.return_value.insert.call_args.kwargs["isDraft"])
+
     def test_original_html_includes_exact_photo_cta_and_two_internal_links(self):
         with Catalog(self.path) as cat:
             plan=m.select_next(cat,site_key=KEY,
