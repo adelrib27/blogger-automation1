@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C69",
   "continuity_protocol_phase": "C69",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C69_FUSAO_LAB_ARQUITETURA_UNIVERSAL",
+  "last_updated_source": "C69_FUSAO_LAB_VIDA_PET_ENGENHARIA_UNIVERSAL_PR96_PR97_CI467",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -57,7 +57,22 @@
     "c68_tests_passed": 427,
     "c68_future_seo_status": "SAFE_LIBRARY_READY_NOT_LIVE_WIRED",
     "c68_new_blogs_created": 0,
-    "c68_existing_writers_changed": false
+    "c68_existing_writers_changed": false,
+    "c69_prs": [
+      96,
+      97
+    ],
+    "c69_ci_runs": [
+      44598058674,
+      44598880655
+    ],
+    "c69_v31_test_count": 467,
+    "c69_universal_ready_status": "SAFE_OFFLINE_CODE_AND_LOCAL_CACHE_NOT_CONNECTED_TO_PRODUCTION_WRITERS",
+    "c69_original_vida_pet_lab_modified": false,
+    "c69_wordpress_live_count_checked": 44,
+    "c69_wordpress_draft_count_checked": 58,
+    "c69_specific_three_daily_schedules_observed": false,
+    "c69_legacy_schedules_observed": true
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -71,25 +86,28 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C69 — importar para o núcleo universal do V31 os MECANISMOS SAFE do LAB Vida Pet (evidência exata, TTL, failover, memória READY, anti-dup, evergreen e orçamento), sem tornar V31 pet-specific",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "Relatório upload MD/PDF inspecionado, LAB Vida Pet já na mesma main e isolado em vida_pet_pratica; R28 #42503073705 success; wordpress.writes_enabled=false, arquivo wordpress_write.flag ausente, nenhum cron no workflow LAB. Policy min_ready3, cooldown30, similaridade .72, evidência min1 fonte externa e min2 exatas, TTL7, pesquisa teto2/3. C68 SEO SAFE PR95 CI427 aprovado; checkpoint prévio C69 main a5cede2b2f359b68444654378c86ee5c9ae5b28c.",
-    "next_safe_step": "Criar branch e núcleo universal V31 SAFE sem rede com adaptador produto R2/campanha, prova e TTL, READY/failover/anti-dup/cooldown, telemetria/budget isolados, testes. PR+CI e merge. Não alterar vida_pet_pratica nem writers LIVE/crons/posts; preservar domínio/nicho independente e C68 SEO.",
+    "objective": "C69 — fusão SAFE da engenharia LAB R28 do Vida Pet no motor UNIVERSAL V31, qualquer Blogger/WordPress, preservando identidade/dados independentes, código e cache local testados com 467 testes V31",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "PR96 MERGED 7c6bfde9e31eea515f7567ad4d5b7cfe0784cc0d CI #44598058674 SUCCESS 459 testes V31+Casa24+Oficina21+Radar15+crossblog. PR97 MERGED 506a8f3eed2403fb74b6706740299606dba04546 CI #44598880655 SUCCESS 467 V31+legados. Novo universal_evidence_ready.py integra Catalog elegibilidade/imagem/campanha exata REAL como dependência injetada, SEO C68, Evidence exato (TTL7, min1 fonte externa+2 fatos, host conferido), SQLiteReadyLabStore por site_key+campaign, cache de evidência por site_key+SKU reidratável sem renovar TTL, buffer min3 simultâneo NÃO limite total, cooldown30, Jaccard .72, Candidate Failover, Budget R28 simulado Search2 HTTP3 bloqueio429. Testes de catálogo real em SQLite fixture, SEM R2/D1 real, 0 rede/POST. Apenas caminhos affiliate_hub_v31/ em PR96/97; original vida_pet_pratica/R28 intacto e wordpress_write.flag ausente. WordPress Casa 44 LIVE+58 DRAFT, Blogger Móveis 2 DRAFT sem mutação. Alguns schedules GitHub legados observados 19/11 (Radar fila success, shadow C8 skip, Radar editor failure); os 3 crons V31 diários ainda não foram confirmados.",
+    "next_safe_step": "C70 (após a checagem read-only de 20/11 10h10 Recife): verificar em GitHub event=schedule ESPECÍFICO dos workflows V31 request_queue 08h47, Blogger 09h18, WordPress 09h41. Independente, desenhar/implementar sob novo PR SAFE conector D1 de evidência READY por site e lock distribuído, pesquisar saldo Firecrawl da MESMA chave GitHub e teste 1 cache miss real custo medido, gate factual no HTML gerado, canário DRAFT real. Nenhum writer foi ligado ao buffer novo; nunca inferir publicação LIVE. Não tocar LAB Vida Pet, WordPress.com privado, outro site/blog sem autorização.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/42503073705",
-      "https://github.com/adelrib27/blogger-automation1/pull/95"
+      "https://github.com/adelrib27/blogger-automation1/pull/96",
+      "https://github.com/adelrib27/blogger-automation1/pull/97",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44598058674",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44598880655",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/UNIVERSAL_EVIDENCE_READY_ARQUITETURA_C69.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md"
     ]
   },
   "next_priorities": [
-    "C69: verificar em 20/11/2026 10h10 America/Recife a ocorrência verdadeira event=schedule de filas V31 08:47, Blogger 09:18 e WordPress 09:41. Checagem read-only da C65 já criada; nenhuma publicação/reexecução automática sem permissão.",
-    "Em QUALQUER novo blog futuro: aplicar norma C68, extrair intenção de busca/cluster por pesquisa real antes da escolha de produto/nicho; comissão positiva verificável, SEM mínimo 3% e sem extra obrigatória; relink de posts verdadeiramente LIVE do mesmo domínio, cold-start sem links; SEO técnico/social/local conforme evidência, sem fabricar reviews/schema/métricas.",
-    "Preferir cada blog real com repositório/secret/campaign/workflow individual, preservando V31 como acervo R2 e motor universal de código; template não executável e linkagem offline demandam integração no provisionamento real, não ativados em sites existentes.",
-    "Não republicar WordPress Casa #305 já LIVE (44 LIVE+58 DRAFT na última conferência) nem WP303/2 Blogger drafts; qualquer novo LIVE precisa revisão/consentimento individual real.",
-    "Continuar curadoria conservadora de SKUs R2 e monitoramento WordPress legados, sem ativação em massa LIVE nem falsas comissões/vendas, preservando separação API erro 10000 e ausência de ofertas."
+    "C70 (20/11/2026 10h10 Recife): comprovar no GitHub por leitura evento `schedule` DOS TRÊS workflows V31 reais: request_queue 08h47, Blogger 09h18, WordPress 09h41. Outros `schedule` legados já ocorreram em 19/11; isso não homologa os três novos. Não confundir push/dispatch/schedule.",
+    "V31 C69 Evidence/READY já integrado ao pacote universal como SAFE e testado 467 CI, mas NÃO conectado ao publisher: antes de ativar exigir fontes reais Firecrawl com saldo da chave GitHub, custo 1 cache miss real, fact gate do texto IA, D1 com namespaces site_key/locks/idempotência e canário DRAFT por site sem publicação LIVE. LAB Vida Pet R28 permanece isolado e sem writer.",
+    "Na criação de blogs novos aplicar a ficha SEO C68 com intenção comercial real, links internos publicados por mesmo host, comissão positiva sem mínimo 3%, campanha exata, e agora perfil de evidência/READY C69 com entradas verificadas. Preferir repo separado por blog e núcleo V31 reutilizável sem copiar dados/credenciais.",
+    "Preservar estado WordPress Casa LIVE post305 já publicado 1 vez (44 LIVE+58 DRAFT), WP303 ainda draft, Blogger Móveis 2 DRAFT; jamais LIVE novo sem autorização individual.",
+    "Biblioteca R2 dos dois CSV universal sem teto TOTAL de artigos (`articles:null`); `min_ready:3` é buffer operacional e não limitação de artigos, curadoria conservadora e produtos em REVIEW ainda bloqueados."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
