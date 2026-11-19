@@ -56,9 +56,12 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          # C65: ponte das credenciais legadas de UM site real, sem afetar sites futuros.
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
           V31_WP_SITE_KEY: ${{ github.event_name == 'schedule' && github.event.schedule != '41 12 * * *' && 'wordpress_casa_decoracao' || inputs.site_key || '' }}
           V31_WP_PREVIEW_TOPIC: ${{ github.event_name == 'schedule' && github.event.schedule != '41 12 * * *' && 'decoração' || inputs.preview_topic || '' }}
-          V31_WP_EXECUTE: ${{ github.event_name == 'schedule' && github.event.schedule == '41 12 * * *' && vars.V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED == 'true' && 'true' || github.event_name == 'workflow_dispatch' && inputs.execute_draft == true && 'true' || 'false' }}
+          V31_WP_EXECUTE: ${{ github.event_name == 'schedule' && github.event.schedule == '41 12 * * *' && vars.V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED != 'false' && 'true' || github.event_name == 'workflow_dispatch' && inputs.execute_draft == true && 'true' || 'false' }}
         shell: bash
         run: |
           set -euo pipefail
