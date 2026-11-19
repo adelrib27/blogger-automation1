@@ -411,6 +411,14 @@ def credentials_for(site_key:str,*,raw:str|None=None)->tuple[str,str]:
     secret=raw if raw is not None else os.getenv(
         "V31_WORDPRESS_SITE_CREDENTIALS_JSON","")
     if not secret:
+        # Ponte estrita: o Casa WordPress real já possui credenciais legadas
+        # separadas no Environment GitHub (C62). Não propagar para outro
+        # domínio: sites futuros usam SEMPRE o JSON universal por site.
+        if site_key == "wordpress_casa_decoracao":
+            legacy_user = os.getenv("CASA_WORDPRESS_USERNAME", "")
+            legacy_password = os.getenv("CASA_WORDPRESS_APP_PASSWORD", "")
+            if legacy_user.strip() and legacy_password.strip():
+                return legacy_user, legacy_password
         raise WordPressAutoDraftError("wordpress_credentials_not_configured")
     try:
         mapping=json.loads(secret)
