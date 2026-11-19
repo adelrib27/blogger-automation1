@@ -102,6 +102,32 @@ class RequestQueueTests(unittest.TestCase):
             with self.assertRaises(RequestQueueError):
                 load_requests(self.folder)
 
+    def test_articles_null_is_continuous_but_r2_batch_is_24(self):
+        self._write("novo_blog_a", articles=None)
+        amounts=[]
+        def preview(cat, **kwargs):
+            amounts.append(kwargs["max_items"])
+            return {"registered_site":True,"can_publish":False,
+                    "cached_for_campaign":0,"review_queue_count":0,
+                    "approved_catalog_candidates":[]}
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",
+                   side_effect=preview):
+            self.assertIsNone(load_requests(self.folder)[0]["articles"])
+            report=process_requests(self.storage,directory=self.folder,
+                                    budget=1,execute=False)
+        self.assertEqual(amounts,[24])
+        self.assertEqual(report["publication_calls"],0)
+        self.assertEqual(report["shopee_mutation_attempts"],0)
+
+    def test_invalid_types_do_not_mean_unlimited(self):
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES):
+            for bad in (False,True,0,25,"unlimited",-1):
+                with self.subTest(bad=bad):
+                    self._write("novo_blog_a",articles=bad)
+                    with self.assertRaises(RequestQueueError):
+                        load_requests(self.folder)
+
     def test_budget_and_campaign_isolation_in_one_snapshot(self):
         self._write("novo_blog_a")
         self._write("novo_blog_b")
