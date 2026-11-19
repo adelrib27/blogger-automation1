@@ -23,3 +23,8 @@ O proprietário pediu o teste das automações de artigos e remover o teto de tr
 3. Confirmar draft REST e portal, registrar PR/CI e remover workflow temporário.
 
 **Não usar Blogger/WordPress conectores como fonte de segredos; não alterar Runner/Pinterest/Worker v1.0.**
+
+## C62 marco — autenticação WP e histórico
+
+- [Teste #44538164537](https://github.com/adelrib27/blogger-automation1/actions/runs/44538164537) **FALHOU fechado antes de POST**: credenciais Casa disponíveis, `site_settings()` foi aceito; `list_posts(include_unpublished=True)` retornou `wordpress_http_HTTPError` ao consultar múltiplos status no mesmo filtro REST. 0 WordPress writes, 0 Shopee/R2 writes.
+- Próximo passo: diagnóstico GET somente com variantes de status (`any`, `publish`, `draft` e lista), expondo apenas códigos HTTP; corrigir contrato REST com teste fake se necessário antes de POST.
