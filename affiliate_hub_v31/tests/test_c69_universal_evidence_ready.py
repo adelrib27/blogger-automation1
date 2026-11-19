@@ -50,6 +50,7 @@ def package(index=0, *, name=None, date=STAMP, identity="EXACT_PRODUCT",
                 "product_key": key,
                 "source_kind": "external",
                 "source_url": source,
+                "approved_host": "fabricante-independente.example",
                 "review_status": "AUTHORIZED",
                 "authorized": authorized,
                 "checked_utc": date,
@@ -371,6 +372,7 @@ class EvidenceReadyUniversalTests(unittest.TestCase):
     def test_cooldown_blocks_different_angle_before_30_days(self):
         self.run_safe([candidate(0)])
         data=candidate(0,angle="Abordagem totalmente distinta: ergonomia e postura")
+        data["evidence"]=package(0,date="2026-12-04T12:00:00Z")
         report=self.run_safe([data],now=NOW+timedelta(days=15))
         self.assertEqual(report["created"],0)
         self.assertIn("PRODUCT_COOLDOWN_ACTIVE",report["rejected_reasons"])
@@ -378,6 +380,7 @@ class EvidenceReadyUniversalTests(unittest.TestCase):
     def test_evergreen_after_cooldown_with_distinct_angle_is_not_total_limit(self):
         self.run_safe([candidate(0)])
         data=candidate(0,angle="Abordagem nova: limpeza e conservação da cadeira")
+        data["evidence"]=package(0,date="2026-12-20T12:00:00Z")
         report=self.run_safe([data],now=NOW+timedelta(days=31))
         self.assertEqual(report["created"],1)
         self.assertEqual(self.store.ready_count(self.site,"exemploblogger"),2)
@@ -385,6 +388,7 @@ class EvidenceReadyUniversalTests(unittest.TestCase):
     def test_similarity_blocks_synonym_rewrites_even_after_cooldown(self):
         self.run_safe([candidate(0)])
         too_close=candidate(0,angle="Comparação das medidas e ajustes do modelo zero")
+        too_close["evidence"]=package(0,date="2027-01-03T12:00:00Z")
         report=self.run_safe([too_close],now=NOW+timedelta(days=45))
         self.assertEqual(report["created"],0)
         self.assertTrue(any(k.startswith("EVERGREEN_") for k in report[
