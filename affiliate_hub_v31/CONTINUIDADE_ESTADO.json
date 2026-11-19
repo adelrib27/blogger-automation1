@@ -4,12 +4,12 @@
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
   "last_checkpoint_phase": "C60",
-  "continuity_protocol_phase": "C60",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
-  "last_updated_date": "2026-11-18",
+  "continuity_protocol_phase": "C61",
+  "continuity_status": "EM_ANDAMENTO",
+  "last_updated_date": "2026-11-19",
   "last_updated_source": "conferencia_conectada_github",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C60_WORDPRESS_UNIVERSAL_DRAFT_SAFE_2026-11-18.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -35,20 +35,18 @@
     "provisional_theme_installed_verified_independently": false
   },
   "active_work": {
-    "objective": "C58-C60: concluir núcleo universal de geração Blogger+WordPress, validar R2 + IA + fotos + link afiliado + CTA + internos e WordPress SAFE, com checkpoints versionados.",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "C60 PR#79 MERGED, CI #44412438334 365 V31+24 Casa+21 Oficina+crossblog PASS; R2+WordPress Casa REAL preview #44412775615 PASS (43 posts, foto+campanha+2 internos, 0 POST); Casa/Oficina/Radar SAFE todos PASS após PR#78.",
-    "next_safe_step": "Acompanhar próximos crons reais do Blogger e WordPress. Para primeiro novo WP draft de ponta a ponta: registrar pedido real tema/quantidade, cadastrar credenciais específicas no GitHub secret protegido e autorizar execução DRAFT; não inventar blog/campanha nem ativar LIVE genérico. Correções Runner tema ficam adiadas conforme decisão do proprietário.",
+    "objective": "C61 — realizar teste de criação de rascunho real e remover limite TOTAL de 3 artigos do Blogger piloto e da arquitetura Blogger/WordPress (modo contínuo com artigos:null)",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C61 prévia gravada em 12ef22240a966bc7880f0821ad1064d258851aca; Blogger Móveis 3 LIVE/0 DRAFT; WP agendado Casa/Oficina SUCCESS e Radar FAILURE; C60 real só PREVIEW WP.",
+    "next_safe_step": "Implementar schema articles:null, geradores e fila compatíveis, atualizar pedido piloto, testes fakes + CI; depois canário R2+API em DRAFT se SKU/link aprovados e credenciais válidas.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/79",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44412438334",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44412775615",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410965031",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410976595",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44410496620"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C61_TESTE_REAL_SEM_TETO_ARTIGOS_2026-11-19.md",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44451960384",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44444741047",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967"
     ]
   },
   "next_priorities": [
