@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C69",
-  "continuity_protocol_phase": "C69",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C70",
+  "continuity_protocol_phase": "C70",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C69_FUSAO_LAB_VIDA_PET_ENGENHARIA_UNIVERSAL_PR96_PR97_CI467",
+  "last_updated_source": "C70_SCHEDULE_REAL_QUEUE3_R2_HANDOFF_FAILED_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C70_SCHEDULE_REAL_HANDOFF_SAFE_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -72,7 +72,12 @@
     "c69_wordpress_live_count_checked": 44,
     "c69_wordpress_draft_count_checked": 58,
     "c69_specific_three_daily_schedules_observed": false,
-    "c69_legacy_schedules_observed": true
+    "c69_legacy_schedules_observed": true,
+    "c70_queue_schedule_run_id": 44600350780,
+    "c70_queue_schedule_event": "schedule",
+    "c70_queue_schedule_result": "failure_after_3_affiliate_conversions_cache_r2_verified_handoff_preview_failed_no_posts",
+    "c70_queue_shopee_mutation_attempts": 3,
+    "c70_queue_publication_calls": 0
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -86,23 +91,21 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C69 — fusão SAFE da engenharia LAB R28 do Vida Pet no motor UNIVERSAL V31, qualquer Blogger/WordPress, preservando identidade/dados independentes, código e cache local testados com 467 testes V31",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "PR96 MERGED 7c6bfde9e31eea515f7567ad4d5b7cfe0784cc0d CI #44598058674 SUCCESS 459 testes V31+Casa24+Oficina21+Radar15+crossblog. PR97 MERGED 506a8f3eed2403fb74b6706740299606dba04546 CI #44598880655 SUCCESS 467 V31+legados. Novo universal_evidence_ready.py integra Catalog elegibilidade/imagem/campanha exata REAL como dependência injetada, SEO C68, Evidence exato (TTL7, min1 fonte externa+2 fatos, host conferido), SQLiteReadyLabStore por site_key+campaign, cache de evidência por site_key+SKU reidratável sem renovar TTL, buffer min3 simultâneo NÃO limite total, cooldown30, Jaccard .72, Candidate Failover, Budget R28 simulado Search2 HTTP3 bloqueio429. Testes de catálogo real em SQLite fixture, SEM R2/D1 real, 0 rede/POST. Apenas caminhos affiliate_hub_v31/ em PR96/97; original vida_pet_pratica/R28 intacto e wordpress_write.flag ausente. WordPress Casa 44 LIVE+58 DRAFT, Blogger Móveis 2 DRAFT sem mutação. Alguns schedules GitHub legados observados 19/11 (Radar fila success, shadow C8 skip, Radar editor failure); os 3 crons V31 diários ainda não foram confirmados.",
-    "next_safe_step": "C70 (após a checagem read-only de 20/11 10h10 Recife): verificar em GitHub event=schedule ESPECÍFICO dos workflows V31 request_queue 08h47, Blogger 09h18, WordPress 09h41. Independente, desenhar/implementar sob novo PR SAFE conector D1 de evidência READY por site e lock distribuído, pesquisar saldo Firecrawl da MESMA chave GitHub e teste 1 cache miss real custo medido, gate factual no HTML gerado, canário DRAFT real. Nenhum writer foi ligado ao buffer novo; nunca inferir publicação LIVE. Não tocar LAB Vida Pet, WordPress.com privado, outro site/blog sem autorização.",
+    "objective": "C70 — diagnóstico e correção SAFE da falha handoff pós-conversão no primeiro schedule REAL da fila V31; verificação Blogger/WP schedule e engenharia factual/D1 offline sem LIVE",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "main 9ef571d... C69 CI467. V31 fila schedule #44600350780 às 19:38Z de 19/11 falhou em handoff_dispatch preview após 467 testes PASS, 3 links Shopee convertidos/cache R2 confirmado e 0 posts. Cron queue 47 11 UTC; Blogger/WP schedules V31 ainda não observados. Checkpoint C70 prévio gravado antes de código.",
+    "next_safe_step": "Analisar handoff_dispatch e testes sem repetir conversões. Patch isolado com testes em PR SAFE; preservar R2/CMS, verificar CI; documentar 20/11 schedule read-only. D1/Firecrawl/writers só depois de gates reais e saldo comprovado.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/96",
-      "https://github.com/adelrib27/blogger-automation1/pull/97",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44598058674",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44598880655",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/UNIVERSAL_EVIDENCE_READY_ARQUITETURA_C69.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44600350780",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C70_SCHEDULE_REAL_HANDOFF_SAFE_2026-11-19.md",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44598880655"
     ]
   },
   "next_priorities": [
+    "C70: investigar HandoffError do schedule real #44600350780 (fila V31, 3 links Shopee convertidos e R2 gravado/verificado, 0 posts); não repetir --execute de conversão já confirmada. Corrigir de forma SAFE e homologar após testes.",
     "C70 (20/11/2026 10h10 Recife): comprovar no GitHub por leitura evento `schedule` DOS TRÊS workflows V31 reais: request_queue 08h47, Blogger 09h18, WordPress 09h41. Outros `schedule` legados já ocorreram em 19/11; isso não homologa os três novos. Não confundir push/dispatch/schedule.",
     "V31 C69 Evidence/READY já integrado ao pacote universal como SAFE e testado 467 CI, mas NÃO conectado ao publisher: antes de ativar exigir fontes reais Firecrawl com saldo da chave GitHub, custo 1 cache miss real, fact gate do texto IA, D1 com namespaces site_key/locks/idempotência e canário DRAFT por site sem publicação LIVE. LAB Vida Pet R28 permanece isolado e sem writer.",
     "Na criação de blogs novos aplicar a ficha SEO C68 com intenção comercial real, links internos publicados por mesmo host, comissão positiva sem mínimo 3%, campanha exata, e agora perfil de evidência/READY C69 com entradas verificadas. Preferir repo separado por blog e núcleo V31 reutilizável sem copiar dados/credenciais.",
@@ -116,8 +119,8 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44566538648",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44598880655",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
-    "schedule_claim": "C65: workflows permanentes Blogger e WordPress homologados por event=workflow_dispatch (SUCCESS/DRY_RUN), event=schedule NÂO observado após C61; último schedule de qualquer workflow foi 2026-11-19T03:30:52Z. Automação read-only para 20/11 às 10:10 Recife registrada."
+    "schedule_claim": "C70: V31 request_queue schedule REAL em 19/11 19:38Z #44600350780, terminou FAILURE no handoff preview após 3 conversões cache R2 e 0 posts. Blogger e WordPress V31 event=schedule ainda não comprovados; verificar 20/11."
   }
 }
