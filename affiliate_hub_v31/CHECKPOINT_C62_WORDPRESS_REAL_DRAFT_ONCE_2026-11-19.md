@@ -42,3 +42,10 @@ O proprietário pediu o teste das automações de artigos e remover o teto de tr
 - **AUTORIZAÇÃO JÁ EXISTENTE:** pedido de testar as automações em rascunho, sem LIVE e sem teto total de três; teste de Casa limitado a um único novo rascunho pelo runner temporário. Não criar demanda permanente WordPress `site_requests.d`.
 - **ANTES DO POST:** JSON C62 atualizado em `main` com estado `EM_ANDAMENTO` e sinalização de potencial operação remota. Se ocorrer interrupção, procurar o Action C62 e consultar o WordPress **antes de reexecutar**. Bloquear qualquer repetição cega e preservar gates comerciais.
 - **PRÓXIMO PASSO:** alterar `C62_WP_TEST_MODE.txt` de `preview` para `execute_draft` uma única vez; registrar ID da execução, verificar `DRAFT_CREATED`/status REST e ausência de LIVE; se falha ambígua, conferir rascunhos do site sem reenviar POST.
+
+## C62 — Action disparada, aguardando resultado autenticado
+
+- **FEITO:** alteração única de `C62_WP_TEST_MODE.txt` de `preview` para `execute_draft` no commit [`c22b1a7`](https://github.com/adelrib27/blogger-automation1/commit/c22b1a7fa6525455a140905c4be3e4d301d49e9b).
+- **EM ANDAMENTO:** [Action C62 #44542052615](https://github.com/adelrib27/blogger-automation1/actions/runs/44542052615), job `wp-real-once` ID `135622693623`; instalação e regressões passaram e a etapa autenticada WP está em andamento. WordPress Casa independente ainda mostrava **43 publicados + 57 rascunhos** no último GET.
+- **REGRA CRÍTICA:** enquanto o job estiver em execução, não executar outra vez; se falhar, checar primeiro o estado de posts no destino, em especial o slug exclusivo `v31-*`, antes de qualquer novo POST.
+- **DIAGNÓSTICO PARALELO:** Radar cron [#44447410967](https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967) terminou `failure` porque o slot `19:00` ficou `QUARENTENA` após três tentativas de plano com `título editorial fora da faixa: 31`; `Publicações confirmadas nesta execução: 0`. Quality gates funcionaram; não é falha de token WP e não cabe bypass de gate.
