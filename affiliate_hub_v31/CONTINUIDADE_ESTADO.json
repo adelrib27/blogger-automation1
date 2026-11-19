@@ -48,15 +48,18 @@
   "active_work": {
     "objective": "C65 — homologar execução schedule real, abastecimento contínuo multi-blog Blogger/WordPress e fluxo universal de aprovação/publicação LIVE com segurança e testes, sem publicação irrestrita",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C64 3 conversões Shopee oficiais e R2 verificado #44551595546; um DRAFT Blogger #2990403416970116294 #44552501661; C62 WordPress Casa DRAFT #303; CI384 PR86; Blogger 3 LIVE+2 DRAFT, Casa 43 LIVE+58 DRAFT. Nenhum evento schedule universal C55/C60 confirmado.",
-    "next_safe_step": "Criar canário schedule somente leitura para 19/11 com horário UTC iminente e sem posts, inspecionar fluxo de pedidos WordPress/credenciais antes de habilitar ciclo. Implementar contrato de aprovação LIVE separado e verificável com CI, nunca publish automático de drafts ainda não revisados.",
-    "mutation_in_progress": false,
-    "remote_operation_in_progress": false,
+    "latest_verified_step": "C65 PR87 cron canary nos workflows permanentes MERGED; PR88 WordPress Casa pedido real contínuo MERGED; PR89 LIVE gate de aprovação individual MERGED, CI395 PASS. WP Casa C65 preview #44561958056 READY_FOR_DRAFT_REVIEW 0 POST, API atual 43 LIVE+58 DRAFT com #303; Blogger Móveis 3 LIVE+2 DRAFT.",
+    "next_safe_step": "Uma única tentativa WordPress Casa DRAFT pelo modo C65_WP_TEST_MODE.txt=draft_once. Após run conferir status+contagem via API WP e conteúdo/detalhes; se falha/não confirmação, jamais repetir sem leitura remota. Depois remover workflows temporários e fechar C65, preservar LIVE não aprovado.",
+    "mutation_in_progress": true,
+    "remote_operation_in_progress": true,
     "rollback_needed": false,
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44552501661",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44551595546",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44553367508"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44553367508",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44561958056",
+      "https://github.com/adelrib27/blogger-automation1/pull/88",
+      "https://github.com/adelrib27/blogger-automation1/pull/89"
     ]
   },
   "next_priorities": [
