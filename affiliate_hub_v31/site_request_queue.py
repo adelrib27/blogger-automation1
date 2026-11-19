@@ -62,7 +62,7 @@ def load_requests(directory:Path=REQUESTS_DIR)->list[dict]:
         topic=doc["topic"]
         if not isinstance(topic,str) or not topic.strip() or len(topic)>160:
             raise RequestQueueError("request_topic_invalid")
-        if type(doc["articles"]) is not int or not 1<=doc["articles"]<=24:
+        if doc["articles"] is not None and (type(doc["articles"]) is not int or not 1<=doc["articles"]<=24):
             raise RequestQueueError("request_articles_invalid")
         if type(doc["enabled"]) is not bool:
             raise RequestQueueError("request_enabled_invalid")
@@ -119,7 +119,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 campaign=route["campaign"]
                 plan=preview_site_launch(
                     cat,topic=request["topic"],platform=request["platform"],
-                    site_key=key,max_items=request["articles"],max_per_shop=1)
+                    site_key=key,max_items=(24 if request["articles"] is None else request["articles"]),max_per_shop=1)
                 if not plan["registered_site"] or plan["can_publish"] is not False:
                     raise RequestQueueError("request_plan_unsafe")
                 before_campaign[campaign]=cat.db.execute(
