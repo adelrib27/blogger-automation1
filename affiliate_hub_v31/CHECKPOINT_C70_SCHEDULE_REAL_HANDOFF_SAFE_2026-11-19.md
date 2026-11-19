@@ -24,3 +24,9 @@ Retomada solicitada a partir de `main`, com leitura em ordem de `V31_CONTINUAR_A
 
 ## Limites operacionais
 `min_ready=3` do C69 não é teto total; pedidos `articles:null` continuam. `publish_enabled=false` impede LIVE irrestrito. Há credenciais em Actions, não trazer segredo aos checkpoints.
+
+## C70.1 — causa identificada, patch + CI + merge
+- Causa-raiz de `HandoffError` identificada no código: `site_requests.d` contém `articles:null` para pedidos contínuos C61/C65; `handoff_dispatch.py` passava o valor diretamente ao `plan_editorial_handoff()`, que exige inteiro 1..24; portanto erro de contrato `invalid_article_count` antes da gravação de envelopes. O log de produção suprimia o detalhe e registrava `HandoffError` genérico; diagnóstico por inspeção com testes.
+- [PR #98](https://github.com/adelrib27/blogger-automation1/pull/98) **MERGED** na main, merge SHA `252a38084f8498bd9cc3e71557ceed1d606695a5`. Corrigiu **somente** `affiliate_hub_v31/handoff_dispatch.py` e novo `tests/test_c70_handoff_continuous.py`: `articles:null` vira `MAX_ARTICLES_PER_BATCH=24` **apenas na chamada de planejamento**, sem editar pedido original ou limitar total; pedidos finitos mantêm sua quantidade. Evita afrouxar gates do catálogo, não toca CMS, Vida Pet ou workflow.
+- [CI #44606961972](https://github.com/adelrib27/blogger-automation1/actions/runs/44606961972) **SUCCESS**: 471 testes V31 PASS (4 novos), Casa 24/24, Oficina 21/21, Radar 15/15 e crossblog. Evidência validada no log `Ran 471 tests ... OK`.
+- **Próximo ensaio SAFE:** canário temporário por push, executar `handoff_dispatch` **sem `--execute`**, apenas leitura do R2 real, sem Shopee/API de publicação/Writer; após capturar resultado, remover workflow temporário. CI offline não é, isoladamente, prova de handoff produtivo.
