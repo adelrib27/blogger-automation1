@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C66",
-  "continuity_protocol_phase": "C66",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C67",
+  "continuity_protocol_phase": "C67",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
-  "last_updated_source": "C66_PREVIA_LIVE_CASA_WP305_REVISADA_PR93_PR94",
+  "last_updated_source": "C67_OWNER_EXPLICIT_POST305_PERMISSION_CHECKPOINT",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C66_REVISAO_REAL_LIVE_2026-11-19.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C67_PUBLICACAO_LIVE_AUTORIZADA_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -57,21 +57,17 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C66 — WordPress Casa DRAFT305 com revisão editorial real concluída, writer universal Blogger/WP H2 alinhado PR93, LIVE gate título+HTML e identidade WP PR94, workflow LIVE permanente em PREVIEW #44577760603 SUCCESS; aguarda aprovação INDIVIDUAL do conteúdo e anúncio, sem LIVE",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "PR93 MERGED CI #44576259629 405 testes V31; PR94 MERGED CI #44577475073 407 testes V31+24 Casa+21 Oficina+15 Radar+crossblog PASS. CMS WP Casa DRAFT305 revisado 753 palavras/8 H2 e oferta original SKU R2/3 URLs afiliadas/CTA/disclosure/2 links internos preservada; 43 LIVE+59 DRAFT. Workflow LIVE PERMANENTE #44577760603 workflow_dispatch execute_live=false SUCCESS: AWAITING_OWNER_APPROVAL, content_sha256 ccc848b143a51235dba21b89be4b5dad92c538300678b9b8854347a5297d9b63 título+HTML, approved_sku=true, exact_campaign=true, publication_calls=0, owner_approval_loaded=false. TEMP C66 e trigger excluídos, GitHub live_approvals.d somente README, sem aprovação; Blogger Móveis 3 LIVE+2 DRAFT.",
-    "next_safe_step": "Solicitar autorização INDIVIDUAL do proprietário para WordPress Casa post #305, título 'Como escolher um vaso decorativo âmbar para sua sala', após conferir anúncio atual no site Shopee (destino não acessível por navegador externo). Somente depois de consentimento concreto criar manifesto `wordpress_casa_decoracao__305.json` com SHA C66 e checks verdadeiros, e executar uma única publicação LIVE manual com readback. NÃO inferir consentimento da frase genérica 'pode avançar'. Independente: verificar event=schedule real 20/11/2026 via automação de leitura C65 10:10 Recife. Não repetir DRAFTs WordPress 303/305 ou Blogger.",
+    "objective": "C67 — publicar LIVE UMA VEZ o WordPress Casa post #305 com autorização expressa do proprietário, após verificação anúncio/affiliate SKU exato; manifesto por post e workflow manual gated",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "Dono respondeu 'sim! Autorizo' à pergunta explícita publicar exclusivamente Casa WP #305 após checagem. WordPress CMS #305 draft, Casa 43 LIVE/59 DRAFT; URL Shopee produto exato SKU 1718605288/58259898640 pesquisada hoje; redirecionamento live do afiliado s.shopee.com.br/8pnOgLent4 aponta a mesmo SKU com mmp_pid, seguido de login/antibot. Checkpoint C67 prévio commit 8f8f4167. Gate preflight C66 digest ccc848b143a51235dba21b89be4b5dad92c538300678b9b8854347a5297d9b63.",
+    "next_safe_step": "Validar #305 draft e SHA, criar manifesto único wordpress_casa_decoracao__305.json com três aprovações genuínas e timestamp UTC, acionar SOMENTE uma vez workflow permanente V31 LIVE com execute_live=true/PUBLISH:wordpress_casa_decoracao:305; acompanhar terminal e readback API. Se incerteza, NUNCA retry POST. Limpar trigger TEMP e fechar JSON/índice.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/93",
-      "https://github.com/adelrib27/blogger-automation1/pull/94",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44576259629",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44577475073",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C67_PUBLICACAO_LIVE_AUTORIZADA_2026-11-19.md",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44577760603",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/REVIEW_LIVE_C66_CASA_POST305_2026-11-19.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C66_REVISAO_REAL_LIVE_2026-11-19.md"
+      "https://shopee.com.br/Vaso-Decorativo-R%C3%B4mulo-%C3%82mbar-30cm-%E2%80%93-Design-Moderno-e-Elegante-i.1718605288.58259898640"
     ]
   },
   "next_priorities": [
