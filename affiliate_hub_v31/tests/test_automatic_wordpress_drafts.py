@@ -205,6 +205,48 @@ class WordPressUniversalDraftTests(unittest.TestCase):
         self.assertEqual(user,"editor")
         self.assertEqual(password,"fake-test-secret")
 
+    def test_wp_exact_100_posts_single_page_uses_rest_totalpages(self):
+        # Casa real tinha 43 publish +57 draft: resposta com exatamente
+        # 100 itens e X-WP-TotalPages=1; não pedir página 2 inexistente.
+        client=m.WordPressRestClient(base_url=HOME,username="editor",
+                                     application_password="test-password")
+        calls=[]
+        def fetch(method,path,body=None):
+            calls.append(path)
+            client._last_wp_total_pages="1"
+            return [{"status":"draft"}]*100
+        with patch.object(client,"_call",side_effect=fetch):
+            items=client.list_posts(include_unpublished=True)
+        self.assertEqual(len(items),100)
+        self.assertEqual(len(calls),1)
+
+    def test_wp_multi_page_and_invalid_total_fail_closed(self):
+        client=m.WordPressRestClient(base_url=HOME,username="editor",
+                                     application_password="test-password")
+        calls=[]
+        def fetch(method,path,body=None):
+            calls.append(path)
+            client._last_wp_total_pages="2"
+            return [{"status":"draft"}]*100 if len(calls)==1 else [{"status":"draft"}]
+        with patch.object(client,"_call",side_effect=fetch):
+            self.assertEqual(len(client.list_posts(include_unpublished=True)),101)
+        self.assertEqual(len(calls),2)
+        def bogus(method,path,body=None):
+            client._last_wp_total_pages="garbage"
+            return [{"status":"draft"}]*100
+        with patch.object(client,"_call",side_effect=bogus):
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,"pages_invalid"):
+                client.list_posts(include_unpublished=True)
+
+    def test_wp_full_page_without_total_is_not_accepted(self):
+        client=m.WordPressRestClient(base_url=HOME,username="editor",
+                                     application_password="test-password")
+        def missing_header(method,path,body=None):
+            return [{"status":"draft"}]*100
+        with patch.object(client,"_call",side_effect=missing_header):
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,"pagination_unverified"):
+                client.list_posts(include_unpublished=True)
+
     def test_rest_client_posts_only_draft(self):
         client=m.WordPressRestClient(base_url=HOME,
             username="editor",application_password="fake-test-secret")
