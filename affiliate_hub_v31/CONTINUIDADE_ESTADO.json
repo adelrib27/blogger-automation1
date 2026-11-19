@@ -46,14 +46,16 @@
   "active_work": {
     "objective": "C64 — homologação acelerada hoje dos workflows Blogger C55 e WordPress C60 sem aguardar cron; executar canário seguro por push em main com modo prévia e uma tentativa Blogger DRAFT somente se prévia validar",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C63 PR85 MERGED, CI #44546604810 383 PASS, Blogger Móveis 3 LIVE+1 DRAFT, WordPress Casa 43 LIVE+58 DRAFT; cron posterior a C61 não observado; workflow_dispatch não está disponível nas ações GitHub deste conector.",
-    "next_safe_step": "Criar checkpoint C64 e workflow temporário controlado por arquivo de modo; primeira execução preview ambos; após inspeção disparar no máximo um Blogger DRAFT real, SEM LIVE. Conferir destinos e remover gatilhos temporários.",
-    "mutation_in_progress": false,
-    "remote_operation_in_progress": false,
+    "latest_verified_step": "C64 preview #44550783543 SUCCESS 49 tests, Blogger NO_VERIFIED_CAMPAIGN_PRODUCT_YET e WP NO_APPROVED_CACHED_PRODUCT_FOR_TOPIC, 0 posts; fila C37 preview #44551256082 SUCCESS: requests_active=1, conversion_candidates=3, ready_review_jobs=3, needs_curation=12, 0 R2 writes.",
+    "next_safe_step": "Acionar modo queue_execute 1 única vez; URL/R2 até 3 conversões, consultar run e recibo antes de QUALQUER repetição. Se PASS com converted>0, testar Blogger DRY_RUN e criar no máximo 1 DRAFT após prova de elegibilidade; não publicar LIVE.",
+    "mutation_in_progress": true,
+    "remote_operation_in_progress": true,
     "rollback_needed": false,
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/85",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44550783543",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44551256082"
     ]
   },
   "next_priorities": [
