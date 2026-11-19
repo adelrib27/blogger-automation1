@@ -129,12 +129,18 @@ def audit_draft(post: dict, *, route: dict, catalog: Catalog) -> dict:
     outbound = URL_RE.findall(body)
     if affiliate not in outbound:
         raise LiveReleaseError("release_exact_campaign_link_missing")
-    if any(urlsplit(link).hostname not in (
-            "s.shopee.com.br", urlsplit(route["identifier"]).hostname
-            if platform == "wordpress" else None
-        ) for link in outbound if link != affiliate):
-        # Blogger's real domain is checked below via blog_url in audit call.
-        raise LiveReleaseError("release_external_links_unverified")
+    if platform == "wordpress":
+        allowed_hosts = {"s.shopee.com.br", urlsplit(route["identifier"]).hostname}
+        if any(urlsplit(link).hostname not in allowed_hosts for link in outbound):
+            raise LiveReleaseError("release_external_links_unverified")
+    # Blogger's internal domain is checked against the authenticated Blog URL.
+    row = catalog.db.execute(
+        "SELECT image_url FROM products WHERE product_key=?", (key,)
+    ).fetchone()
+    if (not row or not isinstance(row[0], str) or
+            not re.search(r'<img\s+[^>]*src=["\x27]' +
+                          re.escape(row[0]) + r'["\x27]', body, re.I)):
+        raise LiveReleaseError("release_real_product_image_mismatch")
     if ("https://cf.shopee.com.br/" not in body or
             "Ver produto na Shopee" not in body or
             "link de afiliado" not in body.lower() or
