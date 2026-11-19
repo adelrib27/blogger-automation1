@@ -1,0 +1,119 @@
+name: V31 C62 TEMP — Casa WordPress real auth e 1 DRAFT opcional
+on:
+  push:
+    paths:
+      - 'affiliate_hub_v31/C62_WP_TEST_MODE.txt'
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  wp-real-once:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar R2, HTTP e testes
+        run: python -m pip install 'boto3>=1.35,<2' requests
+      - name: Regressões do escritor C60+quota C61
+        run: |
+          set -euo pipefail
+          python -m unittest affiliate_hub_v31.tests.test_automatic_wordpress_drafts affiliate_hub_v31.tests.test_site_request_queue affiliate_hub_v31.tests.test_article_commerce -q
+      - name: Teste de identidade e rascunho Casa somente se modo explícito
+        env:
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CASA_CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CASA_CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.catalog import Catalog
+          from affiliate_hub_v31.r2_state import R2State,verify_database
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.site_request_queue import REQUESTS_DIR
+          from affiliate_hub_v31.automatic_wordpress_drafts import (
+              WordPressRestClient,select_next,run,WordPressAutoDraftError)
+          site="wordpress_casa_decoracao"
+          route=sites()[site]
+          mode=Path("affiliate_hub_v31/C62_WP_TEST_MODE.txt").read_text().strip()
+          if mode not in ("preview","execute_draft"):
+              raise SystemExit("V31_C62_MODE_INVALID")
+          username=os.getenv("CASA_WORDPRESS_USERNAME","")
+          passwd=os.getenv("CASA_WORDPRESS_APP_PASSWORD","")
+          if not username or not passwd:
+              raise SystemExit("V31_C62_EXISTING_CASA_CREDENTIALS_UNAVAILABLE")
+          client=WordPressRestClient(base_url=route["identifier"],
+                                    username=username,application_password=passwd)
+          # Identity before any R2 lookup or write.
+          client.site_settings()
+          history=client.list_posts(include_unpublished=True)
+          if len(history)<2:
+              raise SystemExit("V31_C62_WORDPRESS_HISTORY_MISSING")
+          print("V31_C62_AUTHENTICATED_WP_PASS "+
+                json.dumps({"existing_posts":len(history),"write_calls":0}))
+          with tempfile.TemporaryDirectory(prefix="v31-c62-wp-") as t:
+              path=Path(t)/"catalog.sqlite3"
+              if not R2State.from_env().restore_to(path):
+                  raise SystemExit("V31_C62_R2_UNAVAILABLE")
+              verify_database(path)
+              with Catalog(path) as catalog:
+                  topic=None
+                  for item in catalog.select_products(route["campaign"],limit=100):
+                      key,name,origin,image,cached=item
+                      if not cached or catalog.for_conversion(key) is None:
+                          continue
+                      candidate=str(name)[:150]
+                      try:
+                          plan=select_next(catalog,site_key=site,topic=candidate,
+                                           posts=history,requested_total=1)
+                      except WordPressAutoDraftError:
+                          continue
+                      if plan.get("status")=="READY_FOR_DRAFT_REVIEW":
+                          topic=candidate
+                          break
+                  if topic is None:
+                      print("V31_C62_NO_NEW_VERIFIED_CASA_PRODUCT_NO_POST")
+                      raise SystemExit(0)
+                  print("V31_C62_R2_CASA_READY "+
+                    json.dumps({"campaign_verified":True,"new_product":True,
+                                "posts_checked":len(history),
+                                "write_calls":0}))
+                  if mode=="preview":
+                      print("V31_C62_WP_REAL_PREVIEW_PASS_NO_POST")
+                      raise SystemExit(0)
+                  req={"site_key":site,"topic":topic,"platform":"wordpress",
+                       "articles":1,"enabled":True}
+                  # Test request exists only in this runner's workspace.
+                  reqfile=REQUESTS_DIR/(site+".json")
+                  if reqfile.exists():
+                      raise SystemExit("V31_C62_TEST_REQUEST_ALREADY_EXISTS")
+                  reqfile.write_text(json.dumps(req,ensure_ascii=False),encoding="utf-8")
+                  try:
+                      result=run(site_key=site,execute_draft=True,
+                                 wp_client=client,catalog=catalog)
+                  finally:
+                      reqfile.unlink(missing_ok=True)
+                  if result.get("status")!="DRAFT_CREATED" or result.get("publication_calls")!=0:
+                      raise SystemExit("V31_C62_WP_DRAFT_NOT_VERIFIED")
+                  print("V31_C62_WP_REAL_DRAFT_PASS "+
+                    json.dumps({"draft_created":1,"publication_calls":0,
+                                "image":result.get("real_product_image"),
+                                "exact_campaign":result.get("exact_campaign"),
+                                "internal_links":result.get("internal_links")}))
+          PY
