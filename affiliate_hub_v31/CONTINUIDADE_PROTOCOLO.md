@@ -72,7 +72,7 @@ O verificador não deve escrever no catálogo, converter links, publicar artigos
 - Nunca revelar segredos, chaves, cookies, URLs privadas de campanha, conteúdo confidencial de env/outputs.
 - Preservar os dois CSVs e o histórico do R2. Produtos `REVIEW` e pistas de taxonomia não podem virar publicidade automaticamente.
 - Um novo site exige ID e campanha reais; não misturar links de diferentes campanhas, nem imagens de produtos diferentes.
-- `isDraft=True` nos jobs Blogger V31; um novo pedido de quantidade/tema é necessário ao superar `articles`.
+- `isDraft=True` nos jobs Blogger V31 e `status=draft` no escritor WordPress V31. Desde C61, `articles:null` autoriza rascunhos contínuos SEM teto total, mas nunca mais de um por execução; pedidos com total numérico exigem ampliação autorizada quando esgotados. LIVE exige gate e autorização separados.
 - Publicação LIVE apenas com autorização explícita e controle de qualidade.
 - Citar evidências (PR, run, post) **somente quando realmente vistas**.
 - Mudanças de tema do Blogger Local Runner ficam para quando o proprietário retomar esse assunto.
