@@ -4,12 +4,12 @@
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
   "last_checkpoint_phase": "C63",
-  "continuity_protocol_phase": "C63",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "continuity_protocol_phase": "C64",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-19",
   "last_updated_source": "C63_PR85_CI_validada_e_apis_blogger_wordpress",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C63_CRONS_RADAR_QUALITY_2026-11-19.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C64_HOMOLOGACAO_SEM_ESPERAR_CRON_2026-11-19.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -44,18 +44,16 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C63 — Radar recupera planos editoriais curtos sem relaxar gate; WordPress universal bloqueia alegações não verificadas antes do POST; cron diário C55/C60 ainda precisa de observação real",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "PR #85 MERGED commit 06998c96692a5345f911c36c6c883e7495b459f7, CI #44546604810 PASS: 383 V31 +24 Casa +21 Oficina +15 Radar +crossblog. APIs: Blogger Móveis 3 LIVE+1 DRAFT, WP Casa 43 LIVE+58 DRAFT; 0 posts da C63.",
-    "next_safe_step": "C64 observar os primeiros schedule reais de 20/11/2026 após C61/C63 nos cron Blogger 09:18 e WordPress 09:41 Recife; confirmar event=schedule, resultado, quota/SKU e estado remoto. Não repetir os DRAFT Blogger 3612281866616913629 ou WP 303. Radar #44447410967 QUARENTENA; corrigir somente se novo cron mostrar falha, mantendo veto LIVE de itens rejeitados.",
+    "objective": "C64 — homologação acelerada hoje dos workflows Blogger C55 e WordPress C60 sem aguardar cron; executar canário seguro por push em main com modo prévia e uma tentativa Blogger DRAFT somente se prévia validar",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C63 PR85 MERGED, CI #44546604810 383 PASS, Blogger Móveis 3 LIVE+1 DRAFT, WordPress Casa 43 LIVE+58 DRAFT; cron posterior a C61 não observado; workflow_dispatch não está disponível nas ações GitHub deste conector.",
+    "next_safe_step": "Criar checkpoint C64 e workflow temporário controlado por arquivo de modo; primeira execução preview ambos; após inspeção disparar no máximo um Blogger DRAFT real, SEM LIVE. Conferir destinos e remover gatilhos temporários.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/85",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44447410967",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C63_CRONS_RADAR_QUALITY_2026-11-19.md"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44546604810"
     ]
   },
   "next_priorities": [
