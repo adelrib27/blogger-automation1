@@ -321,6 +321,33 @@ class WordPressUniversalDraftTests(unittest.TestCase):
                           "application_password": "test-legacy-secret"}
                 }))
 
+    def test_ai_rewrites_rejected_wordpress_text_before_first_post(self):
+        wp=FakeWP()
+        rejected=[paras()[0]]*8
+        with patch.object(m,"generate_original_paragraphs",
+                          side_effect=[rejected,paras()]) as model:
+            with Catalog(self.dbpath) as cat:
+                result=m.run(site_key=KEY,execute_draft=True,
+                             wp_client=wp,catalog=cat)
+        self.assertEqual(result["status"],"DRAFT_CREATED")
+        self.assertEqual(result["publication_calls"],0)
+        self.assertEqual(model.call_count,2)
+        self.assertEqual(len(wp.writes),1)
+        self.assertEqual(wp.writes[0]["status"],"draft")
+
+    def test_three_invalid_ai_outputs_fail_before_any_wordpress_post(self):
+        wp=FakeWP()
+        rejected=[paras()[0]]*8
+        with patch.object(m,"generate_original_paragraphs",
+                          return_value=rejected) as model:
+            with Catalog(self.dbpath) as cat:
+                with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                            "duplicate_paragraph"):
+                    m.run(site_key=KEY,execute_draft=True,
+                          wp_client=wp,catalog=cat)
+        self.assertEqual(model.call_count,3)
+        self.assertEqual(wp.writes,[])
+
     def test_rest_client_posts_only_draft(self):
         client=m.WordPressRestClient(base_url=HOME,
             username="editor",application_password="fake-test-secret")
