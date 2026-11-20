@@ -329,12 +329,21 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
 
         params = self.input()
         article = {field: params[field] for field in independent_review.ARTICLE_FIELDS}
+        evidence = article["evidence_package"]
+        proposal = {**article, "evidence_package": {
+            **evidence, "product_status": "PROPOSED",
+            "sources": [{**source, "authorized": False, "review_status": "PROPOSED"}
+                        for source in evidence["sources"]],
+        }}
         private = Ed25519PrivateKey.generate()
         public_key = private.public_key().public_bytes_raw().hex()
-        raw = json.dumps(article, sort_keys=True, ensure_ascii=False,
+        raw = json.dumps(proposal, sort_keys=True, ensure_ascii=False,
                          separators=(",", ":")).encode("utf-8")
         digest = hashlib.sha256(raw).hexdigest()
-        self.assertEqual(independent_review.decode_candidate(raw, digest=digest), article)
+        self.assertEqual(independent_review.decode_candidate(raw, digest=digest), proposal)
+        self.assertEqual(independent_review._material_for_review(proposal), article)
+        with self.assertRaisesRegex(ValueError, "only_proposed_evidence"):
+            independent_review._material_for_review(article)
         with self.assertRaises(independent_review.IndependentReviewError):
             independent_review.decode_candidate(raw + b" ", digest=digest)
         with patch.object(independent_review, "sites", return_value=ROUTES):
