@@ -4,12 +4,12 @@
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
   "last_checkpoint_phase": "C80",
-  "continuity_protocol_phase": "C80",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "continuity_protocol_phase": "C81",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
   "last_updated_source": "C80_GITHUB_D1_TOKEN_AUTH_LEASE_CONCURRENCY_REAL_PASS_CLEANUP_ZERO",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -234,9 +234,9 @@
   },
   "active_work": {
     "objective": "C81: integrar envelope R2 privado imutável C78/C79 ao D1 READY real C76 e revisão/evidência C77, sem permitir HTML ou SKU divergentes e sem publicar LIVE",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "C80: token D1 novo fornecido pelo proprietário no Environment v31-editorial-safe, Actions #44786171930 SELECT-only API autenticada e quatro tabelas; #44786624444 corrida real lease um vencedor, ownership/TTL PASS e limpeza zero; TEMP removidos; Cloudflare SELECT independente D1 oficial quatro tabelas vazias.",
-    "next_safe_step": "C81 criar transação/manifesto de transição envelope R2 -> metadata D1, revalidar evidência SEO HMAC com reviewer REAL, canário SAFE e só depois DRAFT Blogger/WordPress; não ligar cron ou LIVE automaticamente.",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "Prévia C81: main comparada à C80, bucket oficial confirmado, quatro contagens D1 zeradas via SELECT e Actions C79/C80 concluídas com sucesso.",
+    "next_safe_step": "Implementar integração preflight C77, envelope R2 C78/C79 e D1 READY C76 na branch isolada, testar recuperação e documentar os resultados.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -244,7 +244,10 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44786171930",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44786624444",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md"
-    ]
+    ],
+    "phase": "C81",
+    "base_main_sha": "40689157d0a13409ffd52c5bcb0ae4a8f581ecdc",
+    "branch": "v31/c81-reviewed-draft"
   },
   "next_priorities": [
     "C81 desenho de handoff durável idempotente e revisão do artigo: C77 fact gate SEO real, C78/C79 envelope R2 com SHA e manifesto HMAC externo, C76 D1 READY com TTL e lease; não aceitar prova criada pela IA como revisor.",
