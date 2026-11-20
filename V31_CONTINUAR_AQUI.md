@@ -1,10 +1,17 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Para um novo chat do projeto:** leia ESTE arquivo, [estado estruturado C79](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint C79](affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md), [C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md), [C77](affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md), [C76](affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md), [C75](affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md) e C74/C69, depois issue-mestre #54. Conferir estados reais antes de qualquer POST. NÃO usar CHECKPOINT_ATUAL.md legado para V31.
+> **Para um novo chat do projeto:** leia este arquivo, depois [CONTINUIDADE_ESTADO.json C80](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint C80](affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md), [C79](affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md), [C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md), C77/C76/C75/C74/C69 e issue-mestre #54. Conferir GitHub Actions e Cloudflare antes de novas mutações. **Não** usar CHECKPOINT_ATUAL.md legado para V31.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
-**Última conferência contextual:** 20/11/2026 (C79 PR104/CI537, R2 CAS REAL canário 412 PASS e cleanup zero; D1 secret ainda ausente, D1 vazio). As observações de checkpoints devem ser revalidadas.
+**Última conferência contextual:** 20/11/2026 (C80: GitHub D1 token autenticado, concorrência D1 real PASS, cleanup zero, workflows TEMP removidos; próximo C81). Revalidar antes de alterações.
 **Protocolo:** [CONTINUIDADE_PROTOCOLO.md](affiliate_hub_v31/CONTINUIDADE_PROTOCOLO.md) · [estado JSON](affiliate_hub_v31/CONTINUIDADE_ESTADO.json).
+
+## C80 — credencial GitHub D1 e concorrência REAL homologadas (20/11/2026)
+
+- O proprietário configurou `V31_D1_API_TOKEN` como Environment Secret em `v31-editorial-safe`. [Actions #44786171930](https://github.com/adelrib27/blogger-automation1/actions/runs/44786171930) **SUCCESS** com `CloudflareD1HTTPRunner` C75 fixado à conta Cloudflare oficial `ebb8d5b4cf9a2cb850c6d8051bd2661f` e banco `9bfce7a4-6167-4bfc-a65e-a74c1a34f064`: SELECT-only autenticado, 4 tabelas verificadas, `writes disabled by default` e zero registros.
+- [Actions #44786624444](https://github.com/adelrib27/blogger-automation1/actions/runs/44786624444) **SUCCESS** em concorrência HTTP real de dois executores, lease C71 um vencedor, owner-only release e reclaim TTL; site e campanha SINTÉTICOS de run com cleanup zero. Somente no workflow TEMP a escrita era habilitada com dois opt-ins. Ações CMS/R2/Firecrawl/LIVE=0.
+- DOIS workflows temporários foram removidos da `main`; consulta independente Cloudflare no D1 oficial confirmou `leases/jobs/evidence/budgets=0`. A conta R2 e outros projetos permanecem intactos; a credencial foi homologada, mas D1 **NÃO** está conectado aos writers.
+- **C81:** unir os objetos R2 imutáveis C78/C79 ao D1 READY C76 através do preflight C77, revisão independente real/HMAC, SEO e fontes verificadas, canários CMS DRAFT controlados antes de qualquer cron LIVE. [Checkpoint C80](affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md).
 
 ## C79 — adaptador privado R2 oficial e canário CAS real (20/11/2026)
 
