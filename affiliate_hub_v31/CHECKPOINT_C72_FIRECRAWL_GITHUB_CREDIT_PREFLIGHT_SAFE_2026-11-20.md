@@ -16,3 +16,11 @@
 4. Em fase posterior, conectar runner D1 seguro a banco **V31 dedicado**, fact gate e writers via canários DRAFT. Não criar banco pet-specific nem editar WordPress Vida Pet; nunca ativar LIVE automaticamente.
 
 **Nenhuma mutação externa na criação deste checkpoint além de documentação GitHub.**
+
+
+## C72.1 — crédito da mesma credencial GitHub COMPROVADO
+
+- [GitHub Action #44747950119](https://github.com/adelrib27/blogger-automation1/actions/runs/44747950119) **SUCCESS**, `event=push`, execução com `secrets.FIRECRAWL_API_KEY` do repo, sem reutilizar token em outro contexto. Resultado `C72_FIRECRAWL_GITHUB_CREDIT_PREFLIGHT=POSITIVE`; API Firecrawl oficial retornou **`remaining_credits=1000`** em 20/11/2026 às 10h51 Recife. Essa é uma observação pontual, não saldo garantido no futuro.
+- Foram realizadas `requests_to_firecrawl=1` do tipo `GET_CREDIT_USAGE_ONLY`, `search_calls=0`, `scrape_calls=0`, `publication_calls=0`, `d1_mutations=0`, `r2_mutations=0`. O valor do secret não foi exibido.
+- Workflow TEMP removido da `main` após prova, commit `32e31a84fc8ed311c4fad67d82466eed4f223b48`. Não acionou o LAB Vida Pet nem mudou blogs/algoritmos.
+- **Próxima dependência:** vincular o contador durável de orçamento D1 V31 a banco dedicado (não Pet) ou equivalente transacional testado antes do primeiro cache miss real; confirmar saldo de novo logo antes da busca. Os 1.000 créditos não autorizam pesquisas ilimitadas ou publicação.
