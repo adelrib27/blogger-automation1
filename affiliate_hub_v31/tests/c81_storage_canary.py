@@ -82,7 +82,9 @@ def main():
         params = test.input(state=state, envelope=envelope)
         key_pair = Ed25519PrivateKey.generate()
         public_key = key_pair.public_key().public_bytes_raw().hex()
+        anchor = hashlib.sha256(bytes.fromhex(public_key)).hexdigest()
         params["release_public_key"] = public_key
+        params["embed_release_key"] = True
         params["release_signature"] = sign_release(
             params["attestation"], private_key=key_pair.private_bytes_raw().hex())
         html_hash = hashlib.sha256(params["html_content"].encode("utf-8")).hexdigest()
@@ -97,7 +99,7 @@ def main():
             fingerprint = staged["fingerprint"]
             job = state.get_job(**tenant, fingerprint=fingerprint)
             stored = envelope.load(**tenant, html_sha256=job["html_sha256"],
-                                   release_public_key=public_key)
+                                   release_public_key_sha256=anchor)
             require(job["status"] == "READY" and stored["html_content"] == params["html_content"]
                     and stored["review"]["evidence_sha256"] == job["evidence_sha256"],
                     "C81_READBACK_BINDING_FAILED")
@@ -111,7 +113,7 @@ def main():
             require(state.get_job(**tenant, fingerprint=fingerprint)["status"] == "USED",
                     "C81_USED_READBACK_FAILED")
             print("C81_OFFICIAL_R2_D1_EXACT_READBACK_READY_USED_REPLAY=PASS")
-            print("C81_R2_V2_PUBLIC_KEY_ONLY_READBACK=PASS")
+            print("C81_R2_V3_KEY_ANCHOR_READBACK=PASS")
             exercise_expired_buffer(state, tenant, params["now"])
         finally:
             try:

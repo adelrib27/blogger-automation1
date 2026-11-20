@@ -93,6 +93,75 @@ jobs:
         run: |
           echo C81_CONFIG_PUBLIC_KEY_MISSING_OR_MISMATCH
           exit 1
+  storage-anchor:
+    if: github.event_name == 'push' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42'
+      - name: Validar envelope R2 com impressão digital e recuperar READY
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
+        run: python -m affiliate_hub_v31.tests.c81_storage_canary
+
+  offer-readiness:
+    if: github.event_name == 'push' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.36,<2'
+      - name: Conferir elegibilidade e cache das ofertas reservadas
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: |
+          python - <<'PY'
+          import json
+          import tempfile
+          from pathlib import Path
+          from affiliate_hub_v31.catalog import Catalog
+          from affiliate_hub_v31.independent_review import _official_storage
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.site_request_queue import VERIFIER_PROFILES
+          profiles = json.loads(VERIFIER_PROFILES.read_text(encoding="utf-8"))
+          with tempfile.TemporaryDirectory() as directory:
+              path = Path(directory) / "catalog.sqlite3"
+              if not _official_storage().restore_to(path):
+                  raise SystemExit("official_catalog_missing")
+              with Catalog(path) as catalog:
+                  for site, profile in profiles.items():
+                      sku = profile.get("pilot_sku")
+                      if not sku:
+                          continue
+                      route = sites()[site]
+                      print(json.dumps({"site_key": site,
+                                        "eligible": catalog.for_conversion(sku) is not None,
+                                        "exact_campaign_link": bool(catalog.cached_link(sku, route["campaign"])),
+                                        "cms_calls": 0}))
+          PY
   blogger:
     if: github.event_name == 'schedule'
     uses: ./.github/workflows/v31_independent_review_draft.yml
