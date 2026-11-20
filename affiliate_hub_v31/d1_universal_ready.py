@@ -119,7 +119,7 @@ class UniversalD1ReadyState:
         self, *, site_key: str, campaign: str,
         owner_nonce: str, fingerprint: str, product_key: str,
         html_sha256: str, evidence_sha256: str,
-        now_epoch: int, min_ready: int = 3
+        now_epoch: int, min_ready: int = 3, cooldown_days: int = 30
     ) -> bool:
         """O lease de refill e limite do buffer são conferidos no MESMO INSERT.
         min_ready limita somente o buffer SIMULTÂNEO, nunca total histórico.
@@ -131,7 +131,9 @@ class UniversalD1ReadyState:
                 for x in (fingerprint,html_sha256,evidence_sha256))
                 or not isinstance(product_key, str)
                 or not SKU_RE.fullmatch(product_key)
-                or type(min_ready) is not int or not 1 <= min_ready <= 100):
+                or type(min_ready) is not int or not 1 <= min_ready <= 100
+                or type(cooldown_days) is not int
+                or not 1 <= cooldown_days <= 365):
             raise D1SafeError("ready_job_input_invalid")
         rows = self._call("""
           INSERT INTO v31_ready_jobs
@@ -145,11 +147,17 @@ class UniversalD1ReadyState:
           )
           AND (SELECT COUNT(*) FROM v31_ready_jobs
                WHERE site_key=? AND campaign=? AND status='READY') < ?
+          AND NOT EXISTS (
+            SELECT 1 FROM v31_ready_jobs
+            WHERE site_key=? AND campaign=? AND product_key=?
+              AND (status='READY' OR COALESCE(used_epoch,created_epoch)>?)
+          )
           ON CONFLICT(site_key,campaign,fingerprint) DO NOTHING
           RETURNING fingerprint
         """, (site_key,campaign,fingerprint,product_key,html_sha256,
               evidence_sha256,t,site_key,campaign,owner_nonce,t,
-              site_key,campaign,min_ready))
+              site_key,campaign,min_ready,site_key,campaign,product_key,
+              t-cooldown_days*86400))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint
 
     def consume_one(
