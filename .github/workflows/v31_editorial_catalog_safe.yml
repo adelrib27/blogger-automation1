@@ -41,6 +41,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Instalar verificador de assinatura de revisão
+        run: python -m pip install 'cryptography>=42'
       - name: Compilar modulos sem importar segredos
         run: python -m compileall -q affiliate_hub_v31
       - name: Testes offline isolados, sem tokens nem rede

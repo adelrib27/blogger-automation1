@@ -136,6 +136,23 @@ class _FinalHTMLScanner(HTMLParser):
         raise FinalFactGateError("html_declaration_disallowed")
 
 
+def scan_final_html(html_content: str) -> _FinalHTMLScanner:
+    if not isinstance(html_content, str) or not 100 <= len(html_content) <= 120_000:
+        raise FinalFactGateError("html_size_invalid")
+    scanner = _FinalHTMLScanner()
+    try:
+        scanner.feed(html_content)
+        scanner.close()
+    except FinalFactGateError:
+        raise
+    except Exception:
+        raise FinalFactGateError("html_parser_rejected") from None
+    if (scanner.article_count != 1 or scanner.tags or scanner.fact_span
+            or scanner.current_block or scanner.prose_count == 0):
+        raise FinalFactGateError("html_structure_invalid")
+    return scanner
+
+
 def verify_final_html_facts(
     *, html_content: str, evidence_package: dict,
     product_key: str, product_title: str,
@@ -149,8 +166,7 @@ def verify_final_html_facts(
     independente, nunca de parâmetros fornecidos por IA/candidato.
     PASS nunca significa autorização LIVE.
     """
-    if not isinstance(html_content, str) or not 100 <= len(html_content) <= 120_000:
-        raise FinalFactGateError("html_size_invalid")
+    scanner = scan_final_html(html_content)
     if (not isinstance(used_evidence_ids, list) or
             not used_evidence_ids or len(used_evidence_ids) > 100 or
             not all(isinstance(x, str) and ID_RE.fullmatch(x)
@@ -170,17 +186,6 @@ def verify_final_html_facts(
         raise FinalFactGateError("package_not_verified_exact_fresh") from exc
     verified = {e["evidence_id"]: " ".join(e["claim_text"].split())
                 for e in audit["allowed_facts"]}
-    scanner = _FinalHTMLScanner()
-    try:
-        scanner.feed(html_content)
-        scanner.close()
-    except FinalFactGateError:
-        raise
-    except Exception as exc:
-        raise FinalFactGateError("html_parser_rejected") from exc
-    if (scanner.article_count != 1 or scanner.tags or scanner.fact_span
-            or scanner.current_block or scanner.prose_count == 0):
-        raise FinalFactGateError("html_structure_invalid")
     if set(scanner.facts) != set(used_evidence_ids):
         raise FinalFactGateError("fact_ids_not_exactly_bound")
     for eid, observed in scanner.facts.items():
