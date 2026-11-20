@@ -16,3 +16,20 @@
 5. Registrar evidência de resultados e atualizar estado/índice. Independente do canário, integração do D1 aos escritores fica pendente até credencial isolada e validações finais.
 
 **Status inicial:** `EM_ANDAMENTO`; sem mutações Cloudflare C74 ao gravar este arquivo.
+
+## C74.1 — Criação e migration comprovadas na conta R2 correta
+
+- `POST /accounts/ebb8d5b4cf9a2cb850c6d8051bd2661f/d1/database` criou **`v31-universal-ready-safe`**, UUID **`9bfce7a4-6167-4bfc-a65e-a74c1a34f064`**, primary_location_hint ENAM, `read_replication.mode=disabled`, resposta `success=true`.
+- `GET /accounts/.../d1/database/9bfce7a4-6167-4bfc-a65e-a74c1a34f064` conferiu nome + UUID antes de executar C71 SQL.
+- Migration fonte `migrations/c71_universal_ready_d1.sql` aplicada ao banco **novo e exclusivo**; consulta `sqlite_master` confirmou quatro tabelas `v31_ready_jobs`, `v31_ready_leases`, `v31_search_budget`, `v31_verified_evidence`, sem mexer em tabelas de quaisquer outros bancos.
+
+## C74.2 — Canários sintéticos D1 PASS, limpeza zero
+
+- Site e campanha só sintéticos: `v31_c74_canary_blog`, `v31_c74_canary_campaign`; testes SQL reais no D1 novo, todos verdadeiros: `lease_contention`, `idempotent`, `budget_bounded`, `breaker_429`, `tenant_isolated`, `evidence_written`.
+- `finally` limpou as quatro tabelas por site+campanha sintéticos, e readback retornou `0` em **todas as quatro** (`cleanup_zero=true`, `all_pass=true`).
+- Observação: testes SQL funcionais isolados não equivalem a ensaio simultâneo multiprocesso nem a integração do adapter Python com a API real; esta continua pendente.
+- **Nenhum** Worker/binding/segredo GitHub, Firecrawl search, writer, Shopee, Blogger, WordPress, LIVE ou projeto Vida Pet/ARV/Pinterest modificado; D1 C73 da conta `adeiltonrml` permanece intocado.
+
+## Encerramento seguro e próximos passos
+
+**C74 SAFE CONCLUÍDA.** Banco correto criado, esquema e canários confirmados, tabelas sem fixtures. `mutation_in_progress=false`, `remote_operation_in_progress=false`, sem rollback necessário. Antes de conectar ao writer, comprovar variáveis/segredos GitHub corretos sem exposição, implementar runner D1 com autorização mínima e teste concorrente real, fact gate HTML + evidence real e canário DRAFT isolado, com LIVE ainda bloqueado.
