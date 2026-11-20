@@ -14,6 +14,7 @@ from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.final_fact_gate import reviewed_text_digest
 from affiliate_hub_v31 import reviewed_ready_promotion as promo
 from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
+from affiliate_hub_v31.private_ready_envelope import ImmutablePrivateReadyEnvelope
 from affiliate_hub_v31.tests.test_c71_d1_universal_ready import SqliteQuery
 from affiliate_hub_v31.tests.test_c69_universal_evidence_ready import (
     KEYS, TITLES, NOW, HOME, OTHER, ROUTES, package,
@@ -68,6 +69,20 @@ def sign_material(payload):
     return hmac.new(KEY, canonical, hashlib.sha256).hexdigest()
 
 
+class ConditionalMemoryBackend:
+    def __init__(self):
+        self.objects = {}
+
+    def put_if_absent(self, key, body):
+        if key in self.objects:
+            return False
+        self.objects[key] = body
+        return True
+
+    def get(self, key):
+        return self.objects.get(key)
+
+
 class ReviewedReadyIntegrationTests(unittest.TestCase):
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
@@ -104,6 +119,7 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
         for target in (
             "affiliate_hub_v31.reviewed_ready_promotion.sites",
             "affiliate_hub_v31.d1_universal_ready.sites",
+            "affiliate_hub_v31.private_ready_envelope.sites",
         ):
             pt = patch(target, return_value=ROUTES)
             pt.start()
@@ -178,6 +194,51 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
         with self.assertRaisesRegex(promo.ReviewedReadyError, "review_attestation"):
             promo.stage_reviewed_ready(**self.input(html_content=changed))
         self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 0)
+
+    def test_envelope_then_ready_with_exact_html_and_idempotent_replay(self):
+        backend = ConditionalMemoryBackend()
+        envelope = ImmutablePrivateReadyEnvelope(backend=backend)
+        params = self.input(envelope=envelope)
+        result = promo.stage_reviewed_ready(**params)
+        self.assertEqual(result["status"], "READY_RESERVED_FOR_DRAFT_REVIEW")
+        stored = envelope.load(site_key=SITE, campaign=CAMPAIGN,
+                               html_sha256=result["html_sha256"],
+                               independent_review_key=KEY)
+        self.assertEqual(stored["html_content"], params["html_content"])
+        replay = promo.stage_reviewed_ready(**params)
+        self.assertEqual(replay["status"], "READY_ALREADY_STAGED")
+        self.assertEqual(replay["fingerprint"], result["fingerprint"])
+        self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 1)
+        self.assertEqual(len(backend.objects), 1)
+
+    def test_envelope_failure_and_signed_gate_failure_create_no_ready(self):
+        backend = ConditionalMemoryBackend()
+        envelope = ImmutablePrivateReadyEnvelope(backend=backend)
+        with self.assertRaises(promo.ReviewedReadyError):
+            promo.stage_reviewed_ready(**self.input(envelope=envelope,
+                                                    html_content=make_html() + " "))
+        self.assertEqual(backend.objects, {})
+        with patch.object(backend, "get", return_value=b"untrusted"):
+            with self.assertRaises(promo.ReviewedReadyError):
+                promo.stage_reviewed_ready(**self.input(envelope=envelope))
+        self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 0)
+
+    def test_recovery_after_envelope_created_and_d1_response_lost(self):
+        backend = ConditionalMemoryBackend()
+        params = self.input(envelope=ImmutablePrivateReadyEnvelope(backend=backend))
+        reserve = self.state.reserve_ready
+
+        def lose_response(**kwargs):
+            reserve(**kwargs)
+            raise promo.D1SafeError("synthetic_response_loss")
+
+        with patch.object(self.state, "reserve_ready", side_effect=lose_response):
+            with self.assertRaises(promo.ReviewedReadyError):
+                promo.stage_reviewed_ready(**params)
+        result = promo.stage_reviewed_ready(**params)
+        self.assertEqual(result["status"], "READY_ALREADY_STAGED")
+        self.assertEqual(len(backend.objects), 1)
+        self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 1)
 
     def test_fake_and_cross_campaign_offer_rejected(self):
         for html in (

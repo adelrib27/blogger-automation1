@@ -5,10 +5,8 @@ editorial reviewer must sign the *exact* payload using a secret unavailable to
 the AI or ordinary writer. This cannot verify a review actually happened:
 signing-key custody and independent source approval are operational gates.
 
-No Firecrawl, Blogger, WordPress, R2 write or LIVE publisher.
-The injected D1 state CAN use an HTTP database transport in a future phase.
-The injected UniversalD1ReadyState may use isolated SQLite tests; production
-connection is explicitly NOT configured here.
+An injected private envelope can persist verified HTML before READY.
+The caller configures storage explicitly. No research or CMS calls occur here.
 """
 from __future__ import annotations
 
@@ -16,9 +14,11 @@ import hashlib
 import hmac
 import json
 import re
+from time import monotonic
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
+from typing import TYPE_CHECKING
 
 from .article_commerce import CommerceArticleError, _single_verified_offer
 from .d1_universal_ready import UniversalD1ReadyState, D1SafeError
@@ -29,6 +29,9 @@ from .universal_evidence_ready import (
     UniversalReadyError, UniversalReadyPolicy, _fingerprint,
     evidence_whitelist,
 )
+
+if TYPE_CHECKING:
+    from .private_ready_envelope import ImmutablePrivateReadyEnvelope
 
 
 class ReviewedReadyError(ValueError):
@@ -154,8 +157,9 @@ def stage_reviewed_ready(
     attestation: dict, independent_review_key: bytes,
     owner_nonce: str, now: datetime,
     policy: UniversalReadyPolicy = UniversalReadyPolicy(),
+    envelope: ImmutablePrivateReadyEnvelope | None = None,
 ) -> dict:
-    """Preflight + SQL-only D1 READY reservation, never a CMS operation.
+    """Preflight and reserve D1 READY after optional exact R2 readback.
 
     The caller must independently load attestation + secret from protected
     review infrastructure (not from an AI candidate or user-submitted form).
@@ -166,8 +170,14 @@ def stage_reviewed_ready(
         raise ReviewedReadyError("isolated_d1_state_required")
     if not isinstance(now, datetime) or now.tzinfo is None:
         raise ReviewedReadyError("verified_clock_required")
+    if envelope is not None:
+        from .private_ready_envelope import ImmutablePrivateReadyEnvelope
+
+        if not isinstance(envelope, ImmutablePrivateReadyEnvelope):
+            raise ReviewedReadyError("immutable_private_envelope_required")
     clock = now.astimezone(timezone.utc)
     epoch = int(clock.timestamp())
+    started = monotonic()
     try:
         route = sites().get(site_key)
         if (not isinstance(route, dict) or route.get("site_key") != site_key
@@ -200,7 +210,7 @@ def stage_reviewed_ready(
         if (seo["status"] != "READY_FOR_EDITORIAL_SAFE_REVIEW"
                 or seo["blockers"] or seo["keyword_source_verified"] is not True):
             raise ReviewedReadyError("seo_live_html_preflight_failed")
-        evidence = evidence_whitelist(
+        evidence_whitelist(
             package=evidence_package, product_key=product_key,
             product_title=title, now=clock, policy=policy,
         )
@@ -244,6 +254,29 @@ def stage_reviewed_ready(
         ):
             return _summary("LEASE_BUSY")
         try:
+            if envelope is not None:
+                previous = state.get_job(
+                    site_key=site_key, campaign=campaign, fingerprint=fingerprint,
+                )
+                if previous is not None and (
+                    previous["product_key"], previous["html_sha256"],
+                    previous["evidence_sha256"],
+                ) != (product_key, html_sha, evidence_sha):
+                    raise ReviewedReadyError("ready_job_binding_conflict")
+                # R2 first: a failed SQL commit can leave an unreferenced
+                # object. Identical retries reuse it through conditional PUT.
+                saved = envelope.save(
+                    site_key=site_key, campaign=campaign, product_key=product_key,
+                    content_html=html_content, attestation=attestation,
+                    independent_review_key=independent_review_key,
+                )
+                if previous is not None:
+                    return _summary("READY_ALREADY_STAGED") | {
+                        "fingerprint": fingerprint,
+                        "html_sha256": saved["html_sha256"],
+                        "job_status": previous["status"],
+                    }
+                epoch = int(clock.timestamp() + monotonic() - started)
             stored = state.cache_verified_evidence(
                 site_key=site_key, campaign=campaign, owner_nonce=owner_nonce,
                 product_key=product_key, product_title=title,
@@ -264,8 +297,12 @@ def stage_reviewed_ready(
                 now_epoch=epoch, min_ready=policy.min_ready,
                 cooldown_days=policy.product_cooldown_days,
             )
-            return _summary("READY_RESERVED_FOR_DRAFT_REVIEW" if reserved
-                            else "READY_NOT_RESERVED")
+            result = _summary("READY_RESERVED_FOR_DRAFT_REVIEW" if reserved
+                              else "READY_NOT_RESERVED")
+            if envelope is not None and reserved:
+                result.update(fingerprint=fingerprint, html_sha256=html_sha,
+                              job_status="READY")
+            return result
         finally:
             if not state.release_lease(
                 site_key=site_key, campaign=campaign,

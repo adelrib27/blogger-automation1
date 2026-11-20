@@ -169,6 +169,22 @@ class UniversalD1ReadyState:
               site_key,campaign,product_key,t-cooldown_days*86400))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint
 
+    def get_job(self, *, site_key: str, campaign: str,
+                fingerprint: str) -> dict | None:
+        _params_site(site_key, campaign)
+        if not isinstance(fingerprint, str) or not HEX_RE.fullmatch(fingerprint):
+            raise D1SafeError("ready_fingerprint_invalid")
+        rows = self._call("""
+          SELECT product_key, html_sha256, evidence_sha256, status
+          FROM v31_ready_jobs
+          WHERE site_key=? AND campaign=? AND fingerprint=?
+        """, (site_key, campaign, fingerprint))
+        if not rows:
+            return None
+        if len(rows) != 1 or rows[0].get("status") not in ("READY", "USED"):
+            raise D1SafeError("d1_ready_job_untrusted")
+        return rows[0]
+
     def consume_one(
         self, *, site_key: str, campaign: str, owner_nonce: str,
         fingerprint: str, now_epoch: int
