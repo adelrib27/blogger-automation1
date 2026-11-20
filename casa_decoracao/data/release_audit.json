@@ -2,105 +2,41 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 9,
+    "total": 6,
     "draft_ready": 1,
-    "rejected": 7,
-    "not_generated": 1,
-    "published_history": 46,
-    "rotation_cycle": 5,
+    "rejected": 5,
+    "not_generated": 0,
+    "published_history": 47,
+    "rotation_cycle": 6,
     "rotation_pending": [
+      "Decoração",
+      "Organização",
+      "Sala",
+      "Quarto",
+      "Cozinha",
+      "Banheiro",
+      "Área Externa",
       "Cama, Mesa e Banho"
     ]
   },
   "items": [
     {
-      "id": 91,
-      "shopee_item_id": "23492815637",
+      "id": 95,
+      "shopee_item_id": "21297458008",
       "category": "Cama, Mesa e Banho",
-      "product": "Protetor De Colchão P/ Berço Americano Bambi - Envio Imediato",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "meta_description_tamanho:158",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 762,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 60,
-          "meta_description_length": 158,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 78,
-      "shopee_item_id": "58253704479",
-      "category": "Decoração",
-      "product": "Jardineira Luxuosa 80x40 com Prato Invisível | Vaso Decorativo para Plantas",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1162"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 1162,
-          "h2_count": 6,
-          "internal_links": 1,
-          "seo_title_length": 58,
-          "meta_description_length": 153,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 79,
-      "shopee_item_id": "11446353993",
-      "category": "Sala",
-      "product": "5 Puxadores Ponto 160 P/ Porta Armário Gaveta Mesa Lateral",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "product": "Protetor Para Colchão Impermeável Matelado Varias Medidas",
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 308,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 597,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 147,
+          "word_count": 621,
+          "h2_count": 7,
+          "internal_links": 3,
+          "seo_title_length": 37,
+          "meta_description_length": 153,
           "cta_count": 2
         },
         "safety_class": "STANDARD"
@@ -142,54 +78,39 @@
       }
     },
     {
-      "id": 90,
-      "shopee_item_id": "46360468172",
+      "id": 94,
+      "shopee_item_id": "23398723658",
       "category": "Cozinha",
-      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "product": "Ralador De Legumes Cortador Fatiador Legumes tabletop 3 Laminas Verduras Ralador Ralador Verdura Legumes Manivela",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
         "reasons": [
+          "categoria_invalida",
           "chamada_consulta_contextual_quantidade_invalida:0",
           "disclosure_afiliado_quantidade_invalida:0",
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
           "titulo_comercial_copiado_no_corpo",
           "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
+          "titulo_produto_cta_quantidade_invalida",
+          "word_count_alto:1283"
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 818,
-          "h2_count": 4,
+          "word_count": 1283,
+          "h2_count": 5,
           "internal_links": 1,
-          "seo_title_length": 57,
+          "seo_title_length": 59,
           "meta_description_length": 155,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 76,
-      "shopee_item_id": "58257199934",
-      "category": "Cozinha",
-      "product": "Escorredor de Louças em Aço Carbono para Cozinha Organizador de Pratos, Tigelas e Talheres",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
       }
     },
     {
@@ -228,10 +149,45 @@
       }
     },
     {
-      "id": 88,
-      "shopee_item_id": "20299321793",
+      "id": 93,
+      "shopee_item_id": "51511552034",
       "category": "Banheiro",
-      "product": "1/2/3 Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio ES",
+      "product": "Kit 2 Porta Shampoo Sabonete Suporte De Canto Parede Banheiro Cozinha Prateleira Sem Furar Multifuncional Cor Preto",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "categoria_invalida",
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 1054,
+          "h2_count": 6,
+          "internal_links": 1,
+          "seo_title_length": 42,
+          "meta_description_length": 155,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 92,
+      "shopee_item_id": "58207037675",
+      "category": "Área Externa",
+      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -248,51 +204,15 @@
           "titulo_comercial_copiado_no_corpo",
           "titulo_produto_cta_nao_fiel",
           "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1260"
+          "word_count_alto:1206"
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 1260,
-          "h2_count": 5,
+          "word_count": 1206,
+          "h2_count": 6,
           "internal_links": 1,
-          "seo_title_length": 59,
-          "meta_description_length": 152,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 89,
-      "shopee_item_id": "58203212212",
-      "category": "Área Externa",
-      "product": "Vaso Polietileno + Planta Artificial Jiboia Follhas Grande Decoracao Jardim",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "REJECTED",
-        "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "meta_description_tamanho:156",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
-        ],
-        "warnings": [],
-        "metrics": {
-          "word_count": 753,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 156,
+          "seo_title_length": 57,
+          "meta_description_length": 151,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
