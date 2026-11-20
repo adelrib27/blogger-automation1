@@ -24,3 +24,12 @@ Continuar V31 após C70 e concluir as próximas pendências técnicas sem transf
 
 ## Efeitos de produção desta prévia
 Zero R2/Shopee/CMS/D1/Firecrawl/Pet mutações. A criação da própria prévia é apenas documentação GitHub. O C71 não presume cron do dia 20 e não autoriza publicação LIVE.
+
+## C71.1 — PR #99/CI e homologação SAFE concluídos
+
+- [PR #99 MERGED](https://github.com/adelrib27/blogger-automation1/pull/99), merge `f040981a50ba7bbb506691b9fe785157d00e137e`, somente seis arquivos novos em `affiliate_hub_v31/`: `d1_universal_ready.py`, `final_fact_gate.py`, `migrations/c71_universal_ready_d1.sql`, `UNIVERSAL_D1_FACT_GATE_C71.md` e dois testes. Nenhum código `vida_pet_pratica/`, workflow, publicador ou CMS alterado.
+- [CI FINAL #44747425029](https://github.com/adelrib27/blogger-automation1/actions/runs/44747425029) **SUCCESS**: `Ran 494 tests ... OK` em V31, Casa 24/24, Oficina 21/21, Radar 15/15 e crossblog PASS. A primeira CI [#44747022412](https://github.com/adelrib27/blogger-automation1/actions/runs/44747022412) passou 493; reforço de cooldown por SKU e filtro de HTML inseguro incluídos antes do merge.
+- Gate `verify_final_html_facts` exige correspondência literal entre spans factuais, fontes C69 e revisão independente de todo texto livre do bloco; ainda **não roda** em writers. Passar no gate não autoriza LIVE.
+- `UniversalD1ReadyState` faz SQL atômico com `RETURNING` (lease, quota, READY/USED, cache TTL7 e budgets/429) em runner injetado; cooldown 30d por mesmo SKU/site bloqueia variação de ângulo com múltiplos fingerprints. Migrador D1 fornecido como arquivo SQL, **não executado em banco Cloudflare**, testado em SQLite de arquivo com duas conexões concorrentes.
+- **Zero Firecrawl, D1 real, CMS, Shopee ou R2 mutações no PR**. A origem externa está em auditoria: GitHub schedule de 19/11 gerou DRAFT Blogger e WP reais, mas a prova de pontualidade em 20/11 continua faltando; histórico de WP 45 LIVE deve ser investigado separadamente.
+- **PENDENTE:** confirmar recursos/quota Firecrawl sob a MESMA credencial GitHub; escolher D1 dedicado sem tocar Pet; teste REST D1 real e locks; integração factual pós-IA + writers com canários DRAFT, decisão de agendador de produção, QA SEO/HTML e owner-review, sempre LIVE manual. A C71 do PR ficou SAFE e não homologação LIVE.
