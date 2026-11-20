@@ -1,10 +1,17 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Para um novo chat do projeto:** leia ESTE arquivo na `main`, depois o [estado estruturado C76](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), o [checkpoint atual C76](affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md), [C75](affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md), [C74](affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md), [C73](affiliate_hub_v31/CHECKPOINT_C73_D1_UNIVERSAL_ISOLADO_2026-11-20.md), [C69](affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). O estado vivo prevalece sobre checkpoints antigos. **NÃO** usar `CHECKPOINT_ATUAL.md` legado como ponto de retomada do V31.
+> **Para um novo chat do projeto:** leia este arquivo e o [estado C77](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), depois o [checkpoint C77](affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md), [C76](affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md), [C75](affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md), [C74](affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md), [C69](affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Nunca usar CHECKPOINT_ATUAL.md legado como ponto V31; conferir serviços antes de mutações.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
-**Última conferência contextual:** 20/11/2026 (C76, PR101 CI508 e D1 oficial confirmado vazio em leitura real). O JSON de estado é atualizado por fase; dados e números nele são observações históricas, NÃO leitura ao vivo.  
+**Última conferência contextual:** 20/11/2026 (C77, PR102/CI518 e auditoria ambiente GitHub R2 MATCH; D1 secret novo ausente). Observações históricas não são estado vivo permanente.
 **Protocolo:** [CONTINUIDADE_PROTOCOLO.md](affiliate_hub_v31/CONTINUIDADE_PROTOCOLO.md) · [estado JSON](affiliate_hub_v31/CONTINUIDADE_ESTADO.json).
+
+## C77 — preflight universal até READY SAFE e conta GitHub protegida (20/11/2026)
+
+- [PR #102 MERGED](https://github.com/adelrib27/blogger-automation1/pull/102) e [CI #44771203643](https://github.com/adelrib27/blogger-automation1/actions/runs/44771203643) **518 testes V31 PASS** + Casa24/Oficina21/Radar15/crossblog. Novo `reviewed_ready_promotion.py` integra catálogo elegível, foto e URL da campanha exata, SEO calculado no mesmo HTML, Evidence C69, fact gate C71, revisão independente HMAC por conteúdo+SKU+site+campanha e D1 READY C76 com lease. **Prova somente em SQLite sintético; não conectado aos writers nem à IA/Firecrawl de produção.**
+- Canário [#44771532251](https://github.com/adelrib27/blogger-automation1/actions/runs/44771532251) executado no **ambiente CORRETO** `v31-editorial-safe`: variável `V31_EDITORIAL_R2_ACCOUNT_ID` **MATCH** com a conta oficial `adeiltonrib27@gmail.com`, enquanto segredo `V31_D1_API_TOKEN` é **ausente** nesse ambiente. Tentativas iniciais sem `environment` retornaram MISSING e NÃO representam a configuração dos workflows produtivos. Workflow TEMP foi removido da `main`.
+- Consulta Cloudflare oficial do novo D1 retornou **0 leases, 0 jobs, 0 evidence, 0 budgets**. Não houve CMS POST/Live e outro projeto/conta não foi alterado.
+- **PENDENTE C78:** configurar segredo GitHub D1 dedicado/privilégio mínimo, testar HTTP SELECT-only do runner pinado; melhorar persistência e leitura do HTML exato por hash em R2, com autenticação/revisão real antes de ligar ao writer; canários SAFE. [Checkpoint C77](affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md).
 
 ## C75–C76 — HTTP D1 seguro e READY vinculado a prova válida (20/11/2026)
 
