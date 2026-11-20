@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C80",
   "continuity_protocol_phase": "C81",
-  "continuity_status": "BLOQUEADO",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
   "last_updated_source": "C81_OFFICIAL_STORAGE_RECOVERY_VERIFIED_REAL_CANDIDATES_PENDING_INDEPENDENT_REVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
@@ -242,10 +242,10 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "Homologar dois DRAFTs reais com o mesmo HTML aprovado, via revisão independente do V31, e acompanhar operação contínua após a prova.",
-    "status": "BLOQUEADO",
-    "latest_verified_step": "PRs #105 a #109 na main, canários oficiais R2/D1 com replay/TTL/limpeza, histórico CMS em leitura e Firecrawl real. Candidatos inéditos de ambas as plataformas pré-validados no ambiente oficial em #44803725543.",
-    "next_safe_step": "Conferir configuração de v31-independent-review e login do revisor. Disparar v31_independent_review_draft.yml na main para cada digest privado verificado, obter aprovação real e confirmar DRAFT/HTML por GET e replay nos dois CMS.",
+    "objective": "Substituir a revisão humana por verificação automatizada independente, homologar DRAFT e preparar política LIVE de autorização única.",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "Diretriz do proprietário atualizada. A revisão factual do DRAFT passa a ser automatizada; LIVE segue sob a política existente durante a homologação.",
+    "next_safe_step": "Executar extração objetiva de fontes confiáveis antes de assinar e testar a cadeia R2/D1/CMS no ambiente oficial.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -256,9 +256,8 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44804047652"
     ],
     "phase": "C81",
-    "base_main_sha": "40689157d0a13409ffd52c5bcb0ae4a8f581ecdc",
-    "branch": "v31/c81-reviewed-draft",
-    "blocker": "O ambiente v31-independent-review ainda não aparece na API do GitHub, faltando configuração administrativa das chaves de revisão e aprovação humana dos candidatos.",
+    "base_main_sha": "51cfde49327457bc4c172be5c043efadc3c5280b",
+    "branch": "v31/c81-autonomous-review",
     "candidates": [
       {
         "site_key": "blogger_moveis_para_cada_canto",
