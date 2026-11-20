@@ -19,3 +19,15 @@
 - A opção de token **sem expiração** é decisão do proprietário, mas demanda revisão/rotação programada; acesso de conta D1 Edit não é restrito ao único banco, por isso o código fixa conta+database e o runner nega escrita por padrão.
 
 **Estado inicial C80:** `EM_ANDAMENTO`; apenas prévia escrita no GitHub. `mutation_in_progress=false`, `remote_operation_in_progress=false`.
+
+## C80.1 — token GitHub validado em D1 real, somente leitura
+- [GitHub Actions #44786171930](https://github.com/adelrib27/blogger-automation1/actions/runs/44786171930) **SUCCESS**, ambiente protegido `v31-editorial-safe`, credencial `V31_D1_API_TOKEN` por `${{ secrets... }}`, account/database oficiais fixos; nenhum token/URL privada exposto.
+- Logs finais comprovam `V31_C80_GITHUB_D1_TOKEN_AUTHENTICATED=true`, `V31_C80_D1_READ_ONLY_QUERY_PASS=true`, `V31_C80_D1_OFFICIAL_FOUR_TABLES_PASS=true`, `V31_C80_D1_READBACK_ZERO=true`, `V31_C80_D1_WRITES_DISABLED_BY_DEFAULT=true` e `V31_C80_NO_CMS_R2_OR_FIRECRAWL_CALLS=true`.
+- Essa prova substitui a observação antiga C79 de segredo D1 ausente: o segredo NOVO foi cadastrado pelo proprietário e funciona. O primeiro teste foi estritamente SELECT, sem mutação.
+
+## C80.2 — próximo teste sintético isolado de concorrência
+- Executar workflow TEMP e **somente nele** colocar `V31_D1_SAFE_WRITES_ENABLED=V31_D1_SAFE_SQL_ONLY`, além de `allow_mutations=True`. Em todos os workflows permanentes, escrita permanece desativada.
+- Dois pedidos de lease `refill` simultâneos pelo cliente D1 HTTP C75, para site/campanha sintéticos únicos do run, exigem um único vencedor, adversário bloqueado, liberação por proprietário correto, recuperação de expiração e limpeza por tenant.
+- Readback final zero nas quatro tabelas; falha implica parar/registrar e nunca acionar CMS/Firecrawl/arquivos R2 ou outro D1. Remover workflow após o teste.
+
+**Estado intermediário:** autenticação real D1 comprovada; aguardando ensaio concorrente com dados sintéticos. 0 posts.
