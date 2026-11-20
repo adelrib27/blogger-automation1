@@ -5,7 +5,8 @@ editorial reviewer must sign the *exact* payload using a secret unavailable to
 the AI or ordinary writer. This cannot verify a review actually happened:
 signing-key custody and independent source approval are operational gates.
 
-No network client, Firecrawl, Blogger, WordPress, R2 write or LIVE publisher.
+No Firecrawl, Blogger, WordPress, R2 write or LIVE publisher.
+The injected D1 state CAN use an HTTP database transport in a future phase.
 The injected UniversalD1ReadyState may use isolated SQLite tests; production
 connection is explicitly NOT configured here.
 """
@@ -279,5 +280,5 @@ def _summary(status: str) -> dict:
         "status": status, "requires_manual_live_approval": True,
         "live_publication_authorized": False, "cms_draft_calls": 0,
         "publication_calls": 0, "shopee_conversions": 0,
-        "network_calls_by_this_module": 0,
+        "external_research_calls": 0,
     }
