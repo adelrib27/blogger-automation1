@@ -1,0 +1,72 @@
+name: V31 C80 TEMP D1 official SELECT-only authenticated smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c80_TEMP_d1_readonly_smoke.yml'
+permissions:
+  contents: read
+concurrency:
+  group: v31-c80-official-d1-readonly
+  cancel-in-progress: false
+jobs:
+  d1-select-official:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      V31_D1_ACCOUNT_ID: ebb8d5b4cf9a2cb850c6d8051bd2661f
+      V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+      V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Authenticate D1 and query only official empty schema
+        shell: bash
+        run: |
+          python - <<'PY'
+          import sys
+          from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner, D1HTTPError
+          
+          try:
+              runner = CloudflareD1HTTPRunner.from_environment(allow_mutations=False)
+              try:
+                  runner('INSERT INTO v31_ready_leases VALUES (?)', ())
+              except D1HTTPError as e:
+                  if str(e) != 'd1_metadata_write_disabled':
+                      raise RuntimeError('C80_GUARD_WRONG_ERROR') from None
+              else:
+                  raise RuntimeError('C80_WRITE_GUARD_BYPASSED')
+              rows = runner(
+                  'SELECT name FROM sqlite_master WHERE type=? AND name LIKE ? ORDER BY name',
+                  ('table', 'v31_%')
+              )
+              names = {x.get('name') for x in rows}
+              expected = {'v31_ready_leases', 'v31_ready_jobs', 'v31_verified_evidence', 'v31_search_budget'}
+              if names != expected:
+                  raise RuntimeError('C80_UNEXPECTED_TABLE_SCHEMA')
+              counts = runner(
+                  'SELECT (SELECT COUNT(*) FROM v31_ready_leases) AS leases, '
+                  '(SELECT COUNT(*) FROM v31_ready_jobs) AS jobs, '
+                  '(SELECT COUNT(*) FROM v31_verified_evidence) AS evidence, '
+                  '(SELECT COUNT(*) FROM v31_search_budget) AS budgets',
+                  ()
+              )
+              if len(counts) != 1 or set(counts[0]) != {'leases', 'jobs', 'evidence', 'budgets'}:
+                  raise RuntimeError('C80_COUNTS_SHAPE_INVALID')
+              if any(type(x) is not int or x != 0 for x in counts[0].values()):
+                  raise RuntimeError('C80_UNEXPECTED_D1_CONTENT')
+              print('V31_C80_GITHUB_D1_TOKEN_AUTHENTICATED=true')
+              print('V31_C80_D1_READ_ONLY_QUERY_PASS=true')
+              print('V31_C80_D1_OFFICIAL_FOUR_TABLES_PASS=true')
+              print('V31_C80_D1_READBACK_ZERO=true')
+              print('V31_C80_D1_WRITES_DISABLED_BY_DEFAULT=true')
+              print('V31_C80_NO_CMS_R2_OR_FIRECRAWL_CALLS=true')
+          except Exception as exc:
+              print('V31_C80_D1_SMOKE_BLOCKED_' + type(exc).__name__)
+              sys.exit(3)
+          PY
