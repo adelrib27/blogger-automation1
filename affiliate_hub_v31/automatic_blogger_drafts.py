@@ -423,12 +423,17 @@ def main()->int:
     p.add_argument("--execute-draft",action="store_true")
     args=p.parse_args()
     try:
+        from .site_request_queue import autonomous_sites_for_writes
+        migrated = autonomous_sites_for_writes() if args.execute_draft else set()
         if args.site_key is not None:
             target=args.site_key
+            if target in migrated:
+                print("AUTONOMOUS_DRAFT_ROUTE_USE_NEW_WORKFLOW")
+                return 0
         else:
             from datetime import date
             eligible=sorted(r["site_key"] for r in load_requests()
-                            if r["platform"]=="blogger")
+                            if r["platform"]=="blogger" and r["site_key"] not in migrated)
             if not eligible:
                 print("V31_C55_NO_REAL_BLOGGER_REQUESTS")
                 return 0
