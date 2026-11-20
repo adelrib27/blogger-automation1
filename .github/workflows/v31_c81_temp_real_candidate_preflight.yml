@@ -1,0 +1,39 @@
+name: V31 C81 - preflight dos candidatos reais
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/v31_c81_temp_real_candidate_preflight.yml']
+permissions:
+  contents: read
+jobs:
+  exact-private-candidate:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: blogger_moveis_para_cada_canto
+            digest: 37155d0befc51d03489b39cde6cda0fc8b84cf09f33aa7c1517aa3b8a9569a30
+          - site: wordpress_casa_decoracao
+            digest: 2d47d9eed17d2fe95df9ecd52c011071b05af4773cf9fda58ea098ff25ac111a
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar leitor do catálogo oficial
+        run: python -m pip install 'boto3>=1.36,<2'
+      - name: Revalidar candidato privado com catálogo, SEO e fatos
+        env:
+          SITE: ${{ matrix.site }}
+          DIGEST: ${{ matrix.digest }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: python -m affiliate_hub_v31.independent_review prepare --site-key "$SITE" --digest "$DIGEST"
