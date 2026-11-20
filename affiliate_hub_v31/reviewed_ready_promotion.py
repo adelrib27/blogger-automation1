@@ -328,6 +328,8 @@ def stage_reviewed_ready(
             FinalFactGateError, D1SafeError, TypeError, ValueError, KeyError) as exc:
         if isinstance(exc, ReviewedReadyError):
             raise
+        if isinstance(exc, D1SafeError) and str(exc) == "evidence_not_verified":
+            raise ReviewedReadyError("reviewed_ready_d1_evidence_not_verified") from None
         # Details may carry product/title/content in upstream errors.
         raise ReviewedReadyError("reviewed_ready_gate_failed_closed") from None
 

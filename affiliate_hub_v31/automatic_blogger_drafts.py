@@ -316,13 +316,16 @@ def _get_blogger_service():
     return criar_servico_blogger()
 
 
-def _list_posts(service,blog_id:str,*,label:str|None=None)->list[dict]:
+def _list_posts(service,blog_id:str,*,label:str|None=None,include_scheduled:bool=False)->list[dict]:
     result=[]
-    for status in ("LIVE","DRAFT"):
+    statuses = ("LIVE", "DRAFT", "SCHEDULED") if include_scheduled else ("LIVE", "DRAFT")
+    for status in statuses:
         token=None
         for _ in range(100): # paginar histórico completo, sem teto de 3/24 artigos
             args={"blogId":blog_id,"status":[status],
                   "maxResults":100,"fetchBodies":True}
+            if include_scheduled:
+                args["view"] = "ADMIN"
             if label is not None:
                 args["labels"]=label
             if token: args["pageToken"]=token

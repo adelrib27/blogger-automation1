@@ -22,6 +22,39 @@ class ReviewedDraftError(ValueError):
     """A delivery or reconciliation failure without private content."""
 
 
+def read_draft_history(site_key):
+    route = sites().get(site_key)
+    if not route or route.get("publish_enabled") is not False:
+        raise ReviewedDraftError("reviewed_draft_route_invalid")
+    if route["platform"] == "blogger":
+        service = blogger._get_blogger_service()
+        blog_id = route["identifier"]
+        blogger.validate_remote_identity(route, service.blogs().get(blogId=blog_id).execute())
+        history = blogger._list_posts(service, blog_id, include_scheduled=True)
+        bodies = (post.get("content") or "" for post in history)
+        count, slugs = len(history), []
+    elif route["platform"] == "wordpress":
+        user, password = wordpress.credentials_for(site_key)
+        url = route["identifier"]
+        client = wordpress.WordPressRestClient(base_url=url, username=user,
+                                               application_password=password)
+        if not wordpress._verify_blog_url(client.site_settings().get("url", ""), url):
+            raise ReviewedDraftError("reviewed_wordpress_site_mismatch")
+        history = client.list_posts(include_unpublished=True)
+        own, _, count, _ = wordpress._check_history(history, site_key=site_key, limit=0)
+        prefix = wordpress._slug_prefix(site_key)
+        slugs = sorted(own | {
+            post["generated_slug"] for post in history
+            if isinstance(post.get("generated_slug"), str)
+            and post["generated_slug"].startswith(prefix)
+        })
+        bodies = (wordpress._html_text(post) for post in history)
+    else:
+        raise ReviewedDraftError("reviewed_draft_route_invalid")
+    keys = sorted({key for body in bodies for key in blogger.KEY_PATTERN.findall(body)})
+    return {"site_key": site_key, "keys": keys, "slugs": slugs, "count": count}
+
+
 def _blogger_draft(*, route, review, marker, content, authorize, service):
     blog_id = route["identifier"]
     service = service or blogger._get_blogger_service()
@@ -36,7 +69,7 @@ def _blogger_draft(*, route, review, marker, content, authorize, service):
         post_id = matches[0].get("id")
     else:
         if review["product_key"] in {
-            key for post in blogger._list_posts(service, blog_id)
+            key for post in blogger._list_posts(service, blog_id, include_scheduled=True)
             for key in blogger.KEY_PATTERN.findall(post.get("content") or "")
         }:
             raise ReviewedDraftError("reviewed_blogger_product_already_used")
@@ -89,6 +122,11 @@ def _wordpress_draft(*, route, review, content, authorize, client):
     if matches:
         post_id = matches[0].get("id")
     else:
+        other_posts = client.list_posts(include_unpublished=True)
+        if any(product_key in blogger.KEY_PATTERN.findall(wordpress._html_text(post))
+               or slug in (post.get("slug"), post.get("generated_slug"))
+               for post in other_posts):
+            raise ReviewedDraftError("reviewed_wordpress_product_already_used")
         if not authorize():
             return None
         result = client.create_draft(title=review["article_title"],
@@ -99,6 +137,8 @@ def _wordpress_draft(*, route, review, content, authorize, client):
             or slug not in (post.get("slug"), post.get("generated_slug"))
             or (post.get("title") or {}).get("raw") != review["article_title"]
             or (post.get("content") or {}).get("raw") != content):
+        if matches:
+            raise ReviewedDraftError("reviewed_wordpress_prior_content_conflict")
         raise ReviewedDraftError("reviewed_wordpress_draft_readback_mismatch")
     if matches:
         authorize()
