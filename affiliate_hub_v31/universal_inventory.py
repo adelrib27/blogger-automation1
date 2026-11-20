@@ -13,6 +13,7 @@ import argparse
 from collections import Counter
 import json
 import sqlite3
+from contextlib import closing
 import tempfile
 from pathlib import Path
 
@@ -229,7 +230,7 @@ def run_r2(*,execute:bool=False) -> dict:
         index=Path(temp)/"universal_index.sqlite3"
         with Catalog(origin) as catalog:
             initial=catalog.stats()
-            with sqlite3.connect(index) as sidecar:
+            with closing(sqlite3.connect(index)) as sidecar, sidecar:
                 summary=rebuild_universal_inventory(catalog,sidecar=sidecar)
                 lexicon=build_lexicon(catalog.db,sidecar)
                 hints=build_review_path_hints(catalog.db,sidecar)

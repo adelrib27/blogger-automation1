@@ -13,6 +13,7 @@ import argparse
 import json
 import re
 import sqlite3
+from contextlib import closing
 import tempfile
 from pathlib import Path
 
@@ -91,7 +92,8 @@ def audit_site(catalog_path: Path, profile: dict) -> dict:
     # de afiliado EXCLUSIVO da campanha do blog.
     rows=candidates_from_catalog(catalog_path,profile["site_key"],cfg,rules,limit=100)
     try:
-        with sqlite3.connect(f"file:{catalog_path.resolve()}?mode=ro",uri=True) as db:
+        uri = catalog_path.resolve().as_uri() + "?mode=ro"
+        with closing(sqlite3.connect(uri, uri=True)) as db:
             cache_total=db.execute(
                 "SELECT COUNT(*) FROM affiliate_links WHERE campaign=?",
                 (site["campaign"],)).fetchone()[0]

@@ -1,6 +1,7 @@
 """O índice de 203k SKUs usa objeto R2 próprio, sem inflar SQLite principal."""
 import io
 import sqlite3
+from contextlib import closing
 import tempfile
 import unittest
 from pathlib import Path
@@ -84,7 +85,7 @@ class UniversalSidecarTests(unittest.TestCase):
         before=self.catalog.read_bytes()
         sidecar=self.root/"sidecar.sqlite3"
         with Catalog(self.catalog) as cat:
-            with sqlite3.connect(sidecar) as index:
+            with closing(sqlite3.connect(sidecar)) as index, index:
                 result=rebuild_universal_inventory(cat,sidecar=index)
             self.assertEqual(cat.db.execute("""
               SELECT count(*) FROM sqlite_master
@@ -99,14 +100,14 @@ class UniversalSidecarTests(unittest.TestCase):
         self.assertEqual(self.store.save_from(sidecar,product_count=2)["index_saved"],True)
         restored=self.root/"restored.sqlite3"
         self.assertTrue(self.store.restore_to(restored,expected_product_count=2))
-        with sqlite3.connect(restored) as db:
+        with closing(sqlite3.connect(restored)) as db:
             self.assertEqual(db.execute(
                 "SELECT count(*) FROM v31_universal_inventory").fetchone()[0],2)
         self.assertIn(POINTER,self.s3.objects)
 
     def test_expected_product_count_refuses_stale_index(self):
         sidecar=self.root/"sidecar.sqlite3"
-        with Catalog(self.catalog) as cat,sqlite3.connect(sidecar) as i:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(sidecar)) as i, i:
             rebuild_universal_inventory(cat,sidecar=i)
         self.store.save_from(sidecar,product_count=2)
         with self.assertRaises(StorageError):
@@ -115,7 +116,7 @@ class UniversalSidecarTests(unittest.TestCase):
 
     def test_review_hint_count_is_verified_after_restore(self):
         sidecar=self.root/"hint-index.sqlite3"
-        with Catalog(self.catalog) as cat, sqlite3.connect(sidecar) as db:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(sidecar)) as db, db:
             rebuild_universal_inventory(cat,sidecar=db)
             db.execute("""
               CREATE TABLE v31_unclassified_review_hints(
@@ -138,7 +139,7 @@ class UniversalSidecarTests(unittest.TestCase):
 
     def test_explicit_hint_expectation_rejects_legacy_without_table(self):
         sidecar=self.root/"legacy-index.sqlite3"
-        with Catalog(self.catalog) as cat, sqlite3.connect(sidecar) as db:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(sidecar)) as db, db:
             rebuild_universal_inventory(cat,sidecar=db)
         self.store.save_from(sidecar,product_count=2)
         with self.assertRaisesRegex(StorageError,
@@ -149,7 +150,7 @@ class UniversalSidecarTests(unittest.TestCase):
 
     def test_restore_hash_tamper_is_blocked(self):
         sidecar=self.root/"sidecar.sqlite3"
-        with Catalog(self.catalog) as cat,sqlite3.connect(sidecar) as i:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(sidecar)) as i, i:
             rebuild_universal_inventory(cat,sidecar=i)
         self.store.save_from(sidecar,product_count=2)
         key=next(k for k in self.s3.objects if "snapshots/" in k)

@@ -13,6 +13,7 @@ from collections import Counter, defaultdict
 import argparse
 import json
 import sqlite3
+from contextlib import closing
 import tempfile
 from pathlib import Path
 
@@ -225,8 +226,8 @@ def main() -> int:
             path=Path(td)/"review-index.sqlite3"
             if not UniversalIndexStorage.from_env().restore_to(path):
                 raise ReviewHintsError("universal_index_missing")
-            with sqlite3.connect(f"file:{path.resolve()}?mode=ro",
-                                 uri=True) as db:
+            uri = path.resolve().as_uri() + "?mode=ro"
+            with closing(sqlite3.connect(uri, uri=True)) as db:
                 result=review_dashboard(db,limit=args.limit)
         print("V31_C47_PRIVATE_REVIEW_DASHBOARD_READONLY_PASS")
         print(json.dumps(result,sort_keys=True,ensure_ascii=False))

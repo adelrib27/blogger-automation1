@@ -48,7 +48,7 @@ print("V31_LEGACY_WP_IMPORT_PASS")
         for folder in FOLDERS:
             script=ROOT/folder/"src"/"publish_generated.py"
             result=subprocess.run(
-                [sys.executable,str(script)],cwd=str(ROOT),
+                [sys.executable,"-X","utf8",str(script)],cwd=str(ROOT),
                 env=env,capture_output=True,text=True,timeout=20)
             with self.subTest(site=folder):
                 self.assertEqual(result.returncode,0,result.stderr[-1800:])

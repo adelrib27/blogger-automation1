@@ -121,7 +121,7 @@ def candidates_from_catalog(db_path: Path, site_key: str,
     config_categories=config.get("categories")
     if not isinstance(config_categories,dict):
         raise FallbackUnavailable("categories_invalid")
-    uri="file:"+str(Path(db_path).resolve())+"?mode=ro"
+    uri=Path(db_path).resolve().as_uri()+"?mode=ro"
     try:
         with closing(sqlite3.connect(uri,uri=True)) as conn:
             rows=conn.execute("""

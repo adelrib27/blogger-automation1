@@ -1,6 +1,7 @@
 """Regressão SAFE — python -m unittest discover -s affiliate_hub_v31/tests -v."""
 import csv
 import sqlite3
+from contextlib import closing
 import tempfile
 import unittest
 from pathlib import Path
@@ -114,7 +115,7 @@ class CatalogSafeTests(unittest.TestCase):
         with Catalog(self.dbpath) as cat:
             cat.import_csv(path, "feed")
             snapshot = self.root / "copy.sqlite3"
-            with sqlite3.connect(snapshot) as destination:
+            with closing(sqlite3.connect(snapshot)) as destination:
                 cat.db.backup(destination)
         with Catalog(snapshot) as restored:
             self.assertTrue(restored.integrity())

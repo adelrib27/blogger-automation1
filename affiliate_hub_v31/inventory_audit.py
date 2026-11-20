@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import sqlite3
+from contextlib import closing
 import tempfile
 from pathlib import Path
 
@@ -29,8 +30,8 @@ def eligible_inventory(db_path: Path, site_key: str, cfg: dict,
         raise InventoryError("site_unknown")
     allowed=set(sites()[site_key]["allowed_niches"])
     try:
-        uri="file:"+str(Path(db_path).resolve())+"?mode=ro"
-        with sqlite3.connect(uri,uri=True) as db:
+        uri=Path(db_path).resolve().as_uri()+"?mode=ro"
+        with closing(sqlite3.connect(uri,uri=True)) as db:
             products=db.execute("""
                 SELECT p.product_key,p.title,p.origin_url,p.image_url,
                        t.category,t.niche

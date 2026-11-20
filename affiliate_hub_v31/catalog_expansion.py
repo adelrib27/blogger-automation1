@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 import sqlite3
+from contextlib import closing
 import tempfile
 from collections import Counter
 from pathlib import Path
@@ -163,7 +164,7 @@ def expand(storage: R2State, files: tuple[Path,Path], *,
             # Facetas universais SAEM PARA SIDECAR: o catálogo comercial
             # já ocupa ~1 GiB e não pode carregar outra tabela de 203k SKUs.
             universal_file=Path(td)/"universal_index.sqlite3"
-            with sqlite3.connect(universal_file) as sidecar:
+            with closing(sqlite3.connect(universal_file)) as sidecar, sidecar:
                 universal_inventory=rebuild_universal_inventory(
                     cat,sidecar=sidecar)
                 universal_title_lexicon=build_lexicon(cat.db,sidecar)
