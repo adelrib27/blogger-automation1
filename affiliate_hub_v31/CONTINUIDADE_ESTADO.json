@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C76",
-  "continuity_protocol_phase": "C76",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C77",
+  "continuity_protocol_phase": "C77",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C76_READY_EVIDENCE_TTL_ATOMIC_MERGED_CI508_READ_ONLY_D1_ZERO",
+  "last_updated_source": "C77_PIPELINE_VERIFIED_READY_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -161,17 +161,15 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C77: autenticar e validar somente leitura o runner HTTP D1 no GitHub (mesma conta oficial V31), avançar a integração Evidence/READY com gates e canário DRAFT SAFE",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "C75 PR100 CI505 MERGED; C76 PR101 CI508 MERGED: READY e USED exigem hash SKU/campanha/site e TTL frescos no MESMO SQL. D1 oficial C74 leu 0 em 4 tabelas, nenhuma publicação e nenhuma escrita Cloudflare C75/C76.",
-    "next_safe_step": "Auditar GitHub var V31_EDITORIAL_R2_ACCOUNT_ID sem segredo, configurar token D1 privilégio mínimo isolado na conta ebb8..., smoke SELECT-only no runner com readback e log sem SKU; depois concorrência real e integração Evidence/HTML/SEO R2, antes de canário DRAFT (zero LIVE).",
+    "objective": "C77 integrar preflight comprovado catálogo+campanha+SEO mesmo HTML+evidência C69+fact gate C71+revisão independente no D1 C76 e auditar var GitHub (sem segredos)",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C76 PR101 CI508 PASS e D1 oficial vazio; checkpoint prévio C77 salvo na main",
+    "next_safe_step": "Branch C77, testes offline e PR/CI; auditoria variável GitHub por canário temporário READ ONLY, sem writers/LIVE",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44761871702"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md"
     ]
   },
   "next_priorities": [
