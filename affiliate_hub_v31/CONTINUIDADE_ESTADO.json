@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C80",
   "continuity_protocol_phase": "C80",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C80_GITHUB_ENV_SECRET_SCREENSHOT_PREVIEW",
+  "last_updated_source": "C80_GITHUB_D1_TOKEN_AUTH_LEASE_CONCURRENCY_REAL_PASS_CLEANUP_ZERO",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -199,7 +199,27 @@
     "c79_d1_token_in_github_configured": false,
     "c79_r2_backend_connected_to_production_writers": false,
     "c79_cms_draft_calls": 0,
-    "c79_cms_live_calls": 0
+    "c79_cms_live_calls": 0,
+    "c80_github_d1_secret_configured": true,
+    "c80_github_environment": "v31-editorial-safe",
+    "c80_d1_readonly_ci_run_id": 44786171930,
+    "c80_d1_readonly_authenticated": true,
+    "c80_d1_table_schema_verified": true,
+    "c80_d1_write_guard_default": true,
+    "c80_d1_concurrency_ci_run_id": 44786624444,
+    "c80_d1_real_single_winner": true,
+    "c80_d1_owner_only_release": true,
+    "c80_d1_expired_lease_reclaim": true,
+    "c80_d1_synthetic_cleanup_zero": true,
+    "c80_d1_independent_final_counts": {
+      "leases": 0,
+      "jobs": 0,
+      "evidence": 0,
+      "budgets": 0
+    },
+    "c80_temp_workflows_removed": true,
+    "c80_cms_publication_calls": 0,
+    "c80_writer_connected_to_d1": false
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -213,23 +233,25 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C80 validar token novo GitHub Environment v31-editorial-safe contra D1 oficial via apenas SELECT e gate de escrita desligada",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "Usuário forneceu captura GitHub Environment com secret V31_D1_API_TOKEN cadastrado; C79 PR104 CI537 real R2 CAS PASS, D1 último readback 0",
-    "next_safe_step": "Executar canário Github Actions SELECT D1 no ambiente protegido; não logar token, não tocar banco em escrita, validar quatro tabelas e bloqueio do runner; remover workflow TEMP após validação.",
+    "objective": "C81: integrar envelope R2 privado imutável C78/C79 ao D1 READY real C76 e revisão/evidência C77, sem permitir HTML ou SKU divergentes e sem publicar LIVE",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "C80: token D1 novo fornecido pelo proprietário no Environment v31-editorial-safe, Actions #44786171930 SELECT-only API autenticada e quatro tabelas; #44786624444 corrida real lease um vencedor, ownership/TTL PASS e limpeza zero; TEMP removidos; Cloudflare SELECT independente D1 oficial quatro tabelas vazias.",
+    "next_safe_step": "C81 criar transação/manifesto de transição envelope R2 -> metadata D1, revalidar evidência SEO HMAC com reviewer REAL, canário SAFE e só depois DRAFT Blogger/WordPress; não ligar cron ou LIVE automaticamente.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44786171930",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44786624444",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md"
     ]
   },
   "next_priorities": [
-    "C80 GitHub Environment v31-editorial-safe: fornecer token V31_D1_API_TOKEN D1-only da conta Cloudflare oficial; atual conector GitHub não cria secret. Não reutilizar tokens de projetos paralelos.",
-    "C80 cliente CloudflareD1HTTPRunner C75 SELECT-only, depois ensaio atômico concorrente e limpeza via D1 com credencial mínima.",
-    "C80 unir preflight C77 e HMAC de revisão real, envelope C78/R2 CAS REAL C79 e metadata D1 C76 sem troca de HTML por IA na hora do POST.",
-    "Homologar fontes Firecrawl com quota e factualidade realmente verificadas, links e SEO por blog, depois rascunho CMS DRAFT isolado e idempotente (zero LIVE sem aprovação individual).",
-    "Preservar 2 CSVs e biblioteca universal Shopee, articles:null contínuo, min_ready=3 só buffer; Vida Pet, ARV, Pinterest e outras contas Cloudflare intocados."
+    "C81 desenho de handoff durável idempotente e revisão do artigo: C77 fact gate SEO real, C78/C79 envelope R2 com SHA e manifesto HMAC externo, C76 D1 READY com TTL e lease; não aceitar prova criada pela IA como revisor.",
+    "C81 validar dados reais Firecrawl autorizados dentro do saldo e link/foto/campanha Shopee corretos antes de qualquer READY.",
+    "C81 canário editorial DRAFT por Blogger/WordPress com verificação GET do CMS, idempotência e recuperação de falhas, sem LIVE irrestrito nem novos cron jobs de produção antes da homologação.",
+    "Credencial D1 GitHub já CONFIGURADA e autenticada via Actions no ambiente protegido; banco oficial e IDs fixos. Token sem expiração exige auditoria/rotação periódica e permissões account-level D1 Edit.",
+    "Manter 2 CSVs catálogo universal, articles:null contínuo, min_ready=3 apenas buffer; não tocar Vida Pet, ARV, Pinterest, outras contas Cloudflare."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -238,7 +260,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44776685517",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44786624444",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "C70: fila V31 event=schedule real 19/11 19:38Z #44600350780 failure após 3 conversões/cache R2; correção PR98 CI471, handoff R2 verificado em canários #44607319448 e #44607864589. Blogger/WP schedule V31 pendentes de 20/11 às 10h10 Recife."
   }
