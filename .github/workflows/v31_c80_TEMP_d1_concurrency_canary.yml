@@ -1,0 +1,104 @@
+name: V31 C80 TEMP D1 actual lease contention with cleanup
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c80_TEMP_d1_concurrency_canary.yml'
+permissions:
+  contents: read
+concurrency:
+  group: v31-c80-official-d1-concurrency
+  cancel-in-progress: false
+jobs:
+  synthetic-d1-lease-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      V31_D1_ACCOUNT_ID: ebb8d5b4cf9a2cb850c6d8051bd2661f
+      V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+      V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+      V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Only synthetic lease contention and scoped cleanup
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, secrets, sys, time
+          from concurrent.futures import ThreadPoolExecutor
+          from threading import Barrier
+          from unittest.mock import patch
+          from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
+          from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
+          
+          site = 'v31_c80_' + os.environ.get('GITHUB_RUN_ID', '')
+          campaign = 'c80_canary'
+          route = {'site_key': site, 'campaign': campaign, 'platform': 'blogger', 'publish_enabled': False}
+          now_epoch = int(time.time())
+          if not site[len('v31_c80_'):].isdecimal():
+              raise RuntimeError('C80_RUN_ID_INVALID')
+          writer = CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
+          reader = CloudflareD1HTTPRunner.from_environment(allow_mutations=False)
+          state = UniversalD1ReadyState(writer)
+          nonce1, nonce2 = ('c80a_' + secrets.token_hex(20), 'c80b_' + secrets.token_hex(20))
+          barrier = Barrier(2)
+          
+          def attempt(owner):
+              barrier.wait(timeout=10)
+              return state.acquire_lease(site_key=site, campaign=campaign,
+                                         lease_name='refill', owner_nonce=owner,
+                                         now_epoch=now_epoch, ttl_seconds=60)
+          
+          def count(table):
+              if table not in ('v31_ready_leases','v31_ready_jobs','v31_verified_evidence','v31_search_budget'):
+                  raise RuntimeError('C80_TABLE_NOT_WHITELISTED')
+              rows = reader('SELECT COUNT(*) AS n FROM ' + table + ' WHERE site_key=? AND campaign=?', (site,campaign))
+              if len(rows) != 1 or type(rows[0].get('n')) is not int:
+                  raise RuntimeError('C80_COUNT_BAD')
+              return rows[0]['n']
+          
+          try:
+              with patch('affiliate_hub_v31.d1_universal_ready.sites', return_value={site: route}):
+                  if count('v31_ready_leases') != 0:
+                      raise RuntimeError('C80_SITE_ALREADY_HAS_LEASE')
+                  with ThreadPoolExecutor(max_workers=2) as pool:
+                      f1 = pool.submit(attempt, nonce1)
+                      f2 = pool.submit(attempt, nonce2)
+                      wins = (f1.result(timeout=30), f2.result(timeout=30))
+                  if sum(wins) != 1 or count('v31_ready_leases') != 1:
+                      raise RuntimeError('C80_CONCURRENT_LEASE_NOT_SINGLE_WINNER')
+                  winner, loser = (nonce1, nonce2) if wins[0] else (nonce2, nonce1)
+                  if state.release_lease(site_key=site, campaign=campaign, lease_name='refill', owner_nonce=loser):
+                      raise RuntimeError('C80_NONOWNER_RELEASE_ALLOWED')
+                  if not state.release_lease(site_key=site, campaign=campaign, lease_name='refill', owner_nonce=winner):
+                      raise RuntimeError('C80_OWNER_RELEASE_BLOCKED')
+                  if not state.acquire_lease(site_key=site, campaign=campaign, lease_name='refill',
+                                             owner_nonce=winner, now_epoch=now_epoch+1, ttl_seconds=60):
+                      raise RuntimeError('C80_REACQUIRE_BLOCKED')
+                  if not state.acquire_lease(site_key=site, campaign=campaign, lease_name='refill',
+                                             owner_nonce=loser, now_epoch=now_epoch+70, ttl_seconds=60):
+                      raise RuntimeError('C80_EXPIRED_LEASE_NOT_RECLAIMED')
+                  if state.release_lease(site_key=site, campaign=campaign, lease_name='refill', owner_nonce=winner):
+                      raise RuntimeError('C80_STALE_OWNER_RELEASE_ALLOWED')
+                  if not state.release_lease(site_key=site, campaign=campaign, lease_name='refill', owner_nonce=loser):
+                      raise RuntimeError('C80_NEW_OWNER_RELEASE_BLOCKED')
+                  print('V31_C80_D1_CONCURRENT_SINGLE_WINNER_REAL_PASS=true')
+                  print('V31_C80_D1_OWNER_ONLY_RELEASE_REAL_PASS=true')
+                  print('V31_C80_D1_LEASE_TTL_RECLAIM_REAL_PASS=true')
+          finally:
+              # Only this run's synthetic site/campaign, no global delete or other tenant.
+              writer('DELETE FROM v31_ready_leases WHERE site_key=? AND campaign=? RETURNING owner_nonce',
+                     (site,campaign))
+              zero = all(count(table) == 0 for table in ('v31_ready_leases','v31_ready_jobs',
+                                                         'v31_verified_evidence','v31_search_budget'))
+              print('V31_C80_D1_CANARY_CLEANUP_ZERO=' + str(zero).lower())
+              if not zero:
+                  raise RuntimeError('C80_CANARY_CLEANUP_NOT_ZERO')
+          print('V31_C80_ZERO_CMS_R2_FIRECRAWL_LIVE_CALLS=true')
+          PY
