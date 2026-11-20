@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C81_REAL_DRAFT_PILOTS_RESUME_CURRENT_MAIN_SCHEDULES_CHECKED",
+  "last_updated_source": "C81_DRAFT_PILOTS_PENDING_FRESH_UTC_REAL_CONVERSION_BUDGET_READY",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -240,7 +240,8 @@
       118,
       119,
       120,
-      121
+      121,
+      122
     ],
     "c81_autonomous_latest_ci": 44830152818,
     "c81_autonomous_wordpress_real_ready_run_id": 44822280026,
@@ -254,7 +255,9 @@
     "c81_autonomous_signing_configuration_verified": true,
     "c81_autonomous_r2_v3_storage_and_catalog_run": 44830269381,
     "c81_blogger_pilot_campaign_link_present": true,
-    "c81_wordpress_pilot_campaign_link_present": false
+    "c81_wordpress_pilot_campaign_link_present": false,
+    "c81_shopee_d1_conversion_budget_migrated": true,
+    "c81_shopee_d1_conversion_fourth_slot_refused": true
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -274,14 +277,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "#44829365949 confirmou as três configurações de assinatura sem divulgar valores. PR #120 integrou a configuração aos canários. #44830269381 comprovou o envelope R2 v3 verificado pela impressão digital, READY/USED, recuperação e limpeza de tenant sintético. O catálogo oficial confirmou ambas as ofertas elegíveis e o link correto apenas para Blogger.",
-    "next_safe_step": "Conferir a cota oficial e o uso do conversor. Preparar conversão isolada da oferta WordPress com teto UTC compartilhado. Disparar os canários apenas quando não houver execução concorrente e os pré-requisitos estiverem válidos.",
+    "latest_verified_step": "PR #122 isolou a conversão piloto WordPress e a cota diária D1. A migração oficial foi aplicada e recusou uma quarta reserva no dia UTC 20/11 sem chamar a Shopee. O D1 oficial registrava 3/3 de HTTP para Blogger. O CMS não tinha DRAFT da oferta piloto em nenhuma das duas rotas.",
+    "next_safe_step": "Após 00:00 UTC de 21/11, reconsultar jobs e cotas, disparar no máximo uma conversão oficial da oferta WordPress e executar um canário DRAFT Blogger. Acompanhar a publicação DRAFT e fazer leitura externa nos dois CMS.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "fa4398a6ab54d6b90b2b471a3f4072239908c97d",
+    "base_main_sha": "0b92f519e643c39bfd092331d4c31f968a668cb7",
     "branch": "codex/v31-c81-actual-draft-pilots",
-    "blocker": "O D1 confirmou 3/3 de HTTP no Blogger em 20/11 UTC. A última leitura do catálogo confirma que falta converter o link do WordPress para a campanha cadastrada. Os dois gatilhos estão preparados. Nenhuma ação do proprietário está pendente.",
+    "blocker": "Restava a renovação UTC das cotas do Blogger e do conversor. LIVE continua desativado.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -297,7 +300,10 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44829365949/job/136610099419",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44830269381/job/136613133089",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44830269381/job/136613132906",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44829960410"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44829960410",
+      "https://github.com/adelrib27/blogger-automation1/pull/122",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44836368321",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44800518473/job/136511132872"
     ]
   },
   "next_priorities": [
