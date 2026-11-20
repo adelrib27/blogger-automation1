@@ -51,3 +51,5 @@ O ambiente `v31-independent-review` não apareceu na última leitura da API de a
 
 - [PR #109](https://github.com/adelrib27/blogger-automation1/pull/109) incorporado após [CI verde](https://github.com/adelrib27/blogger-automation1/actions/runs/44804047652). Corrige caminhos URI e encerramento de conexões SQLite. Suite local Windows: 546 testes executados, um saltado por falta de permissão do host para criar symlink. A proteção contra symlinks continua coberta pelo CI.
 - Estado C81: infraestrutura de armazenamento, recuperação, pesquisa, pré-validação de dois candidatos reais e código de assinatura aprovados nos escopos documentados. **Homologação aguardando configuração e aprovação humana no GitHub.** Nenhum DRAFT C81 foi criado. A execução recorrente da cadeia nova permanece pendente.
+
+- [PR #110](https://github.com/adelrib27/blogger-automation1/pull/110) corrigiu o teste que pressupunha uma fase inicial diferente de BLOQUEADO. [Diagnóstico oficial de continuidade da main](https://github.com/adelrib27/blogger-automation1/actions/runs/44804831111) passou. Última consulta GitHub confirmou apenas os ambientes anteriores, sem o ambiente de revisão requerido.
