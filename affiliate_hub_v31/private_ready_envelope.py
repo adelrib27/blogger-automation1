@@ -156,7 +156,8 @@ class ImmutablePrivateReadyEnvelope:
             "status": "PRIVATE_ENVELOPE_CREATED" if created
                       else "PRIVATE_ENVELOPE_ALREADY_VALID",
             "html_sha256": html_sha, "object_key": objkey,
-            "r2_network_calls_by_this_class": 0,
+            "conditional_object_write_attempts": 1,
+            "object_readback_attempts": 1,
             "cms_draft_calls": 0, "publication_calls": 0,
             "live_publication_authorized": False,
         }
