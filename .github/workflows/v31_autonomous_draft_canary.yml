@@ -1,5 +1,8 @@
-name: V31 - canário DRAFT com histórico autenticado
+name: V31 - canário DRAFT com orçamento de pesquisa
 on:
+  schedule:
+    # Renovação da cota UTC antes do canário. Remover após o ensaio.
+    - cron: '17 0 * * *'
   push:
     branches: [main]
     paths:
@@ -8,12 +11,14 @@ permissions:
   contents: read
 jobs:
   blogger:
+    if: github.event_name == 'schedule'
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: blogger_moveis_para_cada_canto
       pilot: true
     secrets: inherit
   wordpress:
+    if: github.event_name == 'push'
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: wordpress_casa_decoracao

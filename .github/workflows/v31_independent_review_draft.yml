@@ -8,6 +8,10 @@ on:
       pilot:
         default: false
         type: boolean
+    outputs:
+      verified_draft:
+        description: "DRAFT confirmado por leitura autenticada e replay"
+        value: ${{ jobs.deliver-draft.outputs.verified_draft }}
 permissions:
   contents: read
 
@@ -112,6 +116,8 @@ jobs:
       group: v31-editorial-catalog-single-writer
       cancel-in-progress: false
     timeout-minutes: 10
+    outputs:
+      verified_draft: ${{ steps.deliver.outputs.verified_draft }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -121,6 +127,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42' requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
       - name: Confirmar DRAFT e repetição sem duplicata
+        id: deliver
         env:
           SITE: ${{ inputs.site_key }}
           RECEIPT: ${{ needs.independent-verifier.outputs.result }}
@@ -142,6 +149,7 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           import json, os, subprocess, sys
+          from pathlib import Path
           result = json.loads(os.environ["RECEIPT"])
           os.environ["V31_REVIEW_RELEASE_PUBLIC_KEY_HEX"] = result["public_key"]
           args = [sys.executable, "-m", "affiliate_hub_v31.reviewed_draft_delivery",
@@ -156,5 +164,8 @@ jobs:
               verified.append(json.loads(attempt.stdout))
           if verified[0] != verified[1]:
               raise SystemExit("draft_reconciliation_mismatch")
+          proof = dict(verified[0], fingerprint=result["fingerprint"], site_key=result["site_key"])
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              print("verified_draft=" + json.dumps(proof), file=output)
           print("DRAFT_HTML_AND_REPLAY_VERIFIED")
           PY
