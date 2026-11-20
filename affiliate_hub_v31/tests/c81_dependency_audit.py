@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import tempfile
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -9,6 +10,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from affiliate_hub_v31.article_commerce import CommerceArticleError, _single_verified_offer
 from affiliate_hub_v31.catalog import Catalog
+from affiliate_hub_v31.r2_private_ready_backend import ACCOUNT_ID, BUCKET, _error_response
 from affiliate_hub_v31.r2_state import R2State
 from affiliate_hub_v31.site_launch_plan import preview_site_launch
 from affiliate_hub_v31.site_request_queue import load_requests
@@ -56,9 +58,27 @@ def firecrawl_json(path, key, body=None):
 
 def main():
     candidates = []
+    if (os.environ.get("V31_EDITORIAL_R2_ACCOUNT_ID") != ACCOUNT_ID
+            or os.environ.get("V31_EDITORIAL_R2_BUCKET") != BUCKET):
+        raise RuntimeError("C81_OFFICIAL_CATALOG_IDENTITY_MISMATCH")
+    storage = R2State.from_env()
+    research_key = None
+    if os.environ.get("V31_C81_RESEARCH_SMOKE") == "1":
+        run = os.environ.get("GITHUB_RUN_ID", "")
+        if not re.fullmatch(r"[0-9]{1,20}", run):
+            raise RuntimeError("C81_RESEARCH_RUN_ID_MISSING")
+        research_key = f"v31/private-review/research/v1/{run}.json"
+        try:
+            storage.s3.head_object(Bucket=BUCKET, Key=research_key)
+        except Exception as error:
+            if _error_response(error) != ("404", 404):
+                raise RuntimeError("C81_RESEARCH_BUNDLE_STATUS_UNKNOWN") from None
+        else:
+            print("C81_PRIVATE_RESEARCH_BUNDLE_ALREADY_STORED=PASS")
+            return
     with tempfile.TemporaryDirectory(prefix="v31-c81-catalog-") as directory:
         path = Path(directory) / "official-catalog.sqlite3"
-        if not R2State.from_env().restore_to(path):
+        if not storage.restore_to(path):
             raise RuntimeError("C81_OFFICIAL_CATALOG_MISSING")
         with Catalog(path) as catalog:
             print(json.dumps({"catalog": catalog.stats()}))
@@ -71,7 +91,7 @@ def main():
                 verified_image = False
                 for item in report["approved_catalog_candidates"]:
                     try:
-                        title, photo, _ = _single_verified_offer(
+                        title, photo, affiliate = _single_verified_offer(
                             catalog, site_key=request["site_key"],
                             product_key=item["product_key"],
                         )
@@ -81,7 +101,13 @@ def main():
                     if not verified_image:
                         verified_image = photo_is_reachable(photo)
                         if verified_image:
-                            candidates.append((request["site_key"], title))
+                            candidates.append({
+                                "site_key": request["site_key"],
+                                "title": title,
+                                "product_key": item["product_key"],
+                                "product_url": item["original_product_url"],
+                                "image": photo, "affiliate": affiliate,
+                            })
                 print(json.dumps({
                     "site_key": request["site_key"],
                     "approved_candidates": len(report["approved_catalog_candidates"]),
@@ -95,19 +121,30 @@ def main():
     if type(remaining) is not int:
         raise RuntimeError("C81_FIRECRAWL_CREDIT_READ_FAILED")
     print(json.dumps({"firecrawl_remaining_credits": remaining}))
-    if os.environ.get("V31_C81_RESEARCH_SMOKE") == "1":
+    if research_key is not None:
         if remaining < 10:
             raise RuntimeError("C81_FIRECRAWL_SMOKE_BUDGET_UNAVAILABLE")
-        for site_key, title in candidates[:2]:
+        for offer in candidates[:2]:
             result = firecrawl_json("search", key, {
-                "query": title[:160], "limit": 2, "sources": [{"type": "web"}],
+                "query": offer["title"][:160], "limit": 2, "sources": [{"type": "web"}],
                 "country": "BR", "timeout": 25000,
             })
             links = result.get("web")
             if not isinstance(links, list):
                 raise RuntimeError("C81_FIRECRAWL_SEARCH_RESPONSE_INVALID")
-            print(json.dumps({"site_key": site_key, "firecrawl_search_calls": 1,
+            offer["search_candidates"] = [
+                {"url": entry["url"], "title": entry.get("title", "")}
+                for entry in links if isinstance(entry, dict) and isinstance(entry.get("url"), str)
+            ]
+            print(json.dumps({"site_key": offer["site_key"], "firecrawl_search_calls": 1,
                               "search_candidates": len(links), "approved_facts": 0}))
+        # The research candidates are private inputs for factual review.
+        # GitHub logs contain counts only, never affiliate URLs or article text.
+        bundle = json.dumps({"offers": candidates[:2]}, ensure_ascii=False).encode("utf-8")
+        storage.s3.put_object(Bucket=BUCKET, Key=research_key,
+                              Body=bundle, IfNoneMatch="*", ContentType="application/json",
+                              CacheControl="private, no-store")
+        print("C81_PRIVATE_RESEARCH_BUNDLE_STORED=PASS")
 
 
 if __name__ == "__main__":

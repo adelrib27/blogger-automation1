@@ -7,10 +7,13 @@ from contextlib import ExitStack
 from datetime import timedelta
 from unittest.mock import patch
 
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
 from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
 from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
 from affiliate_hub_v31.private_ready_envelope import ImmutablePrivateReadyEnvelope, object_key
 from affiliate_hub_v31.reviewed_ready_promotion import stage_reviewed_ready
+from affiliate_hub_v31.review_signatures import sign_release
 from affiliate_hub_v31.r2_private_ready_backend import BUCKET, R2PrivateReadyBackend
 from affiliate_hub_v31.tests import test_c77_reviewed_ready_promotion as fixture
 
@@ -72,6 +75,11 @@ def main():
         stack.enter_context(patch.object(fixture, "ROUTES", routes))
         test.setUp()
         params = test.input(state=state, envelope=envelope)
+        key_pair = Ed25519PrivateKey.generate()
+        public_key = key_pair.public_key().public_bytes_raw().hex()
+        params["release_public_key"] = public_key
+        params["release_signature"] = sign_release(
+            params["attestation"], private_key=key_pair.private_bytes_raw().hex())
         html_hash = hashlib.sha256(params["html_content"].encode("utf-8")).hexdigest()
         key = object_key(site, campaign, html_hash)
         owner = {"owner_nonce": uuid.uuid4().hex, "lease_name": "writer"}
@@ -84,7 +92,7 @@ def main():
             fingerprint = staged["fingerprint"]
             job = state.get_job(**tenant, fingerprint=fingerprint)
             stored = envelope.load(**tenant, html_sha256=job["html_sha256"],
-                                   independent_review_key=fixture.KEY)
+                                   release_public_key=public_key)
             require(job["status"] == "READY" and stored["html_content"] == params["html_content"]
                     and stored["review"]["evidence_sha256"] == job["evidence_sha256"],
                     "C81_READBACK_BINDING_FAILED")
@@ -98,6 +106,7 @@ def main():
             require(state.get_job(**tenant, fingerprint=fingerprint)["status"] == "USED",
                     "C81_USED_READBACK_FAILED")
             print("C81_OFFICIAL_R2_D1_EXACT_READBACK_READY_USED_REPLAY=PASS")
+            print("C81_R2_V2_PUBLIC_KEY_ONLY_READBACK=PASS")
             exercise_expired_buffer(state, tenant, params["now"])
         finally:
             try:
