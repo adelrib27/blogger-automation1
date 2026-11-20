@@ -1,10 +1,16 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Para um novo chat do projeto:** leia este arquivo e o [estado C77](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), depois o [checkpoint C77](affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md), [C76](affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md), [C75](affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md), [C74](affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md), [C69](affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md) e [issue-mestre #54](https://github.com/adelrib27/blogger-automation1/issues/54). Nunca usar CHECKPOINT_ATUAL.md legado como ponto V31; conferir serviços antes de mutações.
+> **Para um novo chat do projeto:** leia este arquivo, o [estado C78](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md), [C77](affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md), [C76](affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md), [C75](affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md), [C74](affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md), [C69](affiliate_hub_v31/CHECKPOINT_C69_FUSAO_ENGENHARIA_UNIVERSAL_LAB_SAFE_2026-11-19.md) e issue-mestre #54. Conferir serviços reais e nunca usar CHECKPOINT_ATUAL.md legado para V31.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
-**Última conferência contextual:** 20/11/2026 (C77, PR102/CI518 e auditoria ambiente GitHub R2 MATCH; D1 secret novo ausente). Observações históricas não são estado vivo permanente.
+**Última conferência contextual:** 20/11/2026 (C78 PR103/CI527, R2 GitHub `v31-editorial-safe` MATCH, D1 secret novo ausente). Números históricos não substituem leitura atual.
 **Protocolo:** [CONTINUIDADE_PROTOCOLO.md](affiliate_hub_v31/CONTINUIDADE_PROTOCOLO.md) · [estado JSON](affiliate_hub_v31/CONTINUIDADE_ESTADO.json).
+
+## C78 — HTML imutável entre o READY e o futuro writer (20/11/2026)
+
+- [PR #103 MERGED](https://github.com/adelrib27/blogger-automation1/pull/103), [CI #44772815507 SUCCESS](https://github.com/adelrib27/blogger-automation1/actions/runs/44772815507) **527 testes V31** + Casa 24/Oficina 21/Radar 15/crossblog PASS. `private_ready_envelope.py` fornece chave privada por blog/campanha/SHA, CAS condicional **injetado** e read-after-write imutável; valida assinatura C77, conteúdo HTML e rejeita objeto adulterado. **Prova de backend simulado, SEM escrita R2 real**.
+- D1 C74 ainda sem READY produtivo; `V31_D1_API_TOKEN` continua AUSENTE em `v31-editorial-safe`, a conta R2 no mesmo ambiente foi confirmada MATCH em C77. Nenhum CMS/cron/post LIVE alterado nesta fase.
+- **C79:** preparar adapter R2 seguro e D1 HTTP autenticado de privilégio mínimo, prova CAS real com prefixo isolado + limpeza, depois vínculo de envelope HTML real com D1 READY e canários DRAFT, sem publicação LIVE genérica. [Checkpoint C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md).
 
 ## C77 — preflight universal até READY SAFE e conta GitHub protegida (20/11/2026)
 
