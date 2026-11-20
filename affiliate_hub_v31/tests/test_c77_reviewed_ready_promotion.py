@@ -8,12 +8,14 @@ import tempfile
 import unittest
 from datetime import timedelta
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.final_fact_gate import reviewed_text_digest
 from affiliate_hub_v31 import reviewed_ready_promotion as promo
+from affiliate_hub_v31 import reviewed_draft_delivery as delivery
 from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
+from affiliate_hub_v31.private_ready_envelope import ImmutablePrivateReadyEnvelope
 from affiliate_hub_v31.tests.test_c71_d1_universal_ready import SqliteQuery
 from affiliate_hub_v31.tests.test_c69_universal_evidence_ready import (
     KEYS, TITLES, NOW, HOME, OTHER, ROUTES, package,
@@ -68,6 +70,20 @@ def sign_material(payload):
     return hmac.new(KEY, canonical, hashlib.sha256).hexdigest()
 
 
+class ConditionalMemoryBackend:
+    def __init__(self):
+        self.objects = {}
+
+    def put_if_absent(self, key, body):
+        if key in self.objects:
+            return False
+        self.objects[key] = body
+        return True
+
+    def get(self, key):
+        return self.objects.get(key)
+
+
 class ReviewedReadyIntegrationTests(unittest.TestCase):
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
@@ -104,6 +120,7 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
         for target in (
             "affiliate_hub_v31.reviewed_ready_promotion.sites",
             "affiliate_hub_v31.d1_universal_ready.sites",
+            "affiliate_hub_v31.private_ready_envelope.sites",
         ):
             pt = patch(target, return_value=ROUTES)
             pt.start()
@@ -178,6 +195,132 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
         with self.assertRaisesRegex(promo.ReviewedReadyError, "review_attestation"):
             promo.stage_reviewed_ready(**self.input(html_content=changed))
         self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 0)
+
+    def test_envelope_then_ready_with_exact_html_and_idempotent_replay(self):
+        backend = ConditionalMemoryBackend()
+        envelope = ImmutablePrivateReadyEnvelope(backend=backend)
+        params = self.input(envelope=envelope)
+        result = promo.stage_reviewed_ready(**params)
+        self.assertEqual(result["status"], "READY_RESERVED_FOR_DRAFT_REVIEW")
+        stored = envelope.load(site_key=SITE, campaign=CAMPAIGN,
+                               html_sha256=result["html_sha256"],
+                               independent_review_key=KEY)
+        self.assertEqual(stored["html_content"], params["html_content"])
+        replay = promo.stage_reviewed_ready(**params)
+        self.assertEqual(replay["status"], "READY_ALREADY_STAGED")
+        self.assertEqual(replay["fingerprint"], result["fingerprint"])
+        self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 1)
+        self.assertEqual(len(backend.objects), 1)
+
+    def test_envelope_failure_and_signed_gate_failure_create_no_ready(self):
+        backend = ConditionalMemoryBackend()
+        envelope = ImmutablePrivateReadyEnvelope(backend=backend)
+        with self.assertRaises(promo.ReviewedReadyError):
+            promo.stage_reviewed_ready(**self.input(envelope=envelope,
+                                                    html_content=make_html() + " "))
+        self.assertEqual(backend.objects, {})
+        with patch.object(backend, "get", return_value=b"untrusted"):
+            with self.assertRaises(promo.ReviewedReadyError):
+                promo.stage_reviewed_ready(**self.input(envelope=envelope))
+        self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 0)
+
+    def test_recovery_after_envelope_created_and_d1_response_lost(self):
+        backend = ConditionalMemoryBackend()
+        params = self.input(envelope=ImmutablePrivateReadyEnvelope(backend=backend))
+        reserve = self.state.reserve_ready
+
+        def lose_response(**kwargs):
+            reserve(**kwargs)
+            raise promo.D1SafeError("synthetic_response_loss")
+
+        with patch.object(self.state, "reserve_ready", side_effect=lose_response):
+            with self.assertRaises(promo.ReviewedReadyError):
+                promo.stage_reviewed_ready(**params)
+        result = promo.stage_reviewed_ready(**params)
+        self.assertEqual(result["status"], "READY_ALREADY_STAGED")
+        self.assertEqual(len(backend.objects), 1)
+        self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 1)
+
+    def test_blogger_timeout_after_post_reconciles_exact_draft_without_repost(self):
+        service = Mock()
+        routes = {SITE: {**ROUTES[SITE], "identifier": "123456789012"}}
+        service.blogs().get().execute.return_value = {
+            "id": "123456789012", "url": HOME,
+        }
+        posts = service.posts()
+        envelope = ImmutablePrivateReadyEnvelope(backend=ConditionalMemoryBackend())
+        params = self.input(envelope=envelope)
+        ready = promo.stage_reviewed_ready(**params)
+        marker = "v31-" + ready["fingerprint"][:32]
+        draft = {"id": "2026", "blog": {"id": "123456789012"},
+                 "status": "DRAFT", "labels": [marker], "title": TITLE,
+                 "content": params["html_content"]}
+        posts.get().execute.return_value = draft
+        posts.list().execute.return_value = {"items": []}
+        posts.insert().execute.side_effect = TimeoutError()
+        posts.insert.reset_mock()
+
+        with patch.object(delivery, "sites", return_value=routes), patch.object(
+            delivery.time, "time", return_value=NOW.timestamp(),
+        ):
+            kwargs = {"site_key": SITE, "fingerprint": ready["fingerprint"],
+                      "state": self.state, "envelope": envelope,
+                      "independent_review_key": KEY, "blogger_service": service}
+            with self.assertRaisesRegex(delivery.ReviewedDraftError, "unverified"):
+                delivery.deliver_reviewed_draft(**kwargs)
+            self.assertEqual(delivery.deliver_reviewed_draft(**kwargs)["status"],
+                             "DRAFT_RECONCILIATION_REQUIRED")
+            posts.list.side_effect = lambda **q: Mock(**{
+                "execute.return_value": {"items": [draft] if q["status"] == ["DRAFT"] else []},
+            })
+            result = delivery.deliver_reviewed_draft(**kwargs)
+            self.assertEqual(result["status"], "DRAFT_VERIFIED")
+            self.assertEqual(result["draft_id"], "2026")
+            self.assertEqual(posts.insert.call_count, 1)
+            self.assertTrue(posts.insert.call_args.kwargs["isDraft"])
+            self.assertEqual(posts.insert.call_args.kwargs["body"]["content"],
+                             params["html_content"])
+
+    def test_wordpress_checks_raw_html_and_never_reposts_a_used_job(self):
+        wp_site = "wordpress_novo_exemplo"
+        wp_campaign = "exemplowp"
+        content = make_html(affiliate="https://s.shopee.com.br/CampanhaWP456").replace(
+            "<article>", f'<article data-v31-product-key="{KEYS[0]}">')
+        params = self.input(site_key=wp_site, site_url=OTHER,
+                            article_url=OTHER + "guia-cadeira/", html_content=content)
+        payload = params["attestation"]["payload"]
+        seo = {k: params[k] for k in ("site_url", "article_url", "meta_description",
+               "primary_query", "intent", "html_content", "published_posts",
+               "keyword_evidence", "cluster_id")}
+        payload.update(site_key=wp_site, campaign=wp_campaign, site_url=OTHER,
+                       article_url=params["article_url"],
+                       html_sha256=hashlib.sha256(content.encode()).hexdigest(),
+                       seo_context_sha256=promo._json_sha({**seo, "title": TITLE}))
+        params["attestation"]["signature"] = sign_material(payload)
+        envelope = ImmutablePrivateReadyEnvelope(backend=ConditionalMemoryBackend())
+        ready = promo.stage_reviewed_ready(**params, envelope=envelope)
+        client = Mock()
+        client.site_settings.return_value = {"url": OTHER}
+        client.list_posts.return_value = []
+        slug = delivery.wordpress._product_slug(wp_site, KEYS[0])
+        draft = {"id": 303, "slug": slug, "status": "draft",
+                 "title": {"raw": TITLE}, "content": {"raw": content + " "}}
+        client.create_draft.return_value = {"id": 303, "status": "draft"}
+        client.get_post.return_value = draft
+        kwargs = {"site_key": wp_site, "fingerprint": ready["fingerprint"],
+                  "state": self.state, "envelope": envelope,
+                  "independent_review_key": KEY, "wordpress_client": client}
+        with patch.object(delivery, "sites", return_value=ROUTES), patch.object(
+            delivery.time, "time", return_value=NOW.timestamp(),
+        ):
+            with self.assertRaisesRegex(delivery.ReviewedDraftError, "readback_mismatch"):
+                delivery.deliver_reviewed_draft(**kwargs)
+            draft["content"]["raw"] = content
+            client.list_posts.return_value = [draft]
+            self.assertEqual(delivery.deliver_reviewed_draft(**kwargs)["status"],
+                             "DRAFT_VERIFIED")
+            client.create_draft.assert_called_once_with(title=TITLE, slug=slug,
+                                                        content=content)
 
     def test_fake_and_cross_campaign_offer_rejected(self):
         for html in (

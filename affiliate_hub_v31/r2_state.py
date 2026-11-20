@@ -11,6 +11,7 @@ import json
 import os
 import re
 import sqlite3
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -39,7 +40,8 @@ def verify_database(path: Path):
     if not path.is_file() or path.stat().st_size > MAX_STATE_BYTES:
         raise StorageError("invalid_local_state")
     try:
-        with sqlite3.connect(f"file:{path.resolve()}?mode=ro", uri=True) as db:
+        uri = path.resolve().as_uri() + "?mode=ro"
+        with closing(sqlite3.connect(uri, uri=True)) as db:
             if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
                 raise StorageError("sqlite_corruption")
     except sqlite3.DatabaseError:
