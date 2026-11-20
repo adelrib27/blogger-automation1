@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C74",
-  "continuity_protocol_phase": "C74",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C75",
+  "continuity_protocol_phase": "C75",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C74_OFFICIAL_CLOUDFLARE_D1_SAFE_MIGRATION_CANARIES_PASS",
+  "last_updated_source": "C75_HTTP_D1_RUNNER_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -142,15 +142,15 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "Integrar com segurança o D1 V31 exclusivo da conta R2 oficial aos adaptadores SAFE, sem habilitar writers ou LIVE até canário end-to-end e gates",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "C74 novo D1 UUID 9bfce7a4... na conta oficial ebb8...: quatro tabelas migradas, seis provas SQL sintéticas PASS e limpeza quatro tabelas zero; nenhuma publicação e outras contas preservadas",
-    "next_safe_step": "Conferir GitHub vars.V31_EDITORIAL_R2_ACCOUNT_ID e identidade do workflow, não revelar secrets; implementar client D1 de mínimo privilégio, teste de concorrência/lease real, fact-gate/evidence e canário de DRAFT seguro antes de ativar writers",
+    "objective": "C75 cliente HTTP D1 com conta+DB oficiais fixos, resposta validada, escrita desligada por padrão, tests mockados, PR+CI sem writers",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C74 D1 correto SAFE e checkpoint C75 prévio na main, adaptador SQL C71 ainda sem HTTP",
+    "next_safe_step": "Criar branch C75, adicionar cliente + testes mocks, PR, CI, sem D1/Cloudflare writes",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md"
     ]
   },
   "next_priorities": [
