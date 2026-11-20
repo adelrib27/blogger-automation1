@@ -46,7 +46,12 @@ class V31ContinuityTests(unittest.TestCase):
         self.assertTrue(result["next_safe_step"])
 
     def test_active_work_and_status_must_match(self):
-        self._edit(lambda s:s["active_work"].update(status="BLOQUEADO"))
+        def mismatch(state):
+            original = state["continuity_status"]
+            other = "EM_ANDAMENTO" if original == "BLOQUEADO" else "BLOQUEADO"
+            state["active_work"]["status"] = other
+
+        self._edit(mismatch)
         with self.assertRaisesRegex(ContinuityGuardError,
                                     "continuity_status_mismatch"):
             check_repository(self.root)
