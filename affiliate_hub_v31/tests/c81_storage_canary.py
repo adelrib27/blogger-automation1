@@ -1,8 +1,10 @@
 """Synthetic storage canary. Run only in the isolated V31 GitHub job."""
 
 import hashlib
+import json
 import uuid
 from contextlib import ExitStack
+from datetime import timedelta
 from unittest.mock import patch
 
 from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
@@ -18,6 +20,39 @@ TABLES = ("v31_ready_jobs", "v31_verified_evidence", "v31_search_budget", "v31_r
 def require(condition, code):
     if not condition:
         raise RuntimeError(code)
+
+
+def exercise_expired_buffer(state, tenant, now):
+    product = fixture.KEYS[1]
+    owner = {"owner_nonce": uuid.uuid4().hex, "lease_name": "refill"}
+    cached = {"product_key": product, "product_title": fixture.TITLES[1],
+              "owner_nonce": owner["owner_nonce"]}
+    before, after = "a" * 64, "b" * 64
+
+    def reserve(when, fingerprint, expected_evidence):
+        epoch = int(when.timestamp())
+        proof = fixture.package(1, date=when.isoformat())
+        require(state.acquire_lease(**tenant, **owner, now_epoch=epoch),
+                "C81_REFILL_LEASE_FAILED")
+        try:
+            require(state.cache_verified_evidence(**tenant, **cached, package=proof,
+                                                  now_epoch=epoch) == expected_evidence,
+                    "C81_EVIDENCE_REFRESH_UNEXPECTED")
+            digest = hashlib.sha256(json.dumps(
+                proof, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+            return state.reserve_ready(
+                **tenant, owner_nonce=owner["owner_nonce"], fingerprint=fingerprint,
+                product_key=product, html_sha256="c" * 64, evidence_sha256=digest,
+                min_ready=1, now_epoch=epoch,
+            )
+        finally:
+            require(state.release_lease(**tenant, **owner), "C81_REFILL_RELEASE_FAILED")
+
+    require(reserve(now, before, True), "C81_INITIAL_BUFFER_READY_FAILED")
+    require(not reserve(now + timedelta(hours=1), after, False),
+            "C81_ACTIVE_EVIDENCE_REPLACED")
+    require(reserve(now + timedelta(days=8), after, True), "C81_EXPIRED_BUFFER_BLOCKED")
+    print("C81_OFFICIAL_D1_STALE_BUFFER_RECOVERY=PASS")
 
 
 def main():
@@ -63,6 +98,7 @@ def main():
             require(state.get_job(**tenant, fingerprint=fingerprint)["status"] == "USED",
                     "C81_USED_READBACK_FAILED")
             print("C81_OFFICIAL_R2_D1_EXACT_READBACK_READY_USED_REPLAY=PASS")
+            exercise_expired_buffer(state, tenant, params["now"])
         finally:
             try:
                 for table in TABLES:

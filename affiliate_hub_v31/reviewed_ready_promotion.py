@@ -248,6 +248,7 @@ def stage_reviewed_ready(
         fingerprint = _fingerprint(product_key, primary_query, angle)
         # Only after all independent preflight gates: acquire the shared
         # refill lease. Cache and READY reserve are SQL atomic via C76.
+        epoch = int(clock.timestamp() + monotonic() - started)
         if not state.acquire_lease(
             site_key=site_key, campaign=campaign, lease_name="refill",
             owner_nonce=owner_nonce, now_epoch=epoch,
@@ -290,6 +291,7 @@ def stage_reviewed_ready(
                 )
                 if cached != evidence_package:
                     raise ReviewedReadyError("verified_evidence_cache_mismatch")
+            epoch = int(clock.timestamp() + monotonic() - started)
             reserved = state.reserve_ready(
                 site_key=site_key, campaign=campaign, owner_nonce=owner_nonce,
                 fingerprint=fingerprint, product_key=product_key,
