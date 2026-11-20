@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C80",
   "continuity_protocol_phase": "C81",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "BLOQUEADO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C80_GITHUB_D1_TOKEN_AUTH_LEASE_CONCURRENCY_REAL_PASS_CLEANUP_ZERO",
+  "last_updated_source": "C81_OFFICIAL_STORAGE_RECOVERY_VERIFIED_REAL_CANDIDATES_PENDING_INDEPENDENT_REVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -219,7 +219,16 @@
     },
     "c80_temp_workflows_removed": true,
     "c80_cms_publication_calls": 0,
-    "c80_writer_connected_to_d1": false
+    "c80_writer_connected_to_d1": false,
+    "c81_ready_storage_real_canary": 44801751774,
+    "c81_ready_expiry_recovery_real_canary": 44799389774,
+    "c81_shopee_firecrawl_real_dedup_audit": 44802690556,
+    "c81_real_candidate_preflight": 44803725543,
+    "c81_linux_ci_tests": 546,
+    "c81_linux_ci_run": 44804047652,
+    "c81_temp_workflows_removed": true,
+    "c81_independent_review_workflow_merged": true,
+    "c81_cms_draft_created_count": 0
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -233,21 +242,35 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C81: integrar envelope R2 privado imutável C78/C79 ao D1 READY real C76 e revisão/evidência C77, sem permitir HTML ou SKU divergentes e sem publicar LIVE",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "Prévia C81: main comparada à C80, bucket oficial confirmado, quatro contagens D1 zeradas via SELECT e Actions C79/C80 concluídas com sucesso.",
-    "next_safe_step": "Implementar integração preflight C77, envelope R2 C78/C79 e D1 READY C76 na branch isolada, testar recuperação e documentar os resultados.",
+    "objective": "Homologar dois DRAFTs reais com o mesmo HTML aprovado, via revisão independente do V31, e acompanhar operação contínua após a prova.",
+    "status": "BLOQUEADO",
+    "latest_verified_step": "PRs #105 a #109 na main, canários oficiais R2/D1 com replay/TTL/limpeza, histórico CMS em leitura e Firecrawl real. Candidatos inéditos de ambas as plataformas pré-validados no ambiente oficial em #44803725543.",
+    "next_safe_step": "Conferir configuração de v31-independent-review e login do revisor. Disparar v31_independent_review_draft.yml na main para cada digest privado verificado, obter aprovação real e confirmar DRAFT/HTML por GET e replay nos dois CMS.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44786171930",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44786624444",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44802690556",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44803725543",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44804047652"
     ],
     "phase": "C81",
     "base_main_sha": "40689157d0a13409ffd52c5bcb0ae4a8f581ecdc",
-    "branch": "v31/c81-reviewed-draft"
+    "branch": "v31/c81-reviewed-draft",
+    "blocker": "O ambiente v31-independent-review ainda não aparece na API do GitHub, faltando configuração administrativa das chaves de revisão e aprovação humana dos candidatos.",
+    "candidates": [
+      {
+        "site_key": "blogger_moveis_para_cada_canto",
+        "sha256": "37155d0befc51d03489b39cde6cda0fc8b84cf09f33aa7c1517aa3b8a9569a30",
+        "status": "PROPOSED_PREFLIGHT_PASS"
+      },
+      {
+        "site_key": "wordpress_casa_decoracao",
+        "sha256": "2d47d9eed17d2fe95df9ecd52c011071b05af4773cf9fda58ea098ff25ac111a",
+        "status": "PROPOSED_PREFLIGHT_PASS"
+      }
+    ]
   },
   "next_priorities": [
     "C81 desenho de handoff durável idempotente e revisão do artigo: C77 fact gate SEO real, C78/C79 envelope R2 com SHA e manifesto HMAC externo, C76 D1 READY com TTL e lease; não aceitar prova criada pela IA como revisor.",
