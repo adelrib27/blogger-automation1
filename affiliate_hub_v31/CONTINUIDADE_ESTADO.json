@@ -172,7 +172,14 @@
     "c78_private_ready_envelope_status": "SAFE_OFFLINE_NO_R2_BACKEND_WIRED",
     "c78_github_d1_secret_configured": false,
     "c78_cms_draft_calls": 0,
-    "c78_cms_live_calls": 0
+    "c78_cms_live_calls": 0,
+    "c78_d1_read_only_counts": {
+      "leases": 0,
+      "jobs": 0,
+      "evidence": 0,
+      "budgets": 0
+    },
+    "c78_d1_readback_account": "ebb8d5b4cf9a2cb850c6d8051bd2661f"
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -188,7 +195,7 @@
   "active_work": {
     "objective": "C79: adapter R2 privado com CAS condicional e readback na conta oficial, integração de HTML SHA com D1 READY, credencial D1 mínima GitHub e canários DRAFT seguros",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "C77 PR102 CI518: SEO/fatos/revisão assinada/D1 SAFE; ambiente protegido R2 MATCH, D1 secret ausente. C78 PR103 CI527: envelope imutável por tenant SHA, backend apenas mock, sem alterações R2/CMS/Cloudflare.",
+    "latest_verified_step": "C77 PR102 CI518: SEO/fatos/revisão assinada/D1 SAFE; ambiente protegido R2 MATCH, D1 secret ausente. C78 PR103 CI527: envelope imutável por tenant SHA, backend apenas mock, sem alterações R2/CMS/Cloudflare. Auditoria Cloudflare pós-C78: SELECT no D1 oficial retornou 0 em todas as quatro tabelas.",
     "next_safe_step": "Implementar adapter R2 condicional somente após comprovar credenciais/conta em v31-editorial-safe, GET/PUT CAS no caminho prefixado e teste de limpeza; D1 HTTP SELECT-only com segredo mínimo, depois integrar envelope + READY + writers DRAFT; zero LIVE.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
