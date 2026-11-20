@@ -90,7 +90,7 @@ class FinalFactGateTests(unittest.TestCase):
             ("<script>alert(1)</script>", "html_tag"),
             ('<p onclick="alert(1)">Clique</p>', "html_untrusted_attribute"),
             ('<a href="javascript:alert(1)">X</a>', "html_unsafe_url"),
-            ('<span data-v31-fact-id="EVID_0_1"><img src="https://x.test/a"></span>',
+            ('<p><span data-v31-fact-id="EVID_0_1"><img src="https://x.test/a"></span></p>',
              "fact_span_nested_markup_unsafe"),
         ):
             html = HTML.replace("</article>", extra + "</article>")
