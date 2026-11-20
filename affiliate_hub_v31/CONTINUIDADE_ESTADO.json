@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C81_AUTONOMOUS_KEYS_CONFIGURED_BY_OWNER_VALIDATION_PENDING",
+  "last_updated_source": "C81_SIGNING_CONFIGURATION_VERIFIED_BY_GITHUB_DRAFT_CANARIES_PENDING",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -236,7 +236,9 @@
       114,
       115,
       116,
-      117
+      117,
+      118,
+      119
     ],
     "c81_autonomous_latest_ci": 44826311397,
     "c81_autonomous_wordpress_real_ready_run_id": 44822280026,
@@ -245,7 +247,9 @@
     "c81_autonomous_ready_html_sha256": "c2b8bb85f453c43b37b50ebf8dae9c59522870cc4d0291824fd981f45bd0e495",
     "c81_autonomous_cms_new_drafts_confirmed": 0,
     "c81_autonomous_live_activated": false,
-    "c81_autonomous_official_storage_recovery_run": 44825882019
+    "c81_autonomous_official_storage_recovery_run": 44825882019,
+    "c81_autonomous_signing_configuration_check_run": 44829365949,
+    "c81_autonomous_signing_configuration_verified": true
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -265,14 +269,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "Canário oficial R2/D1 com recuperação e limpeza confirmado em #44825882019. PR #118 na main reserva os SKUs dos canários e a validação de continuidade #44826908061 passou. O proprietário informou que cadastrou as três configurações de assinatura.",
-    "next_safe_step": "Validar as duas chaves e a variável no ambiente GitHub v31-editorial-safe por teste criptográfico sintético sem divulgar valores. Usar o mesmo par nos canários DRAFT oficiais, respeitando as cotas e preservando os demais projetos.",
+    "latest_verified_step": "GitHub Actions #44829365949 confirmou os dois segredos e a variável pública do ambiente v31-editorial-safe. HMAC e Ed25519 passaram em desafio sintético, com rejeição de adulteração. O R2/D1 oficial já havia passado no canário de recuperação #44825882019.",
+    "next_safe_step": "Acompanhar a execução real do Blogger na renovação da cota UTC e a execução WordPress após conversão da oferta reservada. Conferir HMAC/Ed25519, bytes do R2, READY/USED, GET autenticado dos dois DRAFTs e repetição exata.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "858ea6fe12fa374712843c76922c795126b2a6dd",
-    "branch": "codex/v31-c81-validate-configured-signing",
-    "blocker": "A assinatura ainda exige prova do GitHub Actions. O canário Blogger aguarda renovação da cota diária e o WordPress aguarda verificação da conversão da oferta reservada.",
+    "base_main_sha": "2dcfdb8de6a1a6b1a66b86ee94d1d713e76f774f",
+    "branch": "codex/v31-c81-stable-signing-drafts",
+    "blocker": "Os primeiros novos DRAFTs dependem da renovação do orçamento no Blogger e da próxima execução de conversão Shopee para o WordPress. LIVE continua desativado.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -284,7 +288,8 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44825882019/job/136598237147",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44826311397",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44826908061"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44826908061",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44829365949/job/136610099419"
     ]
   },
   "next_priorities": [

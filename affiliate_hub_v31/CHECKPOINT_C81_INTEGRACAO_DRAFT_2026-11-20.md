@@ -12,6 +12,11 @@ O proprietário retirou a revisão por pessoa do fluxo editorial. A autorizaçã
 - [PR #116](https://github.com/adelrib27/blogger-automation1/pull/116) e [CI](https://github.com/adelrib27/blogger-automation1/actions/runs/44825759832) aprovaram retentativas limitadas e renovação de READY vencido. [Canário de recuperação no R2/D1 oficial](https://github.com/adelrib27/blogger-automation1/actions/runs/44825882019/job/136598237147) confirmou leitura byte a byte, replay, consumo único, nova prova do mesmo fingerprint após expiração e limpeza de R2/D1. O tenant desse teste era sintético. A [validação do checkpoint](https://github.com/adelrib27/blogger-automation1/actions/runs/44825882014) também passou.
 - [PR #117](https://github.com/adelrib27/blogger-automation1/pull/117), [CI](https://github.com/adelrib27/blogger-automation1/actions/runs/44826311397) e [checkpoint](https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144) confirmaram a transição configurável por rota e o resumo operacional do workflow. A migração efetiva dos escritores aguarda o sinal de ativação. Os SKUs explícitos dos ensaios ficam reservados contra concorrência com o agendamento anterior enquanto durar o canário.
 
+## Configuração de assinatura confirmada
+
+- [PR #119](https://github.com/adelrib27/blogger-automation1/pull/119) e [diagnóstico oficial](https://github.com/adelrib27/blogger-automation1/actions/runs/44829365949/job/136610099419) confirmaram os três campos configurados em `v31-editorial-safe`: segredo HMAC, semente Ed25519 distinta e chave pública correspondente. O desafio sintético confirmou HMAC/Ed25519 e rejeitou o recibo adulterado. Os valores não foram registrados nos logs do teste. O job não enviou DRAFT nem acionou Shopee, R2 ou D1.
+- Os canários reais passam a usar essa configuração persistente. O novo envelope R2 vincula a chave Ed25519 à assinatura do HTML. O job de entrega recebe sua impressão digital para validar a chave recuperada do R2. A conferência de credenciais ainda não constitui um novo DRAFT ou teste do agendamento contínuo.
+
 O registro abaixo preserva o desenho anterior da C81 como histórico. As instruções de revisor obrigatório foram substituídas por esta atualização.
 
 ---

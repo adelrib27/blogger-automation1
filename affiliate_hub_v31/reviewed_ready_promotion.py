@@ -161,6 +161,7 @@ def stage_reviewed_ready(
     envelope: ImmutablePrivateReadyEnvelope | None = None,
     release_signature: str | None = None,
     release_public_key: str | None = None,
+    embed_release_key: bool = False,
 ) -> dict:
     """Preflight and reserve D1 READY after optional exact R2 readback.
 
@@ -287,6 +288,7 @@ def stage_reviewed_ready(
                     independent_review_key=independent_review_key,
                     release_signature=release_signature,
                     release_public_key=release_public_key,
+                    embed_release_key=embed_release_key,
                 )
                 if previous is not None:
                     return _summary("READY_ALREADY_STAGED") | {
