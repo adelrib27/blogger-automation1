@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C79",
   "continuity_protocol_phase": "C79",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C79_OFFICIAL_R2_CAS_PREVIEW",
+  "last_updated_source": "C79_PR104_CI537_R2_CAS_REAL_CLEANUP_ZERO",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -179,7 +179,27 @@
       "evidence": 0,
       "budgets": 0
     },
-    "c78_d1_readback_account": "ebb8d5b4cf9a2cb850c6d8051bd2661f"
+    "c78_d1_readback_account": "ebb8d5b4cf9a2cb850c6d8051bd2661f",
+    "c79_pr_merged": 104,
+    "c79_merge_sha": "4bad4e6af19ba56481dcd03960f5f0a9a962fc3d",
+    "c79_ci_run_id": 44776194805,
+    "c79_v31_tests_passed": 537,
+    "c79_r2_real_cas_run_id": 44776685517,
+    "c79_r2_real_cas_status": "SUCCESS_PUT_IF_NONE_MATCH_STAR_REJECTS_REWRITE_412",
+    "c79_r2_real_envelope_status": "SUCCESS_READBACK_EXACT_BYTES",
+    "c79_r2_synthetic_cleanup_zero": true,
+    "c79_temp_workflow_removed": true,
+    "c79_r2_account_id": "ebb8d5b4cf9a2cb850c6d8051bd2661f",
+    "c79_official_d1_counts": {
+      "leases": 0,
+      "jobs": 0,
+      "evidence": 0,
+      "budgets": 0
+    },
+    "c79_d1_token_in_github_configured": false,
+    "c79_r2_backend_connected_to_production_writers": false,
+    "c79_cms_draft_calls": 0,
+    "c79_cms_live_calls": 0
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -193,23 +213,26 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C79 R2 backend S3 condicional Atômico IfNoneMatch'*' no bucket/conta V31 e canário isolado, sem D1 token ou writers",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C78 PR103 CI527 integrado, R2 S3 backend e credenciais GitHub v31-editorial-safe account MATCH, Cloudflare documentação confirma CAS atômico em PutObject",
-    "next_safe_step": "Implementar adapter S3 restrito e tests offline CI; canário real com objeto sintético isolado e limpeza se CI verde; salvar evidências",
+    "objective": "C80: conectar D1 oficial com token mínimo no ambiente GitHub e validar SELECT-only, depois integração privada R2-envelope→READY e canário editorial DRAFT",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "C79 PR104 MERGED CI537 PASS; canário R2 REAL #44776685517 PutObject IfNoneMatch* e GET imutável PASS, PUT diferente 412, objeto sintético limpo por GET; GitHub TEMP removido. D1 oficial Cloudflare GET/SELECT read-only zeros em 4 tabelas.",
+    "next_safe_step": "Configurar com segurança V31_D1_API_TOKEN D1-only na conta Cloudflare oficial e GitHub Environment v31-editorial-safe (não disponível no conector de Secrets), smoke HTTP SELECT via C75, concorrência D1 com limpeza, integração C77-C79 envelope e revisão real, canário DRAFT em Blogger/WordPress sem LIVE.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
+      "https://github.com/adelrib27/blogger-automation1/pull/104",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44776194805",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44776685517",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md"
     ]
   },
   "next_priorities": [
-    "C79 backend R2 privado com escrita condicional CAS atômica, autenticação da conta oficial; não ativado até testes de host/bucket e rollback.",
-    "C79 criar via meio autorizado token V31_D1_API_TOKEN de privilégio mínimo no ambiente protegido v31-editorial-safe; não reutilizar token de outra conta.",
-    "C79 testar runner HTTP C75 SELECT-only no D1 oficial e concorrência sintética; D1 e R2 continuam sem READY produtivo.",
-    "Revisão independente/HMAC, evidence real Firecrawl com custo validado e HTML exato devem ser aprovados antes de integrar e gerar DRAFT em Blogger/WordPress.",
-    "Preservar artigos contínuos articles:null, buffer min_ready=3, campanhas/links reais e LIVE somente com aprovação individual por post."
+    "C80 GitHub Environment v31-editorial-safe: fornecer token V31_D1_API_TOKEN D1-only da conta Cloudflare oficial; atual conector GitHub não cria secret. Não reutilizar tokens de projetos paralelos.",
+    "C80 cliente CloudflareD1HTTPRunner C75 SELECT-only, depois ensaio atômico concorrente e limpeza via D1 com credencial mínima.",
+    "C80 unir preflight C77 e HMAC de revisão real, envelope C78/R2 CAS REAL C79 e metadata D1 C76 sem troca de HTML por IA na hora do POST.",
+    "Homologar fontes Firecrawl com quota e factualidade realmente verificadas, links e SEO por blog, depois rascunho CMS DRAFT isolado e idempotente (zero LIVE sem aprovação individual).",
+    "Preservar 2 CSVs e biblioteca universal Shopee, articles:null contínuo, min_ready=3 só buffer; Vida Pet, ARV, Pinterest e outras contas Cloudflare intocados."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -218,7 +241,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44772815507",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44776685517",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "C70: fila V31 event=schedule real 19/11 19:38Z #44600350780 failure após 3 conversões/cache R2; correção PR98 CI471, handoff R2 verificado em canários #44607319448 e #44607864589. Blogger/WP schedule V31 pendentes de 20/11 às 10h10 Recife."
   }
