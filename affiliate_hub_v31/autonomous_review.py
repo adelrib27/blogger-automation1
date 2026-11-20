@@ -389,6 +389,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
             raise VerificationError("independent_public_key_configuration_mismatch")
         public_key_sha256 = hashlib.sha256(bytes.fromhex(public_key)).hexdigest()
     tenant = {"site_key": site_key, "campaign": route["campaign"]}
+    cap_reached = (not probe and state.count_draft_attempts_today(
+        **tenant, now_epoch=int(utcnow().timestamp())) >= policy["max_drafts_per_day"])
     with tempfile.TemporaryDirectory(prefix="v31-autonomous-verify-") as tmp:
         file = Path(tmp) / "catalog.sqlite3"
         if not storage.restore_to(file):
@@ -410,6 +412,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     continue
                 fingerprint = _fingerprint(selected, profile["query"], ANGLE)
                 existing = state.get_job(**tenant, fingerprint=fingerprint)
+                if cap_reached and (existing is None or existing["status"] != "USED"):
+                    continue
                 if existing and not probe and (existing["status"] == "USED"
                         or state.ready_has_fresh_evidence(**tenant, fingerprint=fingerprint,
                                                           now_epoch=int(utcnow().timestamp()))):
@@ -439,6 +443,9 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 else:
                     break
             else:
+                if cap_reached:
+                    return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                            "reason": "draft_daily_cap_reached"}
                 if rejected:
                     raise VerificationError(rejected[-1])
                 if sku is not None and not pilot:
