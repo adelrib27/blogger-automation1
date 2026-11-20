@@ -256,7 +256,7 @@ def stage_reviewed_ready(
                 fingerprint=fingerprint, product_key=product_key,
                 html_sha256=html_sha, evidence_sha256=evidence_sha,
                 now_epoch=epoch, min_ready=policy.min_ready,
-                cooldown_days=policy.cooldown_days,
+                cooldown_days=policy.product_cooldown_days,
             )
             return _summary("READY_RESERVED_FOR_DRAFT_REVIEW" if reserved
                             else "READY_NOT_RESERVED")
