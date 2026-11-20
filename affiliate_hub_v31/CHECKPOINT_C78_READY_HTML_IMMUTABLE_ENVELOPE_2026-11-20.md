@@ -29,3 +29,8 @@
 - `articles:null` permanece geração contínua e `min_ready=3` apenas buffer de trabalhos simultâneos.
 
 **Fechamento:** `active_work.status=PRONTO_PARA_PROXIMA_ETAPA`, nenhuma mutação remota em andamento ou rollback pendente. Próxima C79 integra um backend R2 de prova CAS ou verifica a autorização de credenciais mínimas; não habilitar escritores automaticamente.
+
+## C78.3 — conferência independente final após PR #103
+
+- Cloudflare conectado à conta oficial `ebb8d5b4cf9a2cb850c6d8051bd2661f`: GET nome exato `v31-universal-ready-safe`; SQL somente SELECT retornou `leases=0, jobs=0, evidence=0, budgets=0`. Nenhum escritor novo habilitado, nenhuma gravação de conteúdo no D1/R2 real e 0 posts por C78.
+- Estado JSON e índice permanente de continuidade atualizados para C78; workflow TEMP C77 já excluído. Próxima fase C79 deve começar por este checkpoint e auditar o estado vivo.
