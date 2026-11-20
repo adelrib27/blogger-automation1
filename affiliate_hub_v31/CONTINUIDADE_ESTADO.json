@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C81_OFFICIAL_STORAGE_RECOVERY_VERIFIED_REAL_CANDIDATES_PENDING_INDEPENDENT_REVIEW",
+  "last_updated_source": "C81_AUTONOMOUS_VERIFICATION_AND_AUTHENTICATED_DEDUP_PROVEN_DRAFT_CANARIES_PENDING",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -228,7 +228,21 @@
     "c81_linux_ci_run": 44804047652,
     "c81_temp_workflows_removed": true,
     "c81_independent_review_workflow_merged": true,
-    "c81_cms_draft_created_count": 0
+    "c81_cms_draft_created_count": 0,
+    "c81_autonomous_prs_merged": [
+      111,
+      112,
+      113,
+      114,
+      115
+    ],
+    "c81_autonomous_latest_ci": 44824528516,
+    "c81_autonomous_wordpress_real_ready_run_id": 44822280026,
+    "c81_autonomous_wordpress_duplicate_draft_preserved_id": 314,
+    "c81_autonomous_distinct_cms_history_run_id": 44823740700,
+    "c81_autonomous_ready_html_sha256": "c2b8bb85f453c43b37b50ebf8dae9c59522870cc4d0291824fd981f45bd0e495",
+    "c81_autonomous_cms_new_drafts_confirmed": 0,
+    "c81_autonomous_live_activated": false
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -239,44 +253,36 @@
     "runner_lab_fix_deployed_on_windows": false,
     "provisional_theme_installed_verified_independently": false,
     "wordpress_v31_draft_writer_end_to_end_verified": true,
-    "wordpress_casa_v31_live_publication_authorized": false
+    "wordpress_casa_v31_live_publication_authorized": false,
+    "c81_autonomous_draft_blogger_e2e_verified": false,
+    "c81_autonomous_draft_wordpress_e2e_verified": false,
+    "c81_autonomous_daily_operation_verified": false
   },
   "active_work": {
-    "objective": "Substituir a revisão humana por verificação automatizada independente, homologar DRAFT e preparar política LIVE de autorização única.",
+    "phase": "C81",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "Diretriz do proprietário atualizada. A revisão factual do DRAFT passa a ser automatizada; LIVE segue sob a política existente durante a homologação.",
-    "next_safe_step": "Executar extração objetiva de fontes confiáveis antes de assinar e testar a cadeia R2/D1/CMS no ambiente oficial.",
+    "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
+    "latest_verified_step": "PRs #111 a #115 na main. Firecrawl, foto e campanha reais passaram no WordPress e o HTML foi assinado e chegou a READY em #44822280026. A entrega encontrou um rascunho legado existente. Histórico autenticado nas duas plataformas e ausência de oferta verificável WP comprovados em #44823740700 e #44824680064.",
+    "next_safe_step": "Conferir o canário Blogger após a renovação diária de pesquisa UTC e o WordPress após o conversor oficial priorizar o Rizzo Imperial branco do catálogo. Exigir GET, bytes exatos, DRAFT e replay. Verificar os três valores de assinatura instalados em v31-editorial-safe antes do scheduler DRAFT estável.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
+    "base_main_sha": "b830dd0a67bfd6a70c72d49f0f3e90b929cf0c5e",
+    "branch": "codex/v31-c81-recovery-and-campaign-queue",
+    "blocker": "O teste Blogger depende da renovação da cota D1, o WordPress depende do próximo conversor oficial e a operação agendada exige configuração única das chaves do verificador. Nenhuma intervenção editorial por artigo.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44802690556",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44803725543",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44804047652"
-    ],
-    "phase": "C81",
-    "base_main_sha": "51cfde49327457bc4c172be5c043efadc3c5280b",
-    "branch": "v31/c81-autonomous-review",
-    "candidates": [
-      {
-        "site_key": "blogger_moveis_para_cada_canto",
-        "sha256": "37155d0befc51d03489b39cde6cda0fc8b84cf09f33aa7c1517aa3b8a9569a30",
-        "status": "PROPOSED_PREFLIGHT_PASS"
-      },
-      {
-        "site_key": "wordpress_casa_decoracao",
-        "sha256": "2d47d9eed17d2fe95df9ecd52c011071b05af4773cf9fda58ea098ff25ac111a",
-        "status": "PROPOSED_PREFLIGHT_PASS"
-      }
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44823740700",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44824528516",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44824680064",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44800518473"
     ]
   },
   "next_priorities": [
-    "C81 desenho de handoff durável idempotente e revisão do artigo: C77 fact gate SEO real, C78/C79 envelope R2 com SHA e manifesto HMAC externo, C76 D1 READY com TTL e lease; não aceitar prova criada pela IA como revisor.",
-    "C81 validar dados reais Firecrawl autorizados dentro do saldo e link/foto/campanha Shopee corretos antes de qualquer READY.",
-    "C81 canário editorial DRAFT por Blogger/WordPress com verificação GET do CMS, idempotência e recuperação de falhas, sem LIVE irrestrito nem novos cron jobs de produção antes da homologação.",
-    "Credencial D1 GitHub já CONFIGURADA e autenticada via Actions no ambiente protegido; banco oficial e IDs fixos. Token sem expiração exige auditoria/rotação periódica e permissões account-level D1 Edit.",
-    "Manter 2 CSVs catálogo universal, articles:null contínuo, min_ready=3 apenas buffer; não tocar Vida Pet, ARV, Pinterest, outras contas Cloudflare."
+    "Conferir o novo canário de recuperação sintética no D1/R2 oficial e os canários agendados com produtos reais. Preservar os DRAFTs legados e os registros da C81.",
+    "Ativar observação recorrente em DRAFT após a configuração única das chaves e comprovação E2E por plataforma. A política LIVE deve continuar pendente até evidência operacional e aprovação da versão.",
+    "Ampliar cobertura de fontes com identidade exata e melhorar o catálogo de pautas e o monitoramento antes de incorporar novos blogs. Preservar campanhas, dados R2/D1 e projetos paralelos."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -285,8 +291,8 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44786624444",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44824528516",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
-    "schedule_claim": "C70: fila V31 event=schedule real 19/11 19:38Z #44600350780 failure após 3 conversões/cache R2; correção PR98 CI471, handoff R2 verificado em canários #44607319448 e #44607864589. Blogger/WP schedule V31 pendentes de 20/11 às 10h10 Recife."
+    "schedule_claim": "Conversão C81 oficial event=schedule observada em #44800518473, 3 tentativas. Canários editoriais C81 ainda sem novo DRAFT confirmado."
   }
 }

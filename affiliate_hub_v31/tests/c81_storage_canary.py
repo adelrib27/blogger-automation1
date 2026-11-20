@@ -32,7 +32,7 @@ def exercise_expired_buffer(state, tenant, now):
               "owner_nonce": owner["owner_nonce"]}
     before, after = "a" * 64, "b" * 64
 
-    def reserve(when, fingerprint, expected_evidence):
+    def reserve(when, fingerprint, expected_evidence, html_hash="c" * 64):
         epoch = int(when.timestamp())
         proof = fixture.package(1, date=when.isoformat())
         require(state.acquire_lease(**tenant, **owner, now_epoch=epoch),
@@ -45,7 +45,7 @@ def exercise_expired_buffer(state, tenant, now):
                 proof, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
             return state.reserve_ready(
                 **tenant, owner_nonce=owner["owner_nonce"], fingerprint=fingerprint,
-                product_key=product, html_sha256="c" * 64, evidence_sha256=digest,
+                product_key=product, html_sha256=html_hash, evidence_sha256=digest,
                 min_ready=1, now_epoch=epoch,
             )
         finally:
@@ -54,7 +54,12 @@ def exercise_expired_buffer(state, tenant, now):
     require(reserve(now, before, True), "C81_INITIAL_BUFFER_READY_FAILED")
     require(not reserve(now + timedelta(hours=1), after, False),
             "C81_ACTIVE_EVIDENCE_REPLACED")
-    require(reserve(now + timedelta(days=8), after, True), "C81_EXPIRED_BUFFER_BLOCKED")
+    fresh_time = now + timedelta(days=8)
+    require(reserve(fresh_time, before, True, html_hash="d" * 64), "C81_EXPIRED_FINGERPRINT_BLOCKED")
+    require(state.get_job(**tenant, fingerprint=before)["html_sha256"] == "d" * 64
+            and state.ready_has_fresh_evidence(**tenant, fingerprint=before,
+                                               now_epoch=int(fresh_time.timestamp())),
+            "C81_REFRESHED_FINGERPRINT_READBACK_FAILED")
     print("C81_OFFICIAL_D1_STALE_BUFFER_RECOVERY=PASS")
 
 

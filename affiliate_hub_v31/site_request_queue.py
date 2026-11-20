@@ -100,6 +100,8 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
             "r2_snapshot_saved_and_verified":False,"publication_calls":0,
         }
     with tempfile.TemporaryDirectory(prefix="v31-c37-queue-") as tmp:
+        from .autonomous_review import PROFILE
+        verified_routes = json.loads(PROFILE.read_text(encoding="utf-8"))
         path=Path(tmp)/"catalog.sqlite3"
         if not storage.restore_to(path):
             raise RequestQueueError("catalog_missing")
@@ -127,7 +129,17 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                     (campaign,)).fetchone()[0]
                 ready=plan["cached_for_campaign"]
                 available=[]
-                for item in plan["approved_catalog_candidates"]:
+                approved = plan["approved_catalog_candidates"]
+                profiled = verified_routes.get(key, {}).get("offers", {})
+                pending_profiles = {sku for sku in profiled if cat.cached_link(sku, campaign) is None}
+                if pending_profiles:
+                    wider = preview_site_launch(cat, topic=request["topic"], platform=request["platform"],
+                                                site_key=key, max_items=24, max_per_shop=4)
+                    priority = [item for item in wider["approved_catalog_candidates"]
+                                if item["product_key"] in pending_profiles]
+                    priority_keys = {item["product_key"] for item in priority}
+                    approved = priority + [item for item in approved if item["product_key"] not in priority_keys]
+                for item in approved:
                     key_product=item["product_key"]
                     if (key_product not in attempted_keys and
                         item["affiliate_status"]=="requires_conversion" and

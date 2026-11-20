@@ -8,6 +8,9 @@ on:
       pilot:
         default: false
         type: boolean
+      pilot_sku:
+        default: ''
+        type: string
     outputs:
       verified_draft:
         description: "DRAFT confirmado por leitura autenticada e replay"
@@ -80,6 +83,7 @@ jobs:
         env:
           SITE: ${{ inputs.site_key }}
           PILOT: ${{ inputs.pilot && 'true' || 'false' }}
+          PILOT_SKU: ${{ inputs.pilot_sku }}
           CMS_HISTORY: ${{ needs.authenticated-history.outputs.history }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
@@ -99,7 +103,7 @@ jobs:
           trap 'rm -f "$history"' EXIT
           printf '%s' "$CMS_HISTORY" > "$history"
           args=(--site-key "$SITE" --history "$history")
-          if [[ "$PILOT" == true ]]; then args+=(--pilot); fi
+          if [[ "$PILOT" == true ]]; then args+=(--pilot --pilot-sku "$PILOT_SKU"); fi
           if ! result="$(python -m affiliate_hub_v31.autonomous_review "${args[@]}")"; then
             echo "$result"
             exit 1
@@ -148,20 +152,29 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import json, os, subprocess, sys
+          import json, os, subprocess, sys, time
           from pathlib import Path
           result = json.loads(os.environ["RECEIPT"])
           os.environ["V31_REVIEW_RELEASE_PUBLIC_KEY_HEX"] = result["public_key"]
           args = [sys.executable, "-m", "affiliate_hub_v31.reviewed_draft_delivery",
                   "--site-key", result["site_key"], "--fingerprint", result["fingerprint"],
                   "--execute-draft", "--autonomous"]
-          verified = []
-          for _ in range(2):
-              attempt = subprocess.run(args, capture_output=True, text=True, check=False)
-              print(attempt.stdout.strip())
-              if attempt.returncode:
-                  raise SystemExit("autonomous_draft_delivery_failed_closed")
-              verified.append(json.loads(attempt.stdout))
+          recoverable = {"reviewed_draft_delivery_unverified",
+                         "reviewed_draft_lease_release_failed",
+                         '{"status": "LEASE_BUSY"}',
+                         '{"status": "DRAFT_RECONCILIATION_REQUIRED"}'}
+          def confirm_draft():
+              for delay in (0, 2, 5):
+                  time.sleep(delay)
+                  attempt = subprocess.run(args, capture_output=True, text=True, check=False)
+                  output = attempt.stdout.strip()
+                  print(output)
+                  if attempt.returncode == 0:
+                      return json.loads(output)
+                  if output not in recoverable:
+                      break
+              raise SystemExit("autonomous_draft_delivery_failed_closed")
+          verified = [confirm_draft(), confirm_draft()]
           if verified[0] != verified[1]:
               raise SystemExit("draft_reconciliation_mismatch")
           proof = dict(verified[0], fingerprint=result["fingerprint"], site_key=result["site_key"])
