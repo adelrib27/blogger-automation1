@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C79",
-  "continuity_protocol_phase": "C79",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C80",
+  "continuity_protocol_phase": "C80",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C79_PR104_CI537_R2_CAS_REAL_CLEANUP_ZERO",
+  "last_updated_source": "C80_GITHUB_ENV_SECRET_SCREENSHOT_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -213,18 +213,15 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C80: conectar D1 oficial com token mínimo no ambiente GitHub e validar SELECT-only, depois integração privada R2-envelope→READY e canário editorial DRAFT",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "C79 PR104 MERGED CI537 PASS; canário R2 REAL #44776685517 PutObject IfNoneMatch* e GET imutável PASS, PUT diferente 412, objeto sintético limpo por GET; GitHub TEMP removido. D1 oficial Cloudflare GET/SELECT read-only zeros em 4 tabelas.",
-    "next_safe_step": "Configurar com segurança V31_D1_API_TOKEN D1-only na conta Cloudflare oficial e GitHub Environment v31-editorial-safe (não disponível no conector de Secrets), smoke HTTP SELECT via C75, concorrência D1 com limpeza, integração C77-C79 envelope e revisão real, canário DRAFT em Blogger/WordPress sem LIVE.",
+    "objective": "C80 validar token novo GitHub Environment v31-editorial-safe contra D1 oficial via apenas SELECT e gate de escrita desligada",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "Usuário forneceu captura GitHub Environment com secret V31_D1_API_TOKEN cadastrado; C79 PR104 CI537 real R2 CAS PASS, D1 último readback 0",
+    "next_safe_step": "Executar canário Github Actions SELECT D1 no ambiente protegido; não logar token, não tocar banco em escrita, validar quatro tabelas e bloqueio do runner; remover workflow TEMP após validação.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/104",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44776194805",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44776685517",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md"
     ]
   },
   "next_priorities": [
