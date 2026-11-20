@@ -27,12 +27,11 @@ from .r2_private_ready_backend import R2PrivateReadyBackend
 from .review_signatures import approval_receipt, payload_digest, sign_release
 from .reviewed_ready_promotion import stage_reviewed_ready
 from .routing import sites
-from .site_request_queue import load_requests
+from .site_request_queue import VERIFIER_PROFILES as PROFILE, load_requests
 from .site_launch_plan import preview_site_launch
 from .structured_review_source import catalog_gtin, gtin_facts
 from .universal_evidence_ready import _fingerprint
 
-PROFILE = Path(__file__).with_name("autonomous_review_sources.json")
 ANGLE = "guia de decisão com fatos verificados v1"
 SHOPEE = {"shopee.com.br", "www.shopee.com.br", "s.shopee.com.br"}
 
@@ -352,24 +351,6 @@ def _selection(catalog, route, request, policy, sku):
                     "name": template["name"] + " " + gtin}
 
 
-def _pilot_inventory(*, storage, catalog, route, request, prior_keys, prior_slugs):
-    run_id = os.environ.get("GITHUB_RUN_ID", "")
-    if not run_id.isascii() or not run_id.isdecimal():
-        return
-    from .automatic_wordpress_drafts import _product_slug
-    site = route["site_key"]
-    plan = preview_site_launch(catalog, topic=request["topic"], platform=route["platform"],
-                               site_key=site, max_items=24, max_per_shop=4)
-    offers = [{"sku": item["product_key"], "title": item["title"],
-               "campaign_ready": bool(item["affiliate_url"])}
-              for item in plan["approved_catalog_candidates"]
-              if hashlib.sha256(item["product_key"].encode()).hexdigest() not in prior_keys
-              and hashlib.sha256(_product_slug(site, item["product_key"]).encode()).hexdigest() not in prior_slugs]
-    key = f"v31/private-review/research/v1/autonomous-{run_id}-{site}.json"
-    storage.s3.put_object(Bucket=storage.bucket, Key=key, ContentType="application/json",
-                          Body=json.dumps(offers, ensure_ascii=False).encode())
-
-
 def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=False):
     registry = json.loads(PROFILE.read_text(encoding="utf-8"))
     policy = registry.get(site_key)
@@ -419,9 +400,6 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
         if not storage.restore_to(file):
             raise VerificationError("official_catalog_missing")
         with Catalog(file) as catalog:
-            if pilot:
-                _pilot_inventory(storage=storage, catalog=catalog, route=route, request=request,
-                                 prior_keys=prior_keys, prior_slugs=prior_slugs)
             rejected = []
             for selected, profile in _selection(catalog, route, request, policy, sku):
                 if route["platform"] == "wordpress":

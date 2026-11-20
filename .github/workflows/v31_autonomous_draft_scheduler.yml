@@ -88,3 +88,47 @@ jobs:
           CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
           CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
         run: python -m affiliate_hub_v31.autonomous_live --execute-approved-policy
+
+  audit:
+    needs: [choose-one, draft, release]
+    if: always() && needs.choose-one.result == 'success'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Registrar fila e orçamento sem expor conteúdo
+        env:
+          SITE: ${{ needs.choose-one.outputs.site }}
+          DRAFT_RESULT: ${{ needs.draft.result }}
+          LIVE_RESULT: ${{ needs.release.result }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
+          from affiliate_hub_v31.routing import sites
+          site = os.environ["SITE"]
+          route = sites().get(site)
+          if not route:
+              raise SystemExit("audit_route_unknown")
+          clock = datetime.now(timezone.utc)
+          target = (site, route["campaign"])
+          query = CloudflareD1HTTPRunner.from_environment()
+          jobs = query("""SELECT status, count(*) AS total FROM v31_ready_jobs
+                          WHERE site_key=? AND campaign=? GROUP BY status ORDER BY status""", target)
+          budget = query("""SELECT kind, used, max_allowed, blocked_until_epoch FROM v31_search_budget
+                            WHERE site_key=? AND campaign=? AND day_utc=? ORDER BY kind""",
+                         (*target, clock.date().isoformat()))
+          result = {"site": site, "draft_job": os.environ["DRAFT_RESULT"],
+                    "live_job": os.environ["LIVE_RESULT"], "jobs": jobs, "daily_research": budget}
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as summary:
+              print("### Estado operacional V31", file=summary)
+              print("```json", json.dumps(result, indent=2), "```", sep="\n", file=summary)
+          PY

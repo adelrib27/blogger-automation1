@@ -22,6 +22,7 @@ from .routing import sites
 from .site_launch_plan import preview_site_launch
 
 REQUESTS_DIR=Path(__file__).with_name("site_requests.d")
+VERIFIER_PROFILES=Path(__file__).with_name("autonomous_review_sources.json")
 MAX_REQUESTS=500
 MAX_BUDGET=3
 
@@ -78,6 +79,13 @@ def _rotation(entries:list[dict],ordinal:int)->list[dict]:
     return entries[start:]+entries[:start]
 
 
+def autonomous_sites_for_writes() -> set[str]:
+    if os.environ.get("V31_AUTODRAFT_ACTIVE") != "true":
+        return set()
+    registry = json.loads(VERIFIER_PROFILES.read_text(encoding="utf-8"))
+    return {item["site_key"] for item in load_requests() if item["site_key"] in registry}
+
+
 def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                      budget:int=3,execute:bool=False,
                      app_id:str="",app_secret:str="",
@@ -100,8 +108,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
             "r2_snapshot_saved_and_verified":False,"publication_calls":0,
         }
     with tempfile.TemporaryDirectory(prefix="v31-c37-queue-") as tmp:
-        from .autonomous_review import PROFILE
-        verified_routes = json.loads(PROFILE.read_text(encoding="utf-8"))
+        verified_routes = json.loads(VERIFIER_PROFILES.read_text(encoding="utf-8"))
         path=Path(tmp)/"catalog.sqlite3"
         if not storage.restore_to(path):
             raise RequestQueueError("catalog_missing")

@@ -542,10 +542,15 @@ def main()->int:
     parser.add_argument("--execute-draft",action="store_true")
     args=parser.parse_args()
     try:
+        from .site_request_queue import autonomous_sites_for_writes
+        migrated = autonomous_sites_for_writes() if args.execute_draft else set()
         site_key=args.site_key
+        if site_key in migrated:
+            print("AUTONOMOUS_DRAFT_ROUTE_USE_NEW_WORKFLOW")
+            return 0
         if not site_key:
             requests=sorted(r["site_key"] for r in load_requests()
-                if r["platform"]=="wordpress")
+                if r["platform"]=="wordpress" and r["site_key"] not in migrated)
             if not requests:
                 print("V31_C60_NO_REAL_WORDPRESS_REQUESTS")
                 return 0
