@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C76",
   "continuity_protocol_phase": "C76",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C76_EVIDENCE_TTL_READY_BINDING_PREVIEW",
+  "last_updated_source": "C76_READY_EVIDENCE_TTL_ATOMIC_MERGED_CI508_READ_ONLY_D1_ZERO",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -133,7 +133,21 @@
     "c75_merge_sha": "5b08f064c141852ea20f62a9435887e3918d262f",
     "c75_ci_run_id": 44761018643,
     "c75_ci_tests_passed": 505,
-    "c75_http_client_wired_to_writers": false
+    "c75_http_client_wired_to_writers": false,
+    "c76_pr_merged": 101,
+    "c76_merge_sha": "d7d8676437f150884d23d91f74459ae861bcb6f5",
+    "c76_ci_run_id": 44761871702,
+    "c76_v31_tests_passed": 508,
+    "c76_evidence_ttl_sql_atomic_guard": true,
+    "c76_d1_read_only_counts": {
+      "leases": 0,
+      "jobs": 0,
+      "evidence": 0,
+      "budgets": 0
+    },
+    "c76_writer_connected": false,
+    "c76_firecrawl_search_calls": 0,
+    "c76_publication_calls": 0
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -147,22 +161,25 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C76 exigir evidencia exata válida no mesmo SQL de READY/consume no D1 seguro, regressões e CI",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C75 PR100 MERGED CI505 PASS; revisão detectou reserve e consume sem binding atômico de hash+TTL, porém D1 ainda não ligado a writers",
-    "next_safe_step": "Patch pequeno SQL e fixtures, branch C76 PR/CI; sem Cloudflare/CMS",
+    "objective": "C77: autenticar e validar somente leitura o runner HTTP D1 no GitHub (mesma conta oficial V31), avançar a integração Evidence/READY com gates e canário DRAFT SAFE",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "C75 PR100 CI505 MERGED; C76 PR101 CI508 MERGED: READY e USED exigem hash SKU/campanha/site e TTL frescos no MESMO SQL. D1 oficial C74 leu 0 em 4 tabelas, nenhuma publicação e nenhuma escrita Cloudflare C75/C76.",
+    "next_safe_step": "Auditar GitHub var V31_EDITORIAL_R2_ACCOUNT_ID sem segredo, configurar token D1 privilégio mínimo isolado na conta ebb8..., smoke SELECT-only no runner com readback e log sem SKU; depois concorrência real e integração Evidence/HTML/SEO R2, antes de canário DRAFT (zero LIVE).",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44761871702"
     ]
   },
   "next_priorities": [
-    "C74 SAFE concluída: D1 exclusivo criado na conta Cloudflare R2 oficial, canários PASS/limpeza zero; conexão aos writers ainda DESLIGADA.",
-    "Validar GitHub vars e segredos D1 de privilégio mínimo sem expor conteúdo; evitar confusão com a conta adeiltonrml e seu D1 C73 intocado.",
-    "Implementar/adaptar runner D1 C71 à API real, testar leasing/concorrência real, fact gate final, orçamento Firecrawl e canário DRAFT seguro antes de integração V31.",
-    "Seguir universal para Blogger/WordPress, SEO C68, artigos:null contínuos, campanha exclusiva, REVIEW vetado e LIVE só com aprovação por post."
+    "C77 autenticar token GitHub D1 da conta V31 oficial de privilégio mínimo, conferir GitHub var do R2 e validar runner HTTP SELECT-only, sem tocar outra Cloudflare.",
+    "C77 teste concorrente multiprocesso de D1 por tenant com limpeza zero e SHA/TTL, nenhum produto real e nenhuma publicação.",
+    "Integrar verificação real de fontes Firecrawl com saldo atual da mesma chave, whitelist C69, fact gate C71, SEO C68, links afiliados e imagem real R2 por campanha antes de DRAFT.",
+    "Writers Blogger/WordPress ainda não usam READY/D1, e LIVE requer aprovação individual exata; articles:null significa contínuo, min_ready=3 apenas buffer.",
+    "Preservar Cloudflare conta adeiltonrml e seu D1 C73, ARV, Vida Pet e Pinterest sem migração ou exclusão."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -171,7 +188,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44607864589",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44761871702",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "C70: fila V31 event=schedule real 19/11 19:38Z #44600350780 failure após 3 conversões/cache R2; correção PR98 CI471, handoff R2 verificado em canários #44607319448 e #44607864589. Blogger/WP schedule V31 pendentes de 20/11 às 10h10 Recife."
   }
