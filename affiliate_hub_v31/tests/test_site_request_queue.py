@@ -1,5 +1,6 @@
 """C37 — cron universal sem temas pré-previstos, orçamento global e zero posts."""
 import json
+import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
@@ -7,7 +8,7 @@ from unittest.mock import patch
 
 from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.site_request_queue import (
-    RequestQueueError,load_requests,process_requests,
+    RequestQueueError,claim_conversion_attempt,load_requests,process_requests,
 )
 
 ROUTES={
@@ -181,6 +182,50 @@ class RequestQueueTests(unittest.TestCase):
             for bad in (0,4,True,"3"):
                 with self.subTest(bad=bad),self.assertRaises(RequestQueueError):
                     process_requests(self.storage,directory=self.folder,budget=bad)
+
+    def test_daily_reservations_share_cap_and_deduplicate_exact_campaign(self):
+        schema = Path(__file__).resolve().parents[1] / "migrations" / "c81_shopee_conversion_budget.sql"
+        state = sqlite3.connect(self.root / "budget.sqlite3", isolation_level=None)
+        self.addCleanup(state.close)
+        state.executescript(schema.read_text(encoding="utf-8"))
+
+        def query(statement, args):
+            return state.execute(statement, args).fetchall()
+
+        def claim(campaign, sku, day="2026-11-21"):
+            return claim_conversion_attempt(query, day_utc=day, campaign=campaign, product_key=sku)
+
+        self.assertTrue(claim("campanha_a", "shopee:100:1"))
+        self.assertFalse(claim("campanha_a", "shopee:100:1"))
+        self.assertTrue(claim("campanha_b", "shopee:100:1"))
+        self.assertTrue(claim("campanha_b", "shopee:100:2"))
+        self.assertFalse(claim("campanha_a", "shopee:100:3"))
+        self.assertTrue(claim("campanha_a", "shopee:100:1", day="2026-11-22"))
+
+    def test_pilot_selects_only_registered_sku_and_honors_denied_reservation(self):
+        self._write("novo_blog_a")
+        self._write("novo_blog_b")
+        report = {"registered_site":True,"can_publish":False,"cached_for_campaign":0,
+                  "review_queue_count":0,"approved_catalog_candidates":[
+                      {"product_key":f"shopee:100:{n}","affiliate_status":"requires_conversion"}
+                      for n in (1,2)]}
+        reservations = []
+
+        def deny(campaign, sku):
+            reservations.append((campaign, sku))
+            return False
+
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",return_value=report), \
+             patch("affiliate_hub_v31.site_request_queue.reserved_pilot_sku",return_value="shopee:100:2"), \
+             patch("affiliate_hub_v31.site_request_queue.convert_one") as convert:
+            actual = process_requests(self.storage,directory=self.folder,budget=1,execute=True,
+                                      app_id="fixture",app_secret="fixture",
+                                      pilot_site_key="novo_blog_b",reserve_conversion=deny)
+        self.assertEqual(reservations,[("campanha_b","shopee:100:2")])
+        self.assertEqual(actual["conversion_reservations_denied"],1)
+        self.assertEqual(actual["shopee_mutation_attempts"],0)
+        convert.assert_not_called()
 
 
 if __name__=="__main__":

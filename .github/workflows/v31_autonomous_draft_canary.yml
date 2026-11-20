@@ -5,6 +5,13 @@ on:
     paths:
       - '.github/workflows/v31_autonomous_draft_canary.yml'
   workflow_dispatch:
+    inputs:
+      task:
+        description: 'Verificar assinatura ou executar o canário Blogger'
+        required: true
+        type: choice
+        default: signing
+        options: [signing, blogger]
   schedule:
     # Renovação da cota UTC antes do canário. Remover após o ensaio.
     - cron: '17 0 * * *'
@@ -17,7 +24,7 @@ permissions:
 jobs:
   signing-check:
     if: >-
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.task == 'signing')) &&
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -163,7 +170,7 @@ jobs:
                                         "cms_calls": 0}))
           PY
   blogger:
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.task == 'blogger')
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: blogger_moveis_para_cada_canto
@@ -173,7 +180,9 @@ jobs:
   wordpress:
     if: >-
       github.event_name == 'workflow_run' &&
-      github.event.workflow_run.event == 'schedule' &&
+      (github.event.workflow_run.event == 'schedule' ||
+       (github.event.workflow_run.event == 'workflow_dispatch' &&
+        github.event.workflow_run.display_title == 'V31 | conversão isolada wordpress_casa_decoracao')) &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
       github.event.workflow_run.head_branch == 'main' &&
       github.event.workflow_run.conclusion == 'success'
