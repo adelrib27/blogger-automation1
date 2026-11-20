@@ -31,3 +31,18 @@
 - Readback final zero nas quatro tabelas; falha implica parar/registrar e nunca acionar CMS/Firecrawl/arquivos R2 ou outro D1. Remover workflow após o teste.
 
 **Estado intermediário:** autenticação real D1 comprovada; aguardando ensaio concorrente com dados sintéticos. 0 posts.
+
+## C80.3 — canário real D1 concorrente, PASS + cleanup zero
+- [GitHub Actions #44786624444](https://github.com/adelrib27/blogger-automation1/actions/runs/44786624444) **SUCCESS** no Environment correto `v31-editorial-safe`, com o segredo D1 recém-configurado. Apenas neste workflow temporário foram usados os opt-ins `allow_mutations=True` e `V31_D1_SAFE_WRITES_ENABLED=V31_D1_SAFE_SQL_ONLY`.
+- Dois pedidos HTTP paralelos usando `UniversalD1ReadyState.acquire_lease` C71 com site sintético por run, campanha `c80_canary` e rota local em memória. Provas dos logs: `V31_C80_D1_CONCURRENT_SINGLE_WINNER_REAL_PASS=true`, `V31_C80_D1_OWNER_ONLY_RELEASE_REAL_PASS=true` e `V31_C80_D1_LEASE_TTL_RECLAIM_REAL_PASS=true`.
+- Ensaio inclui bloqueio de liberação por proprietário errado e antigo, liberação correta, nova aquisição e recuperação após vencimento lógico. Não adicionou evidência, trabalho READY, artigo real, CMS nem dados Shopee ao D1.
+- Em bloco `finally`, o workflow removeu apenas eventuais leases da combinação site/campanha sintéticos do run. Logs confirmam `V31_C80_D1_CANARY_CLEANUP_ZERO=true` nas quatro tabelas por tenant e `V31_C80_ZERO_CMS_R2_FIRECRAWL_LIVE_CALLS=true`.
+- Os DOIS workflows temporários C80 (SELECT-only e concorrência) foram **REMOVIDOS** da `main` imediatamente após prova, nos commits `54ea79df9cd56a21dcf51c5381827d7798e1a9a8` e `7f190e7204a04cb54e80e705319a6c0d0541ff82`. Nenhum novo cron fixo ou autorizações LIVE foram ligados.
+
+## C80.4 — auditoria independente Cloudflare após limpeza
+- Conexão com a conta Cloudflare V31 oficial `adeiltonrib27@gmail.com` account `ebb8d5b4cf9a2cb850c6d8051bd2661f`: GET banco `v31-universal-ready-safe` UUID `9bfce7a4-6167-4bfc-a65e-a74c1a34f064` confirmado; SQL apenas SELECT retornou **leases=0, jobs=0, evidence=0, budgets=0**.
+- **Resultado:** o bloqueio de credenciais C80 foi resolvido de verdade, não apenas verificado visualmente; a conexão HTTPS D1 do GitHub, SQL read-only, concorrência de lease e cleanup foram homologados no recurso oficial.
+
+## Encerramento e fase seguinte
+**C80 CONCLUÍDA EM SAFE, PRÉ-REQUISITO DE AUTENTICAÇÃO/CONCORRÊNCIA LIBERADO.** `mutation_in_progress=false`, `remote_operation_in_progress=false`, rollback desnecessário. O token sem expiração está sob decisão do proprietário; preservar sob Environment Secret e revisar/rotacionar periodicamente, pois permissão D1 Edit é em escopo de conta (não do único banco), mitigada no cliente por ID fixo e dual opt-in de escrita.
+**C81:** implementar coordenação exata do HTML imutável C78/C79 e metadados D1 C76 com fonte/evidência de verdade, revisão independente HMAC e validação de SEO, depois fluxo Blogger/WordPress **DRAFT** idempotente; nenhum LIVE sem aprovação individual. Não conectar os cron jobs atuais automaticamente.
