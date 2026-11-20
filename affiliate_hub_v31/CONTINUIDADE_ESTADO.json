@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C73",
   "continuity_protocol_phase": "C73",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "BLOQUEIO_SEGURANCA_CONTA_CLOUDFLARE",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C73_D1_V31_NEW_DEDICATED_SAFE_DATABASE_PREVIEW",
+  "last_updated_source": "C73_ACCOUNT_OWNERSHIP_CORRECTION_R2_OFFICIAL_ADEILTONRIB27",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C73_D1_UNIVERSAL_ISOLADO_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -111,7 +111,16 @@
     "c72_firecrawl_github_credits": 1000,
     "c72_firecrawl_credit_run_id": 44747950119,
     "c72_firecrawl_search_calls": 0,
-    "c72_temporary_workflow_removed": true
+    "c72_temporary_workflow_removed": true,
+    "c73_v31_official_cloudflare_email": "adeiltonrib27@gmail.com",
+    "c73_v31_official_r2_account_id": "ebb8d5b4cf9a2cb850c6d8051bd2661f",
+    "c73_v31_official_r2_bucket": "v31-editorial-shopee",
+    "c73_new_d1_account_id": "b1515400afe32581994c4d3f038f835f",
+    "c73_new_d1_account_email": "adeiltonrml@gmail.com",
+    "c73_cross_account_mismatch": true,
+    "c73_new_d1_writer_integration_allowed": false,
+    "c73_comercebem_r2_api_status": "403_10042_R2_NOT_ENABLED",
+    "c73_account_audit_cloudflare_read_only": true
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -125,21 +134,20 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C73: criar D1 EXCLUSIVO V31 com migração e provas sintéticas de transação, concorrência e orçamento, sem Writer, Pet, Shopee, R2, Firecrawl pesquisa ou LIVE",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C71 PR99 CI494 integrado. C72 same GitHub Firecrawl key GET somente leitura retorna 1000 créditos; no search. Cloudflare primary D1 lista ARV/Pet/Pinterest; banco ARV inspecionado somente leitura e não é V31. Nenhum banco existente será tocado.",
-    "next_safe_step": "Criar novo D1 v31-universal-ready-safe na conta primary V31, migrar esquema C71, executar canários sintéticos e limpar. Registrar ID/verificações. Impedir autoscheduler/writers/LIVE.",
+    "objective": "Corrigir vinculação Cloudflare C73: R2 V31 oficial está na conta adeiltonrib27; D1 C73 foi criado na conta adeiltonrml. NÃO ligar D1 a writers na configuração cruzada por suposição.",
+    "status": "BLOQUEIO_SEGURANCA_CONTA_CLOUDFLARE",
+    "latest_verified_step": "Auditoria read-only 3 contas: adeiltonrib27 ebb8... tem bucket v31-editorial-shopee criado 15/11 Standard ENAM e nenhum D1; adeiltonrml b151... tem ARV/Vida Pet/Pinterest e novo D1 e165... isolado sem dados reais; comercebem 4c6570... D1 vazio e R2 API 403 code 10042. C3 confirma bucket oficial. Sem mutações remotas nessa auditoria.",
+    "next_safe_step": "Conferir GitHub vars.V31_EDITORIAL_R2_ACCOUNT_ID sem revelar segredo; provisionar D1 dedicado na mesma conta do bucket oficial ou documentar arquitetura multi-account com permissões/rollback aprovados; preservar D1 e165... até decisão consciente, sem eliminar ou migrar precipitadamente. Zero LIVE.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/99",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44747425029",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44747950119",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C3_R2_2026-11-15.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C73_D1_UNIVERSAL_ISOLADO_2026-11-20.md"
     ]
   },
   "next_priorities": [
+    "BLOQUEIO Cloudflare: R2 original do V31 pertence à conta adeiltonrib27@gmail.com (ebb8...), não à adeiltonrml (b151...) onde o D1 C73 foi criado. Não ligar D1 aos writers até ajustar a arquitetura.",
     "C73: migrar D1 v31-universal-ready-safe em conta Cloudflare principal, testar canários e limpar, SEM mexer em ARV, Vida Pet, Pinterest ou writers.",
     "C72: verificar saldo Firecrawl pela MESMA chave do GitHub com GET somente leitura; sem pesquisa e sem posts; C71 fact gate/D1 permanece SAFE offline.",
     "C71: fact gate HTML e D1 isolado/lease/idempotência SAFE antes dos writers; comprovar next schedules 20/11 e reconhecer sucesso de DRAFT real dos writers no schedule de 19/11.",
