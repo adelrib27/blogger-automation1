@@ -180,7 +180,9 @@ class D1ReadyLeaseTests(unittest.TestCase):
             product_title=TITLES[0],now_epoch=T))
 
     def test_daily_budget_is_atomic_and_circuit_breaker_durable(self):
-        self.assertTrue(self.acquire(kind="firecrawl"))
+        self.assertTrue(self.store.acquire_lease(
+            site_key=B,campaign=C,lease_name="firecrawl",
+            owner_nonce=NA,now_epoch=T,ttl_seconds=300))
         def attempt(at, store=None):
             return (store or self.store).claim_search_budget(
                 site_key=B,campaign=C,owner_nonce=NA,now_epoch=at,
