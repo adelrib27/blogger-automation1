@@ -8,6 +8,7 @@ from __future__ import annotations
 import os
 import sqlite3
 import tempfile
+from contextlib import closing
 from pathlib import Path
 
 from .catalog import Catalog
@@ -25,8 +26,9 @@ def ingest_two(existing_db: Path | str, feed_one: Path | str,
         staged = Path(temp) / "catalog.sqlite3"
         if destination.exists():
             # SQLite backup coerente, inclusive se existir jornal de transações.
-            with sqlite3.connect(f"file:{destination.resolve()}?mode=ro", uri=True) as source:
-                with sqlite3.connect(staged) as target:
+            uri = destination.resolve().as_uri() + "?mode=ro"
+            with closing(sqlite3.connect(uri, uri=True)) as source:
+                with closing(sqlite3.connect(staged)) as target:
                     source.backup(target)
         with Catalog(staged) as catalog:
             legacy_labeled = catalog.reclassify_missing()

@@ -10,6 +10,7 @@ import json
 import re
 from datetime import datetime,timezone
 from pathlib import Path
+from contextlib import closing
 
 from .r2_state import R2State, StorageError, sha256_file, verify_database
 
@@ -90,7 +91,8 @@ class UniversalIndexStorage:
         verify_database(file)
         import sqlite3
         try:
-            with sqlite3.connect(f"file:{file.resolve()}?mode=ro",uri=True) as db:
+            uri = file.resolve().as_uri() + "?mode=ro"
+            with closing(sqlite3.connect(uri, uri=True)) as db:
                 n=db.execute("SELECT count(*) FROM v31_universal_inventory").fetchone()[0]
                 if n!=meta["product_count"]:
                     raise StorageError("universal_index_count_mismatch")
@@ -142,7 +144,8 @@ class UniversalIndexStorage:
         source=Path(path)
         verify_database(source)
         import sqlite3
-        with sqlite3.connect(f"file:{source.resolve()}?mode=ro",uri=True) as db:
+        uri = source.resolve().as_uri() + "?mode=ro"
+        with closing(sqlite3.connect(uri, uri=True)) as db:
             count=db.execute(
                 "SELECT count(*) FROM v31_universal_inventory").fetchone()[0]
         if count!=product_count:

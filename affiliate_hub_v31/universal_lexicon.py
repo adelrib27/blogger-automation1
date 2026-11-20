@@ -12,6 +12,7 @@ from collections import Counter,defaultdict
 import json
 import re
 import sqlite3
+from contextlib import closing
 import tempfile
 from pathlib import Path
 
@@ -183,7 +184,8 @@ def run_query_r2(topic:str,limit:int=12)->dict:
         file=Path(t)/"universal_index.sqlite3"
         if not UniversalIndexStorage.from_env().restore_to(file):
             raise LexiconError("universal_index_missing")
-        with sqlite3.connect(f"file:{file.resolve()}?mode=ro",uri=True) as db:
+        uri = file.resolve().as_uri() + "?mode=ro"
+        with closing(sqlite3.connect(uri, uri=True)) as db:
             paths=paths_for_topic(db,topic,limit=limit)
     return {"mode":"C35_UNIVERSAL_REVIEW_PATH_QUERY",
             "suggested_official_paths":paths,

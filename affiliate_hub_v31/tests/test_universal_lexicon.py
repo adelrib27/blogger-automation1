@@ -1,5 +1,6 @@
 """C35: categoria/nicho universal nasce dos próprios títulos e facetas."""
 import sqlite3
+from contextlib import closing
 import tempfile
 import unittest
 from pathlib import Path
@@ -57,12 +58,12 @@ class UniversalLexiconTests(unittest.TestCase):
                       (product_key,source,level1,level2,level3,status)
                       VALUES(?,?,?,?,?,?)
                     """,(key,"feed1",l1,l2,"","matched"))
-        with Catalog(self.catalog) as cat, sqlite3.connect(self.sidecar) as index:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(self.sidecar)) as index, index:
             rebuild_universal_inventory(cat,sidecar=index)
 
     def test_dynamic_paths_from_unanticipated_titles(self):
         before=self.catalog.read_bytes()
-        with Catalog(self.catalog) as cat, sqlite3.connect(self.sidecar) as index:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(self.sidecar)) as index, index:
             report=build_lexicon(cat.db,index,min_products=2,min_shops=2)
             furniture=paths_for_topic(index,"mesa")
             tools=paths_for_topic(index,"furadeira eletrica")
@@ -79,7 +80,7 @@ class UniversalLexiconTests(unittest.TestCase):
         self.assertTrue(furniture[0]["is_review_signal_only"])
 
     def test_rebuild_idempotent_and_source_policy_protected(self):
-        with Catalog(self.catalog) as cat, sqlite3.connect(self.sidecar) as index:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(self.sidecar)) as index, index:
             first=build_lexicon(cat.db,index,min_products=2,min_shops=2)
             previous=index.execute("""
               SELECT * FROM v31_universal_title_lexicon ORDER BY source_l1,source_l2,term
@@ -94,7 +95,7 @@ class UniversalLexiconTests(unittest.TestCase):
         self.assertNotIn("carabina",str(previous))
 
     def test_thresholds_and_input_limits_fail_closed(self):
-        with Catalog(self.catalog) as cat, sqlite3.connect(self.sidecar) as index:
+        with Catalog(self.catalog) as cat, closing(sqlite3.connect(self.sidecar)) as index, index:
             with self.assertRaises(LexiconError):
                 build_lexicon(cat.db,index,min_products=1,min_shops=2)
             with self.assertRaises(LexiconError):

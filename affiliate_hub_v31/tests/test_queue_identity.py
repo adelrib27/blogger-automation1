@@ -39,7 +39,12 @@ class QueueIdentityTests(unittest.TestCase):
     def test_file_symlink_fails_closed(self):
         original=self.root/"external.json"
         original.write_text("{}")
-        (self.generated/"002.json").symlink_to(original)
+        try:
+            (self.generated/"002.json").symlink_to(original)
+        except OSError as error:
+            if getattr(error, "winerror", None) != 1314:
+                raise
+            self.skipTest("Windows user lacks permission to create test symlinks")
         with self.assertRaisesRegex(ValueError,"generated_file_invalid"):
             highest_reserved_id(self.queue,self.generated)
 
