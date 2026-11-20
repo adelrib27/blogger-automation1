@@ -79,6 +79,30 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42'
+      - name: Conferir o par de assinatura sem publicar valores
+        id: material
+        env:
+          RECEIPT_KEY: ${{ secrets.V31_AUTONOMOUS_REVIEW_HMAC_KEY }}
+          RELEASE_SEED: ${{ secrets.V31_AUTONOMOUS_RELEASE_PRIVATE_KEY_HEX }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from affiliate_hub_v31.review_signatures import configured_signing_keys
+          try:
+              _, _, public = configured_signing_keys(
+                  private_key=os.environ["RELEASE_SEED"], receipt_key=os.environ["RECEIPT_KEY"])
+          except ValueError:
+              raise SystemExit("autonomous_signing_configuration_invalid") from None
+          print("::add-mask::" + public)
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              print("public=" + public, file=output)
+          PY
+      - name: Bloquear configuração incoerente
+        if: vars.V31_AUTONOMOUS_RELEASE_PUBLIC_KEY_HEX == '' || steps.material.outputs.public != vars.V31_AUTONOMOUS_RELEASE_PUBLIC_KEY_HEX
+        run: |
+          echo independent_public_key_configuration_mismatch
+          exit 1
       - id: verify
         env:
           SITE: ${{ inputs.site_key }}
@@ -96,7 +120,7 @@ jobs:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           V31_READY_REVIEW_HMAC_KEY: ${{ secrets.V31_AUTONOMOUS_REVIEW_HMAC_KEY }}
           V31_REVIEW_RELEASE_PRIVATE_KEY_HEX: ${{ secrets.V31_AUTONOMOUS_RELEASE_PRIVATE_KEY_HEX }}
-          V31_REVIEW_RELEASE_PUBLIC_KEY_HEX: ${{ vars.V31_AUTONOMOUS_RELEASE_PUBLIC_KEY_HEX }}
+          V31_REVIEW_RELEASE_PUBLIC_KEY_HEX: ${{ steps.material.outputs.public }}
         run: |
           set -euo pipefail
           history="$(mktemp)"
@@ -155,7 +179,7 @@ jobs:
           import json, os, subprocess, sys, time
           from pathlib import Path
           result = json.loads(os.environ["RECEIPT"])
-          os.environ["V31_REVIEW_RELEASE_PUBLIC_KEY_HEX"] = result["public_key"]
+          os.environ["V31_REVIEW_RELEASE_PUBLIC_KEY_SHA256"] = result["public_key_sha256"]
           args = [sys.executable, "-m", "affiliate_hub_v31.reviewed_draft_delivery",
                   "--site-key", result["site_key"], "--fingerprint", result["fingerprint"],
                   "--execute-draft", "--autonomous"]

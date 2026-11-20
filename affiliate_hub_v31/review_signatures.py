@@ -54,6 +54,16 @@ def _key(raw: str) -> bytes:
     return bytes.fromhex(raw)
 
 
+def configured_signing_keys(*, private_key: str, receipt_key: str) -> tuple[str, bytes, str]:
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+    seed, hmac_key = _key(private_key), _key(receipt_key)
+    if hmac.compare_digest(seed, hmac_key):
+        raise ValueError("review_signing_keys_must_be_distinct")
+    public = Ed25519PrivateKey.from_private_bytes(seed).public_key().public_bytes_raw().hex()
+    return private_key, hmac_key, public
+
+
 def sign_release(attestation: dict, *, private_key: str) -> str:
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 

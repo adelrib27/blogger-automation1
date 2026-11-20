@@ -12,7 +12,7 @@ import tempfile
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
-from secrets import token_bytes, token_hex
+from secrets import token_hex
 from urllib.error import HTTPError
 from urllib.parse import urljoin, urlsplit
 from urllib.request import Request, build_opener
@@ -24,7 +24,7 @@ from .d1_universal_ready import UniversalD1ReadyState
 from .independent_review import _NoRedirect, _official_storage, decode_candidate, prepare_review_payload, read_candidate
 from .private_ready_envelope import ImmutablePrivateReadyEnvelope
 from .r2_private_ready_backend import R2PrivateReadyBackend
-from .review_signatures import approval_receipt, payload_digest, sign_release
+from .review_signatures import approval_receipt, configured_signing_keys, payload_digest, sign_release
 from .reviewed_ready_promotion import stage_reviewed_ready
 from .routing import sites
 from .site_request_queue import VERIFIER_PROFILES as PROFILE, load_requests
@@ -380,20 +380,14 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
 
     state = UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(allow_mutations=True))
     envelope = ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage))
-    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-    if probe:
-        signer = None
-        public_key = ""
-    elif pilot:
-        signer = Ed25519PrivateKey.generate()
-        hmac_key = token_bytes(32)
-        public_key = signer.public_key().public_bytes_raw().hex()
-    else:
-        signer = Ed25519PrivateKey.from_private_bytes(bytes.fromhex(os.environ.get("V31_REVIEW_RELEASE_PRIVATE_KEY_HEX", "")))
-        hmac_key = bytes.fromhex(os.environ.get("V31_READY_REVIEW_HMAC_KEY", ""))
-        public_key = signer.public_key().public_bytes_raw().hex()
+    if not probe:
+        private_key, hmac_key, public_key = configured_signing_keys(
+            private_key=os.environ.get("V31_REVIEW_RELEASE_PRIVATE_KEY_HEX", ""),
+            receipt_key=os.environ.get("V31_READY_REVIEW_HMAC_KEY", ""),
+        )
         if public_key != os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX"):
             raise VerificationError("independent_public_key_configuration_mismatch")
+        public_key_sha256 = hashlib.sha256(bytes.fromhex(public_key)).hexdigest()
     tenant = {"site_key": site_key, "campaign": route["campaign"]}
     with tempfile.TemporaryDirectory(prefix="v31-autonomous-verify-") as tmp:
         file = Path(tmp) / "catalog.sqlite3"
@@ -419,10 +413,10 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 if existing and not probe and (existing["status"] == "USED"
                         or state.ready_has_fresh_evidence(**tenant, fingerprint=fingerprint,
                                                           now_epoch=int(utcnow().timestamp()))):
-                    if pilot:
-                        continue
-                    envelope.load(**tenant, html_sha256=existing["html_sha256"], release_public_key=public_key)
-                    return {"site_key": site_key, "fingerprint": fingerprint, "public_key": public_key,
+                    envelope.load(**tenant, html_sha256=existing["html_sha256"],
+                                  release_public_key_sha256=public_key_sha256)
+                    return {"site_key": site_key, "fingerprint": fingerprint,
+                            "public_key_sha256": public_key_sha256,
                             "status": existing["status"]}
                 try:
                     article = verify_offer(policy=policy, profile=profile, route=route, sku=selected,
@@ -462,11 +456,12 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
             candidate_sha = digest or payload_digest(article)
             receipt = approval_receipt(candidate_sha256=candidate_sha, payload_sha256=payload_digest(payload),
                                        key=hmac_key)
-            signature = sign_release(receipt, private_key=signer.private_bytes_raw().hex())
+            signature = sign_release(receipt, private_key=private_key)
             try:
                 result = stage_reviewed_ready(
                     **article, catalog=catalog, owner_nonce=token_hex(16), now=now,
                     state=state, envelope=envelope, independent_review_key=None, release_public_key=public_key,
+                    embed_release_key=True,
                     attestation={"payload": payload, "candidate_sha256": candidate_sha, "signature": receipt["signature"]},
                     release_signature=signature,
                 )
@@ -474,7 +469,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 raise VerificationError(str(error)) from None
     if result.get("job_status") not in ("READY", "USED"):
         raise VerificationError("ready_reservation_unverified")
-    return {"site_key": site_key, "fingerprint": result["fingerprint"], "public_key": public_key,
+    return {"site_key": site_key, "fingerprint": result["fingerprint"],
+            "public_key_sha256": public_key_sha256,
             "status": result["job_status"]}
 
 

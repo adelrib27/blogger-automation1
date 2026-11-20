@@ -157,6 +157,7 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
                           envelope: ImmutablePrivateReadyEnvelope,
                           independent_review_key: bytes | None = None,
                           release_public_key: str | None = None,
+                          release_public_key_sha256: str | None = None,
                           daily_cap: int = 100,
                           blogger_service=None, wordpress_client=None) -> dict:
     """Claim one POST through D1. After an ambiguous POST, replays only read CMS.
@@ -180,7 +181,8 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
             raise ReviewedDraftError("reviewed_draft_job_missing")
         stored = envelope.load(**tenant, html_sha256=job["html_sha256"],
                                independent_review_key=independent_review_key,
-                               release_public_key=release_public_key)
+                               release_public_key=release_public_key,
+                               release_public_key_sha256=release_public_key_sha256)
         review = stored["review"]
         if (review["product_key"] != job["product_key"]
                 or review["evidence_sha256"] != job["evidence_sha256"]
@@ -226,22 +228,29 @@ def main() -> int:
     parser.add_argument("--autonomous", action="store_true")
     args = parser.parse_args()
     try:
-        public_key = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", "")
-        if len(public_key) != 64:
-            raise ReviewedDraftError("reviewed_draft_public_key_missing")
+        key_material = {}
         daily_cap = 100
         if args.autonomous:
+            anchor = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_SHA256", "")
+            if len(anchor) != 64:
+                raise ReviewedDraftError("reviewed_draft_public_key_anchor_missing")
+            key_material["release_public_key_sha256"] = anchor
             from .autonomous_review import PROFILE
             rules = json.loads(PROFILE.read_text(encoding="utf-8"))
             daily_cap = rules[args.site_key]["max_drafts_per_day"]
+        else:
+            public_key = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", "")
+            if len(public_key) != 64:
+                raise ReviewedDraftError("reviewed_draft_public_key_missing")
+            key_material["release_public_key"] = public_key
         result = deliver_reviewed_draft(
             site_key=args.site_key, fingerprint=args.fingerprint,
             state=UniversalD1ReadyState(
                 CloudflareD1HTTPRunner.from_environment(allow_mutations=True)),
             envelope=ImmutablePrivateReadyEnvelope(
                 backend=R2PrivateReadyBackend.from_environment()),
-            release_public_key=public_key,
             daily_cap=daily_cap,
+            **key_material,
         )
     except ReviewedDraftError as error:
         print(str(error))

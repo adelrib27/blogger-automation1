@@ -372,6 +372,23 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
             envelope.load(site_key=SITE, campaign=CAMPAIGN,
                           html_sha256=ready["html_sha256"], release_public_key=public_key)
 
+        # The autonomous writer receives a digest as its trust anchor.
+        envelope = ImmutablePrivateReadyEnvelope(backend=ConditionalMemoryBackend())
+        envelope.save(site_key=SITE, campaign=CAMPAIGN, product_key=KEYS[0],
+                      content_html=article["html_content"], attestation=attestation,
+                      independent_review_key=None, release_signature=signature,
+                      release_public_key=public_key, embed_release_key=True)
+        tenant = {"site_key": SITE, "campaign": CAMPAIGN,
+                  "html_sha256": ready["html_sha256"]}
+        anchor = hashlib.sha256(bytes.fromhex(public_key)).hexdigest()
+        self.assertEqual(envelope.load(**tenant, release_public_key_sha256=anchor)["html_content"],
+                         article["html_content"])
+        self.assertEqual(envelope.load(**tenant, release_public_key=public_key)["html_content"],
+                         article["html_content"])
+        for untrusted in ({}, {"release_public_key_sha256": "0" * 64}):
+            with self.assertRaisesRegex(ValueError, "private_envelope_integrity"):
+                envelope.load(**tenant, **untrusted)
+
 
     def test_fake_and_cross_campaign_offer_rejected(self):
         for html in (

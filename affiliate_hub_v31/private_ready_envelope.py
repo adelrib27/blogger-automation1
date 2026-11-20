@@ -129,7 +129,8 @@ class ImmutablePrivateReadyEnvelope:
              content_html: str, attestation: dict,
              independent_review_key: bytes | None,
              release_signature: str | None = None,
-             release_public_key: str | None = None) -> dict:
+             release_public_key: str | None = None,
+             embed_release_key: bool = False) -> dict:
         _site(site_key, campaign)
         if (not isinstance(product_key, str)
                 or not re.fullmatch(r"shopee:[0-9]+:[0-9]+", product_key)
@@ -155,6 +156,11 @@ class ImmutablePrivateReadyEnvelope:
                 raise PrivateEnvelopeError("private_envelope_release_keys_required")
             document.update(schema="v31-private-ready-envelope-2",
                             release_signature=release_signature)
+        if embed_release_key:
+            if release_public_key is None or release_signature is None:
+                raise PrivateEnvelopeError("private_envelope_release_keys_required")
+            document.update(schema="v31-private-ready-envelope-3",
+                            release_public_key=release_public_key)
         body = json.dumps(document, sort_keys=True, ensure_ascii=False,
             separators=(",", ":")).encode("utf-8")
         if len(body) > MAX_BYTES:
@@ -182,22 +188,39 @@ class ImmutablePrivateReadyEnvelope:
 
     def load(self, *, site_key: str, campaign: str, html_sha256: str,
              independent_review_key: bytes | None = None,
-             release_public_key: str | None = None) -> dict:
+             release_public_key: str | None = None,
+             release_public_key_sha256: str | None = None) -> dict:
         objkey = object_key(site_key, campaign, html_sha256)
         body = self._get_bytes(objkey)
         if body is None:
             raise PrivateEnvelopeError("private_envelope_missing")
         try:
             data = json.loads(body)
+            if not isinstance(data, dict):
+                raise ValueError("bad envelope")
             fields = {
                     "schema", "site_key", "campaign", "product_key",
                     "html_sha256", "content_html", "attestation"
             }
             schema = "v31-private-ready-envelope-1"
-            if release_public_key is not None:
+            if data.get("schema") == "v31-private-ready-envelope-3":
+                schema = "v31-private-ready-envelope-3"
+                fields.update(("release_signature", "release_public_key"))
+                embedded_key = data.get("release_public_key")
+                if not isinstance(embedded_key, str) or not HEX.fullmatch(embedded_key):
+                    raise ValueError("untrusted embedded key")
+                embedded_sha = hashlib.sha256(bytes.fromhex(embedded_key)).hexdigest()
+                if (release_public_key is None and release_public_key_sha256 is None
+                        or release_public_key is not None and release_public_key != embedded_key
+                        or release_public_key_sha256 is not None and release_public_key_sha256 != embedded_sha):
+                    raise ValueError("untrusted embedded key")
+                release_public_key = embedded_key
+            elif release_public_key_sha256 is not None:
+                raise ValueError("missing embedded key")
+            elif release_public_key is not None:
                 fields.add("release_signature")
                 schema = "v31-private-ready-envelope-2"
-            if (not isinstance(data, dict) or set(data) != fields
+            if (set(data) != fields
                     or data["schema"] != schema
                     or data["site_key"] != site_key
                     or data["campaign"] != campaign
