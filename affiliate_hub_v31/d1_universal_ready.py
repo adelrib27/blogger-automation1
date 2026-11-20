@@ -199,7 +199,7 @@ class UniversalD1ReadyState:
 
     def consume_one(
         self, *, site_key: str, campaign: str, owner_nonce: str,
-        fingerprint: str, now_epoch: int
+        fingerprint: str, now_epoch: int, daily_cap: int = 100
     ) -> bool:
         """Apenas reserva USED, nunca publica. Prova ainda deve estar fresca
         e com hash original; o writer precisa de gate CMS separado."""
@@ -208,9 +208,14 @@ class UniversalD1ReadyState:
         t = _clock(now_epoch)
         if not isinstance(fingerprint, str) or not HEX_RE.fullmatch(fingerprint):
             raise D1SafeError("ready_fingerprint_invalid")
+        if type(daily_cap) is not int or not 1 <= daily_cap <= 100:
+            raise D1SafeError("draft_budget_invalid")
         rows = self._call("""
           UPDATE v31_ready_jobs SET status='USED',used_epoch=?
           WHERE site_key=? AND campaign=? AND fingerprint=? AND status='READY'
+          AND (SELECT COUNT(*) FROM v31_ready_jobs AS attempts
+               WHERE attempts.site_key=? AND attempts.campaign=?
+                 AND attempts.used_epoch>=?) < ?
           AND EXISTS (
             SELECT 1 FROM v31_verified_evidence AS ev
             WHERE ev.site_key=v31_ready_jobs.site_key
@@ -225,7 +230,7 @@ class UniversalD1ReadyState:
               AND owner_nonce=? AND expires_epoch>?
           )
           RETURNING fingerprint
-        """, (t,site_key,campaign,fingerprint,t,t,
+        """, (t,site_key,campaign,fingerprint,site_key,campaign,t-t%86400,daily_cap,t,t,
               site_key,campaign,owner_nonce,t))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint
 

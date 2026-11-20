@@ -1,4 +1,4 @@
-"""Approve an immutable private candidate from a protected GitHub review job."""
+"""Private producer handoff and shared validation of verified editorial material."""
 
 from __future__ import annotations
 
@@ -7,29 +7,20 @@ import hashlib
 import json
 import os
 import re
-import tempfile
-from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from secrets import token_hex
-from urllib.request import HTTPRedirectHandler, Request, build_opener
+from urllib.request import HTTPRedirectHandler
 
 from .article_commerce import _single_verified_offer
 from .catalog import Catalog
-from .d1_http_runner import CloudflareD1HTTPRunner
-from .d1_universal_ready import UniversalD1ReadyState
 from .final_fact_gate import reviewed_text_digest, scan_final_html, verify_final_html_facts
 from .future_blog_seo import audit_future_article
-from .private_ready_envelope import ImmutablePrivateReadyEnvelope
-from .r2_private_ready_backend import ACCOUNT_ID, BUCKET, R2PrivateReadyBackend, _error_response
+from .r2_private_ready_backend import ACCOUNT_ID, BUCKET, _error_response
 from .r2_state import R2State
-from .review_signatures import approval_receipt, payload_digest, sign_release
-from .reviewed_ready_promotion import _json_sha, _offer_in_same_html, review_payload, stage_reviewed_ready
+from .reviewed_ready_promotion import _json_sha, _offer_in_same_html, review_payload
 from .routing import sites
 from .site_request_queue import load_requests
 
-REPOSITORY = "adelrib27/blogger-automation1"
-REVIEW_ENVIRONMENT = "v31-independent-review"
 MAX_CANDIDATE_BYTES = 450_000
 HEX_SHA = re.compile(r"[0-9a-f]{64}")
 SEO_FIELDS = ("site_url", "article_url", "meta_description", "primary_query", "intent",
@@ -141,42 +132,6 @@ def submit_candidate(storage: R2State, *, raw: bytes) -> tuple[str, str]:
     return site_key, digest
 
 
-def require_independent_approval(env: dict, *, site_key: str, digest: str) -> str:
-    run = env.get("GITHUB_RUN_ID", "")
-    reviewer = env.get("V31_PROTECTED_REVIEWER", "")
-    token = env.get("V31_ACTIONS_READ_TOKEN", "")
-    if (env.get("GITHUB_REPOSITORY") != REPOSITORY
-            or env.get("GITHUB_REF") != "refs/heads/main"
-            or env.get("GITHUB_EVENT_NAME") != "workflow_dispatch"
-            or not re.fullmatch(r"[0-9]{1,20}", run)
-            or not re.fullmatch(r"[A-Za-z0-9-]{1,39}", reviewer) or not token):
-        raise IndependentReviewError("protected_review_context_required")
-    try:
-        with Path(env["GITHUB_EVENT_PATH"]).open("rb") as event_file:
-            inputs = json.load(event_file)["inputs"]
-        if inputs["site_key"] != site_key or inputs["candidate_digest"] != digest:
-            raise ValueError("different candidate")
-        request = Request(
-            f"https://api.github.com/repos/{REPOSITORY}/actions/runs/{run}/approvals",
-            headers={"Authorization": "Bearer " + token,
-                     "Accept": "application/vnd.github+json"},
-        )
-        with build_opener(_NoRedirect()).open(request, timeout=15) as response:
-            decisions = json.loads(response.read(250_001))
-        if not isinstance(decisions, list):
-            raise ValueError("invalid review decisions")
-        for entry in decisions:
-            if not any(e["name"] == REVIEW_ENVIRONMENT for e in entry["environments"]):
-                continue
-            if (entry["state"].casefold() == "approved"
-                    and entry["user"]["login"].casefold() == reviewer.casefold()):
-                return reviewer
-            raise IndependentReviewError("independent_review_not_approved")
-    except (OSError, ValueError, KeyError, TypeError, AttributeError):
-        raise IndependentReviewError("independent_review_lookup_failed") from None
-    raise IndependentReviewError("independent_approval_missing")
-
-
 def prepare_review_payload(*, article: dict, catalog: Catalog, now: datetime) -> dict:
     site_key = article["site_key"]
     route = sites().get(site_key)
@@ -210,54 +165,6 @@ def prepare_review_payload(*, article: dict, catalog: Catalog, now: datetime) ->
     )
 
 
-@contextmanager
-def _review_context(*, site_key: str, digest: str):
-    storage = _official_storage()
-    # Prepare the would-be approved material only in memory. C77 will persist
-    # it only when the separately signed receipt is valid for these bytes.
-    proposal = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest),
-                                digest=digest)
-    article = _material_for_review(proposal)
-    with tempfile.TemporaryDirectory(prefix="v31-review-catalog-") as directory:
-        path = Path(directory) / "catalog.sqlite3"
-        if not storage.restore_to(path):
-            raise IndependentReviewError("review_catalog_missing")
-        with Catalog(path) as catalog:
-            now = datetime.now(timezone.utc)
-            payload = prepare_review_payload(article=article, catalog=catalog, now=now)
-            yield storage, catalog, article, payload, now
-
-
-def authorize_receipt(*, site_key: str, digest: str, payload_sha256: str) -> dict:
-    require_independent_approval(os.environ, site_key=site_key, digest=digest)
-    receipt = approval_receipt(
-        candidate_sha256=digest, payload_sha256=payload_sha256,
-        key=bytes.fromhex(os.environ.get("V31_READY_REVIEW_HMAC_KEY", "")),
-    )
-    release = sign_release(receipt, private_key=os.environ.get(
-        "V31_REVIEW_RELEASE_PRIVATE_KEY_HEX", ""))
-    return {"hmac": receipt["signature"], "release_signature": release}
-
-
-def stage_approved_receipt(*, site_key: str, digest: str, payload_sha256: str) -> dict:
-    with _review_context(site_key=site_key, digest=digest) as (
-        storage, catalog, article, payload, now,
-    ):
-        if payload_digest(payload) != payload_sha256:
-            raise IndependentReviewError("review_payload_changed")
-        attestation = {"payload": payload, "candidate_sha256": digest,
-                       "signature": os.environ.get("V31_APPROVAL_HMAC", "")}
-        return stage_reviewed_ready(
-            **article, catalog=catalog, owner_nonce=token_hex(16), now=now,
-            state=UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(
-                allow_mutations=True)),
-            envelope=ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage)),
-            independent_review_key=None, attestation=attestation,
-            release_signature=os.environ.get("V31_APPROVAL_RELEASE_SIGNATURE", ""),
-            release_public_key=os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", ""),
-        )
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description="Revisão independente de candidato V31")
     actions = parser.add_subparsers(dest="action", required=True)
@@ -267,29 +174,9 @@ def main() -> int:
     export.add_argument("--site-key", required=True)
     export.add_argument("--digest", required=True)
     export.add_argument("--file", required=True, type=Path)
-    for action in ("prepare", "authorize", "stage"):
-        command = actions.add_parser(action)
-        command.add_argument("--site-key", required=True)
-        command.add_argument("--digest", required=True)
-        if action != "prepare":
-            command.add_argument("--payload-sha256", required=True)
     args = parser.parse_args()
     try:
-        if args.action == "stage":
-            result = stage_approved_receipt(site_key=args.site_key, digest=args.digest,
-                                            payload_sha256=args.payload_sha256)
-            if result.get("job_status") not in ("READY", "USED"):
-                raise IndependentReviewError("review_ready_reservation_unverified")
-            print(json.dumps({"fingerprint": result["fingerprint"], "candidate": args.digest}))
-        elif args.action == "prepare":
-            with _review_context(site_key=args.site_key, digest=args.digest) as (
-                _, _, _, payload, _,
-            ):
-                print(json.dumps({"payload_sha256": payload_digest(payload)}))
-        elif args.action == "authorize":
-            print(json.dumps(authorize_receipt(site_key=args.site_key, digest=args.digest,
-                                               payload_sha256=args.payload_sha256)))
-        elif args.action == "submit":
+        if args.action == "submit":
             with args.file.open("rb") as stream:
                 raw = stream.read(MAX_CANDIDATE_BYTES + 1)
             if len(raw) > MAX_CANDIDATE_BYTES:
