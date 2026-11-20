@@ -19,6 +19,7 @@ from .reviewed_ready_promotion import (
     ReviewedReadyError, _check_review_signature, review_payload,
 )
 from .routing import sites
+from .review_signatures import verify_release
 
 
 class PrivateEnvelopeError(ValueError):
@@ -60,7 +61,9 @@ def object_key(site_key: str, campaign: str, html_sha256: str) -> str:
 
 
 def _attestation(attestation: dict, *, site_key: str, campaign: str,
-                 product_key: str, content_html: str, key: bytes) -> tuple[str, dict]:
+                 product_key: str, content_html: str, key: bytes | None,
+                 public_key: str | None = None,
+                 release_signature: str | None = None) -> tuple[str, dict]:
     if (not isinstance(attestation, dict) or
             not isinstance(attestation.get("payload"), dict)):
         raise PrivateEnvelopeError("private_envelope_review_required")
@@ -91,7 +94,15 @@ def _attestation(attestation: dict, *, site_key: str, campaign: str,
             seo_context_sha256=reviewed["seo_context_sha256"],
             reviewed_text_hashes=reviewed["reviewed_text_hashes"],
         )
-        _check_review_signature(expected, attestation=attestation, key=key)
+        if public_key is None:
+            _check_review_signature(expected, attestation=attestation, key=key)
+        else:
+            if (key is not None or set(attestation) != {"payload", "signature"}
+                    or attestation["payload"] != expected
+                    or not isinstance(attestation["signature"], str)
+                    or not HEX.fullmatch(attestation["signature"])):
+                raise ValueError("invalid_public_review_attestation")
+            verify_release(attestation, signature=release_signature, public_key=public_key)
     except (ReviewedReadyError, TypeError, ValueError, KeyError):
         raise PrivateEnvelopeError("private_envelope_signature_invalid") from None
     return html_sha, reviewed
@@ -118,7 +129,9 @@ class ImmutablePrivateReadyEnvelope:
 
     def save(self, *, site_key: str, campaign: str, product_key: str,
              content_html: str, attestation: dict,
-             independent_review_key: bytes) -> dict:
+             independent_review_key: bytes,
+             release_signature: str | None = None,
+             release_public_key: str | None = None) -> dict:
         _site(site_key, campaign)
         if (not isinstance(product_key, str)
                 or not re.fullmatch(r"shopee:[0-9]+:[0-9]+", product_key)
@@ -132,12 +145,21 @@ class ImmutablePrivateReadyEnvelope:
             key=independent_review_key,
         )
         objkey = object_key(site_key, campaign, html_sha)
-        body = json.dumps({
+        document = {
             "schema": "v31-private-ready-envelope-1",
             "site_key": site_key, "campaign": campaign,
             "product_key": product_key, "html_sha256": html_sha,
             "content_html": content_html, "attestation": attestation,
-        }, sort_keys=True, ensure_ascii=False,
+        }
+        if release_signature is not None or release_public_key is not None:
+            if release_signature is None or release_public_key is None:
+                raise PrivateEnvelopeError("private_envelope_release_keys_required")
+            _attestation(attestation, site_key=site_key, campaign=campaign,
+                         product_key=product_key, content_html=content_html, key=None,
+                         public_key=release_public_key, release_signature=release_signature)
+            document.update(schema="v31-private-ready-envelope-2",
+                            release_signature=release_signature)
+        body = json.dumps(document, sort_keys=True, ensure_ascii=False,
             separators=(",", ":")).encode("utf-8")
         if len(body) > MAX_BYTES:
             raise PrivateEnvelopeError("private_envelope_too_large")
@@ -163,17 +185,24 @@ class ImmutablePrivateReadyEnvelope:
         }
 
     def load(self, *, site_key: str, campaign: str, html_sha256: str,
-             independent_review_key: bytes) -> dict:
+             independent_review_key: bytes | None = None,
+             release_public_key: str | None = None) -> dict:
         objkey = object_key(site_key, campaign, html_sha256)
         body = self._get_bytes(objkey)
         if body is None:
             raise PrivateEnvelopeError("private_envelope_missing")
         try:
             data = json.loads(body)
-            if (not isinstance(data, dict) or set(data) != {
+            fields = {
                     "schema", "site_key", "campaign", "product_key",
                     "html_sha256", "content_html", "attestation"
-                } or data["schema"] != "v31-private-ready-envelope-1"
+            }
+            schema = "v31-private-ready-envelope-1"
+            if release_public_key is not None:
+                fields.add("release_signature")
+                schema = "v31-private-ready-envelope-2"
+            if (not isinstance(data, dict) or set(data) != fields
+                    or data["schema"] != schema
                     or data["site_key"] != site_key
                     or data["campaign"] != campaign
                     or data["html_sha256"] != html_sha256
@@ -184,6 +213,7 @@ class ImmutablePrivateReadyEnvelope:
                 data["attestation"], site_key=site_key, campaign=campaign,
                 product_key=data["product_key"],
                 content_html=data["content_html"], key=independent_review_key,
+                public_key=release_public_key, release_signature=data.get("release_signature"),
             )
             if confirmed_hash != html_sha256:
                 raise ValueError("hash mismatch")

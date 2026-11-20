@@ -14,6 +14,7 @@ from affiliate_hub_v31.catalog import Catalog
 from affiliate_hub_v31.final_fact_gate import reviewed_text_digest
 from affiliate_hub_v31 import reviewed_ready_promotion as promo
 from affiliate_hub_v31 import reviewed_draft_delivery as delivery
+from affiliate_hub_v31 import independent_review
 from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
 from affiliate_hub_v31.private_ready_envelope import ImmutablePrivateReadyEnvelope
 from affiliate_hub_v31.tests.test_c71_d1_universal_ready import SqliteQuery
@@ -321,6 +322,68 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
                              "DRAFT_VERIFIED")
             client.create_draft.assert_called_once_with(title=TITLE, slug=slug,
                                                         content=content)
+
+    def test_review_signs_exact_approved_candidate_and_writer_uses_only_public_key(self):
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+        params = self.input()
+        article = {field: params[field] for field in independent_review.ARTICLE_FIELDS}
+        private = Ed25519PrivateKey.generate()
+        public_key = private.public_key().public_bytes_raw().hex()
+        raw = json.dumps(article, sort_keys=True, ensure_ascii=False,
+                         separators=(",", ":")).encode("utf-8")
+        digest = hashlib.sha256(raw).hexdigest()
+        self.assertEqual(independent_review.decode_candidate(raw, digest=digest), article)
+        with self.assertRaises(independent_review.IndependentReviewError):
+            independent_review.decode_candidate(raw + b" ", digest=digest)
+        with patch.object(independent_review, "sites", return_value=ROUTES), patch(
+            "affiliate_hub_v31.article_commerce.sites", return_value=ROUTES,
+        ):
+            attestation, signature = independent_review.sign_approved_candidate(
+                article=article, catalog=self.catalog, now=NOW, hmac_key=KEY,
+                release_private_key=private.private_bytes_raw().hex(),
+            )
+        backend = ConditionalMemoryBackend()
+        envelope = ImmutablePrivateReadyEnvelope(backend=backend)
+        ready = promo.stage_reviewed_ready(
+            **{**params, "attestation": attestation}, envelope=envelope,
+            release_signature=signature, release_public_key=public_key,
+        )
+        saved = envelope.load(site_key=SITE, campaign=CAMPAIGN,
+                              html_sha256=ready["html_sha256"], release_public_key=public_key)
+        self.assertEqual(saved["html_content"], article["html_content"])
+        data = json.loads(backend.objects[saved["object_key"]])
+        data["attestation"]["signature"] = "0" * 64
+        backend.objects[saved["object_key"]] = json.dumps(
+            data, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        with self.assertRaisesRegex(ValueError, "private_envelope_integrity"):
+            envelope.load(site_key=SITE, campaign=CAMPAIGN,
+                          html_sha256=ready["html_sha256"], release_public_key=public_key)
+
+    def test_protected_review_requires_actual_approval_and_exact_workflow_inputs(self):
+        from io import BytesIO
+
+        digest = "a" * 64
+        with tempfile.TemporaryDirectory() as directory:
+            event = Path(directory) / "event.json"
+            event.write_text(json.dumps({"inputs": {"site_key": SITE, "candidate_digest": digest}}))
+            env = {"GITHUB_REPOSITORY": independent_review.REPOSITORY,
+                   "GITHUB_REF": "refs/heads/main", "GITHUB_EVENT_NAME": "workflow_dispatch",
+                   "GITHUB_RUN_ID": "123", "V31_ACTIONS_READ_TOKEN": "synthetic-test",
+                   "V31_PROTECTED_REVIEWER": "approved-user", "GITHUB_EVENT_PATH": str(event)}
+            with patch.object(independent_review, "build_opener") as opener:
+                endpoint = opener.return_value
+                endpoint.open.return_value = BytesIO(b"[]")
+                with self.assertRaisesRegex(ValueError, "approval_missing"):
+                    independent_review.require_independent_approval(env, site_key=SITE, digest=digest)
+                endpoint.open.side_effect = lambda *a, **kw: BytesIO(json.dumps([{
+                    "environments": [{"name": independent_review.REVIEW_ENVIRONMENT}],
+                    "state": "approved", "user": {"login": "approved-user"},
+                }]).encode())
+                with self.assertRaises(ValueError):
+                    independent_review.require_independent_approval(env, site_key=SITE, digest="b"*64)
+                self.assertEqual(independent_review.require_independent_approval(
+                    env, site_key=SITE, digest=digest), "approved-user")
 
     def test_fake_and_cross_campaign_offer_rejected(self):
         for html in (

@@ -1,0 +1,106 @@
+name: V31 - revisão factual independente e DRAFT
+run-name: Revisão V31 para ${{ inputs.site_key }} - ${{ inputs.candidate_digest }}
+on:
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: Rota V31 registrada
+        required: true
+        type: string
+      candidate_digest:
+        description: SHA-256 do pacote privado revisado
+        required: true
+        type: string
+      create_draft:
+        description: Após revisão aprovada, entregar apenas um DRAFT
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+
+jobs:
+  independent-review:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-independent-review
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      fingerprint: ${{ steps.stage.outputs.fingerprint }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar dependências do revisor
+        run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42'
+      - name: Verificar aprovação registrada, assinar e registrar READY
+        id: stage
+        env:
+          V31_SITE_KEY: ${{ inputs.site_key }}
+          V31_CANDIDATE_DIGEST: ${{ inputs.candidate_digest }}
+          V31_PROTECTED_REVIEWER: ${{ vars.V31_PROTECTED_REVIEWER }}
+          V31_ACTIONS_READ_TOKEN: ${{ github.token }}
+          V31_READY_REVIEW_HMAC_KEY: ${{ secrets.V31_READY_REVIEW_HMAC_KEY }}
+          V31_REVIEW_RELEASE_PRIVATE_KEY_HEX: ${{ secrets.V31_REVIEW_RELEASE_PRIVATE_KEY_HEX }}
+          V31_REVIEW_RELEASE_PUBLIC_KEY_HEX: ${{ vars.V31_REVIEW_RELEASE_PUBLIC_KEY_HEX }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
+        shell: bash
+        run: |
+          set -euo pipefail
+          result="$(python -m affiliate_hub_v31.independent_review stage --site-key "$V31_SITE_KEY" --digest "$V31_CANDIDATE_DIGEST")"
+          fingerprint="$(printf '%s' "$result" | python -c 'import json, sys; print(json.load(sys.stdin)["fingerprint"])')"
+          [[ "$fingerprint" =~ ^[0-9a-f]{64}$ ]]
+          printf 'fingerprint=%s\n' "$fingerprint" >> "$GITHUB_OUTPUT"
+          echo 'V31_INDEPENDENT_REVIEW_APPROVED_AND_READY_VERIFIED'
+
+  deliver-draft:
+    if: inputs.create_draft == true
+    needs: independent-review
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar dependências dos publicadores DRAFT
+        run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42' requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - name: Verificar assinatura pública e entregar apenas DRAFT
+        env:
+          V31_SITE_KEY: ${{ inputs.site_key }}
+          V31_READY_FINGERPRINT: ${{ needs.independent-review.outputs.fingerprint }}
+          V31_REVIEW_RELEASE_PUBLIC_KEY_HEX: ${{ vars.V31_REVIEW_RELEASE_PUBLIC_KEY_HEX }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+        run: python -m affiliate_hub_v31.reviewed_draft_delivery --site-key "$V31_SITE_KEY" --fingerprint "$V31_READY_FINGERPRINT" --execute-draft

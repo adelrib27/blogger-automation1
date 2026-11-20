@@ -35,6 +35,11 @@ def _blogger_draft(*, route, review, marker, content, authorize, service):
     if matches:
         post_id = matches[0].get("id")
     else:
+        if review["product_key"] in {
+            key for post in blogger._list_posts(service, blog_id)
+            for key in blogger.KEY_PATTERN.findall(post.get("content") or "")
+        }:
+            raise ReviewedDraftError("reviewed_blogger_product_already_used")
         if not authorize():
             return None
         result = service.posts().insert(
@@ -103,7 +108,8 @@ def _wordpress_draft(*, route, review, content, authorize, client):
 def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
                           state: UniversalD1ReadyState,
                           envelope: ImmutablePrivateReadyEnvelope,
-                          independent_review_key: bytes,
+                          independent_review_key: bytes | None = None,
+                          release_public_key: str | None = None,
                           blogger_service=None, wordpress_client=None) -> dict:
     """Claim one POST through D1. After an ambiguous POST, replays only read CMS.
 
@@ -125,7 +131,8 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
         if job is None:
             raise ReviewedDraftError("reviewed_draft_job_missing")
         stored = envelope.load(**tenant, html_sha256=job["html_sha256"],
-                               independent_review_key=independent_review_key)
+                               independent_review_key=independent_review_key,
+                               release_public_key=release_public_key)
         review = stored["review"]
         if (review["product_key"] != job["product_key"]
                 or review["evidence_sha256"] != job["evidence_sha256"]
@@ -169,16 +176,16 @@ def main() -> int:
     parser.add_argument("--execute-draft", action="store_true", required=True)
     args = parser.parse_args()
     try:
-        review_key = bytes.fromhex(os.environ.get("V31_INDEPENDENT_REVIEW_KEY_HEX", ""))
-        if len(review_key) < 32:
-            raise ReviewedDraftError("reviewed_draft_verification_key_missing")
+        public_key = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", "")
+        if len(public_key) != 64:
+            raise ReviewedDraftError("reviewed_draft_public_key_missing")
         result = deliver_reviewed_draft(
             site_key=args.site_key, fingerprint=args.fingerprint,
             state=UniversalD1ReadyState(
                 CloudflareD1HTTPRunner.from_environment(allow_mutations=True)),
             envelope=ImmutablePrivateReadyEnvelope(
                 backend=R2PrivateReadyBackend.from_environment()),
-            independent_review_key=review_key,
+            release_public_key=public_key,
         )
     except ValueError:
         print("V31_REVIEWED_DRAFT_FAILED_CLOSED")

@@ -158,6 +158,8 @@ def stage_reviewed_ready(
     owner_nonce: str, now: datetime,
     policy: UniversalReadyPolicy = UniversalReadyPolicy(),
     envelope: ImmutablePrivateReadyEnvelope | None = None,
+    release_signature: str | None = None,
+    release_public_key: str | None = None,
 ) -> dict:
     """Preflight and reserve D1 READY after optional exact R2 readback.
 
@@ -270,6 +272,8 @@ def stage_reviewed_ready(
                     site_key=site_key, campaign=campaign, product_key=product_key,
                     content_html=html_content, attestation=attestation,
                     independent_review_key=independent_review_key,
+                    release_signature=release_signature,
+                    release_public_key=release_public_key,
                 )
                 if previous is not None:
                     return _summary("READY_ALREADY_STAGED") | {
