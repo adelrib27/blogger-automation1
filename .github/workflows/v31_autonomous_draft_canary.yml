@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/v31_autonomous_draft_canary.yml'
+  workflow_dispatch:
   schedule:
     # Renovação da cota UTC antes do canário. Remover após o ensaio.
     - cron: '17 0 * * *'
@@ -14,11 +15,14 @@ on:
 permissions:
   contents: read
 jobs:
-  recovery:
-    if: github.event_name == 'push' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+  signing-check:
+    if: >-
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
-    timeout-minutes: 8
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,18 +30,69 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42'
-      - name: Confirmar R2 imutável e recuperação D1 em tenant sintético
+      - run: python -m pip install 'cryptography>=42'
+      - name: Verificar HMAC e Ed25519 com um desafio sintético
+        id: derive
         env:
-          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
-          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
-          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
-          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
-          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
-          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
-          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
-          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
-        run: python -m affiliate_hub_v31.tests.c81_storage_canary
+          HMAC_KEY: ${{ secrets.V31_AUTONOMOUS_REVIEW_HMAC_KEY }}
+          ED25519_SEED: ${{ secrets.V31_AUTONOMOUS_RELEASE_PRIVATE_KEY_HEX }}
+        run: |
+          python - <<'PY'
+          import hmac
+          import json
+          import os
+          import re
+          from pathlib import Path
+          from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+          from affiliate_hub_v31.review_signatures import (
+              approval_receipt, payload_digest, sign_release, verify_public_attestation,
+          )
+
+          secret = os.environ["HMAC_KEY"]
+          private = os.environ["ED25519_SEED"]
+          for value, label in ((secret, "HMAC"), (private, "ED25519_PRIVATE")):
+              if not value:
+                  raise SystemExit(f"C81_CONFIG_MISSING_{label}")
+              if not re.fullmatch(r"[0-9a-f]{64}", value):
+                  raise SystemExit(f"C81_CONFIG_FORMAT_{label}")
+          if hmac.compare_digest(secret, private):
+              raise SystemExit("C81_KEYS_MUST_BE_DISTINCT")
+          public = Ed25519PrivateKey.from_private_bytes(bytes.fromhex(private)).public_key().public_bytes_raw().hex()
+          print("::add-mask::" + public)
+          payload = {"scope": "C81_SIGNING_SELF_TEST", "github_run_id": os.environ["GITHUB_RUN_ID"]}
+          hashes = {"candidate_sha256": payload_digest({"purpose": "C81_CONFIG_CHECK"}),
+                    "payload_sha256": payload_digest(payload)}
+          receipt = approval_receipt(**hashes, key=bytes.fromhex(secret))
+          raw = b"v31:review-receipt:1\x00" + json.dumps(
+              hashes, sort_keys=True, separators=(",", ":")).encode()
+          if not hmac.compare_digest(receipt["signature"], hmac.digest(bytes.fromhex(secret), raw, "sha256").hex()):
+              raise SystemExit("C81_HMAC_VERIFICATION_FAILED")
+          attestation = {"payload": payload, "candidate_sha256": receipt["candidate_sha256"],
+                         "signature": receipt["signature"]}
+          signature = sign_release(receipt, private_key=private)
+          verify_public_attestation(payload, attestation=attestation, signature=signature,
+                                    public_key=public, require_receipt=True)
+          altered = dict(attestation, signature="0" * 64)
+          try:
+              verify_public_attestation(payload, attestation=altered, signature=signature,
+                                        public_key=public, require_receipt=True)
+          except ValueError:
+              pass
+          else:
+              raise SystemExit("C81_TAMPERED_RECEIPT_ACCEPTED")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              print("derived=" + public, file=output)
+          print("C81_HMAC_AND_ED25519_CHALLENGE_PASS")
+          PY
+      - name: Confirmar par Ed25519 no ambiente protegido
+        if: vars.V31_AUTONOMOUS_RELEASE_PUBLIC_KEY_HEX != '' && steps.derive.outputs.derived == vars.V31_AUTONOMOUS_RELEASE_PUBLIC_KEY_HEX
+        id: confirmed
+        run: echo C81_AUTONOMOUS_SIGNING_CONFIGURATION_PASS
+      - name: Impedir avanço sem a chave pública correspondente
+        if: success() && steps.confirmed.outcome != 'success'
+        run: |
+          echo C81_CONFIG_PUBLIC_KEY_MISSING_OR_MISMATCH
+          exit 1
   blogger:
     if: github.event_name == 'schedule'
     uses: ./.github/workflows/v31_independent_review_draft.yml
