@@ -1,9 +1,11 @@
 """Opt-in release gate. The repository ships with the proposed policy inactive."""
 
+import argparse
 import hashlib
 import json
 import os
 import re
+import tempfile
 import time
 from pathlib import Path
 
@@ -11,8 +13,14 @@ from . import automatic_blogger_drafts as blogger
 from . import automatic_wordpress_drafts as wordpress
 from .article_commerce import _single_verified_offer
 from .autonomous_review import ANGLE, verify_affiliate_target, verify_image
+from .catalog import Catalog
+from .d1_http_runner import CloudflareD1HTTPRunner
+from .d1_universal_ready import UniversalD1ReadyState
 from .final_fact_gate import scan_final_html
+from .independent_review import _official_storage
 from .manual_live_release import _content, _title
+from .private_ready_envelope import ImmutablePrivateReadyEnvelope
+from .r2_private_ready_backend import R2PrivateReadyBackend
 from .reviewed_ready_promotion import _offer_in_same_html
 from .routing import sites
 from .universal_evidence_ready import _fingerprint
@@ -109,6 +117,7 @@ def _cms(route, home, post_id, wordpress_client, blogger_service):
 
 
 def release(*, site_key, post_id, fingerprint, catalog, state, envelope,
+            expected_html_sha256,
             policy_path=POLICY_PATH, env=None, wordpress_client=None, blogger_service=None):
     env = os.environ if env is None else env
     digest, limits = approved_policy(site_key, policy_path=policy_path, env=env)
@@ -119,7 +128,7 @@ def release(*, site_key, post_id, fingerprint, catalog, state, envelope,
         raise LivePolicyError("live_route_invalid")
     tenant = {"site_key": site_key, "campaign": route["campaign"]}
     job = state.get_job(**tenant, fingerprint=fingerprint)
-    if not job or job["status"] != "USED":
+    if not job or job["status"] != "USED" or job["html_sha256"] != expected_html_sha256:
         raise LivePolicyError("live_requires_verified_draft")
     public_key = env.get("V31_AUTONOMOUS_RELEASE_PUBLIC_KEY_HEX", "")
     if not re.fullmatch(r"[a-f0-9]{64}", public_key):
@@ -173,3 +182,39 @@ def release(*, site_key, post_id, fingerprint, catalog, state, envelope,
     record_outcome(state, tenant=tenant, fingerprint=fingerprint, status="PUBLISHED")
     return {"status": "LIVE_CONFIRMED", "site_key": site_key, "post_id": post_id,
             "policy_sha256": digest, "html_sha256": job["html_sha256"]}
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Publicação V31 regida por política autorizada")
+    parser.add_argument("--execute-approved-policy", action="store_true", required=True)
+    parser.parse_args()
+    try:
+        proof = json.loads(os.environ.get("V31_VERIFIED_DRAFT", ""))
+        site_key = proof["site_key"]
+        if proof.get("status") != "DRAFT_VERIFIED":
+            raise LivePolicyError("live_requires_verified_draft")
+        approved_policy(site_key)
+        storage = _official_storage()
+        state = UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(allow_mutations=True))
+        envelope = ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage))
+        with tempfile.TemporaryDirectory(prefix="v31-approved-live-") as directory:
+            path = Path(directory) / "catalog.sqlite3"
+            if not storage.restore_to(path):
+                raise LivePolicyError("live_official_catalog_missing")
+            with Catalog(path) as catalog:
+                result = release(site_key=site_key, post_id=proof["draft_id"],
+                                 fingerprint=proof["fingerprint"], catalog=catalog,
+                                 state=state, envelope=envelope,
+                                 expected_html_sha256=proof["html_sha256"])
+    except LivePolicyError as error:
+        print(str(error))
+        return 1
+    except Exception:
+        print("autonomous_live_failed_closed")
+        return 1
+    print(json.dumps(result))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

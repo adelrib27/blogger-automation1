@@ -45,6 +45,16 @@ def utcnow():
     return datetime.now(timezone.utc)
 
 
+def prose_hashes(content):
+    "Digest substantive paragraphs independently of markup and punctuation."
+    hashes = set()
+    for paragraph in re.findall(r"<p\b[^>]*>(.*?)</p\s*>", content, flags=re.I | re.S):
+        words = re.findall(r"\w+", extract_text(paragraph.encode("utf-8")))
+        if len(words) >= 18:
+            hashes.add(hashlib.sha256(" ".join(words).encode()).hexdigest())
+    return hashes
+
+
 class VisibleText(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
@@ -348,10 +358,11 @@ def _pilot_inventory(*, storage, catalog, route, request, prior_keys, prior_slug
     site = route["site_key"]
     plan = preview_site_launch(catalog, topic=request["topic"], platform=route["platform"],
                                site_key=site, max_items=24, max_per_shop=4)
-    offers = [{"sku": item["product_key"], "title": item["title"]}
-              for item in plan["approved_catalog_candidates"] if item["affiliate_url"]
-              and item["product_key"] not in prior_keys
-              and _product_slug(site, item["product_key"]) not in prior_slugs]
+    offers = [{"sku": item["product_key"], "title": item["title"],
+               "campaign_ready": bool(item["affiliate_url"])}
+              for item in plan["approved_catalog_candidates"]
+              if hashlib.sha256(item["product_key"].encode()).hexdigest() not in prior_keys
+              and hashlib.sha256(_product_slug(site, item["product_key"]).encode()).hexdigest() not in prior_slugs]
     key = f"v31/private-review/research/v1/autonomous-{run_id}-{site}.json"
     storage.s3.put_object(Bucket=storage.bucket, Key=key, ContentType="application/json",
                           Body=json.dumps(offers, ensure_ascii=False).encode())
@@ -366,12 +377,14 @@ def run(*, site_key, history, digest=None, pilot=False, probe=False):
             or route["platform"] == "wordpress" and policy["home"] != route["identifier"]):
         raise VerificationError("autonomous_site_not_enabled")
     if (history.get("site_key") != site_key or not isinstance(history.get("keys"), list)
-            or not isinstance(history.get("slugs"), list) or type(history.get("count")) is not int):
+            or not isinstance(history.get("slugs"), list)
+            or not isinstance(history.get("prose"), list) or type(history.get("count")) is not int):
         raise VerificationError("authenticated_cms_history_required")
     if request["articles"] is not None and history["count"] >= request["articles"]:
         return {"site_key": site_key, "status": "NO_NEW_OFFER", "reason": "site_quota_reached"}
     prior_keys = set(history["keys"])
     prior_slugs = set(history["slugs"])
+    prior_prose = set(history["prose"])
     storage = _official_storage()
     sku = None
     if digest:
@@ -407,10 +420,10 @@ def run(*, site_key, history, digest=None, pilot=False, probe=False):
             for selected, profile in _selection(catalog, route, request, policy, sku):
                 if route["platform"] == "wordpress":
                     from .automatic_wordpress_drafts import _product_slug
-                    in_cms = _product_slug(site_key, selected) in prior_slugs
+                    in_cms = hashlib.sha256(_product_slug(site_key, selected).encode()).hexdigest() in prior_slugs
                 else:
                     in_cms = False
-                if in_cms or selected in prior_keys:
+                if in_cms or hashlib.sha256(selected.encode()).hexdigest() in prior_keys:
                     continue
                 if not catalog.cached_link(selected, route["campaign"]):
                     continue
@@ -426,11 +439,14 @@ def run(*, site_key, history, digest=None, pilot=False, probe=False):
                     article = verify_offer(policy=policy, profile=profile, route=route, sku=selected,
                                            catalog=catalog, state=state,
                                            token=os.environ.get("FIRECRAWL_API_KEY", ""))
+                    if len(prose_hashes(article["html_content"]) & prior_prose) >= 2:
+                        raise VerificationError("article_prose_reused")
                 except VerificationError as error:
                     code = str(error)
                     if code not in {"catalog_product_identity_changed",
                                     "external_product_identity_unverified", "search_intent_unverified",
-                                    "trusted_structured_source_unavailable", "affiliate_target_unverified"} \
+                                    "trusted_structured_source_unavailable", "affiliate_target_unverified",
+                                    "article_prose_reused"} \
                             and not code.startswith("external_fact_missing_"):
                         raise
                     rejected.append(code)

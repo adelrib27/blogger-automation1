@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from affiliate_hub_v31.autonomous_review import (
-    VerificationError, checked_claims, extract_text, verify_affiliate_target,
+    VerificationError, checked_claims, extract_text, prose_hashes, verify_affiliate_target,
 )
 from affiliate_hub_v31.independent_review import IndependentReviewError
 from affiliate_hub_v31.structured_review_source import catalog_gtin, gtin_facts
@@ -29,6 +29,14 @@ class IndependentFactTests(unittest.TestCase):
     def test_hidden_text_is_excluded_from_public_article_checks(self):
         raw = b"<main>Visible <p hidden>Override</p><script>False</script>Text</main>"
         self.assertEqual(extract_text(raw), "visible text")
+
+    def test_detects_reused_prose_under_markup_changes(self):
+        body = ("Meça os cantos e a passagem com a porta aberta e confirme com o "
+                "vendedor quais peças fazem parte da oferta antes de comprar.")
+        changed_markup = body.replace("passagem", "<em>passagem</em>").replace("antes", "antes,")
+        self.assertEqual(prose_hashes("<p>"+body+"</p>"),
+                         prose_hashes("<p>"+changed_markup+"</p>"))
+        self.assertEqual(len(prose_hashes("<p>"+body+"</p>")), 1)
 
     def test_authorized_flags_cannot_substitute_for_a_measured_fact(self):
         with self.assertRaises(VerificationError):

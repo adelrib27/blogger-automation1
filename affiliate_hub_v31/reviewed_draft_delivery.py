@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import time
@@ -23,6 +24,8 @@ class ReviewedDraftError(ValueError):
 
 
 def read_draft_history(site_key):
+    from .autonomous_review import prose_hashes
+
     route = sites().get(site_key)
     if not route or route.get("publish_enabled") is not False:
         raise ReviewedDraftError("reviewed_draft_route_invalid")
@@ -31,7 +34,7 @@ def read_draft_history(site_key):
         blog_id = route["identifier"]
         blogger.validate_remote_identity(route, service.blogs().get(blogId=blog_id).execute())
         history = blogger._list_posts(service, blog_id, include_scheduled=True)
-        bodies = (post.get("content") or "" for post in history)
+        bodies = [post.get("content") or "" for post in history]
         count, slugs = len(history), []
     elif route["platform"] == "wordpress":
         user, password = wordpress.credentials_for(site_key)
@@ -48,11 +51,15 @@ def read_draft_history(site_key):
             if isinstance(post.get("generated_slug"), str)
             and post["generated_slug"].startswith(prefix)
         })
-        bodies = (wordpress._html_text(post) for post in history)
+        bodies = [wordpress._html_text(post) for post in history]
     else:
         raise ReviewedDraftError("reviewed_draft_route_invalid")
-    keys = sorted({key for body in bodies for key in blogger.KEY_PATTERN.findall(body)})
-    return {"site_key": site_key, "keys": keys, "slugs": slugs, "count": count}
+    keys = {key for body in bodies for key in blogger.KEY_PATTERN.findall(body)}
+    prose = {mark for body in bodies if blogger.KEY_PATTERN.search(body)
+             for mark in prose_hashes(body)}
+    return {"site_key": site_key, "keys": sorted(hashlib.sha256(key.encode()).hexdigest() for key in keys),
+            "slugs": sorted(hashlib.sha256(slug.encode()).hexdigest() for slug in slugs),
+            "prose": sorted(prose), "count": count}
 
 
 def _blogger_draft(*, route, review, marker, content, authorize, service):
