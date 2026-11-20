@@ -111,9 +111,11 @@ def select_next(catalog:Catalog,*,site_key:str,request:dict,
         site_key=site_key,max_items=24,max_per_shop=1)
     if not plan["registered_site"] or plan["can_publish"] is not False:
         raise AutoDraftError("unsafe_site_preview")
+    from .site_request_queue import reserved_pilot_sku
+    reserved = reserved_pilot_sku(site_key)
     for item in plan["approved_catalog_candidates"]:
         key=item["product_key"]
-        if (key in seen or item["affiliate_status"]!="verified_for_campaign"
+        if (key == reserved or key in seen or item["affiliate_status"]!="verified_for_campaign"
             or catalog.for_conversion(key) is None or
             catalog.cached_link(key,route["campaign"])!=item["affiliate_url"]):
             continue

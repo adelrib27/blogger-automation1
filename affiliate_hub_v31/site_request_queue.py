@@ -86,6 +86,12 @@ def autonomous_sites_for_writes() -> set[str]:
     return {item["site_key"] for item in load_requests() if item["site_key"] in registry}
 
 
+def reserved_pilot_sku(site_key: str) -> str | None:
+    rules = json.loads(VERIFIER_PROFILES.read_text(encoding="utf-8")).get(site_key, {})
+    sku = rules.get("pilot_sku")
+    return sku if sku in rules.get("offers", {}) else None
+
+
 def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                      budget:int=3,execute:bool=False,
                      app_id:str="",app_secret:str="",
