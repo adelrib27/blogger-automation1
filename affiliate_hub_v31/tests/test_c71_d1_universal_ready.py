@@ -357,6 +357,21 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertFalse(self.store.consume_one(
             site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,now_epoch=T+3))
 
+    def test_draft_attempt_budget_is_isolated_and_resets_at_utc_midnight(self):
+        tenant = {"site_key": B, "campaign": C}
+        self.assertTrue(self.acquire())
+        self.assertTrue(self.acquire(kind="writer"))
+        self.seed_sql_proof()
+        self.assertTrue(self.store.reserve_ready(
+            **tenant, owner_nonce=NA, fingerprint=ONE, product_key=KEYS[0],
+            html_sha256=TWO, evidence_sha256=THREE, now_epoch=T))
+        self.assertTrue(self.store.consume_one(
+            **tenant, owner_nonce=NA, fingerprint=ONE, now_epoch=T, daily_cap=1))
+        self.assertEqual(self.other.count_draft_attempts_today(**tenant, now_epoch=T), 1)
+        self.assertEqual(self.other.count_draft_attempts_today(site_key=W, campaign=WC, now_epoch=T), 0)
+        self.assertEqual(self.other.count_draft_attempts_today(
+            **tenant, now_epoch=T-T%86400+86400), 0)
+
     def test_query_error_or_invalid_return_fails_closed(self):
         def broken(_sql,_params):
             raise RuntimeError("connection closed")

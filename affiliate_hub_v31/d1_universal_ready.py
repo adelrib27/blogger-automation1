@@ -264,6 +264,17 @@ class UniversalD1ReadyState:
             raise D1SafeError("d1_count_untrusted")
         return rows[0]["n"]
 
+    def count_draft_attempts_today(self, *, site_key: str, campaign: str, now_epoch: int) -> int:
+        _params_site(site_key, campaign)
+        now = _clock(now_epoch)
+        rows = self._call("""
+          SELECT COUNT(*) AS n FROM v31_ready_jobs
+          WHERE site_key=? AND campaign=? AND used_epoch>=?
+        """, (site_key, campaign, now-now%86400))
+        if (len(rows) != 1 or type(rows[0].get("n")) is not int or rows[0]["n"] < 0):
+            raise D1SafeError("d1_count_untrusted")
+        return rows[0]["n"]
+
     def cache_verified_evidence(
         self, *, site_key: str, campaign: str, owner_nonce: str,
         product_key: str, product_title: str, package: dict,
