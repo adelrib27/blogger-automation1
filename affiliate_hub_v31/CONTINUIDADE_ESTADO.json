@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C81_AUTONOMOUS_VERIFICATION_AND_AUTHENTICATED_DEDUP_PROVEN_DRAFT_CANARIES_PENDING",
+  "last_updated_source": "C81_AUTONOMOUS_KEYS_CONFIGURED_BY_OWNER_VALIDATION_PENDING",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -265,14 +265,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PRs #111 a #115 na main. Firecrawl, foto e campanha reais passaram no WordPress e o HTML foi assinado e chegou a READY em #44822280026. A entrega encontrou um rascunho legado existente. Histórico autenticado nas duas plataformas e ausência de oferta verificável WP comprovados em #44823740700 e #44824680064. #116 integrou a recuperação e o canário oficial #44825882019 confirmou R2/D1, replay, renovação do mesmo fingerprint expirado e limpeza do tenant sintético. #117 integrou a transição por rota e o resumo operacional no scheduler.",
-    "next_safe_step": "Conferir o canário Blogger após a renovação diária de pesquisa UTC e o WordPress após o conversor oficial priorizar o Rizzo Imperial branco do catálogo. Exigir GET, bytes exatos, DRAFT e replay. Verificar os três valores de assinatura instalados em v31-editorial-safe antes do scheduler DRAFT estável.",
+    "latest_verified_step": "Canário oficial R2/D1 com recuperação e limpeza confirmado em #44825882019. PR #118 na main reserva os SKUs dos canários e a validação de continuidade #44826908061 passou. O proprietário informou que cadastrou as três configurações de assinatura.",
+    "next_safe_step": "Validar as duas chaves e a variável no ambiente GitHub v31-editorial-safe por teste criptográfico sintético sem divulgar valores. Usar o mesmo par nos canários DRAFT oficiais, respeitando as cotas e preservando os demais projetos.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "a91b75e41ce640972fbf07c1ea6daa680e8115c6",
-    "branch": "codex/v31-c81-reserve-pilot-offers",
-    "blocker": "O teste Blogger depende da renovação da cota D1, o WordPress depende do próximo conversor oficial e a operação agendada exige configuração única das chaves do verificador. Nenhuma intervenção editorial por artigo.",
+    "base_main_sha": "858ea6fe12fa374712843c76922c795126b2a6dd",
+    "branch": "codex/v31-c81-validate-configured-signing",
+    "blocker": "A assinatura ainda exige prova do GitHub Actions. O canário Blogger aguarda renovação da cota diária e o WordPress aguarda verificação da conversão da oferta reservada.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -283,7 +283,8 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44825759832",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44825882019/job/136598237147",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44826311397",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44826908061"
     ]
   },
   "next_priorities": [
