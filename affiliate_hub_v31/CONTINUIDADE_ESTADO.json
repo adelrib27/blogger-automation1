@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C73",
-  "continuity_protocol_phase": "C73",
-  "continuity_status": "BLOQUEIO_SEGURANCA_CONTA_CLOUDFLARE",
+  "last_checkpoint_phase": "C74",
+  "continuity_protocol_phase": "C74",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C73_ACCOUNT_OWNERSHIP_CORRECTION_R2_OFFICIAL_ADEILTONRIB27",
+  "last_updated_source": "C74_OFFICIAL_CLOUDFLARE_RECOVERED_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C73_D1_UNIVERSAL_ISOLADO_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -134,16 +134,15 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "Corrigir vinculação Cloudflare C73: R2 V31 oficial está na conta adeiltonrib27; D1 C73 foi criado na conta adeiltonrml. NÃO ligar D1 a writers na configuração cruzada por suposição.",
-    "status": "BLOQUEIO_SEGURANCA_CONTA_CLOUDFLARE",
-    "latest_verified_step": "Auditoria read-only 3 contas: adeiltonrib27 ebb8... tem bucket v31-editorial-shopee criado 15/11 Standard ENAM e nenhum D1; adeiltonrml b151... tem ARV/Vida Pet/Pinterest e novo D1 e165... isolado sem dados reais; comercebem 4c6570... D1 vazio e R2 API 403 code 10042. C3 confirma bucket oficial. Sem mutações remotas nessa auditoria.",
-    "next_safe_step": "Conferir GitHub vars.V31_EDITORIAL_R2_ACCOUNT_ID sem revelar segredo; provisionar D1 dedicado na mesma conta do bucket oficial ou documentar arquitetura multi-account com permissões/rollback aprovados; preservar D1 e165... até decisão consciente, sem eliminar ou migrar precipitadamente. Zero LIVE.",
+    "objective": "C74 provisionar e validar D1 novo EXCLUSIVO na mesma conta Cloudflare do bucket V31 oficial, sem escritor, Firecrawl ou LIVE",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "Cloudflare login adeiltonrib27 reconfirmado via whoami, GET bucket v31-editorial-shopee success na conta ebb8..., D1 list 0. Checkpoint prévio C74 salvo antes de mutações.",
+    "next_safe_step": "Criar somente D1 V31 novo na conta ebb8..., conferir id/schema, canários sintéticos e limpeza; registrar evidências; contas b151/comercebem intocadas",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C3_R2_2026-11-15.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C73_D1_UNIVERSAL_ISOLADO_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md"
     ]
   },
   "next_priorities": [
