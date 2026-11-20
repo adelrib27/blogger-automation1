@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C71",
-  "continuity_protocol_phase": "C71",
+  "last_checkpoint_phase": "C72",
+  "continuity_protocol_phase": "C72",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C71_PREVIA_SCHEDULE_BLOGGER_WORDPRESS_DRAFTS_19NOV_AND_FACT_GATE_D1_PLAN",
+  "last_updated_source": "C72_QUOTA_GITHUB_KEY_PREFLIGHT_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C71_SCHEDULE_REAL_FACT_GATE_D1_SAFE_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C72_FIRECRAWL_GITHUB_CREDIT_PREFLIGHT_SAFE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -100,7 +100,14 @@
     "c71_20nov_cms_readonly_blogger_live": 3,
     "c71_20nov_cms_readonly_blogger_drafts": 3,
     "c71_20nov_cms_readonly_wp_casa_live": 45,
-    "c71_20nov_cms_readonly_wp_casa_drafts": 59
+    "c71_20nov_cms_readonly_wp_casa_drafts": 59,
+    "c71_pr": 99,
+    "c71_merge_sha": "f040981a50ba7bbb506691b9fe785157d00e137e",
+    "c71_ci_id": 44747425029,
+    "c71_v31_tests": 494,
+    "c71_fact_gate_status": "SAFE_OFFLINE_CODE_NOT_WIRED_TO_WRITERS",
+    "c71_d1_status": "SQLITE_TESTED_D1_SCHEMA_NOT_DEPLOYED",
+    "c71_live_changes": 0
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -114,21 +121,21 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C71: concluir homologação de horários schedule com prova dos writers 19/11 e investigar ausência 20/11; implementar SAFE offline fatos HTML pós-IA e persistência transacional D1 por site sem LIVE",
+    "objective": "C72: saldo/quota Firecrawl da MESMA chave GitHub para liberar pesquisas SAFE controladas, depois gates D1 e HTML factual; preservar blogs e zero LIVE",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "main 8210fec0... C70 concluída. Runs V31 event=schedule 19/11 fila #44600350780 failure pós 3 links cache, Blogger #44609598601 SUCCESS 1 DRAFT 0 LIVE, WP #44614079395 SUCCESS 1 DRAFT 0 LIVE. Em 20/11 às 10h34 Recife não há novos 3 schedules V31 na listagem. Auditoria CMS read-only 3 LIVE/3 DRAFT Blogger, 45 LIVE/59 DRAFT WP; diferenças WP não atribuídas a V31 sem prova.",
-    "next_safe_step": "Checkpoint C71 prévio criado. Desenvolver adaptador D1 isolado (sem deploy), concorrência/idempotência/lease e fact gate final do HTML com evidências autorizadas, CI SAFE e PR. Continuar observar schedules por data; não chamar Firecrawl real sem saldo Github comprovado; não ligar LIVE.",
+    "latest_verified_step": "C71 PR99 MERGED f040981... CI #44747425029 SUCCESS 494 V31 + legados, fact gate pós-IA e SQL D1 com lock/idempotência/cooldown testados em SQLite offline, zero deploy. 3 schedules V31 reais em 19/11: fila failure pós conversão 3 R2, Blogger DRAFT_CREATED, WP DRAFT_CREATED, ambos zero LIVE. Nenhum schedule 20/11 confirmado às 10h34 Recife.",
+    "next_safe_step": "Usar GitHub Actions TEMP exclusivamente GET /v2/team/credit-usage com repo secret FIRECRAWL_API_KEY, sem gastar pesquisas. Não executar Firecrawl cache miss sem crédito positivo/limite de custo, nem implantar D1 em conta/banco incerto; remover TEMP depois.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44609598601",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44614079395",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44600350780",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C71_SCHEDULE_REAL_FACT_GATE_D1_SAFE_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/pull/99",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44747425029",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C72_FIRECRAWL_GITHUB_CREDIT_PREFLIGHT_SAFE_2026-11-20.md"
     ]
   },
   "next_priorities": [
+    "C72: verificar saldo Firecrawl pela MESMA chave do GitHub com GET somente leitura; sem pesquisa e sem posts; C71 fact gate/D1 permanece SAFE offline.",
     "C71: fact gate HTML e D1 isolado/lease/idempotência SAFE antes dos writers; comprovar next schedules 20/11 e reconhecer sucesso de DRAFT real dos writers no schedule de 19/11.",
     "C70 SAFE CONCLUÍDA: PR98 CI471, 2 envelopes privados REVIEW_REQUIRED R2 readback e zero posts; não repetir 3 conversões Shopee originais (#44600350780).",
     "20/11/2026 10h10 Recife: conferir event=schedule dos 3 workflows V31 no GitHub, suas conclusões e leitura de Blogger Móveis/WordPress Casa. A fila já disparou schedule em 19/11 e falhou no handoff antes do patch; Blogger e WordPress schedule ainda sem evidência.",
