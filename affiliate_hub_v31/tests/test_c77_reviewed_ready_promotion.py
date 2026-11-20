@@ -198,6 +198,15 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
             promo.stage_reviewed_ready(**other)
         self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 0)
 
+    def test_wordpress_cannot_use_a_foreign_seo_home_even_when_signed(self):
+        foreign = self.input(site_key="wordpress_novo_exemplo",
+                             site_url=HOME, article_url=ARTICLE_URL)
+        with self.assertRaisesRegex(
+            promo.ReviewedReadyError, "wordpress_site_origin_mismatch"
+        ):
+            promo.stage_reviewed_ready(**foreign)
+        self.assertEqual(self.state.count_ready(site_key=SITE, campaign=CAMPAIGN), 0)
+
     def test_no_signed_key_bad_signature_or_unreviewed_paragraph_blocks(self):
         for overrides in (
             {"independent_review_key": b"short"},
