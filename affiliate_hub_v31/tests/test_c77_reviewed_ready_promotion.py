@@ -154,8 +154,9 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
             }),
             reviewed_text_hashes=HASHES,
         )
-        params["attestation"] = {"payload": material,
-                                 "signature": sign_material(material)}
+        params["attestation"] = overrides.get("attestation", {
+            "payload": material, "signature": sign_material(material)
+        })
         return params
 
     def test_signed_exact_product_to_ready_once_with_all_gates(self):
