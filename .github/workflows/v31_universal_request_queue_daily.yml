@@ -1,4 +1,5 @@
 name: V31 Universal — conversor diario por pedidos reais sem posts
+run-name: ${{ github.event_name == 'workflow_dispatch' && inputs.pilot_site_key != '' && format('V31 | conversão isolada {0}', inputs.pilot_site_key) || 'V31 | conversão regular' }}
 on:
   schedule:
     # Diariamente 08:47 America/Recife. Só converte quando há pedido real.
@@ -16,6 +17,10 @@ on:
         required: true
         type: boolean
         default: false
+      pilot_site_key:
+        description: 'Site piloto registrado, com orçamento 1. Vazio mantém a fila normal.'
+        required: false
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -50,7 +55,11 @@ jobs:
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
           V31_BUDGET: ${{ github.event_name == 'schedule' && '3' || inputs.budget }}
-        run: python -m affiliate_hub_v31.site_request_queue --budget "$V31_BUDGET"
+          V31_PILOT_SITE: ${{ inputs.pilot_site_key }}
+        run: |
+          args=(--budget "$V31_BUDGET")
+          if [[ -n "$V31_PILOT_SITE" ]]; then args+=(--pilot-site-key "$V31_PILOT_SITE"); fi
+          python -m affiliate_hub_v31.site_request_queue "${args[@]}"
       - name: Converter ate 3 links, somente campanhas reais, sem publicacao
         env:
           V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
@@ -60,8 +69,17 @@ jobs:
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
           V31_BUDGET: ${{ github.event_name == 'schedule' && '3' || inputs.budget }}
-        run: python -m affiliate_hub_v31.site_request_queue --budget "$V31_BUDGET" --execute
+          V31_PILOT_SITE: ${{ inputs.pilot_site_key }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
+        run: |
+          args=(--budget "$V31_BUDGET" --execute)
+          if [[ -n "$V31_PILOT_SITE" ]]; then args+=(--pilot-site-key "$V31_PILOT_SITE"); fi
+          python -m affiliate_hub_v31.site_request_queue "${args[@]}"
       - name: Materializar envelopes editoriais privados no R2; apenas REVIEW_REQUIRED
+        if: inputs.pilot_site_key == ''
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
           V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}

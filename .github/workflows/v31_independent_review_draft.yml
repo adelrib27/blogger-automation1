@@ -17,6 +17,9 @@ on:
         value: ${{ jobs.deliver-draft.outputs.verified_draft }}
 permissions:
   contents: read
+concurrency:
+  group: v31-autonomous-pipeline-${{ inputs.site_key }}
+  cancel-in-progress: false
 
 jobs:
   authenticated-history:

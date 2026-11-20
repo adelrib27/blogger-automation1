@@ -12,11 +12,12 @@ import json
 import os
 import re
 import tempfile
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from .catalog import Catalog,host_allowed
 from .converter import ConversionError,convert_one
+from .d1_http_runner import CloudflareD1HTTPRunner, D1HTTPError
 from .r2_state import R2State,verify_database
 from .routing import sites
 from .site_launch_plan import preview_site_launch
@@ -92,10 +93,24 @@ def reserved_pilot_sku(site_key: str) -> str | None:
     return sku if sku in rules.get("offers", {}) else None
 
 
+def claim_conversion_attempt(query, *, day_utc: str, campaign: str, product_key: str) -> bool:
+    """Reserve a global UTC slot before an outbound Shopee attempt."""
+    rows = query("""
+      INSERT INTO v31_shopee_conversion_attempts (day_utc, slot, campaign, product_key)
+      SELECT ?, COALESCE(max(slot), 0) + 1, ?, ?
+      FROM v31_shopee_conversion_attempts WHERE day_utc=?
+      HAVING COALESCE(max(slot), 0) < ?
+      ON CONFLICT DO NOTHING
+      RETURNING slot
+    """, (day_utc, campaign, product_key, day_utc, MAX_BUDGET))
+    return len(rows) == 1
+
+
 def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                      budget:int=3,execute:bool=False,
                      app_id:str="",app_secret:str="",
-                     ordinal:int|None=None)->dict:
+                     ordinal:int|None=None, pilot_site_key:str|None=None,
+                     reserve_conversion=None)->dict:
     if type(budget) is not int or not 1<=budget<=MAX_BUDGET:
         raise RequestQueueError("budget_invalid")
     if type(execute) is not bool:
@@ -104,11 +119,18 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
         raise RequestQueueError("rotation_invalid")
     requests=_rotation(load_requests(directory),
                        date.today().toordinal() if ordinal is None else ordinal)
+    pilot_sku = None
+    if pilot_site_key is not None:
+        requests = [request for request in requests if request["site_key"] == pilot_site_key]
+        pilot_sku = reserved_pilot_sku(pilot_site_key)
+        if not requests or pilot_sku is None or budget != 1:
+            raise RequestQueueError("conversion_registered_pilot_required")
     if not requests:
         return {
             "mode":"SITE_REQUEST_QUEUE_LIVE_CACHE_ONLY" if execute else "DRY_RUN",
             "requests_active":0,"requests_evaluated":0,
             "conversion_candidates":0,"shopee_mutation_attempts":0,
+            "conversion_reservations_denied":0,
             "converted":0,"ready_review_jobs":0,
             "needs_curation":0,"api_interrupted":False,
             "r2_snapshot_saved_and_verified":False,"publication_calls":0,
@@ -126,6 +148,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
         before_campaign={}
         interrupted=False
         mutation_attempts=0
+        denied_attempts=0
         with Catalog(path) as cat:
             before=cat.stats()
             for request in requests:
@@ -145,13 +168,19 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 approved = plan["approved_catalog_candidates"]
                 profiled = verified_routes.get(key, {}).get("offers", {})
                 pending_profiles = {sku for sku in profiled if cat.cached_link(sku, campaign) is None}
-                if pending_profiles:
+                if pending_profiles or pilot_sku:
                     wider = preview_site_launch(cat, topic=request["topic"], platform=request["platform"],
                                                 site_key=key, max_items=24, max_per_shop=4)
                     priority = [item for item in wider["approved_catalog_candidates"]
                                 if item["product_key"] in pending_profiles]
                     priority_keys = {item["product_key"] for item in priority}
                     approved = priority + [item for item in approved if item["product_key"] not in priority_keys]
+                    if pilot_sku:
+                        approved = [item for item in wider["approved_catalog_candidates"]
+                                    if item["product_key"] == pilot_sku]
+                        if not approved or cat.for_conversion(pilot_sku) is None:
+                            raise RequestQueueError("conversion_pilot_offer_ineligible")
+                        ready = int(cat.cached_link(pilot_sku, campaign) is not None)
                 for item in approved:
                     key_product=item["product_key"]
                     if (key_product not in attempted_keys and
@@ -175,6 +204,14 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 raise RequestQueueError("shopee_credentials_missing")
             if execute:
                 for key,campaign in queue:
+                    try:
+                        reserved = reserve_conversion is None or reserve_conversion(campaign, key)
+                    except D1HTTPError:
+                        interrupted = True
+                        break
+                    if not reserved:
+                        denied_attempts += 1
+                        continue
                     mutation_attempts+=1
                     try:
                         _,new=convert_one(cat,key,campaign,app_id,app_secret)
@@ -212,6 +249,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
             "requests_evaluated":len(plans),
             "conversion_candidates":len(queue),
             "shopee_mutation_attempts":mutation_attempts,
+            "conversion_reservations_denied":denied_attempts,
             "converted":len(converted),
             "ready_review_jobs":sum(x["ready"] for x in plans),
             "needs_curation":sum(x["review"] for x in plans),
@@ -225,12 +263,21 @@ def main()->int:
     p=argparse.ArgumentParser(description="V31 — pedidos reais por nicho aberto, 0 posts")
     p.add_argument("--budget",type=int,default=3)
     p.add_argument("--execute",action="store_true")
+    p.add_argument("--pilot-site-key")
     args=p.parse_args()
     try:
+        reserve_conversion = None
+        if args.execute:
+            query = CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
+            def reserve_conversion(campaign, product_key):
+                return claim_conversion_attempt(
+                    query, day_utc=datetime.now(timezone.utc).date().isoformat(),
+                    campaign=campaign, product_key=product_key)
         result=process_requests(
             R2State.from_env(),budget=args.budget,execute=args.execute,
             app_id=os.getenv("V31_EDITORIAL_SHOPEE_APP_ID",""),
-            app_secret=os.getenv("V31_EDITORIAL_SHOPEE_APP_SECRET",""))
+            app_secret=os.getenv("V31_EDITORIAL_SHOPEE_APP_SECRET",""),
+            pilot_site_key=args.pilot_site_key, reserve_conversion=reserve_conversion)
         print("V31_C37_SITE_REQUEST_QUEUE_"+(
             "PARTIAL_API_INTERRUPTED" if result["api_interrupted"] else "PASS"))
         print(json.dumps(result,sort_keys=True))
