@@ -2,16 +2,15 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 6,
-    "draft_ready": 1,
-    "rejected": 5,
-    "not_generated": 0,
-    "published_history": 47,
+    "total": 9,
+    "draft_ready": 2,
+    "rejected": 4,
+    "not_generated": 3,
+    "published_history": 48,
     "rotation_cycle": 6,
     "rotation_pending": [
       "Decoração",
       "Organização",
-      "Sala",
       "Quarto",
       "Cozinha",
       "Banheiro",
@@ -21,60 +20,77 @@
   },
   "items": [
     {
-      "id": 95,
-      "shopee_item_id": "21297458008",
-      "category": "Cama, Mesa e Banho",
-      "product": "Protetor Para Colchão Impermeável Matelado Varias Medidas",
+      "id": 96,
+      "shopee_item_id": "58251353658",
+      "category": "Organização",
+      "product": "Varal De Chão Com Abas Dobrável Aço Secalux 12kg Varal de Apartamento Retratil",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "REJECTED",
+        "reasons": [
+          "categoria_invalida",
+          "chamada_consulta_contextual_quantidade_invalida:0",
+          "disclosure_afiliado_quantidade_invalida:0",
+          "imagem_produto_ausente",
+          "link_afiliado_quantidade_invalida:1",
+          "link_consulta_contextual_quantidade_invalida:0",
+          "quantidade_cta_invalida:1",
+          "rel_afiliado_quantidade_invalida:1",
+          "tema_titulo_nao_unificado",
+          "titulo_comercial_copiado_no_corpo",
+          "titulo_produto_cta_nao_fiel",
+          "titulo_produto_cta_quantidade_invalida",
+          "word_count_alto:1188"
+        ],
+        "warnings": [],
+        "metrics": {
+          "word_count": 1188,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 57,
+          "meta_description_length": 150,
+          "cta_count": 1
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 101,
+      "shopee_item_id": "58256736438",
+      "category": "Sala",
+      "product": "Mesa Lateral Nicho Multiuso 2 Prateleiras – Mesa de Cabeceira Moderna- 60",
       "queue_status": "PUBLISHED",
-      "wordpress_post_id": 308,
+      "wordpress_post_id": 311,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 621,
-          "h2_count": 7,
+          "word_count": 778,
+          "h2_count": 11,
           "internal_links": 3,
           "seo_title_length": 37,
-          "meta_description_length": 153,
+          "meta_description_length": 149,
           "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
     },
     {
-      "id": 87,
-      "shopee_item_id": "20452224775",
-      "category": "Quarto",
-      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "id": 102,
+      "shopee_item_id": "58250364907",
+      "category": "Sala",
+      "product": "Manta Para Sofá ou Cama 100% Algodão 210x120 Capa Decorativa para Casa Nova Elegante",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "REJECTED",
+        "status": "NOT_GENERATED",
         "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
+          "arquivo_gerado_ausente"
         ],
         "warnings": [],
-        "metrics": {
-          "word_count": 787,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 53,
-          "meta_description_length": 153,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
       }
     },
     {
@@ -114,6 +130,44 @@
       }
     },
     {
+      "id": 98,
+      "shopee_item_id": "46360468172",
+      "category": "Cozinha",
+      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "DRAFT_READY",
+        "reasons": [],
+        "warnings": [],
+        "metrics": {
+          "word_count": 633,
+          "h2_count": 5,
+          "internal_links": 1,
+          "seo_title_length": 48,
+          "meta_description_length": 148,
+          "cta_count": 2
+        },
+        "safety_class": "STANDARD"
+      }
+    },
+    {
+      "id": 99,
+      "shopee_item_id": "58257199934",
+      "category": "Cozinha",
+      "product": "Escorredor de Louças em Aço Carbono para Cozinha Organizador de Pratos, Tigelas e Talheres",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
       "id": 86,
       "shopee_item_id": "23599671693",
       "category": "Banheiro",
@@ -149,10 +203,10 @@
       }
     },
     {
-      "id": 93,
-      "shopee_item_id": "51511552034",
-      "category": "Banheiro",
-      "product": "Kit 2 Porta Shampoo Sabonete Suporte De Canto Parede Banheiro Cozinha Prateleira Sem Furar Multifuncional Cor Preto",
+      "id": 97,
+      "shopee_item_id": "58203212212",
+      "category": "Área Externa",
+      "product": "Vaso Polietileno + Planta Artificial Jiboia Follhas Grande Decoracao Jardim",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
@@ -164,58 +218,40 @@
           "imagem_produto_ausente",
           "link_afiliado_quantidade_invalida:1",
           "link_consulta_contextual_quantidade_invalida:0",
+          "meta_description_tamanho:158",
+          "poucos_h2:4",
           "quantidade_cta_invalida:1",
           "rel_afiliado_quantidade_invalida:1",
           "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
           "titulo_produto_cta_nao_fiel",
           "titulo_produto_cta_quantidade_invalida"
         ],
         "warnings": [],
         "metrics": {
-          "word_count": 1054,
-          "h2_count": 6,
+          "word_count": 764,
+          "h2_count": 4,
           "internal_links": 1,
-          "seo_title_length": 42,
-          "meta_description_length": 155,
+          "seo_title_length": 46,
+          "meta_description_length": 158,
           "cta_count": 1
         },
         "safety_class": "STANDARD"
       }
     },
     {
-      "id": 92,
-      "shopee_item_id": "58207037675",
-      "category": "Área Externa",
-      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
+      "id": 100,
+      "shopee_item_id": "23492815637",
+      "category": "Cama, Mesa e Banho",
+      "product": "Protetor De Colchão P/ Berço Americano Bambi - Envio Imediato",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "REJECTED",
+        "status": "NOT_GENERATED",
         "reasons": [
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1206"
+          "arquivo_gerado_ausente"
         ],
         "warnings": [],
-        "metrics": {
-          "word_count": 1206,
-          "h2_count": 6,
-          "internal_links": 1,
-          "seo_title_length": 57,
-          "meta_description_length": 151,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
       }
     }
   ]
