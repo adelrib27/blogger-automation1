@@ -1,3 +1,19 @@
+# Verificação factual autônoma — atualização de 20/11/2026
+
+O proprietário retirou a revisão por pessoa do fluxo editorial. A autorização LIVE atual permanece vigente durante a homologação. A [política proposta](C81_POLITICA_LIVE_AUTONOMA.md) prevê autorização única por versão para as rotas homologadas.
+
+- [PR #111](https://github.com/adelrib27/blogger-automation1/pull/111) introduziu o verificador isolado do gerador, assinatura HMAC e Ed25519, Firecrawl com cota D1 e integração DRAFT. O primeiro [ensaio](https://github.com/adelrib27/blogger-automation1/actions/runs/44820878553) bloqueou antes do CMS porque o destino Shopee precisava ser comprovado.
+- [PR #112](https://github.com/adelrib27/blogger-automation1/pull/112) verificou o caminho oficial de redirecionamento pelo par loja/SKU e implementou a política LIVE bloqueada. [PR #113](https://github.com/adelrib27/blogger-automation1/pull/113) implementou correspondência exata de GTIN e melhorou os diagnósticos da coleta.
+- O [canário com pesquisa real](https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026) confirmou oferta, foto, fontes, SEO e HTML do WordPress até a reserva D1 READY. O hash do envelope R2 foi `c2b8bb85f453c43b37b50ebf8dae9c59522870cc4d0291824fd981f45bd0e495`. A entrega encontrou o DRAFT WordPress #314, anterior ao canário, e bloqueou a duplicação. O Blogger também já tinha um DRAFT anterior para o Briz B23. Ambos foram preservados.
+- [PR #114](https://github.com/adelrib27/blogger-automation1/pull/114) consulta o histórico autenticado antes de assinar e alinha os carimbos à resolução de segundos do D1. A [execução oficial](https://github.com/adelrib27/blogger-automation1/actions/runs/44823740700) confirmou o histórico de ambos os CMS. A extração da ficha do Toledo trouxe o modelo e os fatos, mas omitiu a marca do rodapé, levando a uma rejeição segura. O limite de três consultas HTTP por site/dia foi alcançado.
+- [PR #115](https://github.com/adelrib27/blogger-automation1/pull/115) adicionou comparação de parágrafos substanciais, corrigiu o marcador do Toledo para o conteúdo principal e conectou a prova DRAFT ao motor LIVE desativado. [CI verde](https://github.com/adelrib27/blogger-automation1/actions/runs/44824528516). O [inventário privado de homologação WordPress](https://github.com/adelrib27/blogger-automation1/actions/runs/44824680064) confirmou uma oferta inédita com link, mas sem fonte externa suficiente. Identificou outras ofertas elegíveis, incluindo o Rizzo Imperial branco, que ainda aguardava conversão.
+- Produtos agendados para o próximo ensaio controlado: [Toledo Santos Andirá](https://www.santosandira.com.br/produto/32811/) no Blogger depois da renovação UTC e [Rizzo Imperial branco](https://www.rizzoconfeitaria.com.br/vaso-decorativo-imperial-branco-24cm-1-unidade-rizzo) no WordPress após o conversor oficial. A próxima execução deve confirmar autorização factual, R2/D1, DRAFT no CMS e replay com o mesmo ID. O conversor mantém três tentativas por ciclo. Todas as entregas do ensaio se limitam a DRAFT.
+- A operação recorrente exige cadastrar as duas chaves de assinatura e a variável pública no ambiente `v31-editorial-safe` uma vez. O canário usa chaves efêmeras, exclusivas do job verificador. O agendamento permanente e LIVE permanecem desativados até as validações descritas.
+
+O registro abaixo preserva o desenho anterior da C81 como histórico. As instruções de revisor obrigatório foram substituídas por esta atualização.
+
+---
+
 # C81 — integração editorial Blogger e WordPress em DRAFT
 
 ## Prévia de execução

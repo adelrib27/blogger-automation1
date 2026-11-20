@@ -1,26 +1,61 @@
 name: V31 - canário DRAFT com orçamento de pesquisa
 on:
-  schedule:
-    # Renovação da cota UTC antes do canário. Remover após o ensaio.
-    - cron: '17 0 * * *'
   push:
     branches: [main]
     paths:
       - '.github/workflows/v31_autonomous_draft_canary.yml'
+  schedule:
+    # Renovação da cota UTC antes do canário. Remover após o ensaio.
+    - cron: '17 0 * * *'
+  workflow_run:
+    workflows: ['V31 Universal — conversor diario por pedidos reais sem posts']
+    types: [completed]
+    branches: [main]
 permissions:
   contents: read
 jobs:
+  recovery:
+    if: github.event_name == 'push' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42'
+      - name: Confirmar R2 imutável e recuperação D1 em tenant sintético
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
+        run: python -m affiliate_hub_v31.tests.c81_storage_canary
   blogger:
     if: github.event_name == 'schedule'
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: blogger_moveis_para_cada_canto
       pilot: true
+      pilot_sku: shopee:1243712796:23398984325
     secrets: inherit
   wordpress:
-    if: github.event_name == 'push'
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'schedule' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success'
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: wordpress_casa_decoracao
       pilot: true
+      pilot_sku: shopee:400124163:42079451217
     secrets: inherit

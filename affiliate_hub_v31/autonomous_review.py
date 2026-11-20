@@ -191,7 +191,11 @@ def render_article(*, policy, profile, route, sku, title, image, affiliate, clai
                  "claim_text": claim, "source_sha256": source_hash, "matched_excerpt": excerpt}
                 for i, (kind, claim, excerpt) in enumerate(claims)]
     title_for_post = profile["name"] + ": o que conferir antes de comprar"
-    parts = [f'<article lang="pt-BR" data-v31-product-key="{escaped(sku)}">',
+    package = {"product_key": sku, "product_title": title, "product_status": "VERIFIED",
+               "verified_utc": checked, "sources": evidence, "image_sha256": image_hash}
+    revision = payload_digest({"evidence": package, "search_sha256": search_hash})
+    parts = [f'<article lang="pt-BR" data-v31-product-key="{escaped(sku)}" '
+             f'data-v31-evidence-revision="{revision}">',
              "<h2>Confira a ficha técnica</h2>"]
     for fact in evidence:
         parts.append(f'<p><span data-v31-fact-id="{fact["evidence_id"]}">'
@@ -217,9 +221,7 @@ def render_article(*, policy, profile, route, sku, title, image, affiliate, clai
             "html_content": "\n".join(parts), "published_posts": [related] if related else [],
             "keyword_evidence": {"source": "serp_research", "query": profile["query"],
                                  "observed_utc": checked, "response_sha256": search_hash},
-            "evidence_package": {"product_key": sku, "product_title": title,
-                                 "product_status": "VERIFIED", "verified_utc": checked,
-                                 "sources": evidence, "image_sha256": image_hash},
+            "evidence_package": package,
             "used_evidence_ids": [fact["evidence_id"] for fact in evidence]}
 
 
@@ -368,7 +370,7 @@ def _pilot_inventory(*, storage, catalog, route, request, prior_keys, prior_slug
                           Body=json.dumps(offers, ensure_ascii=False).encode())
 
 
-def run(*, site_key, history, digest=None, pilot=False, probe=False):
+def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=False):
     registry = json.loads(PROFILE.read_text(encoding="utf-8"))
     policy = registry.get(site_key)
     route = sites().get(site_key)
@@ -387,7 +389,11 @@ def run(*, site_key, history, digest=None, pilot=False, probe=False):
     prior_prose = set(history["prose"])
     storage = _official_storage()
     sku = None
-    if digest:
+    if pilot:
+        if pilot_sku not in policy["offers"] or digest:
+            raise VerificationError("pilot_requires_registered_offer")
+        sku = pilot_sku
+    elif digest:
         hint = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest), digest=digest)
         sku = hint["product_key"]
 
@@ -424,12 +430,17 @@ def run(*, site_key, history, digest=None, pilot=False, probe=False):
                 else:
                     in_cms = False
                 if in_cms or hashlib.sha256(selected.encode()).hexdigest() in prior_keys:
+                    if pilot:
+                        return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                                "reason": "pilot_offer_already_present"}
                     continue
                 if not catalog.cached_link(selected, route["campaign"]):
                     continue
                 fingerprint = _fingerprint(selected, profile["query"], ANGLE)
                 existing = state.get_job(**tenant, fingerprint=fingerprint)
-                if existing and not probe:
+                if existing and not probe and (existing["status"] == "USED"
+                        or state.ready_has_fresh_evidence(**tenant, fingerprint=fingerprint,
+                                                          now_epoch=int(utcnow().timestamp()))):
                     if pilot:
                         continue
                     envelope.load(**tenant, html_sha256=existing["html_sha256"], release_public_key=public_key)
@@ -458,7 +469,7 @@ def run(*, site_key, history, digest=None, pilot=False, probe=False):
             else:
                 if rejected:
                     raise VerificationError(rejected[-1])
-                if sku is not None:
+                if sku is not None and not pilot:
                     raise VerificationError("product_has_no_trusted_source_profile")
                 return {"site_key": site_key, "status": "NO_NEW_OFFER",
                         "reason": "no_new_offer_with_trusted_source"}
@@ -494,13 +505,15 @@ def main():
     parser.add_argument("--site-key", required=True)
     parser.add_argument("--digest")
     parser.add_argument("--history", type=Path, required=True)
+    parser.add_argument("--pilot-sku")
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--pilot", action="store_true")
     modes.add_argument("--probe", action="store_true")
     args = parser.parse_args()
     try:
         print(json.dumps(run(site_key=args.site_key, digest=args.digest, pilot=args.pilot,
-                             probe=args.probe, history=json.loads(args.history.read_text(encoding="utf-8")))))
+                             pilot_sku=args.pilot_sku, probe=args.probe,
+                             history=json.loads(args.history.read_text(encoding="utf-8")))))
     except VerificationError as error:
         print(str(error))
         return 1

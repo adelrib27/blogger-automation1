@@ -270,11 +270,15 @@ def stage_reviewed_ready(
                 previous = state.get_job(
                     site_key=site_key, campaign=campaign, fingerprint=fingerprint,
                 )
-                if previous is not None and (
-                    previous["product_key"], previous["html_sha256"],
-                    previous["evidence_sha256"],
-                ) != (product_key, html_sha, evidence_sha):
-                    raise ReviewedReadyError("ready_job_binding_conflict")
+                if previous is not None:
+                    if previous["product_key"] != product_key:
+                        raise ReviewedReadyError("ready_job_binding_conflict")
+                    bound = (previous["status"] == "USED" or state.ready_has_fresh_evidence(
+                        site_key=site_key, campaign=campaign, fingerprint=fingerprint, now_epoch=epoch))
+                    if bound and (previous["html_sha256"], previous["evidence_sha256"]) != (html_sha, evidence_sha):
+                        raise ReviewedReadyError("ready_job_binding_conflict")
+                    if not bound:
+                        previous = None
                 # R2 first: a failed SQL commit can leave an unreferenced
                 # object. Identical retries reuse it through conditional PUT.
                 saved = envelope.save(

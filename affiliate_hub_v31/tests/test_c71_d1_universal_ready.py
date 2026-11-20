@@ -203,6 +203,23 @@ class D1ReadyLeaseTests(unittest.TestCase):
             site_key=B, campaign=C, product_key=KEYS[0], product_title=TITLES[0],
             now_epoch=T), original)
 
+    def test_rebind_same_fingerprint_only_after_ready_evidence_expires(self):
+        self.assertTrue(self.acquire())
+        tenant = {"site_key": B, "campaign": C}
+        params = dict(tenant, owner_nonce=NA, fingerprint=ONE, product_key=KEYS[0])
+        self.seed_sql_proof(expires=T+4)
+        self.assertTrue(self.store.reserve_ready(**params, html_sha256=TWO,
+                                                evidence_sha256=THREE, now_epoch=T))
+        self.assertTrue(self.other.ready_has_fresh_evidence(**tenant, fingerprint=ONE, now_epoch=T+3))
+        self.assertFalse(self.store.reserve_ready(**params, html_sha256=ONE,
+                                                 evidence_sha256=THREE, now_epoch=T+3))
+        self.assertFalse(self.other.ready_has_fresh_evidence(**tenant, fingerprint=ONE, now_epoch=T+4))
+        self.seed_sql_proof(sha=FOUR, verified=T+4)
+        self.assertTrue(self.store.reserve_ready(**params, html_sha256=ONE,
+                                                evidence_sha256=FOUR, now_epoch=T+4))
+        self.assertEqual(self.other.get_job(**tenant, fingerprint=ONE)["html_sha256"], ONE)
+        self.assertTrue(self.other.ready_has_fresh_evidence(**tenant, fingerprint=ONE, now_epoch=T+4))
+
     def test_site_campaign_isolation_and_wrong_tenant_fail_closed(self):
         self.assertTrue(self.acquire())
         self.seed_sql_proof()

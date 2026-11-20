@@ -3,14 +3,15 @@
 > **Para um novo chat do projeto:** leia este arquivo, depois [CONTINUIDADE_ESTADO.json](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint C81](affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md), [C80](affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md), [C79](affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md), [C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md), C77/C76/C75/C74/C69 e issue-mestre #54. Conferir GitHub Actions e Cloudflare antes de novas mutações. **Não** usar CHECKPOINT_ATUAL.md legado para V31.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
-**Última conferência contextual:** 20/11/2026 (C81 em andamento: integração R2/D1 e recuperação real confirmadas, revisão independente implementada e piloto DRAFT pendente). Revalidar antes de alterações.
+**Última conferência contextual:** 20/11/2026. A verificação factual autônoma está na main e DRAFT continua em homologação.
 **Protocolo:** [CONTINUIDADE_PROTOCOLO.md](affiliate_hub_v31/CONTINUIDADE_PROTOCOLO.md) · [estado JSON](affiliate_hub_v31/CONTINUIDADE_ESTADO.json).
 
-## C81 — integração editorial e revisão independente em andamento (20/11/2026)
+## C81 — verificação autônoma em homologação
 
-- [Checkpoint C81](affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md) e [guia da revisão independente](affiliate_hub_v31/C81_REVISAO_INDEPENDENTE.md).
-- PRs [#105](https://github.com/adelrib27/blogger-automation1/pull/105), [#106](https://github.com/adelrib27/blogger-automation1/pull/106) e [#107](https://github.com/adelrib27/blogger-automation1/pull/107) na main. O [canário oficial](https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774) comprovou assinatura pública, HTML imutável, READY→USED, repetição idempotente, recuperação após TTL e limpeza de dados sintéticos; também confirmou duas buscas reais Firecrawl.
-- Pendente: configurar revisor no ambiente novo, validar fontes para SKUs inéditos e executar a aprovação real com um DRAFT por plataforma. Não houve DRAFT C81 nem habilitação LIVE.
+- O proprietário definiu automação sem aprovação humana por artigo. O verificador consulta fontes por conta própria, assina separadamente do gerador e entrega somente DRAFT durante a homologação. A autorização LIVE será dada uma vez por versão da política, depois das provas operacionais.
+- [Checkpoint C81](affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md), [guia técnico](affiliate_hub_v31/C81_REVISAO_INDEPENDENTE.md) e [política LIVE proposta](affiliate_hub_v31/C81_POLITICA_LIVE_AUTONOMA.md).
+- [Canário real](https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026) confirmou R2 e READY para o WordPress. A entrega preservou um rascunho anterior do mesmo SKU. [Histórico autenticado](https://github.com/adelrib27/blogger-automation1/actions/runs/44823740700) desbloqueia a seleção de ofertas inéditas nas duas plataformas.
+- Próximos testes reais: Blogger após a renovação da cota de pesquisa UTC e WordPress depois da conversão no agendamento Shopee. Exigir GET autenticado, título e HTML exatos e replay sem segundo POST. O agendamento permanente DRAFT exige cadastrar as chaves do verificador uma única vez. LIVE automático permanece desativado.
 
 ## C80 — credencial GitHub D1 e concorrência REAL homologadas (20/11/2026)
 
