@@ -175,6 +175,11 @@ def stage_reviewed_ready(
                 or route.get("publish_enabled") is not False):
             raise ReviewedReadyError("registered_draft_only_site_required")
         campaign = route["campaign"]
+        # WordPress identity is a canonical URL in routing.sites; never
+        # authorize SEO or editorial review on an unrelated hostname.
+        if (route["platform"] == "wordpress"
+                and route.get("identifier") != site_url):
+            raise ReviewedReadyError("wordpress_site_origin_mismatch")
         title, image, affiliate = _single_verified_offer(
             catalog, site_key=site_key, product_key=product_key,
             verified_site_route=route,
