@@ -12,34 +12,52 @@ permissions:
   contents: read
 
 jobs:
-  plan:
+  authenticated-history:
     if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 5
     outputs:
-      sites: ${{ steps.select.outputs.sites }}
+      history: ${{ steps.read.outputs.history }}
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - id: select
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - id: read
         env:
           SITE: ${{ inputs.site_key }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
         run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
+          python - <<'PY'
           import json, os
+          from pathlib import Path
           from affiliate_hub_v31.autonomous_review import PROFILE
+          from affiliate_hub_v31.reviewed_draft_delivery import read_draft_history
           from affiliate_hub_v31.site_request_queue import load_requests
-          selected = os.environ.get("SITE")
+          selected = os.environ["SITE"]
           profiles = json.loads(PROFILE.read_text(encoding="utf-8"))
-          sites = [item["site_key"] for item in load_requests()
-                   if item["site_key"] in profiles and (not selected or item["site_key"] == selected)]
-          if not sites:
+          if selected not in profiles or not any(r["site_key"] == selected for r in load_requests()):
               raise SystemExit("no_enabled_autonomous_site")
-          print("sites=" + json.dumps(sites))
+          try:
+              history = read_draft_history(selected)
+          except Exception:
+              raise SystemExit("authenticated_cms_history_failed_closed") from None
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              print("history=" + json.dumps(history), file=output)
+          print("AUTHENTICATED_CMS_HISTORY_READ")
           PY
 
   independent-verifier:
-    needs: plan
+    needs: authenticated-history
 
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
@@ -58,6 +76,7 @@ jobs:
         env:
           SITE: ${{ inputs.site_key }}
           PILOT: ${{ inputs.pilot && 'true' || 'false' }}
+          CMS_HISTORY: ${{ needs.authenticated-history.outputs.history }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
@@ -72,7 +91,10 @@ jobs:
           V31_REVIEW_RELEASE_PUBLIC_KEY_HEX: ${{ vars.V31_AUTONOMOUS_RELEASE_PUBLIC_KEY_HEX }}
         run: |
           set -euo pipefail
-          args=(--site-key "$SITE")
+          history="$(mktemp)"
+          trap 'rm -f "$history"' EXIT
+          printf '%s' "$CMS_HISTORY" > "$history"
+          args=(--site-key "$SITE" --history "$history")
           if [[ "$PILOT" == true ]]; then args+=(--pilot); fi
           if ! result="$(python -m affiliate_hub_v31.autonomous_review "${args[@]}")"; then
             echo "$result"
@@ -125,10 +147,14 @@ jobs:
           args = [sys.executable, "-m", "affiliate_hub_v31.reviewed_draft_delivery",
                   "--site-key", result["site_key"], "--fingerprint", result["fingerprint"],
                   "--execute-draft", "--autonomous"]
-          first = subprocess.check_output(args, text=True)
-          second = subprocess.check_output(args, text=True)
-          if json.loads(first) != json.loads(second):
+          verified = []
+          for _ in range(2):
+              attempt = subprocess.run(args, capture_output=True, text=True, check=False)
+              print(attempt.stdout.strip())
+              if attempt.returncode:
+                  raise SystemExit("autonomous_draft_delivery_failed_closed")
+              verified.append(json.loads(attempt.stdout))
+          if verified[0] != verified[1]:
               raise SystemExit("draft_reconciliation_mismatch")
-          print(first.strip())
           print("DRAFT_HTML_AND_REPLAY_VERIFIED")
           PY

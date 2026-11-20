@@ -310,7 +310,8 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
             pass
     return render_article(policy=policy, profile=profile, route=route, sku=sku, title=title,
                           image=image, affiliate=affiliate, claims=claims, source_hash=source_hash,
-                          image_hash=image_hash, related=related, checked=utcnow().isoformat(),
+                          image_hash=image_hash, related=related,
+                          checked=utcnow().isoformat(timespec="seconds"),
                           search_hash=search_hash)
 
 
@@ -339,7 +340,24 @@ def _selection(catalog, route, request, policy, sku):
                     "name": template["name"] + " " + gtin}
 
 
-def run(*, site_key, digest=None, pilot=False, probe=False):
+def _pilot_inventory(*, storage, catalog, route, request, prior_keys, prior_slugs):
+    run_id = os.environ.get("GITHUB_RUN_ID", "")
+    if not run_id.isascii() or not run_id.isdecimal():
+        return
+    from .automatic_wordpress_drafts import _product_slug
+    site = route["site_key"]
+    plan = preview_site_launch(catalog, topic=request["topic"], platform=route["platform"],
+                               site_key=site, max_items=24, max_per_shop=4)
+    offers = [{"sku": item["product_key"], "title": item["title"]}
+              for item in plan["approved_catalog_candidates"] if item["affiliate_url"]
+              and item["product_key"] not in prior_keys
+              and _product_slug(site, item["product_key"]) not in prior_slugs]
+    key = f"v31/private-review/research/v1/autonomous-{run_id}-{site}.json"
+    storage.s3.put_object(Bucket=storage.bucket, Key=key, ContentType="application/json",
+                          Body=json.dumps(offers, ensure_ascii=False).encode())
+
+
+def run(*, site_key, history, digest=None, pilot=False, probe=False):
     registry = json.loads(PROFILE.read_text(encoding="utf-8"))
     policy = registry.get(site_key)
     route = sites().get(site_key)
@@ -347,13 +365,18 @@ def run(*, site_key, digest=None, pilot=False, probe=False):
     if (not policy or not route or route["publish_enabled"] is not False or not request
             or route["platform"] == "wordpress" and policy["home"] != route["identifier"]):
         raise VerificationError("autonomous_site_not_enabled")
+    if (history.get("site_key") != site_key or not isinstance(history.get("keys"), list)
+            or not isinstance(history.get("slugs"), list) or type(history.get("count")) is not int):
+        raise VerificationError("authenticated_cms_history_required")
+    if request["articles"] is not None and history["count"] >= request["articles"]:
+        return {"site_key": site_key, "status": "NO_NEW_OFFER", "reason": "site_quota_reached"}
+    prior_keys = set(history["keys"])
+    prior_slugs = set(history["slugs"])
     storage = _official_storage()
     sku = None
     if digest:
         hint = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest), digest=digest)
         sku = hint["product_key"]
-    elif pilot or probe:
-        sku = next(iter(policy["offers"]), None)
 
     state = UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(allow_mutations=True))
     envelope = ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage))
@@ -377,24 +400,52 @@ def run(*, site_key, digest=None, pilot=False, probe=False):
         if not storage.restore_to(file):
             raise VerificationError("official_catalog_missing")
         with Catalog(file) as catalog:
+            if pilot:
+                _pilot_inventory(storage=storage, catalog=catalog, route=route, request=request,
+                                 prior_keys=prior_keys, prior_slugs=prior_slugs)
+            rejected = []
             for selected, profile in _selection(catalog, route, request, policy, sku):
+                if route["platform"] == "wordpress":
+                    from .automatic_wordpress_drafts import _product_slug
+                    in_cms = _product_slug(site_key, selected) in prior_slugs
+                else:
+                    in_cms = False
+                if in_cms or selected in prior_keys:
+                    continue
+                if not catalog.cached_link(selected, route["campaign"]):
+                    continue
                 fingerprint = _fingerprint(selected, profile["query"], ANGLE)
                 existing = state.get_job(**tenant, fingerprint=fingerprint)
-                if not existing or probe:
-                    break
-                if pilot:
-                    raise VerificationError("pilot_job_already_exists")
-                if existing["status"] == "USED" and sku is None:
+                if existing and not probe:
+                    if pilot:
+                        continue
+                    envelope.load(**tenant, html_sha256=existing["html_sha256"], release_public_key=public_key)
+                    return {"site_key": site_key, "fingerprint": fingerprint, "public_key": public_key,
+                            "status": existing["status"]}
+                try:
+                    article = verify_offer(policy=policy, profile=profile, route=route, sku=selected,
+                                           catalog=catalog, state=state,
+                                           token=os.environ.get("FIRECRAWL_API_KEY", ""))
+                except VerificationError as error:
+                    code = str(error)
+                    if code not in {"catalog_product_identity_changed",
+                                    "external_product_identity_unverified", "search_intent_unverified",
+                                    "trusted_structured_source_unavailable", "affiliate_target_unverified"} \
+                            and not code.startswith("external_fact_missing_"):
+                        raise
+                    rejected.append(code)
+                    if len(rejected) >= policy["daily_research_attempts"]:
+                        raise VerificationError(code) from None
                     continue
-                envelope.load(**tenant, html_sha256=existing["html_sha256"], release_public_key=public_key)
-                return {"site_key": site_key, "fingerprint": fingerprint, "public_key": public_key,
-                        "status": existing["status"]}
+                else:
+                    break
             else:
+                if rejected:
+                    raise VerificationError(rejected[-1])
                 if sku is not None:
                     raise VerificationError("product_has_no_trusted_source_profile")
-                return {"site_key": site_key, "status": "NO_NEW_OFFER"}
-            article = verify_offer(policy=policy, profile=profile, route=route, sku=selected, catalog=catalog,
-                                   state=state, token=os.environ.get("FIRECRAWL_API_KEY", ""))
+                return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                        "reason": "no_new_offer_with_trusted_source"}
             now = utcnow()
             try:
                 payload = prepare_review_payload(article=article, catalog=catalog, now=now)
@@ -426,12 +477,14 @@ def main():
     parser = argparse.ArgumentParser(description="Verificar fontes e preparar artigo V31")
     parser.add_argument("--site-key", required=True)
     parser.add_argument("--digest")
+    parser.add_argument("--history", type=Path, required=True)
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--pilot", action="store_true")
     modes.add_argument("--probe", action="store_true")
     args = parser.parse_args()
     try:
-        print(json.dumps(run(site_key=args.site_key, digest=args.digest, pilot=args.pilot, probe=args.probe)))
+        print(json.dumps(run(site_key=args.site_key, digest=args.digest, pilot=args.pilot,
+                             probe=args.probe, history=json.loads(args.history.read_text(encoding="utf-8")))))
     except VerificationError as error:
         print(str(error))
         return 1
