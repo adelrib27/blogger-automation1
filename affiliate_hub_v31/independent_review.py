@@ -49,6 +49,27 @@ class _NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def _proposed_evidence(article: dict) -> dict:
+    evidence = article.get("evidence_package")
+    if (not isinstance(evidence, dict) or evidence.get("product_status") != "PROPOSED"
+            or not isinstance(evidence.get("sources"), list)
+            or not all(isinstance(source, dict) and source.get("authorized") is False
+                       and source.get("review_status") == "PROPOSED"
+                       for source in evidence["sources"])):
+        raise IndependentReviewError("review_candidate_must_contain_only_proposed_evidence")
+    return evidence
+
+
+def _material_for_review(article: dict) -> dict:
+    evidence = _proposed_evidence(article)
+    prepared = {
+        **evidence, "product_status": "VERIFIED",
+        "sources": [{**source, "authorized": True, "review_status": "AUTHORIZED"}
+                    for source in evidence["sources"]],
+    }
+    return {**article, "evidence_package": prepared}
+
+
 def decode_candidate(raw: bytes, *, digest: str) -> dict:
     if (not isinstance(digest, str) or not HEX_SHA.fullmatch(digest)
             or not isinstance(raw, bytes) or not 1 <= len(raw) <= MAX_CANDIDATE_BYTES
@@ -64,6 +85,7 @@ def decode_candidate(raw: bytes, *, digest: str) -> dict:
             or canonical != raw or not isinstance(article["site_key"], str)):
         raise IndependentReviewError("review_candidate_schema_invalid")
     scan_final_html(article["html_content"])
+    _proposed_evidence(article)
     return article
 
 
@@ -191,8 +213,11 @@ def prepare_review_payload(*, article: dict, catalog: Catalog, now: datetime) ->
 @contextmanager
 def _review_context(*, site_key: str, digest: str):
     storage = _official_storage()
-    article = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest),
-                               digest=digest)
+    # Prepare the would-be approved material only in memory. C77 will persist
+    # it only when the separately signed receipt is valid for these bytes.
+    proposal = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest),
+                                digest=digest)
+    article = _material_for_review(proposal)
     with tempfile.TemporaryDirectory(prefix="v31-review-catalog-") as directory:
         path = Path(directory) / "catalog.sqlite3"
         if not storage.restore_to(path):
