@@ -26,3 +26,12 @@
 - Migration `affiliate_hub_v31/migrations/c71_universal_ready_d1.sql` executada diretamente no D1 via API Cloudflare **somente após verificar id e nome do banco**. Cinco comandos `CREATE TABLE/INDEX IF NOT EXISTS` sucesso. Consulta `sqlite_master` confirmou as quatro tabelas `v31_ready_jobs`, `v31_ready_leases`, `v31_search_budget`, `v31_verified_evidence`.
 - READ replication desligada; sem Worker, cron, token GitHub D1 novo ou publicação. Dados Shopee e CMS não foram tocados.
 - Próximo ensaio C73.2: dados sintéticos `v31_c73_canary_*` no novo banco somente, testar atomicidade `RETURNING`, contenção de lease, dedup READY, budget e 429, depois limpeza por `site_key`, contagens zero. Não escrever nomes de blogs reais neste teste.
+
+
+## C73.2 — D1 real: seis verificações funcionais PASS e limpeza confirmada
+
+- O novo banco exclusivo `v31-universal-ready-safe` UUID `e16554d8-27e8-40ca-9b6e-5f6d7b54d076` foi verificado por nome+ID antes das operações e recebeu somente fixture sintética `site_key=v31_c73_canary_blog`, `campaign=v31_c73_canary`; nenhum SKU/produto de CSV ou blog real foi escrito.
+- Testes realizados na própria API D1 SQL/RETURNING: `lease_contention=true` (segundo proprietário recusado enquanto lease válido), `ready_idempotent=true` (duplicata recusada), `same_sku_cooldown=true` (outro ângulo do mesmo SKU bloqueado), `daily_budget_bounded=true` (terceira tentativa bloqueada com cap 2), `breaker_429=true` (estado bloqueado persiste), `tenant_tag_isolated=true`. **`all_pass=true`**.
+- Limpeza `finally` efetuou `DELETE` somente para o tenant sintético nas quatro tabelas; leitura de `jobs, leases, budgets, evidence` retornou tudo zero: `fixture_cleanup_zero=true`.
+- Não houve escrita em WordPress, Blogger, Vida Pet, catálogo R2, Shopee nem qualquer Firecrawl SEARCH/scrape. Apenas novo D1 V31 e dados sintéticos transitórios.
+- **C73 SAFE concluída:** D1 real e SQL atômico comprovados, mas o adaptador `d1_universal_ready.py` ainda opera via *query runner* abstrato; não há credential GitHub D1 dedicada ao V31, Worker, binding, sincronização REAL com writer nem chamada real Firecrawl. Não inferir funcionamento de integração Writer/Evidence apenas a partir da migration.
