@@ -19,3 +19,10 @@
 - GitHub V31 `event=schedule` reais de 19/11: fila #44600350780 failure pós 3 links Shopee; Blogger #44609598601 SUCCESS DRAFT_CREATED 0 LIVE; WP #44614079395 SUCCESS DRAFT_CREATED 0 LIVE. Em 20/11 10h34 Recife sem novos 3 schedules na listagem. Auditoria CMS 20/11: Blogger 3 LIVE/3 DRAFT, WP 45 LIVE/59 DRAFT, origem de +2 LIVE não atribuída ao V31.
 
 **Estado inicial:** C73 prévia apenas no GitHub, D1 universal novo ainda não criado ao gravar este checkpoint. Segredos nunca aparecem em commits/logs.
+
+## C73.1 — D1 V31 dedicado criado e esquema aplicado
+
+- Conta Cloudflare principal `b1515400afe32581994c4d3f038f835f`; banco D1 **`v31-universal-ready-safe`** novo, UUID `e16554d8-27e8-40ca-9b6e-5f6d7b54d076`, criado 20/11/2026 14:23:40Z. Nenhum banco anterior foi modificado.
+- Migration `affiliate_hub_v31/migrations/c71_universal_ready_d1.sql` executada diretamente no D1 via API Cloudflare **somente após verificar id e nome do banco**. Cinco comandos `CREATE TABLE/INDEX IF NOT EXISTS` sucesso. Consulta `sqlite_master` confirmou as quatro tabelas `v31_ready_jobs`, `v31_ready_leases`, `v31_search_budget`, `v31_verified_evidence`.
+- READ replication desligada; sem Worker, cron, token GitHub D1 novo ou publicação. Dados Shopee e CMS não foram tocados.
+- Próximo ensaio C73.2: dados sintéticos `v31_c73_canary_*` no novo banco somente, testar atomicidade `RETURNING`, contenção de lease, dedup READY, budget e 429, depois limpeza por `site_key`, contagens zero. Não escrever nomes de blogs reais neste teste.
