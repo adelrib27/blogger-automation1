@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import hmac
 import json
 import os
 import re
 import tempfile
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from secrets import token_hex
@@ -19,11 +19,12 @@ from .catalog import Catalog
 from .d1_http_runner import CloudflareD1HTTPRunner
 from .d1_universal_ready import UniversalD1ReadyState
 from .final_fact_gate import reviewed_text_digest, scan_final_html, verify_final_html_facts
+from .future_blog_seo import audit_future_article
 from .private_ready_envelope import ImmutablePrivateReadyEnvelope
 from .r2_private_ready_backend import ACCOUNT_ID, BUCKET, R2PrivateReadyBackend, _error_response
 from .r2_state import R2State
-from .review_signatures import sign_release
-from .reviewed_ready_promotion import _json_sha, review_payload, stage_reviewed_ready
+from .review_signatures import approval_receipt, payload_digest, sign_release
+from .reviewed_ready_promotion import _json_sha, _offer_in_same_html, review_payload, stage_reviewed_ready
 from .routing import sites
 from .site_request_queue import load_requests
 
@@ -154,15 +155,16 @@ def require_independent_approval(env: dict, *, site_key: str, digest: str) -> st
     raise IndependentReviewError("independent_approval_missing")
 
 
-def sign_approved_candidate(*, article: dict, catalog: Catalog, now: datetime,
-                            hmac_key: bytes, release_private_key: str) -> tuple[dict, str]:
+def prepare_review_payload(*, article: dict, catalog: Catalog, now: datetime) -> dict:
     site_key = article["site_key"]
     route = sites().get(site_key)
-    if route is None or route.get("publish_enabled") is not False or len(hmac_key) < 32:
-        raise IndependentReviewError("review_route_or_signing_key_invalid")
+    if route is None or route.get("publish_enabled") is not False:
+        raise IndependentReviewError("review_route_invalid")
     product_key = article["product_key"]
-    title, _, _ = _single_verified_offer(catalog, site_key=site_key, product_key=product_key)
+    title, image, affiliate = _single_verified_offer(
+        catalog, site_key=site_key, product_key=product_key, verified_site_route=route)
     html_content = article["html_content"]
+    _offer_in_same_html(html_content, image=image, affiliate=affiliate)
     hashes = sorted({reviewed_text_digest(t) for t in scan_final_html(html_content).unbound})
     verify_final_html_facts(
         html_content=html_content, evidence_package=article["evidence_package"],
@@ -172,7 +174,11 @@ def sign_approved_candidate(*, article: dict, catalog: Catalog, now: datetime,
     )
     seo_context = {field: article[field] for field in SEO_FIELDS}
     seo_context["title"] = article["article_title"]
-    payload = review_payload(
+    seo = audit_future_article(**seo_context)
+    if (seo["status"] != "READY_FOR_EDITORIAL_SAFE_REVIEW"
+            or seo["blockers"] or seo["keyword_source_verified"] is not True):
+        raise IndependentReviewError("review_candidate_seo_failed")
+    return review_payload(
         site_key=site_key, campaign=route["campaign"], product_key=product_key,
         site_url=article["site_url"], article_url=article["article_url"],
         article_title=article["article_title"], primary_query=article["primary_query"],
@@ -180,18 +186,10 @@ def sign_approved_candidate(*, article: dict, catalog: Catalog, now: datetime,
         evidence_sha256=_json_sha(article["evidence_package"]),
         seo_context_sha256=_json_sha(seo_context), reviewed_text_hashes=hashes,
     )
-    canonical = json.dumps(payload, ensure_ascii=False, sort_keys=True,
-                           separators=(",", ":")).encode("utf-8")
-    attestation = {"payload": payload, "signature": hmac.new(
-        hmac_key, canonical, hashlib.sha256).hexdigest()}
-    return attestation, sign_release(attestation, private_key=release_private_key)
 
 
-def review_and_stage(*, site_key: str, digest: str) -> dict:
-    require_independent_approval(os.environ, site_key=site_key, digest=digest)
-    hmac_key = bytes.fromhex(os.environ.get("V31_READY_REVIEW_HMAC_KEY", ""))
-    private_key = os.environ.get("V31_REVIEW_RELEASE_PRIVATE_KEY_HEX", "")
-    public_key = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", "")
+@contextmanager
+def _review_context(*, site_key: str, digest: str):
     storage = _official_storage()
     article = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest),
                                digest=digest)
@@ -201,18 +199,38 @@ def review_and_stage(*, site_key: str, digest: str) -> dict:
             raise IndependentReviewError("review_catalog_missing")
         with Catalog(path) as catalog:
             now = datetime.now(timezone.utc)
-            attestation, signature = sign_approved_candidate(
-                article=article, catalog=catalog, now=now,
-                hmac_key=hmac_key, release_private_key=private_key,
-            )
-            return stage_reviewed_ready(
-                **article, catalog=catalog, owner_nonce=token_hex(16), now=now,
-                state=UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(
-                    allow_mutations=True)),
-                envelope=ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage)),
-                independent_review_key=hmac_key, attestation=attestation,
-                release_signature=signature, release_public_key=public_key,
-            )
+            payload = prepare_review_payload(article=article, catalog=catalog, now=now)
+            yield storage, catalog, article, payload, now
+
+
+def authorize_receipt(*, site_key: str, digest: str, payload_sha256: str) -> dict:
+    require_independent_approval(os.environ, site_key=site_key, digest=digest)
+    receipt = approval_receipt(
+        candidate_sha256=digest, payload_sha256=payload_sha256,
+        key=bytes.fromhex(os.environ.get("V31_READY_REVIEW_HMAC_KEY", "")),
+    )
+    release = sign_release(receipt, private_key=os.environ.get(
+        "V31_REVIEW_RELEASE_PRIVATE_KEY_HEX", ""))
+    return {"hmac": receipt["signature"], "release_signature": release}
+
+
+def stage_approved_receipt(*, site_key: str, digest: str, payload_sha256: str) -> dict:
+    with _review_context(site_key=site_key, digest=digest) as (
+        storage, catalog, article, payload, now,
+    ):
+        if payload_digest(payload) != payload_sha256:
+            raise IndependentReviewError("review_payload_changed")
+        attestation = {"payload": payload, "candidate_sha256": digest,
+                       "signature": os.environ.get("V31_APPROVAL_HMAC", "")}
+        return stage_reviewed_ready(
+            **article, catalog=catalog, owner_nonce=token_hex(16), now=now,
+            state=UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(
+                allow_mutations=True)),
+            envelope=ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage)),
+            independent_review_key=None, attestation=attestation,
+            release_signature=os.environ.get("V31_APPROVAL_RELEASE_SIGNATURE", ""),
+            release_public_key=os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", ""),
+        )
 
 
 def main() -> int:
@@ -224,16 +242,28 @@ def main() -> int:
     export.add_argument("--site-key", required=True)
     export.add_argument("--digest", required=True)
     export.add_argument("--file", required=True, type=Path)
-    approve = actions.add_parser("stage")
-    approve.add_argument("--site-key", required=True)
-    approve.add_argument("--digest", required=True)
+    for action in ("prepare", "authorize", "stage"):
+        command = actions.add_parser(action)
+        command.add_argument("--site-key", required=True)
+        command.add_argument("--digest", required=True)
+        if action != "prepare":
+            command.add_argument("--payload-sha256", required=True)
     args = parser.parse_args()
     try:
         if args.action == "stage":
-            result = review_and_stage(site_key=args.site_key, digest=args.digest)
+            result = stage_approved_receipt(site_key=args.site_key, digest=args.digest,
+                                            payload_sha256=args.payload_sha256)
             if result.get("job_status") not in ("READY", "USED"):
                 raise IndependentReviewError("review_ready_reservation_unverified")
             print(json.dumps({"fingerprint": result["fingerprint"], "candidate": args.digest}))
+        elif args.action == "prepare":
+            with _review_context(site_key=args.site_key, digest=args.digest) as (
+                _, _, _, payload, _,
+            ):
+                print(json.dumps({"payload_sha256": payload_digest(payload)}))
+        elif args.action == "authorize":
+            print(json.dumps(authorize_receipt(site_key=args.site_key, digest=args.digest,
+                                               payload_sha256=args.payload_sha256)))
         elif args.action == "submit":
             with args.file.open("rb") as stream:
                 raw = stream.read(MAX_CANDIDATE_BYTES + 1)

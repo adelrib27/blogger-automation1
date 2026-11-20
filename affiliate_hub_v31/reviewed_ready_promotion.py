@@ -25,6 +25,7 @@ from .d1_universal_ready import UniversalD1ReadyState, D1SafeError
 from .final_fact_gate import FinalFactGateError, verify_final_html_facts
 from .future_blog_seo import FutureSEOError, audit_future_article
 from .routing import sites
+from .review_signatures import verify_public_attestation
 from .universal_evidence_ready import (
     UniversalReadyError, UniversalReadyPolicy, _fingerprint,
     evidence_whitelist,
@@ -154,7 +155,7 @@ def stage_reviewed_ready(
     intent: str, keyword_evidence: dict,
     published_posts: list[dict], cluster_id: str,
     evidence_package: dict, used_evidence_ids: list[str],
-    attestation: dict, independent_review_key: bytes,
+    attestation: dict, independent_review_key: bytes | None,
     owner_nonce: str, now: datetime,
     policy: UniversalReadyPolicy = UniversalReadyPolicy(),
     envelope: ImmutablePrivateReadyEnvelope | None = None,
@@ -172,6 +173,8 @@ def stage_reviewed_ready(
         raise ReviewedReadyError("isolated_d1_state_required")
     if not isinstance(now, datetime) or now.tzinfo is None:
         raise ReviewedReadyError("verified_clock_required")
+    if release_public_key is not None and envelope is None:
+        raise ReviewedReadyError("approved_release_requires_private_envelope")
     if envelope is not None:
         from .private_ready_envelope import ImmutablePrivateReadyEnvelope
 
@@ -236,9 +239,15 @@ def stage_reviewed_ready(
             angle=angle, html_sha256=html_sha, evidence_sha256=evidence_sha,
             seo_context_sha256=seo_sha, reviewed_text_hashes=hashes,
         )
-        _check_review_signature(
-            expected, attestation=attestation, key=independent_review_key,
-        )
+        if independent_review_key is not None or release_public_key is None:
+            _check_review_signature(
+                expected, attestation=attestation, key=independent_review_key,
+            )
+        else:
+            verify_public_attestation(
+                expected, attestation=attestation, signature=release_signature,
+                public_key=release_public_key, require_receipt=True,
+            )
         verified = verify_final_html_facts(
             html_content=html_content, evidence_package=evidence_package,
             product_key=product_key, product_title=title,

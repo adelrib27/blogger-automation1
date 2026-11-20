@@ -15,6 +15,7 @@ from affiliate_hub_v31.final_fact_gate import reviewed_text_digest
 from affiliate_hub_v31 import reviewed_ready_promotion as promo
 from affiliate_hub_v31 import reviewed_draft_delivery as delivery
 from affiliate_hub_v31 import independent_review
+from affiliate_hub_v31.review_signatures import approval_receipt, payload_digest, sign_release
 from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
 from affiliate_hub_v31.private_ready_envelope import ImmutablePrivateReadyEnvelope
 from affiliate_hub_v31.tests.test_c71_d1_universal_ready import SqliteQuery
@@ -336,17 +337,19 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
         self.assertEqual(independent_review.decode_candidate(raw, digest=digest), article)
         with self.assertRaises(independent_review.IndependentReviewError):
             independent_review.decode_candidate(raw + b" ", digest=digest)
-        with patch.object(independent_review, "sites", return_value=ROUTES), patch(
-            "affiliate_hub_v31.article_commerce.sites", return_value=ROUTES,
-        ):
-            attestation, signature = independent_review.sign_approved_candidate(
-                article=article, catalog=self.catalog, now=NOW, hmac_key=KEY,
-                release_private_key=private.private_bytes_raw().hex(),
-            )
+        with patch.object(independent_review, "sites", return_value=ROUTES):
+            payload = independent_review.prepare_review_payload(
+                article=article, catalog=self.catalog, now=NOW)
+        receipt = approval_receipt(candidate_sha256=digest, payload_sha256=payload_digest(payload),
+                                   key=KEY)
+        signature = sign_release(receipt, private_key=private.private_bytes_raw().hex())
+        attestation = {"payload": payload, "signature": receipt["signature"],
+                       "candidate_sha256": digest}
         backend = ConditionalMemoryBackend()
         envelope = ImmutablePrivateReadyEnvelope(backend=backend)
         ready = promo.stage_reviewed_ready(
-            **{**params, "attestation": attestation}, envelope=envelope,
+            **{**params, "attestation": attestation, "independent_review_key": None},
+            envelope=envelope,
             release_signature=signature, release_public_key=public_key,
         )
         saved = envelope.load(site_key=SITE, campaign=CAMPAIGN,

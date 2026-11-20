@@ -18,19 +18,85 @@ on:
 
 permissions:
   contents: read
-concurrency:
-  group: v31-editorial-catalog-single-writer
-  cancel-in-progress: false
-
 jobs:
-  independent-review:
+  prepare-private-candidate:
     if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 10
+    outputs:
+      payload_sha256: ${{ steps.prepare.outputs.payload_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar cliente de leitura do catálogo
+        run: python -m pip install 'boto3>=1.36,<2'
+      - name: Conferir candidato e calcular digest editorial
+        id: prepare
+        env:
+          V31_SITE_KEY: ${{ inputs.site_key }}
+          V31_CANDIDATE_DIGEST: ${{ inputs.candidate_digest }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          result="$(python -m affiliate_hub_v31.independent_review prepare --site-key "$V31_SITE_KEY" --digest "$V31_CANDIDATE_DIGEST")"
+          digest="$(printf '%s' "$result" | python -c 'import json, sys; print(json.load(sys.stdin)["payload_sha256"])')"
+          [[ "$digest" =~ ^[0-9a-f]{64}$ ]]
+          printf 'payload_sha256=%s\n' "$digest" >> "$GITHUB_OUTPUT"
+
+  independent-review:
+    needs: prepare-private-candidate
     runs-on: ubuntu-latest
     environment: v31-independent-review
     timeout-minutes: 12
     permissions:
       contents: read
       actions: read
+    outputs:
+      hmac: ${{ steps.authorize.outputs.hmac }}
+      release_signature: ${{ steps.authorize.outputs.release_signature }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar dependências do revisor
+        run: python -m pip install 'cryptography>=42'
+      - name: Verificar a aprovação registrada e assinar os digests
+        id: authorize
+        env:
+          V31_SITE_KEY: ${{ inputs.site_key }}
+          V31_CANDIDATE_DIGEST: ${{ inputs.candidate_digest }}
+          V31_PAYLOAD_DIGEST: ${{ needs.prepare-private-candidate.outputs.payload_sha256 }}
+          V31_PROTECTED_REVIEWER: ${{ vars.V31_PROTECTED_REVIEWER }}
+          V31_ACTIONS_READ_TOKEN: ${{ github.token }}
+          V31_READY_REVIEW_HMAC_KEY: ${{ secrets.V31_READY_REVIEW_HMAC_KEY }}
+          V31_REVIEW_RELEASE_PRIVATE_KEY_HEX: ${{ secrets.V31_REVIEW_RELEASE_PRIVATE_KEY_HEX }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          result="$(python -m affiliate_hub_v31.independent_review authorize --site-key "$V31_SITE_KEY" --digest "$V31_CANDIDATE_DIGEST" --payload-sha256 "$V31_PAYLOAD_DIGEST")"
+          hmac="$(printf '%s' "$result" | python -c 'import json, sys; print(json.load(sys.stdin)["hmac"])')"
+          sig="$(printf '%s' "$result" | python -c 'import json, sys; print(json.load(sys.stdin)["release_signature"])')"
+          [[ "$hmac" =~ ^[0-9a-f]{64}$ && "$sig" =~ ^[0-9a-f]{128}$ ]]
+          printf 'hmac=%s\nrelease_signature=%s\n' "$hmac" "$sig" >> "$GITHUB_OUTPUT"
+          echo 'V31_APPROVAL_RECEIPT_SIGNED'
+
+  stage-ready:
+    needs: [prepare-private-candidate, independent-review]
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 10
     outputs:
       fingerprint: ${{ steps.stage.outputs.fingerprint }}
     steps:
@@ -40,17 +106,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Instalar dependências do revisor
+      - name: Instalar dependências do armazenamento
         run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42'
-      - name: Verificar aprovação registrada, assinar e registrar READY
+      - name: Revalidar candidato, recibo e registrar READY
         id: stage
         env:
           V31_SITE_KEY: ${{ inputs.site_key }}
           V31_CANDIDATE_DIGEST: ${{ inputs.candidate_digest }}
-          V31_PROTECTED_REVIEWER: ${{ vars.V31_PROTECTED_REVIEWER }}
-          V31_ACTIONS_READ_TOKEN: ${{ github.token }}
-          V31_READY_REVIEW_HMAC_KEY: ${{ secrets.V31_READY_REVIEW_HMAC_KEY }}
-          V31_REVIEW_RELEASE_PRIVATE_KEY_HEX: ${{ secrets.V31_REVIEW_RELEASE_PRIVATE_KEY_HEX }}
+          V31_PAYLOAD_DIGEST: ${{ needs.prepare-private-candidate.outputs.payload_sha256 }}
+          V31_APPROVAL_HMAC: ${{ needs.independent-review.outputs.hmac }}
+          V31_APPROVAL_RELEASE_SIGNATURE: ${{ needs.independent-review.outputs.release_signature }}
           V31_REVIEW_RELEASE_PUBLIC_KEY_HEX: ${{ vars.V31_REVIEW_RELEASE_PUBLIC_KEY_HEX }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
@@ -63,7 +128,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          result="$(python -m affiliate_hub_v31.independent_review stage --site-key "$V31_SITE_KEY" --digest "$V31_CANDIDATE_DIGEST")"
+          result="$(python -m affiliate_hub_v31.independent_review stage --site-key "$V31_SITE_KEY" --digest "$V31_CANDIDATE_DIGEST" --payload-sha256 "$V31_PAYLOAD_DIGEST")"
           fingerprint="$(printf '%s' "$result" | python -c 'import json, sys; print(json.load(sys.stdin)["fingerprint"])')"
           [[ "$fingerprint" =~ ^[0-9a-f]{64}$ ]]
           printf 'fingerprint=%s\n' "$fingerprint" >> "$GITHUB_OUTPUT"
@@ -71,7 +136,10 @@ jobs:
 
   deliver-draft:
     if: inputs.create_draft == true
-    needs: independent-review
+    needs: stage-ready
+    concurrency:
+      group: v31-editorial-catalog-single-writer
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     timeout-minutes: 10
@@ -87,7 +155,7 @@ jobs:
       - name: Verificar assinatura pública e entregar apenas DRAFT
         env:
           V31_SITE_KEY: ${{ inputs.site_key }}
-          V31_READY_FINGERPRINT: ${{ needs.independent-review.outputs.fingerprint }}
+          V31_READY_FINGERPRINT: ${{ needs.stage-ready.outputs.fingerprint }}
           V31_REVIEW_RELEASE_PUBLIC_KEY_HEX: ${{ vars.V31_REVIEW_RELEASE_PUBLIC_KEY_HEX }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}

@@ -19,7 +19,7 @@ from .reviewed_ready_promotion import (
     ReviewedReadyError, _check_review_signature, review_payload,
 )
 from .routing import sites
-from .review_signatures import verify_release
+from .review_signatures import verify_public_attestation
 
 
 class PrivateEnvelopeError(ValueError):
@@ -97,12 +97,10 @@ def _attestation(attestation: dict, *, site_key: str, campaign: str,
         if public_key is None:
             _check_review_signature(expected, attestation=attestation, key=key)
         else:
-            if (key is not None or set(attestation) != {"payload", "signature"}
-                    or attestation["payload"] != expected
-                    or not isinstance(attestation["signature"], str)
-                    or not HEX.fullmatch(attestation["signature"])):
-                raise ValueError("invalid_public_review_attestation")
-            verify_release(attestation, signature=release_signature, public_key=public_key)
+            if key is not None:
+                _check_review_signature(expected, attestation=attestation, key=key)
+            verify_public_attestation(expected, attestation=attestation,
+                                      signature=release_signature, public_key=public_key)
     except (ReviewedReadyError, TypeError, ValueError, KeyError):
         raise PrivateEnvelopeError("private_envelope_signature_invalid") from None
     return html_sha, reviewed
@@ -129,7 +127,7 @@ class ImmutablePrivateReadyEnvelope:
 
     def save(self, *, site_key: str, campaign: str, product_key: str,
              content_html: str, attestation: dict,
-             independent_review_key: bytes,
+             independent_review_key: bytes | None,
              release_signature: str | None = None,
              release_public_key: str | None = None) -> dict:
         _site(site_key, campaign)
@@ -143,6 +141,7 @@ class ImmutablePrivateReadyEnvelope:
             attestation, site_key=site_key, campaign=campaign,
             product_key=product_key, content_html=content_html,
             key=independent_review_key,
+            public_key=release_public_key, release_signature=release_signature,
         )
         objkey = object_key(site_key, campaign, html_sha)
         document = {
@@ -154,9 +153,6 @@ class ImmutablePrivateReadyEnvelope:
         if release_signature is not None or release_public_key is not None:
             if release_signature is None or release_public_key is None:
                 raise PrivateEnvelopeError("private_envelope_release_keys_required")
-            _attestation(attestation, site_key=site_key, campaign=campaign,
-                         product_key=product_key, content_html=content_html, key=None,
-                         public_key=release_public_key, release_signature=release_signature)
             document.update(schema="v31-private-ready-envelope-2",
                             release_signature=release_signature)
         body = json.dumps(document, sort_keys=True, ensure_ascii=False,
