@@ -132,7 +132,7 @@ class WordPressRestClient:
             raise WordPressAutoDraftError("wordpress_identity_mismatch")
         return d
 
-    def list_posts(self,*,include_unpublished:bool)->list[dict]:
+    def list_posts(self,*,include_unpublished:bool,slug:str|None=None)->list[dict]:
         if include_unpublished and not self.authenticated:
             raise WordPressAutoDraftError("wordpress_credentials_required")
         statuses="publish,draft,pending,private,future" if include_unpublished else "publish"
@@ -142,10 +142,13 @@ class WordPressRestClient:
             # A API pode devolver EXATAMENTE 100 posts em uma única página.
             # Um lote cheio não implica outra página: conferir total REST.
             self._last_wp_total_pages=None
-            q=urllib.parse.urlencode({
+            params={
                 "status":statuses,"per_page":100,"page":page,
                 "context":"edit" if include_unpublished else "view",
-            })
+            }
+            if slug is not None:
+                params["slug"]=slug
+            q=urllib.parse.urlencode(params)
             batch=self._call("GET","/wp-json/wp/v2/posts?"+q)
             if (not isinstance(batch,list) or len(batch)>100 or
                 any(not isinstance(post,dict) for post in batch)):

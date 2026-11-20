@@ -201,6 +201,7 @@ class ImmutablePrivateReadyEnvelope:
             "status": "PRIVATE_ENVELOPE_VALIDATED",
             "html_content": data["content_html"],
             "html_sha256": html_sha256,
+            "review": data["attestation"]["payload"],
             "object_key": objkey,
             "live_publication_authorized": False,
         }

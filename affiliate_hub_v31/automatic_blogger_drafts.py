@@ -316,13 +316,15 @@ def _get_blogger_service():
     return criar_servico_blogger()
 
 
-def _list_posts(service,blog_id:str)->list[dict]:
+def _list_posts(service,blog_id:str,*,label:str|None=None)->list[dict]:
     result=[]
     for status in ("LIVE","DRAFT"):
         token=None
         for _ in range(100): # paginar histórico completo, sem teto de 3/24 artigos
             args={"blogId":blog_id,"status":[status],
                   "maxResults":100,"fetchBodies":True}
+            if label is not None:
+                args["labels"]=label
             if token: args["pageToken"]=token
             batch=service.posts().list(**args).execute()
             items=batch.get("items",[])
