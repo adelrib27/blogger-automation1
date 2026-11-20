@@ -24,11 +24,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "$R2_ACCOUNT_ID" == "$EXPECTED_R2_ACCOUNT_ID" ]]; then
-            echo 'C77_R2_ACCOUNT_MATCH=true'
+          if [[ -z "$R2_ACCOUNT_ID" ]]; then
+            echo 'C77_R2_ACCOUNT_STATUS=MISSING'
+          elif [[ "$R2_ACCOUNT_ID" == "$EXPECTED_R2_ACCOUNT_ID" ]]; then
+            echo 'C77_R2_ACCOUNT_STATUS=MATCH'
           else
-            echo 'C77_R2_ACCOUNT_MATCH=false'
-            exit 12
+            echo 'C77_R2_ACCOUNT_STATUS=DIFFERENT'
           fi
           if [[ -n "$D1_TOKEN" ]]; then
             echo 'C77_D1_SECRET_CONFIGURED=true'
@@ -36,3 +37,6 @@ jobs:
             echo 'C77_D1_SECRET_CONFIGURED=false'
           fi
           echo 'C77_NO_CLOUDFLARE_NETWORK_NO_DATABASE_MUTATIONS_NO_CMS_POSTS=true'
+          if [[ "$R2_ACCOUNT_ID" != "$EXPECTED_R2_ACCOUNT_ID" ]]; then
+            exit 12
+          fi
