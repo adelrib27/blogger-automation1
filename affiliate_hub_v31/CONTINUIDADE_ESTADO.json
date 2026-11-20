@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C75",
-  "continuity_protocol_phase": "C75",
+  "last_checkpoint_phase": "C76",
+  "continuity_protocol_phase": "C76",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C75_HTTP_D1_RUNNER_PREVIEW",
+  "last_updated_source": "C76_EVIDENCE_TTL_READY_BINDING_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -128,7 +128,12 @@
     "c74_canary_all_pass": true,
     "c74_canary_cleanup_zero": true,
     "c74_writer_connected": false,
-    "c74_cloudflare_other_account_mutations": 0
+    "c74_cloudflare_other_account_mutations": 0,
+    "c75_pr_merged": 100,
+    "c75_merge_sha": "5b08f064c141852ea20f62a9435887e3918d262f",
+    "c75_ci_run_id": 44761018643,
+    "c75_ci_tests_passed": 505,
+    "c75_http_client_wired_to_writers": false
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -142,15 +147,15 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C75 cliente HTTP D1 com conta+DB oficiais fixos, resposta validada, escrita desligada por padrão, tests mockados, PR+CI sem writers",
+    "objective": "C76 exigir evidencia exata válida no mesmo SQL de READY/consume no D1 seguro, regressões e CI",
     "status": "EM_ANDAMENTO",
-    "latest_verified_step": "C74 D1 correto SAFE e checkpoint C75 prévio na main, adaptador SQL C71 ainda sem HTTP",
-    "next_safe_step": "Criar branch C75, adicionar cliente + testes mocks, PR, CI, sem D1/Cloudflare writes",
+    "latest_verified_step": "C75 PR100 MERGED CI505 PASS; revisão detectou reserve e consume sem binding atômico de hash+TTL, porém D1 ainda não ligado a writers",
+    "next_safe_step": "Patch pequeno SQL e fixtures, branch C76 PR/CI; sem Cloudflare/CMS",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C75_RUNNER_D1_HTTP_FAIL_CLOSED_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C76_READY_EVIDENCE_TTL_ATOMIC_2026-11-20.md"
     ]
   },
   "next_priorities": [
