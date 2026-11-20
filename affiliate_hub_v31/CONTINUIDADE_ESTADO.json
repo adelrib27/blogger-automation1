@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C77",
-  "continuity_protocol_phase": "C77",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C78",
+  "continuity_protocol_phase": "C78",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C77_PR102_CI518_ACCOUNT_MATCH_D1_TOKEN_MISSING",
+  "last_updated_source": "C78_PRIVATE_IMMUTABLE_HTML_ENVELOPE_PREVIEW",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -178,18 +178,15 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C78: credencial D1 mínima no ambiente GitHub v31-editorial-safe, runner HTTP SELECT-only e pipeline de envelopes R2/HTML por hash sem LIVE; não ligar writers até homologar",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "latest_verified_step": "C77 PR102 MERGED CI518 PASS; preflight de catálogo+SEO+fatos+assinatura independente+READY SQLite. Auditor GitHub ambiente v31-editorial-safe confirmou R2 account MATCH e D1_SECRET_CONFIGURED=false. D1 Cloudflare oficial read-only 0 em 4 tabelas, sem posts.",
-    "next_safe_step": "Configurar D1 secret limitado no ambiente protegido por via autorizada; preflight HTTP SELECT-only, concorrência real e envelope HTML imutável, custo Firecrawl real antes de piloto DRAFT; sem usar conta errada ou publicar LIVE.",
+    "objective": "C78 implementar envelope HTML privado imutável R2 por tenant/SHA com storage injetado offline, testes e CI, sem tocar CMS/R2 real",
+    "status": "EM_ANDAMENTO",
+    "latest_verified_step": "C77 PR102 CI518 verde; GitHub ambiente protegido R2 MATCH, novo D1 secret não configurado; D1 oficial 4 tabelas vazias",
+    "next_safe_step": "Branch C78, código envelope com put-if-absent CAS/GET readback, testes de hash e isolamentos, PR CI, sem remote writes",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "evidence_links": [
-      "https://github.com/adelrib27/blogger-automation1/pull/102",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44771203643",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44771532251",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C77_PIPELINE_VERIFIED_READY_SAFE_2026-11-20.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md"
     ]
   },
   "next_priorities": [
