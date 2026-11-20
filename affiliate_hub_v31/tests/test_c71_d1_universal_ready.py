@@ -107,8 +107,8 @@ class D1ReadyLeaseTests(unittest.TestCase):
             site_key=B,campaign=C,lease_name="refill",owner_nonce=NB))
 
     def test_missing_lease_does_not_create_ready(self):
-        self.assertFalse(self.store.reserve_ready(        self.seed_sql_proof()
-
+        self.seed_sql_proof()
+        self.assertFalse(self.store.reserve_ready(
             site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
             product_key=KEYS[0],html_sha256=TWO,
             evidence_sha256=THREE,now_epoch=T,min_ready=2))
