@@ -17,3 +17,12 @@
 5. Depois de CI, registrar PR+verificação em checkpoint, JSON e índice; integração de token de privilégios mínimos e canário D1 real ficam etapa posterior.
 
 **Prévia:** nenhuma publicação/Firecrawl/Cloudflare API causada por C75 neste ponto. Estado `EM_ANDAMENTO`.
+
+## C75.1 — Código, PR e CI SAFE concluídos
+
+- [PR #100 MERGED](https://github.com/adelrib27/blogger-automation1/pull/100), merge SHA `5b08f064c141852ea20f62a9435887e3918d262f`; alterações apenas `affiliate_hub_v31/d1_http_runner.py`, `tests/test_c75_d1_http_runner.py` e `C75_HTTP_D1_RUNNER_GUIA.md`.
+- [GitHub Actions #44761018643](https://github.com/adelrib27/blogger-automation1/actions/runs/44761018643) **SUCCESS**: `Ran 505 tests` / `OK`; Casa24/24, Oficina21/21, Radar15/15, cross-blog PASS. C75 acrescentou 11 testes offline HTTP simulado sobre C71 494 testes.
+- Runner HTTPS tem endereço Cloudflare + conta/UUID oficial PINADOS (C74), SELECT por padrão, escrita exige dois opt-ins, valida envelope D1, 1 statement por consulta, `sql+params`, limites, timeout e nega redirects; nenhum token/SQL/resultado em mensagem de falha.
+- **Nenhuma chamada D1 real deste novo cliente**, nenhum GitHub secret novo e nenhum writer/crons alterados; o D1 criado na conta correta na C74 permanece isolado. A integração efetiva da credencial e o canário end-to-end continuam PENDENTES.
+
+**C75 entregue em SAFE**. Não confundir CI/testes HTTP mockados com prova de credencial GitHub ou integração na produção.
