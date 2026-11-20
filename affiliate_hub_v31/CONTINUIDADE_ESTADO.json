@@ -235,9 +235,10 @@
       113,
       114,
       115,
-      116
+      116,
+      117
     ],
-    "c81_autonomous_latest_ci": 44825759832,
+    "c81_autonomous_latest_ci": 44826311397,
     "c81_autonomous_wordpress_real_ready_run_id": 44822280026,
     "c81_autonomous_wordpress_duplicate_draft_preserved_id": 314,
     "c81_autonomous_distinct_cms_history_run_id": 44823740700,
@@ -264,13 +265,13 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PRs #111 a #115 na main. Firecrawl, foto e campanha reais passaram no WordPress e o HTML foi assinado e chegou a READY em #44822280026. A entrega encontrou um rascunho legado existente. Histórico autenticado nas duas plataformas e ausência de oferta verificável WP comprovados em #44823740700 e #44824680064. #116 integrou a recuperação e o canário oficial #44825882019 confirmou R2/D1, replay, renovação do mesmo fingerprint expirado e limpeza do tenant sintético.",
+    "latest_verified_step": "PRs #111 a #115 na main. Firecrawl, foto e campanha reais passaram no WordPress e o HTML foi assinado e chegou a READY em #44822280026. A entrega encontrou um rascunho legado existente. Histórico autenticado nas duas plataformas e ausência de oferta verificável WP comprovados em #44823740700 e #44824680064. #116 integrou a recuperação e o canário oficial #44825882019 confirmou R2/D1, replay, renovação do mesmo fingerprint expirado e limpeza do tenant sintético. #117 integrou a transição por rota e o resumo operacional no scheduler.",
     "next_safe_step": "Conferir o canário Blogger após a renovação diária de pesquisa UTC e o WordPress após o conversor oficial priorizar o Rizzo Imperial branco do catálogo. Exigir GET, bytes exatos, DRAFT e replay. Verificar os três valores de assinatura instalados em v31-editorial-safe antes do scheduler DRAFT estável.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "dee50e00f4e379b84805e0d6ea9906b1841c5334",
-    "branch": "codex/v31-c81-schedule-cutover",
+    "base_main_sha": "a91b75e41ce640972fbf07c1ea6daa680e8115c6",
+    "branch": "codex/v31-c81-reserve-pilot-offers",
     "blocker": "O teste Blogger depende da renovação da cota D1, o WordPress depende do próximo conversor oficial e a operação agendada exige configuração única das chaves do verificador. Nenhuma intervenção editorial por artigo.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
@@ -280,7 +281,9 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44824680064",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44800518473",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44825759832",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44825882019/job/136598237147"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44825882019/job/136598237147",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44826311397",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144"
     ]
   },
   "next_priorities": [
@@ -295,7 +298,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44825882014",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "Conversão C81 oficial event=schedule observada em #44800518473, 3 tentativas. Canários editoriais C81 ainda sem novo DRAFT confirmado."
   }

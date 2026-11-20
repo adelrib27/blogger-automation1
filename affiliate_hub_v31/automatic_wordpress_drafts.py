@@ -286,9 +286,11 @@ def select_next(catalog:Catalog, *,site_key:str,topic:str,
         plan["can_publish"] is not False or
         plan["campaign"]!=route["campaign"]):
         raise WordPressAutoDraftError("catalog_site_match_failed")
+    from .site_request_queue import reserved_pilot_sku
+    reserved = reserved_pilot_sku(site_key)
     for item in plan["approved_catalog_candidates"]:
         key=item["product_key"]
-        if (item["affiliate_status"]!="verified_for_campaign" or
+        if (key == reserved or item["affiliate_status"]!="verified_for_campaign" or
             not item["affiliate_url"] or
             item["affiliate_url"] in prior or
             _product_slug(site_key,key) in own or

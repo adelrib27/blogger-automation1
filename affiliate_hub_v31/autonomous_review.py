@@ -371,7 +371,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
     storage = _official_storage()
     sku = None
     if pilot:
-        if pilot_sku not in policy["offers"] or digest:
+        if pilot_sku != policy.get("pilot_sku") or pilot_sku not in policy["offers"] or digest:
             raise VerificationError("pilot_requires_registered_offer")
         sku = pilot_sku
     elif digest:
