@@ -118,6 +118,34 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertEqual(self.store.count_ready(site_key=B,campaign=C),2)
         self.assertFalse(create(ONE,KEYS[0]))  # already USED, no reinsert
 
+    def test_same_sku_different_angle_blocked_for_cooldown_then_reusable(self):
+        self.assertTrue(self.acquire())
+        self.assertTrue(self.store.reserve_ready(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
+            product_key=KEYS[0],html_sha256=TWO,
+            evidence_sha256=THREE,now_epoch=T))
+        # A different fingerprint is NOT enough to evade same-SKU cooldown.
+        self.assertFalse(self.other.reserve_ready(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=FOUR,
+            product_key=KEYS[0],html_sha256=TWO,
+            evidence_sha256=THREE,now_epoch=T))
+        self.assertTrue(self.acquire(kind="writer"))
+        self.assertTrue(self.store.consume_one(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,now_epoch=T))
+        self.assertFalse(self.other.reserve_ready(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=FOUR,
+            product_key=KEYS[0],html_sha256=TWO,
+            evidence_sha256=THREE,now_epoch=T+30))
+        # Only after cooldown and a new valid lease can a NEW angle enter.
+        future=T+31*86400
+        self.assertTrue(self.store.acquire_lease(
+            site_key=B,campaign=C,lease_name="refill",
+            owner_nonce=NA,now_epoch=future,ttl_seconds=60))
+        self.assertTrue(self.store.reserve_ready(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=FOUR,
+            product_key=KEYS[0],html_sha256=TWO,
+            evidence_sha256=THREE,now_epoch=future))
+
     def test_site_campaign_isolation_and_wrong_tenant_fail_closed(self):
         self.assertTrue(self.acquire())
         self.assertTrue(self.store.reserve_ready(
