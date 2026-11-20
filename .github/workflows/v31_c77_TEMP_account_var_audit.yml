@@ -1,0 +1,38 @@
+name: V31 C77 TEMP conta R2 e D1 secret presence (SAFE)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c77_TEMP_account_var_audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-c77-readonly-account-audit
+  cancel-in-progress: false
+jobs:
+  audit-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+      D1_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+      EXPECTED_R2_ACCOUNT_ID: ebb8d5b4cf9a2cb850c6d8051bd2661f
+    steps:
+      - name: Compare account IDs without exposing values
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$R2_ACCOUNT_ID" == "$EXPECTED_R2_ACCOUNT_ID" ]]; then
+            echo 'C77_R2_ACCOUNT_MATCH=true'
+          else
+            echo 'C77_R2_ACCOUNT_MATCH=false'
+            exit 12
+          fi
+          if [[ -n "$D1_TOKEN" ]]; then
+            echo 'C77_D1_SECRET_CONFIGURED=true'
+          else
+            echo 'C77_D1_SECRET_CONFIGURED=false'
+          fi
+          echo 'C77_NO_CLOUDFLARE_NETWORK_NO_DATABASE_MUTATIONS_NO_CMS_POSTS=true'
