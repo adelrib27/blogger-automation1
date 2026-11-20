@@ -97,10 +97,10 @@ def verify_affiliate_target(url, sku):
     opener = build_opener(_NoRedirect())
     for _ in range(5):
         path = _url(url, SHOPEE).path
-        if (re.fullmatch(fr"/(?:universal-link/)?product/{shop}/{item}/?", path)
+        if (re.fullmatch(fr"/(?:(?:universal-link/)?product|opaanlp)/{shop}/{item}/?", path)
                 or re.search(fr"-i\.{shop}\.{item}/?$", path)):
             return
-        if re.search(r"/product/\d+/\d+|[-.]i\.\d+\.\d+", path):
+        if re.search(r"/(?:product|opaanlp)/\d+/\d+|[-.]i\.\d+\.\d+", path):
             raise VerificationError("affiliate_target_wrong_sku")
         try:
             with opener.open(Request(url, headers={"User-Agent": "Mozilla/5.0"}), timeout=12):
@@ -141,7 +141,8 @@ def firecrawl(path, token, payload):
 
 
 def checked_claims(profile, raw_text):
-    text = " ".join(raw_text.casefold().split())
+    visible_markdown = re.sub(r"!?\[([^\]]*)\]\([^\n)]*\)", r"\1", raw_text)
+    text = " ".join(visible_markdown.replace("**", "").casefold().split())
     if not all(marker in text for marker in profile["identity"]):
         raise VerificationError("external_product_identity_unverified")
     claims = []
@@ -238,7 +239,8 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     def fetch(paid):
         source = paid("HTTP", lambda: scrape_source(profile["source_url"], token))
         expected = urlsplit(profile["source_url"])
-        resolved = urlsplit(source.get("metadata", {}).get("sourceURL", ""))
+        meta = source.get("metadata", {})
+        resolved = urlsplit(meta.get("url") or meta.get("sourceURL", ""))
         if (resolved.scheme, resolved.netloc, resolved.path) != (expected.scheme, expected.netloc, expected.path):
             raise VerificationError("external_source_redirect_unverified")
         markdown = source.get("markdown")
@@ -249,9 +251,10 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
             "query": profile["query"], "limit": 4, "sources": [{"type": "web"}], "country": "BR",
         }))
         hits = search.get("web")
+        terms = set(re.findall(r"\w+", profile["query"].casefold()))
         if not isinstance(hits, list) or not any(
             isinstance(hit, dict) and str(hit.get("url", "")).startswith("https://")
-            and len(set(profile["query"].split()) & set(str(hit.get("title", "")).casefold().split())) >= 2
+            and len(terms & set(re.findall(r"\w+", str(hit.get("title", "")).casefold()))) >= 2
             for hit in hits
         ):
             raise VerificationError("search_intent_unverified")
@@ -263,7 +266,9 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     url, anchor = profile["related"]
     related = None
     try:
-        _read(url, hosts={urlsplit(policy["home"]).hostname}, mime={"text/html"}, limit=2_500_000)
+        page = _read(url, hosts={urlsplit(policy["home"]).hostname}, mime={"text/html"}, limit=2_500_000)
+        if not set(profile["cluster"].split("-")) <= set(re.findall(r"\w+", extract_text(page))):
+            raise VerificationError("related_public_article_unverified")
         related = {"url": url, "title": anchor, "status": "publish", "cluster_id": profile["cluster"]}
     except (OSError, ValueError):
         pass

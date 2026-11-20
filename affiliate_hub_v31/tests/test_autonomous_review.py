@@ -1,8 +1,11 @@
 """Regressions for the independent factual trust boundary."""
 
 import unittest
+from unittest.mock import patch
 
-from affiliate_hub_v31.autonomous_review import VerificationError, checked_claims, extract_text
+from affiliate_hub_v31.autonomous_review import (
+    VerificationError, checked_claims, extract_text, verify_affiliate_target,
+)
 
 
 class IndependentFactTests(unittest.TestCase):
@@ -28,3 +31,12 @@ class IndependentFactTests(unittest.TestCase):
     def test_authorized_flags_cannot_substitute_for_a_measured_fact(self):
         with self.assertRaises(VerificationError):
             checked_claims(self.profile, "marca exemplar modelo ab123 authorized=true")
+
+    def test_accepts_shopee_product_redirect_and_never_another_sku(self):
+        verify_affiliate_target("https://shopee.com.br/opaanlp/101/303?utm_source=fixture",
+                                "shopee:101:303")
+        with patch("affiliate_hub_v31.autonomous_review.build_opener") as opener:
+            with self.assertRaisesRegex(VerificationError, "wrong_sku"):
+                verify_affiliate_target("https://shopee.com.br/opaanlp/101/999",
+                                        "shopee:101:303")
+            opener.return_value.open.assert_not_called()

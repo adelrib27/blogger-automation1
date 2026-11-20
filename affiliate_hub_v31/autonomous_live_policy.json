@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "activation": "pending_policy_approval",
+  "sites": {
+    "blogger_moveis_para_cada_canto": {
+      "max_attempts_per_utc_day": 1,
+      "minimum_interval_seconds": 86400,
+      "minimum_article_words": 350
+    },
+    "wordpress_casa_decoracao": {
+      "max_attempts_per_utc_day": 1,
+      "minimum_interval_seconds": 86400,
+      "minimum_article_words": 350
+    }
+  }
+}
