@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C81_SIGNING_CONFIGURATION_VERIFIED_BY_GITHUB_DRAFT_CANARIES_PENDING",
+  "last_updated_source": "C81_SIGNING_AND_R2_KEY_ANCHOR_VERIFIED_REAL_DRAFTS_AWAITING_BUDGET_AND_CONVERSION",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -238,9 +238,11 @@
       116,
       117,
       118,
-      119
+      119,
+      120,
+      121
     ],
-    "c81_autonomous_latest_ci": 44826311397,
+    "c81_autonomous_latest_ci": 44830152818,
     "c81_autonomous_wordpress_real_ready_run_id": 44822280026,
     "c81_autonomous_wordpress_duplicate_draft_preserved_id": 314,
     "c81_autonomous_distinct_cms_history_run_id": 44823740700,
@@ -249,7 +251,10 @@
     "c81_autonomous_live_activated": false,
     "c81_autonomous_official_storage_recovery_run": 44825882019,
     "c81_autonomous_signing_configuration_check_run": 44829365949,
-    "c81_autonomous_signing_configuration_verified": true
+    "c81_autonomous_signing_configuration_verified": true,
+    "c81_autonomous_r2_v3_storage_and_catalog_run": 44830269381,
+    "c81_blogger_pilot_campaign_link_present": true,
+    "c81_wordpress_pilot_campaign_link_present": false
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -269,14 +274,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "GitHub Actions #44829365949 confirmou os dois segredos e a variável pública do ambiente v31-editorial-safe. HMAC e Ed25519 passaram em desafio sintético, com rejeição de adulteração. O R2/D1 oficial já havia passado no canário de recuperação #44825882019.",
-    "next_safe_step": "Acompanhar a execução real do Blogger na renovação da cota UTC e a execução WordPress após conversão da oferta reservada. Conferir HMAC/Ed25519, bytes do R2, READY/USED, GET autenticado dos dois DRAFTs e repetição exata.",
+    "latest_verified_step": "#44829365949 confirmou as três configurações de assinatura sem divulgar valores. PR #120 integrou a configuração aos canários. #44830269381 comprovou o envelope R2 v3 verificado pela impressão digital, READY/USED, recuperação e limpeza de tenant sintético. O catálogo oficial confirmou ambas as ofertas elegíveis e o link correto apenas para Blogger.",
+    "next_safe_step": "Conferir o canário Blogger na renovação da cota UTC e o canário WordPress após o conversor oficial. Exigir GET autenticado do DRAFT, HTML byte a byte e replay que devolva o mesmo ID. Só depois ativar a operação DRAFT recorrente e observar estabilidade.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "2dcfdb8de6a1a6b1a66b86ee94d1d713e76f774f",
-    "branch": "codex/v31-c81-stable-signing-drafts",
-    "blocker": "Os primeiros novos DRAFTs dependem da renovação do orçamento no Blogger e da próxima execução de conversão Shopee para o WordPress. LIVE continua desativado.",
+    "base_main_sha": "2ab045188aa12068754a2a6b8282bfead33cd261",
+    "branch": "main",
+    "blocker": "O D1 confirmou 3/3 de HTTP no Blogger em 20/11 UTC. A última leitura do catálogo confirma que falta converter o link do WordPress para a campanha cadastrada. Os dois gatilhos estão preparados. Nenhuma ação do proprietário está pendente.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -289,12 +294,15 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44826311397",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44826908061",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44829365949/job/136610099419"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44829365949/job/136610099419",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44830269381/job/136613133089",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44830269381/job/136613132906",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44829960410"
     ]
   },
   "next_priorities": [
-    "Conferir o novo canário de recuperação sintética no D1/R2 oficial e os canários agendados com produtos reais. Preservar os DRAFTs legados e os registros da C81.",
-    "Ativar observação recorrente em DRAFT após a configuração única das chaves e comprovação E2E por plataforma. A política LIVE deve continuar pendente até evidência operacional e aprovação da versão.",
+    "Confirmar os primeiros DRAFTs reais, leitura exata e replay por plataforma. Blogger aguarda cota UTC e WordPress aguarda conversão de link.",
+    "Ativar observação recorrente somente em DRAFT após a comprovação E2E por plataforma. A política LIVE segue pendente até evidência operacional e aprovação da versão.",
     "Ampliar cobertura de fontes com identidade exata e melhorar o catálogo de pautas e o monitoramento antes de incorporar novos blogs. Preservar campanhas, dados R2/D1 e projetos paralelos."
   ],
   "continuity_contract": {
@@ -304,7 +312,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44826459144",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44829960410",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "Conversão C81 oficial event=schedule observada em #44800518473, 3 tentativas. Canários editoriais C81 ainda sem novo DRAFT confirmado."
   }

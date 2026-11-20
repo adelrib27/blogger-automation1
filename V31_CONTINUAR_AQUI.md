@@ -11,7 +11,8 @@
 - O proprietário definiu automação sem aprovação humana por artigo. O verificador consulta fontes por conta própria, assina separadamente do gerador e entrega somente DRAFT durante a homologação. A autorização LIVE será dada uma vez por versão da política, depois das provas operacionais.
 - [Checkpoint C81](affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md), [guia técnico](affiliate_hub_v31/C81_REVISAO_INDEPENDENTE.md) e [política LIVE proposta](affiliate_hub_v31/C81_POLITICA_LIVE_AUTONOMA.md).
 - [Canário real](https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026) confirmou R2 e READY para o WordPress. A entrega preservou um rascunho anterior do mesmo SKU. [Histórico autenticado](https://github.com/adelrib27/blogger-automation1/actions/runs/44823740700) desbloqueia a seleção de ofertas inéditas nas duas plataformas.
-- Próximos testes reais: Blogger após a renovação da cota de pesquisa UTC e WordPress depois da conversão no agendamento Shopee. Exigir GET autenticado, título e HTML exatos e replay sem segundo POST. O agendamento permanente DRAFT exige cadastrar as chaves do verificador uma única vez. LIVE automático permanece desativado.
+- As três configurações de assinatura passaram no [diagnóstico oficial](https://github.com/adelrib27/blogger-automation1/actions/runs/44829365949/job/136610099419). Os canários com produtos reais usam o mesmo par persistente.
+- Próximos testes reais: Blogger após a renovação da cota de pesquisa UTC e WordPress depois da conversão no agendamento Shopee. Exigir GET autenticado, título e HTML exatos e replay sem segundo POST antes de ativar o agendamento permanente DRAFT. LIVE automático permanece desativado.
 
 ## C80 — credencial GitHub D1 e concorrência REAL homologadas (20/11/2026)
 
