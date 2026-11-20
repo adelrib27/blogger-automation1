@@ -1,7 +1,7 @@
 name: V31 C81 - canário isolado R2 e D1
 on:
   push:
-    branches: [v31/c81-reviewed-draft]
+    branches: [main]
     paths:
       - '.github/workflows/v31_c81_storage_canary.yml'
       - 'affiliate_hub_v31/tests/c81_storage_canary.py'
@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   official-synthetic-storage:
-    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/v31/c81-reviewed-draft'
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     timeout-minutes: 8
@@ -36,3 +36,24 @@ jobs:
           V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
           V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
         run: python -m affiliate_hub_v31.tests.c81_storage_canary
+
+  current-catalog-and-credits:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar cliente somente para leitura do catálogo
+        run: python -m pip install 'boto3>=1.36,<2'
+      - name: Conferir catálogo, foto, campanha e créditos atuais
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+        run: python -m affiliate_hub_v31.tests.c81_dependency_audit
