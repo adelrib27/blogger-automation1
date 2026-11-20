@@ -59,7 +59,7 @@ class _FinalHTMLScanner(HTMLParser):
             raise FinalFactGateError("html_tag_outside_safe_contract")
         keys = [name for name, _ in attrs]
         if len(keys) != len(set(keys)) or any(
-            name.startswith("on") or name in ("srcdoc", "formaction")
+            name.startswith("on") or name in ("srcdoc", "formaction", "style", "srcset")
             for name in keys
         ):
             raise FinalFactGateError("html_untrusted_attribute")
