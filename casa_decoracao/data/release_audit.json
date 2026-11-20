@@ -2,17 +2,16 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 9,
-    "draft_ready": 2,
-    "rejected": 4,
-    "not_generated": 3,
-    "published_history": 48,
+    "total": 10,
+    "draft_ready": 1,
+    "rejected": 2,
+    "not_generated": 7,
+    "published_history": 49,
     "rotation_cycle": 6,
     "rotation_pending": [
       "Decoração",
       "Organização",
       "Quarto",
-      "Cozinha",
       "Banheiro",
       "Área Externa",
       "Cama, Mesa e Banho"
@@ -20,69 +19,27 @@
   },
   "items": [
     {
-      "id": 96,
-      "shopee_item_id": "58251353658",
+      "id": 107,
+      "shopee_item_id": "23798178107",
       "category": "Organização",
-      "product": "Varal De Chão Com Abas Dobrável Aço Secalux 12kg Varal de Apartamento Retratil",
+      "product": "Kit Colmeia Organizadora de gavetas/Guarda Roupa P, M, G e GG - Maison Plus",
       "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
-        "status": "REJECTED",
+        "status": "NOT_GENERATED",
         "reasons": [
-          "categoria_invalida",
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_comercial_copiado_no_corpo",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida",
-          "word_count_alto:1188"
+          "arquivo_gerado_ausente"
         ],
         "warnings": [],
-        "metrics": {
-          "word_count": 1188,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 57,
-          "meta_description_length": 150,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
       }
     },
     {
-      "id": 101,
-      "shopee_item_id": "58256736438",
-      "category": "Sala",
-      "product": "Mesa Lateral Nicho Multiuso 2 Prateleiras – Mesa de Cabeceira Moderna- 60",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 311,
-      "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
-        "warnings": [],
-        "metrics": {
-          "word_count": 778,
-          "h2_count": 11,
-          "internal_links": 3,
-          "seo_title_length": 37,
-          "meta_description_length": 149,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 102,
-      "shopee_item_id": "58250364907",
-      "category": "Sala",
-      "product": "Manta Para Sofá ou Cama 100% Algodão 210x120 Capa Decorativa para Casa Nova Elegante",
-      "queue_status": "PENDING",
+      "id": 104,
+      "shopee_item_id": "20452224775",
+      "category": "Quarto",
+      "product": "Kit 2 unidades Abajur La Finesse Cupula - Luminária Para Decoração Quarto e Sala",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "NOT_GENERATED",
@@ -98,7 +55,7 @@
       "shopee_item_id": "23398723658",
       "category": "Cozinha",
       "product": "Ralador De Legumes Cortador Fatiador Legumes tabletop 3 Laminas Verduras Ralador Ralador Verdura Legumes Manivela",
-      "queue_status": "PENDING",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "REJECTED",
@@ -130,41 +87,25 @@
       }
     },
     {
-      "id": 98,
-      "shopee_item_id": "46360468172",
+      "id": 108,
+      "shopee_item_id": "21299367155",
       "category": "Cozinha",
-      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
+      "product": "Conjunto 2/3/5/10 Potes 370/640/640ml Vidro Hermético Mantimentos Marmita Fitness Micro-ondas Freezer Forno Organização",
+      "queue_status": "PUBLISHED",
+      "wordpress_post_id": 315,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 633,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 48,
-          "meta_description_length": 148,
+          "word_count": 592,
+          "h2_count": 9,
+          "internal_links": 3,
+          "seo_title_length": 36,
+          "meta_description_length": 147,
           "cta_count": 2
         },
         "safety_class": "STANDARD"
-      }
-    },
-    {
-      "id": 99,
-      "shopee_item_id": "58257199934",
-      "category": "Cozinha",
-      "product": "Escorredor de Louças em Aço Carbono para Cozinha Organizador de Pratos, Tigelas e Talheres",
-      "queue_status": "PENDING",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
       }
     },
     {
@@ -203,39 +144,51 @@
       }
     },
     {
-      "id": 97,
-      "shopee_item_id": "58203212212",
+      "id": 103,
+      "shopee_item_id": "58207037675",
       "category": "Área Externa",
-      "product": "Vaso Polietileno + Planta Artificial Jiboia Follhas Grande Decoracao Jardim",
+      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "REJECTED",
+        "status": "NOT_GENERATED",
         "reasons": [
-          "categoria_invalida",
-          "chamada_consulta_contextual_quantidade_invalida:0",
-          "disclosure_afiliado_quantidade_invalida:0",
-          "imagem_produto_ausente",
-          "link_afiliado_quantidade_invalida:1",
-          "link_consulta_contextual_quantidade_invalida:0",
-          "meta_description_tamanho:158",
-          "poucos_h2:4",
-          "quantidade_cta_invalida:1",
-          "rel_afiliado_quantidade_invalida:1",
-          "tema_titulo_nao_unificado",
-          "titulo_produto_cta_nao_fiel",
-          "titulo_produto_cta_quantidade_invalida"
+          "arquivo_gerado_ausente"
         ],
         "warnings": [],
-        "metrics": {
-          "word_count": 764,
-          "h2_count": 4,
-          "internal_links": 1,
-          "seo_title_length": 46,
-          "meta_description_length": 158,
-          "cta_count": 1
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
+      }
+    },
+    {
+      "id": 109,
+      "shopee_item_id": "23198744408",
+      "category": "Área Externa",
+      "product": "03 Almofadas Futton 95x45 Pérola Confort para Cadeira e Varanda Macia e Resistente",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 106,
+      "shopee_item_id": "54300877750",
+      "category": "Cama, Mesa e Banho",
+      "product": "Jogo de Toalhas 4 Peças Banhão e Rosto 100% Algodão Brisa Karsten",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
       }
     },
     {
@@ -243,6 +196,22 @@
       "shopee_item_id": "23492815637",
       "category": "Cama, Mesa e Banho",
       "product": "Protetor De Colchão P/ Berço Americano Bambi - Envio Imediato",
+      "queue_status": "PENDING",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 105,
+      "shopee_item_id": "58211324402",
+      "category": "Sala",
+      "product": "Tapete Sala 2,00x1,50 Alto Relevo Moderno Premium Macio Antiderrapante Quarto Decorativo",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
