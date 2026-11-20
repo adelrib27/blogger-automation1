@@ -110,6 +110,7 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
                           envelope: ImmutablePrivateReadyEnvelope,
                           independent_review_key: bytes | None = None,
                           release_public_key: str | None = None,
+                          daily_cap: int = 100,
                           blogger_service=None, wordpress_client=None) -> dict:
     """Claim one POST through D1. After an ambiguous POST, replays only read CMS.
 
@@ -144,7 +145,8 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
             if job["status"] == "USED":
                 return False
             if not state.consume_one(**tenant, owner_nonce=owner["owner_nonce"],
-                                     fingerprint=fingerprint, now_epoch=int(time.time())):
+                                     fingerprint=fingerprint, now_epoch=int(time.time()),
+                                     daily_cap=daily_cap):
                 raise ReviewedDraftError("reviewed_draft_claim_denied")
             return True
 
@@ -174,11 +176,17 @@ def main() -> int:
     parser.add_argument("--site-key", required=True)
     parser.add_argument("--fingerprint", required=True)
     parser.add_argument("--execute-draft", action="store_true", required=True)
+    parser.add_argument("--autonomous", action="store_true")
     args = parser.parse_args()
     try:
         public_key = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", "")
         if len(public_key) != 64:
             raise ReviewedDraftError("reviewed_draft_public_key_missing")
+        daily_cap = 100
+        if args.autonomous:
+            from .autonomous_review import PROFILE
+            rules = json.loads(PROFILE.read_text(encoding="utf-8"))
+            daily_cap = rules[args.site_key]["max_drafts_per_day"]
         result = deliver_reviewed_draft(
             site_key=args.site_key, fingerprint=args.fingerprint,
             state=UniversalD1ReadyState(
@@ -186,9 +194,13 @@ def main() -> int:
             envelope=ImmutablePrivateReadyEnvelope(
                 backend=R2PrivateReadyBackend.from_environment()),
             release_public_key=public_key,
+            daily_cap=daily_cap,
         )
-    except ValueError:
-        print("V31_REVIEWED_DRAFT_FAILED_CLOSED")
+    except ReviewedDraftError as error:
+        print(str(error))
+        return 1
+    except (ValueError, OSError, KeyError):
+        print("reviewed_draft_failed_closed")
         return 1
     print(json.dumps(result))
     return 0 if result["status"] == "DRAFT_VERIFIED" else 1

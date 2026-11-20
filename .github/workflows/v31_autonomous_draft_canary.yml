@@ -1,0 +1,21 @@
+name: V31 - canário autônomo Blogger e WordPress
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_autonomous_draft_canary.yml'
+permissions:
+  contents: read
+jobs:
+  blogger:
+    uses: ./.github/workflows/v31_independent_review_draft.yml
+    with:
+      site_key: blogger_moveis_para_cada_canto
+      pilot: true
+    secrets: inherit
+  wordpress:
+    uses: ./.github/workflows/v31_independent_review_draft.yml
+    with:
+      site_key: wordpress_casa_decoracao
+      pilot: true
+    secrets: inherit

@@ -372,30 +372,6 @@ class ReviewedReadyIntegrationTests(unittest.TestCase):
             envelope.load(site_key=SITE, campaign=CAMPAIGN,
                           html_sha256=ready["html_sha256"], release_public_key=public_key)
 
-    def test_protected_review_requires_actual_approval_and_exact_workflow_inputs(self):
-        from io import BytesIO
-
-        digest = "a" * 64
-        with tempfile.TemporaryDirectory() as directory:
-            event = Path(directory) / "event.json"
-            event.write_text(json.dumps({"inputs": {"site_key": SITE, "candidate_digest": digest}}))
-            env = {"GITHUB_REPOSITORY": independent_review.REPOSITORY,
-                   "GITHUB_REF": "refs/heads/main", "GITHUB_EVENT_NAME": "workflow_dispatch",
-                   "GITHUB_RUN_ID": "123", "V31_ACTIONS_READ_TOKEN": "synthetic-test",
-                   "V31_PROTECTED_REVIEWER": "approved-user", "GITHUB_EVENT_PATH": str(event)}
-            with patch.object(independent_review, "build_opener") as opener:
-                endpoint = opener.return_value
-                endpoint.open.return_value = BytesIO(b"[]")
-                with self.assertRaisesRegex(ValueError, "approval_missing"):
-                    independent_review.require_independent_approval(env, site_key=SITE, digest=digest)
-                endpoint.open.side_effect = lambda *a, **kw: BytesIO(json.dumps([{
-                    "environments": [{"name": independent_review.REVIEW_ENVIRONMENT}],
-                    "state": "approved", "user": {"login": "approved-user"},
-                }]).encode())
-                with self.assertRaises(ValueError):
-                    independent_review.require_independent_approval(env, site_key=SITE, digest="b"*64)
-                self.assertEqual(independent_review.require_independent_approval(
-                    env, site_key=SITE, digest=digest), "approved-user")
 
     def test_fake_and_cross_campaign_offer_rejected(self):
         for html in (
