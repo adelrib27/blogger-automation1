@@ -147,8 +147,13 @@ class UniversalD1ReadyState:
             WHERE site_key=? AND campaign=? AND lease_name='refill'
               AND owner_nonce=? AND expires_epoch>?
           )
-          AND (SELECT COUNT(*) FROM v31_ready_jobs
-               WHERE site_key=? AND campaign=? AND status='READY') < ?
+          AND (SELECT COUNT(*) FROM v31_ready_jobs AS pending
+               JOIN v31_verified_evidence AS ev
+                 ON ev.site_key=pending.site_key AND ev.campaign=pending.campaign
+                 AND ev.product_key=pending.product_key
+                 AND ev.evidence_sha256=pending.evidence_sha256
+               WHERE pending.site_key=? AND pending.campaign=? AND pending.status='READY'
+                 AND ev.verified_epoch<=? AND ev.expires_epoch>?) < ?
           AND EXISTS (
             SELECT 1 FROM v31_verified_evidence
             WHERE site_key=? AND campaign=? AND product_key=?
@@ -156,17 +161,24 @@ class UniversalD1ReadyState:
               AND verified_epoch<=? AND expires_epoch>?
           )
           AND NOT EXISTS (
-            SELECT 1 FROM v31_ready_jobs
-            WHERE site_key=? AND campaign=? AND product_key=?
-              AND (status='READY' OR COALESCE(used_epoch,created_epoch)>?)
+            SELECT 1 FROM v31_ready_jobs AS previous
+            WHERE previous.site_key=? AND previous.campaign=? AND previous.product_key=?
+              AND ((previous.status='USED' AND previous.used_epoch>?)
+                OR (previous.status='READY' AND EXISTS (
+                  SELECT 1 FROM v31_verified_evidence AS ev
+                  WHERE ev.site_key=previous.site_key AND ev.campaign=previous.campaign
+                    AND ev.product_key=previous.product_key
+                    AND ev.evidence_sha256=previous.evidence_sha256
+                    AND ev.verified_epoch<=? AND ev.expires_epoch>?
+                )))
           )
           ON CONFLICT(site_key,campaign,fingerprint) DO NOTHING
           RETURNING fingerprint
         """, (site_key,campaign,fingerprint,product_key,html_sha256,
               evidence_sha256,t,site_key,campaign,owner_nonce,t,
-              site_key,campaign,min_ready,
+              site_key,campaign,t,t,min_ready,
               site_key,campaign,product_key,evidence_sha256,t,t,
-              site_key,campaign,product_key,t-cooldown_days*86400))
+              site_key,campaign,product_key,t-cooldown_days*86400,t,t))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint
 
     def get_job(self, *, site_key: str, campaign: str,
@@ -271,9 +283,19 @@ class UniversalD1ReadyState:
             evidence_sha256=excluded.evidence_sha256,
             payload_json=excluded.payload_json
           WHERE excluded.verified_epoch > v31_verified_evidence.verified_epoch
+            AND NOT EXISTS (
+              SELECT 1 FROM v31_ready_jobs AS pending
+              WHERE pending.site_key=v31_verified_evidence.site_key
+                AND pending.campaign=v31_verified_evidence.campaign
+                AND pending.product_key=v31_verified_evidence.product_key
+                AND pending.evidence_sha256=v31_verified_evidence.evidence_sha256
+                AND pending.status='READY'
+                AND v31_verified_evidence.verified_epoch<=?
+                AND v31_verified_evidence.expires_epoch>?
+            )
           RETURNING evidence_sha256
         """, (site_key,campaign,product_key,product_title,verified,
-              expires,sha,raw,site_key,campaign,owner_nonce,t))
+              expires,sha,raw,site_key,campaign,owner_nonce,t,t,t))
         return len(rows) == 1 and rows[0].get("evidence_sha256") == sha
 
     def get_verified_evidence(

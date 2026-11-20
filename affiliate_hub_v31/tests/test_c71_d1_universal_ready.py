@@ -1,5 +1,6 @@
 """C71 — D1-compatible contract test using REAL SQLite file, no APIs/CMS."""
 import hashlib
+import json
 import sqlite3
 import tempfile
 import unittest
@@ -168,6 +169,39 @@ class D1ReadyLeaseTests(unittest.TestCase):
             site_key=B,campaign=C,owner_nonce=NA,fingerprint=FOUR,
             product_key=KEYS[0],html_sha256=TWO,
             evidence_sha256=THREE,now_epoch=future))
+
+    def test_expired_ready_does_not_fill_buffer_or_block_a_fresh_angle(self):
+        self.assertTrue(self.acquire())
+        self.seed_sql_proof(expires=T+5)
+        params = {"site_key": B, "campaign": C, "owner_nonce": NA,
+                  "product_key": KEYS[0], "html_sha256": TWO, "min_ready": 1}
+        self.assertTrue(self.store.reserve_ready(
+            **params, fingerprint=ONE, evidence_sha256=THREE, now_epoch=T))
+        self.seed_sql_proof(sha=FOUR, verified=T+6)
+        self.assertTrue(self.store.reserve_ready(
+            **params, fingerprint=TWO, evidence_sha256=FOUR, now_epoch=T+6))
+        self.assertTrue(self.acquire(kind="writer", now=T+6))
+        writer = {"site_key": B, "campaign": C, "owner_nonce": NA, "now_epoch": T+6}
+        self.assertFalse(self.store.consume_one(**writer, fingerprint=ONE))
+        self.assertTrue(self.store.consume_one(**writer, fingerprint=TWO))
+
+    def test_refresh_keeps_the_package_bound_to_an_active_ready(self):
+        self.assertTrue(self.acquire())
+        params = {"site_key": B, "campaign": C, "owner_nonce": NA,
+                  "product_key": KEYS[0], "product_title": TITLES[0]}
+        original = package(0)
+        self.assertTrue(self.store.cache_verified_evidence(
+            **params, package=original, now_epoch=T))
+        digest = hashlib.sha256(json.dumps(
+            original, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+        self.assertTrue(self.store.reserve_ready(
+            site_key=B, campaign=C, owner_nonce=NA, product_key=KEYS[0],
+            fingerprint=ONE, html_sha256=TWO, evidence_sha256=digest, now_epoch=T))
+        self.assertFalse(self.store.cache_verified_evidence(
+            **params, package=package(0, date="2026-11-19T13:00:00Z"), now_epoch=T))
+        self.assertEqual(self.store.get_verified_evidence(
+            site_key=B, campaign=C, product_key=KEYS[0], product_title=TITLES[0],
+            now_epoch=T), original)
 
     def test_site_campaign_isolation_and_wrong_tenant_fail_closed(self):
         self.assertTrue(self.acquire())
