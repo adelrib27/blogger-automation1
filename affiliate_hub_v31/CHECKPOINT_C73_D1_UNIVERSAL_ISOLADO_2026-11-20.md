@@ -50,3 +50,10 @@
 **Histórico:** `affiliate_hub_v31/CHECKPOINT_C3_R2_2026-11-15.md` comprova bucket V31 na conta selecionada pelo proprietário. O código GitHub usa `vars.V31_EDITORIAL_R2_ACCOUNT_ID`, mas a variável não foi lida neste diagnóstico; pode ser conferida de modo não secreto antes de deploy.
 
 **BLOQUEIO:** não conectar aos writers o D1 novo `e16554d8-27e8-40ca-9b6e-5f6d7b54d076` da conta `adeiltonrml`; o banco está isolado e vazio após limpeza das fixtures, sem integração ao R2 e sem LIVE. Não apagar nem migrar por inferência. A próxima configuração D1 para o V31 deverá considerar a conta do bucket oficial `adeiltonrib27` (ou arquitetura multi-account explicitamente validada). Os testes SQL C73.1/C73.2 continuam válidos, mas **não demonstram seleção correta da conta de produção**. Nenhuma mudança Cloudflare/CMS nesta auditoria.
+
+
+## C73.4 — Teste de autenticação da conta correta (20/11/2026)
+
+- Conector Cloudflare `Casa e Decoração Automation`: `whoami` confirmou email `adeiltonrib27@gmail.com`, ID de perfil `user:9412f150e9ef160c8c31729358185bc9`.
+- Chamada read-only `GET /accounts/ebb8d5b4cf9a2cb850c6d8051bd2661f/r2/buckets/v31-editorial-shopee` retornou **HTTP 401, Cloudflare error 10000 Authentication error**, solicitação de reconectar o login. Não interpretar como inexistência de bucket: sua presença havia sido confirmada em GET anterior.
+- **Nenhuma alteração cloudflare ou CMS** nesta tentativa. Preservar conta separada do outro projeto. Necessária reconexão de plugin Cloudflare desse perfil antes de operar D1/R2 na conta V31, e nova leitura GET de identidade/bucket.
