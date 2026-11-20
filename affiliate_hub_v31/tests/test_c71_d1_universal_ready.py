@@ -68,6 +68,24 @@ class D1ReadyLeaseTests(unittest.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
 
+    def seed_sql_proof(self, sku=KEYS[0], *, site=B, campaign=C,
+                       sha=THREE, verified=T, expires=None):
+        """Fixture sintética de contrato SQL, NÃO é evidência real validada.
+        Validacao de fontes/autorizacao e TTL7 vive em cache_verified_evidence.
+        """
+        if expires is None:
+            expires = verified + 7 * 86400
+        self.store._query("""
+            INSERT INTO v31_verified_evidence
+            (site_key,campaign,product_key,product_title,verified_epoch,
+             expires_epoch,evidence_sha256,payload_json)
+            VALUES (?,?,?,?,?,?,?,?)
+            ON CONFLICT(site_key,campaign,product_key) DO UPDATE SET
+              verified_epoch=excluded.verified_epoch,
+              expires_epoch=excluded.expires_epoch,
+              evidence_sha256=excluded.evidence_sha256
+        """, (site,campaign,sku,"fixture-synthetic",verified,expires,sha,"{}"))
+
     def acquire(self, who=NA, *, kind="refill", now=T):
         return self.store.acquire_lease(
             site_key=B,campaign=C,lease_name=kind,
@@ -89,6 +107,7 @@ class D1ReadyLeaseTests(unittest.TestCase):
             site_key=B,campaign=C,lease_name="refill",owner_nonce=NB))
 
     def test_missing_lease_does_not_create_ready(self):
+        self.seed_sql_proof()
         self.assertFalse(self.store.reserve_ready(
             site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
             product_key=KEYS[0],html_sha256=TWO,
@@ -97,6 +116,8 @@ class D1ReadyLeaseTests(unittest.TestCase):
 
     def test_min_ready_is_simultaneous_buffer_not_total_quota(self):
         self.assertTrue(self.acquire())
+        for sku in KEYS[:3]:
+            self.seed_sql_proof(sku)
         def create(fp, sku, now=T):
             return self.store.reserve_ready(
                 site_key=B,campaign=C,owner_nonce=NA,fingerprint=fp,
@@ -120,6 +141,7 @@ class D1ReadyLeaseTests(unittest.TestCase):
 
     def test_same_sku_different_angle_blocked_for_cooldown_then_reusable(self):
         self.assertTrue(self.acquire())
+        self.seed_sql_proof()
         self.assertTrue(self.store.reserve_ready(
             site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
             product_key=KEYS[0],html_sha256=TWO,
@@ -138,6 +160,7 @@ class D1ReadyLeaseTests(unittest.TestCase):
             evidence_sha256=THREE,now_epoch=T+30))
         # Only after cooldown and a new valid lease can a NEW angle enter.
         future=T+31*86400
+        self.seed_sql_proof(verified=future)
         self.assertTrue(self.store.acquire_lease(
             site_key=B,campaign=C,lease_name="refill",
             owner_nonce=NA,now_epoch=future,ttl_seconds=60))
@@ -148,6 +171,7 @@ class D1ReadyLeaseTests(unittest.TestCase):
 
     def test_site_campaign_isolation_and_wrong_tenant_fail_closed(self):
         self.assertTrue(self.acquire())
+        self.seed_sql_proof()
         self.assertTrue(self.store.reserve_ready(
             site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
             product_key=KEYS[0],html_sha256=TWO,
@@ -160,6 +184,7 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertTrue(self.other.acquire_lease(
             site_key=W,campaign=WC,lease_name="refill",
             owner_nonce=NB,now_epoch=T))
+        self.seed_sql_proof(site=W,campaign=WC)
         self.assertTrue(self.other.reserve_ready(
             site_key=W,campaign=WC,owner_nonce=NB,fingerprint=ONE,
             product_key=KEYS[0],html_sha256=TWO,
@@ -168,6 +193,7 @@ class D1ReadyLeaseTests(unittest.TestCase):
 
     def test_expired_lease_cannot_mutate_jobs(self):
         self.assertTrue(self.acquire())
+        self.seed_sql_proof()
         self.assertFalse(self.store.reserve_ready(
             site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
             product_key=KEYS[0],html_sha256=TWO,
@@ -226,6 +252,59 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertFalse(attempt(T+30,self.other))
         self.assertTrue(attempt(T+63,self.other))
         self.assertFalse(attempt(T+64,self.other))
+
+    def test_c76_requires_exact_hash_same_site_and_unexpired_evidence(self):
+        self.assertTrue(self.acquire())
+        def reserve():
+            return self.store.reserve_ready(
+                site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
+                product_key=KEYS[0],html_sha256=TWO,
+                evidence_sha256=THREE,now_epoch=T)
+        # No cached proof, wrong hash, future-dated or expired => no READY.
+        self.assertFalse(reserve())
+        self.seed_sql_proof(sha=FOUR)
+        self.assertFalse(reserve())
+        self.seed_sql_proof(verified=T+5)
+        self.assertFalse(reserve())
+        self.seed_sql_proof(verified=T-8*86400)
+        self.assertFalse(reserve())
+        self.seed_sql_proof(verified=T)
+        self.assertTrue(reserve())
+        self.assertEqual(self.store.count_ready(site_key=B,campaign=C),1)
+
+    def test_c76_cross_tenant_proof_cannot_promote_ready(self):
+        self.assertTrue(self.acquire())
+        self.seed_sql_proof(site=W,campaign=WC)
+        self.assertFalse(self.store.reserve_ready(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
+            product_key=KEYS[0],html_sha256=TWO,
+            evidence_sha256=THREE,now_epoch=T))
+        self.seed_sql_proof(site=B,campaign=C)
+        self.assertTrue(self.store.reserve_ready(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
+            product_key=KEYS[0],html_sha256=TWO,
+            evidence_sha256=THREE,now_epoch=T))
+
+    def test_c76_used_requires_proof_still_fresh_unchanged(self):
+        self.assertTrue(self.acquire())
+        self.seed_sql_proof()
+        self.assertTrue(self.store.reserve_ready(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,
+            product_key=KEYS[0],html_sha256=TWO,
+            evidence_sha256=THREE,now_epoch=T))
+        self.assertTrue(self.acquire(kind="writer"))
+        # Rotated source: immutable READY hash must not be accepted as USED.
+        self.seed_sql_proof(sha=FOUR)
+        self.assertFalse(self.store.consume_one(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,now_epoch=T+1))
+        self.seed_sql_proof(expires=T+1)
+        self.assertFalse(self.store.consume_one(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,now_epoch=T+2))
+        self.seed_sql_proof()
+        self.assertTrue(self.store.consume_one(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,now_epoch=T+3))
+        self.assertFalse(self.store.consume_one(
+            site_key=B,campaign=C,owner_nonce=NA,fingerprint=ONE,now_epoch=T+3))
 
     def test_query_error_or_invalid_return_fails_closed(self):
         def broken(_sql,_params):

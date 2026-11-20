@@ -123,6 +123,8 @@ class UniversalD1ReadyState:
     ) -> bool:
         """O lease de refill e limite do buffer são conferidos no MESMO INSERT.
         min_ready limita somente o buffer SIMULTÂNEO, nunca total histórico.
+        A prova EXATA do SKU/campanha deve estar cacheada e fresca NO MESMO
+        INSERT atômico; hash arbitrário ou prova vencida jamais vira READY.
         """
         _params_site(site_key, campaign)
         _nonce(owner_nonce)
@@ -147,6 +149,12 @@ class UniversalD1ReadyState:
           )
           AND (SELECT COUNT(*) FROM v31_ready_jobs
                WHERE site_key=? AND campaign=? AND status='READY') < ?
+          AND EXISTS (
+            SELECT 1 FROM v31_verified_evidence
+            WHERE site_key=? AND campaign=? AND product_key=?
+              AND evidence_sha256=?
+              AND verified_epoch<=? AND expires_epoch>?
+          )
           AND NOT EXISTS (
             SELECT 1 FROM v31_ready_jobs
             WHERE site_key=? AND campaign=? AND product_key=?
@@ -156,15 +164,17 @@ class UniversalD1ReadyState:
           RETURNING fingerprint
         """, (site_key,campaign,fingerprint,product_key,html_sha256,
               evidence_sha256,t,site_key,campaign,owner_nonce,t,
-              site_key,campaign,min_ready,site_key,campaign,product_key,
-              t-cooldown_days*86400))
+              site_key,campaign,min_ready,
+              site_key,campaign,product_key,evidence_sha256,t,t,
+              site_key,campaign,product_key,t-cooldown_days*86400))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint
 
     def consume_one(
         self, *, site_key: str, campaign: str, owner_nonce: str,
         fingerprint: str, now_epoch: int
     ) -> bool:
-        """Apenas reserva USED; jamais publica. Writer must do separate CMS gate."""
+        """Apenas reserva USED, nunca publica. Prova ainda deve estar fresca
+        e com hash original; o writer precisa de gate CMS separado."""
         _params_site(site_key, campaign)
         _nonce(owner_nonce)
         t = _clock(now_epoch)
@@ -174,12 +184,20 @@ class UniversalD1ReadyState:
           UPDATE v31_ready_jobs SET status='USED',used_epoch=?
           WHERE site_key=? AND campaign=? AND fingerprint=? AND status='READY'
           AND EXISTS (
+            SELECT 1 FROM v31_verified_evidence AS ev
+            WHERE ev.site_key=v31_ready_jobs.site_key
+              AND ev.campaign=v31_ready_jobs.campaign
+              AND ev.product_key=v31_ready_jobs.product_key
+              AND ev.evidence_sha256=v31_ready_jobs.evidence_sha256
+              AND ev.verified_epoch<=? AND ev.expires_epoch>?
+          )
+          AND EXISTS (
             SELECT 1 FROM v31_ready_leases
             WHERE site_key=? AND campaign=? AND lease_name='writer'
               AND owner_nonce=? AND expires_epoch>?
           )
           RETURNING fingerprint
-        """, (t,site_key,campaign,fingerprint,
+        """, (t,site_key,campaign,fingerprint,t,t,
               site_key,campaign,owner_nonce,t))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint
 
