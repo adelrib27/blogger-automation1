@@ -46,3 +46,8 @@
 ### Próxima ação de homologação
 
 O ambiente `v31-independent-review` não apareceu na última leitura da API de ambientes. O proprietário recebeu instruções para configurá-lo, cadastrar somente as chaves de revisão e indicar o aprovador. Depois disso, conferir se o revisor é obrigatório, disparar o workflow manual com um digest por execução e aguardar aprovação real antes de enviar DRAFT. A evidência é temporária; fora do TTL, repetir conferência e obter aprovação para o novo digest. Confirmar GET e repetição idempotente por CMS antes de discutir qualquer operação recorrente. LIVE exige decisão individual à parte.
+
+## Compatibilidade e estado da homologação
+
+- [PR #109](https://github.com/adelrib27/blogger-automation1/pull/109) incorporado após [CI verde](https://github.com/adelrib27/blogger-automation1/actions/runs/44804047652). Corrige caminhos URI e encerramento de conexões SQLite. Suite local Windows: 546 testes executados, um saltado por falta de permissão do host para criar symlink. A proteção contra symlinks continua coberta pelo CI.
+- Estado C81: infraestrutura de armazenamento, recuperação, pesquisa, pré-validação de dois candidatos reais e código de assinatura aprovados nos escopos documentados. **Homologação aguardando configuração e aprovação humana no GitHub.** Nenhum DRAFT C81 foi criado. A execução recorrente da cadeia nova permanece pendente.
