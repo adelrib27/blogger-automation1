@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C74",
   "continuity_protocol_phase": "C74",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-20",
-  "last_updated_source": "C74_OFFICIAL_CLOUDFLARE_RECOVERED_PREVIEW",
+  "last_updated_source": "C74_OFFICIAL_CLOUDFLARE_D1_SAFE_MIGRATION_CANARIES_PASS",
   "start_here": "V31_CONTINUAR_AQUI.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C74_CLOUDFLARE_OFICIAL_D1_SAFE_2026-11-20.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
@@ -120,7 +120,15 @@
     "c73_cross_account_mismatch": true,
     "c73_new_d1_writer_integration_allowed": false,
     "c73_comercebem_r2_api_status": "403_10042_R2_NOT_ENABLED",
-    "c73_account_audit_cloudflare_read_only": true
+    "c73_account_audit_cloudflare_read_only": true,
+    "c74_official_d1_account_id": "ebb8d5b4cf9a2cb850c6d8051bd2661f",
+    "c74_official_d1_database_id": "9bfce7a4-6167-4bfc-a65e-a74c1a34f064",
+    "c74_official_d1_name": "v31-universal-ready-safe",
+    "c74_four_tables_migrated": true,
+    "c74_canary_all_pass": true,
+    "c74_canary_cleanup_zero": true,
+    "c74_writer_connected": false,
+    "c74_cloudflare_other_account_mutations": 0
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -134,10 +142,10 @@
     "wordpress_casa_v31_live_publication_authorized": false
   },
   "active_work": {
-    "objective": "C74 provisionar e validar D1 novo EXCLUSIVO na mesma conta Cloudflare do bucket V31 oficial, sem escritor, Firecrawl ou LIVE",
-    "status": "EM_ANDAMENTO",
-    "latest_verified_step": "Cloudflare login adeiltonrib27 reconfirmado via whoami, GET bucket v31-editorial-shopee success na conta ebb8..., D1 list 0. Checkpoint prévio C74 salvo antes de mutações.",
-    "next_safe_step": "Criar somente D1 V31 novo na conta ebb8..., conferir id/schema, canários sintéticos e limpeza; registrar evidências; contas b151/comercebem intocadas",
+    "objective": "Integrar com segurança o D1 V31 exclusivo da conta R2 oficial aos adaptadores SAFE, sem habilitar writers ou LIVE até canário end-to-end e gates",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "latest_verified_step": "C74 novo D1 UUID 9bfce7a4... na conta oficial ebb8...: quatro tabelas migradas, seis provas SQL sintéticas PASS e limpeza quatro tabelas zero; nenhuma publicação e outras contas preservadas",
+    "next_safe_step": "Conferir GitHub vars.V31_EDITORIAL_R2_ACCOUNT_ID e identidade do workflow, não revelar secrets; implementar client D1 de mínimo privilégio, teste de concorrência/lease real, fact-gate/evidence e canário de DRAFT seguro antes de ativar writers",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -146,15 +154,10 @@
     ]
   },
   "next_priorities": [
-    "BLOQUEIO Cloudflare: R2 original do V31 pertence à conta adeiltonrib27@gmail.com (ebb8...), não à adeiltonrml (b151...) onde o D1 C73 foi criado. Não ligar D1 aos writers até ajustar a arquitetura.",
-    "C73: migrar D1 v31-universal-ready-safe em conta Cloudflare principal, testar canários e limpar, SEM mexer em ARV, Vida Pet, Pinterest ou writers.",
-    "C72: verificar saldo Firecrawl pela MESMA chave do GitHub com GET somente leitura; sem pesquisa e sem posts; C71 fact gate/D1 permanece SAFE offline.",
-    "C71: fact gate HTML e D1 isolado/lease/idempotência SAFE antes dos writers; comprovar next schedules 20/11 e reconhecer sucesso de DRAFT real dos writers no schedule de 19/11.",
-    "C70 SAFE CONCLUÍDA: PR98 CI471, 2 envelopes privados REVIEW_REQUIRED R2 readback e zero posts; não repetir 3 conversões Shopee originais (#44600350780).",
-    "20/11/2026 10h10 Recife: conferir event=schedule dos 3 workflows V31 no GitHub, suas conclusões e leitura de Blogger Móveis/WordPress Casa. A fila já disparou schedule em 19/11 e falhou no handoff antes do patch; Blogger e WordPress schedule ainda sem evidência.",
-    "PR futuro SAFE: adaptador D1 com isolamento por site_key/campaign, locking/lease/idempotência, gate final factual IA HTML e canário DRAFT; nunca ligar LIVE ou usar banco/credencial Vida Pet.",
-    "Firecrawl real: antes de cache miss/pesquisa comprovar saldo e chave exata utilizada no GitHub e contador de custo durável; C69 SearchBudget é simulação offline.",
-    "Biblioteca R2 universal dos dois CSVs; artigos=null é contínuo sem teto total e min_ready=3 é reserva; REVIEW não é oferta autorizada."
+    "C74 SAFE concluída: D1 exclusivo criado na conta Cloudflare R2 oficial, canários PASS/limpeza zero; conexão aos writers ainda DESLIGADA.",
+    "Validar GitHub vars e segredos D1 de privilégio mínimo sem expor conteúdo; evitar confusão com a conta adeiltonrml e seu D1 C73 intocado.",
+    "Implementar/adaptar runner D1 C71 à API real, testar leasing/concorrência real, fact gate final, orçamento Firecrawl e canário DRAFT seguro antes de integração V31.",
+    "Seguir universal para Blogger/WordPress, SEO C68, artigos:null contínuos, campanha exclusiva, REVIEW vetado e LIVE só com aprovação por post."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
