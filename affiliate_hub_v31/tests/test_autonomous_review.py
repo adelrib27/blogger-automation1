@@ -6,6 +6,8 @@ from unittest.mock import patch
 from affiliate_hub_v31.autonomous_review import (
     VerificationError, checked_claims, extract_text, verify_affiliate_target,
 )
+from affiliate_hub_v31.independent_review import IndependentReviewError
+from affiliate_hub_v31.structured_review_source import catalog_gtin, gtin_facts
 
 
 class IndependentFactTests(unittest.TestCase):
@@ -40,3 +42,15 @@ class IndependentFactTests(unittest.TestCase):
                 verify_affiliate_target("https://shopee.com.br/opaanlp/101/999",
                                         "shopee:101:303")
             opener.return_value.open.assert_not_called()
+
+    def test_structured_source_must_confirm_exact_checksum_and_facts(self):
+        code = catalog_gtin("Vaso de exemplo. EAN: 4006381333931.")
+        raw = (b'<script type="application/ld+json">{"@type":"Product",'
+               b'"gtin13":"4006381333931","material":"vidro"}</script>')
+        self.assertEqual(len(gtin_facts(raw, code)), 2)
+        with self.assertRaises(IndependentReviewError):
+            gtin_facts(raw.replace(b"4006381333931", b"7006381333931"), code)
+        with self.assertRaises(IndependentReviewError):
+            catalog_gtin("GTIN: 4006381333932")
+        with self.assertRaises(IndependentReviewError):
+            gtin_facts(raw.replace(b"vidro", b"alegacao-comercial"), code)

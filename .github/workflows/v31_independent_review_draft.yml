@@ -83,6 +83,7 @@ jobs:
 
   deliver-draft:
     needs: independent-verifier
+    if: needs.independent-verifier.outputs.result != '' && fromJSON(needs.independent-verifier.outputs.result).status != 'NO_NEW_OFFER'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     concurrency:

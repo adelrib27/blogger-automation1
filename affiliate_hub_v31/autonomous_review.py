@@ -28,6 +28,8 @@ from .review_signatures import approval_receipt, payload_digest, sign_release
 from .reviewed_ready_promotion import stage_reviewed_ready
 from .routing import sites
 from .site_request_queue import load_requests
+from .site_launch_plan import preview_site_launch
+from .structured_review_source import catalog_gtin, gtin_facts
 from .universal_evidence_ready import _fingerprint
 
 PROFILE = Path(__file__).with_name("autonomous_review_sources.json")
@@ -115,8 +117,14 @@ def verify_affiliate_target(url, sku):
 
 
 def verify_image(url):
-    raw = _read(url, hosts={urlsplit(url).hostname},
-                mime={"image/jpeg", "image/png", "image/webp"})
+    try:
+        raw = _read(url, hosts={urlsplit(url).hostname},
+                    mime={"image/jpeg", "image/png", "image/webp"})
+    except HTTPError as error:
+        error.close()
+        raise VerificationError(f"image_http_{error.code}") from None
+    except OSError:
+        raise VerificationError("image_connection_failed") from None
     if not (raw.startswith((b"\xff\xd8\xff", b"\x89PNG\r\n\x1a\n"))
             or raw.startswith(b"RIFF") and raw[8:12] == b"WEBP"):
         raise VerificationError("image_bytes_invalid")
@@ -125,7 +133,7 @@ def verify_image(url):
 
 def scrape_source(url, token):
     return firecrawl("scrape", token, {"url": url, "formats": ["markdown"],
-                                        "onlyMainContent": True})
+                                        "onlyMainContent": True, "maxAge": 0})
 
 
 def firecrawl(path, token, payload):
@@ -148,9 +156,9 @@ def checked_claims(profile, raw_text):
     claims = []
     for claim_type, pattern, claim_text in profile["facts"]:
         matches = {match.group() for match in re.finditer(pattern, text)}
-        if len(matches) != 1:
-            raise VerificationError("external_fact_missing_or_ambiguous")
-        claims.append((claim_type, claim_text, matches.pop()))
+        if not matches:
+            raise VerificationError("external_fact_missing_" + claim_type)
+        claims.append((claim_type, claim_text, min(matches, key=lambda x: (len(x), x))))
     if len(claims) < 2:
         raise VerificationError("independent_evidence_insufficient")
     return claims
@@ -221,6 +229,8 @@ def _research(*, state, tenant, cap, callback):
             if error.code == 429:
                 state.block_search_on_429(**tenant, owner_nonce=lease["owner_nonce"], now_epoch=clock())
             raise VerificationError(f"research_http_{error.code}") from None
+        except OSError:
+            raise VerificationError("research_connection_failed") from None
     try:
         return callback(paid)
     finally:
@@ -231,12 +241,37 @@ def _research(*, state, tenant, cap, callback):
 def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     title, image, affiliate = _single_verified_offer(catalog, site_key=route["site_key"],
                                                      product_key=sku, verified_site_route=route)
-    if not all(marker in title.casefold() for marker in profile["catalog_identity"]):
+    if not all(marker in title.casefold() for marker in profile.get("catalog_identity", ())):
         raise VerificationError("catalog_product_identity_changed")
     verify_affiliate_target(affiliate, sku)
     image_hash = verify_image(image)
 
     def fetch(paid):
+        if "gtin" in profile:
+            gtin = profile["gtin"]
+            hosts = set(policy.get("trusted_structured_hosts", ()))
+            search = paid("SEARCH", lambda: firecrawl("search", token, {
+                "query": gtin, "limit": 6, "sources": [{"type": "web"}], "country": "BR",
+            }))
+            for hit in search.get("web", []):
+                if not isinstance(hit, dict) or not isinstance(hit.get("url"), str):
+                    continue
+                url = hit["url"]
+                if urlsplit(url).hostname not in hosts:
+                    continue
+                try:
+                    raw = paid("HTTP", lambda: _read(url, hosts=hosts, mime={"text/html"}))
+                    facts = gtin_facts(raw, gtin)
+                except OSError:
+                    continue
+                except ValueError as error:
+                    if str(error) not in ("trusted_source_gtin_mismatch",
+                                           "structured_facts_insufficient_or_conflicting"):
+                        raise
+                    continue
+                profile["source_url"] = url
+                return facts, hashlib.sha256(raw).hexdigest(), payload_digest(search)
+            raise VerificationError("trusted_structured_source_unavailable")
         source = paid("HTTP", lambda: scrape_source(profile["source_url"], token))
         expected = urlsplit(profile["source_url"])
         meta = source.get("metadata", {})
@@ -263,37 +298,62 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     claims, source_hash, search_hash = _research(
         state=state, tenant={"site_key": route["site_key"], "campaign": route["campaign"]},
         cap=policy["daily_research_attempts"], callback=fetch)
-    url, anchor = profile["related"]
     related = None
-    try:
-        page = _read(url, hosts={urlsplit(policy["home"]).hostname}, mime={"text/html"}, limit=2_500_000)
-        if not set(profile["cluster"].split("-")) <= set(re.findall(r"\w+", extract_text(page))):
-            raise VerificationError("related_public_article_unverified")
-        related = {"url": url, "title": anchor, "status": "publish", "cluster_id": profile["cluster"]}
-    except (OSError, ValueError):
-        pass
+    if profile.get("related"):
+        url, anchor = profile["related"]
+        try:
+            page = _read(url, hosts={urlsplit(policy["home"]).hostname}, mime={"text/html"})
+            if not set(profile["cluster"].split("-")) <= set(re.findall(r"\w+", extract_text(page))):
+                raise VerificationError("related_public_article_unverified")
+            related = {"url": url, "title": anchor, "status": "publish", "cluster_id": profile["cluster"]}
+        except (OSError, ValueError):
+            pass
     return render_article(policy=policy, profile=profile, route=route, sku=sku, title=title,
                           image=image, affiliate=affiliate, claims=claims, source_hash=source_hash,
                           image_hash=image_hash, related=related, checked=utcnow().isoformat(),
                           search_hash=search_hash)
 
 
+def _selection(catalog, route, request, policy, sku):
+    offers = policy["offers"]
+    if sku in offers:
+        yield sku, offers[sku]
+        return
+    if sku is None:
+        yield from offers.items()
+    if not policy.get("trusted_structured_hosts"):
+        return
+    plan = preview_site_launch(catalog, topic=request["topic"], platform=route["platform"],
+                               site_key=route["site_key"], max_items=24)
+    for item in plan["approved_catalog_candidates"]:
+        key = item["product_key"]
+        if key in offers or (sku is not None and key != sku) or not item["affiliate_url"]:
+            continue
+        row = catalog.db.execute("SELECT description FROM products WHERE product_key=?", (key,)).fetchone()
+        try:
+            gtin = catalog_gtin(row[0] if row else "")
+        except ValueError:
+            continue
+        template = policy["structured_template"]
+        yield key, {**template, "gtin": gtin, "query": gtin,
+                    "name": template["name"] + " " + gtin}
+
+
 def run(*, site_key, digest=None, pilot=False, probe=False):
     registry = json.loads(PROFILE.read_text(encoding="utf-8"))
     policy = registry.get(site_key)
     route = sites().get(site_key)
-    if (not policy or not route or route["publish_enabled"] is not False or
-            not any(item["site_key"] == site_key for item in load_requests())
+    request = next((item for item in load_requests() if item["site_key"] == site_key), None)
+    if (not policy or not route or route["publish_enabled"] is not False or not request
             or route["platform"] == "wordpress" and policy["home"] != route["identifier"]):
         raise VerificationError("autonomous_site_not_enabled")
     storage = _official_storage()
+    sku = None
     if digest:
         hint = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest), digest=digest)
         sku = hint["product_key"]
-    else:
+    elif pilot or probe:
         sku = next(iter(policy["offers"]), None)
-    if sku not in policy["offers"]:
-        raise VerificationError("product_has_no_trusted_source_profile")
 
     state = UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(allow_mutations=True))
     envelope = ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage))
@@ -312,25 +372,34 @@ def run(*, site_key, digest=None, pilot=False, probe=False):
         if public_key != os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX"):
             raise VerificationError("independent_public_key_configuration_mismatch")
     tenant = {"site_key": site_key, "campaign": route["campaign"]}
-    profile = policy["offers"][sku]
-    fingerprint = _fingerprint(sku, profile["query"], ANGLE)
-    existing = state.get_job(**tenant, fingerprint=fingerprint)
-    if existing and not probe:
-        if pilot:
-            raise VerificationError("pilot_job_already_exists")
-        envelope.load(**tenant, html_sha256=existing["html_sha256"], release_public_key=public_key)
-        return {"site_key": site_key, "fingerprint": fingerprint, "public_key": public_key,
-                "status": existing["status"]}
-
     with tempfile.TemporaryDirectory(prefix="v31-autonomous-verify-") as tmp:
         file = Path(tmp) / "catalog.sqlite3"
         if not storage.restore_to(file):
             raise VerificationError("official_catalog_missing")
         with Catalog(file) as catalog:
-            article = verify_offer(policy=policy, profile=profile, route=route, sku=sku, catalog=catalog,
+            for selected, profile in _selection(catalog, route, request, policy, sku):
+                fingerprint = _fingerprint(selected, profile["query"], ANGLE)
+                existing = state.get_job(**tenant, fingerprint=fingerprint)
+                if not existing or probe:
+                    break
+                if pilot:
+                    raise VerificationError("pilot_job_already_exists")
+                if existing["status"] == "USED" and sku is None:
+                    continue
+                envelope.load(**tenant, html_sha256=existing["html_sha256"], release_public_key=public_key)
+                return {"site_key": site_key, "fingerprint": fingerprint, "public_key": public_key,
+                        "status": existing["status"]}
+            else:
+                if sku is not None:
+                    raise VerificationError("product_has_no_trusted_source_profile")
+                return {"site_key": site_key, "status": "NO_NEW_OFFER"}
+            article = verify_offer(policy=policy, profile=profile, route=route, sku=selected, catalog=catalog,
                                    state=state, token=os.environ.get("FIRECRAWL_API_KEY", ""))
             now = utcnow()
-            payload = prepare_review_payload(article=article, catalog=catalog, now=now)
+            try:
+                payload = prepare_review_payload(article=article, catalog=catalog, now=now)
+            except ValueError as error:
+                raise VerificationError(str(error)) from None
             if probe:
                 return {"site_key": site_key, "status": "VERIFIED_WITHOUT_SIGNATURE",
                         "facts": len(article["used_evidence_ids"])}
@@ -338,12 +407,15 @@ def run(*, site_key, digest=None, pilot=False, probe=False):
             receipt = approval_receipt(candidate_sha256=candidate_sha, payload_sha256=payload_digest(payload),
                                        key=hmac_key)
             signature = sign_release(receipt, private_key=signer.private_bytes_raw().hex())
-            result = stage_reviewed_ready(
-                **article, catalog=catalog, owner_nonce=token_hex(16), now=now,
-                state=state, envelope=envelope, independent_review_key=None, release_public_key=public_key,
-                attestation={"payload": payload, "candidate_sha256": candidate_sha, "signature": receipt["signature"]},
-                release_signature=signature,
-            )
+            try:
+                result = stage_reviewed_ready(
+                    **article, catalog=catalog, owner_nonce=token_hex(16), now=now,
+                    state=state, envelope=envelope, independent_review_key=None, release_public_key=public_key,
+                    attestation={"payload": payload, "candidate_sha256": candidate_sha, "signature": receipt["signature"]},
+                    release_signature=signature,
+                )
+            except ValueError as error:
+                raise VerificationError(str(error)) from None
     if result.get("job_status") not in ("READY", "USED"):
         raise VerificationError("ready_reservation_unverified")
     return {"site_key": site_key, "fingerprint": result["fingerprint"], "public_key": public_key,
