@@ -1,10 +1,16 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Para um novo chat do projeto:** leia este arquivo, depois [CONTINUIDADE_ESTADO.json C80](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint C80](affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md), [C79](affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md), [C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md), C77/C76/C75/C74/C69 e issue-mestre #54. Conferir GitHub Actions e Cloudflare antes de novas mutações. **Não** usar CHECKPOINT_ATUAL.md legado para V31.
+> **Para um novo chat do projeto:** leia este arquivo, depois [CONTINUIDADE_ESTADO.json](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint C81](affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md), [C80](affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md), [C79](affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md), [C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md), C77/C76/C75/C74/C69 e issue-mestre #54. Conferir GitHub Actions e Cloudflare antes de novas mutações. **Não** usar CHECKPOINT_ATUAL.md legado para V31.
 
 **Projeto:** [adelrib27/blogger-automation1](https://github.com/adelrib27/blogger-automation1) · ramo `main` · trilha V31.  
-**Última conferência contextual:** 20/11/2026 (C80: GitHub D1 token autenticado, concorrência D1 real PASS, cleanup zero, workflows TEMP removidos; próximo C81). Revalidar antes de alterações.
+**Última conferência contextual:** 20/11/2026 (C81 em andamento: integração R2/D1 e recuperação real confirmadas, revisão independente implementada e piloto DRAFT pendente). Revalidar antes de alterações.
 **Protocolo:** [CONTINUIDADE_PROTOCOLO.md](affiliate_hub_v31/CONTINUIDADE_PROTOCOLO.md) · [estado JSON](affiliate_hub_v31/CONTINUIDADE_ESTADO.json).
+
+## C81 — integração editorial e revisão independente em andamento (20/11/2026)
+
+- [Checkpoint C81](affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md) e [guia da revisão independente](affiliate_hub_v31/C81_REVISAO_INDEPENDENTE.md).
+- PRs [#105](https://github.com/adelrib27/blogger-automation1/pull/105), [#106](https://github.com/adelrib27/blogger-automation1/pull/106) e [#107](https://github.com/adelrib27/blogger-automation1/pull/107) na main. O [canário oficial](https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774) comprovou assinatura pública, HTML imutável, READY→USED, repetição idempotente, recuperação após TTL e limpeza de dados sintéticos; também confirmou duas buscas reais Firecrawl.
+- Pendente: configurar revisor no ambiente novo, validar fontes para SKUs inéditos e executar a aprovação real com um DRAFT por plataforma. Não houve DRAFT C81 nem habilitação LIVE.
 
 ## C80 — credencial GitHub D1 e concorrência REAL homologadas (20/11/2026)
 
