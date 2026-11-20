@@ -35,3 +35,18 @@
 - Limpeza `finally` efetuou `DELETE` somente para o tenant sintético nas quatro tabelas; leitura de `jobs, leases, budgets, evidence` retornou tudo zero: `fixture_cleanup_zero=true`.
 - Não houve escrita em WordPress, Blogger, Vida Pet, catálogo R2, Shopee nem qualquer Firecrawl SEARCH/scrape. Apenas novo D1 V31 e dados sintéticos transitórios.
 - **C73 SAFE concluída:** D1 real e SQL atômico comprovados, mas o adaptador `d1_universal_ready.py` ainda opera via *query runner* abstrato; não há credential GitHub D1 dedicada ao V31, Worker, binding, sincronização REAL com writer nem chamada real Firecrawl. Não inferir funcionamento de integração Writer/Evidence apenas a partir da migration.
+
+
+## C73.3 — CORREÇÃO CRÍTICA DE TITULARIDADE CLOUDFLARE (20/11/2026)
+
+**A hipótese anterior de que a conta Cloudflare com ARV e Vida Pet era a conta principal do catálogo V31 estava ERRADA.** Auditoria somente leitura de três contas com conectores Cloudflare e do checkpoint C3:
+
+| E-mail | Conta ID | Evidência |
+| --- | --- | --- |
+| `adeiltonrib27@gmail.com` | `ebb8d5b4cf9a2cb850c6d8051bd2661f` | **Bucket OFICIAL `v31-editorial-shopee`**, criado 15/11/2026 22:14Z, Standard, ENAM; sem D1 |
+| `adeiltonrml@gmail.com` | `b1515400afe32581994c4d3f038f835f` | Bancos ARV e Vida Pet; R2 `pinterest-media`; **D1 `v31-universal-ready-safe` criado C73 nesta conta errada para o R2 original** |
+| `comercebem@gmail.com` | `4c6570edc2eeb0f55440904ae236b046` | Nenhum D1; API R2 respondeu 403 código 10042, R2 não habilitado |
+
+**Histórico:** `affiliate_hub_v31/CHECKPOINT_C3_R2_2026-11-15.md` comprova bucket V31 na conta selecionada pelo proprietário. O código GitHub usa `vars.V31_EDITORIAL_R2_ACCOUNT_ID`, mas a variável não foi lida neste diagnóstico; pode ser conferida de modo não secreto antes de deploy.
+
+**BLOQUEIO:** não conectar aos writers o D1 novo `e16554d8-27e8-40ca-9b6e-5f6d7b54d076` da conta `adeiltonrml`; o banco está isolado e vazio após limpeza das fixtures, sem integração ao R2 e sem LIVE. Não apagar nem migrar por inferência. A próxima configuração D1 para o V31 deverá considerar a conta do bucket oficial `adeiltonrib27` (ou arquitetura multi-account explicitamente validada). Os testes SQL C73.1/C73.2 continuam válidos, mas **não demonstram seleção correta da conta de produção**. Nenhuma mudança Cloudflare/CMS nesta auditoria.
