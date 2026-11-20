@@ -14,6 +14,7 @@ jobs:
   audit-only:
     if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: v31-editorial-safe
     timeout-minutes: 3
     env:
       R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
