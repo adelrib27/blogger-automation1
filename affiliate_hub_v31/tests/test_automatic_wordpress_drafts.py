@@ -209,6 +209,22 @@ class WordPressUniversalDraftTests(unittest.TestCase):
         self.assertEqual(user,"editor")
         self.assertEqual(password,"fake-test-secret")
 
+    def test_slug_lookup_with_zero_pages_requires_empty_first_page(self):
+        client = m.WordPressRestClient(base_url=HOME, username="editor",
+                                       application_password="test-password")
+        for batch in ([], [{"status": "draft"}]):
+            with self.subTest(batch=batch):
+                def fetch(method, path, body=None):
+                    self.assertIn("slug=novo-produto", path)
+                    client._last_wp_total_pages = "0"
+                    return batch
+                with patch.object(client, "_call", side_effect=fetch):
+                    if batch:
+                        with self.assertRaisesRegex(m.WordPressAutoDraftError, "pages_invalid"):
+                            client.list_posts(include_unpublished=True, slug="novo-produto")
+                    else:
+                        self.assertEqual(client.list_posts(include_unpublished=True, slug="novo-produto"), [])
+
     def test_wp_exact_100_posts_single_page_uses_rest_totalpages(self):
         # Casa real tinha 43 publish +57 draft: resposta com exatamente
         # 100 itens e X-WP-TotalPages=1; não pedir página 2 inexistente.
