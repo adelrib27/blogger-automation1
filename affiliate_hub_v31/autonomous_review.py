@@ -249,6 +249,29 @@ def _research(*, state, tenant, cap, callback):
             raise VerificationError("research_lease_release_unverified")
 
 
+def verified_related_post(policy, profile):
+    if not profile.get("related"):
+        return None
+    url, anchor = profile["related"]
+    hosts = {urlsplit(policy["home"]).hostname}
+    _url(url, hosts)
+    post_id = profile.get("related_wordpress_id")
+    if post_id is not None:
+        if type(post_id) is not int or post_id < 1:
+            raise VerificationError("related_wordpress_id_invalid")
+        endpoint = urljoin(policy["home"], f"wp-json/wp/v2/posts/{post_id}?_fields=id,status,link,title")
+        item = json.loads(_read(endpoint, hosts=hosts, mime={"application/json"}))
+        if (item.get("id") != post_id or item.get("status") != "publish"
+                or item.get("link") != url
+                or html.unescape(item.get("title", {}).get("rendered", "")) != anchor):
+            raise VerificationError("related_public_article_unverified")
+    else:
+        page = _read(url, hosts=hosts, mime={"text/html"})
+        if not set(profile["cluster"].split("-")) <= set(re.findall(r"\w+", extract_text(page))):
+            raise VerificationError("related_public_article_unverified")
+    return {"url": url, "title": anchor, "status": "publish", "cluster_id": profile["cluster"]}
+
+
 def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     title, image, affiliate = _single_verified_offer(catalog, site_key=route["site_key"],
                                                      product_key=sku, verified_site_route=route)
@@ -309,16 +332,7 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     claims, source_hash, search_hash = _research(
         state=state, tenant={"site_key": route["site_key"], "campaign": route["campaign"]},
         cap=policy["daily_research_attempts"], callback=fetch)
-    related = None
-    if profile.get("related"):
-        url, anchor = profile["related"]
-        try:
-            page = _read(url, hosts={urlsplit(policy["home"]).hostname}, mime={"text/html"})
-            if not set(profile["cluster"].split("-")) <= set(re.findall(r"\w+", extract_text(page))):
-                raise VerificationError("related_public_article_unverified")
-            related = {"url": url, "title": anchor, "status": "publish", "cluster_id": profile["cluster"]}
-        except (OSError, ValueError):
-            pass
+    related = verified_related_post(policy, profile)
     return render_article(policy=policy, profile=profile, route=route, sku=sku, title=title,
                           image=image, affiliate=affiliate, claims=claims, source_hash=source_hash,
                           image_hash=image_hash, related=related,
