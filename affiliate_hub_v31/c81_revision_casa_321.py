@@ -13,6 +13,7 @@ from secrets import token_hex
 from . import autonomous_review as review
 from . import automatic_wordpress_drafts as wp
 from .reviewed_draft_delivery import deliver_reviewed_draft
+from .reviewed_ready_promotion import _json_sha
 
 SITE = "wordpress_casa_decoracao"
 SKU = "shopee:400124163:42079451217"
@@ -69,7 +70,7 @@ def main(mode):
                 now = review.utcnow()
                 package = state.get_verified_evidence(**TENANT, product_key=SKU,
                     product_title=article["evidence_package"]["product_title"], now_epoch=int(now.timestamp()))
-                require(package and review.payload_digest(package) == job["evidence_sha256"], "old_evidence_expired")
+                require(package and _json_sha(package) == job["evidence_sha256"], "old_evidence_expired")
                 article.update(html_content=corrected, evidence_package=package)
                 payload = review.prepare_review_payload(article=article, catalog=catalog, now=now)
         digest = review.payload_digest(article)
@@ -115,7 +116,7 @@ def main(mode):
     finally:
         require(state.release_lease(**TENANT, **owner), "writer_release_failed")
     for _ in range(2):
-        result = deliver_reviewed_draft(**{"site_key": SITE, "fingerprint": FP}, state=state,
+        result = deliver_reviewed_draft(site_key=SITE, fingerprint=FP, state=state,
             envelope=envelope, release_public_key=public, daily_cap=1, wordpress_client=client)
         require(result == {"status":"DRAFT_VERIFIED","draft_id":"321","html_sha256":new}, "replay_failed")
     print("REVISED_DRAFT_AND_REPLAY_VERIFIED", new)
