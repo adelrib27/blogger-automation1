@@ -6,7 +6,8 @@ on:
 permissions: {}
 jobs:
   credit:
-    if: github.event.after != '0000000000000000000000000000000000000000' && github.event.head_commit.message == 'C81: verificar saldo e disparar piloto WordPress de 21/11'
+    if: >-
+      github.event.after != '0000000000000000000000000000000000000000' && github.event.head_commit.message == 'C81: validar saldo e despachar piloto WordPress isolado'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     steps:
