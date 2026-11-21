@@ -278,13 +278,13 @@
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
     "latest_verified_step": "DRAFTs confirmados. WordPress 321 recebeu revisão assinada com link interno ao artigo publicado 305; mesmo ID e replay, GET exato, D1 USED e envelope anterior preservado. Blogger 4106024906916105222 inalterado.",
-    "next_safe_step": "Observar os IDs e hashes homologados nos agendamentos, verificar falhas e provar a fila editorial recorrente antes da ativação permanente. Não repetir pilotos ou conversão.",
+    "next_safe_step": "Conferir event=schedule do observe-homologation após push 44910254596. Checagem de 22/11 10h Brasília programada. Não repetir conversão ou DRAFT. Após evidência de recorrência e tratamento de falhas, avaliar fila contínua DRAFT. LIVE exige autorização explícita da política.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "base_main_sha": "a0f0e3d925bbb157ab5f9969f5e0c70fd7be8e8c",
     "branch": "main",
-    "blocker": null,
+    "blocker": "Recorrência pós-homologação dos pilotos ainda em observação.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -310,7 +310,8 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44908968569",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44879578667/job/136771860650",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44909435608/job/136862192832",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44910109759"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44910109759",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44910254596/job/136864347808"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
