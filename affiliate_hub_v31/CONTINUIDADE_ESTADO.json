@@ -6,10 +6,10 @@
   "last_checkpoint_phase": "C81",
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
-  "last_updated_date": "2026-11-20",
-  "last_updated_source": "C81_PAUSA_WORK_LIMITE_2026_11_20",
+  "last_updated_date": "2026-11-21",
+  "last_updated_source": "C81_RETOMADA_DRAFT_2026_11_21",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_PAUSA_WORK_LIMITE_2026-11-20.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_RETOMADA_DRAFT_2026-11-21.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -277,10 +277,10 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "21/11: schedule 44879578667 Blogger entregou DRAFT 4106024906916105222; replay mesmo ID/HTML. D1 USED. Scheduler 44881521670 skipped. Nenhuma reserva Shopee do dia na leitura inicial.",
-    "next_safe_step": "Conferir CMS, cache e fila; conversão piloto WordPress com orçamento 1 e canário associado. Não repetir Blogger. LIVE desativado.",
+    "latest_verified_step": "Blogger DRAFT 4106024906916105222 confirmado no CMS, mesmo ID/HTML no replay. Firecrawl GitHub 978. A fila 44908874467 falhou antes da conversão (cryptography ausente). Corrigida; suíte passou no 44908968569.",
+    "next_safe_step": "Consultar 44908968569 e o canário WordPress subsequente. Não redespachar nem repetir Blogger. Conferir D1 e CMS.",
     "mutation_in_progress": false,
-    "remote_operation_in_progress": false,
+    "remote_operation_in_progress": true,
     "rollback_needed": false,
     "base_main_sha": "a0f0e3d925bbb157ab5f9969f5e0c70fd7be8e8c",
     "branch": "main",
@@ -306,11 +306,13 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44800518473/job/136511132872",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_PAUSA_WORK_LIMITE_2026-11-20.md",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44837608990",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44836542537"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44836542537",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44908968569",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44879578667/job/136771860650"
     ]
   },
   "next_priorities": [
-    "Confirmar os primeiros DRAFTs reais, leitura exata e replay por plataforma. Blogger aguarda cota UTC e WordPress aguarda conversão de link.",
+    "Concluir homologação do WordPress e conferir recorrência DRAFT com LIVE desativado.",
     "Ativar observação recorrente somente em DRAFT após a comprovação E2E por plataforma. A política LIVE segue pendente até evidência operacional e aprovação da versão.",
     "Ampliar cobertura de fontes com identidade exata e melhorar o catálogo de pautas e o monitoramento antes de incorporar novos blogs. Preservar campanhas, dados R2/D1 e projetos paralelos."
   ],
