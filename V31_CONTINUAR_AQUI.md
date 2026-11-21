@@ -1,6 +1,6 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
-> **Retomada C81 em 21/11/2026.** Consultar primeiro o [checkpoint dos DRAFTs](affiliate_hub_v31/CHECKPOINT_C81_RETOMADA_DRAFT_2026-11-21.md) e o estado estruturado. O Blogger confirmou entrega e replay no mesmo ID. A política LIVE aguarda homologação e autorização.
+> **Retomada C81 em 21/11/2026.** Consultar primeiro o [checkpoint dos DRAFTs](affiliate_hub_v31/CHECKPOINT_C81_RETOMADA_DRAFT_2026-11-21.md) e o estado estruturado. Blogger 4106024906916105222 e WordPress 321 confirmados por GET e replay; o WordPress 321 conserva o link interno verificado na revisão assinada. O cron acompanha a integridade em leitura. A política LIVE aguarda homologação e autorização.
 
 > **PAUSA C81 (limite do ChatGPT Work, 20/11/2026):** antes de continuar, leia o [checkpoint de retomada após limite Work](affiliate_hub_v31/CHECKPOINT_C81_PAUSA_WORK_LIMITE_2026-11-20.md). O GitHub mantém código/ações; as sessões Work não são executadas automaticamente com o PC desligado. Verifique novos runs/limites por dia UTC e evite duplicar conversão ou DRAFT. Nenhum LIVE automático autorizado.
 
