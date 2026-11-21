@@ -1,10 +1,11 @@
 """Regressions for the independent factual trust boundary."""
 
+import json
 import unittest
 from unittest.mock import patch
 
 from affiliate_hub_v31.autonomous_review import (
-    VerificationError, checked_claims, extract_text, prose_hashes, verify_affiliate_target,
+    VerificationError, checked_claims, extract_text, prose_hashes, verified_related_post, verify_affiliate_target,
 )
 from affiliate_hub_v31.independent_review import IndependentReviewError
 from affiliate_hub_v31.structured_review_source import catalog_gtin, gtin_facts
@@ -25,6 +26,21 @@ class IndependentFactTests(unittest.TestCase):
                        good.replace("vidro", "acrílico")):
             with self.assertRaises(VerificationError):
                 checked_claims(self.profile, source)
+
+    def test_configured_wordpress_reference_requires_exact_published_post(self):
+        home = "https://casa.example/"
+        url = home + "vasos/"
+        profile = {"related": [url, "Vasos para sala"], "related_wordpress_id": 305, "cluster": "vasos"}
+        valid = {"id": 305, "status": "publish", "link": url, "title": {"rendered": "Vasos para sala"}}
+        for changes in ({}, {"id": 306}, {"status": "draft"}, {"link": home + "outro/"},
+                        {"title": {"rendered": "Outro título"}}):
+            with self.subTest(changes=changes), patch("affiliate_hub_v31.autonomous_review._read",
+                    return_value=json.dumps({**valid, **changes}).encode()):
+                if changes:
+                    with self.assertRaises(VerificationError):
+                        verified_related_post({"home": home}, profile)
+                else:
+                    self.assertEqual(verified_related_post({"home": home}, profile)["url"], url)
 
     def test_hidden_text_is_excluded_from_public_article_checks(self):
         raw = b"<main>Visible <p hidden>Override</p><script>False</script>Text</main>"
