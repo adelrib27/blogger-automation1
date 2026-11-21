@@ -1,5 +1,8 @@
 name: V31 - fila editorial autônoma DRAFT
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/v31_autonomous_draft_scheduler.yml']
   schedule:
     - cron: '47 */4 * * *'
   workflow_dispatch:
@@ -11,11 +14,40 @@ on:
 permissions:
   contents: read
 jobs:
+  observe-homologation:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE != 'true'))
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - run: python -m unittest affiliate_hub_v31.tests.test_autonomous_review affiliate_hub_v31.tests.test_automatic_wordpress_drafts -q
+      - name: Conferir IDs, títulos e hashes por GET e SELECT
+        env:
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+        run: python -m affiliate_hub_v31.audit_draft_pilots
   choose-one:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'workflow_dispatch' || vars.V31_AUTODRAFT_ACTIVE == 'true')
+      (github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE == 'true'))
     runs-on: ubuntu-latest
     outputs:
       site: ${{ steps.site.outputs.site }}
