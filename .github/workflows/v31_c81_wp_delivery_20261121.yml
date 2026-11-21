@@ -1,0 +1,16 @@
+name: C81 - entrega isolada do DRAFT WordPress
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/v31_c81_wp_delivery_20261121.yml']
+permissions:
+  contents: read
+jobs:
+  wordpress:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.event.head_commit.message == 'C81 entrega do piloto WordPress com link confirmado'
+    uses: ./.github/workflows/v31_independent_review_draft.yml
+    with:
+      site_key: wordpress_casa_decoracao
+      pilot: true
+      pilot_sku: shopee:400124163:42079451217
+    secrets: inherit
