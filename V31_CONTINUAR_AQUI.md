@@ -1,5 +1,7 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **Retomada C81 em 21/11/2026.** Consultar primeiro o [checkpoint dos DRAFTs](affiliate_hub_v31/CHECKPOINT_C81_RETOMADA_DRAFT_2026-11-21.md) e o estado estruturado. O Blogger confirmou entrega e replay no mesmo ID. A política LIVE aguarda homologação e autorização.
+
 > **PAUSA C81 (limite do ChatGPT Work, 20/11/2026):** antes de continuar, leia o [checkpoint de retomada após limite Work](affiliate_hub_v31/CHECKPOINT_C81_PAUSA_WORK_LIMITE_2026-11-20.md). O GitHub mantém código/ações; as sessões Work não são executadas automaticamente com o PC desligado. Verifique novos runs/limites por dia UTC e evite duplicar conversão ou DRAFT. Nenhum LIVE automático autorizado.
 
 > **Para um novo chat do projeto:** leia este arquivo, depois [CONTINUIDADE_ESTADO.json](affiliate_hub_v31/CONTINUIDADE_ESTADO.json), [checkpoint C81](affiliate_hub_v31/CHECKPOINT_C81_INTEGRACAO_DRAFT_2026-11-20.md), [C80](affiliate_hub_v31/CHECKPOINT_C80_D1_GITHUB_AUTH_SAFE_2026-11-20.md), [C79](affiliate_hub_v31/CHECKPOINT_C79_R2_CAS_OFFICIAL_SAFE_2026-11-20.md), [C78](affiliate_hub_v31/CHECKPOINT_C78_READY_HTML_IMMUTABLE_ENVELOPE_2026-11-20.md), C77/C76/C75/C74/C69 e issue-mestre #54. Conferir GitHub Actions e Cloudflare antes de novas mutações. **Não** usar CHECKPOINT_ATUAL.md legado para V31.
