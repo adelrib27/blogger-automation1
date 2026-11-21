@@ -1,30 +1,19 @@
 name: V31 - canário DRAFT com orçamento de pesquisa
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/v31_autonomous_draft_canary.yml'
   workflow_dispatch:
     inputs:
       task:
-        description: 'Verificar assinatura ou executar o canário Blogger'
+        description: 'Diagnóstico ou piloto DRAFT manual'
         required: true
         type: choice
         default: signing
-        options: [signing, blogger]
-  schedule:
-    # Renovação da cota UTC antes do canário. Remover após o ensaio.
-    - cron: '17 0 * * *'
-  workflow_run:
-    workflows: ['V31 Universal — conversor diario por pedidos reais sem posts']
-    types: [completed]
-    branches: [main]
+        options: [signing, storage, readiness, blogger, wordpress]
 permissions:
   contents: read
 jobs:
   signing-check:
     if: >-
-      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.task == 'signing')) &&
+      inputs.task == 'signing' &&
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -101,7 +90,7 @@ jobs:
           echo C81_CONFIG_PUBLIC_KEY_MISSING_OR_MISMATCH
           exit 1
   storage-anchor:
-    if: github.event_name == 'push' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    if: inputs.task == 'storage' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     timeout-minutes: 8
@@ -126,7 +115,7 @@ jobs:
         run: python -m affiliate_hub_v31.tests.c81_storage_canary
 
   offer-readiness:
-    if: github.event_name == 'push' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    if: inputs.task == 'readiness' && github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     timeout-minutes: 8
@@ -170,7 +159,7 @@ jobs:
                                         "cms_calls": 0}))
           PY
   blogger:
-    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.task == 'blogger')
+    if: inputs.task == 'blogger' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: blogger_moveis_para_cada_canto
@@ -178,14 +167,7 @@ jobs:
       pilot_sku: shopee:1243712796:23398984325
     secrets: inherit
   wordpress:
-    if: >-
-      github.event_name == 'workflow_run' &&
-      (github.event.workflow_run.event == 'schedule' ||
-       (github.event.workflow_run.event == 'workflow_dispatch' &&
-        github.event.workflow_run.display_title == 'V31 | conversão isolada wordpress_casa_decoracao')) &&
-      github.event.workflow_run.head_repository.full_name == github.repository &&
-      github.event.workflow_run.head_branch == 'main' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: inputs.task == 'wordpress' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: wordpress_casa_decoracao
