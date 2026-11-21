@@ -160,6 +160,8 @@ class WordPressRestClient:
                     pages=int(raw_pages)
                 except (ValueError,TypeError):
                     raise WordPressAutoDraftError("wordpress_pages_invalid") from None
+                if pages == 0 and page == 1 and not batch:
+                    return []
                 if (pages<1 or pages>20 or page>pages or
                     (expected_pages is not None and pages!=expected_pages)):
                     raise WordPressAutoDraftError("wordpress_pages_invalid")
