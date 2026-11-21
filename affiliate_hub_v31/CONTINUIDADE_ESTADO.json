@@ -277,10 +277,10 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "Blogger DRAFT 4106024906916105222 confirmado no CMS, mesmo ID/HTML no replay. Firecrawl GitHub 978. A fila 44908874467 falhou antes da conversão (cryptography ausente). Corrigida; suíte passou no 44908968569.",
-    "next_safe_step": "Consultar 44908968569 e o canário WordPress subsequente. Não redespachar nem repetir Blogger. Conferir D1 e CMS.",
+    "latest_verified_step": "Dois DRAFTs C81 comprovados por GET exato e replay. 44909435608 confirmou WordPress 321 após correção da paginação e suíte completa. D1 USED nos dois pilotos. Uma conversão oficial. Política LIVE pendente.",
+    "next_safe_step": "Observar os IDs e hashes homologados nos agendamentos, verificar falhas e provar a fila editorial recorrente antes da ativação permanente. Não repetir pilotos ou conversão.",
     "mutation_in_progress": false,
-    "remote_operation_in_progress": true,
+    "remote_operation_in_progress": false,
     "rollback_needed": false,
     "base_main_sha": "a0f0e3d925bbb157ab5f9969f5e0c70fd7be8e8c",
     "branch": "main",
@@ -308,11 +308,24 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44837608990",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44836542537",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44908968569",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44879578667/job/136771860650"
-    ]
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44879578667/job/136771860650",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44909435608/job/136862192832"
+    ],
+    "draft_pilots": {
+      "blogger_moveis_para_cada_canto": {
+        "id": "4106024906916105222",
+        "title": "Guarda-roupa Toledo Santos Andirá: o que conferir antes de comprar",
+        "html_sha256": "acf054f9eb4b65196aa46544c8402e7d603144d781604e006042059ba263569c"
+      },
+      "wordpress_casa_decoracao": {
+        "id": "321",
+        "title": "Vaso Rizzo Imperial branco de 24 cm: o que conferir antes de comprar",
+        "html_sha256": "3569eba84b6a3cbef3929572767498f906949ff6d661e24b899f277d5f967f3a"
+      }
+    }
   },
   "next_priorities": [
-    "Concluir homologação do WordPress e conferir recorrência DRAFT com LIVE desativado.",
+    "Conferir primeiros ciclos de observação do scheduler e homologar a operação recorrente DRAFT.",
     "Ativar observação recorrente somente em DRAFT após a comprovação E2E por plataforma. A política LIVE segue pendente até evidência operacional e aprovação da versão.",
     "Ampliar cobertura de fontes com identidade exata e melhorar o catálogo de pautas e o monitoramento antes de incorporar novos blogs. Preservar campanhas, dados R2/D1 e projetos paralelos."
   ],
