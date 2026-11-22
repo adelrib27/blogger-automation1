@@ -8,7 +8,7 @@
 - **19 lojas Blogger sem produtos no HTML** (0 tags IMG, 0 shortlinks afiliados), elegíveis para abastecimento do V31 após obter 24+ anúncios reais e compatíveis.
 - **11 lojas Blogger comerciais com produtos** (de 1 a 35 anúncios com imagens e shortlinks afiliados). Não substituir em C100 sem necessidade.
 - **1 LAB** (*Casa Prática Lab*, 20 ofertas e 32 imgs) excluído como laboratório.
-- **3 WordPress conectados** (Radar Tech, Casa e Decoração, Oficina & Garagem) têm página publicada `/loja/`. O conector WP page GET não retornou corpo nesta leitura; **status comercial ainda não classificado, nenhuma alteração WP autorizada por esta evidência**.
+- **3 WordPress conectados** (Radar Tech, Casa e Decoração, Oficina & Garagem) têm páginas publicadas `/loja/` e **vitrines comerciais já preenchidas**, verificadas por leitura de HTML público: Radar Tech BR **21** destinos Shopee distintos e 29 imagens; Casa e Decoração **32** destinos e 44 imagens; Oficina & Garagem **24** destinos e 36 imagens. **Preservar, não sobrescrever** na C100. O conector WP `get_page` não retornou corpo utilizável; por isso não houve edição WordPress.
 
 ## Fila prioritária — 19 lojas vazias
 1. **Liquidificadores em Foco** — blog_id `5271798990390532475`; Loja page_id `5473313787015756722`; `status=PENDING_REAL_OFFERS`, `updated_by_C100=false`.
