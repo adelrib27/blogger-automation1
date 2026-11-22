@@ -1,0 +1,57 @@
+name: "V31 C100 R2 EXATO - Casa em Ordem e Cozinha SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c100_r2_exact_casa_cozinha.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: v31-c100-shopee-readonly
+  cancel-in-progress: false
+jobs:
+  r2-exact:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Preparar cliente R2 e verificar sintaxe
+        run: |
+          python -m py_compile affiliate_hub_v31/c100_r2_exact_readonly.py affiliate_hub_v31/c100_shop_renderer.py
+          python -m pip install "boto3>=1.36,<2"
+      - name: Consultar R2 e Shopee para as duas lojas sem escrever dados
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_C100_OUTPUT: c100_r2_casa_cozinha.json
+        run: python -m affiliate_hub_v31.c100_r2_exact_readonly --sites casa_em_ordem,cozinha_sem_complicacao | tee c100_exact_casa_cozinha.log
+      - name: Validar previews sem publicar no Blogger
+        run: |
+          python - <<'PY'
+          import json,subprocess,sys
+          data=json.load(open("c100_r2_casa_cozinha.json"))
+          for item in data:
+              if item["status"]!="READ_ONLY_READY_24_PLUS":
+                  print("C100_SITE_HTML_NOT_READY="+item["site_key"])
+                  continue
+              subprocess.run([sys.executable,"-m","affiliate_hub_v31.c100_shop_renderer","--input","c100_r2_casa_cozinha.json","--site",item["site_key"],"--output","c100_preview_"+item["site_key"]+".html"],check=True)
+          PY
+      - name: Preservar evidências por 7 dias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c100-r2-exact-casa-cozinha
+          path: |
+            c100_r2_casa_cozinha.json
+            c100_exact_casa_cozinha.log
+            c100_preview_*.html
+          if-no-files-found: ignore
+          retention-days: 7
