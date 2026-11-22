@@ -1,0 +1,68 @@
+name: "V31 C83 - Shopee Cadeira Certa exact offer SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c83_cadeira_exact_offer_safe.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  exact-offer-read-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Consulta exata item/loja na Open API Shopee SEM conversao
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,time,urllib.request,urllib.error,re
+          app=os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID","")
+          secret=os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET","")
+          if not app or not secret:
+              raise SystemExit("C83_CREDENTIALS_MISSING")
+          query='query C83OfficeArcoExact { productOfferV2(itemId: 58216389111, page: 1, limit: 5) { nodes { itemId shopId productName productLink imageUrl offerLink } pageInfo { hasNextPage } } }'
+          body=json.dumps({"query":query,"operationName":"C83OfficeArcoExact"},separators=(",",":"))
+          ts=int(time.time())
+          digest=hashlib.sha256(f"{app}{ts}{body}{secret}".encode()).hexdigest()
+          request=urllib.request.Request("https://open-api.affiliate.shopee.com.br/graphql",data=body.encode(),headers={
+              "Authorization":f"SHA256 Credential={app}, Timestamp={ts}, Signature={digest}",
+              "Content-Type":"application/json","Accept":"application/json",
+              "User-Agent":"V31-C83-Exact-Safe/1.0"
+          },method="POST")
+          try:
+              with urllib.request.urlopen(request,timeout=25) as response:
+                  raw=response.read(131073)
+                  if response.status!=200 or len(raw)>131072: raise ValueError("http_or_size")
+          except urllib.error.HTTPError as exc:
+              raise SystemExit("C83_HTTP_ERROR_"+str(exc.code)) from None
+          except Exception:
+              raise SystemExit("C83_NETWORK_OR_RESPONSE_ERROR") from None
+          try:
+              obj=json.loads(raw)
+          except Exception:
+              raise SystemExit("C83_INVALID_JSON") from None
+          if obj.get("errors"):
+              print("C83_API_ERROR_TYPES="+json.dumps([str(x.get("extensions",{}).get("code","graphql"))[:24] for x in obj["errors"]]))
+              raise SystemExit("C83_GRAPHQL_ERROR")
+          nodes=((obj.get("data") or {}).get("productOfferV2") or {}).get("nodes") or []
+          print("C83_NODES_COUNT="+str(len(nodes)))
+          match=[n for n in nodes if str(n.get("itemId"))=="58216389111" and str(n.get("shopId"))=="1231183958" and "cadeira" in str(n.get("productName","")).lower()]
+          if len(match)!=1: raise SystemExit("C83_EXACT_OFFER_NOT_CONFIRMED")
+          n=match[0]
+          print("C83_EXACT_OFFER_PASS")
+          print("C83_PRODUCT="+json.dumps({k:n.get(k) for k in ("itemId","shopId","productName","productLink","imageUrl","offerLink")},ensure_ascii=False))
+          print("C83_WRITES=0")
+          PY
