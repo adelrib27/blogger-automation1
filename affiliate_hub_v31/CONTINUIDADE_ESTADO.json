@@ -7,9 +7,9 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C81_BLOGGER_AUTODRAFT_REPO_VARIABLES_VISUALLY_ENABLED_WAIT_SCHEDULE",
+  "last_updated_source": "C81_BLOGGER_MOVEIS_PAGINAS_SEO_LINKS_VERIFICADOS_2026-11-22",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_AUTODRAFT_BLOGGER_ENABLED_2026-11-22.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_BLOGGER_MOVEIS_CORRECOES_2026-11-22.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -24,7 +24,7 @@
     "commercial_enrichment": "3_artigos_verificados_com_imagem_real_link_afiliado_cta_e_links_internos",
     "v31_regression_tests": 407,
     "workers_ai_test": "8_paragrafos_635_palavras_geracao_real_sem_publicar",
-    "blogger_moveis_draft_articles": 2,
+    "blogger_moveis_draft_articles": 6,
     "blogger_moveis_draft_id": "3612281866616913629",
     "wordpress_casa_published_posts": 44,
     "wordpress_casa_draft_posts": 58,
@@ -299,6 +299,24 @@
       "autolive_active": "false",
       "full_rollout_approved": "absent_in_screenshot",
       "administrative_api_readback": false
+    },
+    "blogger_moveis_institutional_pages": 3,
+    "c81_moveis_editorial_fixes_20261122": {
+      "blog_id": "1439741542627895062",
+      "blogger_settings_profile_validated": true,
+      "pages_added_ids": [
+        "880296422528540850",
+        "4353966172029848498",
+        "5725767004918622546"
+      ],
+      "live_posts_institutional_navigation_updated": [
+        "361914172841959603",
+        "3460803458877796795",
+        "5467343028388246916"
+      ],
+      "drafts_unchanged": true,
+      "new_live_articles_published": 0,
+      "scheduler_after_activation_verified": false
     }
   },
   "do_not_assume": {
@@ -319,14 +337,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado.",
-    "next_safe_step": "Conferir próximo event=schedule após configuração do proprietário; confirmar choose-one Blogger e release skipped; validar independent-verifier/deliver-draft e GET CMS/D1. Se NO_NEW_OFFER, investigar catálogo sem fabricar artigos; não duplicar pilotos. WordPress ainda bloqueado por writer LIVE legado Casa.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES.",
+    "next_safe_step": "Validar a primeira execução event=schedule após a ativação Blogger Móveis; conferir jobs choose-one/draft/audit/release, D1 e GET de novo DRAFT sem duplicar. Fazer verificação do gadget de Páginas no Layout; rever 5 DRAFTs legados antes de qualquer LIVE. Preservar WordPress Casa e o LIVE novo desativado.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "base_main_sha": "a0f0e3d925bbb157ab5f9969f5e0c70fd7be8e8c",
     "branch": "main",
-    "blocker": "Novo escritor DRAFT Blogger habilitado segundo captura do proprietário, mas ainda sem execução agendada posterior comprovada. O próximo gate é validar um novo DRAFT seguro ou motivo fail-closed; Live novo permanece false.",
+    "blocker": "Ainda não há schedule escritor pós-ativação comprovado; 5 rascunhos legados precisam de revisão e gadget de páginas da homepage não auditado.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -363,7 +381,8 @@
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_ROLLOUT_SAFE_PREVIEW_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45028515776",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/C81_ATIVACAO_CONTROLADA_DRAFT_REPO_VARIABLES_2026-11-22.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_AUTODRAFT_BLOGGER_ENABLED_2026-11-22.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_AUTODRAFT_BLOGGER_ENABLED_2026-11-22.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_BLOGGER_MOVEIS_CORRECOES_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
