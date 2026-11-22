@@ -1,0 +1,55 @@
+name: "V31 C94 - inventario de links afiliados por blog SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c94_affiliate_catalog_readonly.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  affiliate-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install "boto3>=1.36,<2"
+      - name: Restaurar snapshot R2 SEM gravar e listar campanhas Shopee
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: |
+          python - <<'PY'
+          import tempfile,json,sqlite3,pathlib
+          from affiliate_hub_v31.r2_state import R2State
+          from affiliate_hub_v31.routing import sites
+          with tempfile.TemporaryDirectory() as td:
+            p=pathlib.Path(td)/"read_only.sqlite3"
+            assert R2State.from_env().restore_to(p),"C94_R2_SNAPSHOT_MISSING"
+            db=sqlite3.connect("file:"+str(p)+"?mode=ro",uri=True)
+            routes=sites()
+            counts={r[0]:r[1] for r in db.execute("SELECT campaign,COUNT(*) FROM affiliate_links GROUP BY campaign")}
+            print("C94_CAMPAIGN_COUNTS="+json.dumps(counts,ensure_ascii=False))
+            for site,route in sorted(routes.items()):
+              c=route["campaign"]
+              rows=db.execute("""SELECT l.product_key,p.title,p.image_url,p.origin_url,l.affiliate_url,t.category,t.niche
+                FROM affiliate_links l JOIN products p ON p.product_key=l.product_key
+                LEFT JOIN product_taxonomy t ON t.product_key=p.product_key
+                WHERE l.campaign=? AND p.moderation=\'eligible\'
+                ORDER BY l.updated_utc DESC LIMIT 12""",(c,)).fetchall()
+              choices=[]
+              for key,title,image,origin,affiliate,category,niche in rows:
+                if not image.startswith("https://") or not affiliate.startswith("https://"):continue
+                if (category+"/"+niche) not in route.get("allowed_niches",[]) and not route.get("allowed_source_paths",[]):continue
+                choices.append({"sku":key,"name":title[:150],"image":image,"origin":origin,"affiliate":affiliate})
+              print("C94_SITE="+json.dumps({"site":site,"campaign":c,"links_found":len(rows),"usable":choices[:4]},ensure_ascii=False))
+            db.close()
+          print("C94_READONLY_DONE_NO_PUBLICATION_NO_CONVERSION")
+          PY
