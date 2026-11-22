@@ -278,7 +278,7 @@ class RequestQueueTests(unittest.TestCase):
              patch("affiliate_hub_v31.site_request_queue.autonomous_sites_for_writes",
                    return_value={"novo_blog_a"}), \
              patch("affiliate_hub_v31.site_request_queue.conversion_priority_keys",
-                   return_value=iter([target])), \
+                   side_effect=lambda *args: iter([target])), \
              patch("affiliate_hub_v31.site_request_queue.convert_one",
                    side_effect=convert):
             for bad in (
