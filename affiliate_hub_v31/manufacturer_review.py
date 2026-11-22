@@ -220,7 +220,7 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
             break
     if product_heading is None or section is None:
         raise ManufacturerEvidenceError("manufacturer_product_heading_missing")
-    excerpt = plain(product_heading + " " + section[:7500])[:1800]
+    excerpt = plain(product_heading + " " + section[:7500])[:1100]
     if not any(has_phrase(excerpt, alt) for name, alts in KINDS
                if name == kind for alt in alts):
         raise ManufacturerEvidenceError("manufacturer_product_type_missing")
