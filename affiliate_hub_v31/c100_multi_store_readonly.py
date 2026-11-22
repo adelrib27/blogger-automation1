@@ -13,7 +13,7 @@ MIN_RATING = 4.0
 MIN_SALES = 10
 MAX_PER_SHOP = 2
 MAX_OFFERS = 36
-MAX_QUERIES = 8
+MAX_QUERIES = 12
 NEGATIVE_GENERIC = (
     "miniatura", "boneca", "brinquedo", "infantil", "crianca", "bebe", "fantasia",
     "capa protetora", "peca de reposicao", "refil avulso", "reposicao",
@@ -39,6 +39,8 @@ def listing_valid(n, name, positive, site_key):
     if len(t)<10 or any(x in t for x in NEGATIVE_GENERIC): return None
     if site_key in PRIORITY_APPLIANCE and any(x in t for x in NEGATIVE_APPLIANCE):
         return None
+    if site_key=="cozinha_sem_complicacao" and "air fryer" in t:
+        if any(z in t for z in ("tapete", "silicone", "forma", "papel", "grelha", "cesto", "protetor", "assadeira", "manta", "kit de acessorios")): return None
     if site_key=="air_fryers" and ("air fryer" in t or "fritadeira" in t):
         if any(z in t for z in ("tapete", "forma", "cesto", "grade", "papel", "silicone", "kit acessorios", "assadeira", "pelicula", "espeto", "grelha", "aluminio descartavel")): return None
         if not any(z in t for z in ("eletrica", "digital", "inox", "litro", "oven", "fritadeira", "britania", "mondial", "philco", "midea", "electrolux", "arno", "oster")): return None
@@ -99,25 +101,33 @@ def discover_site(site, app, secret):
     events=[]
     total_calls=0
     for name, keyword, pattern in site["groups"]:
-        nodes,err=call(app,secret,name,keyword,5)
-        total_calls+=1
-        if err and ("10000" in err or "graphql:?" in err):
-            time.sleep(.8)
-            nodes,err=call(app,secret,name,keyword,1)
-            total_calls+=1
-        if err:
-            events.append({"category":name,"keyword":keyword,"error":err})
-            if "10030" in err or "429" in err:
-                break
-            continue
         found=[]
-        for n in nodes:
-            candidate=listing_valid(n,name,pattern,site["key"])
-            if candidate: found.append(candidate)
+        exhausted=False
+        for sort_mode in (1,5):
+            if total_calls>=MAX_QUERIES: break
+            nodes,err=call(app,secret,name,keyword,sort_mode)
+            total_calls+=1
+            if err:
+                events.append({"category":name,"keyword":keyword,"sort_mode":sort_mode,"error":err})
+                if "10030" in err or "429" in err:
+                    exhausted=True
+                    break
+                time.sleep(.35)
+                continue
+            accepted=0
+            for n in nodes:
+                candidate=listing_valid(n,name,pattern,site["key"])
+                if candidate:
+                    found.append(candidate)
+                    accepted+=1
+            events.append({"category":name,"keyword":keyword,"sort_mode":sort_mode,
+                           "received":len(nodes),"accepted":accepted})
+            if sort_mode==1 and accepted>=22:
+                # Bastante variedade já disponível; evitar chamada redundante.
+                break
+            time.sleep(.20)
         result[name]=found
-        events.append({"category":name,"keyword":keyword,"received":len(nodes),"accepted":len(found)})
-        time.sleep(.20)
-        if total_calls>=MAX_QUERIES: break
+        if exhausted or total_calls>=MAX_QUERIES: break
     clean={}
     for name,products in result.items():
         for p in products:
