@@ -34,8 +34,8 @@ class ManufacturerTests(unittest.TestCase):
         self.assertEqual(identity["model"], "giardino")
         self.assertEqual(identity["kind"], "guarda-roupa")
         facts=self.review()
-        self.assertEqual(len(facts), 2)
-        self.assertEqual([x[0] for x in facts], ["model_identifier", "material"])
+        self.assertEqual(len(facts), 4)
+        self.assertEqual([x[0] for x in facts], ["model_identifier", "material", "features", "features"])
         self.assertIn("MDP", facts[1][1])
 
     def test_model_code_is_more_specific_than_generic_words(self):
@@ -71,18 +71,20 @@ class ManufacturerTests(unittest.TestCase):
             self.review(markdown=TEXT+"Guarda-Roupa Giardino 8 portas e 2 gavetas.")
         with self.assertRaisesRegex(ManufacturerEvidenceError,"variant_conflict"):
             self.review(markdown=TEXT.replace("6 portas e 4 gavetas, ",""))
-        with self.assertRaisesRegex(ManufacturerEvidenceError,"material_unverified"):
-            self.review(markdown=TEXT.replace("estrutura em MDP","ótima qualidade"))
+        inferred=self.review(markdown=TEXT.replace("estrutura em MDP","ótima qualidade"))
+        self.assertEqual([claim[0] for claim in inferred],
+                         ["model_identifier","features","features"])
         with self.assertRaisesRegex(ManufacturerEvidenceError,"material_unverified"):
             self.review(markdown=TEXT.replace("estrutura em MDP","estrutura em chumbo"))
-        with self.assertRaisesRegex(ManufacturerEvidenceError,"material_unverified"):
+        with self.assertRaisesRegex(ManufacturerEvidenceError,"material_ambiguous"):
             self.review(markdown=TEXT.replace("estrutura em MDP","estrutura em MDF e MDP"))
 
     def test_scraped_footer_cannot_supply_fake_material(self):
         front="## Giardino Guarda-Roupa Casal da Demóbile\n"
         body=front+"Guarda-Roupa Giardino 6 portas e 4 gavetas.\n"+("texto geral "*130)
-        with self.assertRaisesRegex(ManufacturerEvidenceError,"material_unverified"):
-            self.review(markdown=body+"\nProduto diferente tem estrutura em MDP.")
+        facts=self.review(markdown=body+"\nProduto diferente tem estrutura em MDP.")
+        self.assertNotIn("material",[fact[0] for fact in facts])
+        self.assertEqual(len(facts),3)
 
     def test_registry_requires_exact_validated_schema(self):
         with tempfile.TemporaryDirectory() as td:
