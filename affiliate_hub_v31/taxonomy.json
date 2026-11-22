@@ -1,5 +1,5 @@
 {
-  "version": "v31-editorial-taxonomy-3",
+  "version": "v31-editorial-taxonomy-4",
   "purpose": "Rotas deterministicas para curadoria ANTES da conversao; nenhuma categoria desconhecida publicada automaticamente",
   "normalization": "Frases com limites de palavras; titulo do produto; categoria desconhecida ou conflitante implica revisao",
   "niches": [
@@ -402,6 +402,51 @@
         "organizador para guarda roupa",
         "para casa de boneca",
         "suporte para tv"
+      ]
+    },
+    {
+      "category": "climatizacao",
+      "niche": "ar_condicionado",
+      "terms": [
+        "ar condicionado split",
+        "ar-condicionado split",
+        "condicionador de ar split",
+        "ar condicionado inverter",
+        "ar-condicionado inverter",
+        "ar condicionado de janela",
+        "ar-condicionado de janela"
+      ],
+      "exclude": [
+        "controle remoto",
+        "controle universal",
+        "capa para ar condicionado",
+        "capa protetora",
+        "suporte para ar condicionado",
+        "suporte universal",
+        "tubo de cobre",
+        "tubulacao",
+        "tubulação",
+        "mangueira",
+        "peca para ar condicionado",
+        "peça para ar condicionado",
+        "filtro de ar condicionado",
+        "filtro para ar condicionado",
+        "placa para ar condicionado",
+        "placa eletronica",
+        "placa eletrônica",
+        "compressor avulso",
+        "motor de ar condicionado",
+        "sensor para ar condicionado",
+        "kit limpeza",
+        "kit instalacao",
+        "kit instalação",
+        "recarga de gas",
+        "recarga de gás",
+        "evaporadora avulsa",
+        "condensadora avulsa",
+        "brinquedo",
+        "miniatura",
+        "ar condicionado portatil"
       ]
     }
   ]
