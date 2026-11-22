@@ -293,6 +293,19 @@ def main() -> int:
         print("C93_MISSING_CREDENTIALS")
         return 2
     result=discover(app,secret)
+    path=os.environ.get("V31_AIRCON_CANDIDATE_PATH","").strip()
+    if path:
+        from datetime import datetime,timezone
+        snapshot={
+            "site_key":"blogger_ar_condicionado_sem_duvidas",
+            "generated_at_utc":datetime.now(timezone.utc).isoformat(),
+            "mode":"SAFE_READ_ONLY_REVIEW_NO_PUBLICATION",
+            "primary_keyword":PRIMARY_KEYWORD,
+            **result,
+        }
+        Path(path).write_text(json.dumps(snapshot,indent=2,ensure_ascii=False)+"\\n",
+                              encoding="utf-8")
+        print("C93_ARTIFACT_WRITTEN="+path)
     print("C93_DISCOVERY_SUMMARY="+json.dumps(
         {k:v for k,v in result.items() if k!="candidates"},ensure_ascii=False))
     for n in result["candidates"][:12]:
