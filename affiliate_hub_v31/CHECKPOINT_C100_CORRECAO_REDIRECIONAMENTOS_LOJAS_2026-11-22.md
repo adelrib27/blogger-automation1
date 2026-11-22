@@ -30,7 +30,7 @@ Todos os posts abaixo foram encontrados via `Blogger_Bridge_V2.search_posts_by_t
 | achados_casa | `1426630233929943394` | `3841238517239710135` | `854861801599328533` | 32 |
 | cozinha_sem_complicacao | `3552757910439359679` | `6913756651435112886` | `7888042807715084117` | 20 |
 
-- **16** posts na lista acima têm 20 shortlinks distintos; **Achados para Casa** tem **32** e **Cozinha Sem Complicação** tem **20**. Esses 18 blogs já possuíam lojas comerciais funcionando antes da C100.
+- **17** posts na lista acima têm 20 shortlinks distintos; **Achados para Casa** tem **32** e **Cozinha Sem Complicação** está entre os 17 com **20**. Esses 18 blogs já possuíam lojas comerciais funcionando antes da C100.
 - Os posts "Loja" consultados continham fotos (tipicamente 32 imagens por HTML) e links afiliados, independentemente de a Page ser redirecionadora.
 - **Móveis para Cada Canto** (`blog_id=1439741542627895062`, Page Loja `5105320514641154037`) é a **ÚNICA** página que não contém anúncios E não redireciona para um post "Loja"; `search_posts_by_title("Loja", exact)` retornou ZERO. Esse é o alvo realmente vazio no inventário de 19.
 - Os outros **11 Blogger** que tinham produtos diretamente nas Pages continuam preservados; 1 LAB Casa Prática Lab e 1 blog de astronomia não lançado excluídos. Os 3 WordPress também possuem lojas preenchidas no HTML público.
