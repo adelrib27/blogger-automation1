@@ -39,3 +39,6 @@ A fonte de referência foi `Pasted text.txt` previamente fornecida e igual a `Ca
 - Se o Blogger normalizar/reinserir gadget, exportar HTML normalizado e corrigir sobre o código efetivamente salvo; restaurar backup se necessário.
 
 **Próxima ação de continuidade:** obter export do template LIVE do Café para patch exato ou executar instalação via Work (navegador autenticado) com rollback e teste, nunca afirmar que C95 está instalado antes de verificar.
+
+## Validação do patcher reutilizável C95
+O script offline `blogger_themes/tools/fix_featuredpost1_legacy_v31.py` foi adicionado à branch `main`. Workflow [#45069132403](https://github.com/adelrib27/blogger-automation1/actions/runs/45069132403) concluído **SUCCESS**: `python -m py_compile` PASS e teste de fixture XML com `FeaturedPost1` ativado verificou desativação, seleção exclusiva `Blog1` e **idempotência** (segunda aplicação não altera o resultado). O teste é offline e não significa que o tema C95 já foi instalado no Café.
