@@ -1,0 +1,75 @@
+name: "V31 C94 - 9 blogs extras Shopee exact offer read only"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c94_unrouted_exact_affiliate_readonly.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  exact-account-offers:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Revalidar 9 SKUs e links afiliados da conta, sem conversão
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          import os,time,json,urllib.request,urllib.error,urllib.parse
+          from affiliate_hub_v31.shopee_probe import ENDPOINT,authorization
+          items=json.loads('[["cafe","1046470373","23898564808"],["violao","1209673900","22593119903"],["pedal","1499062997","22499049227"],["casaleve","1348601027","58204233539"],["achadosrotina","1615607650","58204902136"],["atelie","497708428","58251675489"],["mala","1783832671","58209674695"],["vidapet","631619886","20572876042"],["jardim","410010723","22997556744"]]')
+          app=os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID","")
+          secret=os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET","")
+          if not app or not secret:raise SystemExit("C94_CREDENTIALS_MISSING")
+          matched=[]
+          fields="itemId shopId productName productLink imageUrl offerLink priceMin periodEndTime"
+          for base in range(0,len(items),3):
+            batch=items[base:base+3]
+            query="query V31C94ExtraExact { "+" ".join(f"x{i}:productOfferV2(itemId:{item},page:1,limit:4){{nodes{{{fields}}}}}" for i,(site,shop,item) in enumerate(batch))+" }"
+            body=json.dumps({"query":query,"operationName":"V31C94ExtraExact"},separators=(",",":"))
+            req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={"Authorization":authorization(app,secret,body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31-C94-Extra-ReadOnly/1.0"})
+            try:
+              with urllib.request.urlopen(req,timeout=27) as response:
+                raw=response.read(131073)
+                if response.status!=200 or len(raw)>131072:raise ValueError("bad-response")
+              obj=json.loads(raw)
+            except urllib.error.HTTPError as e:
+              print("C94_EXTRA_HTTP_ERROR="+str(base)+" "+str(e.code));continue
+            except Exception:
+              print("C94_EXTRA_NETWORK_ERROR="+str(base));continue
+            if obj.get("errors"):
+              print("C94_EXTRA_GRAPHQL_ERROR="+str(base)+" "+json.dumps([str(z.get("extensions",{}).get("code","graphql")) for z in obj["errors"]]));continue
+            for i,(site,shop,item) in enumerate(batch):
+              nodes=((obj.get("data")or{}).get("x"+str(i)) or {}).get("nodes") or []
+              select=[z for z in nodes if str(z.get("shopId"))==shop and str(z.get("itemId"))==item]
+              if len(select)!=1:print("C94_EXTRA_NO_MATCH="+site);continue
+              p=select[0];url=urllib.parse.urlsplit(str(p.get("offerLink") or ""))
+              origin=urllib.parse.urlsplit(str(p.get("productLink") or ""))
+              try:price=float(p.get("priceMin") or 0)
+              except Exception:price=0
+              if url.scheme!="https" or url.hostname not in ("s.shopee.com.br","shope.ee","shopee.com.br") or origin.hostname!="shopee.com.br" or price<=0 or not str(p.get("imageUrl") or "").startswith("https://"):
+                print("C94_EXTRA_REJECTED="+site);continue
+              offer={"site":site,"sku":"shopee:"+shop+":"+item,"title":p.get("productName"),"image":p.get("imageUrl"),"affiliate":p.get("offerLink"),"origin":p.get("productLink"),"stockConfirmed":False}
+              matched.append(offer)
+              print("C94_EXTRA_VERIFIED="+json.dumps(offer,ensure_ascii=False,separators=(",",":")))
+            time.sleep(0.7)
+          with open("c94_nine_offers.json","w",encoding="utf-8") as f:json.dump(matched,f,ensure_ascii=False,indent=2)
+          print("C94_EXTRA_MATCHED_COUNT="+str(len(matched)))
+          print("C94_EXTRA_NO_MUTATIONS_NO_BLOGGER")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c94-extra-nine-exact-offers
+          path: c94_nine_offers.json
+          retention-days: 7
+          if-no-files-found: ignore
