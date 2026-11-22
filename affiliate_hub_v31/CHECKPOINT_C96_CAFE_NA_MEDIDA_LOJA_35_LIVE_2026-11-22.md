@@ -38,3 +38,6 @@ Arquivo integral preparado/validado antes da edição:
 - Scripts de descoberta READ ONLY: `affiliate_hub_v31/cafe_loja_readonly.py`, `affiliate_hub_v31/cafe_loja_refill_readonly.py`; workflows `v31_c96*` disparam por push no próprio YAML ou manualmente, sem publicação e sem conversão.
 
 **Estado C96: CONCLUÍDO — 35 ofertas reais Shopee na página Loja existente e verificadas no CMS e HTML público.**
+
+## Observação adicional: módulo Loja da HOME (componente separado)
+Após a atualização da página `/p/loja.html`, uma segunda consulta pública da **homepage** `https://cafe-na-medida.blogspot.com/` ainda encontrou o texto de widget **“Nenhum produto disponível no momento”**, mesmo com 35 produtos confirmados na página Loja. A página Loja está correta; o módulo de vitrine embutido no TEMA da HOME é outro componente e não se alimenta automaticamente da Blogger Page. **Não alterar o tema sem backup real e ferramenta autorizada para o ID do Café**; Runner atual não permite instalar para `4820923154548273510`. Para unificar a comunicação, futura revisão do tema deve ao menos fazer o bloco da HOME apontar explicitamente para `/p/loja.html` e não divulgar loja vazia. Esse ajuste de tema **não foi executado em C96**.
