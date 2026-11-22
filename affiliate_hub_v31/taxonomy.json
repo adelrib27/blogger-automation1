@@ -1,5 +1,5 @@
 {
-  "version": "v31-editorial-taxonomy-4",
+  "version": "v31-editorial-taxonomy-5",
   "purpose": "Rotas deterministicas para curadoria ANTES da conversao; nenhuma categoria desconhecida publicada automaticamente",
   "normalization": "Frases com limites de palavras; titulo do produto; categoria desconhecida ou conflitante implica revisao",
   "niches": [
@@ -156,8 +156,7 @@
         "ventilador",
         "climatizador de ar",
         "umidificador de ar",
-        "purificador de ar",
-        "ar condicionado portatil"
+        "purificador de ar"
       ],
       "exclude": [
         "motor ventilador",
@@ -408,6 +407,9 @@
       "category": "climatizacao",
       "niche": "ar_condicionado",
       "terms": [
+        "ar condicionado",
+        "condicionador de ar",
+        "ar condicionado portatil",
         "ar condicionado split",
         "ar-condicionado split",
         "condicionador de ar split",
@@ -446,7 +448,16 @@
         "condensadora avulsa",
         "brinquedo",
         "miniatura",
-        "ar condicionado portatil"
+        "mini ar condicionado",
+        "climatizador",
+        "resfriador de ar",
+        "ar condicionado automotivo",
+        "motor atuador",
+        "comando de ar",
+        "saida de ar",
+        "radiador",
+        "valvula de nucleo",
+        "peca automotiva"
       ]
     }
   ]
