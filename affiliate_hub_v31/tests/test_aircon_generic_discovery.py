@@ -92,5 +92,16 @@ class AirconC93Tests(unittest.TestCase):
         self.assertEqual(calls[:2],[("ar condicionado",1),("ar condicionado split",1)])
 
 
+    def test_api_10000_is_not_no_products(self):
+        with patch("affiliate_hub_v31.aircon_discovery.request_page",
+                   return_value={"error":"graphql","codes":["10000"]}):
+            with patch("affiliate_hub_v31.aircon_discovery.load_history",
+                       return_value=(set(),set())):
+                output=discover("dummy","dummy",rotation_override=0)
+        self.assertEqual(output["status"],"TEMPORARY_API_ERRORS")
+        self.assertEqual(output["queries"],4)
+        self.assertEqual(output["candidates"],[])
+
+
 if __name__=="__main__":
     unittest.main()
