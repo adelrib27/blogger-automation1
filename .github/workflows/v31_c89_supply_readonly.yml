@@ -1,0 +1,42 @@
+name: V31 C89 - medir candidatos verificaveis no R2 SAFE
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'affiliate_hub_v31/supply_probe.py'
+      - '.github/workflows/v31_c89_supply_readonly.yml'
+  workflow_dispatch:
+    inputs:
+      site_key:
+        type: choice
+        required: true
+        default: blogger_moveis_para_cada_canto
+        options:
+          - blogger_moveis_para_cada_canto
+          - wordpress_casa_decoracao
+permissions:
+  contents: read
+concurrency:
+  group: v31-c89-readonly-supply-probe
+  cancel-in-progress: false
+jobs:
+  readonly-r2:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+      V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+      V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+      V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+      SITE: ${{ github.event_name == 'workflow_dispatch' && inputs.site_key || 'blogger_moveis_para_cada_canto' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar leitor R2
+        run: python -m pip install 'boto3>=1.35,<2'
+      - name: Medir prontidao de fontes sem novos links ou artigos
+        run: python -m affiliate_hub_v31.supply_probe --site-key "$SITE"
