@@ -37,6 +37,8 @@ class AirconC93Tests(unittest.TestCase):
             "Ar Condicionado Oribreeze Resfriador de Ar Portatil com Luz Noturna",
             "102 Pcs R134A Valvula de Nucleo Ar Condicionado Automotivo",
             "Moldura Para Ar Condicionado de Janela 30000BTUs",
+            "Caixa Caixonete Madeira para Ar Condicionado de Janela 7500BTUs",
+            "Caixilho Madeira Ar Condicionado de Janela 12000BTUs",
             "Tira Veda Espuma Para Ar Condicionado Janela Split 21000BTU",
             "Comando de Ar Condicionado do Painel VW Up",
             "Evaporadora Ar Condicionado Ford Fusion",
