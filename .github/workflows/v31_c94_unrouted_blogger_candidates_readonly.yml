@@ -1,0 +1,57 @@
+name: "V31 C94 - produtos para 9 blogs Blogger adicionais SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c94_unrouted_blogger_candidates_readonly.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  choose-source-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install "boto3>=1.36,<2"
+      - name: Ler imagens e SKUs candidatos, sem converter ou publicar
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: |
+          python - <<'PY'
+          import sqlite3,tempfile,pathlib,json
+          from affiliate_hub_v31.r2_state import R2State
+          from affiliate_hub_v31.catalog import Catalog,host_allowed
+          from affiliate_hub_v31.source_policy_gate import source_safe_for_use
+          targets=json.loads('[["cafe","cafe","preparo"],["violao","musica","violao_instrumentos"],["pedal","ciclismo","equipamentos"],["casaleve","casa","organizacao"],["achadosrotina","cozinha","organizacao_utensilios"],["atelie","casa","decoracao"],["mala","viagem","malas_acessorios"],["vidapet","pets","cuidados_acessorios"],["jardim","jardim","horta_jardinagem"]]')
+          with tempfile.TemporaryDirectory() as td:
+            path=pathlib.Path(td)/"c94-ro.sqlite3"
+            assert R2State.from_env().restore_to(path),"C94_R2_MISSING"
+            db=sqlite3.connect("file:"+str(path)+"?mode=ro",uri=True)
+            catalog=Catalog.__new__(Catalog);catalog.db=db
+            for label,cat,niche in targets:
+              rows=db.execute("""SELECT p.product_key,p.title,p.origin_url,p.image_url,p.shop_id,p.item_id
+                FROM products p JOIN product_taxonomy t ON p.product_key=t.product_key
+                WHERE p.moderation=\'eligible\' AND t.status=\'matched\'
+                AND t.category=? AND t.niche=? ORDER BY p.last_seen_utc DESC LIMIT 110""",(cat,niche)).fetchall()
+              items=[];seen=set()
+              for sku,title,origin,image,shop,item in rows:
+                if sku in seen or not shop.isdigit() or not item.isdigit():continue
+                if not host_allowed(origin) or not str(image).startswith("https://"):continue
+                if not source_safe_for_use(catalog,sku):continue
+                if len(title)<18 or len(title)>190:continue
+                items.append({"sku":sku,"title":title,"image":image,"origin":origin})
+                seen.add(sku)
+                if len(items)>=8:break
+              print("C94_UNROUTED_SITE="+json.dumps({"site":label,"niche":cat+"/"+niche,"candidates":items},ensure_ascii=False))
+            db.close()
+          print("C94_UNROUTED_R2_READONLY_DONE")
+          PY
