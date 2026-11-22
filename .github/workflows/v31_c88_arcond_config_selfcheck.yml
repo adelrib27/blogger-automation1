@@ -1,0 +1,44 @@
+name: "V31 C88 - Ar Condicionado routing taxonomy selfcheck"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c88_arcond_config_selfcheck.yml"]
+permissions:
+  contents: read
+jobs:
+  c88-safe-route-smoke:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar site exclusivo, taxonomia e gate LIVE OFF sem API
+        run: |
+          python - <<'PY'
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.taxonomy import classify_title
+          s=sites()
+          k="blogger_ar_condicionado_sem_duvidas"
+          assert k in s, "C88_SITE_MISSING"
+          r=s[k]
+          assert r["identifier"]=="2228849984262880811"
+          assert r["campaign"]=="arcondicionadosemduvidas"
+          assert r["publish_enabled"] is False
+          assert "climatizacao/ar_condicionado" in r["allowed_niches"]
+          positives=["Ar Condicionado Split 12000 BTUs LG S3NQ12JAQAC - Frio, Dual Inverter, Compact","Ar Condicionado Split TCL Inverter 9000 BTUs Frio"]
+          for title in positives:
+              c=classify_title(title)
+              print("C88_POSITIVE="+c.status+"_"+c.category+"_"+c.niche)
+              assert c.status=="matched" and c.category=="climatizacao" and c.niche=="ar_condicionado"
+          neg="Controle Remoto Universal para Ar Condicionado Split LG"
+          n=classify_title(neg)
+          assert n.status=="review"
+          print("C88_NEGATIVE_ACCESSORY_REVIEW="+n.reason)
+          print("C88_ROUTE_PASS")
+          print("C88_NO_API_NO_MUTATION")
+          PY
