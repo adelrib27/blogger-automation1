@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C85 Cadeira Certa (grade da HOME):** [diagnóstico CSS + widget](affiliate_hub_v31/CHECKPOINT_C85_CADEIRA_GRADE_FEATUREDPOST_OCULTO_DIAGNOSTICO_2026-11-22.md). O carrossel C84 já foi corrigido e validado. Porém o Blogger exibe **5 de 6 artigos na grade**: Office Arco está no `FeaturedPost1`, e seu ancestral `.featured-post` é ocultado pelo tema com `display:none!important`; Blogger Configurações permite 7 e o feed tem 6. **Correção nativa pendente**: Blogger Layout → gadget Postagem em destaque → desativar Mostrar este widget → salvar; depois verificar `Blog1` com 6 cards e carrossel com 5. A alteração NÃO foi executada por conector nesta sessão (Layout/Template sem endpoint de escrita), não declarar concluída até GET público. Não duplicar posts, nem alterar datas/C83/Shopee ou habilitar AUTO LIVE.
+
+
 > **22/11/2026 — C84 Cadeira Certa: causa exata do destaque Office Arco encontrada (ainda NÃO corrigida no tema LIVE):** [checkpoint](affiliate_hub_v31/CHECKPOINT_C84_CADEIRA_TEMA_CARROSSEL_DIAGNOSTICO_2026-11-22.md) e [patch mínimo de 1 linha para Blogger Tema → Editar HTML](blogger_themes/patches/C84_CADEIRA_CERTA_CAROUSEL_SELECTOR.md). O script carrossel consulta só `#Blog1 .post-wrapper`; o artigo novo Office Arco está em `#FeaturedPost1 .post-wrapper`. Solução: usar seletor `'#FeaturedPost1 .post-wrapper, #Blog1 .post-wrapper'`, mantendo deduplicação e limite cinco originais. Blogger API/Runner conectado não permite editar template desta conta. Aplicar em editor autenticado Work/Blogger após backup e confirmar por GET. Não mexer em posts, datas, API Shopee, campanha ou LIVE V31.
 
 
