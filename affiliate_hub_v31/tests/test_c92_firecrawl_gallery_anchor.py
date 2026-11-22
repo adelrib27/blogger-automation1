@@ -70,9 +70,9 @@ class ObservedFirecrawlGalleryTests(unittest.TestCase):
             self.verify(bad)
 
     def test_no_variant_claim_from_footer_or_gallery(self):
-        wrong="## Guarda-Roupa Buriti 6 Portas\n"+
-              "\n### Sobre o produto\n• 01 Gaveta\n\n## Newsletter\n"+
-              "04 Gavetas com corrediças telescópicas"
+        wrong=("## Guarda-Roupa Buriti 6 Portas\n"
+               "\n### Sobre o produto\n• 01 Gaveta\n\n## Newsletter\n"
+               "04 Gavetas com corrediças telescópicas")
         with self.assertRaisesRegex(ManufacturerEvidenceError,
                                     "manufacturer_variant_conflict"):
             self.verify(wrong)
