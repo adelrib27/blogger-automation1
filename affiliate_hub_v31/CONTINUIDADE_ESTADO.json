@@ -7,9 +7,9 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C88_AR_CONDICIONADO_SEO_6PAGINAS_LG_SHOPEE_ARTIGO_HOMOLOGADO",
+  "last_updated_source": "C89_AR_CONDICIONADO_HOME_DUPLICADO_XML_PENDENTE_INSTITUCIONAIS_ATUALIZADAS",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C88_AR_CONDICIONADO_LANCAMENTO_SEO_PAGINAS_ARTIGO_SHOPEE_2026-11-22.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C89_AR_CONDICIONADO_TEMA_DUPLICACAO_PAGINAS_FONTES_2026-11-22.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -541,6 +541,41 @@
         "No independent mobile-browser verification"
       ],
       "checkpoint": "affiliate_hub_v31/CHECKPOINT_C88_AR_CONDICIONADO_LANCAMENTO_SEO_PAGINAS_ARTIGO_SHOPEE_2026-11-22.md"
+    },
+    "c89_ar_condicionado": {
+      "blog_id": "2228849984262880811",
+      "bug": "Blogger migration/reinsertion of FeaturedPost1 after Blog1 causes third full-post display on homepage",
+      "public_html_confirmed_featuredpost1_after_blog1": true,
+      "original_c87_theme_sha256": "6d0bcab7cfc84c912ffac0dd8b187717b5258738434c447f88960354ac465019",
+      "corrected_c89_theme_file": "TEMA_EXCLUSIVO_AR_CONDICIONADO_SEM_DUVIDAS_V31_C89_SEM_POST_DUPLICADO.xml",
+      "corrected_c89_theme_sha256": "7638ca1759f6523fb083f0c73bb22d2870d3c9f41909c727976460d0a06a5281",
+      "corrected_theme_xml_pass": true,
+      "corrected_theme_js_pass": true,
+      "corrected_theme_featuredpost_visible_false": true,
+      "corrected_theme_installed_live": false,
+      "post_count_live": 1,
+      "pages_count_live": 6,
+      "source_enriched_existing_page_ids": [
+        "8479275003826990437",
+        "4814998680660659640",
+        "1229660535318855287",
+        "3365012459566429524",
+        "2885404980077440157",
+        "5684981871851687539"
+      ],
+      "pages_get_verified_6_of_6": true,
+      "pages_public_verified_partial": true,
+      "official_sources": [
+        "Inmetro",
+        "Google Privacy",
+        "Blogger Help",
+        "original Shopee product"
+      ],
+      "owner_action": "Upload C89 XML Blogger Theme and verify home 1 card + carousel 1 slide + no third full article block",
+      "post_republished": false,
+      "shopee_conversion_repeated": false,
+      "auto_live_enabled": false,
+      "checkpoint": "affiliate_hub_v31/CHECKPOINT_C89_AR_CONDICIONADO_TEMA_DUPLICACAO_PAGINAS_FONTES_2026-11-22.md"
     }
   },
   "do_not_assume": {
@@ -561,8 +596,8 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger. C85: feed tem seis, max home sete; Office Arco está em FeaturedPost1 oculto por CSS display:none, Blog1 grid exibe só cinco. Correção reversível via desativação de widget Featured Post no Layout está PENDENTE. C86: proprietario mostrou Layout sem gadget Postagem em destaque. Revogada recomendacao C85 desativar gadget. Procurar exclusao data:widgets.FeaturedPost no Blog1 XML exato (ainda nao obtido) antes de editar. C86: source XML Blogger Cadeira supplied; remove hidden FeaturedPost1 section, direct carousel to Blog1; output corrected XML + TXT + original backup in current chat, lxml and node check PASS. Not installed live. C86 confirmado pelo proprietario e Firecrawl HTTP 200: grid Blog1 6 posts (Office, Tok, mais quatro), carrossel 5; seletor #Blog1; tema aplicado no Blogger. Atenção: Blogger ainda mostra FeaturedPost1 órfão em outra região HTML, sem excluir posts. C87: tema exclusivo Ar Condicionado em XML entregue no chat, blogger alvo ID 2228849984262880811, paleta clima, hero editorial H1, removido FeaturedPost oculto e form LAB; XML/JS/CSS validados. Não instalado. 0 posts, 0 páginas no alvo. C88 Ar-Condicionado: theme C87 user installed, Blogger SEO meta 135 chars verified public (2nd retry), 6 pages LIVE, LG product ID 822103155:58265302556 Shopee exact+convert runs 45048860136/45048976779 D1 slot2, one article LIVE 940950273343255024, Loja card + dynamic carousel publicly verified, sitemap+robots HTTP200, taxonomy niche v4 route validated run 45049719226. Residual orphan FeaturedPost1 warning. AUTO LIVE off.",
-    "next_safe_step": "C88 concluido nas operacoes autorizadas. Se houver nova etapa, pedir/inspecionar backup XML normalizado Blogger do Ar Condicionado para remover eventual FeaturedPost1 legado duplicado sem CSS fake; verificar responsividade, contato privado autorizado e Search Console. Em paralelo C81 validaçao automacao DRAFT global, nao ativar AUTO LIVE sem gate. Nao repetir conversao SKU LG.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger. C85: feed tem seis, max home sete; Office Arco está em FeaturedPost1 oculto por CSS display:none, Blog1 grid exibe só cinco. Correção reversível via desativação de widget Featured Post no Layout está PENDENTE. C86: proprietario mostrou Layout sem gadget Postagem em destaque. Revogada recomendacao C85 desativar gadget. Procurar exclusao data:widgets.FeaturedPost no Blog1 XML exato (ainda nao obtido) antes de editar. C86: source XML Blogger Cadeira supplied; remove hidden FeaturedPost1 section, direct carousel to Blog1; output corrected XML + TXT + original backup in current chat, lxml and node check PASS. Not installed live. C86 confirmado pelo proprietario e Firecrawl HTTP 200: grid Blog1 6 posts (Office, Tok, mais quatro), carrossel 5; seletor #Blog1; tema aplicado no Blogger. Atenção: Blogger ainda mostra FeaturedPost1 órfão em outra região HTML, sem excluir posts. C87: tema exclusivo Ar Condicionado em XML entregue no chat, blogger alvo ID 2228849984262880811, paleta clima, hero editorial H1, removido FeaturedPost oculto e form LAB; XML/JS/CSS validados. Não instalado. 0 posts, 0 páginas no alvo. C88 Ar-Condicionado: theme C87 user installed, Blogger SEO meta 135 chars verified public (2nd retry), 6 pages LIVE, LG product ID 822103155:58265302556 Shopee exact+convert runs 45048860136/45048976779 D1 slot2, one article LIVE 940950273343255024, Loja card + dynamic carousel publicly verified, sitemap+robots HTTP200, taxonomy niche v4 route validated run 45049719226. Residual orphan FeaturedPost1 warning. AUTO LIVE off. C89 ArCond: diagnose orphan FeaturedPost1 from Blogger theme migration after Blog1 causing full post repeated. Built C89 XML 217819B SHA 7638ca... (FeaturedPost1 explicit visible false, Blog1 carousel maintained), lxml and JS PASS, NOT INSTALLED. Existing 6 institutional pages updated with official sources, API GET 6/6 confirmed, live posts 1, drafts 0.",
+    "next_safe_step": "C89 pending Blogger Theme Edit HTML installation by owner; then public DOM verify featured legacy widget not visible, Blog1 one card, carousel one slide, no third full post. If Blogger reinserts widget, obtain post-save normalized XML, do not CSS hide. Review Contato public cache and 6 institutional sources. No Shopee recapture/republication, AUTO LIVE off.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -614,7 +649,8 @@
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C85_CADEIRA_GRADE_FEATUREDPOST_OCULTO_DIAGNOSTICO_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C86_CADEIRA_TEMA_XML_CORRIGIDO_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C87_TEMA_EXCLUSIVO_AR_CONDICIONADO_PRE_INSTALACAO_2026-11-22.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C88_AR_CONDICIONADO_LANCAMENTO_SEO_PAGINAS_ARTIGO_SHOPEE_2026-11-22.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C88_AR_CONDICIONADO_LANCAMENTO_SEO_PAGINAS_ARTIGO_SHOPEE_2026-11-22.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C89_AR_CONDICIONADO_TEMA_DUPLICACAO_PAGINAS_FONTES_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
