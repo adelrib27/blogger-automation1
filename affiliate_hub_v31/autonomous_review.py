@@ -457,6 +457,9 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                         raise VerificationError("article_prose_reused")
                 except VerificationError as error:
                     code = str(error)
+                    if code == "research_budget_exhausted":
+                        return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                                "reason": "research_budget_exhausted"}
                     if code not in {"catalog_product_identity_changed",
                                     "external_product_identity_unverified", "search_intent_unverified",
                                     "trusted_structured_source_unavailable", "affiliate_target_unverified",
@@ -466,7 +469,9 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                         raise
                     rejected.append(code)
                     if len(rejected) >= policy["daily_research_attempts"]:
-                        raise VerificationError(code) from None
+                        return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                                "reason": "no_new_offer_with_trusted_source",
+                                "candidates_with_source_rejected": len(rejected)}
                     continue
                 else:
                     break
