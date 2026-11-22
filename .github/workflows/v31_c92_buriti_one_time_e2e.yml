@@ -71,7 +71,6 @@ jobs:
           V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
         run: |
           set -euo pipefail
-          echo "conversion_ready=false" >> "$GITHUB_OUTPUT"
           if ! output="$(python -m affiliate_hub_v31.site_request_queue \
              --execute --budget 1 \
              --target-site-key blogger_moveis_para_cada_canto \
