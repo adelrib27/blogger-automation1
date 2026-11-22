@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_VERIFIED",
+  "last_updated_source": "C97_CAFE_NA_MEDIDA_LOJA_CARD_RESPONSIVE_LIVE_VERIFIED",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -20,7 +20,11 @@
     "category_sections": 12,
     "affiliate_offer_links": 35,
     "seller_extra_commission_ge_3pct_count_at_lookup": 31,
-    "shopee_readonly_runs": [45073667091, 45073821892, 45074004475],
+    "shopee_readonly_runs": [
+      45073667091,
+      45073821892,
+      45074004475
+    ],
     "blogger_get_exact_html_verified": true,
     "public_html_cards_verified": 35,
     "published_once_existing_page": true,
@@ -1041,5 +1045,24 @@
     "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/45028436487",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "Conversão C81 oficial event=schedule observada em #44800518473, 3 tentativas. Canários editoriais C81 ainda sem novo DRAFT confirmado."
+  },
+  "c97_cafe_loja_responsive": {
+    "checkpoint": "affiliate_hub_v31/CHECKPOINT_C97_CAFE_NA_MEDIDA_LOJA_CARD_RESPONSIVO_2026-11-22.md",
+    "blog_id": "4820923154548273510",
+    "page_id": "4202100014512520679",
+    "status": "LIVE_PUBLIC_LAYOUT_VERIFIED",
+    "cause": "auto-fit collapses empty grid tracks causing only card to expand",
+    "fix": "auto-fill for all 12 grids; all 35 images fixed at height 205px",
+    "desktop_card_width_px": 282,
+    "desktop_first_image_height_px": 205,
+    "mobile_viewport_px": 375,
+    "mobile_card_width_px": 351,
+    "mobile_horizontal_overflow": false,
+    "products_preserved": 35,
+    "affiliate_destinations_preserved": 35,
+    "theme_modified": false,
+    "autolive_modified": false,
+    "backup": "affiliate_hub_v31/backups/C97_CAFE_NA_MEDIDA_LOJA_PRE_GRID_FIX_2026-11-22.html",
+    "export": "affiliate_hub_v31/exports/C97_CAFE_NA_MEDIDA_LOJA_GRID_RESPONSIVA_2026-11-22.html"
   }
 }
