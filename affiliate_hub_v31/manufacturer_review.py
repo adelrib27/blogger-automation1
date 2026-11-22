@@ -189,7 +189,17 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
     if any(k in source_counts and source_counts[k] != v
            for k, v in seller_counts.items()):
         raise ManufacturerEvidenceError("manufacturer_variant_conflict")
-    materials = {m.group(1) for m in MATERIAL_PATTERN.finditer(excerpt)}
+    material_matches = list(MATERIAL_PATTERN.finditer(excerpt))
+    materials = {m.group(1) for m in material_matches}
+    # Não transformar "estrutura em MDF e MDP" em alegação exclusiva MDF.
+    for match in material_matches:
+        suffix = excerpt[match.end():match.end()+30]
+        another = re.match(
+            r"\s+(?:e|/|mais)\s+(madeira macica|aco inoxidavel|"
+            r"mdp|mdf|madeira|polietileno|polipropileno|vidro|"
+            r"ceramica|aluminio|aco|ferro|plastico)\b", suffix)
+        if another:
+            materials.add(another.group(1))
     if len(materials) != 1 or not materials <= MATERIALS:
         raise ManufacturerEvidenceError("manufacturer_material_unverified")
     material = materials.pop()
