@@ -2,8 +2,8 @@
   "project": "Casa e Decoração",
   "policy_version": 3,
   "summary": {
-    "total": 7,
-    "draft_ready": 2,
+    "total": 6,
+    "draft_ready": 1,
     "rejected": 1,
     "not_generated": 4,
     "published_history": 52,
@@ -51,65 +51,33 @@
       }
     },
     {
-      "id": 103,
-      "shopee_item_id": "58207037675",
-      "category": "Área Externa",
-      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
-      "queue_status": "QUARANTINE",
+      "id": 123,
+      "shopee_item_id": "20299321793",
+      "category": "Banheiro",
+      "product": "1/2/3 Suporte De Shampoo Preto Organizador Alta qualidade Prateleira De Banheiro Sem Furo Premium-Space Alumínio ES",
+      "queue_status": "GENERATED",
       "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 119,
-      "shopee_item_id": "54300877750",
-      "category": "Cama, Mesa e Banho",
-      "product": "Jogo de Toalhas 4 Peças Banhão e Rosto 100% Algodão Brisa Karsten",
-      "queue_status": "QUARANTINE",
-      "wordpress_post_id": null,
-      "gate": {
-        "status": "NOT_GENERATED",
-        "reasons": [
-          "arquivo_gerado_ausente"
-        ],
-        "warnings": [],
-        "metrics": {}
-      }
-    },
-    {
-      "id": 121,
-      "shopee_item_id": "23492815637",
-      "category": "Cama, Mesa e Banho",
-      "product": "Protetor De Colchão P/ Berço Americano Bambi - Envio Imediato",
-      "queue_status": "PUBLISHED",
-      "wordpress_post_id": 327,
       "gate": {
         "status": "DRAFT_READY",
         "reasons": [],
         "warnings": [],
         "metrics": {
-          "word_count": 693,
-          "h2_count": 8,
+          "word_count": 955,
+          "h2_count": 11,
           "internal_links": 3,
           "seo_title_length": 36,
-          "meta_description_length": 155,
+          "meta_description_length": 154,
           "cta_count": 2
         },
         "safety_class": "STANDARD"
       }
     },
     {
-      "id": 122,
-      "shopee_item_id": "23598657219",
-      "category": "Sala",
-      "product": "Manta Pet Ultra Soft 70x90 Leve Macia Estampada Conforto Para Cachorros E Gatos Para Cama Sofá Transporte Chão",
-      "queue_status": "PENDING",
+      "id": 103,
+      "shopee_item_id": "58207037675",
+      "category": "Área Externa",
+      "product": "Suporte Para Vaso De Planta 25x25cm Em Madeira Pinus Natural Deck Modular Jardim Base Decorativa Envio Rápido 24h",
+      "queue_status": "QUARANTINE",
       "wordpress_post_id": null,
       "gate": {
         "status": "NOT_GENERATED",
@@ -137,25 +105,35 @@
       }
     },
     {
-      "id": 120,
-      "shopee_item_id": "46360468172",
-      "category": "Cozinha",
-      "product": "Kit 4 Potes Herméticos Tampa Bambu Organizador Mantimentos Cozinha",
+      "id": 119,
+      "shopee_item_id": "54300877750",
+      "category": "Cama, Mesa e Banho",
+      "product": "Jogo de Toalhas 4 Peças Banhão e Rosto 100% Algodão Brisa Karsten",
+      "queue_status": "QUARANTINE",
+      "wordpress_post_id": null,
+      "gate": {
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
+        "warnings": [],
+        "metrics": {}
+      }
+    },
+    {
+      "id": 124,
+      "shopee_item_id": "23193709615",
+      "category": "Cama, Mesa e Banho",
+      "product": "Capa de Colchão Casal,Queen, King ,Solteiro Protetor em Malha com Zíper",
       "queue_status": "PENDING",
       "wordpress_post_id": null,
       "gate": {
-        "status": "DRAFT_READY",
-        "reasons": [],
+        "status": "NOT_GENERATED",
+        "reasons": [
+          "arquivo_gerado_ausente"
+        ],
         "warnings": [],
-        "metrics": {
-          "word_count": 711,
-          "h2_count": 5,
-          "internal_links": 1,
-          "seo_title_length": 52,
-          "meta_description_length": 153,
-          "cta_count": 2
-        },
-        "safety_class": "STANDARD"
+        "metrics": {}
       }
     }
   ]
