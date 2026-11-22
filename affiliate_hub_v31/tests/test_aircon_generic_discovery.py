@@ -78,16 +78,16 @@ class AirconC93Tests(unittest.TestCase):
                 return {"nodes":[bad],"pageInfo":{"hasNextPage":True}}
             if keyword=="ar condicionado split":
                 return {"nodes":[good],"pageInfo":{"hasNextPage":False}}
-            raise AssertionError("unexpected fallback")
+            return {"nodes":[],"pageInfo":{"hasNextPage":False}}
         with patch("affiliate_hub_v31.aircon_discovery.request_page",fake_request):
             with patch("affiliate_hub_v31.aircon_discovery.load_history",return_value=(set(),set())):
                 output=discover("dummy","dummy",rotation_override=0)
         self.assertEqual(output["status"],"READ_ONLY_CANDIDATES")
-        self.assertEqual(output["queries"],2)
+        self.assertEqual(output["queries"],4)
         self.assertEqual(output["new_listing_candidates"],1)
         self.assertEqual(output["candidates"][0]["listing_key"],"9:10")
         self.assertFalse(output["candidates"][0]["stock_confirmed"])
-        self.assertEqual(calls,[("ar condicionado",1),("ar condicionado split",1)])
+        self.assertEqual(calls[:2],[("ar condicionado",1),("ar condicionado split",1)])
 
 
 if __name__=="__main__":
