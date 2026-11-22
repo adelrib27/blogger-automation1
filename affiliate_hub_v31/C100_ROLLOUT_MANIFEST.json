@@ -34,13 +34,14 @@
       "title": "Cozinha Sem Complicação",
       "blog_id": "3552757910439359679",
       "page_id": "6913756651435112886",
-      "status": "PENDING_API_EXACT",
-      "selected_offers": 0,
-      "source_run_id": null,
-      "request_id": null,
-      "checkpoint": null,
-      "backup": null,
-      "public_verified": false
+      "status": "LIVE_VERIFIED",
+      "selected_offers": 32,
+      "source_run_id": 45079448309,
+      "request_id": "v31-c100-cozinha-32-shopee-20261122-01",
+      "checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_COZINHA_32_LIVE_CASA_ORDEM_RATE_LIMIT_2026-11-22.md",
+      "backup": "affiliate_hub_v31/backups/C100_COZINHA_SEM_COMPLICACAO_LOJA_BEFORE_LIVE_2026-11-22.html",
+      "public_verified": true,
+      "public_dom_duplicates_unresolved": true
     },
     {
       "site_key": "portal_radar_tech",
@@ -138,13 +139,14 @@
       "title": "Casa em Ordem",
       "blog_id": "4177382081459143374",
       "page_id": "4031853959690608178",
-      "status": "PENDING_API_EXACT",
-      "selected_offers": 0,
-      "source_run_id": null,
+      "status": "BLOCKED_SHOPEE_RATE_LIMIT_10030",
+      "selected_offers": 19,
+      "source_run_id": 45079448309,
       "request_id": null,
       "checkpoint": null,
       "backup": null,
-      "public_verified": false
+      "public_verified": false,
+      "block_reason": "Shopee GraphQL 10030 after 32 exact checks, only 19 qualified; no CMS writes"
     },
     {
       "site_key": "estilo_dia",
