@@ -33,7 +33,7 @@ e, na aba **Repository variables**, cadastrar ou editar:
 
 ## Expandir somente depois da prova real
 
-- Próxima etapa: mover `V31_AUTODRAFT_ROLLOUT_SITE` para `wordpress_casa_decoracao` e homologar a segunda rota isoladamente; não usar `all` nessa fase.
+- Próxima etapa: **antes de mover** `V31_AUTODRAFT_ROLLOUT_SITE` para `wordpress_casa_decoracao`, auditar e resolver coexistência com o workflow legado `casa_editorial_generate_schedule.yml`: esse cron 3x/dia está configurado com `CASA_LIVE_PUBLISH_ENABLED=true`, `CASA_WORDPRESS_STATUS=publish` e usa grupo de concorrência diferente. Não se pode declarar migração WordPress isolada enquanto existir conflito de publicadores. Depois de corrigido/homologado, migrar a segunda rota isoladamente, nunca `all` de início.
 - Usar `all` apenas após autorização explícita para expansão e `V31_AUTODRAFT_FULL_ROLLOUT_APPROVED=true`, políticas de fontes por site e provas independentes por plataforma.
 - LIVE requer política aprovada e específica, não faz parte deste procedimento.
 
