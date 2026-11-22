@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — menu institucional Blogger Móveis corrigido:** [checkpoint de verificação](affiliate_hub_v31/CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md). O tema aponta para 5 URLs fixas que não existiam; foram criadas páginas Sobre, Contato, Loja, Termos de Uso e Aviso de Afiliados com os mesmos slugs e GET autenticado 5/5. A Política de Privacidade já estava correta. Agora 8 páginas, 3 artigos LIVE e 6 DRAFTs preservados. Contato ainda necessita canal privado aprovado pelo proprietário. Cron DRAFT pós-ativação e política LIVE não foram alterados.
+
+
 > **Correções reais Blogger Móveis em 22/11/2026:** [checkpoint de SEO + 3 páginas + links institucionais](affiliate_hub_v31/CHECKPOINT_C81_BLOGGER_MOVEIS_CORRECOES_2026-11-22.md). Blogger API confirmou 3 artigos LIVE existentes, 6 DRAFTs preservados e 3 páginas novas. O novo cron DRAFT ainda não possui execução `event=schedule` pós-ativação comprovada; não alterar canário assinado nem ligar LIVE. Falta verificar PageList da homepage e revisar cinco rascunhos legados.
 
 
