@@ -83,7 +83,27 @@ def request_exact(app,secret,chunk):
         return doc.get("data") or {}, "graphql:"+",".join(codes[:2])
     return doc.get("data") or {},None
 
+def furniture_category(title: str) -> str:
+    t=norm(title)
+    if any(x in t for x in ("sofa", "poltrona", "recamier", "puff", "chaise")):
+        return "Sofás e poltronas"
+    if any(x in t for x in ("cadeira", "banqueta", "banco alto")):
+        return "Cadeiras e banquetas"
+    if any(x in t for x in ("mesa", "escrivaninha", "bancada", "home office")):
+        return "Mesas e escritórios"
+    if any(x in t for x in ("guarda roupa", "guarda-roupa", "armario", "comoda", "gaveteiro", "roupeiro")):
+        return "Armários e cômodas"
+    if any(x in t for x in ("rack", "painel de tv", "estante", "aparador")):
+        return "Racks e estantes"
+    if any(x in t for x in ("cama", "cabeceira", "beliche", "criado mudo", "criado-mudo")):
+        return "Quartos e camas"
+    if "sapateira" in t:
+        return "Sapateiras e organização"
+    return "Outros móveis"
+
+
 def source_category(name,source,site):
+    if site["key"]=="moveis":return furniture_category(str(name or ""))
     title=norm(name)
     for label,keyword,rx in site["groups"]:
         if re.search(r"\b(?:"+rx+r")\b",title):
