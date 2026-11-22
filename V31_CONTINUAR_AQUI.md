@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C83 Cadeira Certa CONCLUÍDA:** [checkpoint com GET público, Blogger, Shopee e D1](affiliate_hub_v31/CHECKPOINT_C83_CADEIRA_CERTA_CONVERSAO_PUBLICACAO_CARROSSEL_2026-11-22.md). Tok Boxbit agora é **slide 1/5 do carrossel natural da HOME**, sem alterar tema ou post. Shopee Affiliate API confirmou SKU Office Arco `1231183958/58216389111` e gerou `https://s.shopee.com.br/9fMfOM4016` para campanha `cadeiracertahomeoffice`, D1 slot1 (22/11) e proteção anti-replay. Artigo Office Arco Blogger **6656620121237912250 LIVE** (GET autenticado e HTTP200 público), 6 LIVE e 0 DRAFT. Publicação manual única; **AUTO LIVE V31 continua OFF**. Não repetir conversão nem nova postagem.
+
+
 > **22/11/2026 — C82 Cadeira Certa SEO/afiliados:** [checkpoint de execução real](affiliate_hub_v31/CHECKPOINT_C82_CADEIRA_CERTA_AUDITORIA_CORRECOES_2026-11-22.md). Tok Boxbit já estava LIVE/HTTP200 e listado em Postagens, mas fora do carrossel. Quatro guias LIVE receberam CTA/shortlink preexistente do mesmo produto, imagem verdadeira e links internos; página Loja corrigida. Novo artigo do modelo **Office Arco** criado como **DRAFT Blogger 6656620121237912250** com URL Shopee e imagem exatas; URL afiliada própria ainda NÃO convertida. Rota V31 SAFE registrada, sem escrever LIVE nem habilitar cron. Pendente verificação do SKU no catálogo/curadoria e conversão oficial da campanha, mais o destaque no carrossel do tema.
 
 
