@@ -262,8 +262,14 @@ def discover(app: str, secret: str, *, rotation_override: int | None = None) -> 
             continue
     novel=[n for n in candidates if not n["is_previously_published_listing"] and
            not n["may_repeat_published_model"]]
-    return {"status":"READ_ONLY_CANDIDATES" if novel else
-            ("NO_NEW_EDITORIAL_CANDIDATES" if candidates else "NO_VALID_CANDIDATES"),
+    # Uma falha 10000/HTTP/transporte nao prova que faltam produtos
+    # e nao pode ser registrada como catalogo vazio.
+    had_errors=any("error" in trace for trace in traces)
+    status=("READ_ONLY_CANDIDATES" if candidates else
+            "TEMPORARY_API_ERRORS" if had_errors else "NO_VALID_CANDIDATES")
+    if candidates and not novel:
+        status="NO_NEW_EDITORIAL_CANDIDATES"
+    return {"status":status,
             "queries":queries,"traces":traces,"candidates":candidates,
             "new_listing_candidates":len(novel),
             "warning":"Affiliate API offer does NOT prove stock; no publishing/conversion."}
