@@ -43,3 +43,9 @@ Foi criado **um rascunho, não LIVE**:
 2. A promoção Tok no carrossel depende do código/gadget do tema, não apenas da API de post; o post está acessível na listagem de Postagens e passa a receber quatro links internos.
 3. O bloco da homepage “Loja”/vitrine é independente da página `/p/loja.html`. Ainda pode exigir configuração do widget/tema e um inventário válido da campanha para popular automaticamente.
 4. Medir desempenho de cliques, Search Console e indexação quando dados autorizados estiverem acessíveis; não inventar métricas.
+
+## Complemento: registro SAFE da rota editorial
+- `affiliate_hub_v31/sites.d/blogger_cadeira_certa_home_office.json` criado na `main` com Blogger ID real `7163624325768776034`, site_key `blogger_cadeira_certa_home_office`, nicho `casa/moveis`, path `home living/furniture`, `publish_enabled=false`.
+- Nome reservado de rastreamento para **novas conversões futuras**: `cadeiracertahomeoffice`. Trata-se de valor administrativo de subID da rota **ainda não validado por chamada de conversão na API**; não afirmar que a URL histórica Tok já usa esse subID.
+- Sem `site_requests.d` habilitado e sem `autonomous_review_sources.json` para essa rota: portanto nenhuma seleção/escrita automática C81 foi ligada para o blog.
+- Para obter CTA do Office Arco, aplicar conversor a produto aprovado de identidade exata `shopee:1231183958:58216389111`, sem converter automaticamente outro SKU. Se ausente ou REVIEW no catálogo, interromper e registrar fila de curadoria. Só depois atualizar o DRAFT com link real da mesma campanha.
