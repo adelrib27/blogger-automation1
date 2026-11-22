@@ -36,3 +36,10 @@ Data: 22/11/2026. **Aguardar instalação e homologação em etapa posterior, co
 2. Criar institucional com **slugs exatos** já presentes no menu: `/p/sobre.html`, `/p/loja.html`, `/p/contato.html`, `/p/politica-de-privacidade.html`, `/p/termos-de-uso.html`, `/p/aviso-de-afiliados.html`. O blog tinha **0 páginas** na auditoria; links do tema ainda não têm destino real.
 3. Configurar e testar canal Contato privado real apenas após aprovação de destinatário e política apropriada. Não transferir FormSubmit LAB.
 4. Sistema V31: **`V31_AUTOLIVE_ACTIVE=false` permanece**. Nada em R2, D1, conversor, CI ou outros blogs foi modificado nesta etapa.
+
+## 22/11/2026 — atualização de estado após instalação real (C88)
+**A fase C87 de pré-instalação foi superada.** O proprietário enviou captura da HOME já com o tema C87 instalado, e nova inspeção pública HTTP 200 confirmou cabeçalho azul/ciano, hero, menu e carousel. O Blogger ID correto em produção continua `2228849984262880811`.
+
+O lançamento integral do blog (SEO, seis páginas, produto Shopee confirmado e primeiro artigo publicado) está documentado em [CHECKPOINT_C88_AR_CONDICIONADO_LANCAMENTO_SEO_PAGINAS_ARTIGO_SHOPEE_2026-11-22.md](CHECKPOINT_C88_AR_CONDICIONADO_LANCAMENTO_SEO_PAGINAS_ARTIGO_SHOPEE_2026-11-22.md). Resultado: **tema C87 em produção**, 1 artigo LIVE, 6 páginas LIVE, Loja com um produto real, SEO público validado, campanha isolada e LIVE automático OFF.
+
+**Atenção:** após o Blogger normalizar o XML, o DOM público ainda contém `FeaturedPost1` legado fora da seção antiga. Não suprime o artigo de `Blog1`, mas exige futura inspeção do XML normalizado se houver duplicação visual. Não reinstalar o tema sem backup e sem corrigir pontualmente essa possível regressão.
