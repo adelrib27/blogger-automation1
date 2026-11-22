@@ -289,11 +289,14 @@ class RequestQueueTests(unittest.TestCase):
                 {"authenticated_cms_keys":[],"target_product_key":"shopee:999:999"},
             ):
                 with self.subTest(bad=bad), self.assertRaises(RequestQueueError):
-                    process_requests(self.storage,directory=self.folder,
-                        budget=1,execute=True,app_id="app",app_secret="secret",
-                        target_site_key="novo_blog_a",target_product_key=target,
-                        authenticated_cms_keys=[] ,reserve_conversion=lambda *_: True,
-                        **bad)
+                    args=dict(directory=self.folder, budget=1, execute=True,
+                              app_id="app",app_secret="secret",
+                              target_site_key="novo_blog_a",
+                              target_product_key=target,
+                              authenticated_cms_keys=[],
+                              reserve_conversion=lambda *_: True)
+                    args.update(bad)
+                    process_requests(self.storage,**args)
             self.assertEqual(calls,[])
             out=process_requests(self.storage,directory=self.folder,budget=1,
                 execute=True,app_id="app",app_secret="secret",
