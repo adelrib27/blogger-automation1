@@ -281,7 +281,16 @@
     "c81_rollout_full_requires_separate_approval": true,
     "c81_writer_scheduler_activated_by_this_work": false,
     "c81_blogger_pilot_confirmed_id": "4106024906916105222",
-    "c81_wordpress_pilot_confirmed_id": "321"
+    "c81_wordpress_pilot_confirmed_id": "321",
+    "c81_rollout_postmerge_push_run_id": 45028515776,
+    "c81_rollout_postmerge_status": "OBSERVE_PASS_DRAFT_WRITER_SKIPPED",
+    "c81_d1_20261122_read_only_snapshot": {
+      "blogger_used": 1,
+      "wordpress_used": 1,
+      "wordpress_ready": 1,
+      "budget_rows_for_20261122": 0
+    },
+    "c81_casa_legacy_scheduled_live_writes_present": true
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -301,14 +310,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura.",
     "next_safe_step": "Para ativar rollout: confirmar via administração GitHub as variáveis (V31_AUTODRAFT_ROLLOUT_SITE=blogger_moveis_para_cada_canto, V31_AUTODRAFT_ACTIVE=true), não definir full rollout/all nem V31_AUTOLIVE_ACTIVE; revalidar cotas e conflitos, depois confirmar 1 novo DRAFT por GET/HTML SHA/ID replay e D1 USED em schedule real. Somente após sucesso migrar WordPress e ampliar.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "base_main_sha": "a0f0e3d925bbb157ab5f9969f5e0c70fd7be8e8c",
     "branch": "main",
-    "blocker": "Integração SAFE do rollout concluída, mas GitHub Environment/Repo Actions Variables são administrativas e este conector não permite alterar ou ler valores atuais. DRAFT recorrente NOVO não foi homologado; ativação depende de intervenção controlada do proprietário ou Work.",
+    "blocker": "Configuração de Actions Repository Variables requer acesso administrativo indisponível neste conector. Primeira rota a migrar: blogger_moveis_para_cada_canto. WordPress Casa aguarda resolução da coexistência com cron legado LIVE 3x/dia antes de migrar.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -342,7 +351,9 @@
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_OBSERVACAO_AGENDADA_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/pull/124",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45028436487",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_ROLLOUT_SAFE_PREVIEW_2026-11-22.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_ROLLOUT_SAFE_PREVIEW_2026-11-22.md",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45028515776",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/C81_ATIVACAO_CONTROLADA_DRAFT_REPO_VARIABLES_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
