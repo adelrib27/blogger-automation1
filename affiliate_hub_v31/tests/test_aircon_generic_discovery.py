@@ -43,6 +43,8 @@ class AirconC93Tests(unittest.TestCase):
             "Controle Remoto Universal Para Ar Condicionado Split",
             "Mini Ar Condicionado Climatizador USB",
             "Ar condicionado ar quente condensadora avulsa",
+            "Turbina Evaporadora 12000BTUs Ar Condicionado Inverter Midea",
+            "Ar Condicionado 12V 7000BTUs para Caminhao Motorhomes",
         ):
             with self.subTest(title=title):
                 self.assertFalse(is_whole_air_conditioner(title))
@@ -79,7 +81,7 @@ class AirconC93Tests(unittest.TestCase):
             raise AssertionError("unexpected fallback")
         with patch("affiliate_hub_v31.aircon_discovery.request_page",fake_request):
             with patch("affiliate_hub_v31.aircon_discovery.load_history",return_value=(set(),set())):
-                output=discover("dummy","dummy")
+                output=discover("dummy","dummy",rotation_override=0)
         self.assertEqual(output["status"],"READ_ONLY_CANDIDATES")
         self.assertEqual(output["queries"],2)
         self.assertEqual(output["new_listing_candidates"],1)
