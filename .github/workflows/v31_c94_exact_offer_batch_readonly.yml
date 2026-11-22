@@ -1,0 +1,79 @@
+name: "V31 C94 - 17 lojas Shopee consulta exata SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c94_exact_offer_batch_readonly.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  offers-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Consultar 17 anuncios por itemId e verificar shopId SEM mutation
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request,urllib.error,urllib.parse
+          from affiliate_hub_v31.shopee_probe import authorization,ENDPOINT
+          app=os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID","")
+          secret=os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET","")
+          if not app or not secret:raise SystemExit("C94_API_MISSING_CREDENTIALS")
+          offers=json.loads('[["eletro","279375549","22199037616"],["cabelos","1454957878","58207190236"],["achadoscasa","1573153044","23594419411"],["ventiladores","1153008100","22893627247"],["limpeza","786307292","22096374889"],["conecta","1005725674","23694425035"],["estilo","388442075","9517347156"],["casaordem","1593844752","58265235906"],["escolhacerta","1585542716","22398817823"],["achadosvalem","385241875","16131366296"],["guiaachados","1401975200","58259312326"],["vitrine","1005725674","23694425035"],["modaofertas","855455765","19546550508"],["achadinhosbeleza","445820015","16703780377"],["radarblogger","301592546","22192873783"],["cozinhasemcomp","1612799037","46565715088"],["liquidificadores","1215229492","23194225307"]]')
+          result=[]
+          for base in range(0,len(offers),4):
+            batch=offers[base:base+4]
+            fields="itemId shopId productName productLink imageUrl offerLink priceMin periodEndTime"
+            query="query C94ExactBatch { "+" ".join(f"b{i}:productOfferV2(itemId:{row[2]},page:1,limit:4){{nodes{{{fields}}}}}" for i,row in enumerate(batch))+" }"
+            body=json.dumps({"query":query,"operationName":"C94ExactBatch"},separators=(",",":"))
+            req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={"Authorization":authorization(app,secret,body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31-C94-ExactReadOnly/1.0"})
+            try:
+              with urllib.request.urlopen(req,timeout=25) as resp:
+                raw=resp.read(131073)
+                if resp.status!=200 or len(raw)>131072:raise ValueError("invalid_body")
+              response=json.loads(raw)
+            except urllib.error.HTTPError as exc:
+              print("C94_BATCH_ERROR="+str(base)+" HTTP"+str(exc.code));continue
+            except Exception:
+              print("C94_BATCH_ERROR="+str(base)+" TRANSPORT_OR_SCHEMA");continue
+            if response.get("errors"):
+              code=[str(x.get("extensions",{}).get("code","graphql")) for x in response["errors"]]
+              print("C94_BATCH_GRAPHQL="+str(base)+" "+json.dumps(code));continue
+            for i,(site,shop,item) in enumerate(batch):
+              nodes=((response.get("data") or {}).get("b"+str(i)) or {}).get("nodes") or []
+              matched=[n for n in nodes if str(n.get("shopId"))==shop and str(n.get("itemId"))==item]
+              if len(matched)!=1:
+                print("C94_NO_EXACT="+site+" "+shop+":"+item);continue
+              n=matched[0]
+              u=urllib.parse.urlsplit(str(n.get("offerLink") or ""))
+              img=urllib.parse.urlsplit(str(n.get("imageUrl") or ""))
+              link=urllib.parse.urlsplit(str(n.get("productLink") or ""))
+              try: price=float(n.get("priceMin") or 0)
+              except Exception:price=0
+              if u.scheme!="https" or u.hostname not in ("s.shopee.com.br","shope.ee","shopee.com.br") or img.scheme!="https" or link.hostname!="shopee.com.br" or price<=0:
+                print("C94_REJECTED_OFFER="+site);continue
+              candidate={"site":site,"sku":"shopee:"+shop+":"+item,"title":n.get("productName"),"image":n.get("imageUrl"),"origin":n.get("productLink"),"affiliate":n.get("offerLink"),"pricePositive":True,"stockConfirmed":False}
+              result.append(candidate)
+              print("C94_EXACT_API="+json.dumps(candidate,ensure_ascii=False,separators=(",",":")))
+            time.sleep(0.8)
+          with open("c94_exact_offers.json","w",encoding="utf-8") as f:json.dump(result,f,ensure_ascii=False,indent=2)
+          print("C94_OFFERS_COUNT="+str(len(result)))
+          print("C94_READONLY_NO_CONVERSION_NO_POSTING")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c94-exact-shopee-offerlinks-readonly
+          path: c94_exact_offers.json
+          if-no-files-found: ignore
+          retention-days: 7
