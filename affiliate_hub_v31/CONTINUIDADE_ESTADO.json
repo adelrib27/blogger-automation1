@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C98_CAFE_NA_MEDIDA_LOJA_CONTINUOUS_GRID_LIVE_VERIFIED",
+  "last_updated_source": "C100_STORE_EXPANSION_INVENTORY_AND_API_DISCOVERY_IN_PROGRESS",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1088,5 +1088,30 @@
     "autolive_modified": false,
     "backup": "affiliate_hub_v31/backups/C98_CAFE_NA_MEDIDA_LOJA_BEFORE_CONTINUOUS_GRID_2026-11-22.html",
     "export": "affiliate_hub_v31/exports/C98_CAFE_NA_MEDIDA_LOJA_GRADE_CONTINUA_SEM_AVISO_2026-11-22.html"
+  },
+  "c100_store_expansion": {
+    "preexecution_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_EXPANSAO_LOJAS_PRE_EXECUCAO_2026-11-22.md",
+    "inventory_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_INVENTARIO_LOJAS_2026-11-22.md",
+    "source_reference": "C96-C99 Cafe na Medida Loja",
+    "status": "API_DISCOVERY_IN_PROGRESS",
+    "blogger_total": 32,
+    "blogger_existing_shops": 31,
+    "blogger_empty_shops": 19,
+    "blogger_nonempty_shops": 11,
+    "blogger_lab_excluded": 1,
+    "blogger_unlaunched_excluded": 1,
+    "wordpress_shops_pending_body_verification": 3,
+    "empty_shop_profiles": "affiliate_hub_v31/c100_store_profiles.json",
+    "discovery_script": "affiliate_hub_v31/c100_multi_store_readonly.py",
+    "pilot_run_id": 45078464648,
+    "pilot_site_keys": [
+      "achados_casa",
+      "casa_em_ordem",
+      "cozinha_sem_complicacao"
+    ],
+    "new_store_live_confirmed": [],
+    "pending_shops": 19,
+    "shopee_offer_generation_mutations": 0,
+    "autolive_enabled_by_c100": false
   }
 }
