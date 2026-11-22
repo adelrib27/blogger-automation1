@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C87 Ar-Condicionado sem Dúvidas: TEMA EXCLUSIVO PREPARADO, AINDA NÃO INSTALADO:** [checkpoint técnico](affiliate_hub_v31/CHECKPOINT_C87_TEMA_EXCLUSIVO_AR_CONDICIONADO_PRE_INSTALACAO_2026-11-22.md). Destino Blogger **2228849984262880811** `https://ar-condicionado-sem-duvidas.blogspot.com/` (0 posts, 0 páginas). Fonte XML R52 era LAB de outro blog `8476663092477971560` e nunca deve ser usada como identidade de destino. Artefato entregue nesta conversa: `TEMA_EXCLUSIVO_AR_CONDICIONADO_SEM_DUVIDAS_V31_C87.xml`, SHA256 `6d0bcab7cfc84c912ffac0dd8b187717b5258738434c447f88960354ac465019`. Visual específico azul/ciano, hero/climatização, removido `FeaturedPost1` oculto, carrossel exclusivo `Blog1` com grade preservada, endpoint FormSubmit LAB removido. XML/JS/CSS PASS. **Pendentes:** instalar quando usuário autorizar, validar público e criar 6 páginas com slugs já apontados pelo menu. AUTO LIVE V31 OFF; sem conversões/publicações adicionais.
+
+
 > **22/11/2026 — C86 Cadeira Certa HOMOLOGADO:** [checkpoint atualizado](affiliate_hub_v31/CHECKPOINT_C86_CADEIRA_TEMA_XML_CORRIGIDO_2026-11-22.md). Proprietário instalou XML corrigido; captura e HTML público HTTP 200 confirmaram **6 artigos na grade** de `Blog1` (Office Arco primeiro, Tok Boxbit segundo), **5 slides no carrossel**, seletor `#Blog1 .post-wrapper` e ausência da seção oculta `featured_post`. Configuração Blogger de 12 artigos permanece. Nota: Blogger ainda emite `FeaturedPost1` órfão fora da seção original, sem excluir posts; monitorar futuras publicações. **Não republicar/reconverter; AUTO LIVE V31 continua OFF.**
 
 
