@@ -7,9 +7,9 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C81_OBSERVACAO_CRON_3_SCHEDULES_PASS_DRAFT_WRITE_NOT_ACTIVE",
+  "last_updated_source": "C81_PR124_CI565_SINGLE_SITE_ROLLOUT_FAIL_CLOSED",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_OBSERVACAO_AGENDADA_2026-11-22.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_ROLLOUT_SAFE_PREVIEW_2026-11-22.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -228,7 +228,7 @@
     "c81_linux_ci_run": 44804047652,
     "c81_temp_workflows_removed": true,
     "c81_independent_review_workflow_merged": true,
-    "c81_cms_draft_created_count": 0,
+    "c81_cms_draft_created_count": 2,
     "c81_autonomous_prs_merged": [
       111,
       112,
@@ -248,7 +248,7 @@
     "c81_autonomous_wordpress_duplicate_draft_preserved_id": 314,
     "c81_autonomous_distinct_cms_history_run_id": 44823740700,
     "c81_autonomous_ready_html_sha256": "c2b8bb85f453c43b37b50ebf8dae9c59522870cc4d0291824fd981f45bd0e495",
-    "c81_autonomous_cms_new_drafts_confirmed": 0,
+    "c81_autonomous_cms_new_drafts_confirmed": 2,
     "c81_autonomous_live_activated": false,
     "c81_autonomous_official_storage_recovery_run": 44825882019,
     "c81_autonomous_signing_configuration_check_run": 44829365949,
@@ -271,7 +271,17 @@
     "c81_live_policy_activated": false,
     "c81_legacy_radar_live_env_observed": true,
     "c81_legacy_radar_run_failure": 44972828996,
-    "c81_safe_lab_run_failure": 44961954195
+    "c81_safe_lab_run_failure": 44961954195,
+    "c81_rollout_pr_merged": 124,
+    "c81_rollout_merge_sha": "1cb0ea75e21dbe04664c1f6101f1f22e406487f3",
+    "c81_rollout_ci_run_id": 45028436487,
+    "c81_rollout_ci_tests_passed": 565,
+    "c81_rollout_safety_status": "CODE_MERGED_SAFE_NO_ADMIN_VARIABLE_ACTIVATION",
+    "c81_rollout_requires_explicit_site": true,
+    "c81_rollout_full_requires_separate_approval": true,
+    "c81_writer_scheduler_activated_by_this_work": false,
+    "c81_blogger_pilot_confirmed_id": "4106024906916105222",
+    "c81_wordpress_pilot_confirmed_id": "321"
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -291,14 +301,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "Em 22/11/2026, três execuções reais schedule do observe-homologation passaram (#44924334792, #44953910353, #44998382196), todas confirmando por GET CMS e SELECT D1 status DRAFT, IDs e SHA dos dois pilotos. Jobs choose-one/draft/release/audit SKIPPED em todas, logo DRAFT recorrente ainda sem prova. Workflows legados Radar/LAB falharam em trilhas separadas.",
-    "next_safe_step": "Na próxima sessão Work conferir runs e cotas atuais, branch main, estado var V31_AUTODRAFT_ACTIVE, lista de sites e conflito com writers legados; ativação controlada DRAFT só com verificação de um site por vez, GET HTML/ID/replay D1 USED e zero LIVE. Não contornar opt-in por código. Registrar resultados no GitHub.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa.",
+    "next_safe_step": "Para ativar rollout: confirmar via administração GitHub as variáveis (V31_AUTODRAFT_ROLLOUT_SITE=blogger_moveis_para_cada_canto, V31_AUTODRAFT_ACTIVE=true), não definir full rollout/all nem V31_AUTOLIVE_ACTIVE; revalidar cotas e conflitos, depois confirmar 1 novo DRAFT por GET/HTML SHA/ID replay e D1 USED em schedule real. Somente após sucesso migrar WordPress e ampliar.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "base_main_sha": "a0f0e3d925bbb157ab5f9969f5e0c70fd7be8e8c",
     "branch": "main",
-    "blocker": "Observação em schedule homologada (3/3 PASS). Falta homologar entrega RECORRENTE de novos DRAFTs. Variável V31_AUTODRAFT_ACTIVE ainda não foi lida pela API administrativa, mas jobs writer skipped, portanto não presumir ativação. Examinar LIVE legado Radar Tech BR separadamente.",
+    "blocker": "Integração SAFE do rollout concluída, mas GitHub Environment/Repo Actions Variables são administrativas e este conector não permite alterar ou ler valores atuais. DRAFT recorrente NOVO não foi homologado; ativação depende de intervenção controlada do proprietário ou Work.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -329,7 +339,10 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44924334792",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44953910353",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44998382196",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_OBSERVACAO_AGENDADA_2026-11-22.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_OBSERVACAO_AGENDADA_2026-11-22.md",
+      "https://github.com/adelrib27/blogger-automation1/pull/124",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45028436487",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_ROLLOUT_SAFE_PREVIEW_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
@@ -346,11 +359,11 @@
     }
   },
   "next_priorities": [
-    "Conferir estado vivo de GitHub Actions em 22/11; 3 observações por schedule PASS não homologam escritores DRAFT. Confirmar V31_AUTODRAFT_ACTIVE por administração GitHub, uma rota por vez e isolamento de escritor legado.",
-    "Antes de ligar escritor DRAFT recorrente: orçamento UTC D1/Shopee, Firecrawl, idempotência, CMS GET/HTML SHA e nenhum workflow LIVE em conflito.",
-    "Tratar separadamente falha Radar Tech BR em quarentena por título 34 e flag LIVE legado true; falha V31 LAB SAFE não justifica contornar evidência. Não misturar com C81.",
-    "Nova política LIVE V31 permanece pendente de homologação e autorização única, com rollback e monitoramento; não ligar V31_AUTOLIVE_ACTIVE.",
-    "Preservar catálogo universal, site/campanha/SKU, 2 pilotos e continuação C81; nunca reconverter/repostar os pilotos já USED."
+    "Verificar no GitHub Actions Variables a situação real e habilitar migração de APENAS UM blog: V31_AUTODRAFT_ROLLOUT_SITE=blogger_moveis_para_cada_canto + V31_AUTODRAFT_ACTIVE=true, mantendo V31_AUTOLIVE_ACTIVE desativado e ALL sem aprovação. Este conector não possui administração de Variables.",
+    "Confirmar próximo schedule writer novo com orçamento e catálogo real, D1 READY→USED, CMS GET HTML SHA, mesmo ID em replay, sem duplicação nem LIVE; caso falhe, rollback variável V31_AUTODRAFT_ACTIVE=false e investigar com logs.",
+    "Depois homologar WordPress isoladamente, sem repetir SKU ou POST já USED; para expansão a todos os sites exigir liberação da versão de política e perfis verificadores, nunca inferir universal de dois pilotos.",
+    "Auditar isoladamente escritores LIVE legados Radar/Oficina/Casa e falhas Radar #44972828996 e LAB #44961954195; não ativar LIVE do fluxo novo por isso.",
+    "Manter 2 pilotos e biblioteca universal; corrigir contadores antigos de DRAFT C81 (atualizados para 2 em 22/11) e checkpoints no GitHub."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
@@ -359,7 +372,7 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Ler V31_CONTINUAR_AQUI.md e este JSON diretamente do GitHub main; conferir evidencias atuais antes de alterar estado; priorizar objetivo e pending work.",
-    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/44829960410",
+    "last_validation": "https://github.com/adelrib27/blogger-automation1/actions/runs/45028436487",
     "first_preview_commit": "1782bcf71b667b3f03f696dc056a7ecc5f5eccb1",
     "schedule_claim": "Conversão C81 oficial event=schedule observada em #44800518473, 3 tentativas. Canários editoriais C81 ainda sem novo DRAFT confirmado."
   }
