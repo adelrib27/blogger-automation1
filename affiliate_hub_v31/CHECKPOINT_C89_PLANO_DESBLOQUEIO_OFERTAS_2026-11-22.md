@@ -19,3 +19,16 @@
 6. Abrir PR, CI, integrar somente após PASS e homologar SAFE; manter LIVE desligado e preservar a main concorrente de C88.
 
 **Critério:** sem fontes confiáveis não inventar artigos. Uma solução sustentável repõe candidatos e não confunde ausência de prova com sucesso de criação.
+## Diagnóstico remoto confirmado
+- [PR #125 MERGED](https://github.com/adelrib27/blogger-automation1/pull/125) instalou probe SAFE; CI #45051412900 passou **568 testes**. [Run oficial R2 #45051513196](https://github.com/adelrib27/blogger-automation1/actions/runs/45051513196) SUCCESS (sem API paga nem escrita).
+- Auditoria R2 oficial do Blogger Móveis: 112 SKU aprovados examinados na amostra de até 100 por rota; 11 com link convertido da campanha; 16 aprovados na prévia top24, dos quais 10 convertidos; **zero GTIN válido tanto nos top24 quanto nos 112**; 2 ofertas com perfis estáticos, ambas já com link convertido.
+- Consulta autenticada Blogger via plugin confirmou: 6 DRAFTs atuais, entre eles ID 4106024906916105222 Toledo e ID 1333713426144675487 B23 Briz. Portanto os DOIS perfis estáticos já correspondem a rascunhos existentes, e o verificador agendado os ignora corretamente (proteção antidupliação).
+- Causa combinada: não é cota ou conversor; falta uma rota factual universal para títulos/modelos SEM GTIN, com pesquisa em fabricantes autorizados e características objetivas verificadas. Repetir a conversão dos 2 SKU não resolverá.
+- Fonte fabricante pública confirmada: demobile.com.br/produtos/giardino-guarda-roupa-casal contém nome do modelo e informação objetiva sobre material MDP; o desafio é ligar marca+modelo+variante ao SKU sem confundir linhas.
+
+## Direção C89 pós-diagnóstico
+- Implementar caminho separado de busca por marca/modelo em domínios de fabricantes confiáveis, com validação estrita de URL/identidade/atributos e budgets D1. GTIN continua sendo rota preferencial quando existir.
+- Ampliar seleção a nichos registrados além da prévia top24 e alinhar conversor à elegibilidade factual; nenhum link de outra campanha.
+- Um candidato sem prova continua bloqueado; resultados `NO_NEW_OFFER` devem vir acompanhados de causa operacional. Não publicar LIVE.
+
+Este relatório não afirma que o novo código já está integrado nem que foi criado DRAFT novo.
