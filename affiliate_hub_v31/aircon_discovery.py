@@ -39,7 +39,7 @@ ACCESSORY = re.compile(
     r"filtro(?:s)?|compressor(?:es)?|miniatura|adesivo(?:s)?|"
     r"brinquedo|climatizador|umidificador|ventilador|resfriador|"
     r"refrescador|refil|adaptador|refrigerante|"
-    r"base para|cabo(?:s)?|valvula(?:s)?|radiador|"
+    r"base para|cabo(?:s)?|valvula(?:s)?|radiador|moldura|vedacao|espuma|"
     r"atuador(?:es)?|engrenagem|conexao|painel de ar|"
     r"comando de ar|saida de ar|ar forcado|"
     r"evaporadora avulsa|condensadora avulsa|"
@@ -279,7 +279,9 @@ def main() -> int:
           ("Ar Condicionado Split Elgin 24000 BTUs",True),
           ("Evaporadora Ar Condicionado Ford Fusion",False),
           ("Caixa Evaporadora ar com Ar Condicionado Peugeot",False),
-          ("Conexao de compressor Ar Condicionado Fiat",False)
+          ("Conexao de compressor Ar Condicionado Fiat",False),
+          ("Moldura Para Ar Condicionado de Janela 30000BTUs",False),
+          ("Tira Veda Espuma Para Ar Condicionado Janela Split Portatil 21000BTU",False)
         ]
         for title,expected in samples:
             assert is_whole_air_conditioner(title)==expected,(title,expected)
