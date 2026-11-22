@@ -74,7 +74,7 @@ class ManufacturerVariantC92(unittest.TestCase):
                          source_url=url,source_metadata=metadata,markdown=markdown)
         self.assertEqual([f[0] for f in facts],
                          ["model_identifier","features","features"])
-        self.assertIn("1 portas",facts[1][1])  # checked numeral, grammar tested below
+        self.assertIn("1 porta",facts[1][1])
         self.assertIn("6 gavetas",facts[2][1])
         with self.assertRaisesRegex(ManufacturerEvidenceError,"model_identity_mismatch"):
             verify_manufacturer_markdown(identity=identity,catalog_title=title,
