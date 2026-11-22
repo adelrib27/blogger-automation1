@@ -15,7 +15,7 @@ e, na aba **Repository variables**, cadastrar ou editar:
 | `V31_AUTODRAFT_FULL_ROLLOUT_APPROVED` | **não definir** ou `false` | Impede seleção `all` |
 | `V31_AUTOLIVE_ACTIVE` | **não definir** ou `false` | Bloqueia LIVE automático novo |
 
-**Ordem:** conferir nome/valor dos gatilhos existentes; definir `ROLLOUT_SITE` antes de ativar `ACTIVE=true`. Essas flags precisam estar no nível do **repositório**, porque o job `choose-one` não tem `environment:`; armazená-las somente em `v31-editorial-safe` pode produzir divergência entre jobs. Se houver homônimos no Environment, reconciliar para NÃO haver conflito de escopo. Não tocar Secrets HMAC/Ed25519/R2/D1/Shopee.
+**Ordem segura:** primeiro colocar `V31_AUTODRAFT_ACTIVE=false` (mesmo se já existir em `true`), verificar `V31_AUTOLIVE_ACTIVE=false`/ausente, então definir `V31_AUTODRAFT_ROLLOUT_SITE=blogger_moveis_para_cada_canto`; somente por último mudar `V31_AUTODRAFT_ACTIVE=true`. Isto evita ativação acidental caso a flag global já estivesse ligada antes de cadastrar a rota. Essas flags precisam estar no nível do **repositório**, porque o job `choose-one` não tem `environment:`; armazená-las somente em `v31-editorial-safe` pode produzir divergência entre jobs. Se houver homônimos no Environment, reconciliar para NÃO haver conflito de escopo. Não tocar Secrets HMAC/Ed25519/R2/D1/Shopee.
 
 ## O que esperar do próximo schedule
 
