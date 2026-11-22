@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C100 EXPANSÃO LOJAS — CHECKPOINT ANTES DE EXECUTAR:** [plano e protocolo anti-duplicação](affiliate_hub_v31/CHECKPOINT_C100_EXPANSAO_LOJAS_PRE_EXECUCAO_2026-11-22.md). Pedido de replicar nas lojas vazias a estrutura C96-C99 Café na Medida (35 ofertas reais, imagens, links afiliados, grade contínua, CTA laranja #D83F00). A primeira ação C100 foi gravar o checkpoint **antes de editar outros sites**; inventário Blogger/WP e execução por site ainda pendentes. Consultar as evidências posteriores C100 e **reler cada CMS** antes de qualquer escrita; preservar AUTO LIVE OFF, D1/R2, temas, artigos, Pinterest e lojas já com produtos.
+
+
 > **22/11/2026 — C98 CAFÉ NA MEDIDA: GRADE ÚNICA E AVISO LEGADO OCULTO, LIVE HOMOLOGADO:** [checkpoint](affiliate_hub_v31/CHECKPOINT_C98_CAFE_LOJA_GRADE_CONTINUA_2026-11-22.md). A C97 deixou moedor isolado em primeira seção (1 cartão) e aviso falso de fotos/carrossel vazio do tema. **C98** unificou as 12 categorias em 1 grade contínua de 35 cartões (rótulos e atalhos por categoria preservados) e CSS exclusivo da página oculta `.ub-v29-photo-notice`, `#ub-v21-store-carousel` vazio e cabeçalho legado duplicado. GET Blogger LIVE exato; público 35 cartões/35 fotos/35 links afiliados, 12 links internos; browser desktop 1280 px confirmou primeiros 4 cards na mesma linha (~222 px cada), aviso e carrossel ocultos. Backup: `affiliate_hub_v31/backups/C98_CAFE_NA_MEDIDA_LOJA_BEFORE_CONTINUOUS_GRID_2026-11-22.html`; export: `affiliate_hub_v31/exports/C98_CAFE_NA_MEDIDA_LOJA_GRADE_CONTINUA_SEM_AVISO_2026-11-22.html`. **Nenhuma alteração no tema, Shopee, D1/R2, crons ou AUTO LIVE.**
 
 
