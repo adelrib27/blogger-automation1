@@ -1,0 +1,56 @@
+name: "V31 C100 R2 EXATO - Achados para Casa SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c100_r2_exact_achados_casa.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: v31-c100-shopee-readonly
+  cancel-in-progress: false
+jobs:
+  r2-exact:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Validar sintaxe e instalar cliente R2
+        run: |
+          python -m py_compile affiliate_hub_v31/c100_r2_exact_readonly.py affiliate_hub_v31/c100_shop_renderer.py
+          python -m pip install "boto3>=1.36,<2"
+      - name: R2 fontes elegíveis mais Shopee offer exata por SKU sem mutação
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_C100_OUTPUT: c100_r2_exact_achados_casa.json
+        run: python -m affiliate_hub_v31.c100_r2_exact_readonly --sites achados_casa | tee c100_exact_a.log
+      - name: Gerar HTML somente quando 24 ofertas verificadas, sem publicar
+        run: |
+          python - <<'PY'
+          import json,subprocess,sys
+          d=json.load(open("c100_r2_exact_achados_casa.json"))[0]
+          if d["status"]!="READ_ONLY_READY_24_PLUS":
+              print("C100_HTML_BLOCKED_NOT_ENOUGH_VALID_OFFERS")
+              sys.exit(0)
+          subprocess.run([sys.executable,"-m","affiliate_hub_v31.c100_shop_renderer","--input","c100_r2_exact_achados_casa.json","--site","achados_casa","--output","c100_preview_achados_casa.html"],check=True)
+          PY
+      - name: Preservar shortlist e preview por sete dias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c100-r2-exact-achados-casa
+          path: |
+            c100_r2_exact_achados_casa.json
+            c100_preview_achados_casa.html
+            c100_exact_a.log
+          if-no-files-found: ignore
+          retention-days: 7
