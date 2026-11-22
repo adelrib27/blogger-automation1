@@ -80,7 +80,7 @@ class ManufacturerTests(unittest.TestCase):
 
     def test_scraped_footer_cannot_supply_fake_material(self):
         front="## Giardino Guarda-Roupa Casal da Demóbile\n"
-        body=front+"Este texto nao confirma especificacoes da linha.\n"+("texto geral "*130)
+        body=front+"Guarda-Roupa Giardino 6 portas e 4 gavetas.\n"+("texto geral "*130)
         with self.assertRaisesRegex(ManufacturerEvidenceError,"material_unverified"):
             self.review(markdown=body+"\nProduto diferente tem estrutura em MDP.")
 
