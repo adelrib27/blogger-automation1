@@ -23,7 +23,7 @@ from pathlib import Path
 from affiliate_hub_v31.shopee_probe import ENDPOINT, authorization
 
 PRIMARY_KEYWORD = "ar condicionado"
-ALTERNATIVE_KEYWORDS = ("ar-condicionado", "condicionador de ar")
+ALTERNATIVE_KEYWORDS = ("ar condicionado split", "ar condicionado inverter", "ar condicionado de janela")
 MAX_PAGES_PER_KEYWORD = 2
 PAGE_SIZE = 30
 MAX_QUERIES = 4
@@ -33,14 +33,20 @@ HISTORY_PATH = Path(__file__).with_name("aircon_editorial_history.json")
 PRODUCT = re.compile(r"\b(?:ar condicionado|condicionador de ar)\b")
 ACCESSORY = re.compile(
     r"\b(?:controle remoto|controle universal|capa(?:s)?|suporte(?:s)?|"
-    r"pe[cç]a(?:s)?|placa(?:s)?|tubo(?:s)?|tubula[cç][aã]o|"
-    r"mangueira(?:s)?|sensor(?:es)?|kit de instala[cç][aã]o|"
-    r"kit instala[cç][aã]o|limpeza|higieniza[cç][aã]o|"
-    r"filtro(?:s)?|compressor avulso|miniatura|adesivo(?:s)?|"
-    r"brinquedo|climatizador|umidificador|ventilador|refil|"
-    r"adaptador|refrigerante|g[aá]s refrigerante|"
-    r"base para|pe[cç]as para|cabo(?:s)?|"
-    r"kit controle|prote[cç][aã]o para)\b"
+    r"peca(?:s)?|placa(?:s)?|tubo(?:s)?|tubulacao|"
+    r"mangueira(?:s)?|sensor(?:es)?|kit de instalacao|"
+    r"kit instalacao|limpeza|higienizacao|"
+    r"filtro(?:s)?|compressor(?:es)?|miniatura|adesivo(?:s)?|"
+    r"brinquedo|climatizador|umidificador|ventilador|resfriador|"
+    r"refrescador|refil|adaptador|refrigerante|"
+    r"base para|cabo(?:s)?|valvula(?:s)?|radiador|"
+    r"atuador(?:es)?|engrenagem|conexao|painel de ar|"
+    r"comando de ar|saida de ar|ar forcado|"
+    r"evaporadora avulsa|condensadora avulsa|"
+    r"ar condicionado automotivo|automotivo|veicular|"
+    r"para carro|para toyota|para porsche|para ford|"
+    r"para peugeot|para fiat|vw up|ford fusion|"
+    r"ar condicionado de carro|r134a)\b"
 )
 CAPACITY = re.compile(r"\b(7[.,]?500|9[.,]?000|10[.,]?000|12[.,]?000|18[.,]?000|"
                       r"22[.,]?000|24[.,]?000|30[.,]?000|36[.,]?000)\s*(?:btu|btus)?\b")
@@ -59,12 +65,18 @@ def is_whole_air_conditioner(title: object) -> bool:
     txt = normalize(title)
     if not PRODUCT.search(txt) or ACCESSORY.search(txt):
         return False
-    # "mini ar condicionado" e uma busca que quase sempre aponta
-    # para climatizadores/ventiladores USB sem compressor.
-    if re.search(r"\b(?:mini|usb|pessoal|de mesa|evaporativo)\b", txt):
+    if re.search(r"\b(?:mini|usb|pessoal|de mesa|evaporativo|"
+                 r"evaporadora usada|condensadora usada|motor|"
+                 r"compativel com carro|siena|fiesta|cayenne)\b", txt):
         return False
-    return True
-
+    capacity = bool(CAPACITY.search(txt))
+    appliance_form = bool(re.search(r"\b(?:split|inverter|janela|portatil|"
+                                    r"quente e frio|hi wall)\b",txt))
+    brand = any(re.search(r"\b"+re.escape(b)+r"\b",txt) for b in BRANDS)
+    # Qualquer capacidade pode ser candidata: nao limitar a 9k/12k.
+    # O numero com BTUs e so uma evidencia de aparelho real.
+    explicit_btu = bool(re.search(r"\b[0-9]{3,6}\s?btu(?:s)?\b",txt))
+    return (capacity or explicit_btu) and (appliance_form or brand)
 
 def listing_key(node: dict) -> str:
     shop, item = str(node.get("shopId") or ""), str(node.get("itemId") or "")
@@ -225,6 +237,9 @@ def discover(app: str, secret: str) -> dict:
             traces.append({"keyword":keyword,"page":page,"returned":len(nodes),
                            "whole_appliances":valid,"has_next":
                            bool(data["pageInfo"].get("hasNextPage"))})
+            if page==1 and valid==0:
+                # Ampla encontrou apenas acessorios: nao gastar pagina 2.
+                break
             if not nodes or not data["pageInfo"].get("hasNextPage"):
                 break
         # Se a busca ampla trouxer produtos elegíveis, usar paginação
@@ -255,7 +270,16 @@ def main() -> int:
           ("Controle Remoto Ar Condicionado LG",False),
           ("Capa de Ar Condicionado Split 9000 BTUs",False),
           ("Mini Ar Condicionado Climatizador USB",False),
-          ("Suporte para Ar Condicionado Split",False)
+          ("Suporte para Ar Condicionado Split",False),
+          ("Ar Condicionado Oribreeze, Resfriador de Ar Portatil",False),
+          ("102 Pcs R134A Valvula de Nucleo Ar Condicionado Automotivo",False),
+          ("Comando de Ar Condicionado do Painel VW Up",False),
+          ("Ar Condicionado Split Inverter Midea 18000 BTUs 220V",True),
+          ("Ar Condicionado Janela Consul 7500 BTUs",True),
+          ("Ar Condicionado Split Elgin 24000 BTUs",True),
+          ("Evaporadora Ar Condicionado Ford Fusion",False),
+          ("Caixa Evaporadora ar com Ar Condicionado Peugeot",False),
+          ("Conexao de compressor Ar Condicionado Fiat",False)
         ]
         for title,expected in samples:
             assert is_whole_air_conditioner(title)==expected,(title,expected)
