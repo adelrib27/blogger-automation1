@@ -1,8 +1,8 @@
 """C89 — model-based objective evidence from pretrusted manufacturer product pages.
 
 No AI or arbitrary search result can authorize a new domain or invent a SKU.
-Discovery is independent of the article generator. Without identity + material
-from one exact product page, this module fails closed.
+Discovery is independent of the article generator. Only identity plus objectively
+verified material and/or exact features from one official page can pass.
 """
 from __future__ import annotations
 
@@ -23,7 +23,11 @@ STOP = frozenset((
     "altura","largura","profundidade","com","sem","para","dos","das","de",
     "do","da","em","cor","cores","casa","sala","quarto","canto","modelo",
     "cm","mdp","mdf","metal","ate","corredica","corredicas","puxador","puxadores",
-    "estofado","estofada","poliester","jogo","peças","pecas","natural"
+    "estofado","estofada","poliester","jogo","peças","pecas","natural",
+    "multiuso","lavanderia","espelho","espelhos","grafite","grafitte",
+    "jatoba","atacama","nicho","nichos","ripada","ripadas",
+    "amendola","touch","ambiente","sapateira","sapateiro","pes",
+    "rodizios","opcional","opcionais","c","s","p","inox"
 ))
 
 KINDS = (
@@ -48,7 +52,7 @@ MATERIAL_PATTERN = re.compile(
     r"polipropileno|vidro|ceramica|aluminio|aco|ferro|plastico)\b",
     re.I,
 )
-COUNT_PATTERN = re.compile(r"\b(\d{1,2})\s+(portas|gavetas)\b")
+COUNT_PATTERN = re.compile(r"\b(\d{1,2})\s+(?:(?:amplas?|internas?|externas?|ripadas?)\s+)?(portas?|gavetas?)\b")
 
 
 class ManufacturerEvidenceError(ValueError):
@@ -120,13 +124,23 @@ def models_for_catalog_title(title, *, site_key, registry_path=REGISTRY):
                (len(w) >= 3 and any(c.isdigit() for c in w)
                 and any(c.isalpha() for c in w)))]
     tokens = list(dict.fromkeys(tokens))
-    # A model token with letters+digits is less ambiguous than generic prose.
-    tokens.sort(key=lambda w: (-(any(c.isdigit() for c in w) and
-                                 any(c.isalpha() for c in w)), -len(w), w))
-    return [{"brand": brand["brand"], "model": model, "kind": kind,
-             "hosts": brand["hosts"],
-             "product_path_prefix": brand["product_path_prefix"]}
-            for model in tokens[:2]]
+    # Seller titles usually put the actual model before finishing/color terms.
+    # Length sorting promoted "lavanderia", "espelho" and "grafitte" as models.
+    if not tokens:
+        return []
+    codes = [w for w in tokens if any(c.isdigit() for c in w)
+             and any(c.isalpha() for c in w)]
+    chosen = codes[0] if codes else tokens[0]
+    raw = unicodedata.normalize("NFKD", title.casefold())
+    raw = "".join(c for c in raw if not unicodedata.combining(c))
+    variant = re.search(r"\b" + re.escape(chosen) +
+                        r"\s+(\d{1,2})[.,](\d{1,2})\b", raw)
+    identity = {"brand": brand["brand"], "model": chosen, "kind": kind,
+                "hosts": brand["hosts"],
+                "product_path_prefix": brand["product_path_prefix"]}
+    if variant:
+        identity["variant"] = variant.group(1) + "." + variant.group(2)
+    return [identity]
 
 
 def source_page_allowed(url, identity):
@@ -144,12 +158,16 @@ def source_page_allowed(url, identity):
     # A product page must identify the actual model, not a category/search page.
     model = plain(identity["model"]).replace(" ", "")
     slug = plain(p.path).replace(" ", "")
-    return len(model) >= 3 and model in slug
+    if len(model) < 3 or model not in slug:
+        return False
+    variant = identity.get("variant")
+    return not variant or has_phrase(p.path, model + " " + variant)
 
 
 def _count_map(text):
     found = {}
-    for number, kind in COUNT_PATTERN.findall(plain(text)):
+    for number, label in COUNT_PATTERN.findall(plain(text)):
+        kind = "portas" if label.startswith("porta") else "gavetas"
         found.setdefault(kind, set()).add(int(number))
     return found
 
@@ -175,7 +193,9 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
             product_kind(catalog_title) != kind or
             not has_phrase(header, model) or
             not has_phrase(header, identity["brand"]) or
-            product_kind(header) != kind):
+            product_kind(header) != kind or
+            identity.get("variant") and not has_phrase(
+                header, model + " " + identity["variant"])):
         raise ManufacturerEvidenceError("manufacturer_model_identity_mismatch")
     # First section only: product description, not footer/category suggestions.
     normalized = plain(markdown[:7500])
@@ -186,15 +206,25 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
     if not any(has_phrase(excerpt, alt) for name, alts in KINDS
                if name == kind for alt in alts):
         raise ManufacturerEvidenceError("manufacturer_product_type_missing")
-    # Never approve a seller variant explicitly contradicted by manufacturer.
+    # Exact seller variant quantities must be demonstrable on the official
+    # page. A subcomponent (e.g. two MDF doors of a six-door wardrobe)
+    # cannot override the product headline's six doors.
     seller_counts = _count_map(catalog_title)
     source_counts = _count_map(excerpt)
-    # If the seller explicitly promises 6 doors / 4 drawers, the exact
-    # manufacturer page MUST confirm those numbers. Silent/contradictory
-    # pages and mixed variants are not proof.
-    if any(len(numbers) != 1 or source_counts.get(kind) != numbers
-           for kind, numbers in seller_counts.items()):
-        raise ManufacturerEvidenceError("manufacturer_variant_conflict")
+    headline_counts = _count_map(" ".join(markdown.splitlines()[:5]))
+    feature_claims = []
+    for feature, numbers in seller_counts.items():
+        if len(numbers) != 1:
+            raise ManufacturerEvidenceError("manufacturer_variant_conflict")
+        expected = next(iter(numbers))
+        found = source_counts.get(feature, set())
+        if expected not in found or (len(found) > 1 and expected not in
+                                     headline_counts.get(feature, set())):
+            raise ManufacturerEvidenceError("manufacturer_variant_conflict")
+        word = "portas" if feature == "portas" else "gavetas"
+        feature_claims.append(
+            ("features", f"O fabricante informa {expected} {word} no modelo "
+             + model.upper() + ".", f"{expected} {word}"))
     material_matches = list(MATERIAL_PATTERN.finditer(excerpt))
     materials = {m.group(1) for m in material_matches}
     # Não transformar "estrutura em MDF e MDP" em alegação exclusiva MDF.
@@ -206,13 +236,18 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
             r"ceramica|aluminio|aco|ferro|plastico)\b", suffix)
         if another:
             materials.add(another.group(1))
-    if len(materials) != 1 or not materials <= MATERIALS:
-        raise ManufacturerEvidenceError("manufacturer_material_unverified")
-    material = materials.pop()
-    display = material.upper() if material in ("mdp", "mdf") else material
-    return [
+    if len(materials) > 1:
+        raise ManufacturerEvidenceError("manufacturer_material_ambiguous")
+    claims = [
         ("model_identifier", "O fabricante identifica o modelo como " +
          model.upper() + ".", model),
-        ("material", "O fabricante informa material " + display + ".",
-         material),
     ]
+    if len(materials) == 1 and materials <= MATERIALS:
+        material = materials.pop()
+        display = material.upper() if material in ("mdp", "mdf") else material
+        claims.append(("material", "O fabricante informa material " +
+                       display + ".", material))
+    claims.extend(feature_claims)
+    if len(claims) < 2:
+        raise ManufacturerEvidenceError("manufacturer_objective_facts_insufficient")
+    return claims
