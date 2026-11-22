@@ -8,6 +8,7 @@ real de cada site; nunca chama publicadores nem manipula métricas.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -124,6 +125,8 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                      budget:int=3,execute:bool=False,
                      app_id:str="",app_secret:str="",
                      ordinal:int|None=None, pilot_site_key:str|None=None,
+                     target_site_key:str|None=None, target_product_key:str|None=None,
+                     authenticated_cms_keys:list[str]|None=None,
                      reserve_conversion=None)->dict:
     if type(budget) is not int or not 1<=budget<=MAX_BUDGET:
         raise RequestQueueError("budget_invalid")
@@ -133,6 +136,23 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
         raise RequestQueueError("rotation_invalid")
     requests=_rotation(load_requests(directory),
                        date.today().toordinal() if ordinal is None else ordinal)
+    if (target_site_key is None) != (target_product_key is None):
+        raise RequestQueueError("exact_target_site_and_sku_required")
+    if target_site_key is not None:
+        # One-off recovery must not silently act on multiple campaigns or
+        # reuse an already published/drafted SKU from authenticated CMS.
+        if (not execute or budget != 1 or pilot_site_key is not None
+            or target_site_key not in autonomous_sites_for_writes()
+            or not re.fullmatch(r"shopee:\d+:\d+",str(target_product_key))
+            or type(authenticated_cms_keys) is not list
+            or any(not isinstance(x,str) or not re.fullmatch(r"[a-f0-9]{64}",x)
+                   for x in authenticated_cms_keys)):
+            raise RequestQueueError("targeted_autodraft_migration_guard_failed")
+        if hashlib.sha256(target_product_key.encode()).hexdigest() in authenticated_cms_keys:
+            raise RequestQueueError("target_product_already_in_cms")
+        requests = [r for r in requests if r["site_key"] == target_site_key]
+        if not requests:
+            raise RequestQueueError("target_site_request_disabled_or_missing")
     pilot_sku = None
     if pilot_site_key is not None:
         requests = [request for request in requests if request["site_key"] == pilot_site_key]
@@ -187,6 +207,10 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 preferred = (list(conversion_priority_keys(
                     cat, route, verified_routes.get(key, {})))
                     if key in migrated_sites else [])
+                if target_site_key is not None:
+                    if key != target_site_key or target_product_key not in preferred:
+                        raise RequestQueueError("target_offer_not_in_verified_supply")
+                    preferred = [target_product_key]
                 profiled = verified_routes.get(key, {}).get("offers", {})
                 pending_profiles = {sku for sku in profiled if cat.cached_link(sku, campaign) is None}
                 if pending_profiles or pilot_sku:
@@ -296,8 +320,21 @@ def main()->int:
     p.add_argument("--budget",type=int,default=3)
     p.add_argument("--execute",action="store_true")
     p.add_argument("--pilot-site-key")
+    p.add_argument("--target-site-key")
+    p.add_argument("--target-product-key")
     args=p.parse_args()
     try:
+        cms_keys = None
+        if args.target_site_key or args.target_product_key:
+            if (not args.target_site_key or not args.target_product_key
+                    or not args.execute or args.budget != 1):
+                raise RequestQueueError("exact_target_requires_one_real_conversion")
+            from .reviewed_draft_delivery import read_draft_history
+            history = read_draft_history(args.target_site_key)
+            if (history.get("site_key") != args.target_site_key or
+                    type(history.get("keys")) is not list):
+                raise RequestQueueError("cms_history_authenticated_read_required")
+            cms_keys = history["keys"]
         reserve_conversion = None
         if args.execute:
             query = CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
@@ -309,7 +346,10 @@ def main()->int:
             R2State.from_env(),budget=args.budget,execute=args.execute,
             app_id=os.getenv("V31_EDITORIAL_SHOPEE_APP_ID",""),
             app_secret=os.getenv("V31_EDITORIAL_SHOPEE_APP_SECRET",""),
-            pilot_site_key=args.pilot_site_key, reserve_conversion=reserve_conversion)
+            pilot_site_key=args.pilot_site_key, reserve_conversion=reserve_conversion,
+            target_site_key=args.target_site_key,
+            target_product_key=args.target_product_key,
+            authenticated_cms_keys=cms_keys)
         print("V31_C37_SITE_REQUEST_QUEUE_"+(
             "PARTIAL_API_INTERRUPTED" if result["api_interrupted"] else "PASS"))
         print(json.dumps(result,sort_keys=True))
