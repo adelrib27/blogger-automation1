@@ -1,0 +1,53 @@
+{
+  "schema": "v31-trusted-manufacturer-registry-1",
+  "policy": "Manual trust is per manufacturer domain, not per SKU or article. A search result is never authorization by itself.",
+  "sites": {
+    "blogger_moveis_para_cada_canto": [
+      {
+        "brand": "Demóbile",
+        "aliases": [
+          "Demóbile",
+          "Demobile"
+        ],
+        "hosts": [
+          "demobile.com.br",
+          "www.demobile.com.br"
+        ],
+        "product_path_prefix": "/produtos/"
+      },
+      {
+        "brand": "Briz",
+        "aliases": [
+          "Briz"
+        ],
+        "hosts": [
+          "brizmoveis.com.br"
+        ],
+        "product_path_prefix": "/pt/quartos/produto/"
+      },
+      {
+        "brand": "Santos Andirá",
+        "aliases": [
+          "Santos Andirá",
+          "Santos Andira"
+        ],
+        "hosts": [
+          "www.santosandira.com.br"
+        ],
+        "product_path_prefix": "/produto/"
+      }
+    ],
+    "wordpress_casa_decoracao": [
+      {
+        "brand": "Rizzo",
+        "aliases": [
+          "Rizzo"
+        ],
+        "hosts": [
+          "www.rizzoconfeitaria.com.br"
+        ],
+        "product_path_prefix": "/"
+      }
+    ]
+  }
+}
