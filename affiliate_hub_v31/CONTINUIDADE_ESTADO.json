@@ -7,9 +7,9 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C86_CADEIRA_CORRIGIDO_CONFIRMACAO_PUBLICA",
+  "last_updated_source": "C87_TEMA_EXCLUSIVO_AR_CONDICIONADO_PREPARADO_NAO_INSTALADO",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C86_CADEIRA_TEMA_XML_CORRIGIDO_2026-11-22.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C87_TEMA_EXCLUSIVO_AR_CONDICIONADO_PRE_INSTALACAO_2026-11-22.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -458,6 +458,28 @@
       "verification_date": "2026-11-22",
       "verified_http_status": 200,
       "validation": "PASS"
+    },
+    "c87_ar_condicionado_theme": {
+      "target_blog_id": "2228849984262880811",
+      "target_blog_url": "https://ar-condicionado-sem-duvidas.blogspot.com/",
+      "source_lab_id": "8476663092477971560",
+      "file": "TEMA_EXCLUSIVO_AR_CONDICIONADO_SEM_DUVIDAS_V31_C87.xml",
+      "sha256": "6d0bcab7cfc84c912ffac0dd8b187717b5258738434c447f88960354ac465019",
+      "file_bytes": 216894,
+      "exclusive_palette": "clima",
+      "html_home_intro": true,
+      "featuredpost_hidden_widget_removed": true,
+      "blog1_posts_single_source": true,
+      "contact_lab_form_removed": true,
+      "xml_validation_pass": true,
+      "node_js_validation_pass": true,
+      "new_css_validation_pass": true,
+      "actual_target_blog_posts": 0,
+      "actual_target_blog_pages": 0,
+      "theme_installed_live": false,
+      "blogspot_menu_pages_exist": false,
+      "live_publishing_automation_unchanged": true,
+      "checkpoint": "affiliate_hub_v31/CHECKPOINT_C87_TEMA_EXCLUSIVO_AR_CONDICIONADO_PRE_INSTALACAO_2026-11-22.md"
     }
   },
   "do_not_assume": {
@@ -478,8 +500,8 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger. C85: feed tem seis, max home sete; Office Arco está em FeaturedPost1 oculto por CSS display:none, Blog1 grid exibe só cinco. Correção reversível via desativação de widget Featured Post no Layout está PENDENTE. C86: proprietario mostrou Layout sem gadget Postagem em destaque. Revogada recomendacao C85 desativar gadget. Procurar exclusao data:widgets.FeaturedPost no Blog1 XML exato (ainda nao obtido) antes de editar. C86: source XML Blogger Cadeira supplied; remove hidden FeaturedPost1 section, direct carousel to Blog1; output corrected XML + TXT + original backup in current chat, lxml and node check PASS. Not installed live. C86 confirmado pelo proprietario e Firecrawl HTTP 200: grid Blog1 6 posts (Office, Tok, mais quatro), carrossel 5; seletor #Blog1; tema aplicado no Blogger. Atenção: Blogger ainda mostra FeaturedPost1 órfão em outra região HTML, sem excluir posts.",
-    "next_safe_step": "C86 homologado na homepage; observar futuramente posts > 6, mobile e eventual normalização do Blogger. Não reconverter Office Arco e manter V31_AUTO_LIVE off. Retomar C81 conforme cron/evidências quando solicitado.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger. C85: feed tem seis, max home sete; Office Arco está em FeaturedPost1 oculto por CSS display:none, Blog1 grid exibe só cinco. Correção reversível via desativação de widget Featured Post no Layout está PENDENTE. C86: proprietario mostrou Layout sem gadget Postagem em destaque. Revogada recomendacao C85 desativar gadget. Procurar exclusao data:widgets.FeaturedPost no Blog1 XML exato (ainda nao obtido) antes de editar. C86: source XML Blogger Cadeira supplied; remove hidden FeaturedPost1 section, direct carousel to Blog1; output corrected XML + TXT + original backup in current chat, lxml and node check PASS. Not installed live. C86 confirmado pelo proprietario e Firecrawl HTTP 200: grid Blog1 6 posts (Office, Tok, mais quatro), carrossel 5; seletor #Blog1; tema aplicado no Blogger. Atenção: Blogger ainda mostra FeaturedPost1 órfão em outra região HTML, sem excluir posts. C87: tema exclusivo Ar Condicionado em XML entregue no chat, blogger alvo ID 2228849984262880811, paleta clima, hero editorial H1, removido FeaturedPost oculto e form LAB; XML/JS/CSS validados. Não instalado. 0 posts, 0 páginas no alvo.",
+    "next_safe_step": "C87: quando usuário autorizar instalar, fazer backup do tema atual do blog Ar Condicionado (ID 2228849984262880811), usar XML C87 hash 6d0bc..., conferir homepage + posts + mobile. Criar seis páginas institucionais slugs previstos, pois há 0 páginas. Não usar runner allowlist 8476663092477971560 como se fosse blog destino; LIVE auto V31 segue off.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -529,7 +551,8 @@
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C83_CADEIRA_CERTA_CONVERSAO_PUBLICACAO_CARROSSEL_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C84_CADEIRA_TEMA_CARROSSEL_DIAGNOSTICO_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C85_CADEIRA_GRADE_FEATUREDPOST_OCULTO_DIAGNOSTICO_2026-11-22.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C86_CADEIRA_TEMA_XML_CORRIGIDO_2026-11-22.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C86_CADEIRA_TEMA_XML_CORRIGIDO_2026-11-22.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C87_TEMA_EXCLUSIVO_AR_CONDICIONADO_PRE_INSTALACAO_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
