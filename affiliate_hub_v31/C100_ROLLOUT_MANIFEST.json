@@ -379,29 +379,41 @@
       "title": "Móveis para Cada Canto",
       "blog_id": "1439741542627895062",
       "page_id": "5105320514641154037",
-      "status": "TRUE_EMPTY_C101_API_VALIDATION_RUNNING",
-      "selected_offers": 0,
+      "status": "C101_NEW_STORE_LIVE_VERIFIED",
+      "selected_offers": 27,
       "source_run_id": null,
-      "request_id": null,
-      "checkpoint": null,
-      "backup": null,
+      "request_id": "v31-c101-moveis-27-shopee-20261122-01",
+      "checkpoint": "affiliate_hub_v31/CHECKPOINT_C101_CORRECAO_CONCLUIDA_MOVEIS_27_LIVE_2026-11-22.md",
+      "backup": "affiliate_hub_v31/backups/C101_MOVEIS_PARA_CADA_CANTO_LOJA_ANTES_2026-11-22.html",
       "public_verified": false,
       "verified_current_affiliate_links": 0,
       "preexisting_store_post_id": null,
       "preexisting_store_post_links": 0,
-      "next_action": "Do not write without 24+ exact Shopee offers, link redirect verification and backup of Page",
-      "validation_run_id": 45082936074
+      "next_action": "No further changes; preserve completed Móveis store",
+      "validation_run_id": 45082936074,
+      "unique_sellers": 23,
+      "categories": 6,
+      "internal_guides": 4,
+      "orange_buttons": 27,
+      "page_url": "https://moveisparacadacanto.blogspot.com/p/loja.html",
+      "source_run_ids": [
+        45082936074,
+        45083038223
+      ],
+      "html_export": "affiliate_hub_v31/exports/C101_MOVEIS_CADA_CANTO_27_SHOPEE_VERIFICADOS_2026-11-22.html",
+      "cms_exact_readback": true,
+      "public_html_verified": true,
+      "visible_cards_browser": 27,
+      "external_shopee_antibot_automated_session": true
     }
   ],
   "corrected_audit_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_CORRECAO_REDIRECIONAMENTOS_LOJAS_2026-11-22.md",
   "corrected_audit_note": "Original PAGE-only inventory confused 18 redirect pages with truly empty stores. Post targets are LIVE with Shopee products. See correction checkpoint before any write.",
-  "current_commercially_empty_sites": [
-    "moveis"
-  ],
+  "current_commercially_empty_sites": [],
   "preexisting_linked_post_stores": 18,
   "preexisting_page_store_upgrades": 2,
   "preexisting_stores_preserved_untouched": 16,
-  "scope_pending_true_empty": 1,
+  "scope_pending_true_empty": 0,
   "definitive_handoff": "affiliate_hub_v31/C100_RETOMADA_DEFINITIVA_MOVEIS_UNICA_LOJA_VAZIA_2026-11-22.md",
   "offline_tests": {
     "run_id": 45080445023,
@@ -414,5 +426,9 @@
   "original_existing_store_posts_preserved": 18,
   "corrected_after_user_feedback_2026_11_22": true,
   "c101_checkpoint": "affiliate_hub_v31/CHECKPOINT_C101_ROLLBACK_2_LOJAS_2026-11-22.md",
-  "c101_muebles_workflow_run_id": 45082936074
+  "c101_muebles_workflow_run_id": 45082936074,
+  "c101_final_checkpoint": "affiliate_hub_v31/CHECKPOINT_C101_CORRECAO_CONCLUIDA_MOVEIS_27_LIVE_2026-11-22.md",
+  "current_new_store_count": 1,
+  "current_commercially_populated_blogger_sites": 30,
+  "c101_fully_complete": true
 }
