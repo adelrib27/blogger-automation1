@@ -1,0 +1,56 @@
+name: "V31 C100 R2 - inventário comercial 19 lojas vazias READ ONLY"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c100_r2_inventory_readonly.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  inventory:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install "boto3>=1.36,<2"
+      - name: Contar candidatos reais por nicho e site no R2 sem mutação
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: |
+          python - <<'PY'
+          import tempfile,sqlite3,json,pathlib
+          from affiliate_hub_v31.r2_state import R2State
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.catalog import Catalog
+          profiles=json.load(open("affiliate_hub_v31/c100_store_profiles.json"))["sites"]
+          routes=sites()
+          route_by_id={str(v["identifier"]):v for v in routes.values() if v["platform"]=="blogger"}
+          with tempfile.TemporaryDirectory() as t:
+            dbpath=pathlib.Path(t)/"c100_readonly.sqlite3"
+            assert R2State.from_env().restore_to(dbpath),"R2_RESTORE_FAILED"
+            db=sqlite3.connect("file:"+str(dbpath)+"?mode=ro",uri=True)
+            for p in profiles:
+              route=route_by_id.get(p["blog"])
+              if not route:
+                print("C100_R2_SITE="+json.dumps({"site":p["key"],"status":"NOT_ROUTED"}));continue
+              total=0;by=[]
+              for pair in route.get("allowed_niches",[]):
+                cat,niche=pair.split("/",1)
+                cnt=db.execute("""SELECT COUNT(DISTINCT p.product_key)
+                  FROM products p JOIN product_taxonomy t ON p.product_key=t.product_key
+                  WHERE p.moderation='eligible' AND t.status='matched'
+                  AND t.category=? AND t.niche=?""",(cat,niche)).fetchone()[0]
+                total+=cnt;by.append([pair,cnt])
+              print("C100_R2_SITE="+json.dumps({"site":p["key"],"total":total,"per_niche":by},ensure_ascii=False))
+            db.close()
+          print("C100_R2_READ_ONLY_NO_API_NO_WRITES")
+          PY
