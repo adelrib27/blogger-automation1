@@ -1,0 +1,39 @@
+name: "V31 C96b - Café na Medida ofertas de relevância READ ONLY"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c96b_cafe_loja_refill_readonly.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-c96-cafe-loja-readonly
+  cancel-in-progress: false
+jobs:
+  refill:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sintaxe python
+        run: python -m py_compile affiliate_hub_v31/cafe_loja_refill_readonly.py
+      - name: Descoberta complementar com a mesma Shopee API
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: python -m affiliate_hub_v31.cafe_loja_refill_readonly | tee c96b_offers.log
+      - name: Evidência de consulta durante 3 dias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c96b-cafe-loja-refill
+          path: c96b_offers.log
+          if-no-files-found: ignore
+          retention-days: 3
