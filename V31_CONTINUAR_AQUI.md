@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C100 SEGUNDA LOJA REPLICADA — COZINHA SEM COMPLICAÇÃO (32 LIVE) E CASA EM ORDEM BLOQUEADA 10030:** [checkpoint detalhado](affiliate_hub_v31/CHECKPOINT_C100_COZINHA_32_LIVE_CASA_ORDEM_RATE_LIMIT_2026-11-22.md). Cozinha Blogger `3552757910439359679` página `6913756651435112886`: 36 candidatos Shopee exatos da conta passaram triagem, 4 falsos positivos removidos, **32 cards/fotos/offerLinks** e CTAs laranja implantados uma vez, GET CMS exato e HTML público presente. Versão prévia e backup no checkpoint. Navegador visual limitou sessão; o HTML público tinha cópia DOM duplicada pelo tema, **não declarar duas vitrines visíveis sem rechecagem**. Casa em Ordem **não alterada**: run R2 exact #45079448309 recebeu API `10030` após 19 ofertas; não furar limite. Manifesto idempotente `affiliate_hub_v31/C100_ROLLOUT_MANIFEST.json`: **2 lojas LIVE, 17 páginas pendentes**, 1 bloqueada por rate-limit. AUTO LIVE V31 permanece OFF.
+
+
 > **22/11/2026 — C100 PRIMEIRA LOJA REPLICADA: ACHADOS PARA CASA (36 LIVE):** [checkpoint e prova](affiliate_hub_v31/CHECKPOINT_C100_ACHADOS_CASA_36_LIVE_2026-11-22.md). Página existente Blogger `1426630233929943394` / `3841238517239710135` atualizada uma vez: 36 produtos reais com imagens, links Shopee e CTAs laranja, 8 categorias e 6 links editoriais, GET CMS exato e navegador público com **36 cartões visíveis**. HTML público inclui cópia adicional DOM **oculta pelo tema** (não são duas vitrines visíveis). Backup e export no checkpoint. **Outras 18 lojas vazias pendentes**, preservadas. R2 exact workflow #45078972630, API READ ONLY. Não repetir essa atualização se já estiver LIVE. AUTO LIVE OFF.
 
 
