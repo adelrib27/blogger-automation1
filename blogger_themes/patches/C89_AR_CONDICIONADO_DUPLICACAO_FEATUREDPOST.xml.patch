@@ -1,0 +1,22 @@
+--- C87_original
++++ C89_corrigido
+@@ -3727,7 +3727,18 @@
+                 <b:if cond='data:view.isMultipleItems'>
+                   <h2 class='main-heading'><data:messages.posts/></h2>
+                 </b:if>
+-                  <!-- CLIMA C87: gadget FeaturedPost oculto removido para preservar todos os artigos no Blog1. -->
++                  <!-- CLIMA C89: preservar o ID do gadget legado, mas desativá-lo pelo Blogger (visible=false). Isto impede sua migração para fora da seção e não exclui artigos do Blog1. -->
++                  <b:section class='featured-post' id='featured_post' name='Destaque legado desativado - carrossel proprio' showaddelement='false'>
++                    <b:widget id='FeaturedPost1' locked='true' title='Destaque legado desativado' type='FeaturedPost' visible='false'>
++                      <b:widget-settings>
++                        <b:widget-setting name='showSnippet'>false</b:widget-setting>
++                        <b:widget-setting name='showPostTitle'>true</b:widget-setting>
++                        <b:widget-setting name='showFirstImage'>true</b:widget-setting>
++                        <b:widget-setting name='useMostRecentPost'>false</b:widget-setting>
++                      </b:widget-settings>
++                      <b:includable id='main' var='this'/>
++                    </b:widget>
++                  </b:section>
+ 
+                 <b:section class='main' id='page_body' name='Page Body' showaddelement='false'>
+                   <b:widget id='Blog1' locked='true' title='Postagens no blog' type='Blog' visible='true'>
