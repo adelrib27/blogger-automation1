@@ -1,0 +1,64 @@
+name: "V31 C94 - shortlist Blogger por nicho R2 SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c94_blogger_shortlist_r2_readonly.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  c94-inventory:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install "boto3>=1.36,<2"
+      - name: Extrair 3 ofertas candidatas por blog sem converter e sem publicar
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: |
+          python - <<'PY'
+          import json,sqlite3,tempfile,pathlib
+          from affiliate_hub_v31.r2_state import R2State
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.catalog import host_allowed
+          from affiliate_hub_v31.source_policy_gate import source_safe_for_use
+          from affiliate_hub_v31.catalog import Catalog
+          skip={"blogger_ar_condicionado_sem_duvidas","blogger_cadeira_certa_home_office",
+                "blogger_moveis_para_cada_canto","blogger_air_fryers"}
+          with tempfile.TemporaryDirectory() as td:
+            path=pathlib.Path(td)/"r2-c94-readonly.sqlite3"
+            assert R2State.from_env().restore_to(path),"C94_R2_MISSING"
+            db=sqlite3.connect("file:"+str(path)+"?mode=ro",uri=True)
+            catalog=Catalog.__new__(Catalog);catalog.db=db
+            for key,r in sorted(sites().items()):
+              if r["platform"]!="blogger" or key in skip:continue
+              found=[];seen=set()
+              for pair in r["allowed_niches"]:
+                cat,niche=pair.split("/")
+                sql="""SELECT p.product_key,p.title,p.origin_url,p.image_url,p.shop_id,p.item_id
+                  FROM products p JOIN product_taxonomy t ON t.product_key=p.product_key
+                  WHERE p.moderation=\'eligible\' AND t.status=\'matched\'
+                  AND t.category=? AND t.niche=? ORDER BY p.last_seen_utc DESC LIMIT 35"""
+                for row in db.execute(sql,(cat,niche)):
+                  sku,title,origin,image,shop,item=row
+                  if sku in seen or not shop.isdigit() or not item.isdigit():continue
+                  if not host_allowed(origin) or not image.startswith("https://"):continue
+                  if not source_safe_for_use(catalog,sku):continue
+                  if len(title)<24 or len(title)>190:continue
+                  seen.add(sku);found.append({"sku":sku,"title":title,"image":image,"origin":origin})
+                  if len(found)>=4:break
+                if len(found)>=4:break
+              print("C94_BLOGGER_SITE="+json.dumps({"site":key,"campaign":r["campaign"],"candidates":found},ensure_ascii=False))
+            db.close()
+          print("C94_R2_SHORTLIST_READONLY_NO_D1_NO_PUBLICATION")
+          PY
