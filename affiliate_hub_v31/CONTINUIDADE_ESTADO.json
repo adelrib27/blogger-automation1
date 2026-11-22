@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C100_REDIRECT_POST_AUDIT_CORRECTED_ONLY_MOVEIS_EMPTY",
+  "last_updated_source": "C101_RESTORED_ORIGINAL_TWO_LOJAS_MOVEIS_API_VALIDATION_RUNNING",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1093,7 +1093,7 @@
     "preexecution_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_EXPANSAO_LOJAS_PRE_EXECUCAO_2026-11-22.md",
     "inventory_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_INVENTARIO_LOJAS_2026-11-22.md",
     "source_reference": "C96-C99 Cafe na Medida Loja",
-    "status": "REDIRECT_AUDIT_COMPLETED_ONLY_MOVEIS_TRULY_EMPTY",
+    "status": "C101_ROLLBACK_VERIFIED_ONLY_MOVEIS_TRUE_EMPTY",
     "blogger_total": 32,
     "blogger_existing_shops": 31,
     "blogger_empty_shops": 1,
@@ -1109,30 +1109,7 @@
       "casa_em_ordem",
       "cozinha_sem_complicacao"
     ],
-    "new_store_live_confirmed": [
-      {
-        "site_key": "achados_casa",
-        "blog_id": "1426630233929943394",
-        "page_id": "3841238517239710135",
-        "url": "https://achadosparacasa2026.blogspot.com/p/loja.html",
-        "product_count": 36,
-        "public_visible_cards": 36,
-        "source_run_id": 45078972630,
-        "checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_ACHADOS_CASA_36_LIVE_2026-11-22.md"
-      },
-      {
-        "site_key": "cozinha_sem_complicacao",
-        "blog_id": "3552757910439359679",
-        "page_id": "6913756651435112886",
-        "url": "https://cozinha-sem-complicacao.blogspot.com/p/loja.html",
-        "product_count": 32,
-        "source_run_id": 45079448309,
-        "checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_COZINHA_32_LIVE_CASA_ORDEM_RATE_LIMIT_2026-11-22.md",
-        "cms_verified": true,
-        "public_html_verified": true,
-        "visual_clone_check_pending": true
-      }
-    ],
+    "new_store_live_confirmed": [],
     "pending_shops": 1,
     "shopee_offer_generation_mutations": 0,
     "autolive_enabled_by_c100": false,
@@ -1151,17 +1128,22 @@
     "pending_site_keys": [
       "moveis"
     ],
-    "page_upgraded_existing_store_posts_preserved": [
-      "achados_casa",
-      "cozinha_sem_complicacao"
-    ],
+    "page_upgraded_existing_store_posts_preserved": [],
     "preexisting_redirect_shops_untouched": 16,
     "earlier_rate_limit_on_casa_em_ordem": "10030_RATE_LIMIT_ON_OPTIONAL_EXPANSION_NOT_AN_EMPTY_STORE",
     "shopee_api_rate_limit_observed": true,
     "no_more_shopee_api_calls_in_current_turn": true,
-    "further_cms_store_writes_suspended_due_corrected_inventory": true,
+    "further_cms_store_writes_suspended_due_corrected_inventory": false,
     "definitive_handoff": "affiliate_hub_v31/C100_RETOMADA_DEFINITIVA_MOVEIS_UNICA_LOJA_VAZIA_2026-11-22.md",
     "pure_guard_tests_run_id": 45080445023,
-    "pure_guard_tests_passed": 6
+    "pure_guard_tests_passed": 6,
+    "c101_rollback_checkpoint": "affiliate_hub_v31/CHECKPOINT_C101_ROLLBACK_2_LOJAS_2026-11-22.md",
+    "c101_moveis_run_id": 45082936074,
+    "restored_original_store_pages": [
+      "achados_casa",
+      "cozinha_sem_complicacao"
+    ],
+    "current_new_store_count": 0,
+    "publication_attempted_on_moveis": false
   }
 }
