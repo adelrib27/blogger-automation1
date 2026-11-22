@@ -1,0 +1,61 @@
+name: "V31 C88 - Ar Condicionado ID exato Shopee SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c88_arcond_exact_offer_safe.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  exact-product-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Consultar produto exato Shopee sem consumir slot nem converter
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request,urllib.error
+          from affiliate_hub_v31.shopee_probe import ENDPOINT,authorization
+          app=os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID","")
+          secret=os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET","")
+          if not app or not secret:raise SystemExit("C88_EXACT_ABORT_CREDENTIALS_MISSING")
+          query='query C88AirExact { productOfferV2(itemId: 58265302556, page: 1, limit: 5) { nodes { itemId shopId productName productLink imageUrl offerLink } pageInfo { hasNextPage } } }'
+          body=json.dumps({"query":query,"operationName":"C88AirExact"},separators=(",",":"))
+          req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={
+              "Authorization":authorization(app,secret,body,int(time.time())),
+              "Content-Type":"application/json","Accept":"application/json",
+              "User-Agent":"V31-C88-Air-Exact-Safe/1.0"})
+          try:
+              with urllib.request.urlopen(req,timeout=25) as resp:
+                  raw=resp.read(131073)
+                  if resp.status!=200 or len(raw)>131072:raise ValueError("invalid_status_or_size")
+              doc=json.loads(raw)
+          except urllib.error.HTTPError as exc:
+              print("C88_EXACT_HTTP_ERROR="+str(exc.code));raise SystemExit("C88_EXACT_FAILED_CLOSED") from None
+          except Exception:
+              raise SystemExit("C88_EXACT_NETWORK_ERROR") from None
+          if doc.get("errors"):
+              print("C88_EXACT_GRAPHQL_CODES="+json.dumps([str(e.get("extensions",{}).get("code","graphql"))[:24] for e in doc["errors"]]))
+              raise SystemExit("C88_EXACT_GRAPHQL_FAIL")
+          nodes=((doc.get("data")or{}).get("productOfferV2")or{}).get("nodes")or[]
+          print("C88_EXACT_NODES="+str(len(nodes)))
+          exact=[n for n in nodes if str(n.get("itemId"))=="58265302556" and str(n.get("shopId"))=="822103155" and ("ar condicionado" in str(n.get("productName","")).lower() or "ar-condicionado" in str(n.get("productName","")).lower()) and ("inverter" in str(n.get("productName","")).lower() or "lg" in str(n.get("productName","")).lower())]
+          if len(exact)!=1:raise SystemExit("C88_EXACT_PRODUCT_NOT_ELIGIBLE")
+          n=exact[0]
+          print("C88_EXACT_VERIFIED="+json.dumps({k:n.get(k) for k in ("itemId","shopId","productName","productLink","imageUrl","offerLink")},ensure_ascii=False,separators=(",",":")))
+          print("C88_EXACT_WRITES=0")
+          PY
