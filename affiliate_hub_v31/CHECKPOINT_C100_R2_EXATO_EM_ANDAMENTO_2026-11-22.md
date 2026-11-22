@@ -1,5 +1,8 @@
 # V31 C100 — Continuidade intermediária: R2 vs Busca Shopee — 22/11/2026
 
+> **ESTADO SUPERADO:** após esta fase, verificou-se que 18 das 19 Pages classificadas como vazias eram redirecionamentos para POST `Loja` LIVE com produtos. Só Móveis é realmente vazia. Leitura obrigatória: [retificação e provas](CHECKPOINT_C100_CORRECAO_REDIRECIONAMENTOS_LOJAS_2026-11-22.md). Este checkpoint intermediário permanece como histórico, não como fila válida de publicação.
+
+
 ## Estado verificado (não confundir com loja publicada)
 - Checkpoint C100 inicial já existe: `affiliate_hub_v31/CHECKPOINT_C100_EXPANSAO_LOJAS_PRE_EXECUCAO_2026-11-22.md`.
 - Inventário completo: `affiliate_hub_v31/CHECKPOINT_C100_INVENTARIO_LOJAS_2026-11-22.md`. **19 Blogger Lojas vazias; 11 Blogger com ofertas; 3 WordPress com ofertas; 1 LAB e 1 blog não lançado excluídos.**
