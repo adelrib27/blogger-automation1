@@ -218,9 +218,22 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
             raise ManufacturerEvidenceError("manufacturer_variant_conflict")
         expected = next(iter(numbers))
         found = source_counts.get(feature, set())
-        if expected not in found or (len(found) > 1 and expected not in
-                                     headline_counts.get(feature, set())):
+        if expected not in found:
             raise ManufacturerEvidenceError("manufacturer_variant_conflict")
+        extra = found - {expected}
+        if extra:
+            # Other quantities must be explicitly identified as a subset
+            # (e.g. two MDF doors OF a six-door wardrobe), never an
+            # unexplained conflicting product configuration.
+            if (feature != "portas" or
+                expected not in headline_counts.get("portas", set())):
+                raise ManufacturerEvidenceError("manufacturer_variant_conflict")
+            for amount in extra:
+                description = re.search(
+                    rf"\b0?{amount}\s+portas\s+em\s+(?:mdf|mdp)\b",
+                    excerpt)
+                if not description:
+                    raise ManufacturerEvidenceError("manufacturer_variant_conflict")
         word = "portas" if feature == "portas" else "gavetas"
         feature_claims.append(
             ("features", f"O fabricante informa {expected} {word} no modelo "
