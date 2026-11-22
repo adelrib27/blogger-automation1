@@ -44,7 +44,7 @@ ACCESSORY = re.compile(
     r"filtro(?:s)?|compressor(?:es)?|miniatura|adesivo(?:s)?|"
     r"brinquedo|climatizador|umidificador|ventilador|resfriador|"
     r"refrescador|refil|adaptador|refrigerante|"
-    r"base para|cabo(?:s)?|valvula(?:s)?|radiador|moldura|vedacao|espuma|"
+    r"base para|cabo(?:s)?|valvula(?:s)?|radiador|moldura|vedacao|espuma|caixonete|caixilho|caixa de madeira|"
     r"atuador(?:es)?|engrenagem|conexao|turbina|painel de ar|"
     r"comando de ar|saida de ar|ar forcado|"
     r"evaporadora avulsa|condensadora avulsa|"
@@ -294,7 +294,9 @@ def main() -> int:
           ("Moldura Para Ar Condicionado de Janela 30000BTUs",False),
           ("Tira Veda Espuma Para Ar Condicionado Janela Split Portatil 21000BTU",False),
           ("Turbina Evaporadora Ar Condicionado 12000 BTUs Inverter Midea Carrier",False),
-          ("Ar Condicionado Inverter 12V 7000 BTUs Economy Caminhao Motorhomes",False)
+          ("Ar Condicionado Inverter 12V 7000 BTUs Economy Caminhao Motorhomes",False),
+          ("Caixa Caixonete Madeira Para Ar Condicionado de Janela 7500 BTUs",False),
+          ("Caixilho de Madeira para Ar Condicionado Janela 12000BTU",False)
         ]
         for title,expected in samples:
             assert is_whole_air_conditioner(title)==expected,(title,expected)
