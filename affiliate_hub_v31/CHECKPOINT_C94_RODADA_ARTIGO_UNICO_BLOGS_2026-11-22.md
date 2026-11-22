@@ -23,3 +23,29 @@ Registros de artigos serão acrescentados a cada publicação verificada. Evitar
 **Blogs pulados por já terem artigo novo hoje:** Ar-Condicionado sem Dúvidas (2 Midea), Cadeira Certa no Home Office (Office Arco), WordPress Casa e Decoração (cron criou post `330`, `Organizando o Banheiro com Prateleiras`, 22/11 16:50:55). O cron WP estava em andamento durante a auditoria: rechecamos antes de evitar duplicação.
 
 **Inventário R2 C94 read-only:** workflow [#45063501588](https://github.com/adelrib27/blogger-automation1/actions/runs/45063501588) SUCCESS. Campanhas com affiliate_links armazenados: `airfryers=3`, `casaedecoracaowp=14`, `moveisparacadacanto=12`, `oficinawp=6`, `radarwp=15`; demais campanhas V31 sem links cached. Limite global D1 de 3 conversões Shopee de 22/11 já esgotado. **Não inventar URLs para demais blogs**. Próxima etapa exige consultar API exata `productOfferV2(itemId)` para obter `offerLink` oficial da mesma conta (sem SubID específico) ou publicar apenas conteúdo sem CTA quando válido editorialmente. Este checkpoint NÃO afirma que todos os blogs foram concluídos.
+
+## Etapa concluída — totalidade das 24 rotas V31 cadastradas
+Todas as 24 rotas editoriais atualmente cadastradas no V31 (21 Blogger + 3 WordPress) foram verificadas. **21 receberam nova publicação individual neste ciclo**, **3 foram puladas** porque já tinham publicação de 22/11, inclusive o post 330 de Casa e Decoração publicado por seu cron.
+Artigos adicionais à primeira etapa, todos Blogger LIVE `published_at=2026-11-22` com foto do anúncio e offerLink de conta Shopee API:
+- Cabelos em Foco: `7433909958670615634`, https://cabelos-em-foco.blogspot.com/2026/11/modelador-de-cachos-de-cetim-sem-calor.html
+- Eletroportáteis na Cozinha: `4918040711433599634`, https://eletroportateis-na-cozinha.blogspot.com/2026/11/sanduicheira-grill-oliverhome-750-w.html
+- Achados para Casa: `6572219156134379728`, https://achadosparacasa2026.blogspot.com/2026/11/cortina-blackout-280-230-m-como-medir.html
+- Ventiladores em Foco: `7711287992526425292`, https://ventiladores-em-foco.blogspot.com/2026/11/ventilador-de-teto-com-lampada-e27-8.html
+- Limpeza Inteligente: `178485226582513429`, https://limpeza-inteligente.blogspot.com/2026/11/mop-com-esponja-pva-quando-vale-pena-e.html
+- Conecta Achados: `1053423153113471831`, https://conectaachados.blogspot.com/2026/11/sapateira-de-nove-andares-como-planejar.html
+- Estilo no Dia a Dia: `5523832851018433598`, https://estilo-no-dia-a-dia-0071220800-2.blogspot.com/2026/11/sandalia-de-amarrar-no-tornozelo.html
+- Casa em Ordem: `1450278586926534219`, https://casa-em-ordem-pratica.blogspot.com/2026/11/porta-talheres-de-bambu-com-5.html
+- Escolha Certa Online: `6713641579459420246`, https://escolha-certa-online.blogspot.com/2026/11/pulseira-de-smartwatch-22-mm.html
+- Achados que Valem: `6153898693607741422`, https://achados-que-valem.blogspot.com/2026/11/kit-de-caixas-organizadoras-de-40-l-o.html
+- Guia de Achados & Ofertas: `6210479350725590904`, https://guia-de-achados-e-ofertas.blogspot.com/2026/11/organizador-de-maquiagem-com-tampa.html
+- Vitrine Prática: `2903591004267019099`, https://vitrine-pratica.blogspot.com/2026/11/caixa-organizadora-de-40-litros-para.html
+- Moda e Ofertas: `7593866043388843685`, https://moda-ofertas.blogspot.com/2026/11/kit-de-calcas-jeans-skinny-com-elastano.html
+- Achadinhos de Beleza: `538506346193721537`, https://canal-attitude.blogspot.com/2026/11/secador-taiff-easy-1700-w-voltagem.html
+- Portal Radar Tech Blogger: `2924800419526696880`, https://portalradartechbr.blogspot.com/2026/11/smartwatch-w99-anunciado-com-amoled-e.html
+- Cozinha Sem Complicação: `1080965947069489990`, https://cozinha-sem-complicacao.blogspot.com/2026/11/formas-de-silicone-para-bolo-e-air.html
+- Liquidificadores em Foco: `1403911035321641048`, https://liquidificadores-em-foco.blogspot.com/2026/11/liquidificador-philco-ph900-1200-w-copo.html
+
+Foram criados e conferidos todos como DRAFTs novos com data atual, e publicados individualmente; cada API Blogger retornou `status=live` e URL real. A oferta e imagem referem-se ao MESMO SKU; os links dos 17 anúncios foram confirmados na [Actions #45064120898](https://github.com/adelrib27/blogger-automation1/actions/runs/45064120898), SUCCESS, com retorno `offerLink` autenticado da conta. Esses `offerLink` podem não carregar SubID de campanha. V31 AUTO LIVE segue OFF; não houve nova conversão D1.
+
+### Continuação de escopo — blogs conectados, mas não roteados no V31
+A conta Blogger tem 31 blogs, dos quais **10 adicionais** não são blog V31 cadastrado (e 21 são roteados). O inventário inclui blogs legítimos de café, violão, ciclismo, casa, achados, ateliê, viagem, pet e jardim; há também LAB e um blog astronomia sem posts/páginas. Antes de publicar em blog NÃO roteado, conferir se o usuário incluiu a operação ao solicitar até o último blog, evitar LAB/placeholder e ter produto real com offerLink da conta, sem inventar campanha/SubID. A nova etapa ainda não é concluída neste checkpoint.
