@@ -1,0 +1,13 @@
+# C92 — Evidência de candidatos antes de correção de identidade
+Data 2026-11-22, Blogger Móveis para Cada Canto. Apenas DRAFT, LIVE V31 desativado.
+
+- Canário real [#45055648381](https://github.com/adelrib27/blogger-automation1/actions/runs/45055648381): AUTHENTICATED_CMS_HISTORY, assinatura Ed25519/HMAC PASS, independent-verifier NO_NEW_OFFER; deliver-draft skipped, nenhum LIVE.
+- Auditoria [#45055808599](https://github.com/adelrib27/blogger-automation1/actions/runs/45055808599): 9 posts/drafts CMS; 10 perfis model-based, 3 já com link mas os 3 já no CMS; nenhum novo perfil com link, sete sem conversão. 0 mutações.
+- Auditoria ampliada [#45055951437](https://github.com/adelrib27/blogger-automation1/actions/runs/45055951437): sete ofertas sem link, modelos extraídos erroneamente por heurística de maior palavra: 'lavanderia' em Viena, 'espelho' em Buriti/Marabá, 'grafitte' em Marabá, 'comoda' em Master, 'sapateira' em Áurea.
+- Títulos públicos reais detectados: Armário Multiuso Viena 2 portas Demóbile; Guarda-roupa Buriti Santos Andirá 6 portas 4 gavetas; Multi-Cômoda Marabá 1.6 Santos Andirá 1 porta 6 gavetas; Cômoda Master Santos Andirá 2 portas 4 gavetas; Cômoda Áurea Demóbile.
+- Fontes oficiais públicas confirmadas: https://www.santosandira.com.br/produto/guarda-roupa-buriti-6-portas/ (6 portas, 4 gavetas, duas portas ripadas), https://www.santosandira.com.br/produto/multi-comoda-maraba-1-6/ (1 porta e 6 gavetas), https://www.santosandira.com.br/produto/comoda-master/ (4 gavetas, mas não confirma 2 portas), https://demobile.com.br/produtos/viena-armario e https://demobile.com.br/produtos/aurea-comoda (material MDP, sem todos os números de portas/gavetas no texto público).
+- Falha em C89: `models_for_catalog_title` elege maior token genérico antes do modelo, e `verify_manufacturer_markdown` exige material, rejeitando página oficial com características de portas/gavetas mas sem material; contador de portas confunde total (6) e subconjunto (2 ripadas).
+- Próxima correção: seletor preserva ordem do modelo após excluir genéricos; valida versão 1.6, counts/variant pelo texto oficial, aceita `features` factuais mensuráveis como alternativa ao material. Continua a recusar atributo sem fonte, link errado, SKU já no CMS, duplicatas, dados externos não verificados.
+- Orçamento global Shopee do dia 22/11: dois slots já usados por campanhas Ar Condicionado/Cadeira. Evitar conversão sem certeza de identidade; usar no máximo um restante após prova do modelo.
+
+Este checkpoint não autoriza publicação LIVE, não altera token/secrets, não afirma novo DRAFT.
