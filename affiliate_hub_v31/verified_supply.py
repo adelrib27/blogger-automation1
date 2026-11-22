@@ -12,7 +12,6 @@ from pathlib import Path
 from .catalog import Catalog
 from .manufacturer_review import models_for_catalog_title
 from .source_policy_gate import source_safe_for_use
-from .structured_review_source import catalog_gtin
 
 PROFILE = Path(__file__).with_name("autonomous_review_sources.json")
 GENERIC_ADVICE = [
@@ -99,6 +98,9 @@ def dynamic_profile(catalog: Catalog, route: dict, policy: dict, sku: str):
     if not template.get("advice") or not template.get("cluster"):
         return None
     try:
+        # Lazy import avoids site_request_queue -> verified_supply ->
+        # independent_review -> site_request_queue during startup.
+        from .structured_review_source import catalog_gtin
         gtin = catalog_gtin(description)
     except ValueError:
         gtin = None
