@@ -56,7 +56,7 @@ jobs:
           matches=[n for n in nodes if str(n.get("shopId"))=="1736335904" and str(n.get("itemId"))=="58267891881"]
           if len(matches)!=1:raise SystemExit("C92_MIDEA_IDENTITY_UNCONFIRMED")
           n=matches[0];name=str(n.get("productName")or"").lower()
-          try:price=float(n.get("priceMin")or0)
+          try:price=float(n.get("priceMin") or 0)
           except Exception:price=0
           if n.get("productLink")!=expected or not all(x in name for x in ("midea","9000","inverter")) or price<=0:
             raise SystemExit("C92_MIDEA_PRODUCT_NOT_MATCHED")
