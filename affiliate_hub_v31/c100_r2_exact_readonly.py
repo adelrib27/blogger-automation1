@@ -91,6 +91,59 @@ def source_category(name,source,site):
     raw=source.split("/")[-1].replace("_"," ").capitalize()
     return raw
 
+def primary_product_guard(title: object, source_path: str, site_key: str) -> bool:
+    """Rejeita produtos ACESSÓRIOS disfarçados de equipamentos inteiros.
+
+    Aplicado após curadoria do R2 e antes de aprovar o mesmo anúncio na API.
+    Funciona também em blogs abrangentes, usando o nicho original do R2.
+    Não compara identidade entre vendedores por semelhança superficial.
+    """
+    t=norm(title)
+    if not t:return False
+    if source_path.endswith("/air_fryers") or site_key=="air_fryers":
+        if not ("air fryer" in t or "airfryer" in t or "fritadeira" in t):
+            return False
+        if any(x in t for x in (
+            "tapete", "forrar", "silicone para", "forma para", "papel para",
+            "puxador", "cabo para", "cesto de reposicao", "peca para",
+            "desengordurante", "limpador", "escova de limpeza", "tampa avulsa",
+            "resistencia", "acessorio para", "industrial profissional tacho",
+        )):return False
+    if source_path.endswith("/liquidificadores") or site_key=="liquidificadores":
+        if "liquidificador" not in t:return False
+        if any(x in t for x in (
+            "arraste motor", "motor e copo", "copo de liquidificador",
+            "copo para liquidificador", "pecas para liquidificador",
+            "tampa para liquidificador", "acoplamento", "lamina de reposicao",
+            "engrenagem", "faca de liquidificador", "conjunto de reposicao",
+        )):return False
+    if source_path.endswith("/ventilacao") or site_key=="ventiladores":
+        if "ventilador" not in t:return False
+        if any(x in t for x in (
+            "helice ventilador", "helice para ventilador",
+            "botao ventilador", "grade de ventilador",
+            "capacitor para ventilador", "controle remoto para ventilador",
+            "motor para ventilador", "ventilador de refrigeracao alimentos",
+            "resfriamento rapido para macarrao", "pecas para ventilador",
+        )):return False
+    if source_path.endswith("/moveis") or site_key=="moveis":
+        if any(x in t for x in (
+            "puxador para", "dobradica", "corredica para",
+            "parafuso para", "adesivo para moveis", "capa para cadeira",
+            "capa para sofa", "pe de reposicao", "pes para moveis",
+            "sapata para", "rodizio avulso", "rodinha para",
+            "kit reparo", "pe de mesa avulso", "miniatura de",
+        )):return False
+        if not any(x in t for x in (
+            "mesa", "cadeira", "sofa", "poltrona", "estante",
+            "guarda roupa", "guarda-roupa", "rack", "painel de tv",
+            "comoda", "aparador", "armario", "escrivaninha",
+            "gaveteiro", "cabeceira", "beliche", "sapateira",
+            "criado mudo", "criado-mudo", "bancada",
+        )):return False
+    return True
+
+
 def verify(node,source,site):
     # Reutiliza as regras HTTP, ID, origem, imagem, reputação e faturamento
     # do mesmo produto; taxonomia R2 já valida o nicho.
@@ -98,10 +151,8 @@ def verify(node,source,site):
                          r"[a-z0-9]+",site["key"])
     if not result:return None
     if str(result["shopId"])!=str(source["shopId"]) or str(result["itemId"])!=str(source["itemId"]):return None
-    title=norm(node.get("productName"))
-    if site["key"]=="liquidificadores" and "liquidificador" not in title:return None
-    if site["key"]=="ventiladores" and "ventilador" not in title:return None
-    if site["key"]=="air_fryers" and not ("air fryer" in title or "fritadeira" in title):return None
+    if not primary_product_guard(node.get("productName"),source["source_category"],site["key"]):
+        return None
     result["category"]=source_category(node.get("productName"),source["source_category"],site)
     return result
 
