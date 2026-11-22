@@ -51,3 +51,12 @@ O proprietário esclareceu: **não adotar regras excessivamente rigorosas**, por
 - Falta de campo de estoque na Affiliate API ou HTTP 403 no site não significa esgotamento.
 - O LG retirado da vitrine na C92 **não foi excluído do catálogo e pode voltar**, sujeito à verificação atual da variante. A página educativa LG continua LIVE. Esta correção não restaurou o CTA sem checagem.
 - A política atualizada passa a orientar próximas revisões; **não houve mudança em produtos publicados, conversões ou LIVE automático** nesta correção de diretriz.
+
+## Complemento: múltiplos anúncios por modelo (decisão do proprietário, 22/11/2026)
+O usuário esclareceu que a mesma mercadoria pode constar em **várias páginas da mesma loja ou de vendedores diferentes**. A seleção de ofertas não deve estar ancorada exclusivamente no `shopId:itemId` de um único anúncio, nem ignorar as alternativas ao aparecer aviso de esgotamento.
+- Criar identidade editorial `product_identity_key` por **marca + modelo/códigos + capacidade + tensão + ciclo + variante/kit** e relacionar um conjunto de `listing_key=shopId:itemId`, sem confundir especificações diferentes.
+- Quando um anúncio sinalizar falta de estoque, consultar **alternativas exatas** na biblioteca Shopee R2/CSV e na API de afiliados; vendedores repetidos ou diferentes são elegíveis após conferir produto, foto, reputação, disponibilidade razoavelmente observável, frete/garantia e link afiliado da conta.
+- Manter **o mesmo artigo/permalink** quando o produto for tecnicamente o mesmo; atualizar os CTAs para anúncios equivalentes comprovados, discriminando cada vendedor e o link próprio; não duplicar postagem nem copiar título/descrição para vários anúncios.
+- Não reutilizar shortlink entre itens de diferentes IDs nem deduzir que stock ausente significa esgotamento. Observar limite D1 3 conversões/dia e regras de SubID, sem inventar rastreabilidade.
+- Caso um anúncio esgotado volte a ter estoque, poderá regressar como alternativa preferida ou secundária, sem recriar artigo. **Nenhum novo anúncio LG foi localizado ou publicado por esta alteração de política; não alegar reativação nem automação de monitoramento.**
+- Ver [política consolidada](POLITICA_ESTOQUE_SHOPEE_ARCOND_C92_2026-11-22.md), seção “Busca de anúncios alternativos do MESMO produto”.
