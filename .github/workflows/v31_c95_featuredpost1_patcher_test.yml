@@ -1,0 +1,53 @@
+name: "V31 C95 — testar corretor universal FeaturedPost1 offline"
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v31_c95_featuredpost1_patcher_test.yml
+      - blogger_themes/tools/fix_featuredpost1_legacy_v31.py
+permissions:
+  contents: read
+jobs:
+  test-patcher-offline:
+    if: github.repository == 'adelrib27/blogger-automation1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Syntax checker
+        run: python -m py_compile blogger_themes/tools/fix_featuredpost1_legacy_v31.py
+      - name: Testar exclusão do post e idempotência em XML Blogger mínimo
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p=Path("blogger_themes/tools/fix_featuredpost1_legacy_v31.py")
+          spec=importlib.util.spec_from_file_location("fix_featured",p)
+          mod=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          old='''<html xmlns:b="http://www.google.com/2005/gml/b">
+            <b:section id='featured_post' showaddelement='false'>
+              <b:widget id='FeaturedPost1' type='FeaturedPost' visible='true'>
+                <b:widget-settings><b:widget-setting name='useMostRecentPost'>true</b:widget-setting></b:widget-settings>
+                <b:includable id='main'/>
+              </b:widget>
+            </b:section>
+            <b:section id='page_body'><b:widget id='Blog1'/></b:section>
+            <script>var id='ub-v21-featured';var cards = document.querySelectorAll('#FeaturedPost1 .post-wrapper, #Blog1 .post-wrapper');</script>
+          </html>'''
+          new, evidence=mod.patch(old)
+          assert evidence["featuredpost_legacy_disabled"]
+          assert evidence["carousel_blog1_only"]
+          assert "useMostRecentPost'>false" in new
+          assert "visible='false'" in new
+          assert "#FeaturedPost1 .post-wrapper" not in new
+          second, evidence2=mod.patch(new)
+          assert second == new
+          assert evidence2["carousel_blog1_only"]
+          print("C95_PATCHER_PASS_IDEMPOTENCE")
+          PY
