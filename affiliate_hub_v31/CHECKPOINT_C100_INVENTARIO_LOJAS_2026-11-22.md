@@ -1,5 +1,8 @@
 # V31 C100 — Inventário READ ONLY de Lojas — 22/11/2026
 
+> **RETIFICAÇÃO OBRIGATÓRIA (22/11):** este documento registra a PRIMEIRA fotografia de leitura das **Pages**, mas a inferência de **19 lojas sem produtos está errada**. 18 Pages redirecionavam para posts com 20 links afiliados cada (Achados para Casa: 32). A única Loja comercial realmente vazia é **Móveis para Cada Canto**, conforme [C100 auditoria definitiva](CHECKPOINT_C100_CORRECAO_REDIRECIONAMENTOS_LOJAS_2026-11-22.md). Não usar a lista antiga de 19 para novas escritas. Manifesto e estado foram corrigidos.
+
+
 **Pré-condição:** checkpoint anterior [C100 PRÉ-EXECUÇÃO](CHECKPOINT_C100_EXPANSAO_LOJAS_PRE_EXECUCAO_2026-11-22.md) já salvo e indexado antes das leituras.
 
 ## Resumo confirmado via Blogger API v3
