@@ -2,6 +2,8 @@ name: "V31 C93 - descoberta generica ar condicionado SAFE"
 # Somente consulta e shortlist; primario generico, fallbacks diarios rotativos. NENHUM artigo e publicado.
 # Rotacao diaria e suite de testes C93 corrigida para ate quatro chamadas totais.
 # Gatilho de homologacao final com taxonomia v6, anti-caixonete e shortlist JSON.
+# Push valida codigo sem gastar API; apenas schedule e manual fazem consulta.
+# Respostas 10000 em tempo real sao falha transitoria, nao ausencia de produto.
 on:
   push:
     branches: [main]
@@ -47,15 +49,17 @@ jobs:
           print("C93_TAXONOMY_BROAD_TEST_PASS")
           PY
       - name: Buscar apenas ar condicionado na Shopee Affiliate Open API
+        if: github.event_name != 'push'
         env:
           V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
           V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
           V31_AIRCON_CANDIDATE_PATH: c93_candidates.json
         run: python -m affiliate_hub_v31.aircon_discovery
       - name: Validar lista gerada de candidatos
+        if: github.event_name != 'push'
         run: python -m json.tool c93_candidates.json > /dev/null
       - name: Preservar shortlist para revisao editorial por 7 dias
-        if: always()
+        if: github.event_name != 'push' && always()
         uses: actions/upload-artifact@v4
         with:
           name: v31-c93-arcond-readonly-shortlist
