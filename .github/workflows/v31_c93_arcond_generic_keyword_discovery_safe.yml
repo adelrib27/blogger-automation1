@@ -22,7 +22,23 @@ jobs:
         with:
           python-version: '3.12'
       - name: Testar os filtros de aparelhos sem consumir a API
-        run: python -m affiliate_hub_v31.aircon_discovery --dry-run
+        run: |
+          python -m py_compile affiliate_hub_v31/aircon_discovery.py affiliate_hub_v31/taxonomy.py
+          python -m affiliate_hub_v31.aircon_discovery --dry-run
+          python - <<'PY'
+          from affiliate_hub_v31.taxonomy import classify_title
+          cases=[
+            ("Ar Condicionado Split Inverter Gree 18000 BTUs Frio", "ar_condicionado"),
+            ("Ar Condicionado Portatil Electrolux 12000 BTU Frio", "ar_condicionado"),
+            ("Ar condicionado Janela Consul 7500 BTUs Frio", "ar_condicionado"),
+            ("Controle Remoto para Ar Condicionado", "review"),
+            ("Mini Ar Condicionado Climatizador USB", "review"),
+          ]
+          for title,expected in cases:
+            result=classify_title(title)
+            assert (result.niche if result.status=="matched" else result.status)==expected,(title,result)
+          print("C93_TAXONOMY_BROAD_TEST_PASS")
+          PY
       - name: Buscar apenas ar condicionado na Shopee Affiliate Open API
         env:
           V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
