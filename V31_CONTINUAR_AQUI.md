@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C84 Cadeira Certa: causa exata do destaque Office Arco encontrada (ainda NÃO corrigida no tema LIVE):** [checkpoint](affiliate_hub_v31/CHECKPOINT_C84_CADEIRA_TEMA_CARROSSEL_DIAGNOSTICO_2026-11-22.md) e [patch mínimo de 1 linha para Blogger Tema → Editar HTML](blogger_themes/patches/C84_CADEIRA_CERTA_CAROUSEL_SELECTOR.md). O script carrossel consulta só `#Blog1 .post-wrapper`; o artigo novo Office Arco está em `#FeaturedPost1 .post-wrapper`. Solução: usar seletor `'#FeaturedPost1 .post-wrapper, #Blog1 .post-wrapper'`, mantendo deduplicação e limite cinco originais. Blogger API/Runner conectado não permite editar template desta conta. Aplicar em editor autenticado Work/Blogger após backup e confirmar por GET. Não mexer em posts, datas, API Shopee, campanha ou LIVE V31.
+
+
 > **22/11/2026 — C83 Cadeira Certa CONCLUÍDA:** [checkpoint com GET público, Blogger, Shopee e D1](affiliate_hub_v31/CHECKPOINT_C83_CADEIRA_CERTA_CONVERSAO_PUBLICACAO_CARROSSEL_2026-11-22.md). Tok Boxbit agora é **slide 1/5 do carrossel natural da HOME**, sem alterar tema ou post. Shopee Affiliate API confirmou SKU Office Arco `1231183958/58216389111` e gerou `https://s.shopee.com.br/9fMfOM4016` para campanha `cadeiracertahomeoffice`, D1 slot1 (22/11) e proteção anti-replay. Artigo Office Arco Blogger **6656620121237912250 LIVE** (GET autenticado e HTTP200 público), 6 LIVE e 0 DRAFT. Publicação manual única; **AUTO LIVE V31 continua OFF**. Não repetir conversão nem nova postagem.
 
 
