@@ -1,0 +1,74 @@
+name: "V31 C88 - Ar Condicionado consulta Shopee SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c88_arcond_catalog_discovery_safe.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  discover-read-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Shopee productOfferV2 — ler ofertas de aparelhos completos SEM mutacao
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os,re,time,urllib.request,urllib.error
+          from affiliate_hub_v31.shopee_probe import authorization,ENDPOINT
+          app=os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID","")
+          secret=os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET","")
+          if not app or not secret: raise SystemExit("C88_READONLY_CREDENTIALS_MISSING")
+          keys=["ar condicionado split inverter 12000","ar condicionado inverter 9000 btus"]
+          for i,kw in enumerate(keys,1):
+              query='query C88ArConditioners { productOfferV2(keyword: '+json.dumps(kw,ensure_ascii=False)+', sortType: 1, page: 1, limit: 20) { nodes { itemId shopId productName productLink imageUrl offerLink } pageInfo { hasNextPage } } }'
+              body=json.dumps({"query":query,"operationName":"C88ArConditioners"},separators=(",",":"),ensure_ascii=False)
+              req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={"Authorization":authorization(app,secret,body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31-C88-AirConditioner-ReadOnly/1.0"})
+              try:
+                  with urllib.request.urlopen(req,timeout=22) as resp:
+                      raw=resp.read(131073)
+                      if resp.status!=200 or len(raw)>131072: raise ValueError("bad_http_or_size")
+                  doc=json.loads(raw)
+              except urllib.error.HTTPError as exc:
+                  print("C88_READONLY_HTTP_ERROR="+str(exc.code))
+                  raise SystemExit("C88_CATALOG_READ_FAILED_CLOSED") from None
+              except Exception:
+                  raise SystemExit("C88_CATALOG_NETWORK_OR_JSON_ERROR") from None
+              if doc.get("errors"):
+                  print("C88_READONLY_API_ERROR_CODES="+json.dumps([str(e.get("extensions",{}).get("code","graphql"))[:24] for e in doc["errors"]]))
+                  raise SystemExit("C88_CATALOG_GRAPHQL_FAILED_CLOSED")
+              nodes=((doc.get("data") or {}).get("productOfferV2") or {}).get("nodes") or []
+              print("C88_KEYWORD="+kw)
+              print("C88_RESULT_COUNT="+str(len(nodes)))
+              qualified=[]
+              for n in nodes:
+                  name=str(n.get("productName") or "")
+                  norm=name.lower()
+                  if not ("ar condicionado" in norm or "ar-condicionado" in norm): continue
+                  if not ("split" in norm or "inverter" in norm):continue
+                  if not ("9000" in norm or "9.000" in norm or "12000" in norm or "12.000" in norm):continue
+                  if re.search(r"\b(capa|suporte|controle|placa|motor|peça|peca|filtro|compressor|tubulacao|tubulação|mangueira|limpeza|miniatura|simulador|servico|serviço)\b",norm): continue
+                  link=str(n.get("productLink") or "")
+                  if not link.startswith("https://shopee.com.br/"): continue
+                  if not str(n.get("imageUrl") or "").startswith("https://"): continue
+                  if str(n.get("itemId") or "").isdigit() and str(n.get("shopId") or "").isdigit():
+                      qualified.append({k:n.get(k) for k in ("itemId","shopId","productName","productLink","imageUrl","offerLink")})
+              print("C88_QUALIFIED_COUNT="+str(len(qualified)))
+              for n in qualified[:10]:
+                  print("C88_CANDIDATE_JSON="+json.dumps(n,ensure_ascii=False,separators=(",",":")))
+          print("C88_SHOPEE_READONLY_DONE_WRITES=0")
+          PY
