@@ -1,0 +1,24 @@
+name: "V31 C100 - regras anti-acessorios loja PURE OFFLINE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c100_primary_product_guards_test.yml"]
+permissions:
+  contents: read
+jobs:
+  pure-tests:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check syntax and test niche-specific product guards without any API calls
+        run: |
+          python -m pip install "boto3>=1.36,<2"
+          python -m py_compile affiliate_hub_v31/c100_r2_exact_readonly.py
+          python -m unittest affiliate_hub_v31.tests.test_c100_primary_product_guards -v
