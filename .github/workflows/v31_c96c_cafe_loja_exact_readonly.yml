@@ -1,0 +1,74 @@
+name: "V31 C96c - Café validação exata de 5 ofertas já conhecidas"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c96c_cafe_loja_exact_readonly.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: v31-c96-cafe-loja-readonly
+  cancel-in-progress: false
+jobs:
+  legacy-exact:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Confirmação do SKU exato pela mesma API Shopee READ ONLY
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: |
+          python - <<'PY' | tee c96c_exact.log
+          import json,os,time,urllib.request,urllib.parse,urllib.error
+          from affiliate_hub_v31.shopee_probe import ENDPOINT,authorization
+          items=[("Moedores","22494405073"),("Porta filtros","58255557635"),("Prensas francesas","53415510560"),("Chaleiras","54557028525"),("Italianas","23898564808")]
+          fields="itemId shopId productName productLink imageUrl offerLink priceMin ratingStar sales shopName shopType commissionRate sellerCommissionRate commission periodEndTime"
+          app=os.environ["V31_EDITORIAL_SHOPEE_APP_ID"];secret=os.environ["V31_EDITORIAL_SHOPEE_APP_SECRET"]
+          count=0
+          for base in range(0,len(items),2):
+              batch=items[base:base+2]
+              query="query V31C96Exact { "+" ".join(f"a{i}:productOfferV2(itemId:{item},page:1,limit:5){{nodes{{{fields}}}}}" for i,(cat,item) in enumerate(batch))+" }"
+              body=json.dumps({"query":query,"operationName":"V31C96Exact"},separators=(",",":"))
+              req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={"Authorization":authorization(app,secret,body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31-Cafe-Legacy-Exact-ReadOnly/1.0"})
+              try:
+                  with urllib.request.urlopen(req,timeout=26) as resp:
+                      raw=resp.read(100000)
+                  obj=json.loads(raw)
+              except Exception:
+                  print("C96C_API_TRANSPORT_ERROR="+str(base));continue
+              if obj.get("errors"):
+                  print("C96C_API_GRAPHQL_ERROR="+json.dumps([str(e.get("extensions",{}).get("code","graphql")) for e in obj["errors"][:2]]));continue
+              for i,(cat,item) in enumerate(batch):
+                  nodes=((obj.get("data") or {}).get("a"+str(i)) or {}).get("nodes") or []
+                  hits=[n for n in nodes if str(n.get("itemId"))==item]
+                  if len(hits)!=1:
+                      print("C96C_ITEM_NOT_UNIQUE_OR_ABSENT="+item);continue
+                  n=hits[0]
+                  try:price=float(n.get("priceMin") or 0)
+                  except Exception:price=0
+                  offer=urllib.parse.urlsplit(str(n.get("offerLink") or ""))
+                  origin=urllib.parse.urlsplit(str(n.get("productLink") or ""))
+                  if (price<=0 or offer.scheme!="https" or offer.hostname not in ("s.shopee.com.br","shope.ee","shopee.com.br")
+                      or origin.scheme!="https" or origin.hostname!="shopee.com.br" or not str(n.get("imageUrl") or "").startswith("https://")):
+                      print("C96C_ITEM_INVALID="+item);continue
+                  n["category"]=cat
+                  print("C96C_OFFER="+json.dumps(n,ensure_ascii=False,separators=(",",":")))
+                  count+=1
+              time.sleep(.3)
+          print("C96C_MATCHED="+str(count))
+          print("C96C_NO_CONVERSION_NO_PUBLICATION")
+          PY
+      - name: Evidência descartável de consulta
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c96c-cafe-exact
+          path: c96c_exact.log
+          if-no-files-found: ignore
+          retention-days: 3
