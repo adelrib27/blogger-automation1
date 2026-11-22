@@ -26,3 +26,10 @@
 - Só após observação e evidência 2 plataformas propor aprovação ÚNICA da política LIVE nova. O usuário não precisa aprovar artigo por artigo.
 
 **Rollback operacional:** se ocorrer erro relevante, colocar Repository Variable `V31_AUTODRAFT_ACTIVE=false` e revalidar D1/CMS antes de qualquer retry; nunca apagar snapshots/rascunhos para “limpar fila”.
+
+## Correção final de pré-homologação com Firecrawl real — PR #130
+- Antes de usar cota Shopee adicional, executei uma pesquisa Firecrawl com a mesma consulta do verificador: `Santos Andirá Buriti guarda-roupa`; o resultado #1 foi a URL oficial `https://www.santosandira.com.br/produto/guarda-roupa-buriti-6-portas/`.
+- O scrape Firecrawl real maxAge=0 retornou HTTP 200, metadata `title=Guarda-Roupa Buriti 6 Portas – Santos Andirá`, `url/sourceURL` exatas e conteúdo com título H2 após **11 imagens de galeria**. A seção do produto informa 04 gavetas, 02 portas MDF ripadas como subconjunto do modelo 06 portas, e demais características. Não houve publicação neste teste.
+- Esse formato revelou defeito antes de gastar quota: o código anterior encontrava o primeiro token `buriti` dentro da URL de imagem e considerava as primeiras cinco linhas como heading, causando reprovação falsa. Corrigido em [PR #130 MERGED](https://github.com/adelrib27/blogger-automation1/pull/130), merge SHA `a9191a841dfaf21e166ca6a97204e5a17d6eb584`: remover links/imagens no Markdown, localizar H1/H2/H3 de produto exato, limitar o escopo ao artigo antes de rodapé, validar números a partir do heading real.
+- [CI #45058125770](https://github.com/adelrib27/blogger-automation1/actions/runs/45058125770): **591 testes PASS**, regressões WordPress e cross-blog PASS. Testes adversariais recusam fatos tirados apenas da galeria/rodapé, sem tocar recursos remotos.
+- O canário de data única do PR #129 continua configurado; utilizará automaticamente o código PR #130 porque foi integrado à `main` antes de 23/11 UTC. **A entrega do DRAFT ainda não está comprovada; somente o agendamento foi instalado e a pré-validação das fontes foi concluída.**
