@@ -35,3 +35,20 @@ Versão de texto `TEMA_EXCLUSIVO_AR_CONDICIONADO_SEM_DUVIDAS_V31_C91_CONTROLES_L
 2. Verificar Loja em desktop/mobile: apenas 1 item → sem botões Anterior/Próximo, compartilhamento e contador visíveis.
 3. Quando a Loja tiver 2+ produtos, verificar navegação anterior/próximo com rótulos horizontais e pause/share intactos; não criar ofertas artificiais só para testar.
 4. Preservar o funcionamento das quatro páginas temáticas e do formulário C90 e status de 10 páginas LIVE, 1 artigo LIVE, 0 DRAFT. Não reconverter o LG, não ligar `V31_AUTOLIVE_ACTIVE`.
+
+## Homologação em produção — usuário instalou C91, 22/11/2026
+
+O proprietário enviou captura da página pública Loja após instalação do XML C91, mostrando o produto LG, o indicador **1 / 1** e **Compartilhar**, sem botões Anterior/Próximo deformados.
+
+**Auditoria independente do navegador público via Firecrawl Interact** em `https://ar-condicionado-sem-duvidas.blogspot.com/p/loja.html`:
+- Documento da Loja HTTP 200, título/produto LG preservado e shortlink afiliado `https://s.shopee.com.br/8fU8IIYmXO` presente.
+- `#ub-v21-store-carousel`: **1 slide**.
+- Botão Anterior `data-ub-step="-1"`: atributo `hidden` presente, estilo calculado `display:none`, bounding rectangle **0 × 0**.
+- Botão Próximo `data-ub-step="1"`: `hidden`, `display:none`, bounding rectangle **0 × 0**.
+- Contador `1 / 1`: visível, `display:block`.
+- Compartilhar: visível, `display:flex`, dimensões cerca de `145 × 44 px`.
+- A captura do usuário e o navegador público confirmam a correção da situação **com um único produto** em produção.
+
+**Estado C91: HOMOLOGADO na Loja com 1 oferta.** O caso com 2 ou mais ofertas permanece validado apenas no teste local em Chromium anterior, não em Loja LIVE de múltiplos produtos; checar quando houver outros modelos elegíveis. Não publicar ofertas fictícias ou modificar a loja só para testar.
+
+Sem alterações nos artigos, páginas, links afiliados, D1/R2 ou política automática; `V31_AUTOLIVE_ACTIVE` continua desativado.
