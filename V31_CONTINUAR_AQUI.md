@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C82 Cadeira Certa SEO/afiliados:** [checkpoint de execução real](affiliate_hub_v31/CHECKPOINT_C82_CADEIRA_CERTA_AUDITORIA_CORRECOES_2026-11-22.md). Tok Boxbit já estava LIVE/HTTP200 e listado em Postagens, mas fora do carrossel. Quatro guias LIVE receberam CTA/shortlink preexistente do mesmo produto, imagem verdadeira e links internos; página Loja corrigida. Novo artigo do modelo **Office Arco** criado como **DRAFT Blogger 6656620121237912250** com URL Shopee e imagem exatas; URL afiliada própria ainda NÃO convertida. Rota V31 SAFE registrada, sem escrever LIVE nem habilitar cron. Pendente verificação do SKU no catálogo/curadoria e conversão oficial da campanha, mais o destaque no carrossel do tema.
+
+
 > **22/11/2026 — menu institucional Blogger Móveis corrigido:** [checkpoint de verificação](affiliate_hub_v31/CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md). O tema aponta para 5 URLs fixas que não existiam; foram criadas páginas Sobre, Contato, Loja, Termos de Uso e Aviso de Afiliados com os mesmos slugs e GET autenticado 5/5. A Política de Privacidade já estava correta. Agora 8 páginas, 3 artigos LIVE e 6 DRAFTs preservados. Contato ainda necessita canal privado aprovado pelo proprietário. Cron DRAFT pós-ativação e política LIVE não foram alterados.
 
 
