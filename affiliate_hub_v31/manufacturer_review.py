@@ -148,7 +148,10 @@ def source_page_allowed(url, identity):
 
 
 def _count_map(text):
-    return {kind: int(n) for n, kind in COUNT_PATTERN.findall(plain(text))}
+    found = {}
+    for number, kind in COUNT_PATTERN.findall(plain(text)):
+        found.setdefault(kind, set()).add(int(number))
+    return found
 
 
 def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
@@ -186,8 +189,11 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
     # Never approve a seller variant explicitly contradicted by manufacturer.
     seller_counts = _count_map(catalog_title)
     source_counts = _count_map(excerpt)
-    if any(k in source_counts and source_counts[k] != v
-           for k, v in seller_counts.items()):
+    # If the seller explicitly promises 6 doors / 4 drawers, the exact
+    # manufacturer page MUST confirm those numbers. Silent/contradictory
+    # pages and mixed variants are not proof.
+    if any(len(numbers) != 1 or source_counts.get(kind) != numbers
+           for kind, numbers in seller_counts.items()):
         raise ManufacturerEvidenceError("manufacturer_variant_conflict")
     material_matches = list(MATERIAL_PATTERN.finditer(excerpt))
     materials = {m.group(1) for m in material_matches}
