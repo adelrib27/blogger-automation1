@@ -57,3 +57,14 @@ A seção é ocultada por CSS via `.featured-post{display:none!important}`, enqu
 2. Verificar publicamente `#Blog1 .post-wrapper` com 6 IDs únicos, Office Arco e Tok Boxbit, `#ub-v21-featured` com 5 slides, links e imagens, navegação e mobile. Em publicações futuras, a grade respeita limite 12 definido no Blogger.
 3. Se falhar validação pós-save, restaurar XML de backup e reavaliar o XML normalizado pelo Blogger, sem duplicar posts.
 4. Manter `V31_AUTOLIVE_ACTIVE=false` até homologação da política global V31; Office Arco já está LIVE, não republicar nem reconverter.
+
+## Homologação após instalação pelo proprietário — 22/11/2026
+
+O proprietário enviou captura da homepage **após instalar o XML corrigido**, com a Office Arco **no primeiro slide do carrossel e no primeiro cartão da grade**, Tok Boxbit no segundo cartão e cinco artigos em destaque. Em leitura pública independente Firecrawl `maxAge=0` (HTTP 200):
+
+- `#Blog1` contém **exatamente seis IDs únicos em ordem**: Office Arco `6656620121237912250`, Tok Boxbit `3691939235338797956`, Gamer `5233454304666317388`, Ajustes `8648967166394388356`, Mesh/estofada `7516498952063951593`, Sete critérios `4636680511643933177`.
+- O HTML público contém `#ub-v21-featured` e **cinco slides** renderizados, com seletor `var cards = document.querySelectorAll('#Blog1 .post-wrapper');`.
+- A seção antiga `id=featured_post` **não existe** mais no HTML público. **Observação adicional:** Blogger ainda emite um `div.widget.FeaturedPost#FeaturedPost1` em outra região do documento após normalizar o tema, mas isso **não retira nenhum artigo da grade**. Não confundir vestígio de widget com o defeito original; caso produza novo conflito no futuro, auditar a normalização do Blogger antes de alterar novamente.
+- Não foi alterada a configuração do usuário de 12 artigos; atualmente há seis artigos publicados.
+- **Gate de HOMOLOGAÇÃO C86: PASSOU na homepage pública**, tanto por captura visual quanto por inspeção estrutural de DOM. Nenhum post foi duplicado/republicado, nenhuma conversão Shopee foi repetida e LIVE automático V31 não foi ativado.
+- Testes específicos de navegação mobile e ciclo futuro com mais de 12 artigos não foram executados; não inferir comprovação deles a partir do atual teste de homepage.
