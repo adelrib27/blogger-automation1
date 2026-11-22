@@ -18,7 +18,9 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: v31-autonomous-pipeline-${{ inputs.site_key }}
+  # Serializa o writer novo com os writers universais legados no mesmo repo.
+  # O controle de site/campanha segue em D1; esta trava evita colisão de workflows.
+  group: v31-editorial-catalog-single-writer
   cancel-in-progress: false
 
 jobs:
