@@ -1,0 +1,78 @@
+name: "V31 C92 - Ar Condicionado stock-aware offers read only"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c92_arcond_product_status_readonly.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  check-offers:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Ler ofertas por SKU exato sem mutacao ou alegar estoque
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request,urllib.error
+          from affiliate_hub_v31.shopee_probe import authorization,ENDPOINT
+          app=os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID","")
+          secret=os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET","")
+          if not app or not secret:raise SystemExit("C92_NO_CREDENTIALS")
+          offers=[
+            ("aiwa",324683184,58216294636),
+            ("midea",1736335904,58212764417),
+            ("vix",1323031590,22598538992),
+            ("lg_existing",822103155,58265302556)
+          ]
+          fields="itemId shopId productName productLink imageUrl offerLink priceMin priceMax sales ratingStar commissionRate periodStartTime periodEndTime"
+          blocks=["%s: productOfferV2(itemId: %d, page: 1, limit: 5) { nodes { %s } }"%(alias,item,fields) for alias,shop,item in offers]
+          query="query V31C92StockGate { "+" ".join(blocks)+" }"
+          body=json.dumps({"query":query,"operationName":"V31C92StockGate"},separators=(",",":"),ensure_ascii=False)
+          req=urllib.request.Request(ENDPOINT,data=body.encode(),headers={"Authorization":authorization(app,secret,body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31C92StockAware/1.0"},method="POST")
+          try:
+            with urllib.request.urlopen(req,timeout=28) as r:
+              raw=r.read(131073)
+              if r.status!=200 or len(raw)>131072:raise ValueError("invalid_response")
+            obj=json.loads(raw)
+          except urllib.error.HTTPError as e:
+            raise SystemExit("C92_SHOPEE_HTTP_"+str(e.code)) from None
+          except Exception:
+            raise SystemExit("C92_SHOPEE_NETWORK_FAIL_CLOSED") from None
+          if obj.get("errors"):
+            print("C92_API_CODES="+json.dumps([str(e.get("extensions",{}).get("code","graphql"))[:24] for e in obj["errors"]]))
+            raise SystemExit("C92_API_QUERY_UNSUPPORTED")
+          data=obj.get("data") or {}
+          for alias,shop,item in offers:
+            nodes=(data.get(alias) or {}).get("nodes") or []
+            matches=[n for n in nodes if str(n.get("itemId"))==str(item) and str(n.get("shopId"))==str(shop)]
+            if len(matches)!=1:
+              print("C92_NO_EXACT_MATCH="+alias)
+              continue
+            n=matches[0]
+            name=str(n.get("productName") or "")
+            link=str(n.get("productLink") or "")
+            image=str(n.get("imageUrl") or "")
+            offer=str(n.get("offerLink") or "")
+            try:price=float(n.get("priceMin") or 0)
+            except Exception:price=0.0
+            end=n.get("periodEndTime")
+            try:endnum=int(end or 0)
+            except Exception:endnum=0
+            editorial=(("ar condicionado" in name.lower() or "ar-condicionado" in name.lower()) and "inverter" in name.lower() and ("12000" in name or "12.000" in name) and link.startswith("https://shopee.com.br/") and image.startswith("https://") and offer.startswith("https://") and price>0 and (endnum==0 or endnum>=int(time.time())))
+            print("C92_EXACT_OFFER="+json.dumps({"alias":alias,"shopId":shop,"itemId":item,"productName":name,"productLink":link,"imageUrl":image,"offerLink":offer,"priceMin":n.get("priceMin"),"priceMax":n.get("priceMax"),"sales":n.get("sales"),"ratingStar":n.get("ratingStar"),"commissionRate":n.get("commissionRate"),"periodStartTime":n.get("periodStartTime"),"periodEndTime":end,"eligible_for_editorial":editorial,"stock_confirmed":False},ensure_ascii=False,separators=(",",":")))
+          print("C92_DONE_READ_ONLY_NO_STOCK_ASSERTION")
+          PY
