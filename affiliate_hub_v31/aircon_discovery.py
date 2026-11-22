@@ -303,7 +303,7 @@ def main() -> int:
             "primary_keyword":PRIMARY_KEYWORD,
             **result,
         }
-        Path(path).write_text(json.dumps(snapshot,indent=2,ensure_ascii=False)+"\\n",
+        Path(path).write_text(json.dumps(snapshot,indent=2,ensure_ascii=False)+"\n",
                               encoding="utf-8")
         print("C93_ARTIFACT_WRITTEN="+path)
     print("C93_DISCOVERY_SUMMARY="+json.dumps(
