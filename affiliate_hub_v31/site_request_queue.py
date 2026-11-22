@@ -184,8 +184,9 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 # A rota migrada só consome uma cota de conversão em produtos
                 # que já têm caminho comprovável (fabricante/modelo ou GTIN).
                 # Outros blogs continuam com a fila universal anterior.
-                preferred = list(conversion_priority_keys(
+                preferred = (list(conversion_priority_keys(
                     cat, route, verified_routes.get(key, {})))
+                    if key in migrated_sites else [])
                 profiled = verified_routes.get(key, {}).get("offers", {})
                 pending_profiles = {sku for sku in profiled if cat.cached_link(sku, campaign) is None}
                 if pending_profiles or pilot_sku:
