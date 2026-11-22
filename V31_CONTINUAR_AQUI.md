@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **22/11/2026 — C100 PRIMEIRA LOJA REPLICADA: ACHADOS PARA CASA (36 LIVE):** [checkpoint e prova](affiliate_hub_v31/CHECKPOINT_C100_ACHADOS_CASA_36_LIVE_2026-11-22.md). Página existente Blogger `1426630233929943394` / `3841238517239710135` atualizada uma vez: 36 produtos reais com imagens, links Shopee e CTAs laranja, 8 categorias e 6 links editoriais, GET CMS exato e navegador público com **36 cartões visíveis**. HTML público inclui cópia adicional DOM **oculta pelo tema** (não são duas vitrines visíveis). Backup e export no checkpoint. **Outras 18 lojas vazias pendentes**, preservadas. R2 exact workflow #45078972630, API READ ONLY. Não repetir essa atualização se já estiver LIVE. AUTO LIVE OFF.
+
+
 > **22/11/2026 — C100 EXPANSÃO LOJAS — CHECKPOINT ANTES DE EXECUTAR:** [plano e protocolo anti-duplicação](affiliate_hub_v31/CHECKPOINT_C100_EXPANSAO_LOJAS_PRE_EXECUCAO_2026-11-22.md). Pedido de replicar nas lojas vazias a estrutura C96-C99 Café na Medida (35 ofertas reais, imagens, links afiliados, grade contínua, CTA laranja #D83F00). A primeira ação C100 foi gravar o checkpoint **antes de editar outros sites**; inventário Blogger/WP e execução por site ainda pendentes. Consultar as evidências posteriores C100 e **reler cada CMS** antes de qualquer escrita; preservar AUTO LIVE OFF, D1/R2, temas, artigos, Pinterest e lojas já com produtos.
 
 
