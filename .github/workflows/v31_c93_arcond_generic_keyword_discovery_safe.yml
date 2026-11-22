@@ -1,0 +1,30 @@
+name: "V31 C93 - descoberta generica ar condicionado SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c93_arcond_generic_keyword_discovery_safe.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  generic-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testar os filtros de aparelhos sem consumir a API
+        run: python -m affiliate_hub_v31.aircon_discovery --dry-run
+      - name: Buscar apenas ar condicionado na Shopee Affiliate Open API
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: python -m affiliate_hub_v31.aircon_discovery
