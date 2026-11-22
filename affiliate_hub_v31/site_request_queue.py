@@ -21,6 +21,7 @@ from .d1_http_runner import CloudflareD1HTTPRunner, D1HTTPError
 from .r2_state import R2State,verify_database
 from .routing import sites
 from .site_launch_plan import preview_site_launch
+from .verified_supply import conversion_priority_keys
 
 REQUESTS_DIR=Path(__file__).with_name("site_requests.d")
 VERIFIER_PROFILES=Path(__file__).with_name("autonomous_review_sources.json")
@@ -164,6 +165,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
         denied_attempts=0
         with Catalog(path) as cat:
             before=cat.stats()
+            migrated_sites = autonomous_sites_for_writes()
             for request in requests:
                 key=request["site_key"]
                 route=sites()[key]
@@ -179,6 +181,12 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 ready=plan["cached_for_campaign"]
                 available=[]
                 approved = plan["approved_catalog_candidates"]
+                # A rota migrada só consome uma cota de conversão em produtos
+                # que já têm caminho comprovável (fabricante/modelo ou GTIN).
+                # Outros blogs continuam com a fila universal anterior.
+                preferred = (list(conversion_priority_keys(
+                    cat, route, verified_routes.get(key, {})))
+                    if key in migrated_sites else [])
                 profiled = verified_routes.get(key, {}).get("offers", {})
                 pending_profiles = {sku for sku in profiled if cat.cached_link(sku, campaign) is None}
                 if pending_profiles or pilot_sku:
@@ -194,6 +202,17 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                         if not approved or cat.for_conversion(pilot_sku) is None:
                             raise RequestQueueError("conversion_pilot_offer_ineligible")
                         ready = int(cat.cached_link(pilot_sku, campaign) is not None)
+                if pilot_sku:
+                    # A operação de um piloto permanece exatamente isolada.
+                    preferred = [sku for sku in preferred if sku == pilot_sku]
+                elif key in migrated_sites:
+                    # Sem fonte confiável, não desperdiçar quota Shopee em
+                    # ofertas que o verificador autônomo não poderá autorizar.
+                    approved = []
+                covered = {item["product_key"] for item in approved}
+                priority = [{"product_key": sku, "affiliate_status": "requires_conversion"}
+                            for sku in preferred if sku not in covered]
+                approved = priority + approved
                 for item in approved:
                     key_product=item["product_key"]
                     if (key_product not in attempted_keys and

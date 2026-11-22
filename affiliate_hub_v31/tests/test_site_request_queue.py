@@ -228,5 +228,36 @@ class RequestQueueTests(unittest.TestCase):
         convert.assert_not_called()
 
 
+    def test_migrated_autodraft_does_not_convert_offers_without_fact_source(self):
+        self._write("novo_blog_a")
+        report = {"registered_site":True,"can_publish":False,
+                  "cached_for_campaign":0,"review_queue_count":0,
+                  "approved_catalog_candidates":[
+                      {"product_key":f"shopee:100:{n}",
+                       "affiliate_status":"requires_conversion"}
+                      for n in (1,2,3)]}
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",
+                   return_value=report), \
+             patch("affiliate_hub_v31.site_request_queue.autonomous_sites_for_writes",
+                   return_value={"novo_blog_a"}), \
+             patch("affiliate_hub_v31.site_request_queue.conversion_priority_keys",
+                   return_value=iter([])):
+            empty=process_requests(self.storage,directory=self.folder,budget=3)
+        self.assertEqual(empty["conversion_candidates"],0)
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",
+                   return_value=report), \
+             patch("affiliate_hub_v31.site_request_queue.autonomous_sites_for_writes",
+                   return_value={"novo_blog_a"}), \
+             patch("affiliate_hub_v31.site_request_queue.conversion_priority_keys",
+                   return_value=iter(["shopee:100:2"])):
+            one=process_requests(self.storage,directory=self.folder,budget=3)
+        self.assertEqual(one["conversion_candidates"],1)
+        self.assertEqual(one["shopee_mutation_attempts"],0)
+        self.assertEqual(one["publication_calls"],0)
+        self.assertEqual(self.storage.saved,0)
+
+
 if __name__=="__main__":
     unittest.main()

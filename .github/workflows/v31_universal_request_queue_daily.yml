@@ -56,6 +56,9 @@ jobs:
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
           V31_BUDGET: ${{ github.event_name == 'schedule' && '3' || inputs.budget }}
           V31_PILOT_SITE: ${{ inputs.pilot_site_key }}
+          V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
+          V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
+          V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
         run: |
           args=(--budget "$V31_BUDGET")
           if [[ -n "$V31_PILOT_SITE" ]]; then args+=(--pilot-site-key "$V31_PILOT_SITE"); fi
@@ -70,6 +73,9 @@ jobs:
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
           V31_BUDGET: ${{ github.event_name == 'schedule' && '3' || inputs.budget }}
           V31_PILOT_SITE: ${{ inputs.pilot_site_key }}
+          V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
+          V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
+          V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
           V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
           V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}

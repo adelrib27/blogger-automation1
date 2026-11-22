@@ -15,6 +15,7 @@ from .routing import sites
 from .site_request_queue import load_requests, VERIFIER_PROFILES
 from .site_launch_plan import preview_site_launch
 from .structured_review_source import catalog_gtin
+from .manufacturer_review import models_for_catalog_title
 
 
 def _has_valid_gtin(catalog: Catalog, key: str) -> bool:
@@ -28,6 +29,14 @@ def _has_valid_gtin(catalog: Catalog, key: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+
+def _has_trusted_model(catalog: Catalog, key: str, site_key: str) -> bool:
+    row = catalog.db.execute(
+        "SELECT title FROM products WHERE product_key=?", (key,)
+    ).fetchone()
+    return bool(row and models_for_catalog_title(str(row[0]), site_key=site_key))
 
 
 def audit_catalog(catalog: Catalog, site_key: str) -> dict:
@@ -49,10 +58,14 @@ def audit_catalog(catalog: Catalog, site_key: str) -> dict:
         "top24_approved": 0,
         "top24_with_campaign_link": 0,
         "top24_gtin": 0,
+        "top24_trusted_model": 0,
+        "top24_model_with_campaign_link": 0,
         "top24_gtin_with_campaign_link": 0,
         "authorized_pool_scanned": 0,
         "authorized_pool_with_campaign_link": 0,
         "authorized_pool_valid_gtin": 0,
+        "authorized_pool_trusted_model": 0,
+        "authorized_pool_model_with_campaign_link": 0,
         "authorized_pool_gtin_with_campaign_link": 0,
         "authorized_pool_limit_per_path": 100,
         "source_facts_verified": 0,
@@ -79,6 +92,9 @@ def audit_catalog(catalog: Catalog, site_key: str) -> dict:
     for item in top:
         converted = item["affiliate_status"] == "verified_for_campaign"
         gtin = _has_valid_gtin(catalog, item["product_key"])
+        model = _has_trusted_model(catalog, item["product_key"], site_key)
+        report["top24_trusted_model"] += int(model)
+        report["top24_model_with_campaign_link"] += int(model and converted)
         report["top24_with_campaign_link"] += int(converted)
         report["top24_gtin"] += int(gtin)
         report["top24_gtin_with_campaign_link"] += int(gtin and converted)
@@ -99,6 +115,9 @@ def audit_catalog(catalog: Catalog, site_key: str) -> dict:
             seen.add(key)
             cached = bool(row[4])
             gtin = _has_valid_gtin(catalog, key)
+            model = _has_trusted_model(catalog, key, site_key)
+            report["authorized_pool_trusted_model"] += int(model)
+            report["authorized_pool_model_with_campaign_link"] += int(cached and model)
             report["authorized_pool_scanned"] += 1
             report["authorized_pool_with_campaign_link"] += int(cached)
             report["authorized_pool_valid_gtin"] += int(gtin)
