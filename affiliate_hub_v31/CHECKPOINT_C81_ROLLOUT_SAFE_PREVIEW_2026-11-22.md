@@ -16,3 +16,15 @@
 5. Quando o Work puder administrar GitHub Variables: ativar primeiro somente uma rota; GET CMS + título/HTML SHA + D1 USED + replay de mesmo ID; observar schedule real, depois outra rota. Não executar publicações LIVE até aprovação explícita de política.
 
 **Estado inicial:** `main` no commit `b4e296a0336feff321f6fefd160b7ce639f9d372`. Preview documentado somente; primeiro PR/CI deve confirmar segurança antes de merge.
+
+## PR #124 — implementação integrada e CI
+
+- [PR #124 MERGED](https://github.com/adelrib27/blogger-automation1/pull/124) na `main`, merge `1cb0ea75e21dbe04664c1f6101f1f22e406487f3`. Nenhuma variável do GitHub ou publicação CMS foi ativada.
+- [Actions #45028436487](https://github.com/adelrib27/blogger-automation1/actions/runs/45028436487) **SUCCESS**, `565 tests ... OK`, regressões Casa 24/24, Oficina 21/21, Radar 15/15, cross-blog PASS. 5 novos testes offline de rollout.
+- `site_request_queue.autonomous_sites_for_writes` só retorna migração quando `V31_AUTODRAFT_ACTIVE=true` **E** `V31_AUTODRAFT_ROLLOUT_SITE=<site_key exato e habilitado>`. O literal `all` requer ainda `V31_AUTODRAFT_FULL_ROLLOUT_APPROVED=true`. Sem site, nenhuma migração.
+- O cron novo em `v31_autonomous_draft_scheduler.yml` permanece em `observe-homologation` quando não existe alvo explícito válido; `choose-one` só escolhe as rotas permitidas pela função compartilhada. Disparo manual exige seleção explícita de um site registrado, sem habilitar cron global.
+- Writers legados universais Blogger/WordPress recebem as mesmas variáveis de rollout e só excluem as rotas realmente migradas. O workflow reutilizável do verificador divide a trava `v31-editorial-catalog-single-writer` com os escritores universais para prevenir colisão na transição.
+- A etapa de seleção `choose-one` agora instala explicitamente suas dependências Python; antes podia tentar importar `boto3` e `cryptography` em runner não preparado.
+- **Limites conhecidos:** a evidência CI comprova código e regras de entrada, não uma execução agendada com a variável ativada nem DRAFT recorrente. A função migratória considera somente perfis configurados (atualmente Blogger Móveis e WordPress Casa), não torna outros blogs automaticamente homologados.
+- **Gatilhos remotos NÃO alterados**: `V31_AUTODRAFT_ACTIVE` e `V31_AUTODRAFT_ROLLOUT_SITE` continuam sujeitos à administração GitHub/Work. `V31_AUTOLIVE_ACTIVE` não foi ligado.
+- Antes do primeiro rollout, validar crédito Firecrawl, dia UTC da quota, histórico CMS e proteção de escritores legados. Verificar que somente `blogger_moveis_para_cada_canto` é migrado inicialmente, depois auditar schedule e novo DRAFT por GET/replay. Não habilitar `all` sem evidência e autorização apropriadas.
