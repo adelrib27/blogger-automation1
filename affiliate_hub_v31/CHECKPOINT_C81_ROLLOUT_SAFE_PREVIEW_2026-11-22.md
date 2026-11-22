@@ -37,3 +37,9 @@
 - `.github/workflows/casa_editorial_generate_schedule.yml` está **agendado 3x/dia** e executa para `wordpress_casa_decoracao` com `CASA_WORDPRESS_STATUS=publish` e `CASA_LIVE_PUBLISH_ENABLED=true`, em grupo de concorrência `casa-decoracao-editorial-v3`, **diferente** da trava `v31-editorial-catalog-single-writer`. Portanto a migração da rota WordPress exige auditoria explícita de coexistência/reconciliação com o writer LEGADO LIVE; este PR não o desativa nem afirma ausência de LIVE legado.
 - `radar_editorial_vnext_autonomous.yml` também possui LIVE legado habilitado, com falhas de QUARENTENA. Não alterar essa rota durante o rollout de Blogger Móveis.
 - **Primeiro alvo recomendado** continua `blogger_moveis_para_cada_canto`. Caso a verificação no CMS mostre outro writer independente ativo para esse mesmo blog, abortar a transferência até corrigir o conflito.
+
+## Verificação pós-merge da nova sintaxe do workflow
+
+- A mudança da configuração do scheduler disparou o [run GitHub Actions #45028515776](https://github.com/adelrib27/blogger-automation1/actions/runs/45028515776), `event=push`, **SUCCESS** no novo código.
+- O job `observe-homologation` confirmou novamente por GET e SELECT os mesmos IDs/hash dos dois DRAFTs, sem alterações remotas. Jobs `choose-one`, `draft`, `audit` e `release` ficaram **skipped**. Isto comprova que o workflow pós-merge é parseado/executa e continua em observação fail-closed; **não comprova criação de novo DRAFT recorrente**.
+- [Diagnóstico de continuidade #45028879006](https://github.com/adelrib27/blogger-automation1/actions/runs/45028879006) **SUCCESS** após atualização do índice/estado.
