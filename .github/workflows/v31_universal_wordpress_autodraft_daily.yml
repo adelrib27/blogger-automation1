@@ -60,6 +60,8 @@ jobs:
           V31_WP_SITE_KEY: ${{ inputs.site_key || '' }}
           V31_WP_PREVIEW_TOPIC: ${{ inputs.preview_topic || '' }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
+          V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
+          V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
           V31_WP_EXECUTE: ${{ github.event_name == 'schedule' && github.event.schedule == '41 12 * * *' && vars.V31_UNIVERSAL_WORDPRESS_AUTODRAFT_ENABLED != 'false' && 'true' || github.event_name == 'workflow_dispatch' && inputs.execute_draft == true && 'true' || 'false' }}
         shell: bash
         run: |
