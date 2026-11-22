@@ -7,9 +7,9 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C84_CADEIRA_TEMA_CARROSSEL_DIAGNOSTICO_LIVE_PATCH_PENDENTE",
+  "last_updated_source": "C85_CADEIRA_GRADE_FEATUREDPOST_CSS_OCULTO_DIAGNOSTICO",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C84_CADEIRA_TEMA_CARROSSEL_DIAGNOSTICO_2026-11-22.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C85_CADEIRA_GRADE_FEATUREDPOST_OCULTO_DIAGNOSTICO_2026-11-22.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -409,6 +409,21 @@
       "requires_authenticated_blogger_theme_editor": true,
       "theme_reinstall_forbidden": true,
       "auto_live_off": true
+    },
+    "c85_cadeira_certa_grid": {
+      "blog_id": "7163624325768776034",
+      "blogger_feed_total_live_posts": 6,
+      "blogger_settings_home_max_posts": 7,
+      "blogger_grid_visible_cards": 5,
+      "featured_widget_post_id": "6656620121237912250",
+      "css_hides_featured_post_true": true,
+      "hidden_rule": ".centered-top-container, .centered-top-placeholder, .sidebar-container, .featured-post, .vertical-ad-container, #footer.footer { display: none !important; }",
+      "carousel_fixed_c84_public_verified": true,
+      "recommended_native_layout_action": "Desativar Mostrar este widget em FeaturedPost1, testar Blogger Blog1 com 6 cartões e carrossel com 5, sem mudar tema",
+      "native_layout_toggled": false,
+      "public_grid_six_verified": false,
+      "next_checkpoint": "affiliate_hub_v31/CHECKPOINT_C85_CADEIRA_GRADE_FEATUREDPOST_OCULTO_DIAGNOSTICO_2026-11-22.md",
+      "no_post_or_template_mutation_in_c85": true
     }
   },
   "do_not_assume": {
@@ -429,8 +444,8 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger.",
-    "next_safe_step": "Aplicar manualmente/Work a substituicao de 1 seletor no Blogger Theme Editor Cadeira Certa 7163624325768776034, apos backup XML; depois verificar #ub-v21-featured com Office Arco no slide 1, Tok slide 2. Preservar C83 publicado, sem reconverter.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger. C85: feed tem seis, max home sete; Office Arco está em FeaturedPost1 oculto por CSS display:none, Blog1 grid exibe só cinco. Correção reversível via desativação de widget Featured Post no Layout está PENDENTE.",
+    "next_safe_step": "Cadeira Certa C85: em Blogger Layout, desativar 'Mostrar este widget' no FeaturedPost1 (não CSS), salvar; verificar DOM público Blog1 seis cards com Office e carrossel cinco slides. Se falhar inspecionar filtro data:posts do XML exato. Nada LIVE automático.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -478,7 +493,8 @@
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C82_CADEIRA_CERTA_AUDITORIA_CORRECOES_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C83_CADEIRA_CERTA_CONVERSAO_PUBLICACAO_CARROSSEL_2026-11-22.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C84_CADEIRA_TEMA_CARROSSEL_DIAGNOSTICO_2026-11-22.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C84_CADEIRA_TEMA_CARROSSEL_DIAGNOSTICO_2026-11-22.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C85_CADEIRA_GRADE_FEATUREDPOST_OCULTO_DIAGNOSTICO_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
