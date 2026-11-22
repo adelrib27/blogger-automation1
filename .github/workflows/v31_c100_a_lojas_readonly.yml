@@ -1,0 +1,42 @@
+name: "V31 C100 A - Lojas vazias Shopee real READ ONLY"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c100_a_lojas_readonly.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-c100-shopee-readonly
+  cancel-in-progress: false
+jobs:
+  shortlist:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Teste de sintaxe e perfis sem consultar Shopee
+        run: |
+          python -m py_compile affiliate_hub_v31/c100_multi_store_readonly.py
+          python -m json.tool affiliate_hub_v31/c100_store_profiles.json >/dev/null
+      - name: Consultar produtos válidos em nichos de cozinha/casa
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_C100_OUTPUT: c100_a_shortlist.json
+        run: python -m affiliate_hub_v31.c100_multi_store_readonly --sites achados_casa,casa_em_ordem,cozinha_sem_complicacao | tee c100_a.log
+      - name: Salvar evidências privadas por 7 dias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c100-a-real-shopee-shortlists
+          path: |
+            c100_a_shortlist.json
+            c100_a.log
+          if-no-files-found: ignore
+          retention-days: 7
