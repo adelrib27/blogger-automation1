@@ -81,10 +81,23 @@ def _rotation(entries:list[dict],ordinal:int)->list[dict]:
 
 
 def autonomous_sites_for_writes() -> set[str]:
+    """Return only sites explicitly migrated to the verified autonomous writer.
+
+    V31_AUTODRAFT_ACTIVE is a global arm, *not* permission to migrate every
+    registered route. Deployment must name one site until full rollout is
+    separately authorized. Both old writers and the new scheduler use this
+    function; they cannot disagree about who owns a migrated route.
+    """
     if os.environ.get("V31_AUTODRAFT_ACTIVE") != "true":
         return set()
     registry = json.loads(VERIFIER_PROFILES.read_text(encoding="utf-8"))
-    return {item["site_key"] for item in load_requests() if item["site_key"] in registry}
+    eligible = {item["site_key"] for item in load_requests()
+                if item["site_key"] in registry}
+    target = os.environ.get("V31_AUTODRAFT_ROLLOUT_SITE", "")
+    if target == "all":
+        return (eligible if os.environ.get("V31_AUTODRAFT_FULL_ROLLOUT_APPROVED")
+                == "true" else set())
+    return {target} if target in eligible else set()
 
 
 def reserved_pilot_sku(site_key: str) -> str | None:
