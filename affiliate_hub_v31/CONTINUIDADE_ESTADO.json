@@ -6,10 +6,10 @@
   "last_checkpoint_phase": "C81",
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
-  "last_updated_date": "2026-11-21",
-  "last_updated_source": "C81_RETOMADA_DRAFT_2026_11_21",
+  "last_updated_date": "2026-11-22",
+  "last_updated_source": "C81_OBSERVACAO_CRON_3_SCHEDULES_PASS_DRAFT_WRITE_NOT_ACTIVE",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_RETOMADA_DRAFT_2026-11-21.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C81_OBSERVACAO_AGENDADA_2026-11-22.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -257,7 +257,21 @@
     "c81_blogger_pilot_campaign_link_present": true,
     "c81_wordpress_pilot_campaign_link_present": false,
     "c81_shopee_d1_conversion_budget_migrated": true,
-    "c81_shopee_d1_conversion_fourth_slot_refused": true
+    "c81_shopee_d1_conversion_fourth_slot_refused": true,
+    "c81_observation_actual_scheduled_runs": [
+      44924334792,
+      44953910353,
+      44998382196
+    ],
+    "c81_observation_scheduled_runs_status": "THREE_SUCCESS_READ_ONLY",
+    "c81_observation_blogger_draft_id": "4106024906916105222",
+    "c81_observation_wordpress_draft_id": "321",
+    "c81_periodic_new_draft_delivery_proven": false,
+    "c81_scheduler_writing_jobs_seen": "SKIPPED",
+    "c81_live_policy_activated": false,
+    "c81_legacy_radar_live_env_observed": true,
+    "c81_legacy_radar_run_failure": 44972828996,
+    "c81_safe_lab_run_failure": 44961954195
   },
   "do_not_assume": {
     "all_review_products_approved": false,
@@ -277,14 +291,14 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "DRAFTs confirmados. WordPress 321 recebeu revisão assinada com link interno ao artigo publicado 305; mesmo ID e replay, GET exato, D1 USED e envelope anterior preservado. Blogger 4106024906916105222 inalterado.",
-    "next_safe_step": "Conferir event=schedule do observe-homologation após push 44910254596. Checagem de 22/11 10h Brasília programada. Não repetir conversão ou DRAFT. Após evidência de recorrência e tratamento de falhas, avaliar fila contínua DRAFT. LIVE exige autorização explícita da política.",
+    "latest_verified_step": "Em 22/11/2026, três execuções reais schedule do observe-homologation passaram (#44924334792, #44953910353, #44998382196), todas confirmando por GET CMS e SELECT D1 status DRAFT, IDs e SHA dos dois pilotos. Jobs choose-one/draft/release/audit SKIPPED em todas, logo DRAFT recorrente ainda sem prova. Workflows legados Radar/LAB falharam em trilhas separadas.",
+    "next_safe_step": "Na próxima sessão Work conferir runs e cotas atuais, branch main, estado var V31_AUTODRAFT_ACTIVE, lista de sites e conflito com writers legados; ativação controlada DRAFT só com verificação de um site por vez, GET HTML/ID/replay D1 USED e zero LIVE. Não contornar opt-in por código. Registrar resultados no GitHub.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "base_main_sha": "a0f0e3d925bbb157ab5f9969f5e0c70fd7be8e8c",
     "branch": "main",
-    "blocker": "Recorrência pós-homologação dos pilotos ainda em observação.",
+    "blocker": "Observação em schedule homologada (3/3 PASS). Falta homologar entrega RECORRENTE de novos DRAFTs. Variável V31_AUTODRAFT_ACTIVE ainda não foi lida pela API administrativa, mas jobs writer skipped, portanto não presumir ativação. Examinar LIVE legado Radar Tech BR separadamente.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -311,7 +325,11 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44879578667/job/136771860650",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44909435608/job/136862192832",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44910109759",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/44910254596/job/136864347808"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44910254596/job/136864347808",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44924334792",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44953910353",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44998382196",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_OBSERVACAO_AGENDADA_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
@@ -328,9 +346,11 @@
     }
   },
   "next_priorities": [
-    "Conferir primeiros ciclos de observação do scheduler e homologar a operação recorrente DRAFT.",
-    "Ativar observação recorrente somente em DRAFT após a comprovação E2E por plataforma. A política LIVE segue pendente até evidência operacional e aprovação da versão.",
-    "Ampliar cobertura de fontes com identidade exata e melhorar o catálogo de pautas e o monitoramento antes de incorporar novos blogs. Preservar campanhas, dados R2/D1 e projetos paralelos."
+    "Conferir estado vivo de GitHub Actions em 22/11; 3 observações por schedule PASS não homologam escritores DRAFT. Confirmar V31_AUTODRAFT_ACTIVE por administração GitHub, uma rota por vez e isolamento de escritor legado.",
+    "Antes de ligar escritor DRAFT recorrente: orçamento UTC D1/Shopee, Firecrawl, idempotência, CMS GET/HTML SHA e nenhum workflow LIVE em conflito.",
+    "Tratar separadamente falha Radar Tech BR em quarentena por título 34 e flag LIVE legado true; falha V31 LAB SAFE não justifica contornar evidência. Não misturar com C81.",
+    "Nova política LIVE V31 permanece pendente de homologação e autorização única, com rollback e monitoramento; não ligar V31_AUTOLIVE_ACTIVE.",
+    "Preservar catálogo universal, site/campanha/SKU, 2 pilotos e continuação C81; nunca reconverter/repostar os pilotos já USED."
   ],
   "continuity_contract": {
     "must_update_at_start": true,
