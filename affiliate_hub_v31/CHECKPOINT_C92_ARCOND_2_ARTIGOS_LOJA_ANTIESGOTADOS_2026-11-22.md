@@ -42,3 +42,12 @@
 
 ## Verificação final autenticada após todas as mutações — C92
 Blogger V2 `list_published_posts=3` com IDs LG `940950273343255024`, Midea9k `8208866544157240159` e Midea12k `8847875310080419457`; `list_drafts=0`; `list_pages=10`. `get_post` em ambos os Midea retornou `status=live` e o respectivo `offerLink` da Shopee API; `get_post` do LG retornou `status=live`, nota de esgotamento e **ausência do shortlink comercial antigo**. `get_page` da Loja retornou `status=live`, **dois cartões**, ambos os links Midea e nenhum shortlink LG. Browser público: homepage, Loja, LG e ambos posts Midea HTTP 200; links e imagens íntegros. **C92 encerrada sem rascunhos pendentes.**
+
+## Correção de política solicitada pelo proprietário — 22/11/2026
+O proprietário esclareceu: **não adotar regras excessivamente rigorosas**, porque um produto momentaneamente esgotado pode voltar a ter estoque. Ajustamos a política, sem apagar o histórico das decisões C92 e sem fazer afirmações de disponibilidade não verificadas. Ver [política revisada](POLITICA_ESTOQUE_SHOPEE_ARCOND_C92_2026-11-22.md).
+- Um único alerta público ou página indexada é `SINAL_DE_ESGOTAMENTO`, **não motivo para banimento definitivo nem exclusão automática**.
+- Se a indisponibilidade estiver de fato corroborada, uma pausa do CTA comercial é **temporária e reversível**. Preservar artigo, SKU, imagem, histórico de afiliado e SEO.
+- A nova verificação que indicar retorno de estoque permite restaurar oferta e link válido sem recriar artigo, sem repetir API mutation.
+- Falta de campo de estoque na Affiliate API ou HTTP 403 no site não significa esgotamento.
+- O LG retirado da vitrine na C92 **não foi excluído do catálogo e pode voltar**, sujeito à verificação atual da variante. A página educativa LG continua LIVE. Esta correção não restaurou o CTA sem checagem.
+- A política atualizada passa a orientar próximas revisões; **não houve mudança em produtos publicados, conversões ou LIVE automático** nesta correção de diretriz.
