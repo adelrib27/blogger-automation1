@@ -13,6 +13,7 @@ import os
 import re
 import time
 import unicodedata
+from datetime import datetime, timezone
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -23,7 +24,11 @@ from pathlib import Path
 from affiliate_hub_v31.shopee_probe import ENDPOINT, authorization
 
 PRIMARY_KEYWORD = "ar condicionado"
-ALTERNATIVE_KEYWORDS = ("ar condicionado split", "ar condicionado inverter", "ar condicionado de janela")
+ALTERNATIVE_KEYWORDS = (
+    "ar condicionado split", "ar condicionado inverter",
+    "ar condicionado de janela", "ar condicionado portatil",
+    "ar condicionado 18000 btus",
+)
 MAX_PAGES_PER_KEYWORD = 2
 PAGE_SIZE = 30
 MAX_QUERIES = 4
@@ -40,11 +45,11 @@ ACCESSORY = re.compile(
     r"brinquedo|climatizador|umidificador|ventilador|resfriador|"
     r"refrescador|refil|adaptador|refrigerante|"
     r"base para|cabo(?:s)?|valvula(?:s)?|radiador|moldura|vedacao|espuma|"
-    r"atuador(?:es)?|engrenagem|conexao|painel de ar|"
+    r"atuador(?:es)?|engrenagem|conexao|turbina|painel de ar|"
     r"comando de ar|saida de ar|ar forcado|"
     r"evaporadora avulsa|condensadora avulsa|"
     r"ar condicionado automotivo|automotivo|veicular|"
-    r"para carro|para toyota|para porsche|para ford|"
+    r"para carro|caminhao|motorhome|motorhomes|veiculo|para toyota|para porsche|para ford|"
     r"para peugeot|para fiat|vw up|ford fusion|"
     r"ar condicionado de carro|r134a)\b"
 )
@@ -187,13 +192,18 @@ def request_page(app: str, secret: str, keyword: str, page: int) -> dict:
     return {"nodes":block["nodes"],"pageInfo":block.get("pageInfo") or {}}
 
 
-def discover(app: str, secret: str) -> dict:
+def discover(app: str, secret: str, *, rotation_override: int | None = None) -> dict:
+    """A keyword generica e fixa; fallbacks rotacionam por dia UTC."""
+    offset=(datetime.now(timezone.utc).date().toordinal()
+            if rotation_override is None else rotation_override) % len(ALTERNATIVE_KEYWORDS)
+    fallbacks=ALTERNATIVE_KEYWORDS[offset:]+ALTERNATIVE_KEYWORDS[:offset]
+    keywords=(PRIMARY_KEYWORD,*fallbacks)
     known_listings,known_models=load_history()
     seen=set()
     candidates=[]
     traces=[]
     queries=0
-    for keyword in (PRIMARY_KEYWORD,*ALTERNATIVE_KEYWORDS):
+    for keyword in keywords:
         if queries>=MAX_QUERIES:
             break
         got_results=False
@@ -244,7 +254,8 @@ def discover(app: str, secret: str) -> dict:
                 break
         # Se a busca ampla trouxer produtos elegíveis, usar paginação
         # ao invés de desperdiçar chamadas repetindo a mesma intenção.
-        if candidates:
+        if len(candidates)>=12:
+            # Ja ha variedade suficiente para revisao deste ciclo.
             break
         if got_results:
             # A keyword pode ter trazido só acessórios: tentar sinônimos.
@@ -281,7 +292,9 @@ def main() -> int:
           ("Caixa Evaporadora ar com Ar Condicionado Peugeot",False),
           ("Conexao de compressor Ar Condicionado Fiat",False),
           ("Moldura Para Ar Condicionado de Janela 30000BTUs",False),
-          ("Tira Veda Espuma Para Ar Condicionado Janela Split Portatil 21000BTU",False)
+          ("Tira Veda Espuma Para Ar Condicionado Janela Split Portatil 21000BTU",False),
+          ("Turbina Evaporadora Ar Condicionado 12000 BTUs Inverter Midea Carrier",False),
+          ("Ar Condicionado Inverter 12V 7000 BTUs Economy Caminhao Motorhomes",False)
         ]
         for title,expected in samples:
             assert is_whole_air_conditioner(title)==expected,(title,expected)
