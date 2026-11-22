@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C100_STORE_EXPANSION_INVENTORY_AND_API_DISCOVERY_IN_PROGRESS",
+  "last_updated_source": "C100_ACHADOS_CASA_36_LIVE_18_STORES_PENDING",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1093,7 +1093,7 @@
     "preexecution_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_EXPANSAO_LOJAS_PRE_EXECUCAO_2026-11-22.md",
     "inventory_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_INVENTARIO_LOJAS_2026-11-22.md",
     "source_reference": "C96-C99 Cafe na Medida Loja",
-    "status": "API_DISCOVERY_IN_PROGRESS",
+    "status": "ONE_LIVE_VERIFIED_REMAINING_PENDING",
     "blogger_total": 32,
     "blogger_existing_shops": 31,
     "blogger_empty_shops": 19,
@@ -1109,9 +1109,25 @@
       "casa_em_ordem",
       "cozinha_sem_complicacao"
     ],
-    "new_store_live_confirmed": [],
-    "pending_shops": 19,
+    "new_store_live_confirmed": [
+      {
+        "site_key": "achados_casa",
+        "blog_id": "1426630233929943394",
+        "page_id": "3841238517239710135",
+        "url": "https://achadosparacasa2026.blogspot.com/p/loja.html",
+        "product_count": 36,
+        "unique_sellers": 35,
+        "extra_commission_ge_3pct": 22,
+        "cms_exact_readback": true,
+        "public_visible_cards": 36,
+        "technical_hidden_clone": true
+      }
+    ],
+    "pending_shops": 18,
     "shopee_offer_generation_mutations": 0,
-    "autolive_enabled_by_c100": false
+    "autolive_enabled_by_c100": false,
+    "first_live_checkpoint": "affiliate_hub_v31/CHECKPOINT_C100_ACHADOS_CASA_36_LIVE_2026-11-22.md",
+    "r2_inventory_run_id": 45078854741,
+    "exact_pilot_run_id": 45078972630
   }
 }
