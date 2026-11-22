@@ -39,3 +39,6 @@
 - Fontes: Inmetro PBE https://www.gov.br/inmetro/pt-br/assuntos/regulamentacao/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/condicionadores-de-ar/sistema-pbe-para-consulta-dos-produtos-etiquetados ; Shopee Affiliate API autenticada; páginas públicas de anúncios.
 
 **Estado esperado ao final:** 3 posts LIVE, 0 DRAFT, 10 páginas LIVE. Necessário confirmar por nova listagem Blogger e atualizar estado persistente. `V31_AUTOLIVE_ACTIVE` segue OFF.
+
+## Verificação final autenticada após todas as mutações — C92
+Blogger V2 `list_published_posts=3` com IDs LG `940950273343255024`, Midea9k `8208866544157240159` e Midea12k `8847875310080419457`; `list_drafts=0`; `list_pages=10`. `get_post` em ambos os Midea retornou `status=live` e o respectivo `offerLink` da Shopee API; `get_post` do LG retornou `status=live`, nota de esgotamento e **ausência do shortlink comercial antigo**. `get_page` da Loja retornou `status=live`, **dois cartões**, ambos os links Midea e nenhum shortlink LG. Browser público: homepage, Loja, LG e ambos posts Midea HTTP 200; links e imagens íntegros. **C92 encerrada sem rascunhos pendentes.**
