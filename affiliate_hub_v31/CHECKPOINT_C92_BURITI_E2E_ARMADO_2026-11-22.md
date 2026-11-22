@@ -33,3 +33,8 @@
 - Esse formato revelou defeito antes de gastar quota: o código anterior encontrava o primeiro token `buriti` dentro da URL de imagem e considerava as primeiras cinco linhas como heading, causando reprovação falsa. Corrigido em [PR #130 MERGED](https://github.com/adelrib27/blogger-automation1/pull/130), merge SHA `a9191a841dfaf21e166ca6a97204e5a17d6eb584`: remover links/imagens no Markdown, localizar H1/H2/H3 de produto exato, limitar o escopo ao artigo antes de rodapé, validar números a partir do heading real.
 - [CI #45058125770](https://github.com/adelrib27/blogger-automation1/actions/runs/45058125770): **591 testes PASS**, regressões WordPress e cross-blog PASS. Testes adversariais recusam fatos tirados apenas da galeria/rodapé, sem tocar recursos remotos.
 - O canário de data única do PR #129 continua configurado; utilizará automaticamente o código PR #130 porque foi integrado à `main` antes de 23/11 UTC. **A entrega do DRAFT ainda não está comprovada; somente o agendamento foi instalado e a pré-validação das fontes foi concluída.**
+
+## Monitoramento configurado
+
+- Uma verificação única de acompanhamento foi agendada no ChatGPT para **23/11/2026 às 09h de Recife**, para ler GitHub Actions, D1 e Blogger após o canário noturno. Isso **não é** a publicação do artigo nem substitui o cron do GitHub.
+- A automação de acompanhamento só deve informar evidências; não pode repetir conversões Shopee de forma implícita, ativar LIVE ou considerar um GitHub Actions verde equivalente a DRAFT homologado.
