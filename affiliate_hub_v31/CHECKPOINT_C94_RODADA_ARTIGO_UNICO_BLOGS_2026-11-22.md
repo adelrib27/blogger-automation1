@@ -49,3 +49,43 @@ Foram criados e conferidos todos como DRAFTs novos com data atual, e publicados 
 
 ### Continuação de escopo — blogs conectados, mas não roteados no V31
 A conta Blogger tem 31 blogs, dos quais **10 adicionais** não são blog V31 cadastrado (e 21 são roteados). O inventário inclui blogs legítimos de café, violão, ciclismo, casa, achados, ateliê, viagem, pet e jardim; há também LAB e um blog astronomia sem posts/páginas. Antes de publicar em blog NÃO roteado, conferir se o usuário incluiu a operação ao solicitar até o último blog, evitar LAB/placeholder e ter produto real com offerLink da conta, sem inventar campanha/SubID. A nova etapa ainda não é concluída neste checkpoint.
+
+## Segunda etapa: nove blogs adicionais não roteados, todos publicados manualmente em 22/11
+
+A auditoria final `Blogger_Bridge_V2__list_blogs` identificou **32 blogs Blogger**, dos quais 21 estão no cadastro V31 e **11 fora dele**. Os 3 WordPress V31 completam 35 sites conectados. Nove blogs Blogger fora da rota são editoriais reais, com posts anteriores, e receberam um novo artigo em resposta ao pedido do usuário `até o último blog`; **não foram criadas rotas, campanhas, agendas ou LIVE automáticos** para eles.
+
+Antes de publicar foram realizadas duas ações somente de leitura, ambas **SUCCESS**:
+- [Actions #45065462143](https://github.com/adelrib27/blogger-automation1/actions/runs/45065462143): selecionou imagens e SKUs existentes no snapshot R2 para nichos café, violão, ciclismo, organização, cozinha, artesanato, viagem, pets e jardim; descartados produtos inadequados.
+- [Actions #45065563243](https://github.com/adelrib27/blogger-automation1/actions/runs/45065563243): validou por `productOfferV2(itemId)` **9/9** SKUs e respectivos `shopId`, origem, imagem e `offerLink` afiliado da conta, sem mutation nem SubID específico.
+Artigos criados como **novos rascunhos com data 22/11**, verificados individualmente por GET e publicados manualmente após revisão. GET de listagem final confirmou nove LIVE hoje.
+
+| Blog | Artigo publicado 22/11/2026 | Blogger post ID | SKU Shopee / URL de afiliado da conta |
+|---|---|---|---|
+| Café na Medida | [Cafeteira italiana de inox: 200 ou 300 ml, moagem e uso em fogão de indução](https://cafe-na-medida.blogspot.com/2026/11/cafeteira-italiana-de-inox-200-ou-300.html) | `5908389765438644073` | `1046470373:23898564808` / `https://s.shopee.com.br/7pv1UpUa9A` |
+| Violão do Começo | [Violão Giannini Start NF-14 CEQ de nylon: o que avaliar na primeira compra](https://violao-do-comeco-acordes.blogspot.com/2026/11/violao-giannini-start-nf-14-ceq-de.html) | `4274247247044362464` | `1209673900:22593119903` / `https://s.shopee.com.br/5LDgWEe6Df` |
+| Pedal Leve | [Bicicleta Premier aro 26 ou 29: como conferir marchas, freios e tamanho do quadro](https://pedal-leve-mobilidade-urbana.blogspot.com/2026/11/bicicleta-premier-aro-26-ou-29-como.html) | `7856819199581769482` | `1499062997:22499049227` / `https://s.shopee.com.br/5q9x79cbnA` |
+| Casa Leve e Funcional | [Cabideiro de canto com sapateira: organização vertical sem bloquear a circulação](https://casa-leve-e-funcional.blogspot.com/2026/11/cabideiro-de-canto-com-sapateira.html) | `2118945138766105008` | `1348601027:58204233539` / `https://s.shopee.com.br/2BGekPv2GY` |
+| Achados da Rotina | [Dispenser de detergente de 550 ml: como organizar a bancada da pia](https://achados-da-rotina.blogspot.com/2026/11/dispenser-de-detergente-de-550-ml-como.html) | `2706202619683032977` | `1615607650:58204902136` / `https://s.shopee.com.br/3Vm2Krpp22` |
+| Ateliê Criativo em Casa | [Luminária USB de haste flexível para artesanato: posicionamento e iluminação](https://atelie-criativo-em-casa.blogspot.com/2026/11/luminaria-usb-de-haste-flexivel-para.html) | `7160135978538488548` | `497708428:58251675489` / `https://s.shopee.com.br/40iIvmnzHP` |
+| Mala Pronta e Viagem Prática | [Mala de viagem grande anunciada para 23 kg: dimensões, rodas e cuidados](https://mala-pronta-viagem-pratica.blogspot.com/2026/11/mala-de-viagem-grande-anunciada-para-23.html) | `859677851654531331` | `1783832671:58209674695` / `https://s.shopee.com.br/70LuVIgtiC` |
+| Vida Pet Prática | [Arranhador com toca para gatos: como conferir tamanho, estabilidade e material](https://vida-pet-pratica.blogspot.com/2026/11/arranhador-com-toca-para-gatos-como.html) | `4479490813115979404` | `631619886:20572876042` / `https://s.shopee.com.br/8KrI5kbxXE` |
+| Jardim e Horta na Prática | [Musgo sphagnum de 10 litros: umidade, drenagem e cuidados na jardinagem](https://jardim-e-horta-na-pratica.blogspot.com/2026/11/musgo-sphagnum-de-10-litros-umidade.html) | `143842189592844804` | `410010723:22997556744` / `https://s.shopee.com.br/6L6Di4jVKK` |
+
+### Sites fora da publicação, por razões verificáveis
+- **Casa Prática Lab**, Blogger `8930870316690519385`: **LAB/testes**, deliberadamente excluído de publicações comerciais por não ser blog de produção.
+- **Meu Céu Noturno — Astronomia para Iniciantes**, Blogger `9156820142401099679`: **0 artigos e 0 páginas**, sem implantação editorial prévia ou cadastro de nicho/campanha V31. Mantido como blog ainda não lançado, sem publicação isolada que ignore a preparação necessária.
+Não confundir essas duas exceções justificadas com falha de publicação. Os 9 blogs editoriais adicionais ativos foram concluídos.
+
+## Homologação final do ciclo 22/11/2026
+- **35 sites conectados**: 32 Blogger e 3 WordPress.
+- **30 novos artigos manuais LIVE nesta execução**: 28 Blogger (19 V31 + 9 adicionais) e 2 WordPress.
+- **3 sites já tinham artigos novos hoje**: Ar-Condicionado sem Dúvidas, Cadeira Certa no Home Office e Casa e Decoração WordPress; sem posts clonados por esta rodada.
+- **2 sites não publicados justificadamente**: LAB e astronomia não lançado.
+- **Todas as 28 publicações Blogger reconfirmadas** em `list_published_posts` com `id`, `status=live`, `published_at=2026-11-22` e URL; WP Oficina id `129` e WP Radar id `324` rechecados `status=publish`, date 22/11. Cron Casa & Decoração post `330` verificado.
+- Total 17 novos links da Shopee API em V31 + 9 links adicionais API, e alguns links R2 cached; URLs exatas da mesma oferta e imagens preservadas.
+- O estoque em tempo real não foi confirmado; artigos orientam conferir variantes e valores no checkout. Produtos esgotados podem voltar e podem existir vendedores alternativos, conforme política C92.
+- `offerLink` da conta não equivale necessariamente a URL com SubID individual do blog; não houve mutation de geração de shortlink. A inexistência de uma campanha individual para sites não roteados foi explicitada nos seus artigos, sem inventar rastreabilidade.
+- **Nenhuma alteração nos gatilhos LIVE automáticos**; `V31_AUTOLIVE_ACTIVE` segue OFF. Não tocar no sistema Pinterest, DRAFT HMAC C81, R2/D1 ou configurações de outros plugins.
+- O inventário preliminar deste checkpoint que falava em 31 Blogger/10 adicionais foi corrigido nesta auditoria final para **32 Blogger/11 adicionais**.
+
+**Estado C94: CONCLUÍDO PARA TODOS OS BLOGS EDITORIAIS ATIVOS**, preservando duas exclusões justificadas. Recheck de entrega pública e SEO fino pode ser executado separadamente sem republicar posts, principalmente se o tema exibir widgets antigos.
