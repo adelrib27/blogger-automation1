@@ -14,8 +14,9 @@ TITLE = "Guarda-Roupa Casal 6 Portas 4 Gavetas Giardino Demóbile Roupeiro"
 URL = "https://demobile.com.br/produtos/giardino-guarda-roupa-casal"
 META = {"url": URL, "title": "Giardino Guarda-Roupa Casal da Demóbile Móveis"}
 TEXT = ("## Giardino Guarda-Roupa Casal da Demóbile Móveis\n\n"
-        "O Guarda-Roupa Casal Giardino tem estrutura em MDP e revestimento "
-        "em pintura UV. Cabideiros metálicos e corrediças telescópicas.\n")
+        "O Guarda-Roupa Casal Giardino possui 6 portas e 4 gavetas, "
+        "estrutura em MDP e revestimento em pintura UV. "
+        "Cabideiros metálicos e corrediças telescópicas.\n")
 
 
 class ManufacturerTests(unittest.TestCase):
@@ -68,6 +69,8 @@ class ManufacturerTests(unittest.TestCase):
     def test_variant_conflicts_and_missing_measured_material_fail_closed(self):
         with self.assertRaisesRegex(ManufacturerEvidenceError,"variant_conflict"):
             self.review(markdown=TEXT+"Guarda-Roupa Giardino 8 portas e 2 gavetas.")
+        with self.assertRaisesRegex(ManufacturerEvidenceError,"variant_conflict"):
+            self.review(markdown=TEXT.replace("6 portas e 4 gavetas, ",""))
         with self.assertRaisesRegex(ManufacturerEvidenceError,"material_unverified"):
             self.review(markdown=TEXT.replace("estrutura em MDP","ótima qualidade"))
         with self.assertRaisesRegex(ManufacturerEvidenceError,"material_unverified"):
