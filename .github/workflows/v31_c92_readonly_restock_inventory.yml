@@ -70,7 +70,8 @@ jobs:
                       if len(new_candidates)<8:
                           identity=profile.get('manufacturer_identity',{})
                           new_candidates.append({
-                             'sku':sku, 'brand':identity.get('brand',''),
+                             'sku':sku, 'title':str(catalog.db.execute('SELECT title FROM products WHERE product_key=?',(sku,)).fetchone()[0])[:160],
+                             'brand':identity.get('brand',''),
                              'model':identity.get('model',''),
                              'kind':identity.get('kind',''),
                              'affiliate_link_ready':ready,
