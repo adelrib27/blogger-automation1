@@ -113,7 +113,7 @@ def dynamic_profile(catalog: Catalog, route: dict, policy: dict, sku: str):
     identity = manufacturer[0]
     kind = identity["kind"]
     profile = {**template, "name": name,
-               "query": " ".join((identity["brand"], identity["model"], kind)),
+               "query": " ".join(x for x in (identity["brand"], identity["model"], identity.get("variant",""), kind) if x),
                "catalog_identity": [identity["model"]],
                "manufacturer_identity": identity,
                "cluster": kind.replace(" ", "-").casefold()}
