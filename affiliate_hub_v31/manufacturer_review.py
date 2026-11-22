@@ -239,6 +239,12 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
             ("features", f"O fabricante informa {expected} {word} no modelo "
              + model.upper() + ".", f"{expected} {word}"))
     material_matches = list(MATERIAL_PATTERN.finditer(excerpt))
+    if (not material_matches and re.search(
+            r"\b(?:estrutura em|fabricad[oa] em|produzid[oa] em|"
+            r"material (?:principal )?(?:de|em))\s+\w+", excerpt)):
+        # An explicitly stated but unsupported substance is not silently
+        # ignored to make a risky product pass on other measurements.
+        raise ManufacturerEvidenceError("manufacturer_material_unverified")
     materials = {m.group(1) for m in material_matches}
     # Não transformar "estrutura em MDF e MDP" em alegação exclusiva MDF.
     for match in material_matches:
