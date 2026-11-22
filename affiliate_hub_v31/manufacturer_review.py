@@ -234,7 +234,8 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
                     excerpt)
                 if not description:
                     raise ManufacturerEvidenceError("manufacturer_variant_conflict")
-        word = "portas" if feature == "portas" else "gavetas"
+        word = ("porta" if expected == 1 else "portas") if feature == "portas" else (
+            "gaveta" if expected == 1 else "gavetas")
         feature_claims.append(
             ("features", f"O fabricante informa {expected} {word} no modelo "
              + model.upper() + ".", f"{expected} {word}"))
