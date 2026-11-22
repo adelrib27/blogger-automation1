@@ -197,12 +197,30 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
             identity.get("variant") and not has_phrase(
                 header, model + " " + identity["variant"])):
         raise ManufacturerEvidenceError("manufacturer_model_identity_mismatch")
-    # First section only: product description, not footer/category suggestions.
-    normalized = plain(markdown[:7500])
-    model_pos = normalized.find(plain(model))
-    if model_pos < 0 or model_pos > 2300:
+    # Firecrawl pages may contain gallery-image URL filenames before the
+    # real product heading. Never select the first model word in raw text:
+    # it may occur only in an image filename, related-card or footer.
+    visible = re.sub(
+        r"!?\[[^\]\n]{0,500}\]\([^)\n]{1,3000}\)", " ",
+        markdown[:120_000],
+    )
+    product_heading = None
+    section = None
+    for match in re.finditer(r"(?m)^\s*#{1,3}\s+([^\n]{1,240})$", visible):
+        heading = match.group(1)
+        if (has_phrase(heading, model) and product_kind(heading) == kind
+            and (not identity.get("variant") or has_phrase(
+                heading, model + " " + identity["variant"]))):
+            product_heading = heading
+            trailing = visible[match.end():]
+            # Stop at the next top-level product/content section; nested
+            # "### Sobre o produto" and "### Medidas" remain available.
+            next_article = re.search(r"(?m)^#{1,2}\s+\S", trailing)
+            section = trailing[:next_article.start()] if next_article else trailing
+            break
+    if product_heading is None or section is None:
         raise ManufacturerEvidenceError("manufacturer_product_heading_missing")
-    excerpt = normalized[max(0, model_pos - 100):model_pos + 1100]
+    excerpt = plain(product_heading + " " + section[:7500])[:1800]
     if not any(has_phrase(excerpt, alt) for name, alts in KINDS
                if name == kind for alt in alts):
         raise ManufacturerEvidenceError("manufacturer_product_type_missing")
@@ -211,7 +229,7 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
     # cannot override the product headline's six doors.
     seller_counts = _count_map(catalog_title)
     source_counts = _count_map(excerpt)
-    headline_counts = _count_map(" ".join(markdown.splitlines()[:5]))
+    headline_counts = _count_map(product_heading)
     feature_claims = []
     for feature, numbers in seller_counts.items():
         if len(numbers) != 1:
