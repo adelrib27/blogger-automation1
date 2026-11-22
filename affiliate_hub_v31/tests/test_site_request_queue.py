@@ -259,5 +259,80 @@ class RequestQueueTests(unittest.TestCase):
         self.assertEqual(self.storage.saved,0)
 
 
+    def test_exact_migrated_conversion_needs_cms_auth_and_one_sku(self):
+        import hashlib
+        self._write("novo_blog_a")
+        target="shopee:100:2"
+        plan={"registered_site":True,"can_publish":False,
+              "cached_for_campaign":0,"review_queue_count":0,
+              "approved_catalog_candidates":[]}
+        calls=[]
+        def convert(cat, sku, campaign, app_id, app_secret):
+            calls.append((sku,campaign))
+            url="https://s.shopee.com.br/one-verified-link"
+            cat.cache_link(sku,campaign,url)
+            return url,True
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",
+                   return_value=plan), \
+             patch("affiliate_hub_v31.site_request_queue.autonomous_sites_for_writes",
+                   return_value={"novo_blog_a"}), \
+             patch("affiliate_hub_v31.site_request_queue.conversion_priority_keys",
+                   side_effect=lambda *args: iter([target])), \
+             patch("affiliate_hub_v31.site_request_queue.convert_one",
+                   side_effect=convert):
+            for bad in (
+                {"authenticated_cms_keys":None},
+                {"authenticated_cms_keys":[hashlib.sha256(target.encode()).hexdigest()]},
+                {"authenticated_cms_keys":[],"execute":False},
+                {"authenticated_cms_keys":[],"budget":3},
+                {"authenticated_cms_keys":[],"target_product_key":"shopee:999:999"},
+            ):
+                with self.subTest(bad=bad), self.assertRaises(RequestQueueError):
+                    args=dict(directory=self.folder, budget=1, execute=True,
+                              app_id="app",app_secret="secret",
+                              target_site_key="novo_blog_a",
+                              target_product_key=target,
+                              authenticated_cms_keys=[],
+                              reserve_conversion=lambda *_: True)
+                    args.update(bad)
+                    process_requests(self.storage,**args)
+            self.assertEqual(calls,[])
+            out=process_requests(self.storage,directory=self.folder,budget=1,
+                execute=True,app_id="app",app_secret="secret",
+                target_site_key="novo_blog_a",target_product_key=target,
+                authenticated_cms_keys=[], reserve_conversion=lambda *_: True)
+        self.assertEqual(out["converted"],1)
+        self.assertEqual(out["shopee_mutation_attempts"],1)
+        self.assertEqual(calls,[(target,"campanha_a")])
+        self.assertEqual(self.storage.saved,1)
+
+    def test_exact_target_fails_on_wrong_supplier_or_disabled_migration(self):
+        self._write("novo_blog_a")
+        plan={"registered_site":True,"can_publish":False,
+              "cached_for_campaign":0,"review_queue_count":0,
+              "approved_catalog_candidates":[]}
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",
+                   return_value=plan), \
+             patch("affiliate_hub_v31.site_request_queue.autonomous_sites_for_writes",
+                   return_value=set()):
+            with self.assertRaisesRegex(RequestQueueError,"migration_guard_failed"):
+                process_requests(self.storage,directory=self.folder,budget=1,
+                   execute=True,target_site_key="novo_blog_a",
+                   target_product_key="shopee:100:2",authenticated_cms_keys=[])
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",
+                   return_value=plan), \
+             patch("affiliate_hub_v31.site_request_queue.autonomous_sites_for_writes",
+                   return_value={"novo_blog_a"}), \
+             patch("affiliate_hub_v31.site_request_queue.conversion_priority_keys",
+                   return_value=iter([])):
+            with self.assertRaisesRegex(RequestQueueError,"target_offer_not_in_verified_supply"):
+                process_requests(self.storage,directory=self.folder,budget=1,
+                   execute=True,target_site_key="novo_blog_a",
+                   target_product_key="shopee:100:2",authenticated_cms_keys=[])
+
+
 if __name__=="__main__":
     unittest.main()
