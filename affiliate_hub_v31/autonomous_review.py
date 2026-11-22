@@ -30,6 +30,9 @@ from .routing import sites
 from .site_request_queue import VERIFIER_PROFILES as PROFILE, load_requests
 from .site_launch_plan import preview_site_launch
 from .structured_review_source import catalog_gtin, gtin_facts
+from .manufacturer_review import (ManufacturerEvidenceError, source_page_allowed,
+                                  verify_manufacturer_markdown)
+from .verified_supply import supply_profiles
 from .universal_evidence_ready import _fingerprint
 
 ANGLE = "guia de decisão com fatos verificados v1"
@@ -281,6 +284,31 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     image_hash = verify_image(image)
 
     def fetch(paid):
+        if "manufacturer_identity" in profile:
+            identity = profile["manufacturer_identity"]
+            search = paid("SEARCH", lambda: firecrawl("search", token, {
+                "query": profile["query"], "limit": 8,
+                "sources": [{"type": "web"}], "country": "BR",
+            }))
+            for hit in search.get("web", []):
+                if not isinstance(hit, dict):
+                    continue
+                url = hit.get("url")
+                if not source_page_allowed(url, identity):
+                    continue
+                source = paid("HTTP", lambda: scrape_source(url, token))
+                try:
+                    facts = verify_manufacturer_markdown(
+                        identity=identity, catalog_title=title, source_url=url,
+                        source_metadata=source.get("metadata"),
+                        markdown=source.get("markdown"))
+                except ManufacturerEvidenceError:
+                    continue
+                profile["source_url"] = url
+                return (facts,
+                        hashlib.sha256(source["markdown"].encode()).hexdigest(),
+                        payload_digest(search))
+            raise VerificationError("trusted_manufacturer_source_unavailable")
         if "gtin" in profile:
             gtin = profile["gtin"]
             hosts = set(policy.get("trusted_structured_hosts", ()))
@@ -341,28 +369,13 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
 
 
 def _selection(catalog, route, request, policy, sku):
-    offers = policy["offers"]
-    if sku in offers:
-        yield sku, offers[sku]
-        return
-    if sku is None:
-        yield from offers.items()
-    if not policy.get("trusted_structured_hosts"):
-        return
-    plan = preview_site_launch(catalog, topic=request["topic"], platform=route["platform"],
-                               site_key=route["site_key"], max_items=24)
-    for item in plan["approved_catalog_candidates"]:
-        key = item["product_key"]
-        if key in offers or (sku is not None and key != sku) or not item["affiliate_url"]:
-            continue
-        row = catalog.db.execute("SELECT description FROM products WHERE product_key=?", (key,)).fetchone()
-        try:
-            gtin = catalog_gtin(row[0] if row else "")
-        except ValueError:
-            continue
-        template = policy["structured_template"]
-        yield key, {**template, "gtin": gtin, "query": gtin,
-                    "name": template["name"] + " " + gtin}
+    """Broaden approved supply beyond the 24-item editorial preview.
+
+    Manual product profiles remain first, but newer products only acquire
+    a reviewer when they have a valid GTIN or a known manufacturer/model.
+    Neither path bypasses the exact affiliate campaign or the signed review.
+    """
+    yield from supply_profiles(catalog, route, policy, only_key=sku)
 
 
 def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=False):
@@ -447,7 +460,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     if code not in {"catalog_product_identity_changed",
                                     "external_product_identity_unverified", "search_intent_unverified",
                                     "trusted_structured_source_unavailable", "affiliate_target_unverified",
-                                    "article_prose_reused"} \
+                                    "article_prose_reused",
+                                    "trusted_manufacturer_source_unavailable"} \
                             and not code.startswith("external_fact_missing_"):
                         raise
                     rejected.append(code)
@@ -461,7 +475,9 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     return {"site_key": site_key, "status": "NO_NEW_OFFER",
                             "reason": "draft_daily_cap_reached"}
                 if rejected:
-                    raise VerificationError(rejected[-1])
+                    return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                            "reason": "no_new_offer_with_trusted_source",
+                            "candidates_with_source_rejected": len(rejected)}
                 if sku is not None and not pilot:
                     raise VerificationError("product_has_no_trusted_source_profile")
                 return {"site_key": site_key, "status": "NO_NEW_OFFER",
