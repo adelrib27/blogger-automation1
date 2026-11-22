@@ -28,3 +28,12 @@
 - **Limites conhecidos:** a evidência CI comprova código e regras de entrada, não uma execução agendada com a variável ativada nem DRAFT recorrente. A função migratória considera somente perfis configurados (atualmente Blogger Móveis e WordPress Casa), não torna outros blogs automaticamente homologados.
 - **Gatilhos remotos NÃO alterados**: `V31_AUTODRAFT_ACTIVE` e `V31_AUTODRAFT_ROLLOUT_SITE` continuam sujeitos à administração GitHub/Work. `V31_AUTOLIVE_ACTIVE` não foi ligado.
 - Antes do primeiro rollout, validar crédito Firecrawl, dia UTC da quota, histórico CMS e proteção de escritores legados. Verificar que somente `blogger_moveis_para_cada_canto` é migrado inicialmente, depois auditar schedule e novo DRAFT por GET/replay. Não habilitar `all` sem evidência e autorização apropriadas.
+
+## Auditoria complementar do D1 oficial e colisão de CMS (22/11)
+
+- Consulta somente leitura pela conexão Cloudflare oficial `adeiltonrib27@gmail.com` / D1 `v31-universal-ready-safe` confirmou 5 tabelas V31. Por `site_key+campaign+status`, há Blogger Móveis **USED=1**, WordPress Casa **USED=1**, **READY=1**. O READY adicional do WordPress não foi consumido e deve ser preservado.
+- A consulta às cotas D1 com `day_utc >= '2026-11-21'` mostrou registros de 21/11 (Blogger HTTP 1/3, SEARCH 1/3; WordPress HTTP 3/3, SEARCH 3/3), e **nenhuma linha ainda para 22/11 no momento do SELECT**. Ausência de registro não é prova de que pesquisas ou conversões futuras foram executadas; reconsultar imediatamente antes do writer.
+- Conversões registradas pelo D1 no dia 21/11: duas tentativas WordPress Casa e uma Blogger Móveis. Não repetir SKU/conversão por inferência.
+- `.github/workflows/casa_editorial_generate_schedule.yml` está **agendado 3x/dia** e executa para `wordpress_casa_decoracao` com `CASA_WORDPRESS_STATUS=publish` e `CASA_LIVE_PUBLISH_ENABLED=true`, em grupo de concorrência `casa-decoracao-editorial-v3`, **diferente** da trava `v31-editorial-catalog-single-writer`. Portanto a migração da rota WordPress exige auditoria explícita de coexistência/reconciliação com o writer LEGADO LIVE; este PR não o desativa nem afirma ausência de LIVE legado.
+- `radar_editorial_vnext_autonomous.yml` também possui LIVE legado habilitado, com falhas de QUARENTENA. Não alterar essa rota durante o rollout de Blogger Móveis.
+- **Primeiro alvo recomendado** continua `blogger_moveis_para_cada_canto`. Caso a verificação no CMS mostre outro writer independente ativo para esse mesmo blog, abortar a transferência até corrigir o conflito.
