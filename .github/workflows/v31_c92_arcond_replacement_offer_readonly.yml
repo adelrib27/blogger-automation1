@@ -1,0 +1,67 @@
+name: "V31 C92 - crosscheck replacement SKUs read only"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c92_arcond_replacement_offer_readonly.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  check-alternate-skus:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Leitura de quatro itens exatos com preço e link oficial (sem estoque implícito)
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request,urllib.error
+          from affiliate_hub_v31.shopee_probe import authorization,ENDPOINT
+          creds=(os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID",""),os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET",""))
+          if not all(creds):raise SystemExit("C92_NO_CREDENTIALS")
+          candidates=[
+            ("midea_9k",1736335904,58267891881),
+            ("midea_12k_web",889973435,18398298625),
+            ("midea_12k_friopecas",1323031590,23299409402),
+            ("samsung_9k",1527564302,58208983484)
+          ]
+          fields="itemId shopId productName productLink imageUrl offerLink priceMin priceMax sales ratingStar commissionRate periodStartTime periodEndTime"
+          query="query C92ReplacementGate { "+" ".join(f"{alias}:productOfferV2(itemId:{item},page:1,limit:3){{ nodes{{{fields}}} }}" for alias,shop,item in candidates)+" }"
+          body=json.dumps({"query":query,"operationName":"C92ReplacementGate"},separators=(",",":"))
+          req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={"Authorization":authorization(creds[0],creds[1],body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31-C92-Replacement-Gate/1.0"})
+          try:
+            with urllib.request.urlopen(req,timeout=26) as resp:
+              raw=resp.read(131073)
+              if resp.status!=200 or len(raw)>131072:raise ValueError("bad_response")
+            obj=json.loads(raw)
+          except urllib.error.HTTPError as e:
+            raise SystemExit("C92_HTTP_"+str(e.code)) from None
+          except Exception:
+            raise SystemExit("C92_NETWORK_ERROR") from None
+          if obj.get("errors"):
+            print("C92_GRAPHQL_CODES="+json.dumps([str(e.get("extensions",{}).get("code","graphql"))[:24] for e in obj["errors"]]))
+            raise SystemExit("C92_READ_FAILED")
+          data=obj.get("data") or {}
+          for alias,shop,item in candidates:
+            nodes=((data.get(alias)or{}).get("nodes")or[])
+            match=[z for z in nodes if str(z.get("shopId"))==str(shop) and str(z.get("itemId"))==str(item)]
+            if len(match)!=1:
+              print("C92_ALTERNATE_NOT_FOUND="+alias);continue
+            z=match[0]
+            try:p=float(z.get("priceMin") or 0)
+            except Exception:p=0
+            name=str(z.get("productName") or "")
+            ok=bool(("ar condicionado" in name.lower() or "ar-condicionado" in name.lower()) and "inverter" in name.lower() and p>0 and str(z.get("offerLink")or"").startswith("https://") and str(z.get("imageUrl")or"").startswith("https://") and str(z.get("productLink")or"").startswith("https://shopee.com.br/"))
+            print("C92_ALT="+json.dumps({"alias":alias,"sku":"shopee:"+str(shop)+":"+str(item),"name":name,"productLink":z.get("productLink"),"offerLink":z.get("offerLink"),"imageUrl":z.get("imageUrl"),"priceMin":z.get("priceMin"),"sales":z.get("sales"),"rating":z.get("ratingStar"),"commissionRate":z.get("commissionRate"),"periodEndTime":z.get("periodEndTime"),"affiliate_active":ok,"stock_confirmed":False},ensure_ascii=False,separators=(",",":")))
+          print("C92_ALTERNATE_READ_ONLY_DONE")
+          PY
