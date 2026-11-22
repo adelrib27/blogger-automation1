@@ -24,7 +24,7 @@ STOP = frozenset((
     "do","da","em","cor","cores","casa","sala","quarto","canto","modelo",
     "cm","mdp","mdf","metal","ate","corredica","corredicas","puxador","puxadores",
     "estofado","estofada","poliester","jogo","peças","pecas","natural",
-    "multiuso","lavanderia","espelho","espelhos","grafite","grafitte",
+    "comoda","multiuso","lavanderia","espelho","espelhos","grafite","grafitte",
     "jatoba","atacama","nicho","nichos","ripada","ripadas",
     "amendola","touch","ambiente","sapateira","sapateiro","pes",
     "rodizios","opcional","opcionais","c","s","p","inox"
@@ -202,7 +202,7 @@ def verify_manufacturer_markdown(*, identity, catalog_title, source_url,
     model_pos = normalized.find(plain(model))
     if model_pos < 0 or model_pos > 2300:
         raise ManufacturerEvidenceError("manufacturer_product_heading_missing")
-    excerpt = normalized[model_pos:model_pos + 1100]
+    excerpt = normalized[max(0, model_pos - 100):model_pos + 1100]
     if not any(has_phrase(excerpt, alt) for name, alts in KINDS
                if name == kind for alt in alts):
         raise ManufacturerEvidenceError("manufacturer_product_type_missing")
