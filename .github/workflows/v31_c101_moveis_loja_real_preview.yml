@@ -1,0 +1,84 @@
+name: "V31 C101 - Moveis Loja Shopee REAL SAFE PREVIEW"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c101_moveis_loja_real_preview.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: v31-c101-shopee-readonly
+  cancel-in-progress: false
+jobs:
+  c101-moveis:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Verificar guardas e pré-condições em modo offline
+        run: |
+          python -m pip install "boto3>=1.36,<2"
+          python -m py_compile affiliate_hub_v31/c100_r2_exact_readonly.py affiliate_hub_v31/c100_shop_renderer.py
+          python -m unittest affiliate_hub_v31.tests.test_c100_primary_product_guards -v
+      - name: R2 READ ONLY mais Shopee Affiliate API EXATA — SOMENTE MOVEIS
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_C100_OUTPUT: c101_moveis_verified.json
+        run: python -m affiliate_hub_v31.c100_r2_exact_readonly --sites moveis | tee c101_moveis.log
+      - name: Validar contagem e gerar PREVIEW de móveis - sem publicar
+        run: |
+          python - <<'PY'
+          import json,subprocess,sys
+          data=json.load(open("c101_moveis_verified.json"))
+          assert len(data)==1 and data[0]["site_key"]=="moveis"
+          row=data[0]
+          print("C101_PREVIEW_META="+json.dumps({k:row[k] for k in ("status","r2_candidates","api_exact_matches","eligible_live_offers","selected_count","unique_sellers","errors")},ensure_ascii=False))
+          if row["status"]!="READ_ONLY_READY_24_PLUS":
+              print("C101_BLOCKED_NOT_24_VALIDATED_OFFERS")
+              sys.exit(0)
+          subprocess.run([sys.executable,"-m","affiliate_hub_v31.c100_shop_renderer","--input","c101_moveis_verified.json","--site","moveis","--output","c101_moveis_draft.html"],check=True)
+          html=open("c101_moveis_draft.html",encoding="utf-8").read()
+          assert html.count('Ver oferta na Shopee</a>')==row["selected_count"]
+          print("C101_PREVIEW_VERIFIED="+str(row["selected_count"]))
+          PY
+      - name: Testar HTTP 3 links da API sem comprar ou rastrear usuário
+        if: success()
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.error,urllib.parse
+          p=json.load(open("c101_moveis_verified.json"))[0]
+          if p["selected_count"]<24:raise SystemExit(0)
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self,req,fp,code,msg,headers,newurl):return None
+          opener=urllib.request.build_opener(NoRedirect())
+          for x in p["products"][:3]:
+              link=x["offer"]
+              try:
+                  req=urllib.request.Request(link,method="HEAD",headers={"User-Agent":"Mozilla/5.0"})
+                  with opener.open(req,timeout=12) as resp:
+                      print("C101_LINK_PROBE="+json.dumps({"shop_item":x["listing_key"],"status":resp.status,"location_host":urllib.parse.urlsplit(resp.headers.get("Location","")).hostname},ensure_ascii=False))
+              except urllib.error.HTTPError as exc:
+                  print("C101_LINK_PROBE="+json.dumps({"shop_item":x["listing_key"],"status":exc.code,"location_host":urllib.parse.urlsplit(exc.headers.get("Location","")).hostname},ensure_ascii=False))
+              except Exception as exc:
+                  print("C101_LINK_PROBE="+json.dumps({"shop_item":x["listing_key"],"error":type(exc).__name__},ensure_ascii=False))
+          PY
+      - name: Salvar shortlist, log e html sem publicação por 7 dias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c101-moveis-shopee-verified-preview
+          path: |
+            c101_moveis_verified.json
+            c101_moveis.log
+            c101_moveis_draft.html
+          if-no-files-found: ignore
+          retention-days: 7
