@@ -16,8 +16,8 @@ from affiliate_hub_v31.c100_multi_store_readonly import listing_valid
 from affiliate_hub_v31.cafe_loja_readonly import norm, num, rate
 
 PROFILE_PATH=pathlib.Path(__file__).with_name("c100_store_profiles.json")
-MAX_CANDIDATE_PER_SITE=80
-MAX_CANDIDATE_PER_NICHE=60
+MAX_CANDIDATE_PER_SITE=160
+MAX_CANDIDATE_PER_NICHE=160
 MAX_ALIAS_PER_CALL=8
 MAX_API_CALLS_PER_SITE=16
 MAX_OFFERS=36
@@ -177,7 +177,11 @@ def verify(node,source,site):
     return result
 
 def discover(site,route,db,catalog,app,secret):
-    candidates=pool(db,catalog,site,route)
+    all_candidates=pool(db,catalog,site,route)
+    offset=int(os.environ.get("V31_C101_CANDIDATE_OFFSET","0"))
+    if offset and site["key"]!="moveis":raise ValueError("offset restricted to C101 moveis")
+    if not (0<=offset<=160):raise ValueError("invalid offset")
+    candidates=all_candidates[offset:]
     accepted={};errors=[];calls=0;exact_found=0
     for offset in range(0,len(candidates),MAX_ALIAS_PER_CALL):
         if calls>=MAX_API_CALLS_PER_SITE:break
@@ -221,7 +225,7 @@ def discover(site,route,db,catalog,app,secret):
     return {
         "site_key":site["key"],"site_title":site["title"],
         "blog_id":site["blog"],"page_id":site["page"],"status":status,
-        "r2_candidates":len(candidates),"api_exact_matches":exact_found,
+        "r2_candidates":len(candidates),"candidate_offset":offset,"api_exact_matches":exact_found,
         "eligible_live_offers":len(accepted),"selected_count":len(selected),
         "unique_sellers":len(shops),"seller_extra_ge_3pct":sum(p["sellerCommissionRate"]>=.03 for p in selected),
         "calls":calls,"errors":errors,"stock_confirmed":False,"subid_confirmed":False,
