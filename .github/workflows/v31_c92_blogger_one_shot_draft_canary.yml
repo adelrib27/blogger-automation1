@@ -1,0 +1,21 @@
+name: V31 C92 — canário único de DRAFT após C89
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c92_blogger_one_shot_draft_canary.yml'
+permissions:
+  contents: read
+jobs:
+  verify-and-deliver-one-draft:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main' &&
+      vars.V31_AUTODRAFT_ACTIVE == 'true' &&
+      vars.V31_AUTODRAFT_ROLLOUT_SITE == 'blogger_moveis_para_cada_canto' &&
+      vars.V31_AUTOLIVE_ACTIVE != 'true'
+    uses: ./.github/workflows/v31_independent_review_draft.yml
+    with:
+      site_key: blogger_moveis_para_cada_canto
+      pilot: false
+    secrets: inherit
