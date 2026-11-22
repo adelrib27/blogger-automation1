@@ -1,5 +1,8 @@
 # V31 — CONTINUAR AQUI (ponto de entrada permanente)
 
+> **Correções reais Blogger Móveis em 22/11/2026:** [checkpoint de SEO + 3 páginas + links institucionais](affiliate_hub_v31/CHECKPOINT_C81_BLOGGER_MOVEIS_CORRECOES_2026-11-22.md). Blogger API confirmou 3 artigos LIVE existentes, 6 DRAFTs preservados e 3 páginas novas. O novo cron DRAFT ainda não possui execução `event=schedule` pós-ativação comprovada; não alterar canário assinado nem ligar LIVE. Falta verificar PageList da homepage e revisar cinco rascunhos legados.
+
+
 > **C81 — rollout DRAFT gradual em 22/11/2026:** [PR #124 (565 testes PASS)](https://github.com/adelrib27/blogger-automation1/pull/124) integrou ativação por rota exata e dupla confirmação para migração total. Consulte o [checkpoint de engenharia e cotas](affiliate_hub_v31/CHECKPOINT_C81_ROLLOUT_SAFE_PREVIEW_2026-11-22.md) e o [guia de Repository Variables](affiliate_hub_v31/C81_ATIVACAO_CONTROLADA_DRAFT_REPO_VARIABLES_2026-11-22.md). **Código pronto; ativação DRAFT recorrente depende de configuração GitHub administrativa que o conector deste chat não possui.** Blogger Móveis primeiro. Casa WordPress tem cron LIVE legado com risco de coexistência, não migrar sem auditoria. Política LIVE nova desativada.
 
 > **Observação C81 de 22/11/2026:** [checkpoint de observação agendada](affiliate_hub_v31/CHECKPOINT_C81_OBSERVACAO_AGENDADA_2026-11-22.md): três runs `event=schedule` PASS com GET de ambos os DRAFTs e comparação de SHA; os jobs de escrita permanecem skipped, portanto não homologam a geração recorrente. Inspecionar flag de opt-in e conflitos com writers legados antes de ativar DRAFT. LIVE da política nova continua desativado.
