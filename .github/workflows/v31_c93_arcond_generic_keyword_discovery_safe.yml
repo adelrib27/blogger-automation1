@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
     paths: [".github/workflows/v31_c93_arcond_generic_keyword_discovery_safe.yml"]
+  schedule:
+    - cron: '17 13 * * *'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -10,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   generic-readonly:
-    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     timeout-minutes: 8
@@ -25,6 +28,7 @@ jobs:
         run: |
           python -m py_compile affiliate_hub_v31/aircon_discovery.py affiliate_hub_v31/taxonomy.py
           python -m affiliate_hub_v31.aircon_discovery --dry-run
+          python -m unittest affiliate_hub_v31.tests.test_aircon_generic_discovery -q
           python - <<'PY'
           from affiliate_hub_v31.taxonomy import classify_title
           cases=[
@@ -43,4 +47,15 @@ jobs:
         env:
           V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
           V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_AIRCON_CANDIDATE_PATH: c93_candidates.json
         run: python -m affiliate_hub_v31.aircon_discovery
+      - name: Validar lista gerada de candidatos
+        run: python -m json.tool c93_candidates.json > /dev/null
+      - name: Preservar shortlist para revisao editorial por 7 dias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c93-arcond-readonly-shortlist
+          path: c93_candidates.json
+          if-no-files-found: ignore
+          retention-days: 7
