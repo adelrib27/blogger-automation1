@@ -7,9 +7,9 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-22",
-  "last_updated_source": "C82_CADEIRA_CERTA_BLOGGER_SEO_SHOPEE_DRAFT_REAL",
+  "last_updated_source": "C83_CADEIRA_CERTA_SHOPEE_EXACT_LINK_LIVE_TOK_CAROUSEL",
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C82_CADEIRA_CERTA_AUDITORIA_CORRECOES_2026-11-22.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C83_CADEIRA_CERTA_CONVERSAO_PUBLICACAO_CARROSSEL_2026-11-22.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -357,11 +357,11 @@
       "loja_page_updated": "5014986967420563988",
       "new_shopee_product_draft_id": "6656620121237912250",
       "new_product_key": "shopee:1231183958:58216389111",
-      "new_product_affiliate_conversion_verified": false,
-      "new_product_draft_remains_unpublished": true,
+      "new_product_affiliate_conversion_verified": true,
+      "new_product_draft_remains_unpublished": false,
       "v31_site_route_registered": true,
       "v31_site_campaign_subid_reserved_not_api_verified": "cadeiracertahomeoffice",
-      "theme_carousel_tok_highlight_fixed": false,
+      "theme_carousel_tok_highlight_fixed": true,
       "live_policy_unchanged": true,
       "seo_expansions_GET_verified": [
         "5233454304666317388",
@@ -369,6 +369,29 @@
         "7516498952063951593"
       ],
       "live_public_link_verified": true
+    },
+    "c83_cadeira_certa": {
+      "blog_id": "7163624325768776034",
+      "tok_boxbit_post_id": "3691939235338797956",
+      "tok_boxbit_carousel_position": 1,
+      "carousel_total_slides": 5,
+      "carousel_verified_publicly": true,
+      "new_office_arco_post_id": "6656620121237912250",
+      "new_office_arco_status": "live",
+      "new_office_arco_url": "https://cadeira-certa-home-office.blogspot.com/2026/11/cadeira-office-arco-mesh-e-estofada-9.html",
+      "new_office_arco_product_key": "shopee:1231183958:58216389111",
+      "new_office_arco_image_url": "https://cf.shopee.com.br/file/sg-11134201-825bc-ms0en6j61b0ibc",
+      "new_office_arco_affiliate_link": "https://s.shopee.com.br/9fMfOM4016",
+      "new_office_arco_campaign": "cadeiracertahomeoffice",
+      "shopee_read_only_run": "45040964757",
+      "shopee_conversion_run": "45041101197",
+      "d1_conversion_slot": 1,
+      "d1_conversion_day": "2026-11-22",
+      "live_posts_count": 6,
+      "draft_posts_count": 0,
+      "auto_live_remained_disabled": true,
+      "theme_edited": false,
+      "publication_mode": "manual_single_post"
     }
   },
   "do_not_assume": {
@@ -389,8 +412,8 @@
     "phase": "C81",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar verificação factual sem aprovação humana por artigo, usando novos DRAFTs Blogger e WordPress e operação contínua. LIVE exige autorização única da política após homologação.",
-    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes.",
-    "next_safe_step": "Prioridade nova C82: comprovar elegibilidade exata shopId 1231183958 itemId 58216389111 no catálogo e converter via API Shopee da campanha de Cadeira Certa; validar shortlink, foto e DRAFT por GET antes de qualquer LIVE. Em paralelo preservar a homologação C81 do Blogger Móveis. O carrossel do tema Cadeira ainda não destaca Tok.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas.",
+    "next_safe_step": "C83 concluída. Manter V31 AUTO LIVE off; seguir homologação C81 pelo cron agendado de Móveis, verificar DRAFT/D1. Cadeira Certa tem agora 6 LIVE e 0 DRAFT, carrossel cinco slides com Tok primeiro; nenhuma nova conversão Office Arco deve ser repetida. Não ativar writer Cadeira sem perfil e testes.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -436,7 +459,8 @@
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_AUTODRAFT_BLOGGER_ENABLED_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_BLOGGER_MOVEIS_CORRECOES_2026-11-22.md",
       "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md",
-      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C82_CADEIRA_CERTA_AUDITORIA_CORRECOES_2026-11-22.md"
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C82_CADEIRA_CERTA_AUDITORIA_CORRECOES_2026-11-22.md",
+      "https://github.com/adelrib27/blogger-automation1/blob/main/affiliate_hub_v31/CHECKPOINT_C83_CADEIRA_CERTA_CONVERSAO_PUBLICACAO_CARROSSEL_2026-11-22.md"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
