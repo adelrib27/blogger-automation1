@@ -18,7 +18,11 @@ jobs:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'push' || (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE != 'true'))
+      (github.event_name == 'push' || (github.event_name == 'schedule' &&
+      (vars.V31_AUTODRAFT_ACTIVE != 'true' ||
+       vars.V31_AUTODRAFT_ROLLOUT_SITE == '' ||
+       (vars.V31_AUTODRAFT_ROLLOUT_SITE == 'all' &&
+        vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED != 'true'))))
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     timeout-minutes: 8
@@ -47,7 +51,11 @@ jobs:
     if: >-
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE == 'true'))
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE == 'true' &&
+        vars.V31_AUTODRAFT_ROLLOUT_SITE != '' &&
+        (vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all' ||
+         vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED == 'true')))
     runs-on: ubuntu-latest
     outputs:
       site: ${{ steps.site.outputs.site }}
@@ -58,13 +66,21 @@ jobs:
       - id: site
         env:
           REQUESTED: ${{ inputs.site_key }}
+          IS_SCHEDULE: ${{ github.event_name == 'schedule' && 'true' || 'false' }}
+          V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
+          V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
+          V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
         run: |
           python - <<'PY' >> "$GITHUB_OUTPUT"
           import json, os, time
           from affiliate_hub_v31.autonomous_review import PROFILE
-          from affiliate_hub_v31.site_request_queue import load_requests
+          from affiliate_hub_v31.site_request_queue import load_requests, autonomous_sites_for_writes
           settings = json.loads(PROFILE.read_text(encoding="utf-8"))
-          sites = sorted(r["site_key"] for r in load_requests() if r["site_key"] in settings)
+          registered = {r["site_key"] for r in load_requests() if r["site_key"] in settings}
+          # Manual canary is an explicit site choice; schedule may only
+          # migrate routes granted by BOTH the arm and rollout variables.
+          sites = sorted(autonomous_sites_for_writes() if
+                         os.environ["IS_SCHEDULE"] == "true" else registered)
           preferred = os.environ["REQUESTED"]
           if not sites or (preferred and preferred not in sites):
               raise SystemExit("no_configured_site")
