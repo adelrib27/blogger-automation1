@@ -49,3 +49,12 @@ Foi criado **um rascunho, não LIVE**:
 - Nome reservado de rastreamento para **novas conversões futuras**: `cadeiracertahomeoffice`. Trata-se de valor administrativo de subID da rota **ainda não validado por chamada de conversão na API**; não afirmar que a URL histórica Tok já usa esse subID.
 - Sem `site_requests.d` habilitado e sem `autonomous_review_sources.json` para essa rota: portanto nenhuma seleção/escrita automática C81 foi ligada para o blog.
 - Para obter CTA do Office Arco, aplicar conversor a produto aprovado de identidade exata `shopee:1231183958:58216389111`, sem converter automaticamente outro SKU. Se ausente ou REVIEW no catálogo, interromper e registrar fila de curadoria. Só depois atualizar o DRAFT com link real da mesma campanha.
+
+## Complemento SEO com validação GET (22/11)
+Três artigos originalmente muito curtos foram expandidos com blocos editoriais independentes e orientados à intenção de busca, sem promessas técnicas inventadas:
+- Gamer versus escritório `5233454304666317388`: uso real, mecanismos, apoio lombar, perguntas frequentes e link ao guia de ajustes.
+- Ajustes `8648967166394388356`: método de comparação de dimensões, sequência de inspeção, FAQ e link a materiais.
+- Mesh versus estofado `7516498952063951593`: ventilação, manutenção, durabilidade e FAQ, link ao guia de sete critérios.
+A releitura Blogger GET confirmou em 3/3 os marcadores `data-v31-seo-expansion="20261122"`, manutenção do CTA comercial do Tok e `status=live`. Novo DRAFT Office Arco permaneceu `status=draft` e seu SKU não foi trocado.
+
+Verificação pública adicional com Firecrawl em `/2026/11/como-comparar-ajustes-de-altura-bracos.html` retornou HTTP 200, CTA e URL pré-existente de afiliado Tok Boxbit no texto efetivamente servido ao público. Esta validação NÃO comprova checkout ou comissão do shortLink.
