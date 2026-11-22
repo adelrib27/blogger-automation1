@@ -58,6 +58,8 @@ jobs:
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
           V31_SITE_KEY: ${{ inputs.site_key || '' }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
+          V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
+          V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
           V31_DRAFT_EXECUTE: ${{ github.event_name == 'schedule' && github.event.schedule == '18 12 * * *' && 'true' || github.event_name == 'workflow_dispatch' && inputs.execute_draft == true && 'true' || 'false' }}
         shell: bash
         run: |
