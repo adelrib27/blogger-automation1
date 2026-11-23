@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-23",
-  "last_updated_source": "C108_RADAR_TECH_FEATURED_REAL_PHOTOS_WORDPRESS_HOME",
+  "last_updated_source": "C110_C111_RADAR_TECH_EIGHT_TECH_HUBS_LIVE_ACCESSIBLE_MENUS_CAROUSEL_FILTER",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1366,5 +1366,91 @@
     "published_posts_modified": 0,
     "auto_live_changed": false,
     "next_steps": "Visual user approval and optional later optimization after screenshot review, restrict newer post lists to tech if requested; preserve existing posts until SEO-safe migration"
+  },
+  "c110_radar_tech_menu_hubs": {
+    "status": "COMPLETE_LIVE_QA",
+    "checkpoint": "affiliate_hub_v31/CHECKPOINT_C110_RADAR_TECH_MENUS_SMARTPHONES_COMPUTACAO_TVS_LIVE_2026-11-23.md",
+    "manifest": "affiliate_hub_v31/C110_RADAR_TECH_HUBS_PUBLISH_MANIFEST_2026-11-23.json",
+    "published_pages": [
+      {
+        "slug": "audio-bluetooth",
+        "id": 333
+      },
+      {
+        "slug": "smartwatches",
+        "id": 334
+      },
+      {
+        "slug": "projetores-acessorios",
+        "id": 335
+      },
+      {
+        "slug": "gadgets-conectividade",
+        "id": 336
+      },
+      {
+        "slug": "smartphones",
+        "id": 337
+      },
+      {
+        "slug": "computacao",
+        "id": 338
+      },
+      {
+        "slug": "tvs",
+        "id": 339
+      },
+      {
+        "slug": "guias-tecnologia",
+        "id": 340
+      }
+    ],
+    "new_core_pillars": [
+      "smartphones",
+      "computacao",
+      "tvs"
+    ],
+    "navigation": "Início | Tecnologia dropdown | Smartphones | Computação | TVs | Guias de Compra dropdown | Loja",
+    "nav_tech_children": [
+      "/category/tecnologia/",
+      "/audio-bluetooth/",
+      "/smartwatches/",
+      "/projetores-acessorios/",
+      "/gadgets-conectividade/"
+    ],
+    "nav_guides_children": [
+      "/guias-tecnologia/",
+      "/guias-tecnologia/#como-escolher",
+      "/guias-tecnologia/#compatibilidade",
+      "/guias-tecnologia/#antes-de-comprar"
+    ],
+    "header_template_db_id": 66,
+    "home_template_db_id": 42,
+    "custom_css_db_id": 56,
+    "before_backup": "affiliate_hub_v31/backups/C110_RADAR_TECH_PRE_NOVOS_MENUS_2026-11-23.json",
+    "css_backup": "affiliate_hub_v31/backups/C110_RADAR_TECH_CUSTOM_CSS_BEFORE_MENUS_2026-11-23.css",
+    "header_final": "affiliate_hub_v31/exports/C110_RADAR_TECH_HEADER_FINAL_2026-11-23.html",
+    "css_final": "affiliate_hub_v31/exports/C110_RADAR_TECH_CUSTOM_CSS_FINAL_2026-11-23.css",
+    "pages_are_hubs_not_wp_categories": true,
+    "all_eight_public_http200": true,
+    "original_posts_unchanged": {
+      "published": 37,
+      "drafts": 15
+    },
+    "new_blog_categories_created": 0,
+    "routing_classification_not_extended": "site_routes.json still allows tecnologia/gadgets only. Validate R2 category taxonomy before expanding automatic future route.",
+    "automatic_live_touched": false
+  },
+  "c111_radar_tech_home_tech_only": {
+    "status": "COMPLETE_PUBLIC_QA",
+    "original_home_backup": "affiliate_hub_v31/backups/C111_RADAR_TECH_HOME_BEFORE_TECH_CAROUSEL_2026-11-23.html",
+    "home_live": "affiliate_hub_v31/exports/C111_RADAR_TECH_HOME_TECH_ONLY_CAROUSEL_LATEST_PREVIEW_2026-11-23.html",
+    "slides": 5,
+    "only_technology_article_slides": true,
+    "latest_posts_filtered_category_id": 3,
+    "per_page": 10,
+    "latest_public_tech_posts_confirmed": 10,
+    "unrelated_post_deletions": 0,
+    "note": "old out-of-niche individual posts preserved; their URL/SEO migration not done"
   }
 }
