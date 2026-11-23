@@ -1,0 +1,34 @@
+name: "V31 C114 Radar WP - autenticacao e identidade do draft 356 SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c114_radarwp_wp_draft_auth_readonly_once.yml"]
+permissions: {contents: read}
+jobs:
+  inspect-draft-only:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: "Verificar credencial WordPress, dominio e draft - nenhuma escrita"
+        env:
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+        run: |
+          python - <<'PY'
+          from affiliate_hub_v31.automatic_wordpress_drafts import credentials_for,WordPressRestClient
+          from affiliate_hub_v31.routing import sites
+          r=sites()["wordpress_radartechbr"]
+          if r["identifier"]!="https://radartechbr.com.br/" or r["campaign"]!="radarwp" or r["publish_enabled"] is not False:raise SystemExit("C114_ROUTE_UNSAFE")
+          u,p=credentials_for("wordpress_radartechbr")
+          wp=WordPressRestClient(base_url=r["identifier"],username=u,application_password=p)
+          wp.site_settings()
+          post=wp.get_post(356)
+          content=(post.get("content")or{}).get("raw","")
+          if post.get("status")!="draft" or not isinstance(content,str) or "LG Dual Inverter Compact" not in str((post.get("title")or{}).get("raw","")) or "radartech-climatizacao" not in content or "Transparência editorial" not in content or any(x in content for x in ("blogspot.com","ar-condicionado-sem-duvidas","https://s.shopee.com.br/")):raise SystemExit("C114_DRAFT_IDENTIFICATION_FAILED")
+          print("V31_C114_RADAR_WP_DRAFT_356_AUTH_AND_IDENTITY_PASS_NO_MUTATIONS")
+          PY
