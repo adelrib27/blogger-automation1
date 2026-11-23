@@ -1,0 +1,130 @@
+{
+  "schema": "v31_portfolio_five_migration_draft/v1",
+  "date": "2026-11-23",
+  "phase": "editorial_salvage_drafts_verified_via_Blogger_API",
+  "scope": "16 blogs listed by connected Blogger account, 5 retained, 11 candidates for owner manual deletion",
+  "live_publications": 0,
+  "blog_deletions": 0,
+  "source_backups_exact_verified": 11,
+  "source_published_posts": 95,
+  "selected_five": [
+    {
+      "id": "3552757910439359679",
+      "name": "Cozinha Sem Complicação"
+    },
+    {
+      "id": "1439741542627895062",
+      "name": "Móveis para Cada Canto"
+    },
+    {
+      "id": "4830103887652146866",
+      "name": "Estilo no Dia a Dia"
+    },
+    {
+      "id": "7757953554206491487",
+      "name": "Limpeza Inteligente"
+    },
+    {
+      "id": "8052455848487624244",
+      "name": "Vida Pet Prática"
+    }
+  ],
+  "drafts": [
+    {
+      "target_id": "3552757910439359679",
+      "post_id": "5513820607691719534",
+      "source_blog": "8658632621591002634",
+      "title": "Sanduicheira ou grill compacto: como escolher chapas, voltagem e facilidade de limpeza",
+      "status": "draft",
+      "get_exact": true
+    },
+    {
+      "target_id": "1439741542627895062",
+      "post_id": "5667175148968856980",
+      "source_blog": "7163624325768776034",
+      "title": "Cadeira mesh ou estofada no home office: conforto, medidas e manutenção",
+      "status": "draft",
+      "get_exact": true
+    },
+    {
+      "target_id": "4830103887652146866",
+      "post_id": "7538746411189780835",
+      "source_blog": "2858597309582499028",
+      "title": "Como montar looks com jeans que você já tem: combinações práticas para a semana",
+      "status": "draft",
+      "get_exact": true
+    },
+    {
+      "target_id": "4830103887652146866",
+      "post_id": "8826080853584006959",
+      "source_blog": "6319734511998091378",
+      "title": "Touca de cetim e modelador sem calor: o que observar antes de usar",
+      "status": "draft",
+      "get_exact": true
+    },
+    {
+      "target_id": "3552757910439359679",
+      "post_id": "1972066528706408498",
+      "source_blog": "5271798990390532475",
+      "title": "Liquidificador de bancada ou portátil: diferenças, limpeza e critérios de compra",
+      "status": "draft",
+      "get_exact": true
+    },
+    {
+      "target_id": "3552757910439359679",
+      "post_id": "6989724121072195864",
+      "source_blog": "4820923154548273510",
+      "title": "Café coado, prensa francesa ou moka: como escolher o método de preparo em casa",
+      "status": "draft",
+      "get_exact": true
+    },
+    {
+      "target_id": "3552757910439359679",
+      "post_id": "2428730622218583526",
+      "source_blog": "1453188702831337099",
+      "title": "Balança digital de cozinha: capacidade, função tara e precisão na rotina",
+      "status": "draft",
+      "get_exact": true
+    },
+    {
+      "target_id": "7757953554206491487",
+      "post_id": "8350292185500005781",
+      "source_blog": "1453188702831337099",
+      "title": "Carrinho organizador para materiais de limpeza: onde usar e quais cuidados tomar",
+      "status": "draft",
+      "get_exact": true
+    }
+  ],
+  "unmatched_sources": [
+    {
+      "id": "2228849984262880811",
+      "name": "Ar-Condicionado sem Dúvidas",
+      "reason": "Climatização não combina organicamente com nenhuma das cinco editorias"
+    },
+    {
+      "id": "4473989735719981382",
+      "name": "Ventiladores em Foco",
+      "reason": "Ventilação não combina organicamente com nenhuma das cinco editorias"
+    },
+    {
+      "id": "4073458513010284301",
+      "name": "Pedal Leve",
+      "reason": "Ciclismo não combina organicamente com nenhuma das cinco editorias"
+    },
+    {
+      "id": "3644898524310766003",
+      "name": "Jardim e Horta na Prática",
+      "reason": "Jardinagem e horticultura não combinam organicamente com nenhuma das cinco editorias"
+    }
+  ],
+  "editorial_guards": [
+    "All eight artifacts are DRAFT (not LIVE) and have exact Blogger GET readback",
+    "Editorial rewrites retain factual guardrails, and avoid copying commercial links/photos from old site",
+    "No affiliate link or image is transferred; any commercial publication requires campaign/SKU verification",
+    "Source blogs remain publicly intact; none have canonical redirects across Blogspot verified",
+    "Search Console backlink/traffic coverage unavailable for most origins; deletion may lose SEO value",
+    "Old store workflows freeze in separate branch pending PR merge and CI",
+    "Post-specific permission required for LIVE by project policy",
+    "Manual deletion by owner only after reviewing backup, drafts and migration risk"
+  ]
+}
