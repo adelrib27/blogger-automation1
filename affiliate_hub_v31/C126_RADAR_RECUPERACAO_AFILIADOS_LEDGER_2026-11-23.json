@@ -1,0 +1,173 @@
+{
+  "schema": "v31-radar-c126-affiliate-recovery/v1",
+  "date": "2026-11-23",
+  "scope": "Radar Tech BR WordPress, four pending of ten C115",
+  "previous_completed": [
+    260,
+    314,
+    311,
+    278,
+    256,
+    138
+  ],
+  "c125_completed": {
+    "post_id": 28,
+    "wp_status": "publish",
+    "verified": true,
+    "checkpoint": "affiliate_hub_v31/CHECKPOINT_C125_RADAR_POST28_OBD2_VERIFIED_2026-11-23.md",
+    "relation_to_prior_offer": "new related Shopee offer, not recovered original seller"
+  },
+  "verification_sources": {
+    "c122_r2": {
+      "run_id": 45245173559,
+      "status": "success",
+      "mode": "read_only",
+      "matched_exact_for_pending": 0,
+      "radarwp_affiliate_link_exact_match_count": 0,
+      "broad_search_hits": {
+        "24": 307,
+        "25": 2,
+        "28": 12,
+        "29": 58
+      }
+    },
+    "c123_api": {
+      "run_id": 45245633827,
+      "status": "success",
+      "query_results": {
+        "24": "16 listings",
+        "25": "10000 transient error",
+        "28": "25 listings",
+        "29": "10000 transient error"
+      }
+    },
+    "c124_photo": {
+      "run_id": 45246247233,
+      "status": "success",
+      "wp_28_strong_match": {
+        "shop_id": "1712301672",
+        "item_id": "58252631500",
+        "phash_distance": 0,
+        "dhash_distance": 1,
+        "ahash_distance": 0
+      },
+      "wp_24_strong_match_count": 0,
+      "wp_24_downloaded_images": 16
+    },
+    "c126_exact": {
+      "run_id": 45247433458,
+      "status": "success",
+      "mode": "read_only",
+      "arctic": {
+        "shop_id": "344939301",
+        "item_id": "23493283907",
+        "name": "Mini Ar Condicionado Portátil Arctic Air Cooler Umidificador Climatizador Luz Led USB Ar puro",
+        "shop_name": "Mix de Produtos",
+        "offerLink": "https://s.shopee.com.br/7pv31eaR0h",
+        "image": "https://cf.shopee.com.br/file/sg-11134201-7rdwx-m0ak98sx50iudc",
+        "image_distance": {
+          "phash": 40,
+          "dhash": 34,
+          "ahash": 39
+        },
+        "strong_visual_match": false
+      },
+      "kapbom": {
+        "shop_id": "1634402287",
+        "item_id": "23694616922",
+        "name": "Alto-falante bluetooth portátil 50W- KAPBOM KA-8955 com luz RGB e à prova d'água TWS som poderoso e led limpo",
+        "shop_name": "almeidasantoseletronicos",
+        "offerLink": "https://s.shopee.com.br/6q2VpoeAmL",
+        "image": "https://cf.shopee.com.br/file/br-11134207-81z1k-mg69l6rb3213f3",
+        "image_distance": {
+          "phash": 36,
+          "dhash": 36,
+          "ahash": 19
+        },
+        "strong_visual_match": false
+      },
+      "warnings": [
+        "API title and image differ from WP; no original seller confirmed",
+        "Shopee API offer links not independently checked by redirect on these two",
+        "Listing snapshot not evidence of stock or price at publication"
+      ]
+    }
+  },
+  "wordpress_current": {
+    "published_count": 37,
+    "categories": [
+      {
+        "id": 3,
+        "name": "Tecnologia",
+        "count": 15
+      },
+      {
+        "id": 1,
+        "name": "Guias de Compra",
+        "count": 22
+      },
+      {
+        "id": 20,
+        "name": "Ar-condicionado",
+        "count": 0
+      }
+    ],
+    "completed_post_ids": [
+      260,
+      314,
+      311,
+      278,
+      256,
+      138,
+      28
+    ],
+    "pending": [
+      {
+        "id": 29,
+        "name": "Arctic Air Cooler portátil",
+        "wp_original_modified": "2026-10-17T15:39:40",
+        "featured_media": 73,
+        "verified_same_as_backup": true,
+        "backup": "affiliate_hub_v31/backups/C127_RADAR_WP_POST_29_ORIGINAL_2026-11-23.json",
+        "status": "PENDING_NO_CONFIRMED_SAME_PRODUCT_OFFER"
+      },
+      {
+        "id": 25,
+        "name": "Caixa de som Kapbom KA-8955",
+        "wp_original_modified": "2026-10-17T15:39:11",
+        "featured_media": 69,
+        "verified_same_as_backup": true,
+        "backup": "affiliate_hub_v31/backups/C128_RADAR_WP_POST_25_ORIGINAL_2026-11-23.json",
+        "status": "PENDING_NO_CONFIRMED_SAME_PRODUCT_OFFER"
+      },
+      {
+        "id": 24,
+        "name": "Luz RGB portátil",
+        "wp_original_modified": "2026-10-17T15:39:03",
+        "featured_media": 67,
+        "verified_same_as_backup": true,
+        "backup": "affiliate_hub_v31/backups/C129_RADAR_WP_POST_24_ORIGINAL_2026-11-23.json",
+        "status": "PENDING_NO_CONFIRMED_SAME_PRODUCT_OFFER"
+      }
+    ]
+  },
+  "safety": {
+    "legacy_auto_live": false,
+    "legacy_if_false": true,
+    "config_auto_publish": false,
+    "wp_post_writes_this_stage": [
+      28
+    ],
+    "no_r2_d1_mutations": true,
+    "no_conversion_api_mutations": true,
+    "universal_suite_remaining_historical_failures": 8
+  },
+  "next_actions": [
+    "If needed, inspect alternative official product photos and compare full model identifiers; no title-only matching",
+    "Require campaign-specific affiliate verified same variant and product image before inserting CTA",
+    "Do not reedit 7 completed posts without new evidence",
+    "Do not classify Arctic mini evaporative device as real AC in empty category 20",
+    "Do not claim universal V31 CI is green"
+  ],
+  "recovery_code": "V31-RADAR-C126-20261123-SEVEN-VERIFIED-THREE-OFFER-PENDING"
+}
