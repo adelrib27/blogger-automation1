@@ -24,7 +24,7 @@ class DraftCycleOutcomeTests(unittest.TestCase):
     def test_budget_exhaustion_does_not_count_as_draft(self):
         value = classify("NO_NEW_OFFER", "research_budget_exhausted")
         self.assertEqual(value["draft_outcome"], "BLOCKED_RESEARCH_BUDGET")
-        self.assertFalse(value["new_draft_confirmed"])
+        self.assertFalse(value["draft_verified_or_reconciled"])
 
     def test_source_rejection_is_not_operational_delivery(self):
         value = classify("NO_NEW_OFFER", "no_new_offer_with_trusted_source")
@@ -37,7 +37,7 @@ class DraftCycleOutcomeTests(unittest.TestCase):
     def test_ready_with_complete_matching_proof_confirms_draft(self):
         value = classify("READY", proof=good_proof())
         self.assertEqual(value["draft_outcome"], "DRAFT_VERIFIED")
-        self.assertTrue(value["new_draft_confirmed"])
+        self.assertTrue(value["draft_verified_or_reconciled"])
         self.assertFalse(value["automatic_live_confirmation"])
 
     def test_success_without_proof_fails_closed(self):
