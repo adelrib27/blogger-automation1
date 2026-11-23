@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-23",
-  "last_updated_source": "C105_RADAR_TECH_WORDPRESS_ONLY_OWNER_DECISION",
+  "last_updated_source": "C106_RADAR_TECH_WORDPRESS_REMOVE_4_UNRELATED_CATEGORIES_TECH_ONLY_ROUTE",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1256,5 +1256,65 @@
     "routing_code_changed": false,
     "live_automation_activated": false,
     "next_step": "before restarting scheduled editorial, technically disable Portal Radar Tech Blogger route, test routing, archive 17 articles, assess search/backlinks and plan safe URL handling"
+  },
+  "c106_radar_tech_category_cleanup": {
+    "completed": true,
+    "url": "https://radartechbr.com.br/",
+    "checkpoint": "affiliate_hub_v31/CHECKPOINT_C106_RADAR_TECH_LIMPEZA_CATEGORIAS_CONCLUIDA_2026-11-23.md",
+    "categories_removed": [
+      {
+        "id": 6,
+        "name": "Moda & Beleza"
+      },
+      {
+        "id": 5,
+        "name": "Cozinha & Utilidades"
+      },
+      {
+        "id": 4,
+        "name": "Casa & Decoração"
+      },
+      {
+        "id": 7,
+        "name": "Ferramentas & Automotivo"
+      }
+    ],
+    "remaining_categories": [
+      {
+        "id": 1,
+        "name": "Guias de Compra",
+        "published": 23,
+        "drafts": 14
+      },
+      {
+        "id": 3,
+        "name": "Tecnologia",
+        "published": 14,
+        "drafts": 1
+      }
+    ],
+    "posts_reclassified": [
+      28,
+      27,
+      256,
+      31,
+      30,
+      22
+    ],
+    "posts_total": 52,
+    "published_total": 37,
+    "draft_total": 15,
+    "all_post_ids_titles_urls_slugs_status_preserved": true,
+    "original_taxonomy_backup": "affiliate_hub_v31/backups/C106_RADAR_TECH_CATEGORY_INVENTORY_BEFORE_2026-11-23.json",
+    "routes_backup": "affiliate_hub_v31/backups/C106_RADAR_TECH_ROUTES_BEFORE_NICHE_LOCK_2026-11-23.json",
+    "allowed_niches_now": [
+      "tecnologia/gadgets"
+    ],
+    "allowed_niches_before_count": 9,
+    "auto_live_unmodified_off": true,
+    "other_19_routes_unmodified": true,
+    "article_deletions": 0,
+    "site_deletions": 0,
+    "followup": "23 published and 14 draft out-of-niche articles still temporarily in Guias de Compra, assess GSC and plan individual content migration/retirement before claiming site purely tech"
   }
 }
