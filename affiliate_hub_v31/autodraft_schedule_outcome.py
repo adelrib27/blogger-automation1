@@ -56,6 +56,6 @@ def summarize_draft_cycle(*, site_key: str, verification_receipt: str,
         "live_job": live_job,
         "draft_verified_or_reconciled": outcome == "DRAFT_VERIFIED",
         "new_post_creation_unproven_by_summary": True,
-        "automatic_live_confirmation": False,
+        "automatic_live_confirmation": None,
         "note": "O resultado de um job SUCCESS não prova criação de DRAFT nem publicação LIVE",
     }
