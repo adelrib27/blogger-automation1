@@ -32,7 +32,7 @@ PATHS = {
     },
 }
 ROOT = Path(__file__).resolve().parent.parent
-MAX_RUNS = 60
+MAX_RUNS = 5
 MAX_JOBS = 100
 
 
@@ -152,7 +152,7 @@ def audit(*, token: str) -> dict:
         # A query NÃO chama rerun nem dispatch e verifica o evento schedule.
         response = _get_json(
             "/repos/" + REPO + "/actions/workflows/"
-            + quote(cfg["workflow"], safe="") + "/runs?event=schedule&per_page=60",
+            + quote(cfg["workflow"], safe="") + "/runs?event=schedule&per_page=5",
             token)
         runs = response.get("workflow_runs")
         if not isinstance(runs, list):
