@@ -81,6 +81,11 @@ class ScopeGuardContractTests(unittest.TestCase):
         self.assertIn("every active", method["allowed_for"])
         self.assertFalse(any(k.startswith("vida_pet_") for k in POLICY["rollout"]))
         self.assertEqual(POLICY["simulation_gate"]["target_cases_per_validation_cycle"], 50)
+        # A metodologia inspiradora NÃO é blog, projeto nem destino editorial do V31.
+        self.assertNotIn("8052455848487624244",
+                         [x["id"] for x in POLICY["blogger"]["current_targets"]])
+        self.assertEqual(len(POLICY["blogger"]["current_targets"]), 4)
+        self.assertEqual(POLICY["snapshot_counts"]["total_current_targets"], 7)
 
     def test_policy_tampering_fails_closed(self):
         tampered = copy.deepcopy(POLICY)
