@@ -61,3 +61,14 @@ Gates para retomar após este checkpoint:
 
 ## Continuidade segura
 Leitura obrigatória no próximo ciclo: `V31_CONTINUAR_AQUI.md` -> `CONTINUIDADE_ESTADO.json` -> ESTE checkpoint C134 -> C133, Actions recentes e estado real APIs. Não repetir PRs #134–#137. Trabalhar em branch, PREVIEW antes da próxima mutação e só mesclar após CI verde. **LIVE OFF** até autorização expressa.
+
+## 6. Inventário CMS adicional autenticado (READ ONLY, 23/11/2026)
+A revisão pontual de rotas prioritárias identificou os alvos reais sem habilitar publicação:
+- **Blogger Cozinha Sem Complicação:** API Blogger GET blog ID `3552757910439359679` confirma `https://cozinha-sem-complicacao.blogspot.com/` e título; não implica perfil independente ou pedido habilitado.
+- **Blogger Estilo no Dia a Dia:** GET ID `4830103887652146866`, título API **Estilo no Dia a Dia e Acessórios**, URL `https://estilo-no-dia-a-dia-e-acessorios.blogspot.com/`; rótulo do portfólio resumido difere do título completo, mas ID corresponde. Não renomear nem inferir campanha.
+- **Blogger Limpeza Inteligente:** GET ID `7757953554206491487`, URL `https://limpeza-inteligente.blogspot.com/`.
+- **Blogger Vida Pet Prática:** GET ID `8052455848487624244`, URL `https://vida-pet-pratica.blogspot.com/`; verificação de blog/URL **não comprova** campanha de afiliado.
+- **WordPress Oficina & Garagem:** conexão REST autenticada confirmou 3 DRAFTs históricos (IDs 17, 15, 13) e 17 posts LIVE totais; último LIVE listado #129 de 22/11. Nenhum post editado.
+- **WordPress Radar Tech BR:** conexão REST autenticada confirmou 19 DRAFTs, IDs recentes 355/354/353 (23/11), e 37 posts LIVE totais; último LIVE listado #326 de 22/11. Nenhum post editado.
+- **WordPress Casa e Decoração:** REST GET `/wp/v2/posts/321?context=edit` confirmou `status=draft` e conteúdo com `data-v31-product-key` `shopee:400124163:42079451217`, imagem exata de oferta, link Shopee com `nofollow sponsored`, aviso de afiliado e link interno do mesmo domínio. Não declarar SHA remota idêntica sem cotejo byte a byte com envelope R2; o GET confirma estado e elementos comerciais.
+- Observação: os DRAFTs anteriores existentes nesses CMS não são prova de que os seis sites restantes tenham perfis autónomos homologados, nem autorização para LIVE. Os contadores de posts refletem as respostas das APIs no instante da consulta.
