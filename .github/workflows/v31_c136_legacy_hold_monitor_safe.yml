@@ -1,5 +1,5 @@
 name: V31 C136 — Monitor SAFE dos crons legados e DRAFTs
-# C136 retry diagnóstica após primeira execução GET falhar fechada; sem ampliar permissões.
+# C136: janela de runs limitada a 5 após erro github_response_too_large; sem ampliar permissões.
 
 on:
   push:
