@@ -48,6 +48,8 @@ jobs:
         run: |
           python -m compileall -q affiliate_hub_v31
           python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: C140 — 50 simulações SAFE antes de acessar a fila comercial
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50
       - name: Calcular candidatos por tema/campanha, sem mutations
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}

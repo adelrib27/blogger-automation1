@@ -17,6 +17,7 @@ from .editorial import EditorialError, make_brief
 from .future_site_intake import preview_future_site
 from .r2_state import R2State, verify_database
 from .routing import sites
+from .editorial_scope_validation import load_policy, scope_status
 
 class SiteLaunchError(ValueError):
     pass
@@ -46,6 +47,11 @@ def preview_site_launch(
         if not isinstance(site_key,str):
             raise SiteLaunchError("site_key_invalid")
         registered=sites().get(site_key)
+        # C140: exclusão expressa aplica-se até aos fluxos manuais de prévia
+        # e conversão; rota histórica não é permissão para usar o blog.
+        if (registered is not None and
+                scope_status(load_policy(), registered) == "EXCLUDED_BY_OWNER"):
+            raise SiteLaunchError("owner_excluded_editorial_site")
         if registered is None:
             raise SiteLaunchError("site_not_registered")
         if registered["platform"]!=platform or registered["publish_enabled"] is not False:

@@ -31,13 +31,6 @@
         "id": "3552757910439359679",
         "name": "Cozinha Sem Complicação",
         "route_registered": true
-      },
-      {
-        "site_key": "blogger_vida_pet_pratica",
-        "id": "8052455848487624244",
-        "name": "Vida Pet Prática",
-        "route_registered": false,
-        "campaign_verified_for_v31": false
       }
     ],
     "exclusions": [
@@ -50,8 +43,8 @@
         "do_not_delete_without_separate_command": true
       }
     ],
-    "legacy_inventory_note": "The 2026-11-23 16-accessible-source-blog backup is historical and must not restrict current scope or re-enroll old source blogs as active without a fresh CMS check.",
-    "future_connected_active_blogs": "discover_and_validate_on_following_inventory_sync"
+    "legacy_inventory_note": "Blogger Bridge V2 retrieved six connected identities on 2026-11-23, but only four are in the universal editorial rollout. Ar-Condicionado sem Dúvidas is expressly excluded. The Vida Pet Prática material is engineering reference only, NOT a V31 editorial target/project/blog/workflow; do not create a route, campaign, special writer, or rollout for it. The original connected CMS record is untouched. Historical source blogs are not automatically eligible.",
+    "future_connected_active_blogs": "discover_verify_authenticated_cms_identity_then_explicitly_update_scope; reference_only_material_is_not_an_editorial_site_candidate"
   },
   "wordpress": {
     "source": "Connected WP REST authenticated public posts checks 2026-11-23",
@@ -91,18 +84,58 @@
     "global_third_party_writes_now_authorized": false,
     "do_not_activate_live_during_onboarding": true,
     "live_activation": "REQUIRES_SUCCESSFUL_E2E_HOMOLOGATION_AND_EXPLICIT_FINAL_USER_AUTHORIZATION",
-    "do_not_invent_vida_pet_campaign": true,
     "do_not_consume_colliding_casa_ready_sku": true,
     "separate_projects": [
       "Pinterest",
       "Mercado Livre"
-    ]
+    ],
+    "do_not_invent_unverified_campaign_for_any_site": true,
+    "generic_site_identity_gate": "Every new Blogger/WordPress editorial destination must be a user-authorized active CMS site verified and explicitly added to the universal policy; named methodological references are not destinations."
   },
   "snapshot_counts": {
-    "blogger_targets": 5,
+    "blogger_targets": 4,
     "blogger_excluded": 1,
     "wordpress_targets": 3,
-    "total_current_targets": 8
+    "total_current_targets": 7
   },
-  "notes": "Declarative strategy decision, not an approval to create/post articles immediately. Target membership must be refreshed against authenticated current CMS evidence. Other Blogger accounts not connected were not enumerated."
+  "notes": "C140 clarification overrides C139 former count: four current Blogger editorial targets plus three active WordPress targets; Ar-Condicionado excluded. Vida Pet Prática is ONLY architectural reference, not a V31 blog/site/project or individual pipeline; its real external CMS instance is not a V31 rollout destination. No automatic LIVE permission.",
+  "universal_reference_methodology": {
+    "origin_context": "C69 merger of the ideas/methods from a prior Vida Pet Prática reference into V31 universally; the reference itself is NOT a V31 editorial site, pipeline or separate project",
+    "architectural_status": "FUSED_INTO_ONE_UNIVERSAL_BLOGGER_WORDPRESS_V31_ENGINE_NOT_SEPARATE_SUBPROJECT",
+    "components": [
+      "Evidence Engine",
+      "exact SKU and model identity",
+      "manufacturer or authorized independent sources",
+      "two exact evidence checks when applicable",
+      "trusted source whitelist",
+      "fixed seven-day evidence TTL without read renewal",
+      "Candidate Failover",
+      "Evergreen editorial planning",
+      "SKU and angle cooldown",
+      "cross-site duplicate guard",
+      "SearchBudget",
+      "D1 READY buffer",
+      "strict site_key+campaign isolation"
+    ],
+    "allowed_for": "every active, independently verified Blogger or WordPress site and future sites, regardless of niche",
+    "prohibited": [
+      "special Vida Pet editorial writer in V31",
+      "separate pet-only pipeline",
+      "pet-only policy exemptions",
+      "special rate budget or priority for pet-related site",
+      "copying old Vida Pet storage or legacy project state into V31 without evidence",
+      "treating the Vida Pet Prática reference as an active V31 blog/site or onboarding target",
+      "setting up special 'Vida Pet Prática' profiles, requests, sources, campaigns, writers, quotas or posts in V31"
+    ],
+    "treatment_of_any_current_blog": "Same universal route, credential, campaign, independent evidence, SEO, idempotence and DRAFT gates; no name-based exemptions"
+  },
+  "simulation_gate": {
+    "minimum_cases_per_validation_cycle": 10,
+    "target_cases_per_validation_cycle": 50,
+    "maximum_cases_per_validation_cycle": 50,
+    "mode": "OFFLINE_ONLY_NO_NETWORK_NO_MUTATIONS",
+    "mandatory_before": "critical editorial conversion or DRAFT generation cycles after integration",
+    "offline_success_does_not_authorize_live": true,
+    "source": "user_explicit_2026_11_23"
+  }
 }

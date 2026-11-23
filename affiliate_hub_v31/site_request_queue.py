@@ -21,6 +21,7 @@ from .converter import ConversionError,convert_one
 from .d1_http_runner import CloudflareD1HTTPRunner, D1HTTPError
 from .r2_state import R2State,verify_database
 from .routing import sites
+from .editorial_scope_validation import is_route_in_active_scope
 from .site_launch_plan import preview_site_launch
 from .verified_supply import conversion_priority_keys
 
@@ -71,6 +72,10 @@ def load_requests(directory:Path=REQUESTS_DIR)->list[dict]:
         if type(doc["enabled"]) is not bool:
             raise RequestQueueError("request_enabled_invalid")
         if doc["enabled"]:
+            # C140: nenhuma rota antiga/excluída nem blog não autenticado entra
+            # no conversor ou nos writers por engano. Vale para TODO nicho.
+            if not is_route_in_active_scope(site):
+                raise RequestQueueError("site_outside_verified_active_scope")
             entries.append(doc)
     return entries
 
