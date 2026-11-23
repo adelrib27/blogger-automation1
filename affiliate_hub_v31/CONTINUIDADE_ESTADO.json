@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-23",
-  "last_updated_source": "C104_GSC_FIVE_V31_PROPERTIES_SEO_REAL_DATA_READ_ONLY",
+  "last_updated_source": "C105_RADAR_TECH_WORDPRESS_ONLY_OWNER_DECISION",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1236,5 +1236,25 @@
     "site_edits": 0,
     "automation_live_touched": false,
     "next_priority": "DIAGNOSE_INDEXING_CASA_WP_AND_ACHADOS_REDIRECT_BEFORE_SCALING"
+  },
+  "c105_radar_tech_portfolio": {
+    "checkpoint": "affiliate_hub_v31/CHECKPOINT_C105_DECISAO_RADAR_TECH_WORDPRESS_UNICO_2026-11-23.md",
+    "owner_decision": "KEEP_ONLY_RADAR_TECH_BR_WORDPRESS_FOR_NEW_TECH_EDITORIAL",
+    "primary": {
+      "platform": "wordpress",
+      "url": "https://radartechbr.com.br/"
+    },
+    "retire_planned": {
+      "platform": "blogger",
+      "name": "Portal Radar Tech",
+      "blog_id": "7487888217273188851",
+      "url": "https://portalradartechbr.blogspot.com/",
+      "posts_before_retirement": 17,
+      "status": "NO_NEW_ARTICLES_PLAN_DECOMMISSION"
+    },
+    "website_deletions_performed": 0,
+    "routing_code_changed": false,
+    "live_automation_activated": false,
+    "next_step": "before restarting scheduled editorial, technically disable Portal Radar Tech Blogger route, test routing, archive 17 articles, assess search/backlinks and plan safe URL handling"
   }
 }
