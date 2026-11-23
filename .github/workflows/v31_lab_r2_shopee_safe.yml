@@ -1,0 +1,60 @@
+name: V31 LAB R2 — Shopee R56 SAFE (sem publicar)
+
+on:
+  push:
+    branches:
+      - lab/v31-r56-replicacao-shopee-safe
+    paths:
+      - 'v31_master/**'
+      - '.github/workflows/v31_lab_r2_shopee_safe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-r56-labr2-shopee-safe
+  cancel-in-progress: false
+
+jobs:
+  safe-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar perfil V31 e testes offline
+        run: |
+          set -euo pipefail
+          python -m py_compile v31_master/replication_safe.py v31_master/shopee_r2_safe.py
+          python v31_master/replication_safe.py --profile v31_master/profiles/lab_r2_v31_r52_r55.json
+          python v31_master/shopee_r2_safe.py --self-test
+      - name: Consultar Shopee Affiliate API sem gravar Blogger
+        run: |
+          set -euo pipefail
+          python v31_master/shopee_r2_safe.py --out-dir "$RUNNER_TEMP/v31_r2_shopee_safe"
+      - name: Expor HTML revisado para importação via conector Blogger
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          html=(Path(os.environ['RUNNER_TEMP']) / 'v31_r2_shopee_safe' / 'v31_r2_store.html').read_text(encoding='utf-8')
+          assert html.count('data-item-id=') == 16
+          assert html.count('rel="nofollow sponsored noopener"') == 32
+          assert not any(x in html for x in ('SHOPEE_SECRET', 'SHOPEE_APP_ID', '<script'))
+          print('V31_R56_STOREFILE_JSON=' + json.dumps({'blog_id': '8476663092477971560', 'html': html}, ensure_ascii=True, separators=(',', ':')))
+          PY
+      - name: Artefatos de revisão — somente candidatos reais
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-r56-labr2-shopee-safe
+          path: ${{ runner.temp }}/v31_r2_shopee_safe/
+          if-no-files-found: error
+          retention-days: 7
