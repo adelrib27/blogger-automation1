@@ -81,8 +81,7 @@ jobs:
             echo "Executando modo de teste direcionado/fact-safe em RASCUNHO."
             python src/main_wordpress_teste_seguro.py
           else
-            echo "Executando fluxo geral com publicação automática conforme config/wordpress.json."
-            python src/main_wordpress_auto.py
+            echo "C114 SAFE: fluxo geral legado bloqueado; use teste direcionado em rascunho ou gerador V31 DRAFT."
           fi
 
       - name: Verificar alterações no controle do WordPress
