@@ -2,12 +2,9 @@ name: Ventiladores em Foco — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "35 9 23 * *"
-      timezone: "America/Recife"
-  push:
-    paths:
-      - "ventiladores_store/store_live_kickoff.txt"
+
+# V31: site de origem em consolidação para cinco Blogger. Sem gatilhos
+# schedule/push. Preserva apenas operação MANUAL de recuperação.
 
 permissions:
   contents: write

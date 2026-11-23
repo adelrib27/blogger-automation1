@@ -2,12 +2,9 @@ name: Eletroportáteis na Cozinha — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "5 9 12 * *"
-      timezone: "America/Recife"
-  push:
-    paths:
-      - "eletroportateis_store/store_live_kickoff.txt"
+
+# V31: site de origem em consolidação para cinco Blogger. Sem gatilhos
+# schedule/push. Preserva apenas operação MANUAL de recuperação.
 
 permissions:
   contents: write

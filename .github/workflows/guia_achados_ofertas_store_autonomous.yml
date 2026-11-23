@@ -2,9 +2,9 @@ name: Guia de Achados & Ofertas — Loja Shopee LIVE Controlada
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "5 10 15 * *"
-      timezone: "America/Recife"
+
+# V31: site de origem em consolidação para cinco Blogger. Sem gatilhos
+# schedule/push. Preserva apenas operação MANUAL de recuperação.
 
 permissions:
   contents: write
