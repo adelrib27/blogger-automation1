@@ -36,8 +36,7 @@
         "site_key": "blogger_vida_pet_pratica",
         "id": "8052455848487624244",
         "name": "Vida Pet Prática",
-        "route_registered": false,
-        "campaign_verified_for_v31": false
+        "route_registered": false
       }
     ],
     "exclusions": [
@@ -91,12 +90,13 @@
     "global_third_party_writes_now_authorized": false,
     "do_not_activate_live_during_onboarding": true,
     "live_activation": "REQUIRES_SUCCESSFUL_E2E_HOMOLOGATION_AND_EXPLICIT_FINAL_USER_AUTHORIZATION",
-    "do_not_invent_vida_pet_campaign": true,
     "do_not_consume_colliding_casa_ready_sku": true,
     "separate_projects": [
       "Pinterest",
       "Mercado Livre"
-    ]
+    ],
+    "do_not_invent_unverified_campaign_for_any_site": true,
+    "generic_site_identity_gate": "Exact platform+site_key+identifier identity from authenticated inventory. An existing blog without a verified V31 route/campaign remains blocked by the same universal rules as any other; no special cases."
   },
   "snapshot_counts": {
     "blogger_targets": 5,
@@ -104,5 +104,42 @@
     "wordpress_targets": 3,
     "total_current_targets": 8
   },
-  "notes": "Declarative strategy decision, not an approval to create/post articles immediately. Target membership must be refreshed against authenticated current CMS evidence. Other Blogger accounts not connected were not enumerated."
+  "notes": "All connected active CMS blogs are inventory candidates, not preapproved to generate articles. A missing/unknown campaign or route is a generic universal blocker, not a special case. 50 offline simulations do not replace real D1/R2/CMS homologation.",
+  "universal_reference_methodology": {
+    "origin_context": "C69 reuse of engineering practices first explored with Vida Pet Prática",
+    "architectural_status": "FUSED_INTO_ONE_UNIVERSAL_BLOGGER_WORDPRESS_V31_ENGINE_NOT_SEPARATE_SUBPROJECT",
+    "components": [
+      "Evidence Engine",
+      "exact SKU and model identity",
+      "manufacturer or authorized independent sources",
+      "two exact evidence checks when applicable",
+      "trusted source whitelist",
+      "fixed seven-day evidence TTL without read renewal",
+      "Candidate Failover",
+      "Evergreen editorial planning",
+      "SKU and angle cooldown",
+      "cross-site duplicate guard",
+      "SearchBudget",
+      "D1 READY buffer",
+      "strict site_key+campaign isolation"
+    ],
+    "allowed_for": "every active, independently verified Blogger or WordPress site and future sites, regardless of niche",
+    "prohibited": [
+      "special Vida Pet editorial writer in V31",
+      "separate pet-only pipeline",
+      "pet-only policy exemptions",
+      "special rate budget or priority for pet-related site",
+      "copying old Vida Pet storage or legacy project state into V31 without evidence"
+    ],
+    "treatment_of_any_current_blog": "Same universal route, credential, campaign, independent evidence, SEO, idempotence and DRAFT gates; no name-based exemptions"
+  },
+  "simulation_gate": {
+    "minimum_cases_per_validation_cycle": 10,
+    "target_cases_per_validation_cycle": 50,
+    "maximum_cases_per_validation_cycle": 50,
+    "mode": "OFFLINE_ONLY_NO_NETWORK_NO_MUTATIONS",
+    "mandatory_before": "critical editorial conversion or DRAFT generation cycles after integration",
+    "offline_success_does_not_authorize_live": true,
+    "source": "user_explicit_2026_11_23"
+  }
 }
