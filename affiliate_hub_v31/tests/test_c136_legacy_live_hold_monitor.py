@@ -106,6 +106,7 @@ class C136LegacyHoldMonitorTests(unittest.TestCase):
         self.assertFalse(result["automatic_live_authorized"])
         self.assertEqual(len(paths), 4)
         self.assertTrue(all("/actions/" in x for x in paths))
+        self.assertTrue(all("per_page=5" in x for x in paths if "/runs?" in x))
 
     def test_pending_does_not_imply_all_verified(self):
         def fake_get(path, token):
