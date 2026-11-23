@@ -1,0 +1,36 @@
+name: "V31 C123 Radar - Shopee quatro produtos READ ONLY"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c123_radar_shopee_four_keywords_readonly.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-shopee-queries-safe
+  cancel-in-progress: false
+jobs:
+  search:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Compilar consulta direcionada
+        run: python -m py_compile affiliate_hub_v31/c123_shopee_four_keywords_readonly.py
+      - name: Buscar Shopee API com limite de quatro consultas sem mutações
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: python -m affiliate_hub_v31.c123_shopee_four_keywords_readonly
+      - name: Arquivo de candidatos para revisão independente
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c123-radar-four-shopee-search-candidates
+          path: c123_radar_four_shopee_candidates.json
+          if-no-files-found: ignore
+          retention-days: 7
