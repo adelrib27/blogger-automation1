@@ -1,0 +1,42 @@
+name: "V31 C122 Radar - 4 ofertas R2 READ ONLY"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/v31_c122_radar_four_affiliates_readonly.yml"
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  recover:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: v31-editorial-safe
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Preparar dependência R2 sem uso de API de conversão
+        run: |
+          python -m pip install "boto3>=1.36,<2"
+          python -m py_compile affiliate_hub_v31/c122_radar_four_affiliates_readonly.py
+      - name: Conferir biblioteca privada sem modificar arquivos remotos
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: |
+          python -m affiliate_hub_v31.c122_radar_four_affiliates_readonly
+      - name: Arquivar somente o relatório de pesquisa, sem credenciais
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c122-radar-four-r2-candidates
+          path: c122_radar_four_catalog_candidates.json
+          if-no-files-found: ignore
+          retention-days: 7
