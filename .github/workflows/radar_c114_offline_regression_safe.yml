@@ -1,0 +1,46 @@
+name: Radar Tech BR — C114 Regression SAFE (sem publicacao)
+on:
+  pull_request:
+    paths:
+      - "radar_tech_br/src/**"
+      - ".github/workflows/radar_editorial_vnext_*.yml"
+      - ".github/workflows/radar_c114_offline_regression_safe.yml"
+      - "config/wordpress.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-c114:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compilar e testar somente código local, sem tokens ou rede
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile radar_tech_br/src/*.py
+          export PYTHONPATH=.:radar_tech_br/src:src
+          python radar_tech_br/src/self_test.py
+          python radar_tech_br/src/cta_card_self_test.py
+          python radar_tech_br/src/word_count_threshold_self_test.py
+          python radar_tech_br/src/c114_quality_regression_self_test.py
+      - name: Validar interlock LIVE do legado
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path(".github/workflows/radar_editorial_vnext_autonomous.yml").read_text()
+          assert "if: ${{ false }}" in s
+          assert 'RADAR_LIVE_PUBLISH_ENABLED: "false"' in s
+          assert "RADAR_WORDPRESS_STATUS: draft" in s
+          from pathlib import Path
+          p=Path("radar_tech_br/src/publish_generated.py").read_text()
+          assert "OWNER_APPROVED" in p
+          print("C114: LIVE fail-closed verificado")
+          PY
