@@ -36,7 +36,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path(".github/workflows/radar_editorial_vnext_autonomous.yml").read_text()
-          assert "if: ${{ false }}" in s
+          assert ("if: " + chr(36) + "{{ false }}") in s
           assert 'RADAR_LIVE_PUBLISH_ENABLED: "false"' in s
           assert "RADAR_WORDPRESS_STATUS: draft" in s
           from pathlib import Path
