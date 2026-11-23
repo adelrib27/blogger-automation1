@@ -38,6 +38,13 @@ class FakeStorage:
 
 class RequestQueueTests(unittest.TestCase):
     def setUp(self):
+        # Fixtures sintéticas do C37 são blogs hipotéticos (não o inventário
+        # CMS atual). Mockar apenas escopo ativo aqui; testes C140 validam
+        # separadamente o guard real e a exclusão do proprietário.
+        check=patch("affiliate_hub_v31.site_request_queue.is_route_in_active_scope",
+                    return_value=True)
+        check.start()
+        self.addCleanup(check.stop)
         td=tempfile.TemporaryDirectory()
         self.addCleanup(td.cleanup)
         self.root=Path(td.name)
