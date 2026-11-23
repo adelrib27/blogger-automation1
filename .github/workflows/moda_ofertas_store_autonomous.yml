@@ -2,9 +2,9 @@ name: Moda e Ofertas — Loja Shopee 10:20
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "20 10 18 * *"
-      timezone: "America/Recife"
+
+# V31: site de origem em consolidação para cinco Blogger. Sem gatilhos
+# schedule/push. Preserva apenas operação MANUAL de recuperação.
 
 permissions:
   contents: write
