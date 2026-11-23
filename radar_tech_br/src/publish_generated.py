@@ -325,7 +325,7 @@ def append_history(history, item, article, post_id, url, source="automatic_gate"
 
 def main():
     if not ENABLED or not OWNER_APPROVED:
-        print("C114 SAFE: writer legado LIVE bloqueado (RADAR_LIVE_PUBLISH_ENABLED e autorização exclusiva são obrigatórios).")
+        print("C114 SAFE: publicação LIVE desativada; writer legado bloqueado (flag e aprovação exclusiva obrigatórias).")
         return
     if STATUS != "publish":
         raise RuntimeError("Trava de publicação: RADAR_WORDPRESS_STATUS deve ser publish")
