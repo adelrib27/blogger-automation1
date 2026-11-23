@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-23",
-  "last_updated_source": "C106_RADAR_TECH_WORDPRESS_REMOVE_4_UNRELATED_CATEGORIES_TECH_ONLY_ROUTE",
+  "last_updated_source": "C107_RADAR_TECH_FSE_HEADER_HOME_DEAD_MENUS_REMOVED_LIVE_VERIFIED",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1316,5 +1316,37 @@
     "article_deletions": 0,
     "site_deletions": 0,
     "followup": "23 published and 14 draft out-of-niche articles still temporarily in Guias de Compra, assess GSC and plan individual content migration/retirement before claiming site purely tech"
+  },
+  "c107_radar_tech_menus_cleanup": {
+    "completed": true,
+    "site": "https://radartechbr.com.br/",
+    "theme": "twentytwentyfive",
+    "type": "FSE WordPress template overrides, NOT classic WP menus",
+    "checkpoint": "affiliate_hub_v31/CHECKPOINT_C107_RADAR_TECH_MENUS_LIMPOS_LIVE_2026-11-23.md",
+    "header_original": "affiliate_hub_v31/backups/C107_RADAR_TECH_HEADER_LIVE_TEMPLATE_BEFORE_MENUS_2026-11-23.html",
+    "home_original": "affiliate_hub_v31/backups/C107_RADAR_TECH_HOME_LIVE_TEMPLATE_BEFORE_MENUS_2026-11-23.html",
+    "header_applied": "affiliate_hub_v31/exports/C107_RADAR_TECH_HEADER_TECH_ONLY_PREVIEW_2026-11-23.html",
+    "home_applied": "affiliate_hub_v31/exports/C107_RADAR_TECH_HOME_TECH_ONLY_PREVIEW_2026-11-23.html",
+    "wordpress_template_part_header_id": 66,
+    "wordpress_template_home_id": 42,
+    "deleted_category_slugs_which_menus_no_longer_link": [
+      "casa-decoracao",
+      "cozinha-utilidades",
+      "moda-beleza",
+      "ferramentas-automotivo"
+    ],
+    "navigation_now": [
+      "/loja/",
+      "/category/tecnologia/",
+      "/category/guias-de-compra/"
+    ],
+    "exact_db_content_verified": true,
+    "public_site_desktop_mobile_post_category_http200": true,
+    "published_posts_preserved": 37,
+    "drafts_preserved": 15,
+    "theme_file_source_still_has_old_links": true,
+    "attention": "FSE DB overrides correct public site now; filesystem theme files may restore obsolete menus if editor customizations reset. Out-of-niche posts still in Guias de Compra for later SEO-safe migration.",
+    "cms_post_deletions": 0,
+    "live_automation_touched": false
   }
 }
