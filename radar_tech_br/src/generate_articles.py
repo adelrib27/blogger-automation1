@@ -121,10 +121,7 @@ def parse_json(raw):
 def slug_category(name):
     return {
         "Tecnologia": "tecnologia",
-        "Casa & Decoração": "casa-decoracao",
-        "Cozinha & Utilidades": "cozinha-utilidades",
-        "Ferramentas & Automotivo": "ferramentas-automotivo",
-        "Moda & Beleza": "moda-beleza",
+        "Ar-condicionado": "tecnologia/ar-condicionado",
     }.get(name, "")
 
 
@@ -146,19 +143,19 @@ def editorial_plan_prompt(item):
 Use o produto real da Shopee apenas como ponto de partida para escolher UM ÚNICO TÍTULO EDITORIAL útil ao leitor. Tema e título são a mesma coisa: não crie um campo de tema separado.
 
 PRODUTO REAL: {item['product']}
+DADOS VERIFICÁVEIS DA OFERTA (podem estar incompletos): {json.dumps(item.get('product_evidence') or {}, ensure_ascii=False)}
 INTENÇÃO DA BUSCA: {item['source_keyword']}
 CATEGORIA: {item['category']}
 
 REGRAS:
-- O título editorial deve ter entre 35 e 60 caracteres.
-- Deve responder a uma necessidade, dúvida, comparação, escolha, uso ou organização coerente com a categoria e com o produto.
-- Não copie nem faça paráfrase rasa do título comercial.
-- Não inclua marca, loja, preço, desconto ou especificação técnica somente porque aparece no anúncio.
-- O conteúdo deve continuar útil mesmo que o leitor nunca clique no produto.
-- Não transforme automaticamente todo produto em review, ficha técnica ou "vale a pena comprar?".
-- Gere uma palavra-chave principal natural e coerente com o título.
-- Explique em uma frase qual é a necessidade do leitor e em outra como a classe do produto se conecta naturalmente ao assunto.
-- Não invente fatos ausentes do anúncio.
+- Escreva um título de busca natural entre 35 e 60 caracteres, com objeto e intenção claros.
+- Prefira perguntas reais como "Como escolher [produto]?" e "[produto] vale a pena?" somente quando o conteúdo puder responder com evidências; não invente ensaios ou avaliações.
+- Nunca produza "Melhores X até R$ Y" nem "A ou B" sem dois ou mais produtos comparáveis com preços e especificações verificadas. Este fluxo tem somente UMA oferta.
+- Não use títulos vagos iniciados com "Escolhendo", "Aparar pelos com", "Dicas gerais" ou superlativos não sustentados.
+- NÃO copie título de vendedor nem anuncie preço, avaliação, especificação ou estoque ausente.
+- A oferta Shopee será o objeto de referência factual, sem virar propaganda.
+- Gere uma palavra-chave natural, uma necessidade do leitor e a conexão ao modelo pesquisado, apenas como campos INTERNOS.
+- Jamais escreva "O leitor" no título ou na descrição pública. Não invente fatos ausentes.
 
 Responda SOMENTE em JSON válido:
 {{
@@ -205,6 +202,8 @@ def make_plan(item, raw=None):
     product_connection = re.sub(r"\s+", " ", str(data.get("product_connection") or "")).strip()
     if not 35 <= len(title) <= 60:
         raise RuntimeError(f"título editorial fora da faixa: {len(title)}")
+    if re.search(r"\bo leitor\b|^escolhendo\b|^aparar pelos com\b", title, re.I):
+        raise RuntimeError("título genérico ou interno recusado")
     if not keyword:
         raise RuntimeError("palavra-chave editorial ausente")
     if not reader_need or not product_connection:
@@ -218,10 +217,32 @@ def make_plan(item, raw=None):
 
 
 def meta_description(plan):
-    reader_need = str(plan.get("reader_need") or "").strip().rstrip(".")
-    keyword = str(plan.get("keyword") or "").strip()
-    text = f"{reader_need}. Veja critérios práticos sobre {keyword} e saiba o que conferir antes de escolher."
-    return cut_text(text, 155)
+    """Resumo PÚBLICO independente de reader_need; nunca publica instruções internas.
+
+    Frases completas são escolhidas conforme o tamanho do título; nenhuma
+    especificação, nota, preço ou experiência de teste é presumida.
+    """
+    title = re.sub(r"\s+", " ", str(plan.get("title") or "")).strip()
+    if not 25 <= len(title) <= 60 or re.search(r"\bo leitor\b", title, re.I):
+        raise RuntimeError("título indisponível para meta descrição")
+    prefix = title.rstrip(".")
+    if not prefix.endswith(("?", "!")):
+        prefix += "."
+    suffixes = (
+        "Confira especificações, compatibilidade e detalhes do anúncio antes de comprar.",
+        "Confira recursos, compatibilidade e limites do produto no anúncio antes de escolher.",
+        "Compare recursos, compatibilidade, limitações e o que verificar no anúncio antes da compra.",
+        "Compare critérios de escolha, limites de uso e informações presentes no anúncio antes da compra.",
+        "Veja o que conferir na ficha do produto, incluindo compatibilidade, recursos e limites da oferta.",
+        "Entenda os recursos, as limitações e os cuidados para verificar os detalhes da oferta antes da compra.",
+        "Confira recursos, possíveis incompatibilidades, limitações e os detalhes do anúncio do modelo antes de decidir.",
+        "Veja critérios de escolha, aspectos de compatibilidade, limites de uso e informações que precisam ser confirmadas no anúncio.",
+    )
+    candidates = [prefix + " " + tail for tail in suffixes]
+    candidates = [text for text in candidates if 140 <= len(text) <= 155]
+    if not candidates:
+        raise RuntimeError("meta descrição específica não alcançou 140–155 caracteres")
+    return min(candidates, key=lambda text: abs(len(text) - 148))
 
 
 def universal_article_rules(item):
@@ -232,12 +253,14 @@ def universal_article_rules(item):
         else ""
     )
     return f"""
-- 700 a 1400 palavras e pelo menos 5 H2 distintos; sem H1.
-- O artigo deve entregar valor por si só, mesmo sem clique no produto.
-- O produto é apenas uma opção relacionada; não escreva o artigo como página de venda, anúncio, review obrigatório ou ficha técnica.
-- O nome comercial do produto serve somente como contexto interno. NÃO repita no corpo a oferta específica, marca, modelo ou título comercial completo.
-- Quando for útil, fale da classe genérica do produto e de critérios reais de escolha.
-- Não copie nem repita o título comercial como título editorial ou dentro do corpo.
+- 700 a 1400 palavras; use de 4 a 7 H2 variados conforme a intenção, sem H1.
+- Responda à dúvida concreta do leitor; não escreva parágrafos que serviriam para qualquer produto.
+- Distinga explicitamente FATO CONFIRMADO, CRITÉRIO DE ESCOLHA e DADO A CONFERIR NO ANÚNCIO; nunca extrapole a ficha disponível.
+- Identifique o modelo de referência de maneira contextual quando útil, sem copiar o título comercial inteiro ou fazer propaganda.
+- Não afirme que houve teste, comparação, nota de avaliação, preço atual ou especificação sem campo verificável.
+- Sem alegações absolutas ou conclusões genéricas que repitam a abertura.
+- Não escreva "O leitor" em nenhum trecho destinado ao público.
+- Evite negritar a palavra-chave repetidamente; destaque apenas 2–5 termos informativos realmente úteis.
 - Não invente preço, desconto, estoque, entrega, potência, tensão, corrente, torque, capacidade, medidas, material, compatibilidade, certificação, garantia ou desempenho.
 - Quando um dado técnico for relevante e não estiver confirmado, oriente a conferir anúncio, ficha técnica ou manual.
 - Não diga que testamos, usamos ou comprovamos o produto.
@@ -267,6 +290,8 @@ PALAVRA-CHAVE PRINCIPAL: {plan['keyword']}
 NECESSIDADE DO LEITOR: {plan['reader_need']}
 CONEXÃO NATURAL DO PRODUTO: {plan['product_connection']}
 PRODUTO REAL DE REFERÊNCIA: {item['product']}
+DADOS OFICIAIS VERIFICADOS (ausência significa DESCONHECIDO): {json.dumps(item.get('product_evidence') or {}, ensure_ascii=False)}
+ID DA OFERTA: {item.get('shopee_item_id', '')}
 CATEGORIA: {item['category']}
 
 Escreva um artigo editorial informativo em português do Brasil, adequado à categoria indicada.
@@ -287,6 +312,7 @@ TÍTULO EDITORIAL ÚNICO: {plan['title']}
 PALAVRA-CHAVE PRINCIPAL: {plan['keyword']}
 CATEGORIA: {item['category']}
 PRODUTO REAL: {item['product']}
+DADOS VERIFICADOS: {json.dumps(item.get('product_evidence') or {}, ensure_ascii=False)}
 
 FALHAS DETECTADAS:
 {failure}
@@ -302,34 +328,22 @@ Responda SOMENTE com um novo fragmento HTML completo.
 
 
 def insert_contextual_blocks(editorial, item, cta_lead):
-    h2_matches = list(re.finditer(r"<h2\b[^>]*>.*?</h2>", editorial, flags=re.I | re.S))
-    if len(h2_matches) < 4:
-        raise RuntimeError("estrutura insuficiente para posicionar CTAs")
-    third_h2_start = h2_matches[2].start()
-    first_part = editorial[:third_h2_start].rstrip()
-    second_part = editorial[third_h2_start:].rstrip()
+    """Apenas UM bloco comercial; links internos usam histórico do mesmo site."""
+    if len(re.findall(r"<h2\b", editorial, re.I)) < 4:
+        raise RuntimeError("estrutura editorial insuficiente")
     cta = cta_block(item, cta_lead)
     cat_slug = slug_category(item.get("category"))
     internal = (
         f'<p><a href="/category/{cat_slug}/">Veja outros guias de {html.escape(str(item.get("category") or ""))}</a>.</p>'
-        if cat_slug
-        else ""
+        if cat_slug else ""
     )
-    pieces = [first_part, cta, second_part]
-    if internal:
-        pieces.append(internal)
-    # Links de posts reais do MESMO WordPress, verificados no histórico
-    # após resposta da API no momento da publicação anterior. Nenhuma
-    # URL externa ou de campanha é aceita aqui.
     related = from_published_history(
         ROOT / "radar_tech_br" / "data" / "publication_history.json",
-        blog_home_url=SITE_URL.rstrip("/")+"/",
+        blog_home_url=SITE_URL.rstrip("/") + "/",
         article_title=str(item.get("editorial_title") or item.get("topic") or ""),
-        category=str(item.get("category") or ""),limit=2)
-    if related:
-        pieces.append(related)
-    pieces.append(cta)
-    return "\n\n".join(x for x in pieces if x)
+        category=str(item.get("category") or ""), limit=2,
+    )
+    return "\n\n".join(x for x in (editorial, internal, related, cta) if x)
 
 
 def build(item, plan, raw, enforce=True, cta_lead=None, cta_generation_mode="test-or-fallback"):
@@ -341,14 +355,15 @@ def build(item, plan, raw, enforce=True, cta_lead=None, cta_generation_mode="tes
     article_item = {**item, "topic": title, "editorial_title": title}
     lead = validate_cta_lead(article_item, cta_lead or default_cta_lead(article_item))
     content = insert_contextual_blocks(editorial, article_item, lead)
+    description = meta_description(plan)
     article = {
         **article_item,
         "seo_title": title,
-        "meta_description": meta_description(plan),
+        "meta_description": description,
         "focus_keyword": plan["keyword"],
         "reader_need": plan["reader_need"],
         "product_connection": plan["product_connection"],
-        "excerpt": meta_description(plan),
+        "excerpt": description,
         "editorial_html": editorial,
         "content_html": content,
         "cta_lead": lead,

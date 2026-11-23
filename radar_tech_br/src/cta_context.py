@@ -42,6 +42,7 @@ TÍTULO DO ARTIGO: {plan['title']}
 NECESSIDADE DO LEITOR: {plan['reader_need']}
 CONEXÃO EDITORIAL: {plan['product_connection']}
 PRODUTO REAL DA SHOPEE: {item['product']}
+FATOS DA API (ausências são desconhecidas): {json.dumps(item.get('product_evidence') or {}, ensure_ascii=False)}
 
 REGRAS OBRRIGATÓRIAS:
 - Escreva EXATAMENTE 2 frases, entre 35 e 70 palavras no total.
@@ -51,7 +52,7 @@ REGRAS OBRRIGATÓRIAS:
 - Pode abreviar o nome comercial apenas de forma fiel, preservando tipo, marca e números realmente presentes no título do produto.
 - Não invente material, robustez, desempenho, finalidade específica, experiência de uso, teste, popularidade, certificação ou característica que não esteja explicitamente disponível.
 - Evite adjetivos exagerados e expressões como "imperdível", "maravilhoso", "incrível", "perfeito", "melhor", "excelente", "ideal", "promoção", "oferta", "corra", "aproveite" e equivalentes.
-- Não mencione preço, desconto, estoque, frete, urgência ou escassez.
+- Não mencione preço, desconto, estoque, frete, urgência ou escassez na chamada; preço observado, se verificado, será informado em campo separado pelo código.
 - Não use linguagem de venda agressiva.
 - Não escreva botão, link, HTML ou aviso de afiliado; o código insere esses elementos.
 
@@ -133,6 +134,42 @@ def _linked_lead(item, cta_lead, link):
     return linked
 
 
+def _money_brl(raw):
+    """Somente exibe preço numérico efetivamente presente no feed da oferta."""
+    try:
+        value = float(str(raw).replace(",", "."))
+        if not 0.01 <= value <= 1_000_000:
+            return ""
+        return "R$ " + f"{value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except (TypeError, ValueError, OverflowError):
+        return ""
+
+
+def _facts_html(item):
+    """Resumo opcional com proveniência; jamais inventa especificações ou reviews."""
+    facts = item.get("product_evidence")
+    if not isinstance(facts, dict):
+        return ""
+    lines = []
+    first, last = _money_brl(facts.get("priceMin")), _money_brl(facts.get("priceMax"))
+    day = re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(facts.get("source_date") or ""))
+    if first:
+        price = first if not last or last == first else f"{first} a {last}"
+        when = f" (consulta de {day.group(0)})" if day else " (valor observado no feed)"
+        lines.append(f"<li>Preço informado pela Shopee{when}: <strong>{html.escape(price)}</strong>. Confira o valor atual no anúncio.</li>")
+    try:
+        rating = float(facts.get("ratingStar"))
+        if 0 < rating <= 5:
+            lines.append(f"<li>Avaliação agregada informada na consulta: {rating:.1f}/5. Não substitui ler as avaliações reais.</li>")
+    except (TypeError, ValueError, OverflowError):
+        pass
+    shop = str(facts.get("shopName") or "").strip()
+    if shop and len(shop) <= 100:
+        lines.append(f"<li>Loja informada no feed: {html.escape(shop)}</li>")
+    lines.append("<li>Antes de escolher: confirme medidas, tensão, compatibilidade, garantia e disponibilidade diretamente no anúncio; características não confirmadas não são presumidas.</li>")
+    return '<ul class="rt-c114-factcheck" style="text-align:left;font-size:14px;line-height:1.7;">' + "".join(lines) + "</ul>"
+
+
 def cta_block(item, cta_lead):
     product = html.escape(str(item.get("product") or "Produto relacionado"))
     link = html.escape(str(item.get("affiliate_link") or ""), quote=True)
@@ -150,6 +187,7 @@ def cta_block(item, cta_lead):
             "</div>"
         )
 
+    facts_html = _facts_html(item)
     product_title = (
         f'<p class="{CTA_PRODUCT_TITLE_CLASS}" style="margin:0 0 14px;line-height:1.4;'
         'font-size:18px;font-weight:700;color:#111827;">'
@@ -164,6 +202,7 @@ def cta_block(item, cta_lead):
             "🛒 REFERÊNCIA RELACIONADA AO TEMA</p>",
             image,
             product_title,
+            facts_html,
             '<p style="margin:0 0 18px;line-height:1.65;font-family:\'Trebuchet MS\',\'Segoe UI\',Arial,sans-serif;'
             'font-size:21px;font-weight:700;color:#7C2D12;background:linear-gradient(135deg,#FFF7ED 0%,#FFFBEB 100%);'
             'border:1px solid #F6C66D;border-left:5px solid #F59E0B;border-radius:12px;padding:16px 18px;'

@@ -20,16 +20,16 @@ HISTORY = ROOT / "radar_tech_br" / "data" / "publication_history.json"
 LEGACY_QUEUE = ROOT / "data" / "fase3" / "fila_dia.json"
 WP_URL = "https://radartechbr.com.br"
 ENABLED = os.getenv("RADAR_LIVE_PUBLISH_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+# C114: mesmo que alguém reative workflow legado, LIVE exige autorização
+# operacional distinta e explícita, além do gate de qualidade do artigo.
+OWNER_APPROVED = os.getenv("RADAR_VNEXT_LIVE_OWNER_APPROVED", "false").strip().lower() == "true"
 LIMIT = max(1, min(int(os.getenv("RADAR_PUBLISH_LIMIT", "1")), 1))
 DAILY_CAP = max(1, min(int(os.getenv("RADAR_DAILY_PUBLISH_CAP", "5")), 5))
 STATUS = os.getenv("RADAR_WORDPRESS_STATUS", "draft").strip().lower()
 LOCAL_TZ = ZoneInfo("America/Sao_Paulo")
 CATEGORY_SLUGS = {
     "Tecnologia": "tecnologia",
-    "Casa & Decoração": "casa-decoracao",
-    "Cozinha & Utilidades": "cozinha-utilidades",
-    "Ferramentas & Automotivo": "ferramentas-automotivo",
-    "Moda & Beleza": "moda-beleza",
+    "Ar-condicionado": "ar-condicionado",
 }
 IMAGE_EXTENSIONS = {
     "image/jpeg": ".jpg",
@@ -103,6 +103,30 @@ def category_id(name):
     if not isinstance(rows, list) or not rows:
         raise RuntimeError("Categoria ausente no WordPress: " + name)
     return int(rows[0]["id"])
+
+
+def verify_affiliate_destination(url):
+    """Preflight obrigatório para LIVE; incerteza de rede/404/redirect bloqueia.
+
+    URLs aprovadas pelo formato também podem expirar. A verificação HTTP é
+    deliberadamente fail-closed; 403/429 anti-bot implica revisão humana,
+    nunca liberação presumida. Sem mutações na Shopee.
+    """
+    parts = urllib.parse.urlsplit(str(url or ""))
+    allowed = {"s.shopee.com.br", "shopee.com.br", "www.shopee.com.br"}
+    if parts.scheme != "https" or parts.hostname not in allowed or not parts.path.strip("/"):
+        raise RuntimeError("link de afiliado sem domínio/path Shopee verificado")
+    req = urllib.request.Request(
+        url, method="HEAD", headers={"User-Agent": "Mozilla/5.0 (RadarTechBR-LinkVerifier/1.0)"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=12) as response:
+            final = urllib.parse.urlsplit(response.geturl())
+            if response.status not in (200, 204) or final.scheme != "https" or final.hostname not in allowed:
+                raise RuntimeError("redirecionamento/destino afiliado não confirmado")
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as exc:
+        raise RuntimeError("link afiliado inacessível ou não verificável; revisão humana requerida") from None
+    return True
 
 
 def existing(slug):
@@ -300,8 +324,8 @@ def append_history(history, item, article, post_id, url, source="automatic_gate"
 
 
 def main():
-    if not ENABLED:
-        print("Publicação ao vivo desativada por RADAR_LIVE_PUBLISH_ENABLED=false.")
+    if not ENABLED or not OWNER_APPROVED:
+        print("C114 SAFE: publicação LIVE desativada; writer legado bloqueado (flag e aprovação exclusiva obrigatórias).")
         return
     if STATUS != "publish":
         raise RuntimeError("Trava de publicação: RADAR_WORDPRESS_STATUS deve ser publish")
@@ -341,10 +365,12 @@ def main():
         if gate["status"] != "DRAFT_READY":
             item["status"] = "BLOCKED"
             item["last_error"] = "quality gate antes da publicação: " + ", ".join(gate.get("reasons") or [])
+            print(f"C114 BLOQUEADO: SKU {item_id or 'desconhecido'}: {item['last_error']}")
             continue
 
         try:
             validate_card_product_title(article)
+            verify_affiliate_destination(article.get("affiliate_link"))
             slug = slugify(article.get("topic") or article.get("seo_title"))
             old = existing(slug)
             if old and old.get("status") == "publish":

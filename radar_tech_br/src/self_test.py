@@ -51,13 +51,11 @@ def main():
     good = build(item(), plan(), editorial())
     assert good["quality"]["status"] == "DRAFT_READY", good["quality"]
     assert 900 <= good["word_count"] <= 1400
-    assert good["content_html"].count('class="og-produto-titulo-original"') == 2
-    assert good["content_html"].count(item()["image_url"]) == 2
+    assert good["content_html"].count('class="og-produto-titulo-original"') == 1
+    assert good["content_html"].count(item()["image_url"]) == 1
     assert slug_category("Tecnologia") == "tecnologia"
-    assert slug_category("Casa & Decoração") == "casa-decoracao"
-    assert slug_category("Cozinha & Utilidades") == "cozinha-utilidades"
-    assert slug_category("Ferramentas & Automotivo") == "ferramentas-automotivo"
-    assert slug_category("Moda & Beleza") == "moda-beleza"
+    assert slug_category("Ar-condicionado") == "tecnologia/ar-condicionado"
+    assert slug_category("Moda & Beleza") == ""
 
     alt = media_alt_text(item(product="Produto demonstrativo para imagem destacada"))
     assert alt == "Produto demonstrativo para imagem destacada" and len(alt) <= 180
@@ -86,7 +84,7 @@ def main():
     copied = build(item(), plan(), editorial(bad=item()["product"]), enforce=False)
     assert "titulo_comercial_copiado_no_corpo" in copied["quality"]["reasons"]
 
-    risk = item("Ferramentas & Automotivo", "Torquímetro para manutenção automotiva", "torquimetro")
+    risk = item("Tecnologia", "Torquímetro para manutenção automotiva", "torquimetro")
     risk_plan = plan("Como avaliar ferramentas para manutenção automotiva", "ferramentas manutenção automotiva")
     review = build(risk, risk_plan, editorial("ferramentas manutenção automotiva"), enforce=False)
     assert review["quality"]["status"] == "HUMAN_REVIEW_REQUIRED", review["quality"]
@@ -99,7 +97,7 @@ def main():
     assert parsed["title"] == "Como escolher um smartwatch para sua rotina"
 
     meta = meta_description(plan())
-    assert 110 <= len(meta) <= 160, len(meta)
+    assert 140 <= len(meta) <= 155, len(meta)
 
     print("Self-test Radar Tech BR vNext: 15/15 OK")
 
