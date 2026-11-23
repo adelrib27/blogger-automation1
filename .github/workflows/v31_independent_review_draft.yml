@@ -15,6 +15,9 @@ on:
       verified_draft:
         description: "DRAFT confirmado por leitura autenticada e replay"
         value: ${{ jobs.deliver-draft.outputs.verified_draft }}
+      verification_receipt:
+        description: "Resultado do verificador mesmo quando NO_NEW_OFFER cancela entrega"
+        value: ${{ jobs.independent-verifier.outputs.result }}
 permissions:
   contents: read
 concurrency:
