@@ -52,6 +52,10 @@ def prepare_draft(catalog: Catalog, site_key: str, brief_id: str,
     key, title, keyword, category, niche, status, article_slug = row[1:]
     if status != "APPROVED":
         raise DraftError("brief_not_approved")
+    # Briefs aprovados antes de uma mudança de nicho não podem furar o
+    # cadastro atual do blog. Revalidar na preparação, não só no planejamento.
+    if f"{category}/{niche}" not in site["allowed_niches"]:
+        raise DraftError("niche_outside_site")
     if fold(keyword) not in fold(title):
         raise DraftError("keyword_missing_from_title")
     if not catalog.for_conversion(key):
@@ -79,7 +83,9 @@ def prepare_draft(catalog: Catalog, site_key: str, brief_id: str,
     body="".join("<p>"+html.escape(p,quote=True)+"</p>" for p in cleaned)
     try:
         commercial = product_offer_html(
-            catalog, site_key=site_key, product_key=key, topic=keyword,
+            # A palavra-chave genérica (ex.: "tecnologia") não identifica
+            # o produto. O título do brief, derivado do item validado, sim.
+            catalog, site_key=site_key, product_key=key, topic=title,
             verified_site_route=site)
         related = related_articles_html(related_posts or [],
             blog_home_url=blog_home_url) if related_posts else ""
