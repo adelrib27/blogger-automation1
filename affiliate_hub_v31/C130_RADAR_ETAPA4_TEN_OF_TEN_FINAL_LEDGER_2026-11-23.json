@@ -1,0 +1,134 @@
+{
+  "schema": "v31-radar-c130-final-ledger/v1",
+  "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
+  "site": "Radar Tech BR",
+  "date_local": "2026-11-23",
+  "phase": "C130",
+  "editorial_status": "TEN_OUT_OF_TEN_WORDPRESS_POSTS_REWRITTEN_AND_VERIFIED",
+  "commercial_status": "SEVEN_SHOPEE_LINKED_THREE_ORIGINAL_TIKTOK_LEGACY",
+  "universal_auto_live": false,
+  "posts": [
+    {
+      "id": 260,
+      "short_title": "Smartwatch e frequência cardíaca",
+      "platform": "Shopee",
+      "media": 261,
+      "checkpoint": "C116"
+    },
+    {
+      "id": 314,
+      "short_title": "Ventilador de mesa",
+      "platform": "Shopee",
+      "media": 315,
+      "checkpoint": "C117",
+      "category_change": "Guias de Compra 1 -> Tecnologia 3"
+    },
+    {
+      "id": 311,
+      "short_title": "Caixa de som com microfones",
+      "platform": "Shopee",
+      "media": 312,
+      "checkpoint": "C118"
+    },
+    {
+      "id": 278,
+      "short_title": "Controle para projetor",
+      "platform": "Shopee",
+      "media": 279,
+      "checkpoint": "C119"
+    },
+    {
+      "id": 256,
+      "short_title": "Ventilador portátil USB com luz",
+      "platform": "Shopee",
+      "media": 257,
+      "checkpoint": "C120"
+    },
+    {
+      "id": 138,
+      "short_title": "Smartwatch tela infinita",
+      "platform": "Shopee",
+      "media": 137,
+      "checkpoint": "C121"
+    },
+    {
+      "id": 28,
+      "short_title": "Scanner OBD2 Bluetooth",
+      "platform": "Shopee",
+      "media": 72,
+      "checkpoint": "C125",
+      "caveat": "new related offer with near-exact promotional photo not verified as original seller"
+    },
+    {
+      "id": 29,
+      "short_title": "Arctic Air Cooler portátil",
+      "platform": "TikTok Shop BR original link preserved",
+      "media": 73,
+      "checkpoint": "C128",
+      "pdp_id": "1731402390818161683",
+      "original_link": "https://vt.tiktok.com/ZS9UNndpjDsxQ-GACcI/",
+      "shopee_migration": "PENDING_EXACT_MATCH"
+    },
+    {
+      "id": 25,
+      "short_title": "Kapbom KA-8955",
+      "platform": "TikTok Shop BR original link preserved",
+      "media": 69,
+      "checkpoint": "C129",
+      "pdp_id": "1736946357369735159",
+      "original_link": "https://vt.tiktok.com/ZS9UNtSQoTWWq-a7gKh/",
+      "shopee_migration": "PENDING_EXACT_MATCH"
+    },
+    {
+      "id": 24,
+      "short_title": "Luz RGB portátil",
+      "platform": "TikTok Shop BR original link preserved",
+      "media": 67,
+      "checkpoint": "C130",
+      "pdp_id": "1732895975902708781",
+      "original_link": "https://vt.tiktok.com/ZS9UNGSAnRA9S-q3vFI/",
+      "shopee_migration": "PENDING_EXACT_MATCH"
+    }
+  ],
+  "verification": {
+    "wp_get_post_full_10_of_10": {
+      "statuses_all_publish": true,
+      "categories_all_technology_3": true,
+      "featured_media_original_preserved": true,
+      "one_commercial_card_each": true,
+      "shortlinks_platform_audit": {
+        "shopee": 7,
+        "tiktok_shop": 3
+      }
+    },
+    "seo_updated_individually": true,
+    "public_http_200_confirmed_each_in_sequence": true,
+    "wordpress_published_total_observed_previously": 37,
+    "category_counts_final": {
+      "tecnologia": 15,
+      "guias_de_compra": 22,
+      "ar_condicionado": 0
+    },
+    "legacy_workflow_job_if_false": true,
+    "legacy_workflow_flag_off": true,
+    "wordpress_config_publicacao_automatica_false": true
+  },
+  "safety_notes": [
+    "No new posts created and all ten slugs/permalinks unchanged",
+    "Do not re-execute ten WP writes without new independently verified changes",
+    "The last three links are preexisting TikTok Shop PDP URLs: platform clearly labelled; affiliate commission and live stock not verified",
+    "Do NOT mislabel TikTok PDP links as Shopee or manufacture affiliate offer links",
+    "The user project is Shopee-focused: commercial migration of three links is an independent pending task with exact product and affiliate identity checks",
+    "Arctic mini cooler is NOT a real air conditioner; Ar-condicionado ID20 remains empty",
+    "Universal V31 still has eight historical contract/test failures; no release assertion",
+    "Automatic LIVE remains OFF"
+  ],
+  "files": {
+    "c127_visual_tiktok": "affiliate_hub_v31/CHECKPOINT_C127_PRE_AUDITORIA_TIKTOK_E_IMAGENS_2026-11-23.md",
+    "c128_arctic": "affiliate_hub_v31/CHECKPOINT_C128_RADAR_POST29_ARCTIC_REWRITE_VERIFIED_2026-11-23.md",
+    "c129_kapbom": "affiliate_hub_v31/CHECKPOINT_C129_RADAR_POST25_KAPBOM_REWRITE_VERIFIED_2026-11-23.md",
+    "c130_rgb": "affiliate_hub_v31/CHECKPOINT_C130_RADAR_POST24_RGB_REWRITE_VERIFIED_2026-11-23.md"
+  },
+  "next_stage": "C131 — separate commerce migration audit for three TikTok Shop originals, exact Shopee product/variant+image+campaign verification. No automatic switch; preserve working TikTok URLs until exact evidence, avoid duplicate revenue/SEO claims. Then address eight V31 universal legacy failures in a separate safe regression branch.",
+  "recovery_code": "V31-RADAR-C130-20261123-ETAPA4-10DE10-EDITORIAL-3TIKTOK-LEGACY-LIVE-OFF"
+}
