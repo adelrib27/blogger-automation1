@@ -1,0 +1,37 @@
+name: "V31 C126 Radar - oferta exata Arctic Kapbom SAFE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c126_exact_arctic_kapbom_safe.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-shopee-queries-safe
+  cancel-in-progress: false
+jobs:
+  exact-offer:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: |
+          python -m pip install "pillow>=11,<13" "ImageHash>=4.3,<5"
+          python -m py_compile affiliate_hub_v31/c126_exact_offer_visual_safe.py
+      - name: Consultar exatamente quatro itemIds sem converter
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+        run: python -m affiliate_hub_v31.c126_exact_offer_visual_safe
+      - name: Guardar somente relatório de revisão
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c126-arctic-kapbom-exact-visual-results
+          path: c126_exact_visual_results.json
+          if-no-files-found: ignore
+          retention-days: 7
