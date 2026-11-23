@@ -7,7 +7,7 @@
   "continuity_protocol_phase": "C81",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-23",
-  "last_updated_source": "C110_C111_RADAR_TECH_EIGHT_TECH_HUBS_LIVE_ACCESSIBLE_MENUS_CAROUSEL_FILTER",
+  "last_updated_source": "C133_V31_UNIVERSAL_610_SAFE_TESTS_PRONTIDAO_DRAFT_PARCIAL",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -1452,5 +1452,47 @@
     "latest_public_tech_posts_confirmed": 10,
     "unrelated_post_deletions": 0,
     "note": "old out-of-niche individual posts preserved; their URL/SEO migration not done"
+  },
+  "latest_verified_checkpoint": {
+    "phase": "C133",
+    "path": "affiliate_hub_v31/CHECKPOINT_C133_AUDITOR_PRONTIDAO_UNIVERSAL_610_TESTES_2026-11-23.md",
+    "recorded_local_date": "2026-11-23",
+    "objective": "universal_blogger_wordpress",
+    "universal_suite": {
+      "count": 610,
+      "failures": 0,
+      "errors": 0,
+      "github_run_id": 45259792390,
+      "scope": "offline"
+    },
+    "deployment_audit": {
+      "github_run_id": 45259940897,
+      "priority_sites": 8,
+      "configured_for_draft_preflight": 2,
+      "profile_request_missing": 5,
+      "route_missing": 1,
+      "all_configured": false
+    },
+    "pilot": {
+      "site_key": "blogger_moveis_para_cada_canto",
+      "last_confirmed_schedule_id": 45137244359,
+      "status": "NO_NEW_OFFER",
+      "reason": "research_budget_exhausted",
+      "daily_search_quota": "3/3",
+      "daily_http_quota": "3/3"
+    },
+    "cms_pilots": {
+      "blogger_draft_id": "4106024906916105222",
+      "wordpress_draft_id": 321
+    },
+    "publication": {
+      "automatic_live_enabled": false,
+      "rollout_all_approved": false
+    },
+    "pending": [
+      "onboard five sites with existing route but no autonomous request/profile",
+      "register Vida Pet route after campaign verification",
+      "validate fresh DRAFT canary after natural budget renewal"
+    ]
   }
 }
