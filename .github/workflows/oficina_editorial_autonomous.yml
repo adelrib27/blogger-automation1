@@ -18,7 +18,9 @@ concurrency:
 
 jobs:
   v31_oficina_discovery:
+    # C134 SAFE: suspender descoberta/writer legados com efeito de publicação
     if: >-
+      false &&
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
       vars.V31_EDITORIAL_C9_RELEASE_ENABLED == 'true' &&
@@ -36,7 +38,9 @@ jobs:
 
   publicar-um-slot:
     needs: [v31_oficina_discovery]
+    # C134 SAFE: nenhum agendamento/push/manual deste writer legado autoriza LIVE
     if: >-
+      false &&
       always() &&
       !cancelled() &&
       github.ref == 'refs/heads/main' &&
@@ -66,8 +70,8 @@ jobs:
       OFICINA_GENERATION_BATCH_SIZE: "1"
       OFICINA_GENERATION_BODY_ATTEMPTS: "3"
       OFICINA_CTA_ATTEMPTS: "2"
-      OFICINA_LIVE_PUBLISH_ENABLED: "true"
-      OFICINA_WORDPRESS_STATUS: "publish"
+      OFICINA_LIVE_PUBLISH_ENABLED: "false"
+      OFICINA_WORDPRESS_STATUS: "draft"
       OFICINA_PUBLISH_LIMIT: "1"
 
     steps:
