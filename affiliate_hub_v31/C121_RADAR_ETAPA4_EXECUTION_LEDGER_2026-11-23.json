@@ -1,0 +1,72 @@
+{
+  "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
+  "site": "Radar Tech BR",
+  "date": "2026-11-23",
+  "phase": "C121",
+  "status": "six_rewritten_and_verified_four_pending_affiliate_link_reconciliation",
+  "requested": "Etapa 4: reescrever os 10 artigos existentes, sem alterar permalink nem ativar geração LIVE automática",
+  "completed": [
+    {
+      "post_id": 260,
+      "checkpoint": "CHECKPOINT_C116_RADAR_POST260_REWRITE_VERIFIED_2026-11-23.md"
+    },
+    {
+      "post_id": 314,
+      "checkpoint": "CHECKPOINT_C117_RADAR_POST314_REWRITE_VERIFIED_2026-11-23.md",
+      "category_change": {
+        "from": 1,
+        "to": 3
+      }
+    },
+    {
+      "post_id": 311,
+      "checkpoint": "CHECKPOINT_C118_RADAR_POST311_REWRITE_VERIFIED_2026-11-23.md"
+    },
+    {
+      "post_id": 278,
+      "checkpoint": "CHECKPOINT_C119_RADAR_POST278_REWRITE_VERIFIED_2026-11-23.md"
+    },
+    {
+      "post_id": 256,
+      "checkpoint": "CHECKPOINT_C120_RADAR_POST256_REWRITE_VERIFIED_2026-11-23.md"
+    },
+    {
+      "post_id": 138,
+      "checkpoint": "CHECKPOINT_C121_RADAR_POST138_REWRITE_VERIFIED_2026-11-23.md"
+    }
+  ],
+  "pending": [
+    {
+      "post_id": 29,
+      "topic": "Arctic Air Cooler portátil",
+      "cause": "Nenhuma URL afiliada Shopee no HTML bruto/metas verificados, preservar permalink e featured_media73"
+    },
+    {
+      "post_id": 28,
+      "topic": "Scanner OBD2 Bluetooth",
+      "cause": "Nenhuma URL afiliada no HTML bruto/metas, preservar permalink e featured_media72"
+    },
+    {
+      "post_id": 25,
+      "topic": "Caixa de som Kapbom KA-8955",
+      "cause": "Nenhuma URL afiliada no HTML bruto/metas, preservar permalink e featured_media69"
+    },
+    {
+      "post_id": 24,
+      "topic": "Luz RGB portátil",
+      "cause": "Nenhuma URL afiliada no HTML bruto/metas, preservar permalink e featured_media67"
+    }
+  ],
+  "guardrails": {
+    "all_six_same_original_permalink": true,
+    "featured_media_preserved": true,
+    "affiliate_links_preserved_on_completed": true,
+    "no_auto_live": true,
+    "legacy_workflow_paused": true,
+    "wordpress_posts_creation": 0,
+    "missing_shopee_links_never_invent": true,
+    "universal_v31_eight_legacy_tests_pending": true
+  },
+  "next_steps": "Priorizar busca de SKU/offerLink no catálogo original e dados históricos do V31, confirmar campanha e produto exatos, backup por post, preview seguro e readback antes de qualquer escrita. Não reexecutar os seis concluídos; a categoria Ar-condicionado ID20 permanece sem artigo adequado.",
+  "recovery_code": "V31-RADAR-C121-20261123-SIX-VERIFIED-FOUR-AFFILIATE-PENDING"
+}
