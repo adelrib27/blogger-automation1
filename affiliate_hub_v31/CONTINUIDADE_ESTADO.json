@@ -3,11 +3,11 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C137",
-  "continuity_protocol_phase": "C137",
+  "last_checkpoint_phase": "C138",
+  "continuity_protocol_phase": "C138",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-23",
-  "last_updated_source": "C137_R2_12_PRIORITY_BLOGGER_CANDIDATES_0_EXACT_CAMPAIGN_CACHED_666_PASS",
+  "last_updated_source": "C138_REAL_CONVERSION_QUEUE_RCA_2_ACTIVE_D1_GLOBAL_3_OF_3_NO_WRITES",
   "c96_cafe_loja": {
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_C96_CAFE_NA_MEDIDA_LOJA_35_LIVE_2026-11-22.md",
     "blog_id": "4820923154548273510",
@@ -34,7 +34,7 @@
     "v31_autolive_activated": false
   },
   "start_here": "V31_CONTINUAR_AQUI.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C137_R2_CAMPANHA_12_CANDIDATOS_0_LINKS_666_TESTES_2026-11-23.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C138_RCA_FILA_CONVERSAO_ORCAMENTO_GLOBAL_2026-11-23.md",
   "priority_issue": "https://github.com/adelrib27/blogger-automation1/issues/54",
   "runner_issue": "https://github.com/adelrib27/blogger-automation1/issues/70",
   "mission": "Biblioteca universal dos dois CSV Shopee -> indice e curadoria do acervo completo -> selecionar por tema somente ao solicitar blog -> campanha exclusiva daquele site -> imagem real + link convertido + texto original + CTA + links internos -> revisao -> publicacao autorizada.",
@@ -949,17 +949,17 @@
     "c81_autonomous_daily_operation_verified": false
   },
   "active_work": {
-    "phase": "C137",
+    "phase": "C138",
     "status": "EM_ANDAMENTO",
     "objective": "Homologar E2E a escrita autônoma de novos DRAFTs Blogger e WordPress de produtos reais Shopee com evidência, sem duplicações e sem LIVE até autorização final.",
-    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger. C85: feed tem seis, max home sete; Office Arco está em FeaturedPost1 oculto por CSS display:none, Blog1 grid exibe só cinco. Correção reversível via desativação de widget Featured Post no Layout está PENDENTE. C86: proprietario mostrou Layout sem gadget Postagem em destaque. Revogada recomendacao C85 desativar gadget. Procurar exclusao data:widgets.FeaturedPost no Blog1 XML exato (ainda nao obtido) antes de editar. C86: source XML Blogger Cadeira supplied; remove hidden FeaturedPost1 section, direct carousel to Blog1; output corrected XML + TXT + original backup in current chat, lxml and node check PASS. Not installed live. C86 confirmado pelo proprietario e Firecrawl HTTP 200: grid Blog1 6 posts (Office, Tok, mais quatro), carrossel 5; seletor #Blog1; tema aplicado no Blogger. Atenção: Blogger ainda mostra FeaturedPost1 órfão em outra região HTML, sem excluir posts. C87: tema exclusivo Ar Condicionado em XML entregue no chat, blogger alvo ID 2228849984262880811, paleta clima, hero editorial H1, removido FeaturedPost oculto e form LAB; XML/JS/CSS validados. Não instalado. 0 posts, 0 páginas no alvo. C88 Ar-Condicionado: theme C87 user installed, Blogger SEO meta 135 chars verified public (2nd retry), 6 pages LIVE, LG product ID 822103155:58265302556 Shopee exact+convert runs 45048860136/45048976779 D1 slot2, one article LIVE 940950273343255024, Loja card + dynamic carousel publicly verified, sitemap+robots HTTP200, taxonomy niche v4 route validated run 45049719226. Residual orphan FeaturedPost1 warning. AUTO LIVE off. C89 ArCond: diagnose orphan FeaturedPost1 from Blogger theme migration after Blog1 causing full post repeated. Built C89 XML 217819B SHA 7638ca... (FeaturedPost1 explicit visible false, Blog1 carousel maintained), lxml and JS PASS, NOT INSTALLED. Existing 6 institutional pages updated with official sources, API GET 6/6 confirmed, live posts 1, drafts 0. C90: criou 4 páginas temáticas reais Blogger LIVE/HTTP200; contato atualizado com FormSubmit em blogbloggerautomation@gmail.com e Privacidade; SEO interlinks do LG/Sobre/Loja; XML C90 gerado (hash 6bf24f...), corrige 4 spans e bloco postBody que ocultava formulário; instalado em produção? NÃO; C89 permanece até proprietário aplicar. 10 pages LIVE, 1 article LIVE, 0 DRAFT. C91 ArCond: validado defeito controles Loja Anterior/Proximo 44px, hidden true mas CSS visível em carrossel de 1 produto. C91 XML com CSS scoped hidden e largura auto/min102, JS preserva labels textuais em multi slides. Lxml/CSS/Node/Playwright PASS. XML entregue na conversa, NÃO INSTALADO. C91 HOMOLOGADO LIVE: proprietário instalou C91; navegador público Loja HTTP200 1 slide, ambos data-ub-step hidden computed display:none rect0x0, contador 1/1 e Compartilhar visíveis; link LG Shopee intacto. Multi-slide ainda sem prova LIVE. C92 ARCOND DONE: 2 new Midea posts LIVE IDs 8208866544157240159 and 8847875310080419457, 3 live 0 draft 10 pages total. Shopee Affiliate API offerLinks exact SKU images, stock unconfirmed; public Shopee listing no soldout marker at reviewed source. LG existing API eligible but public soldout; removed all LG CTA from post and store, kept educational post. Store 2 new cards, public HTTP200. Conversion 9k stopped before mutation due global D1 3 slots occupied; use native offerLink without campaign-specific subid. AUTO LIVE off. Owner revision on C92 stock: no permanent block for soldout, consider as transient signal, confirm before pausing, restore if restocked, preserve posts and cached links, API unknown != out of stock. Updated policy file and checkpoint; no CMS changes or automatic monitor. C92 stock nuance: user wants to search alternate listings for same technical model, same shop or other sellers, before treating product as unavailable. Policy updated: product_identity_key distinct from listing_key shopId:itemId; only validated equivalent variant, own photo and affiliate URL; preserve article SEO; no LIVE auto offer replacement implemented. C93: generic Shopee productOfferV2 keyword 'ar condicionado' implemented broad-first with bounded 4 queries/day, rotating fallback, taxonomy v6, anti-accessory checks, 3 previous articles history, same product may have many seller listings. Runs 450603/450605/450607/450610 proved offers incl Consul/Hisense/Elgin/LG/Gree/Daikin. Last API run 450611 had transient 10000; code now marks TEMPORARY_API_ERRORS instead of NO_VALID. Push CI tests offline 45061344889 PASS 7 tests. Daily READ ONLY cron 13:17 UTC first future schedule unverified; no articles/posts or D1 mutation. C94 22/11: 30 new manual articles published LIVE in 28 Blogger and 2 WP, API Blogger list_reverified 28/28 dates today, WordPress 2/2, 5 public spot checks HTTP200 affiliate+sponsored. 3 sites had a post today already; 2 intentionally not posted (Casa Pratica Lab and empty astronomy blog). API Shopee read-only 17/17 and extra9/9 exact offers validated, no D1 mutations; stock not guaranteed; central V31 autoLIVE OFF. GitHub C94 checkpoint full 30 URLs. C95: verified Cafe home HTML 22/11 HTTP200 FeaturedPost1 reserves post 5908389765438644073 and Blog1 contains 4 previous; candidate theme XML local verified disabled FeaturedPost1 and selects Blog1 only, not installed. User should back up Cafe theme before overwriting; no operator tool has Cafe theme-write permissions. Reusable Python offline fixer committed in blogger_themes/tools/fix_featuredpost1_legacy_v31.py.\nC133->C134 (23/11/2026): 610 testes C133 PASS; schedule #45260835997 no Blogger Móveis: GitHub success mas NO_NEW_OFFER: research_budget_exhausted, nenhum novo draft; D1 oficial GET/SELECT leases0 USED2 READY1 evidências3, quota Móveis SEARCH3/3 HTTP3/3. PR #136 MERGED commit 7b44786b176d6dbac9fb9e16cad7670b10d64e24, auditor diferencia outcome de success; CI #45263710289 619 PASS. Auditoria descobriu crons legados LIVE em Casa+Oficina; PR #137 MERGED commit daa4554f3bcb6aec24fdba3043894dcf877e791e com false && nos quatro jobs e flags LIVE false/status draft; CI #45264548509 623 testes PASS + regressões WP. Blogger Móveis #4106024906916105222 e WP Casa #321 confirmados draft por API; Blogger Vida Pet ID8052455848487624244/URL real confirmados, campanha V31 não validada. Auditor 8 prioritários: 2 configurados, 5 rotas sem request/profile, 1 Vida Pet sem rota. Política LIVE pending_policy_approval; nenhum LIVE por esta C134. Checkpoint C134 no GitHub.\nC134 READ-ONLY adicional: WordPress Casa REST GET /posts/314 (context edit) status DRAFT, slug v31-31856a8a43a1-8503898928, data-v31-product-key=shopee:306698991:8503898928. Mesmo SKU do único READY D1 na campanha casaedecoracaowp. Risco de duplicação detectado, job NÃO consumido, post NÃO editado, sem código de workaround. O READY só pode passar após reconciliação independente conteúdo/hash e status, preservando CMS existente.\nC135 23/11/2026: hash SHA-256 do WordPress Casa DRAFT #314 f87330fc...2d2c987 DIFERE do hash D1 READY c2b8bb85...0e495 apesar da mesma SKU shopee:306698991:8503898928. Checkpoint PREVIEW criado commit 1b56332. PR #138 MERGED SHA 0f497271132ea6b9db68f2018b414c8f8d0a0022: auditor genérico GET CMS + D1 SELECT, sem writes, 15 testes novos; CI #45268392814 638 PASS. Execução real #45268529600 SUCCESS observou CONFLICTING_DRAFT_HTML CMS ID 314, ready_delivery_authorized=false, automatic_live_authorized=false, cms_writes=0,d1_writes=0. Nenhum novo DRAFT ou LIVE. API Actions consultada após merge #137 ainda sem cron real subsequente Casa/Oficina; verificar quando ocorrer.\nC135 adicional: reutilizado log antigo R2 READ ONLY C94 run #45063976401 de 22/11. 4 candidatos por site para Cozinha, Estilo, Limpeza (12 total) em nomes de nicho; origem Shopee e sem prova de fabricante externo, conversão na campanha ou dedup CMS nesse relatório. NÃO criar profiles/requests a partir desta shortlist, nem repetir R2 sem necessidade.\nC136 (23/11): PRs #139, #140, #141 merged (último commit 6385fd10), 653/653 testes offline PASS CI #45277141551. O primeiro audit remoto #45276651288 falhou fechado, o segundo #45276964406 isolou github_response_too_large; PR141 limitou GET GitHub Actions a 5 runs. Execução final #45277246529 SUCCESS: Casa/Oficina PENDING_OBSERVATION (não houve schedule pós-merge #137), sem LIVE ou writes; GET Blogger #4106024906916105222 SHA acf054f9... e GET WordPress #321 SHA 81303c4a... ambos DRAFT, com D1 USED, PASS. Monitor cron UTC 23:47 diário ativo.\nC137: PR #142 MERGED SHA 685774614ab71c3e792fc051647e0dc70b2b14bd, CI #45278150121 666/666 PASS. Run remoto R2 #45278265895 COMPLETED SUCCESS: 3 Blogger (Cozinha/Estilo/Limpeza), 4 SKUs em cada, 12 candidatos exatos com 0 cache affiliate_links na campanha de cada rota. Snapshot R2 validada, sqlite mode=ro + query_only; R2/D1/CMS writes=0, Shopee conversions=0, LIVE=false. Falta verificar fluxos reais de conversão (sem inventar campanha/URL), fabricante e dedup CMS.",
-    "next_safe_step": "C138: auditar logs da fila universal de conversão Shopee (sem dispatch repetido) e verificar registros D1 do orçamento global; determinar se rotas/campanhas Cozinha/Estilo/Limpeza realmente têm mecanismo de conversão apto. Só converter SKU após confirmação factual de produto, CTA de campanha e antirrepetição CMS; perfis de revisão com fontes independentes, pedidos reais. Monitor read-only C136 continua 23:47 UTC. Aguardar quota natural de Móveis, não consumir READY Casa #314. LIVE OFF até aprovação final.",
+    "latest_verified_step": "PR #124 MERGED CI #45028436487 565 testes PASS. Código compartilha rollout por rota exata entre scheduler e writers legados; 3 observações por schedule confirmaram DRAFTs Blogger 4106024906916105222 e WP 321 com hashes exatos. LIVE novo não habilitado. Nenhuma variável do GitHub alterada nesta etapa. Pós-merge #45028515776 push SUCCESS: GET autenticado confirma dois DRAFTs intactos, writers skipped. D1 oficial SELECT: Blogger USED1, WordPress USED1 READY1, nenhum orçamento para 22/11 no momento da leitura. Proprietário mostrou captura GitHub Repository Variables com ACTIVE=true, ROLLOUT_SITE=blogger_moveis_para_cada_canto, AUTOLIVE=false, FULL não cadastrado. Nenhum schedule posterior da escrita ainda confirmado. Em 22/11, Blogger Móveis recebeu perfil de SEO, 3 páginas institucionais GET-confirmadas e links de navegação nos 3 artigos LIVE; 6 drafts intactos. Checkpoint detalhado C81_BLOGGER_MOVEIS_CORRECOES. Posteriormente: corrigidos via cinco novas páginas Blogger os links hardcoded Sobre, Contato, Loja, Termos, Afiliados; 5/5 GET OK; total 8 páginas, 3 LIVE, 6 DRAFT. Detalhes em CHECKPOINT_C81_MOVEIS_MENU_LINKS_CORRIGIDOS_2026-11-22.md. C82: Blogger Cadeira Certa 4 guias LIVE enriquecidos com CTA do Tok (URL pré-existente), Loja atualizada, DRAFT Office Arco ID 6656620121237912250 com imagem do próprio anúncio e link original não afiliado, rota SAFE cadastrada sem automação LIVE. Veja checkpoint C82. Três dos guias originalmente curtos receberam FAQ/seções SEO distintas, GET 3/3 confirmados; web público confirmou CTA Tok em guia de ajustes. C83: Shopee API Office Arco exact SKU validated run 45040964757; generateShortLink correct campaign run 45041101197 + D1 UTC slot1; Blogger Office Arco ID 6656620121237912250 manual LIVE GET/web HTTP200; Tok Boxbit first of 5 slides in native theme carousel public GET. C83 pendencias resolvidas. C84: causa raiz DOM encontrada no tema HTML: selecao #Blog1 exclui FeaturedPost1 (Office Arco). Patch 1-linha no GitHub, LIVE nao aplicado; nao declarar corrigido ate verificacao no Blogger. C85: feed tem seis, max home sete; Office Arco está em FeaturedPost1 oculto por CSS display:none, Blog1 grid exibe só cinco. Correção reversível via desativação de widget Featured Post no Layout está PENDENTE. C86: proprietario mostrou Layout sem gadget Postagem em destaque. Revogada recomendacao C85 desativar gadget. Procurar exclusao data:widgets.FeaturedPost no Blog1 XML exato (ainda nao obtido) antes de editar. C86: source XML Blogger Cadeira supplied; remove hidden FeaturedPost1 section, direct carousel to Blog1; output corrected XML + TXT + original backup in current chat, lxml and node check PASS. Not installed live. C86 confirmado pelo proprietario e Firecrawl HTTP 200: grid Blog1 6 posts (Office, Tok, mais quatro), carrossel 5; seletor #Blog1; tema aplicado no Blogger. Atenção: Blogger ainda mostra FeaturedPost1 órfão em outra região HTML, sem excluir posts. C87: tema exclusivo Ar Condicionado em XML entregue no chat, blogger alvo ID 2228849984262880811, paleta clima, hero editorial H1, removido FeaturedPost oculto e form LAB; XML/JS/CSS validados. Não instalado. 0 posts, 0 páginas no alvo. C88 Ar-Condicionado: theme C87 user installed, Blogger SEO meta 135 chars verified public (2nd retry), 6 pages LIVE, LG product ID 822103155:58265302556 Shopee exact+convert runs 45048860136/45048976779 D1 slot2, one article LIVE 940950273343255024, Loja card + dynamic carousel publicly verified, sitemap+robots HTTP200, taxonomy niche v4 route validated run 45049719226. Residual orphan FeaturedPost1 warning. AUTO LIVE off. C89 ArCond: diagnose orphan FeaturedPost1 from Blogger theme migration after Blog1 causing full post repeated. Built C89 XML 217819B SHA 7638ca... (FeaturedPost1 explicit visible false, Blog1 carousel maintained), lxml and JS PASS, NOT INSTALLED. Existing 6 institutional pages updated with official sources, API GET 6/6 confirmed, live posts 1, drafts 0. C90: criou 4 páginas temáticas reais Blogger LIVE/HTTP200; contato atualizado com FormSubmit em blogbloggerautomation@gmail.com e Privacidade; SEO interlinks do LG/Sobre/Loja; XML C90 gerado (hash 6bf24f...), corrige 4 spans e bloco postBody que ocultava formulário; instalado em produção? NÃO; C89 permanece até proprietário aplicar. 10 pages LIVE, 1 article LIVE, 0 DRAFT. C91 ArCond: validado defeito controles Loja Anterior/Proximo 44px, hidden true mas CSS visível em carrossel de 1 produto. C91 XML com CSS scoped hidden e largura auto/min102, JS preserva labels textuais em multi slides. Lxml/CSS/Node/Playwright PASS. XML entregue na conversa, NÃO INSTALADO. C91 HOMOLOGADO LIVE: proprietário instalou C91; navegador público Loja HTTP200 1 slide, ambos data-ub-step hidden computed display:none rect0x0, contador 1/1 e Compartilhar visíveis; link LG Shopee intacto. Multi-slide ainda sem prova LIVE. C92 ARCOND DONE: 2 new Midea posts LIVE IDs 8208866544157240159 and 8847875310080419457, 3 live 0 draft 10 pages total. Shopee Affiliate API offerLinks exact SKU images, stock unconfirmed; public Shopee listing no soldout marker at reviewed source. LG existing API eligible but public soldout; removed all LG CTA from post and store, kept educational post. Store 2 new cards, public HTTP200. Conversion 9k stopped before mutation due global D1 3 slots occupied; use native offerLink without campaign-specific subid. AUTO LIVE off. Owner revision on C92 stock: no permanent block for soldout, consider as transient signal, confirm before pausing, restore if restocked, preserve posts and cached links, API unknown != out of stock. Updated policy file and checkpoint; no CMS changes or automatic monitor. C92 stock nuance: user wants to search alternate listings for same technical model, same shop or other sellers, before treating product as unavailable. Policy updated: product_identity_key distinct from listing_key shopId:itemId; only validated equivalent variant, own photo and affiliate URL; preserve article SEO; no LIVE auto offer replacement implemented. C93: generic Shopee productOfferV2 keyword 'ar condicionado' implemented broad-first with bounded 4 queries/day, rotating fallback, taxonomy v6, anti-accessory checks, 3 previous articles history, same product may have many seller listings. Runs 450603/450605/450607/450610 proved offers incl Consul/Hisense/Elgin/LG/Gree/Daikin. Last API run 450611 had transient 10000; code now marks TEMPORARY_API_ERRORS instead of NO_VALID. Push CI tests offline 45061344889 PASS 7 tests. Daily READ ONLY cron 13:17 UTC first future schedule unverified; no articles/posts or D1 mutation. C94 22/11: 30 new manual articles published LIVE in 28 Blogger and 2 WP, API Blogger list_reverified 28/28 dates today, WordPress 2/2, 5 public spot checks HTTP200 affiliate+sponsored. 3 sites had a post today already; 2 intentionally not posted (Casa Pratica Lab and empty astronomy blog). API Shopee read-only 17/17 and extra9/9 exact offers validated, no D1 mutations; stock not guaranteed; central V31 autoLIVE OFF. GitHub C94 checkpoint full 30 URLs. C95: verified Cafe home HTML 22/11 HTTP200 FeaturedPost1 reserves post 5908389765438644073 and Blog1 contains 4 previous; candidate theme XML local verified disabled FeaturedPost1 and selects Blog1 only, not installed. User should back up Cafe theme before overwriting; no operator tool has Cafe theme-write permissions. Reusable Python offline fixer committed in blogger_themes/tools/fix_featuredpost1_legacy_v31.py.\nC133->C134 (23/11/2026): 610 testes C133 PASS; schedule #45260835997 no Blogger Móveis: GitHub success mas NO_NEW_OFFER: research_budget_exhausted, nenhum novo draft; D1 oficial GET/SELECT leases0 USED2 READY1 evidências3, quota Móveis SEARCH3/3 HTTP3/3. PR #136 MERGED commit 7b44786b176d6dbac9fb9e16cad7670b10d64e24, auditor diferencia outcome de success; CI #45263710289 619 PASS. Auditoria descobriu crons legados LIVE em Casa+Oficina; PR #137 MERGED commit daa4554f3bcb6aec24fdba3043894dcf877e791e com false && nos quatro jobs e flags LIVE false/status draft; CI #45264548509 623 testes PASS + regressões WP. Blogger Móveis #4106024906916105222 e WP Casa #321 confirmados draft por API; Blogger Vida Pet ID8052455848487624244/URL real confirmados, campanha V31 não validada. Auditor 8 prioritários: 2 configurados, 5 rotas sem request/profile, 1 Vida Pet sem rota. Política LIVE pending_policy_approval; nenhum LIVE por esta C134. Checkpoint C134 no GitHub.\nC134 READ-ONLY adicional: WordPress Casa REST GET /posts/314 (context edit) status DRAFT, slug v31-31856a8a43a1-8503898928, data-v31-product-key=shopee:306698991:8503898928. Mesmo SKU do único READY D1 na campanha casaedecoracaowp. Risco de duplicação detectado, job NÃO consumido, post NÃO editado, sem código de workaround. O READY só pode passar após reconciliação independente conteúdo/hash e status, preservando CMS existente.\nC135 23/11/2026: hash SHA-256 do WordPress Casa DRAFT #314 f87330fc...2d2c987 DIFERE do hash D1 READY c2b8bb85...0e495 apesar da mesma SKU shopee:306698991:8503898928. Checkpoint PREVIEW criado commit 1b56332. PR #138 MERGED SHA 0f497271132ea6b9db68f2018b414c8f8d0a0022: auditor genérico GET CMS + D1 SELECT, sem writes, 15 testes novos; CI #45268392814 638 PASS. Execução real #45268529600 SUCCESS observou CONFLICTING_DRAFT_HTML CMS ID 314, ready_delivery_authorized=false, automatic_live_authorized=false, cms_writes=0,d1_writes=0. Nenhum novo DRAFT ou LIVE. API Actions consultada após merge #137 ainda sem cron real subsequente Casa/Oficina; verificar quando ocorrer.\nC135 adicional: reutilizado log antigo R2 READ ONLY C94 run #45063976401 de 22/11. 4 candidatos por site para Cozinha, Estilo, Limpeza (12 total) em nomes de nicho; origem Shopee e sem prova de fabricante externo, conversão na campanha ou dedup CMS nesse relatório. NÃO criar profiles/requests a partir desta shortlist, nem repetir R2 sem necessidade.\nC136 (23/11): PRs #139, #140, #141 merged (último commit 6385fd10), 653/653 testes offline PASS CI #45277141551. O primeiro audit remoto #45276651288 falhou fechado, o segundo #45276964406 isolou github_response_too_large; PR141 limitou GET GitHub Actions a 5 runs. Execução final #45277246529 SUCCESS: Casa/Oficina PENDING_OBSERVATION (não houve schedule pós-merge #137), sem LIVE ou writes; GET Blogger #4106024906916105222 SHA acf054f9... e GET WordPress #321 SHA 81303c4a... ambos DRAFT, com D1 USED, PASS. Monitor cron UTC 23:47 diário ativo.\nC137: PR #142 MERGED SHA 685774614ab71c3e792fc051647e0dc70b2b14bd, CI #45278150121 666/666 PASS. Run remoto R2 #45278265895 COMPLETED SUCCESS: 3 Blogger (Cozinha/Estilo/Limpeza), 4 SKUs em cada, 12 candidatos exatos com 0 cache affiliate_links na campanha de cada rota. Snapshot R2 validada, sqlite mode=ro + query_only; R2/D1/CMS writes=0, Shopee conversions=0, LIVE=false. Falta verificar fluxos reais de conversão (sem inventar campanha/URL), fabricante e dedup CMS.\nC138: auditoria read-only da fila universal de conversão real. Workflow v31_universal_request_queue_daily.yml já executa schedule 47 11 * * * com pedidos enabled e MAX_BUDGET 3; 22/11 run #45056332000 SUCCESS requests_active=2 converted=1, 2 reservas recusadas; 21/11 run #44934503717 SUCCESS active=2 converted=2; nenhum post. D1 SELECT em 23/11 mostrou v31_shopee_conversion_attempts slots=1 Móveis,2/3 Radar WP, total 3/3 reservas globais (reservas não comprovam conversões). Três Blogger C137 0/12 links de campanha, sem request/profile ativo, requer fonte factual/campanha real antes de habilitar. Nenhuma escrita R2/D1/CMS, nenhum dispatch duplicado.",
+    "next_safe_step": "C139: após renovação natural UTC, conferir scheduler V31 e fila universal antes de disparar qualquer escrita; manter limite global de conversão e idempotência. Em paralelo selecionar um SKU de um dos 3 Blogger com documento oficial de fabricante/modelo/GTIN, imagem e link real, verificar CMS e só depois acrescentar profile/request legítimo, começando por um site. Monitorar C136 '47 23 * * *' UTC para skip real Casa/Oficina. Não consumir READY Casa #314. Não habilitar LIVE sem autorização final.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
     "base_main_sha": "685774614ab71c3e792fc051647e0dc70b2b14bd",
     "branch": "main",
-    "blocker": "C137 evidenciou 12 SKUs de catálogo em três Blogger sem nenhum cache de URL afiliada da campanha correta; não há base para DRAFT desses SKUs. C136 cron legados Casa/Oficina ainda PENDING_OBSERVATION (sem run pós-PR137); Móveis 23/11 SEARCH/HTTP 3/3; WP Casa READY conflita DRAFT #314; 5 rotas sem profiles/requests, Vida Pet sem campanha V31; LIVE policy pendente.",
+    "blocker": "Fila universal Shopee opera para apenas 2 requests ativos; Cozinha/Estilo/Limpeza têm rota mas não request/profile factual, 12 SKUs C137 com 0 links de campanha. Dia UTC 23/11 com D1 global 3/3 reservas de tentativas de conversão (Móveis 1, RadarWP 2; sucesso não comprovado). Casa/Oficina crons legados ainda sem execução pós-PR137; piloto Móveis SEARCH/HTTP 3/3; WP Casa READY conflita DRAFT #314; LIVE pendente.",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44801751774",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/44822280026",
@@ -1029,7 +1029,9 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45277246529",
       "https://github.com/adelrib27/blogger-automation1/pull/142",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45278150121",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45278265895"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45278265895",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45056332000",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/44934503717"
     ],
     "draft_pilots": {
       "blogger_moveis_para_cada_canto": {
@@ -1472,83 +1474,90 @@
     "note": "old out-of-niche individual posts preserved; their URL/SEO migration not done"
   },
   "latest_verified_checkpoint": {
-    "phase": "C137",
-    "path": "affiliate_hub_v31/CHECKPOINT_C137_R2_CAMPANHA_12_CANDIDATOS_0_LINKS_666_TESTES_2026-11-23.md",
+    "phase": "C138",
+    "path": "affiliate_hub_v31/CHECKPOINT_C138_RCA_FILA_CONVERSAO_ORCAMENTO_GLOBAL_2026-11-23.md",
     "recorded_local_date": "2026-11-23",
-    "objective": "audit_exact_campaign_cached_affiliate_coverage_prior_to_verified_draft_onboarding",
-    "universal_suite": {
+    "objective": "identify_true_conversion_queue_blocker_for_expansion_without_reset_or_manual_intervention",
+    "underlying_code_suite": {
       "count": 666,
       "failures": 0,
-      "errors": 0,
       "github_run_id": 45278150121,
-      "scope": "offline"
+      "scope": "offline_C137_no_new_code_in_C138"
     },
-    "merged_prs": [
-      142
-    ],
-    "remote_audit": {
-      "run_id": 45278265895,
-      "conclusion": "success",
-      "mode": "R2_OFFICIAL_SNAPSHOT_SQLITE_READ_ONLY",
-      "site_count": 3,
-      "total_candidates": 12,
-      "total_exact_campaign_cached": 0,
-      "r2_writes": 0,
-      "cms_writes": 0,
-      "d1_writes": 0,
-      "affiliate_conversions": 0,
-      "automatic_live_authorized": false
+    "merged_prs_current_phase": [],
+    "real_queue": {
+      "workflow": ".github/workflows/v31_universal_request_queue_daily.yml",
+      "schedule_utc": "47 11 * * *",
+      "max_global_attempts_per_utc_day": 3,
+      "requests_active_verified": 2,
+      "runs": [
+        {
+          "run_id": 45056332000,
+          "date": "2026-11-22",
+          "converted": 1,
+          "attempts": 1,
+          "reservations_denied": 2,
+          "r2_snapshot_saved_and_verified": true,
+          "publication_calls": 0
+        },
+        {
+          "run_id": 44934503717,
+          "date": "2026-11-21",
+          "converted": 2,
+          "attempts": 2,
+          "reservations_denied": 1,
+          "publication_calls": 0
+        }
+      ]
     },
-    "campaign_cache_by_site": {
-      "blogger_cozinha_sem_complicacao": {
-        "campaign": "cozinhasemcomp",
-        "candidates": 4,
-        "cached": 0
+    "d1_2026_11_23": {
+      "conversion_attempt_reservations": 3,
+      "global_budget": 3,
+      "campaigns": {
+        "moveisparacadacanto": 1,
+        "radarwp": 2
       },
-      "blogger_estilo": {
-        "campaign": "estilo",
-        "candidates": 4,
-        "cached": 0
-      },
-      "blogger_limpeza": {
-        "campaign": "limpeza",
-        "candidates": 4,
-        "cached": 0
-      }
+      "reservations_do_not_prove_successful_conversion": true,
+      "read_only_sql": true
     },
-    "deployment_audit": {
-      "priority_sites": 8,
-      "configured_for_draft_preflight": 2,
-      "profile_request_missing": 5,
-      "route_missing": 1
+    "r2_campaign_cache": {
+      "audited_in_c137_run": 45278265895,
+      "priority_blogger_sites": 3,
+      "candidates": 12,
+      "exact_campaign_cached": 0
     },
     "blocked_ready": {
       "site_key": "wordpress_casa_decoracao",
-      "existing_wordpress_post_id": 314,
+      "wordpress_post_id": 314,
       "reason": "CONFLICTING_DRAFT_HTML",
       "do_not_consume": true
     },
-    "old_drafts_still_verified_in_c136": true,
-    "legacy_hold_monitor": {
+    "legacy_monitor": {
       "run_id": 45277246529,
-      "cron_utc": "47 23 * * *",
       "casa": "PENDING_OBSERVATION",
-      "oficina": "PENDING_OBSERVATION"
+      "oficina": "PENDING_OBSERVATION",
+      "cron_utc": "47 23 * * *"
     },
     "publication": {
       "automatic_live_enabled": false,
       "policy": "pending_policy_approval",
-      "new_drafts_in_c137": 0,
-      "live_posts_in_c137": 0
+      "new_drafts_in_c138": 0,
+      "live_posts_in_c138": 0
+    },
+    "writes_in_c138": {
+      "cms": 0,
+      "d1": 0,
+      "r2": 0,
+      "shopee": 0,
+      "github_docs_only": true
     },
     "pending": [
-      "inspect genuine Shopee conversion queue and D1 budget",
-      "reverify exact manufacturer/catalog identity before conversion",
-      "observe legacy cron post-hold skipped",
-      "wait natural new Blogger canary and verify GET/SHA",
-      "do not consume WP Casa colliding READY",
-      "onboard Blogger/WordPress sites only with verified sources and real requests",
-      "owner final authorization before LIVE"
+      "verify next scheduled legacy jobs SKIPPED with real GitHub run evidence",
+      "wait natural quota renewal for Móveis and global Shopee conversions",
+      "verify independent factual sources before site requests",
+      "do not consume collision READY WP Casa #314",
+      "confirm existing verified Blogger/WP pilot DRAFTs remain stable",
+      "obtain explicit final LIVE authorization"
     ]
   }
 }
