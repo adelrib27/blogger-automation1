@@ -1,4 +1,4 @@
-"""C140 — 50 cenários individuais, além de guardas de contrato.
+"""C140/C141 — 50 cenários individuais, portfólio global e guardas.
 
 Casos synthetic-only; nenhum login CMS, nenhuma chamada Shopee/D1/R2, nem
 mutação de arquivos de produção. A métrica é testes executados, não DRAFTs.
@@ -67,7 +67,9 @@ class ScopeGuardContractTests(unittest.TestCase):
         self.assertEqual(result["cms_writes"], 0)
         self.assertEqual(result["affiliate_mutations"], 0)
         self.assertFalse(result["live_authorized"])
-        self.assertEqual(result["outcomes"]["PREFLIGHT_ONLY_NOT_AUTHORIZED"], 7)
+        self.assertGreaterEqual(result["outcomes"]["PREFLIGHT_ONLY_NOT_AUTHORIZED"], 1)
+        self.assertEqual(result["global_coverage_audit"]["global_candidates"], 28)
+        self.assertEqual(result["global_coverage_audit"]["cross_account_pending"], 24)
 
     def test_ten_to_fifty_enforced(self):
         self.assertEqual(gate.run_simulations(count=10)["passed"], 10)
@@ -85,7 +87,8 @@ class ScopeGuardContractTests(unittest.TestCase):
         self.assertNotIn("8052455848487624244",
                          [x["id"] for x in POLICY["blogger"]["current_targets"]])
         self.assertEqual(len(POLICY["blogger"]["current_targets"]), 4)
-        self.assertEqual(POLICY["snapshot_counts"]["total_current_targets"], 7)
+        self.assertEqual(POLICY["snapshot_counts"]["total_current_targets"], 31)
+        self.assertEqual(POLICY["snapshot_counts"]["blogger_connected_verified_subset"], 4)
 
     def test_policy_tampering_fails_closed(self):
         tampered = copy.deepcopy(POLICY)
