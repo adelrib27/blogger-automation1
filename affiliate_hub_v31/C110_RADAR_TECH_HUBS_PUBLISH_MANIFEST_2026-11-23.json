@@ -1,7 +1,7 @@
 {
   "date": "2026-11-23",
   "cycle": "C110",
-  "stage": "DRAFT_CREATION",
+  "stage": "LIVE_VERIFIED",
   "authoritative_html": "affiliate_hub_v31/C110_RADAR_TECH_HUBS_HTML_READY_2026-11-23.json",
   "header_backup": "affiliate_hub_v31/backups/C110_RADAR_TECH_PRE_NOVOS_MENUS_2026-11-23.json",
   "site": "https://radartechbr.com.br/",
@@ -103,7 +103,25 @@
       }
     }
   ],
-  "header_changed": false,
-  "custom_css_changed": false,
-  "live_automation_changed": false
+  "header_changed": true,
+  "custom_css_changed": true,
+  "live_automation_changed": false,
+  "home_changed": true,
+  "applied_templates": {
+    "header": "affiliate_hub_v31/exports/C110_RADAR_TECH_HEADER_FINAL_2026-11-23.html",
+    "home": "affiliate_hub_v31/exports/C111_RADAR_TECH_HOME_TECH_ONLY_CAROUSEL_LATEST_PREVIEW_2026-11-23.html",
+    "custom_css": "affiliate_hub_v31/exports/C110_RADAR_TECH_CUSTOM_CSS_FINAL_2026-11-23.css"
+  },
+  "public_qa": {
+    "eight_published_hubs_http200": true,
+    "html_desktop_mobile": true,
+    "dropdown_desktop_click_test": true,
+    "custom_css_loaded": true,
+    "homepage_recent_posts_filtered_to_technology": true,
+    "old_hero_moda_and_decoracao_removed": true,
+    "existing_post_totals_from_pre_final_wp_api": {
+      "publish": 37,
+      "draft": 15
+    }
+  }
 }
