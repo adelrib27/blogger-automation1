@@ -1,0 +1,530 @@
+
+/* Radar Tech BR — carrossel editorial do hero */
+.rt-feature-carousel{position:relative!important;overflow:hidden!important;display:block!important;padding:0!important;min-height:350px!important;background:#11152d!important;isolation:isolate}
+.rt-v2-promo-grid .rt-v2-promo-side{min-height:169px!important;padding:24px 26px!important}
+.rt-v2-promo-grid .rt-v2-promo-side strong{font-size:22px!important;margin-bottom:16px!important}
+.rt-feature-track,.rt-feature-slide{position:absolute;inset:0}
+.rt-feature-slide{opacity:0;pointer-events:none;background-size:100% 100%,contain;background-position:center center,center center;background-repeat:no-repeat,no-repeat;transition:opacity .6s ease,transform .75s ease;transform:scale(1.015)}
+.rt-feature-slide.is-active{opacity:1;pointer-events:auto;transform:scale(1);z-index:1}
+.rt-feature-slide:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,12,30,.04),rgba(6,12,30,.16));pointer-events:none}
+.rt-feature-content{position:absolute;z-index:2;left:34px;bottom:30px;width:min(590px,68%);color:#fff;text-align:left}
+.rt-feature-kicker{display:inline-flex;align-items:center;gap:7px;margin-bottom:14px;padding:7px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(14,18,45,.34);backdrop-filter:blur(8px);font-size:11px;font-weight:800;letter-spacing:1.05px;text-transform:uppercase;color:#e9ddff}
+.rt-feature-content h1{margin:0 0 11px!important;color:#fff!important;font-size:clamp(27px,2.65vw,42px)!important;line-height:1.03!important;letter-spacing:-1.15px!important;max-width:570px!important;text-shadow:0 2px 18px rgba(0,0,0,.18)}
+.rt-feature-content p{margin:0 0 16px!important;max-width:540px;color:rgba(255,255,255,.88)!important;font-size:14.5px!important;line-height:1.5!important}
+.rt-feature-cta{display:inline-flex;align-items:center;justify-content:center;padding:12px 17px;border:1px solid rgba(201,170,255,.7);border-radius:999px;background:rgba(27,16,76,.76);box-shadow:0 0 18px rgba(139,92,246,.26);color:#fff!important;text-decoration:none!important;font-size:13px;font-weight:800;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
+.rt-feature-cta:hover{transform:translateY(-1px);background:#6d28d9;box-shadow:0 0 24px rgba(139,92,246,.48)}
+.rt-feature-nav{position:absolute;z-index:4;top:50%;width:40px;height:40px;margin-top:-20px;border:1px solid rgba(255,255,255,.24);border-radius:50%;background:rgba(10,14,40,.5);backdrop-filter:blur(8px);color:#fff;font-size:25px;line-height:1;cursor:pointer;opacity:.86;transition:opacity .18s ease,background .18s ease,transform .18s ease}
+.rt-feature-nav:hover{opacity:1;background:rgba(109,40,217,.9);transform:scale(1.04)}
+.rt-feature-prev{left:14px}.rt-feature-next{right:14px}
+.rt-feature-dots{position:absolute;z-index:4;right:26px;bottom:22px;display:flex;gap:7px;align-items:center}
+.rt-feature-dot{width:7px;height:7px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.42);cursor:pointer;transition:width .22s ease,background .22s ease}
+.rt-feature-dot.is-active{width:24px;background:#b794ff}
+@media (max-width:780px){.rt-feature-carousel{min-height:330px!important}.rt-v2-promo-grid .rt-v2-promo-side{min-height:145px!important;padding:22px!important}.rt-feature-content{left:22px;right:22px;bottom:28px;width:auto;max-width:none}.rt-feature-content h1{font-size:clamp(26px,7.2vw,34px)!important;letter-spacing:-.8px!important}.rt-feature-content p{font-size:13.5px!important;max-width:94%}.rt-feature-nav{width:34px;height:34px;font-size:21px}.rt-feature-prev{left:10px}.rt-feature-next{right:10px}.rt-feature-dots{right:20px;bottom:14px}.rt-feature-kicker{font-size:10px}}
+@media (prefers-reduced-motion:reduce){.rt-feature-slide,.rt-feature-cta,.rt-feature-nav,.rt-feature-dot{transition:none!important}}
+
+/* Radar Tech BR — ajustes editoriais de artigos */
+.rt-article-header{
+  max-width:960px!important;
+}
+.rt-article-title{
+  font-size:clamp(32px,3vw,38px)!important;
+  line-height:1.04!important;
+  letter-spacing:-1.25px!important;
+  max-width:920px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+.rt-kicker,
+.rt-kicker a{
+  color:#8b5cf6!important;
+}
+.rt-article-content{
+  max-width:800px!important;
+  font-size:18.5px!important;
+  line-height:1.78!important;
+}
+.rt-article-content .wp-block-post-content{
+  max-width:800px!important;
+}
+.rt-article-content .wp-block-post-content.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){
+  max-width:800px!important;
+}
+.rt-article-content .wp-block-post-content > p:first-child{
+  position:relative;
+  margin-top:0!important;
+  margin-bottom:30px!important;
+  padding:44px 24px 22px!important;
+  border:1px solid #ded7ff;
+  border-radius:16px;
+  background:linear-gradient(135deg,#faf8ff,#f7f8fc);
+  box-shadow:0 8px 24px rgba(17,24,39,.04);
+}
+.rt-article-content .wp-block-post-content > p:first-child::before{
+  content:"Resumo rápido";
+  position:absolute;
+  top:18px;
+  left:24px;
+  color:#8b5cf6;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.2px;
+  line-height:1;
+  text-transform:uppercase;
+}
+.rt-article-featured{
+  max-width:960px!important;
+}
+.rt-article-featured img{
+  border-radius:18px!important;
+  box-shadow:0 18px 40px rgba(17,24,39,.10);
+}
+.produto-principal-contextual{
+  border:1px solid #b8f6a6!important;
+  background:linear-gradient(135deg,#f5fff1 0%,#eaffdf 55%,#f2ffe9 100%)!important;
+  border-radius:18px!important;
+  box-shadow:0 12px 30px rgba(34,197,94,.10),0 0 0 1px rgba(132,255,135,.22)!important;
+}
+.produto-principal-contextual > p:first-child{
+  display:inline-block!important;
+  margin:0 auto 18px!important;
+  padding:9px 15px!important;
+  border:1px solid #c4a5ff!important;
+  border-radius:999px!important;
+  background:linear-gradient(135deg,#8b5cf6,#6d28d9)!important;
+  color:#fff!important;
+  box-shadow:0 0 0 2px rgba(139,92,246,.14),0 0 18px rgba(139,92,246,.58),0 8px 22px rgba(77,35,160,.24)!important;
+  letter-spacing:.2px!important;
+}
+.produto-principal-contextual > p:first-child strong{
+  color:#fff!important;
+}
+.produto-principal-contextual a[rel~="sponsored"]{
+  background:linear-gradient(135deg,#14532d,#166534 55%,#0f3f24)!important;
+  color:#fff!important;
+  border:1px solid #65ff82!important;
+  border-radius:999px!important;
+  padding:13px 22px!important;
+  text-transform:uppercase!important;
+  letter-spacing:.25px!important;
+  box-shadow:0 0 0 2px rgba(101,255,130,.16),0 0 18px rgba(57,255,92,.48),0 10px 24px rgba(20,83,45,.28)!important;
+  transition:transform .18s ease,box-shadow .18s ease!important;
+}
+.produto-principal-contextual a[rel~="sponsored"]::before{
+  content:"👉 ";
+}
+.produto-principal-contextual a[rel~="sponsored"]:hover{
+  transform:translateY(-1px);
+  box-shadow:0 0 0 2px rgba(101,255,130,.22),0 0 22px rgba(57,255,92,.60),0 12px 28px rgba(20,83,45,.32)!important;
+}
+/* Home — ordem visual das seções */
+.rt-v2-home{
+  display:flex!important;
+  flex-direction:column!important;
+}
+.rt-v2-home > .rt-v2-market-shell{order:1;}
+.rt-v2-home > .rt-v2-featured-section{order:3;}
+.rt-v2-home > .rt-v2-banner-wrap{order:3;}
+.rt-v2-home > .rt-v2-category-section{order:2;}
+.rt-v2-home > .rt-v2-latest{order:5;}
+.rt-v2-home > .rt-v3-category-feed-section{order:6;}
+.rt-v2-home > .rt-v2-trust{order:7;}
+
+@media (max-width:720px){
+  .rt-article-title{
+    font-size:clamp(30px,8.8vw,38px)!important;
+    letter-spacing:-.6px!important;
+    line-height:1.08!important;
+  }
+  .rt-article-content{
+    font-size:17.5px!important;
+    line-height:1.72!important;
+  }
+  .rt-article-content .wp-block-post-content > p:first-child{
+    padding:42px 18px 20px!important;
+  }
+  .rt-article-content .wp-block-post-content > p:first-child::before{
+    left:18px;
+  }
+  .rt-v2-header{
+    position:relative!important;
+  }
+  .rt-v2-trending{
+    display:flex!important;
+    gap:20px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    white-space:nowrap!important;
+    padding-right:104px!important;
+    scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .rt-v2-trending::-webkit-scrollbar{display:none!important;}
+  .rt-v2-trending a{
+    flex:0 0 auto!important;
+    scroll-snap-align:start;
+  }
+  .rt-v2-header::after{
+    content:"mais →";
+    position:absolute;
+    right:0;
+    bottom:0;
+    z-index:12;
+    pointer-events:none;
+    height:44px;
+    display:flex;
+    align-items:center;
+    padding:0 14px 0 28px;
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.2px;
+    background:linear-gradient(90deg,rgba(70,28,150,0) 0%,rgba(70,28,150,.78) 28%,rgba(91,33,182,.96) 58%,rgba(109,40,217,1) 100%);
+    text-shadow:0 1px 2px rgba(0,0,0,.18);
+  }
+}
+
+
+
+/* Loja Radar Tech BR — storefront v1 2026-10-19 */
+.page-id-213 .wp-block-post-title{display:none!important}
+.page-id-213 .wp-block-post-content{max-width:none!important;margin:0!important}
+.page-id-213 .wp-block-post-content.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width:none!important}
+.page-id-213 .wp-block-post-content > .rt-shop{max-width:1440px!important;margin:0 auto!important;padding:22px 24px 56px!important}
+.rt-shop{font-family:inherit;color:#0f172a}
+.rt-shop *{box-sizing:border-box}
+.rt-shop a{text-decoration:none}
+.rt-shop-hero{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:32px;align-items:center;min-height:390px;padding:46px 48px;border-radius:26px;background:linear-gradient(125deg,#073b9b 0%,#0b5bd7 43%,#0f72df 62%,#ffd400 62%,#ffbf00 100%);box-shadow:0 22px 52px rgba(15,48,110,.17);margin-bottom:26px}
+.rt-shop-hero:before{content:"";position:absolute;inset:auto auto -160px -80px;width:420px;height:420px;border-radius:50%;background:rgba(255,255,255,.08);z-index:-1}
+.rt-shop-hero-copy{position:relative;z-index:3;color:#fff;max-width:760px}
+.rt-shop-eyebrow{display:inline-flex;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);font-size:12px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;margin-bottom:17px}
+.rt-shop-hero h1{margin:0 0 16px!important;max-width:700px;color:#fff!important;font-size:clamp(36px,4.3vw,64px)!important;line-height:.99!important;letter-spacing:-2px!important;text-shadow:0 2px 18px rgba(0,0,0,.12)}
+.rt-shop-hero-copy>p{margin:0 0 24px!important;max-width:670px;color:#eef6ff!important;font-size:17px!important;line-height:1.6!important}
+.rt-shop-hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.rt-shop-primary,.rt-shop-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 19px;border-radius:12px;font-weight:850;font-size:14px;transition:.18s ease}
+.rt-shop-primary{background:#ffd400;color:#09275f!important;box-shadow:0 8px 24px rgba(255,212,0,.23)}
+.rt-shop-secondary{background:#fff;color:#0b4fb8!important;border:1px solid rgba(255,255,255,.55)}
+.rt-shop-primary:hover,.rt-shop-secondary:hover{transform:translateY(-2px)}
+.rt-shop-hero-meta{display:flex;flex-wrap:wrap;gap:9px 18px;color:#ddecff;font-size:12px;font-weight:650}
+.rt-shop-hero-products{position:relative;height:300px;z-index:2}
+.rt-shop-float-card{position:absolute;display:flex;align-items:center;justify-content:center;background:#fff;border:8px solid rgba(255,255,255,.94);border-radius:22px;box-shadow:0 20px 46px rgba(4,24,64,.26);overflow:hidden}
+.rt-shop-float-card img{width:100%;height:100%;object-fit:contain;background:#fff}
+.rt-shop-float-a{width:255px;height:255px;left:8%;top:20px;transform:rotate(-5deg)}
+.rt-shop-float-b{width:190px;height:190px;right:0;top:2px;transform:rotate(6deg)}
+.rt-shop-float-c{width:160px;height:160px;right:22px;bottom:-6px;transform:rotate(-4deg)}
+.rt-shop-catbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0 0 38px;padding:14px;border:1px solid #e6eaf2;border-radius:20px;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.055)}
+.rt-shop-catbar a{display:grid;grid-template-columns:46px 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;min-height:72px;padding:10px 12px;border-radius:15px;color:#13213d!important;transition:.18s ease}
+.rt-shop-catbar a:hover{background:#f4f7ff;transform:translateY(-1px)}
+.rt-shop-cat-icon{grid-row:1/3;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#2655d9,#0d8cf0);color:#fff;font-size:22px;font-weight:900;box-shadow:0 7px 18px rgba(34,84,214,.2)}
+.rt-shop-catbar strong{font-size:13px;line-height:1.15}
+.rt-shop-catbar small{color:#64748b;font-size:11px;line-height:1.2;margin-top:2px}
+.rt-shop-section{margin-top:12px}
+.rt-shop-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:18px;padding:0 4px}
+.rt-shop-section-head h2{margin:3px 0 6px!important;font-size:clamp(26px,2.6vw,38px)!important;line-height:1.05!important;letter-spacing:-.8px!important;color:#0b1740!important}
+.rt-shop-section-head p{margin:0!important;color:#64748b!important;font-size:14px!important}
+.rt-shop-section-head>a{flex:0 0 auto;color:#0b63d8!important;font-weight:800;font-size:13px}
+.rt-shop-kicker{color:#ff9d00;font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.rt-shop-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.rt-shop-card{min-width:0;display:flex;flex-direction:column;overflow:hidden;border:1px solid #e6eaf2;border-radius:18px;background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.065);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.rt-shop-card:hover{transform:translateY(-3px);box-shadow:0 18px 36px rgba(15,23,42,.1);border-color:#cfd8eb}
+.rt-shop-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px 14px 0}
+.rt-shop-pill{display:inline-flex;max-width:76%;padding:6px 8px;border-radius:8px;background:#eef4ff;color:#1549b8;font-size:10px;font-weight:900;line-height:1.15;text-transform:uppercase;letter-spacing:.35px}
+.rt-shop-rating{color:#f59e0b;font-size:11px;font-weight:900;white-space:nowrap}
+.rt-shop-image{display:flex;align-items:center;justify-content:center;height:205px;margin:9px 12px 0;border-radius:13px;background:#f8fafc;overflow:hidden}
+.rt-shop-image img{width:100%;height:100%;object-fit:contain;transition:transform .24s ease}
+.rt-shop-card:hover .rt-shop-image img{transform:scale(1.025)}
+.rt-shop-card-body{display:flex;flex:1;flex-direction:column;padding:14px}
+.rt-shop-card h3{margin:0 0 8px!important;color:#101a35!important;font-size:17px!important;line-height:1.24!important;letter-spacing:-.2px!important}
+.rt-shop-sub{margin:0 0 15px!important;color:#64748b!important;font-size:12.2px!important;line-height:1.45!important;min-height:52px}
+.rt-shop-price-label{margin:auto 0 1px!important;color:#7c8aa5!important;font-size:10px!important;font-weight:750;text-transform:uppercase;letter-spacing:.55px}
+.rt-shop-price{margin:0 0 12px!important;color:#e11d1d!important;font-size:24px!important;line-height:1.15!important;font-weight:900!important;letter-spacing:-.5px}
+.rt-shop-price small{color:#8b1d1d;font-size:12px;font-weight:750}
+.rt-shop-buy{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:42px;padding:0 13px;border-radius:10px;background:linear-gradient(135deg,#119b43,#0a7d34);color:#fff!important;font-size:12.5px;font-weight:850;box-shadow:0 8px 18px rgba(17,155,67,.16)}
+.rt-shop-buy:hover{filter:brightness(1.04)}
+.rt-shop-promos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:30px 0}
+.rt-shop-promo{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;min-height:185px;padding:24px;border-radius:19px;color:#fff!important;box-shadow:0 14px 30px rgba(15,23,42,.09)}
+.rt-shop-promo:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-50px;top:-58px;background:rgba(255,255,255,.14)}
+.rt-shop-promo span{position:relative;z-index:2;font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.rt-shop-promo strong{position:relative;z-index:2;max-width:360px;font-size:22px;line-height:1.12;margin-bottom:15px}
+.rt-shop-promo em{position:relative;z-index:2;font-style:normal;font-size:12px;font-weight:850}
+.rt-shop-promo-tech{background:linear-gradient(135deg,#4c1d95,#7c3aed 58%,#a855f7)}
+.rt-shop-promo-home{background:linear-gradient(135deg,#087d36,#14a74f 58%,#52c76b)}
+.rt-shop-promo-tools{background:linear-gradient(135deg,#ef4a19,#fb7a13 60%,#ffb100)}
+.rt-shop-trust{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:30px 0 18px}
+.rt-shop-trust>div{padding:21px;border:1px solid #dfe6f1;border-radius:15px;background:#f8fbff}
+.rt-shop-trust strong{display:block;color:#10204a;font-size:14px;margin-bottom:5px}
+.rt-shop-trust span{display:block;color:#64748b;font-size:12.5px;line-height:1.5}
+.rt-shop-disclosure{padding:22px 24px;border-radius:16px;background:#081b3d;color:#fff}
+.rt-shop-disclosure strong{display:block;color:#ffd400;font-size:14px;margin-bottom:7px}
+.rt-shop-disclosure p{margin:0!important;color:#d7e4f8!important;font-size:12.5px!important;line-height:1.6!important}
+.rt-v2-shop-action{display:inline-flex!important;align-items:center!important;min-height:36px!important;padding:0 13px!important;border-radius:10px!important;background:#ffd400!important;color:#18204a!important;font-weight:900!important;white-space:nowrap!important;box-shadow:0 7px 18px rgba(255,212,0,.16)!important}
+.rt-v2-shop-action:hover{background:#ffe350!important;color:#18204a!important}
+.rt-footer-shop{margin:18px 0 0;padding:14px 16px;border:1px solid rgba(255,255,255,.14);border-radius:13px;background:rgba(255,255,255,.045)}
+.rt-footer-shop a{display:inline-flex;align-items:center;gap:8px;color:#fff!important;font-weight:900!important;font-size:16px!important}
+.rt-footer-shop a:before{content:"LOJA";padding:4px 7px;border-radius:6px;background:#ffd400;color:#17201d;font-size:9px;letter-spacing:.8px}
+.rt-footer-shop p{margin:5px 0 0!important;color:rgba(255,255,255,.7)!important;font-size:12px!important;line-height:1.45!important}
+@media(max-width:1180px){
+  .rt-shop-hero{grid-template-columns:1fr minmax(300px,.7fr)}
+  .rt-shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .rt-shop-catbar{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto}
+}
+@media(max-width:820px){
+  .page-id-213 .wp-block-post-content > .rt-shop{padding:16px 14px 42px!important}
+  .rt-shop-hero{grid-template-columns:1fr;min-height:auto;padding:34px 26px;background:linear-gradient(145deg,#073b9b 0%,#0b65d8 72%,#ffc400 72%,#ffd400 100%)}
+  .rt-shop-hero-products{height:245px}
+  .rt-shop-float-a{width:210px;height:210px;left:4%}.rt-shop-float-b{width:150px;height:150px;right:4%}.rt-shop-float-c{width:125px;height:125px}
+  .rt-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rt-shop-promos{grid-template-columns:1fr}
+  .rt-shop-trust{grid-template-columns:1fr}
+  .rt-shop-section-head{align-items:flex-start;flex-direction:column;gap:10px}
+  .rt-v2-header-actions .rt-v2-shop-action{order:-1}
+}
+@media(max-width:520px){
+  .rt-shop-hero{padding:28px 20px;border-radius:19px}
+  .rt-shop-hero h1{font-size:clamp(34px,11vw,47px)!important;letter-spacing:-1.2px!important}
+  .rt-shop-hero-products{height:205px}
+  .rt-shop-float-a{width:170px;height:170px}.rt-shop-float-b{width:125px;height:125px}.rt-shop-float-c{width:105px;height:105px}
+  .rt-shop-grid{grid-template-columns:1fr}
+  .rt-shop-image{height:270px}
+  .rt-shop-catbar{grid-template-columns:repeat(5,175px);padding:10px}
+}
+
+
+/* Loja Radar Tech BR — identidade aplicada somente à página /loja/ */
+.page-id-213 .rt-v2-utility{background:#061a3d!important}
+.page-id-213 .rt-v2-header{background:linear-gradient(110deg,#073b9b,#064fb8 58%,#0b63cf)!important}
+.page-id-213 .rt-v2-trending a:first-child{color:#ffd400!important;font-weight:900!important}
+.page-id-213 .rt-footer{background:#071a3b!important}
+.page-id-213 .rt-footer-shop{border-color:rgba(255,212,0,.28);background:rgba(255,212,0,.055)}
+
+
+/* Loja Radar Tech BR — ajuste estrutural full-width V2 2026-10-19 */
+body.page-id-213 main.wp-block-group,
+body.page-id-213 .wp-block-post-content,
+body.page-id-213 .wp-block-post-content.is-layout-constrained,
+body.page-id-213 .wp-block-post-content.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){
+  width:100%!important;
+  max-width:none!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+body.page-id-213 .wp-block-post-content{
+  padding:0!important;
+}
+body.page-id-213 .rt-marketplace{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  overflow:visible!important;
+  background:#fff!important;
+}
+body.page-id-213 .rtm-hero{
+  width:100%!important;
+  padding:28px 0 14px!important;
+}
+body.page-id-213 .rtm-slider{
+  width:min(1440px,calc(100% - 48px))!important;
+  max-width:1440px!important;
+  margin:0 auto!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  box-shadow:0 12px 34px rgba(15,23,42,.08)!important;
+}
+body.page-id-213 .rtm-slide{
+  min-height:390px!important;
+  background:linear-gradient(90deg,#ffc400 0 42%,#fff 42% 100%)!important;
+}
+body.page-id-213 .rtm-slide-inner{
+  width:100%!important;
+  max-width:none!important;
+  min-height:390px!important;
+  grid-template-columns:42% 58%!important;
+  gap:0!important;
+  padding:0!important;
+  align-items:stretch!important;
+}
+body.page-id-213 .rtm-slide-copy{
+  padding:42px 44px 46px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  min-width:0!important;
+}
+body.page-id-213 .rtm-slide-copy h1{
+  font-size:clamp(34px,3.25vw,54px)!important;
+  line-height:1.02!important;
+  letter-spacing:-1.4px!important;
+  max-width:520px!important;
+  margin:0 0 14px!important;
+}
+body.page-id-213 .rtm-slide-copy p{
+  max-width:500px!important;
+  font-size:16px!important;
+  line-height:1.55!important;
+}
+body.page-id-213 .rtm-slide-media{
+  min-height:390px!important;
+  padding:42px 54px 42px 34px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:24px!important;
+  background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)!important;
+}
+body.page-id-213 .rtm-slide-media img{
+  width:28%!important;
+  max-width:230px!important;
+  min-width:0!important;
+  border-radius:18px!important;
+  padding:12px!important;
+}
+body.page-id-213 .rtm-prev{left:18px!important;}
+body.page-id-213 .rtm-next{right:18px!important;}
+body.page-id-213 .rtm-dots{bottom:16px!important;}
+body.page-id-213 .rtm-brands-wrap,
+body.page-id-213 .rtm-showcase,
+body.page-id-213 .rtm-categories,
+body.page-id-213 .rtm-footnote{
+  width:100%!important;
+}
+body.page-id-213 .rtm-container{
+  width:min(1280px,calc(100% - 48px))!important;
+  max-width:1280px!important;
+  margin:0 auto!important;
+}
+body.page-id-213 .rtm-brands-wrap{
+  padding:34px 0 18px!important;
+  background:#fff!important;
+}
+body.page-id-213 .rtm-headline{
+  align-items:center!important;
+  margin-bottom:24px!important;
+}
+body.page-id-213 .rtm-headline h2{
+  font-size:clamp(25px,2.1vw,34px)!important;
+  max-width:920px!important;
+  line-height:1.12!important;
+  letter-spacing:-.6px!important;
+}
+body.page-id-213 .rtm-brands{
+  display:grid!important;
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+  gap:18px!important;
+  overflow:visible!important;
+}
+body.page-id-213 .rtm-brand span{
+  width:82px!important;
+  height:82px!important;
+  font-size:13px!important;
+}
+body.page-id-213 .rtm-showcase{
+  padding:24px 0 42px!important;
+  background:#fff!important;
+}
+body.page-id-213 .rtm-grid4{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:18px!important;
+}
+body.page-id-213 .rtm-panel{
+  min-width:0!important;
+  min-height:420px!important;
+  padding:18px!important;
+  border-radius:14px!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+body.page-id-213 .rtm-panel-top h3{
+  font-size:20px!important;
+}
+body.page-id-213 .rtm-products{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:18px 14px!important;
+}
+body.page-id-213 .rtm-product img{
+  aspect-ratio:1/1!important;
+  width:100%!important;
+  max-height:150px!important;
+  object-fit:contain!important;
+}
+body.page-id-213 .rtm-product strong{
+  font-size:15px!important;
+  margin-top:8px!important;
+}
+body.page-id-213 .rtm-more{
+  margin-top:auto!important;
+  padding-top:14px!important;
+}
+body.page-id-213 .rtm-categories{
+  padding:0 0 30px!important;
+}
+body.page-id-213 .rtm-footnote{
+  padding:34px 0!important;
+}
+@media(max-width:1200px){
+ body.page-id-213 .rtm-brands{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
+ body.page-id-213 .rtm-grid4{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+}
+@media(max-width:860px){
+ body.page-id-213 .rtm-slider{width:calc(100% - 24px)!important;border-radius:12px!important;}
+ body.page-id-213 .rtm-slide{background:#ffc400!important;}
+ body.page-id-213 .rtm-slide-inner{grid-template-columns:1fr!important;}
+ body.page-id-213 .rtm-slide-copy{padding:32px 24px 24px!important;}
+ body.page-id-213 .rtm-slide-media{min-height:auto!important;padding:22px 24px 56px!important;background:#fff!important;}
+ body.page-id-213 .rtm-container{width:calc(100% - 24px)!important;}
+}
+@media(max-width:640px){
+ body.page-id-213 .rtm-brands{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ body.page-id-213 .rtm-grid4{grid-template-columns:1fr!important;}
+ body.page-id-213 .rtm-slide-copy h1{font-size:34px!important;}
+}
+
+
+/* Loja Radar Tech BR — atalho Shopee */
+.rtm-brand-shopee a{display:block;text-decoration:none;color:inherit}
+.rtm-brand-shopee .rtm-shopee-logo{background:#fff!important;border:1px solid #ececec;overflow:hidden}
+.rtm-brand-shopee .rtm-shopee-logo img{display:block;width:52%;height:52%;object-fit:contain;margin:auto}
+.rtm-brand-shopee a:hover .rtm-shopee-logo{transform:translateY(-2px);box-shadow:0 12px 22px rgba(0,0,0,.12)}
+.rtm-brand-shopee small{color:#555}
+
+
+/* Loja Radar Tech BR — Shopee: restaurar cor original do círculo, mantendo logo e link */
+body.page-id-213 .rtm-brand-shopee .rtm-shopee-logo{
+  background:linear-gradient(135deg,#2877ff,#0b1e63)!important;
+  border:0!important;
+}
+body.page-id-213 .rtm-brand-shopee .rtm-shopee-logo img{
+  width:52%!important;
+  height:52%!important;
+  object-fit:contain!important;
+}
+
+
+/* C110 RADAR TECH NAV — menus acessíveis Tecnologia/Guias e novas verticais (2026-11-23) */
+.rt-v2-trending.rt-c110-nav{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:flex-start!important;gap:6px 9px!important;overflow:visible!important;white-space:normal!important;position:relative!important;z-index:100!important;padding-right:0!important;scroll-snap-type:none!important}
+.rt-c110-nav .rt-c110-toplink,.rt-c110-nav .rt-c110-drop>summary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;box-sizing:border-box;padding:9px 12px;border-radius:9px;color:#fff!important;font-size:13px;line-height:1.3;font-weight:750;text-decoration:none!important;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.13);transition:background .15s ease;cursor:pointer}
+.rt-c110-nav .rt-c110-toplink:hover,.rt-c110-nav .rt-c110-drop>summary:hover,.rt-c110-nav .rt-c110-drop[open]>summary{background:rgba(255,255,255,.18)!important}
+.rt-c110-nav .rt-c110-shop{background:#fff!important;color:#4e268f!important;border-color:#fff!important}
+.rt-c110-nav .rt-c110-drop{position:relative;flex:0 0 auto;min-width:0}
+.rt-c110-nav .rt-c110-drop>summary{list-style:none;white-space:nowrap}
+.rt-c110-nav .rt-c110-drop>summary::-webkit-details-marker{display:none}
+.rt-c110-nav .rt-c110-drop>summary::marker{content:""}
+.rt-c110-nav .rt-c110-drop>summary span{margin-left:7px;font-size:17px;line-height:1}
+.rt-c110-nav .rt-c110-menu{position:absolute;left:0;top:calc(100% + 7px);z-index:5000;display:grid;gap:3px;min-width:255px;max-width:330px;padding:9px;box-sizing:border-box;background:#fff;border:1px solid #e5dff6;border-radius:13px;box-shadow:0 18px 42px rgba(21,17,54,.25)}
+.rt-c110-nav .rt-c110-menu a{display:block!important;padding:11px 13px!important;border-radius:8px!important;color:#252240!important;font-size:13px!important;line-height:1.4!important;font-weight:650!important;background:transparent!important;text-decoration:none!important;white-space:normal!important;min-height:0!important}
+.rt-c110-nav .rt-c110-menu a strong{font-weight:850;color:#5327aa}
+.rt-c110-nav .rt-c110-menu a:hover,.rt-c110-nav .rt-c110-menu a:focus{background:#f1ebff!important;color:#44208d!important}
+.rt-c110-nav a:focus-visible,.rt-c110-nav summary:focus-visible{outline:3px solid #fff!important;outline-offset:3px!important}
+.rt-v2-header:has(.rt-c110-nav){overflow:visible!important}
+.rt-v2-header:has(.rt-c110-nav)::after{display:none!important;content:none!important}
+.rt-v2-header .rt-mobile-more{display:none!important}
+.rt-c110-topic-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:13px!important}
+@media(max-width:760px){
+.rt-v2-trending.rt-c110-nav{display:flex!important;flex-wrap:wrap!important;overflow:visible!important;overflow-x:visible!important;overflow-y:visible!important;white-space:normal!important;gap:7px!important;padding:8px 0!important}
+.rt-c110-nav .rt-c110-toplink,.rt-c110-nav .rt-c110-drop>summary{font-size:12px!important;padding:9px 11px!important;min-height:41px!important}
+.rt-c110-nav .rt-c110-drop[open]{flex:1 1 100%!important;width:100%!important}
+.rt-c110-nav .rt-c110-drop[open]>.rt-c110-menu{position:static!important;width:100%!important;max-width:none!important;min-width:0!important;box-shadow:0 10px 22px rgba(0,0,0,.2)}
+.rt-v2-header::after{display:none!important;content:none!important}
+.rt-c110-topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:420px){.rt-c110-nav .rt-c110-toplink,.rt-c110-nav .rt-c110-drop>summary{font-size:11px!important;padding:8px 9px!important}}
+@media(prefers-reduced-motion:reduce){.rt-c110-nav .rt-c110-toplink,.rt-c110-nav .rt-c110-drop>summary{transition:none!important}}
