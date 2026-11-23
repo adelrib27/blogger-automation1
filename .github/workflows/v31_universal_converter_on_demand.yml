@@ -47,6 +47,8 @@ jobs:
         run: |
           python -m compileall -q affiliate_hub_v31
           python -m unittest discover -s affiliate_hub_v31/tests -q
+      - name: C140 — 50 simulações SAFE antes de converter URLs
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50
       - name: Plano de links por assunto no site real, nenhuma chamada Shopee
         env:
           V31_SITE: ${{ inputs.site_key }}
