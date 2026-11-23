@@ -47,3 +47,14 @@
 
 ## Contrato de retomada
 Ler primeiro `V31_CONTINUAR_AQUI.md` -> `CONTINUIDADE_ESTADO.json` -> ESTE checkpoint -> resultados Actions e quotas D1 reais. Não repetir #136–#138; não apagar/consumir READY conflitado; não confundir SUCCESS da auditoria com DRAFT entregue. **LIVE OFF**.
+
+## 6. Pré-onboarding por reaproveitamento de evidência R2 existente (sem repetir execução)
+A C135 recuperou os logs de uma **execução anterior**, [C94 R2 SAFE #45063976401](https://github.com/adelrib27/blogger-automation1/actions/runs/45063976401), concluída em **22/11/2026**. Ela já havia restaurado uma snapshot oficial R2 em modo de leitura e listado até quatro candidatos de catálogo por rota Blogger. Por isso **não foi acionada outra restauração ou pesquisa R2 nesta C135**.
+
+Entre os oito sites prioritários, foram recuperadas listas de **quatro SKUs cada** para:
+- `blogger_cozinha_sem_complicacao`, campanha registrada `cozinhasemcomp`: 4 candidatos de catálogo, incluindo fritadeira industrial/tacho e acessórios para air fryer. A presença no nicho do catálogo NÃO atesta que um acessório é uma fritadeira principal.
+- `blogger_estilo`, campanha registrada `estilo`: 4 candidatos de catálogo, vestuário/calçados com descrições comerciais de vendedores.
+- `blogger_limpeza`, campanha registrada `limpeza`: 4 candidatos de catálogo, aspiradores, saco para aspirador e mop PVA.
+Esses **12 candidatos são históricos de 22/11**, URLs de origem Shopee, sem ficha de fabricante/GTIN e sem prova de `affiliate_links` da campanha extraída nesse relatório. `moderation='eligible'`, taxonomia `matched` e `source_safe_for_use` do catálogo **não equivalem** a homologação factual por fonte externa, validação atual de estoque, conversão na campanha ou ausência de SKU no CMS.
+
+**Decisão:** NÃO criar `autonomous_review_sources.json` artificial nem `site_requests.d/*.json` habilitados com base nesses candidatos. No próximo onboarding, consultar oferta/proveniência atuais, validar identidade exata e fonte externa independente, URL afiliada da campanha verdadeira, foto do SKU, exclusões de produtos já no CMS e correspondência intenção/nicho. Só então registrar perfil+pedido do site e executar canário DRAFT individual. `blogger_radar_tech` da C94 não equivale ao site WordPress `wordpress_radartechbr`, portanto não usar sua campanha ou produtos no WP.
