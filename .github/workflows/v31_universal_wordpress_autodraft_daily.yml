@@ -45,6 +45,8 @@ jobs:
         run: |
           set -euo pipefail
           python -m unittest affiliate_hub_v31.tests.test_automatic_wordpress_drafts affiliate_hub_v31.tests.test_article_commerce affiliate_hub_v31.tests.test_wordpress_related_posts -q
+      - name: C140 — simular 50 cenários universais antes do DRAFT WordPress
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50
       - name: Selecionar tema real, site real e campanha isolada, status DRAFT ONLY
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
