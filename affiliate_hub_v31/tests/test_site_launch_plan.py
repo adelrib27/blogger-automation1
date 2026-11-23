@@ -25,6 +25,7 @@ class LaunchPlanTests(unittest.TestCase):
             ("13","300","Organizador de Cozinha com Tampa","Home & Living","Kitchenware"),
             ("14","400","Air Fryer Proibida Antigo","Health","Nutrition"),
             ("15","500","Produto Vitrine Sem Nicho","Home & Living","Furniture"),
+            ("16","600","Smartwatch Bluetooth com Tela","Electronics","Wearable Technology"),
         ]
         with feed.open("w",newline="",encoding="utf-8") as stream:
             w=csv.DictWriter(stream,fieldnames=[
@@ -42,7 +43,10 @@ class LaunchPlanTests(unittest.TestCase):
             import_source_categories(cat,feed,"first")
             cat.cache_link("shopee:11:100","airfryers",
                            "https://s.shopee.com.br/old-airfryers-link")
+            # Cache antigo de cozinha não pode contornar filtro de nicho.
             cat.cache_link("shopee:12:200","radarwp",
+                           "https://s.shopee.com.br/radarwp-old-out-of-niche")
+            cat.cache_link("shopee:16:600","radarwp",
                            "https://s.shopee.com.br/radarwp-link")
 
     def test_blogger_existing_site_uses_only_its_campaign_and_creates_brief(self):
@@ -84,14 +88,17 @@ class LaunchPlanTests(unittest.TestCase):
 
     def test_wordpress_isolation_and_cross_site_flags(self):
         with Catalog(self.db) as cat:
-            plan=preview_site_launch(cat,topic="Air Fryer",platform="wordpress",
+            plan=preview_site_launch(cat,topic="Smartwatch",platform="wordpress",
                                      site_key="wordpress_radartechbr")
+            old_cuisine=preview_site_launch(cat,topic="Air Fryer",platform="wordpress",
+                                            site_key="wordpress_radartechbr")
         self.assertEqual(plan["campaign"],"radarwp")
         self.assertEqual(plan["platform"],"wordpress")
         by_id={x["product_key"]:x for x in plan["approved_catalog_candidates"]}
-        self.assertEqual(by_id["shopee:12:200"]["affiliate_url"],
+        self.assertEqual(list(by_id),["shopee:16:600"])
+        self.assertEqual(by_id["shopee:16:600"]["affiliate_url"],
                          "https://s.shopee.com.br/radarwp-link")
-        self.assertIsNone(by_id["shopee:11:100"]["affiliate_url"])
+        self.assertEqual(old_cuisine["approved_catalog_candidates"],[])
         self.assertTrue(all(x["editorial_brief"] is not None
                             for x in plan["approved_catalog_candidates"]))
 

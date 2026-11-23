@@ -26,6 +26,7 @@ class FallbackV23Tests(unittest.TestCase):
                 "Luminária Solar para Jardim em LED",
                 "Luminária de Mesa para Sala",
                 "Capa para Liquidificador 2 Litros",
+                "Smartwatch Bluetooth com Tela",
             ],1):
                 w.writerow({
                     "shopId":"904","itemId":str(i),"productName":title,
@@ -37,7 +38,10 @@ class FallbackV23Tests(unittest.TestCase):
             cat.import_csv(feed,"feed1")
             cat.cache_link("shopee:904:1","casaedecoracaowp",
                            "https://s.shopee.com.br/verified-one")
+            # Cache Radar antigo de luminária é inaceitável desde C105.
             cat.cache_link("shopee:904:2","radarwp",
+                           "https://s.shopee.com.br/radar-old-lamp")
+            cat.cache_link("shopee:904:4","radarwp",
                            "https://s.shopee.com.br/radar-only")
         self.config={"categories":{
             "Area Externa":["luminaria solar jardim"],
@@ -65,13 +69,17 @@ class FallbackV23Tests(unittest.TestCase):
         self.assertIsNone(row["commission"])
 
     def test_campaign_isolation_and_no_organic_productlink(self):
-        config={"categories":{"Sala":["luminaria mesa"]}}
+        config={"categories":{"Tecnologia":["smartwatch"]}}
         self.assertEqual(candidates_from_catalog(self.db,"wordpress_casa_decoracao",
                          config,self.rules),[])
         radar=candidates_from_catalog(self.db,"wordpress_radartechbr",config,self.rules)
         self.assertEqual(len(radar),1)
         self.assertEqual(radar[0]["offerLink"],"https://s.shopee.com.br/radar-only")
-        self.assertNotIn("item-i.904.2",radar[0]["offerLink"])
+        self.assertEqual(radar[0]["itemId"],"4")
+        self.assertNotIn("item-i.904.4",radar[0]["offerLink"])
+        self.assertEqual(candidates_from_catalog(
+            self.db,"wordpress_radartechbr",
+            {"categories":{"Sala":["luminaria mesa"]}},self.rules),[])
 
     def test_files_match_existing_intent_report_and_ranking_contract(self):
         rows=candidates_from_catalog(self.db,"wordpress_casa_decoracao",
@@ -146,10 +154,13 @@ class FallbackV23Tests(unittest.TestCase):
         self.assertEqual(blocked,[])
         self.assertEqual(before,after)
         radar=candidates_from_catalog(self.db,"wordpress_radartechbr",
-                                      {"categories":{"Sala":["luminaria mesa"]}},
+                                      {"categories":{"Tecnologia":["smartwatch"]}},
                                       self.rules)
         self.assertEqual(len(radar),1)
-        self.assertEqual(radar[0]["itemId"],"2")
+        self.assertEqual(radar[0]["itemId"],"4")
+        self.assertEqual(candidates_from_catalog(
+            self.db,"wordpress_radartechbr",
+            {"categories":{"Sala":["luminaria mesa"]}},self.rules),[])
 
     def test_conflicting_source_even_with_matched_feed_rejected_for_fallback(self):
         from affiliate_hub_v31.source_category_index import create_source_category_schema

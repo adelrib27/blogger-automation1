@@ -21,7 +21,7 @@ class CachedAlternativeTests(unittest.TestCase):
                 for n in range(5):
                     w.writerow({
                         "shopId":str(9100+n),"itemId":str(9300+n),
-                        "productName":f"Air Fryer Elétrica Modelo {n}",
+                        "productName":f"Smartwatch Bluetooth Modelo {n}",
                         "productLink":f"https://shopee.com.br/product/{9100+n}/{9300+n}",
                         "imageUrl":"https://cf.shopee.com.br/file/photo"
                     })
@@ -33,7 +33,7 @@ class CachedAlternativeTests(unittest.TestCase):
                         f"shopee:{9100+n}:{9300+n}","radarwp",
                         f"https://s.shopee.com.br/cache-{n}"
                     )
-            cfg={"categories":{"Cozinha & Utilidades":["air fryer"]}}
+            cfg={"categories":{"Tecnologia":["smartwatch"]}}
             rules={"rules":{}}
             rows=candidates_from_catalog(db,"wordpress_radartechbr",cfg,rules,limit=20)
             self.assertEqual(len(rows),3)
@@ -45,6 +45,9 @@ class CachedAlternativeTests(unittest.TestCase):
                 "https://s.shopee.com.br/") for r in rows))
             self.assertEqual(candidates_from_catalog(
                 db,"wordpress_casa_decoracao",cfg,rules,20),[])
+            self.assertEqual(candidates_from_catalog(
+                db,"wordpress_radartechbr",
+                {"categories":{"Cozinha":["air fryer"]}},rules,20),[])
 
 
 if __name__ == "__main__":

@@ -37,7 +37,9 @@ class RouteTests(unittest.TestCase):
             with feed.open("w",encoding="utf-8",newline="") as f:
                 w=csv.DictWriter(f,fieldnames=["shopId","itemId","productName","productLink","imageUrl"])
                 w.writeheader()
-                for idx,title in enumerate(["Liquidificador potente","Air Fryer digital","Furadeira 12V","Produto Premium"],1):
+                for idx,title in enumerate(["Liquidificador potente","Air Fryer digital","Furadeira 12V",
+                                            "Produto Premium","Smartwatch com Bluetooth",
+                                            "Fone Bluetooth"],1):
                     w.writerow({"shopId":"20","itemId":str(idx),"productName":title,
                                 "productLink":f"https://shopee.com.br/item-i.20.{idx}",
                                 "imageUrl":"https://cdn.example/image.jpg"})
@@ -48,12 +50,14 @@ class RouteTests(unittest.TestCase):
                 wp=plan_site(cat,"wordpress_radartechbr")
                 self.assertEqual(air["product_keys"],["shopee:20:2"])
                 self.assertEqual(liq["product_keys"],["shopee:20:1"])
-                self.assertIn("shopee:20:3",wp["product_keys"])
+                self.assertEqual(wp["product_keys"],["shopee:20:5","shopee:20:6"])
                 wp_diverse=plan_site(cat,"wordpress_radartechbr",limit=2)
-                self.assertIn("shopee:20:3",wp_diverse["product_keys"])
                 self.assertEqual(len(wp_diverse["product_keys"]),2)
-                self.assertTrue(any(p in wp_diverse["product_keys"]
-                                    for p in ("shopee:20:1","shopee:20:2")))
+                self.assertEqual(set(wp_diverse["product_keys"]),
+                                 {"shopee:20:5","shopee:20:6"})
+                # Nem cozinha nem ferramentas vazam para o WP tecnológico.
+                for forbidden in ("shopee:20:1","shopee:20:2","shopee:20:3"):
+                    self.assertNotIn(forbidden,wp["product_keys"])
 
                 self.assertEqual(air["mode"],"SAFE_NO_PUBLICATION")
                 self.assertNotIn("shopee:20:4",air["product_keys"])

@@ -21,7 +21,8 @@ class WarmupSelectionTests(unittest.TestCase):
                                       "Luminária Solar LED de Jardim 2",
                                       "Broca para Furadeira",
                                       "Furadeira de Impacto 12V",
-                                      "Luminária de Mesa para Sala"],1):
+                                      "Luminária de Mesa para Sala",
+                                      "Smartwatch Bluetooth com Tela"],1):
                 writer.writerow({"shopId":"123","itemId":str(id),"productName":name,
                                  "productLink":f"https://shopee.com.br/item-i.123.{id}",
                                  "imageUrl":"https://images.example.invalid/p.png"})
@@ -39,8 +40,14 @@ class WarmupSelectionTests(unittest.TestCase):
                                 "https://s.shopee.com.br/cached")
         self.assertEqual(warmup_candidates(self.catalog,"wordpress_casa_decoracao",
                                            cfg,rules,1),["shopee:123:2"])
+        # O Radar não recebe luminária decorativa, mesmo em cache universal.
         self.assertEqual(warmup_candidates(self.catalog,"wordpress_radartechbr",
-                                           cfg,rules,1),["shopee:123:1"])
+                                           cfg,rules,1),[])
+        tech={"categories":{"Tecnologia":["smartwatch"]}}
+        self.assertEqual(warmup_candidates(self.catalog,"wordpress_radartechbr",
+                                           tech,{"rules":{}},1),["shopee:123:6"])
+        self.assertEqual(warmup_candidates(self.catalog,"wordpress_casa_decoracao",
+                                           tech,{"rules":{}},1),[])
 
     def test_missing_category_is_prioritized_for_next_conversion(self):
         cfg={"categories":{
