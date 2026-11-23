@@ -1,0 +1,46 @@
+name: "V31 C133 — prontidão universal DRAFT (somente leitura)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/v31_c133_autodraft_rollout_readiness_safe.yml"
+      - "affiliate_hub_v31/autodraft_rollout_readiness.py"
+      - "affiliate_hub_v31/BLOGGER_PORTFOLIO_FIVE_2026-11-23.json"
+      - "affiliate_hub_v31/site_routes.json"
+      - "affiliate_hub_v31/sites.d/**"
+      - "affiliate_hub_v31/site_requests.d/**"
+      - "affiliate_hub_v31/autonomous_review_sources.json"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  audit-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Contratos de segurança sem API, segredos ou CMS
+        run: |
+          python -m compileall -q affiliate_hub_v31/autodraft_rollout_readiness.py
+          python -m unittest affiliate_hub_v31.tests.test_autodraft_rollout_readiness -v
+      - name: Relatório de prontidão informativo, nunca habilitar rollout
+        run: |
+          python -m affiliate_hub_v31.autodraft_rollout_readiness --output c133_universal_readiness_report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path("c133_universal_readiness_report.json").read_text(encoding="utf-8"))
+          if not report["all_configured_for_draft_preflight"]:
+              print("::warning::V31 C133: rollout ainda incompleto; consulte relatorio JSON. LIVE continua bloqueado.")
+          else:
+              print("C133_CONFIG_FILES_COMPLETE_BUT_REMOTE_CANARY_STILL_REQUIRED")
+          PY
+      - name: Arquivar evidência sem credenciais
+        uses: actions/upload-artifact@v4
+        with:
+          name: c133-universal-autodraft-readiness
+          path: c133_universal_readiness_report.json
+          retention-days: 14
+          if-no-files-found: error
