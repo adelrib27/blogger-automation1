@@ -109,6 +109,50 @@ class ScopeGuardContractTests(unittest.TestCase):
                    return_value=POLICY):
             self.assertEqual(gate.run_simulations()["passed"], 50)
 
+    @staticmethod
+    def request_doc(site, enabled=True):
+        return {"site_key":site["site_key"], "topic":"pauta real somente no gate",
+                "platform":site["platform"], "articles":None, "enabled":enabled}
+
+    def test_live_queue_rejects_owner_excluded_blogger_even_with_valid_route(self):
+        from affiliate_hub_v31.site_request_queue import load_requests, RequestQueueError
+        from affiliate_hub_v31.routing import sites
+        blocked = sites()["blogger_ar_condicionado_sem_duvidas"]
+        with tempfile.TemporaryDirectory() as d:
+            Path(d, blocked["site_key"] + ".json").write_text(
+                json.dumps(self.request_doc(blocked)), encoding="utf-8")
+            with self.assertRaisesRegex(RequestQueueError,"site_outside_verified_active_scope"):
+                load_requests(Path(d))
+
+    def test_live_queue_rejects_old_blogger_outside_active_inventory(self):
+        from affiliate_hub_v31.site_request_queue import load_requests, RequestQueueError
+        from affiliate_hub_v31.routing import sites
+        old_route=sites()["blogger_ventiladores"]
+        with tempfile.TemporaryDirectory() as d:
+            Path(d, old_route["site_key"] + ".json").write_text(
+                json.dumps(self.request_doc(old_route)),encoding="utf-8")
+            with self.assertRaisesRegex(RequestQueueError,"site_outside_verified_active_scope"):
+                load_requests(Path(d))
+
+    def test_live_queue_accepts_registered_active_pilot_without_publication(self):
+        from affiliate_hub_v31.site_request_queue import load_requests
+        from affiliate_hub_v31.routing import sites
+        pilot=sites()["blogger_moveis_para_cada_canto"]
+        with tempfile.TemporaryDirectory() as d:
+            Path(d, pilot["site_key"] + ".json").write_text(
+                json.dumps(self.request_doc(pilot)),encoding="utf-8")
+            self.assertEqual([x["site_key"] for x in load_requests(Path(d))],
+                             [pilot["site_key"]])
+
+    def test_disabled_old_route_does_not_enter_queue_or_fail(self):
+        from affiliate_hub_v31.site_request_queue import load_requests
+        from affiliate_hub_v31.routing import sites
+        old_route=sites()["blogger_ar_condicionado_sem_duvidas"]
+        with tempfile.TemporaryDirectory() as d:
+            Path(d,old_route["site_key"]+".json").write_text(
+                json.dumps(self.request_doc(old_route,enabled=False)),encoding="utf-8")
+            self.assertEqual(load_requests(Path(d)),[])
+
 
 if __name__ == "__main__":
     unittest.main()
