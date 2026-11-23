@@ -45,6 +45,8 @@ EXPECTED_BY_CLASS = {
     "unregistered_active": ("ROUTE_NOT_REGISTERED",) * 5,
     "explicitly_excluded": ("EXCLUDED_BY_OWNER",) * 5,
     "historical_pending": ("PENDING_ACCOUNT_AUTHENTICATION",) * 5,
+    "unregistered_pending": ("ROUTE_NOT_REGISTERED",) * 5,
+    "reference_only": ("REFERENCE_ONLY_NOT_V31_DESTINATION",) * 5,
 }
 
 
@@ -235,6 +237,8 @@ def scope_status(policy: dict, route: dict | None,
             if existing and existing != key:
                 return "ROUTE_IDENTITY_MISMATCH"
             return "PENDING_ACCOUNT_AUTHENTICATION"
+        if historic and historic["current_access_class"] == "REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION":
+            return "REFERENCE_ONLY_NOT_V31_DESTINATION"
         return "NOT_IN_VERIFIED_ACTIVE_INVENTORY"
     expected_id = match.get("id", match.get("url"))
     if match["platform"] != route["platform"] or expected_id != route_id:
@@ -281,54 +285,98 @@ def evaluate_preflight(policy: dict, route: dict | None,
 
 
 def simulation_cases(policy: dict) -> list[dict]:
-    """Dez identidades de naturezas distintas × cinco falhas/condições = 50."""
+    """50 verificações sem rede: 28 Blogger históricos + 3 WP e riscos globais.
+
+    Blogs adicionais permanecem suportados: se houver mais de 31 destinos,
+    os lotes seguintes rotacionam com cycle_index sem ampliar o limite 50.
+    """
     validate_policy(policy)
+    inventory = load_global_inventory(policy)
     actors = []
-    for platform in ("blogger", "wordpress"):
-        for target in policy[platform]["current_targets"]:
-            key = target["site_key"]
-            route = None
-            kind = "unregistered_active"
-            if target["route_registered"]:
-                route = {
-                    "site_key": key, "platform": platform,
-                    "identifier": target.get("id", target.get("url")),
-                    "campaign": "verifiedfixture", "publish_enabled": False,
-                }
-                kind = "registered_active"
-            actors.append((key, route, kind))
-    for excluded in policy["blogger"]["exclusions"]:
-        actors.append((excluded["site_key"], {
-            "site_key": excluded["site_key"], "platform": "blogger",
-            "identifier": excluded["id"], "campaign": "legacyfixture",
-            "publish_enabled": False,
-        }, "explicitly_excluded"))
-    # Um futuro site ainda NÃO registrado é simulado genericamente, sem
-    # associar a referência metodológica Vida Pet a qualquer blog-alvo.
-    actors.append(("blogger_future_site_pending", None, "unregistered_active"))
-    actors.append((OLD_SOURCE_ROUTE["site_key"], OLD_SOURCE_ROUTE,
-                   "historical_pending"))
-    if len(actors) != 10:
-        raise EditorialScopeError("snapshot_ten_actors_required")
+    for row in inventory["sites"]:
+        if not row["editorial_candidate"]:
+            continue
+        key = row["existing_universal_route"] or row["legacy_site_key"]
+        ident = row["blog_id"]
+        route = ({
+            "site_key": key, "platform": "blogger", "identifier": ident,
+            "campaign": "simulatedcamp", "publish_enabled": False,
+        } if row["existing_universal_route"] else None)
+        if row["current_access_class"] == "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET":
+            kind = "registered_active"
+        elif route is None:
+            kind = "unregistered_pending"
+        else:
+            kind = "historical_pending"
+        actors.append((key, route, kind))
+    for wp in policy["wordpress"]["current_targets"]:
+        key = wp["site_key"]
+        route = ({
+            "site_key": key, "platform": "wordpress", "identifier": wp["url"],
+            "campaign": "simulatedcamp", "publish_enabled": False,
+        } if wp["route_registered"] else None)
+        actors.append((key, route, "registered_active" if route else "unregistered_pending"))
+    if not actors:
+        raise EditorialScopeError("no_real_portfolio_candidates")
+    # Um ciclo não é limitado ao tamanho da conta Google conectada.
+    # O inventário integral é validado antes; se houver >31 blogs futuros,
+    # a escolha de 31 gira entre ciclos sem que nenhum seja 'inativo'.
+    cycle = 0
+    selected = (actors[cycle % len(actors):] + actors[:cycle % len(actors)])[:31]
+    while len(selected) < 31:
+        selected.append(actors[len(selected) % len(actors)])
+    excluded = policy["blogger"]["exclusions"][0]
+    excluded_route = {
+        "site_key": excluded["site_key"], "platform": "blogger",
+        "identifier": excluded["id"], "campaign": "historicalcamp",
+        "publish_enabled": False,
+    }
+    reference = next((r for r in inventory["sites"] if r["current_access_class"]
+                      == "REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION"), None)
+    if reference is None:
+        raise EditorialScopeError("universal_reference_identity_missing")
+    reference_route = {
+        "site_key": "blogger_reference_only_not_a_destination",
+        "platform": "blogger", "identifier": reference["blog_id"],
+        "campaign": "historicalcamp", "publish_enabled": False,
+    }
+    extras = [
+        (excluded["site_key"], excluded_route, "explicitly_excluded"),
+        ("blogger_reference_only_not_a_destination", reference_route, "reference_only"),
+        ("blogger_future_site_pending", None, "unregistered_pending"),
+    ]
+    # 31 originais + 5 exclusões + 5 referências negadas + 5 futuros + 4
+    # repetições de riscos independentes = 50, todos sem API.
+    selection = [(a, VARIANTS[i % len(VARIANTS)])
+                 for i, a in enumerate(selected)]
+    selection += [(a, v) for a in extras for v in VARIANTS]
+    active = [a for a in actors if a[2] == "registered_active"]
+    if not active:
+        raise EditorialScopeError("no_verified_active_pilot")
+    selection += [(active[i % len(active)], VARIANTS[(i + 1) % len(VARIANTS)])
+                  for i in range(4)]
+    if len(selection) != 50:
+        raise EditorialScopeError("fifty_simulation_matrix_invalid")
     cases = []
-    for key, route, kind in actors:
-        for index, variant in enumerate(VARIANTS):
-            quality = {flag: True for flag in REQUIRED_FLAGS}
-            quality["manual_live_requested"] = False
-            if variant == "affiliate_unverified":
-                quality["affiliate_campaign_verified"] = False
-            elif variant == "factual_source_missing":
-                quality["independent_facts_verified"] = False
-            elif variant == "cms_duplicate":
-                quality["cms_no_duplicate_or_conflict"] = False
-            elif variant == "live_requested":
-                quality["manual_live_requested"] = True
-            cases.append({
-                "id": f"simulation_{len(cases)+1:02d}",
-                "site_key": key, "route": route, "quality": quality,
-                "variant": variant,
-                "expected": EXPECTED_BY_CLASS[kind][index],
-            })
+    for actor, variant in selection:
+        key, route, kind = actor
+        quality = {flag: True for flag in REQUIRED_FLAGS}
+        quality["manual_live_requested"] = False
+        if variant == "affiliate_unverified":
+            quality["affiliate_campaign_verified"] = False
+        elif variant == "factual_source_missing":
+            quality["independent_facts_verified"] = False
+        elif variant == "cms_duplicate":
+            quality["cms_no_duplicate_or_conflict"] = False
+        elif variant == "live_requested":
+            quality["manual_live_requested"] = True
+        index = VARIANTS.index(variant)
+        cases.append({
+            "id": f"simulation_{len(cases)+1:02d}",
+            "site_key": key, "route": route, "quality": quality,
+            "variant": variant,
+            "expected": EXPECTED_BY_CLASS[kind][index],
+        })
     return cases
 
 
