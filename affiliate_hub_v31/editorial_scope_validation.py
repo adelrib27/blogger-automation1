@@ -108,7 +108,7 @@ def load_global_inventory(policy: dict) -> dict:
                 or not isinstance(row.get("c102_verified_live_url"), str)
                 or not row["c102_verified_live_url"].startswith("https://")):
             raise EditorialScopeError("global_portfolio_row_invalid")
-        if (row["editorial_candidate"] != kind in {
+        if row["editorial_candidate"] != (kind in {
                 "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET",
                 "HISTORICALLY_VERIFIED_PENDING_CROSS_ACCOUNT_AUTH"}):
             raise EditorialScopeError("global_portfolio_candidate_mismatch")
