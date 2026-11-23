@@ -43,10 +43,11 @@ jobs:
               ("midea9","1736335904","58267891881",("midea","inverter","9000")),
               ("midea12","889973435","18398298625",("midea","inverter","12000")),
               ("lg12","822103155","58265302556",("lg","inverter","12000"))]
-          query='query V31RadarOfferAudit($id:Int) { productOfferV2(itemId:$id,page:1,limit:5) { nodes { itemId shopId productName productLink imageUrl priceMin periodEndTime } } }'
+          # query individual, com itemId literal de escalar Long; não usar Int32
           results=[]
           for label,shop,item,words in products:
-              body=json.dumps({"query":query,"operationName":"V31RadarOfferAudit","variables":{"id":int(item)}},separators=(',',':'))
+              query=f"query V31RadarOfferAudit {{ productOfferV2(itemId:{item},page:1,limit:5) {{ nodes {{ itemId shopId productName productLink imageUrl priceMin periodEndTime }} }} }}"
+              body=json.dumps({"query":query,"operationName":"V31RadarOfferAudit"},separators=(',',':'))
               req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={"Authorization":authorization(app,secret,body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31-C112-Radar-Audit/1.0"})
               try:
                   with urllib.request.urlopen(req,timeout=25) as resp:
@@ -60,7 +61,7 @@ jobs:
                   n=hits[0] if ok else {}
                   normalized=re.sub(r"[^a-z0-9]","",str(n.get("productName")or"").lower())
                   expected=f"https://shopee.com.br/product/{shop}/{item}"
-                  try:price=float(n.get("priceMin")or0)
+                  try:price=float(n.get("priceMin") or 0)
                   except (ValueError,TypeError):price=0
                   img=str(n.get("imageUrl")or"")
                   end=n.get("periodEndTime")
