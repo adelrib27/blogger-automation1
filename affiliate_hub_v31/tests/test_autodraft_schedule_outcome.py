@@ -38,7 +38,7 @@ class DraftCycleOutcomeTests(unittest.TestCase):
         value = classify("READY", proof=good_proof())
         self.assertEqual(value["draft_outcome"], "DRAFT_VERIFIED")
         self.assertTrue(value["draft_verified_or_reconciled"])
-        self.assertFalse(value["automatic_live_confirmation"])
+        self.assertIsNone(value["automatic_live_confirmation"])
 
     def test_success_without_proof_fails_closed(self):
         value = classify("READY")
@@ -63,7 +63,7 @@ class DraftCycleOutcomeTests(unittest.TestCase):
             site_key="blogger_moveis", verification_receipt="{",
             verified_draft="{", draft_job="success", live_job="success")
         self.assertEqual(value["draft_outcome"], "UNVERIFIED")
-        self.assertFalse(value["automatic_live_confirmation"])
+        self.assertIsNone(value["automatic_live_confirmation"])
 
 
 if __name__ == "__main__":
