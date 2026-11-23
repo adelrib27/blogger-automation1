@@ -69,6 +69,20 @@ class DraftAdapterTests(unittest.TestCase):
         self.assertIn('nofollow sponsored',draft.content_html)
         self.assertNotIn("https://shopee.com.br/item",draft.content_html)
 
+    def test_old_approved_brief_cannot_bypass_new_site_niche(self):
+        # Simula briefing legado criado quando outro blog aceitava Air Fryer.
+        # Mesmo com link radarwp válido no cache, a rota ATUAL é soberana.
+        brief,key=self.ledger.next_brief("blogger_air_fryers","shopee:10:45")
+        self.ledger.update_status(key,"APPROVED")
+        self.cat.cache_link("shopee:10:45","radarwp",
+                            "https://s.shopee.com.br/old-cuisine-link")
+        with self.cat.db:
+            self.cat.db.execute(
+                "UPDATE editorial_briefs SET site_key=? WHERE brief_id=?",
+                ("wordpress_radartechbr",key))
+        with self.assertRaisesRegex(DraftError,"niche_outside_site"):
+            prepare_draft(self.cat,"wordpress_radartechbr",key,paragraphs("air fryer"))
+
     def test_missing_affiliate_and_keyword_blocks(self):
         brief,key=self.ledger.next_brief("blogger_liquidificadores","shopee:10:46")
         self.ledger.update_status(key,"APPROVED")
