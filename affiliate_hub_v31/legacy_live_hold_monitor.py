@@ -187,8 +187,12 @@ def main() -> int:
             result = {"mode": "STATIC_SAFE_HOLD_VERIFIED", "all_holds_verified": False}
         else:
             result = audit(token=os.getenv("GITHUB_TOKEN", ""))
+    except LegacyHoldAuditError as exc:
+        # Código de erro controlado (sem URL, headers, tokens ou resposta HTTP).
+        print("C136_LEGACY_HOLD_FAILED_CLOSED:" + str(exc))
+        return 1
     except Exception:
-        print("C136_LEGACY_HOLD_FAILED_CLOSED")
+        print("C136_LEGACY_HOLD_FAILED_CLOSED:internal_error")
         return 1
     print("C136_LEGACY_HOLD=" + json.dumps(result, sort_keys=True))
     if any(x.get("status") == "SECURITY_EXCEPTION_JOB_RAN"
