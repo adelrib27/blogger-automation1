@@ -1,0 +1,41 @@
+name: "V31 C124 Radar - foto da oferta x WordPress READ ONLY"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_c124_image_match_readonly.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  image-match:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Obter resultados de busca APENAS para análise
+        uses: actions/download-artifact@v4
+        with:
+          name: c123-radar-four-shopee-search-candidates
+          run-id: 45245633827
+          repository: adelrib27/blogger-automation1
+          github-token: ${{ github.token }}
+          path: c123_artifact
+      - name: Preparar comparador de imagens, sem acesso R2 nem token Shopee
+        run: |
+          python -m pip install "pillow>=11,<13" "ImageHash>=4.3,<5"
+          python -m py_compile affiliate_hub_v31/c124_visual_match_shopee_readonly.py
+      - name: Comparar imagens originais do WP com fotos do catálogo atual
+        run: python -m affiliate_hub_v31.c124_visual_match_shopee_readonly
+      - name: Guardar evidências de similaridade sem editar artigos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-c124-radar-image-comparison
+          path: c124_image_matching_results.json
+          retention-days: 7
+          if-no-files-found: ignore
