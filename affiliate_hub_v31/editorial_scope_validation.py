@@ -200,6 +200,9 @@ def simulation_cases(policy: dict) -> list[dict]:
             "identifier": excluded["id"], "campaign": "legacyfixture",
             "publish_enabled": False,
         }, "explicitly_excluded"))
+    # Um futuro site ainda NÃO registrado é simulado genericamente, sem
+    # associar a referência metodológica Vida Pet a qualquer blog-alvo.
+    actors.append(("blogger_future_site_pending", None, "unregistered_active"))
     actors.append((OLD_SOURCE_ROUTE["site_key"], OLD_SOURCE_ROUTE,
                    "historical_not_active"))
     if len(actors) != 10:
