@@ -1,0 +1,57 @@
+name: V31 C135 — conciliação READY x CMS (somente GET e SELECT)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c135_ready_cms_collision_readonly.yml'
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: 'Site real registrado no V31 (somente leitura)'
+        required: true
+        type: string
+        default: wordpress_casa_decoracao
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-c135-ready-cms-audit-readonly
+  cancel-in-progress: false
+
+jobs:
+  read-only-audit:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    environment: v31-editorial-safe
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar clientes de leitura
+        run: python -m pip install requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - name: Validar regressão SAFE sem credenciais
+        run: python -m unittest affiliate_hub_v31.tests.test_c135_ready_cms_collision -q
+      - name: Auditoria autenticada sem criação ou publicação
+        env:
+          SITE: ${{ inputs.site_key || 'wordpress_casa_decoracao' }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.ready_cms_collision_audit --site-key "$SITE"
+          echo 'V31_C135_READ_ONLY_COMPLETE_NO_CMS_OR_D1_WRITES' >> "$GITHUB_STEP_SUMMARY"
