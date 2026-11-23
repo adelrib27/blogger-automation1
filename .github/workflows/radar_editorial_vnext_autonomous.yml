@@ -34,6 +34,8 @@ concurrency:
 
 jobs:
   autonomo:
+    # C114: pausa fail-closed do writer legado; não publicar até homologação e autorização específica.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
@@ -44,8 +46,8 @@ jobs:
       RADAR_GENERATION_BATCH_SIZE: "1"
       RADAR_WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
       RADAR_WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
-      RADAR_WORDPRESS_STATUS: publish
-      RADAR_LIVE_PUBLISH_ENABLED: "true"
+      RADAR_WORDPRESS_STATUS: draft
+      RADAR_LIVE_PUBLISH_ENABLED: "false"
       RADAR_PUBLISH_LIMIT: "1"
       RADAR_DAILY_PUBLISH_CAP: "5"
 
