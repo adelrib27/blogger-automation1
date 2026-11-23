@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 POLICY_PATH = Path(__file__).with_name("EDITORIAL_ACTIVE_SCOPE_POLICY.json")
+HISTORICAL_PATH = Path(__file__).with_name("EDITORIAL_GLOBAL_PORTFOLIO_C141.json")
 EXPECTED_SCHEMA = "v31_editorial_active_scope_policy/v1"
 REQUIRED_FLAGS = (
     "affiliate_campaign_verified",
@@ -43,7 +44,7 @@ EXPECTED_BY_CLASS = {
     ),
     "unregistered_active": ("ROUTE_NOT_REGISTERED",) * 5,
     "explicitly_excluded": ("EXCLUDED_BY_OWNER",) * 5,
-    "historical_not_active": ("NOT_IN_VERIFIED_ACTIVE_INVENTORY",) * 5,
+    "historical_pending": ("PENDING_ACCOUNT_AUTHENTICATION",) * 5,
 }
 
 
@@ -60,10 +61,101 @@ def load_policy(path: Path = POLICY_PATH) -> dict:
     return policy
 
 
+def load_global_inventory(policy: dict) -> dict:
+    """Histórico de IDs C102, nunca uma autorização remota de escrita."""
+    if not isinstance(policy, dict) or policy.get("blogger", {}).get(
+            "historical_inventory_manifest") != (
+            "affiliate_hub_v31/EDITORIAL_GLOBAL_PORTFOLIO_C141.json"):
+        raise EditorialScopeError("portfolio_manifest_untrusted")
+    try:
+        doc = json.loads(HISTORICAL_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError, UnicodeError):
+        raise EditorialScopeError("global_portfolio_unreadable") from None
+    if (not isinstance(doc, dict)
+            or doc.get("schema") != "v31_editorial_global_inventory_c141/v1"
+            or not isinstance(doc.get("sites"), list)
+            or not isinstance(doc.get("summary"), dict)):
+        raise EditorialScopeError("global_portfolio_schema_invalid")
+    rows = doc["sites"]
+    if not rows or len(rows) != len({
+            z.get("blog_id") for z in rows if isinstance(z, dict)}):
+        raise EditorialScopeError("global_portfolio_duplicates_or_empty")
+    types = {
+        "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET": 0,
+        "HISTORICALLY_VERIFIED_PENDING_CROSS_ACCOUNT_AUTH": 0,
+        "EXCLUDED_BY_OWNER": 0,
+        "REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION": 0,
+    }
+    identities = set()
+    route_keys = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise EditorialScopeError("global_portfolio_row_invalid")
+        key = row.get("legacy_site_key")
+        bid = row.get("blog_id")
+        kind = row.get("current_access_class")
+        route_key = row.get("existing_universal_route")
+        if (not isinstance(key, str)
+                or not re.fullmatch(r"[a-z0-9_]{3,50}", key)
+                or not isinstance(bid, str) or not bid.isdecimal()
+                or kind not in types
+                or type(row.get("editorial_candidate")) is not bool
+                or (route_key is not None and
+                    (not isinstance(route_key, str) or
+                     not re.fullmatch(r"[a-z0-9_]{3,50}", route_key)))
+                or not isinstance(row.get("c102_verified_live_post_id"), str)
+                or not row["c102_verified_live_post_id"].isdecimal()
+                or not isinstance(row.get("c102_verified_live_url"), str)
+                or not row["c102_verified_live_url"].startswith("https://")):
+            raise EditorialScopeError("global_portfolio_row_invalid")
+        if (row["editorial_candidate"] != kind in {
+                "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET",
+                "HISTORICALLY_VERIFIED_PENDING_CROSS_ACCOUNT_AUTH"}):
+            raise EditorialScopeError("global_portfolio_candidate_mismatch")
+        if key in identities or (route_key is not None and route_key in route_keys):
+            raise EditorialScopeError("global_portfolio_key_reused")
+        identities.add(key)
+        if route_key:
+            route_keys.add(route_key)
+        types[kind] += 1
+    expected = {
+        "history_total": len(rows),
+        "global_candidates": sum(r["editorial_candidate"] for r in rows),
+        "currently_authenticated_candidates": types["AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET"],
+        "cross_account_pending": types["HISTORICALLY_VERIFIED_PENDING_CROSS_ACCOUNT_AUTH"],
+        "owner_excluded": types["EXCLUDED_BY_OWNER"],
+        "reference_only": types["REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION"],
+        "routed_candidates": sum(r["editorial_candidate"] and bool(r["existing_universal_route"]) for r in rows),
+        "without_route": sum(r["editorial_candidate"] and not r["existing_universal_route"] for r in rows),
+    }
+    if expected != doc["summary"]:
+        raise EditorialScopeError("global_portfolio_summary_mismatch")
+    policy_counts = policy.get("snapshot_counts", {})
+    if (policy_counts.get("blogger_targets") != expected["global_candidates"]
+            or policy_counts.get("blogger_connected_verified_subset") != expected[
+                "currently_authenticated_candidates"]
+            or policy_counts.get("blogger_candidates_pending_current_account_auth") != expected[
+                "cross_account_pending"]
+            or policy_counts.get("reference_only") != expected["reference_only"]
+            or policy_counts.get("blogger_excluded") != expected["owner_excluded"]):
+        raise EditorialScopeError("global_portfolio_policy_counts_mismatch")
+    auth_ids = {r["blog_id"] for r in rows if r["current_access_class"] ==
+                "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET"}
+    policy_ids = {p.get("id") for p in policy.get("blogger", {}).get("current_targets", [])}
+    if auth_ids != policy_ids or None in policy_ids:
+        raise EditorialScopeError("global_portfolio_connected_identity_mismatch")
+    exclusions = {x.get("id") for x in policy.get("blogger", {}).get("exclusions", [])}
+    inventory_exclusions = {r["blog_id"] for r in rows if r["current_access_class"] ==
+                             "EXCLUDED_BY_OWNER"}
+    if inventory_exclusions != exclusions:
+        raise EditorialScopeError("global_portfolio_owner_exclusion_mismatch")
+    return doc
+
+
 def validate_policy(policy: dict) -> None:
     if (not isinstance(policy, dict) or policy.get("schema") != EXPECTED_SCHEMA
             or policy.get("enrollment") !=
-            "ALL_EXISTING_ACTIVE_CONNECTED_BLOGGER_AND_WORDPRESS_EXCEPT_EXPLICIT_EXCLUSIONS"
+            "ALL_CURRENTLY_ACTIVE_BLOGGER_ACROSS_ACCOUNTS_AND_WORDPRESS_EXCEPT_EXPLICIT_EXCLUSIONS"
             or policy.get("rollout", {}).get("global_third_party_writes_now_authorized") is not False
             or policy.get("rollout", {}).get("do_not_activate_live_during_onboarding") is not True):
         raise EditorialScopeError("scope_contract_invalid")
@@ -100,6 +192,8 @@ def validate_policy(policy: dict) -> None:
     if any(e.get("exclude_from_new_v31_editorial_article_automation") is not True
            for e in excluded):
         raise EditorialScopeError("scope_exclusion_not_enforced")
+    # A validação das 50 simulações sempre lê TODAS as identidades C102.
+    load_global_inventory(policy)
 
 
 def scope_status(policy: dict, route: dict | None,
@@ -132,6 +226,15 @@ def scope_status(policy: dict, route: dict | None,
     ]
     match = next((x for x in possible if x["site_key"] == key), None)
     if match is None:
+        # Uma conta parcial não significa que os outros blogs deixaram de
+        # existir. C102 os documentou por ID e LIVE; o acesso atual é pendente.
+        historic = next((entry for entry in load_global_inventory(policy)["sites"]
+                         if entry["blog_id"] == route_id), None)
+        if historic and historic["editorial_candidate"]:
+            existing = historic.get("existing_universal_route")
+            if existing and existing != key:
+                return "ROUTE_IDENTITY_MISMATCH"
+            return "PENDING_ACCOUNT_AUTHENTICATION"
         return "NOT_IN_VERIFIED_ACTIVE_INVENTORY"
     expected_id = match.get("id", match.get("url"))
     if match["platform"] != route["platform"] or expected_id != route_id:
@@ -204,7 +307,7 @@ def simulation_cases(policy: dict) -> list[dict]:
     # associar a referência metodológica Vida Pet a qualquer blog-alvo.
     actors.append(("blogger_future_site_pending", None, "unregistered_active"))
     actors.append((OLD_SOURCE_ROUTE["site_key"], OLD_SOURCE_ROUTE,
-                   "historical_not_active"))
+                   "historical_pending"))
     if len(actors) != 10:
         raise EditorialScopeError("snapshot_ten_actors_required")
     cases = []
@@ -233,6 +336,7 @@ def run_simulations(*, count: int = 50, policy: dict | None = None) -> dict:
     if type(count) is not int or not 10 <= count <= 50:
         raise EditorialScopeError("simulation_count_must_be_10_to_50")
     policy = load_policy() if policy is None else policy
+    inventory = load_global_inventory(policy)
     cases = simulation_cases(policy)[:count]
     counts = {}
     for case in cases:
@@ -250,6 +354,7 @@ def run_simulations(*, count: int = 50, policy: dict | None = None) -> dict:
         "passed": len(cases),
         "failed": 0,
         "outcomes": counts,
+        "global_coverage_audit": inventory["summary"],
         "cms_writes": 0,
         "r2_writes": 0,
         "d1_writes": 0,
