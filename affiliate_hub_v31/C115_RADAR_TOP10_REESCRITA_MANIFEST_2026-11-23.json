@@ -1,0 +1,579 @@
+{
+  "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
+  "site": "Radar Tech BR",
+  "phase": "C115",
+  "date": "2026-11-23",
+  "source": "WP REST authenticated wp_list_posts + wp_get_post_full context edit + AIOSEO missing SEO scan",
+  "snapshot_status": "planning only; no post modifications",
+  "inventory_baseline": {
+    "published_posts": 37,
+    "technology_category_id": 3,
+    "technology_posts": 14,
+    "general_buying_guides_category_id": 1,
+    "general_guides_posts": 23,
+    "air_conditioning_category_id": 20,
+    "air_conditioning_posts": 0
+  },
+  "ranking_not_based_on": [
+    "Google Search Console impressions",
+    "Google organic clicks",
+    "Affiliate conversion reports",
+    "Guaranteed product stock/prices"
+  ],
+  "ranking_basis": [
+    "Technology relevance and existing hubs",
+    "Observed leakage/duplicate commercial boxes or missing monetization",
+    "Risk of misleading technical or health claims",
+    "Search intent specificity and useful unique angle",
+    "Potential of existing article URL while keeping permalink"
+  ],
+  "c114_guardrails": {
+    "auto_live_enabled": false,
+    "legacy_writer_paused": true,
+    "offline_regression_passed": true,
+    "universal_suite_all_green": false,
+    "universal_baseline_failures": 8
+  },
+  "items": [
+    {
+      "rank": 1,
+      "post_id": 260,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/smartwatch-com-monitor-de-frequencia-cardiaca/",
+      "current_title": "Smartwatch com monitor de frequência cardíaca",
+      "slug_locked": "smartwatch-com-monitor-de-frequencia-cardiaca",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-10-31T12:57:46",
+      "featured_media_id": 261,
+      "current_html_observations": {
+        "word_count_approx": 1001,
+        "commercial_cards": 2,
+        "affiliate_anchor_count": 4,
+        "img_tags": 2,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": true
+      },
+      "priority": "P0",
+      "reason": "Meta/excerpt com 'O leitor busca', dois CTAs; abertura menciona monitoramento de saúde sem estabelecer limites do sensor.",
+      "search_intent": "O que mede e quais limites tem um smartwatch de frequência cardíaca?",
+      "proposed_editorial_title": "Smartwatch e frequência cardíaca: o que verificar",
+      "proposed_focus_keyword": "smartwatch frequência cardíaca",
+      "proposed_h2": [
+        "O que a leitura de frequência cardíaca realmente informa",
+        "Sensor óptico e limitações práticas",
+        "Compatibilidade com celular e aplicativo",
+        "Recursos e autonomia a conferir no modelo",
+        "Checklist do anúncio e interpretação responsável"
+      ],
+      "faq_questions_only_if_supported": [
+        "Leitura de smartwatch substitui equipamento médico?",
+        "É compatível com meu telefone?"
+      ],
+      "fact_checks_required": [
+        "Identificação exata do modelo no link Shopee",
+        "Recursos e condições de medição documentados",
+        "Compatibilidade declarada e limitações; não apresentar diagnóstico médico"
+      ],
+      "hub_link_candidate": "/smartwatches/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 2,
+      "post_id": 314,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/escolhendo-o-melhor-ventilador-para-o-verao/",
+      "current_title": "Escolhendo o Melhor Ventilador para o Verão",
+      "slug_locked": "escolhendo-o-melhor-ventilador-para-o-verao",
+      "current_category_id": 1,
+      "last_modified_reported": "2026-11-19T19:58:50",
+      "featured_media_id": 315,
+      "current_html_observations": {
+        "word_count_approx": 1132,
+        "commercial_cards": 2,
+        "affiliate_anchor_count": 4,
+        "img_tags": 2,
+        "internal_anchor_count": 2,
+        "meta_contains_internal_reader_need": true
+      },
+      "priority": "P0",
+      "reason": "Meta e excerpt com instrução vazada, dois cartões repetidos, cerca de 28 negritos contendo 'ventilador'; postagem está em categoria genérica.",
+      "search_intent": "Como comparar ventiladores de mesa por uso e recursos relevantes?",
+      "proposed_editorial_title": "Ventilador de mesa: como escolher sem errar",
+      "proposed_focus_keyword": "como escolher ventilador de mesa",
+      "proposed_h2": [
+        "Ventilador versus ar-condicionado: funções diferentes",
+        "O que verificar em diâmetro, ajustes e alimentação",
+        "Ruído e consumo: dados que precisam de ficha técnica",
+        "Quando o modelo da oferta pode fazer sentido",
+        "Checklist, segurança e manutenção conforme manual"
+      ],
+      "faq_questions_only_if_supported": [
+        "Ventilador realmente baixa a temperatura do quarto?",
+        "Que dados conferem consumo e ruído?"
+      ],
+      "fact_checks_required": [
+        "Oferta original do modelo Prime Air Maxx Force",
+        "Potência, número de pás e alimentação apenas com fonte",
+        "Limites de alegações de resfriamento e segurança",
+        "Verificar categoria tecnológica adequada, nunca marcar como ar-condicionado"
+      ],
+      "hub_link_candidate": "/guias-tecnologia/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 3,
+      "post_id": 29,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/arctic-air-cooler-portatil-o-que-conferir-antes-de-comprar/",
+      "current_title": "Arctic Air Cooler portátil: o que conferir antes de comprar",
+      "slug_locked": "arctic-air-cooler-portatil-o-que-conferir-antes-de-comprar",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-10-17T15:39:40",
+      "featured_media_id": 73,
+      "current_html_observations": {
+        "word_count_approx": 372,
+        "commercial_cards": 0,
+        "affiliate_anchor_count": 0,
+        "img_tags": 0,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P0",
+      "reason": "Texto curto e sem links afiliados ou imagem inline no HTML bruto; expressão comercial 'mini ar-condicionado' pode confundir com tecnologia de climatização por compressor.",
+      "search_intent": "Qual é a tecnologia do Arctic Air Cooler e o que ela realmente faz?",
+      "proposed_editorial_title": "Arctic Air Cooler: climatizador ou ar-condicionado?",
+      "proposed_focus_keyword": "Arctic Air Cooler funciona",
+      "proposed_h2": [
+        "O que diz o anúncio e o que ainda falta comprovar",
+        "Ventilação, umidificação e ar-condicionado não são sinônimos",
+        "Alimentação, reservatório e cuidados a conferir",
+        "Limitações esperadas e condições de uso",
+        "Perguntas e checklist antes de comprar"
+      ],
+      "faq_questions_only_if_supported": [
+        "O Arctic Air Cooler equivale a um split?",
+        "Precisa de água e qual é o consumo?"
+      ],
+      "fact_checks_required": [
+        "Modelo exato e método de funcionamento documentados",
+        "Não equiparar climatizador/umidificador a ar-condicionado",
+        "Localizar oferta vigente e afiliada na campanha correta; sem inserir link não confirmado",
+        "Verificar imagem original e direitos de uso; preservar featured_media existente",
+        "Não reclassificar automaticamente para categoria Ar-condicionado ID20"
+      ],
+      "hub_link_candidate": "/guias-tecnologia/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 4,
+      "post_id": 311,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/caixa-de-som-bluetooth-com-microfones-e-luzes-para-eventos/",
+      "current_title": "Caixa de som Bluetooth com microfones e luzes para eventos",
+      "slug_locked": "caixa-de-som-bluetooth-com-microfones-e-luzes-para-eventos",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-11-17T22:29:38",
+      "featured_media_id": 312,
+      "current_html_observations": {
+        "word_count_approx": 995,
+        "commercial_cards": 2,
+        "affiliate_anchor_count": 4,
+        "img_tags": 2,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P1",
+      "reason": "Dois blocos afiliados da mesma oferta, nenhuma ligação interna no HTML bruto, introdução promocional e pouca informação específica.",
+      "search_intent": "Como conferir uma caixa de som Bluetooth com microfones para karaokê?",
+      "proposed_editorial_title": "Caixa de som com microfones: o que conferir",
+      "proposed_focus_keyword": "caixa de som bluetooth com microfone",
+      "proposed_h2": [
+        "Microfones inclusos e modo de conexão",
+        "Entradas, Bluetooth e compatibilidade declarada",
+        "Iluminação, bateria e carregamento",
+        "Potência e alcance: evite números sem fonte",
+        "Checklist antes de escolher"
+      ],
+      "faq_questions_only_if_supported": [
+        "Os microfones precisam de pilhas?",
+        "Há entrada auxiliar ou USB?"
+      ],
+      "fact_checks_required": [
+        "Quantidade e tipo de microfones realmente presentes",
+        "Conexões do modelo e alimentação",
+        "Evitar confundir com artigo de karaokê #235; diferença de intenção",
+        "Link exato e imagem de anúncio; inserir 1 CTA"
+      ],
+      "hub_link_candidate": "/audio-bluetooth/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 5,
+      "post_id": 278,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/controle-remoto-para-projetor-portatil/",
+      "current_title": "Controle remoto para projetor portátil",
+      "slug_locked": "controle-remoto-para-projetor-portatil",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-11-05T15:34:16",
+      "featured_media_id": 279,
+      "current_html_observations": {
+        "word_count_approx": 1150,
+        "commercial_cards": 2,
+        "affiliate_anchor_count": 4,
+        "img_tags": 2,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P1",
+      "reason": "Dois CTAs da mesma oferta e artigo não comprova compatibilidade por marca/modelo; busca exige informação precisa.",
+      "search_intent": "Como verificar se um controle remoto serve no projetor portátil específico?",
+      "proposed_editorial_title": "Controle para projetor portátil: compatibilidade",
+      "proposed_focus_keyword": "controle remoto projetor portátil",
+      "proposed_h2": [
+        "Identifique marca, modelo e código do projetor",
+        "Controle infravermelho e tecnologias diferentes",
+        "Botões, pareamento e alimentação",
+        "Compatibilidade não é universal",
+        "Checklist antes de comprar"
+      ],
+      "faq_questions_only_if_supported": [
+        "Controle universal funciona em qualquer projetor?",
+        "Como comparar código de modelo?"
+      ],
+      "fact_checks_required": [
+        "Código/modelo do controle e projetores compatíveis",
+        "Tipo de sinal e pilhas somente se comprovados",
+        "Não sugerir pareamento sem documentação",
+        "Conectar ao hub Projetores e acessórios"
+      ],
+      "hub_link_candidate": "/projetores-acessorios/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 6,
+      "post_id": 28,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/scanner-obd2-bluetooth-o-que-verificar-antes-de-comprar/",
+      "current_title": "Scanner OBD2 Bluetooth: o que verificar antes de comprar",
+      "slug_locked": "scanner-obd2-bluetooth-o-que-verificar-antes-de-comprar",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-11-23T10:10:04",
+      "featured_media_id": 72,
+      "current_html_observations": {
+        "word_count_approx": 410,
+        "commercial_cards": 0,
+        "affiliate_anchor_count": 0,
+        "img_tags": 0,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P1",
+      "reason": "Guia curto com nenhuma âncora afiliada e nenhuma imagem inline; anúncio usa 'universal', termo que exige validação por veículo/app.",
+      "search_intent": "Um scanner OBD2 Bluetooth funciona no meu veículo e celular?",
+      "proposed_editorial_title": "Scanner OBD2 Bluetooth: confira a compatibilidade",
+      "proposed_focus_keyword": "scanner OBD2 bluetooth compatibilidade",
+      "proposed_h2": [
+        "Compatibilidade por protocolo, ano e veículo",
+        "Bluetooth, sistema do celular e aplicativo",
+        "Funções de leitura versus funções avançadas",
+        "Privacidade, limitações e segurança no uso",
+        "Checklist e oferta verificada"
+      ],
+      "faq_questions_only_if_supported": [
+        "Funciona em qualquer carro?",
+        "Preciso pagar por aplicativo?"
+      ],
+      "fact_checks_required": [
+        "Modelos/anos de veículos suportados e protocolo do equipamento",
+        "Sistema e app compatíveis, sem prometer diagnóstico universal",
+        "Não orientar intervenção em sistemas críticos do carro",
+        "Oferta afiliada correta e featured_media antes de adicionar CTA"
+      ],
+      "hub_link_candidate": "/gadgets-conectividade/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 7,
+      "post_id": 256,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/ventilador-portatil-com-resfriamento-e-iluminacao/",
+      "current_title": "Ventilador portátil com resfriamento e iluminação",
+      "slug_locked": "ventilador-portatil-com-resfriamento-e-iluminacao",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-11-23T10:10:27",
+      "featured_media_id": 257,
+      "current_html_observations": {
+        "word_count_approx": 1013,
+        "commercial_cards": 2,
+        "affiliate_anchor_count": 4,
+        "img_tags": 2,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P1",
+      "reason": "Dois cartões afiliados duplicados; a palavra 'resfriamento' pode ser interpretada como capacidade de ar-condicionado sem evidência.",
+      "search_intent": "Quais recursos e limites avaliar em ventilador portátil com iluminação?",
+      "proposed_editorial_title": "Ventilador portátil com luz: como avaliar",
+      "proposed_focus_keyword": "ventilador portátil com iluminação",
+      "proposed_h2": [
+        "Ventilar não é refrigerar o ar",
+        "Luz integrada e modos declarados",
+        "Alimentação, autonomia e segurança",
+        "O que observar em tamanho e uso",
+        "Limitações e perguntas de compra"
+      ],
+      "faq_questions_only_if_supported": [
+        "Reduz a temperatura do ambiente?",
+        "Funciona ligado por USB?"
+      ],
+      "fact_checks_required": [
+        "Tecnologia real da oferta e fonte de alimentação",
+        "Não afirmar queda de temperatura sem ensaio",
+        "Estado do link e da imagem",
+        "Não categorizar como ar-condicionado"
+      ],
+      "hub_link_candidate": "/guias-tecnologia/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 8,
+      "post_id": 25,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/caixa-som-kapbom-ka-8955-guia-antes-da-compra/",
+      "current_title": "Caixa de som Kapbom KA-8955: guia antes da compra",
+      "slug_locked": "caixa-som-kapbom-ka-8955-guia-antes-da-compra",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-10-17T15:39:11",
+      "featured_media_id": 69,
+      "current_html_observations": {
+        "word_count_approx": 450,
+        "commercial_cards": 0,
+        "affiliate_anchor_count": 0,
+        "img_tags": 0,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P1",
+      "reason": "Guia curto sem link afiliado no conteúdo; nome do anúncio cita 50W, TWS e resistência à água sem ficha técnica independente.",
+      "search_intent": "Como conferir potência, TWS, bateria e proteção anunciada da Kapbom KA-8955?",
+      "proposed_editorial_title": "Kapbom KA-8955: o que conferir na ficha técnica",
+      "proposed_focus_keyword": "Kapbom KA-8955 especificações",
+      "proposed_h2": [
+        "Identifique a versão exata do modelo",
+        "Potência anunciada versus especificação comprovada",
+        "TWS, codecs e conectividade",
+        "Resistência à água exige classificação verificável",
+        "Autonomia, acessórios e checklist"
+      ],
+      "faq_questions_only_if_supported": [
+        "Qual é o nível comprovado de proteção à água?",
+        "Conecta duas caixas em TWS?"
+      ],
+      "fact_checks_required": [
+        "Manual/ficha oficial da versão analisada",
+        "Não declarar resistência à água sem classificação comprovada",
+        "Preço e potência só quando verificáveis",
+        "Localizar link afiliado específico e imagem original"
+      ],
+      "hub_link_candidate": "/audio-bluetooth/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 9,
+      "post_id": 138,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/como-escolher-um-relogio-inteligente-com-tela-infinita/",
+      "current_title": "Como escolher um relógio inteligente com tela infinita",
+      "slug_locked": "como-escolher-um-relogio-inteligente-com-tela-infinita",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-10-17T15:40:00",
+      "featured_media_id": 137,
+      "current_html_observations": {
+        "word_count_approx": 1048,
+        "commercial_cards": 0,
+        "affiliate_anchor_count": 2,
+        "img_tags": 1,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P1",
+      "reason": "Termo publicitário 'tela infinita' tratado como benefício genérico; artigo sem links internos, com duas âncoras de oferta no corpo.",
+      "search_intent": "O que significa 'tela infinita' nos anúncios de smartwatch?",
+      "proposed_editorial_title": "Smartwatch com tela infinita: o que significa?",
+      "proposed_focus_keyword": "smartwatch tela infinita",
+      "proposed_h2": [
+        "O que a expressão informa — e o que não garante",
+        "Tamanho de tela e bordas: dados mensuráveis",
+        "Sistema, conectividade e apps compatíveis",
+        "Autonomia, construção e conforto",
+        "Critérios para avaliar anúncio e variantes"
+      ],
+      "faq_questions_only_if_supported": [
+        "Tela infinita é uma tecnologia padronizada?",
+        "Como comparar o tamanho útil da tela?"
+      ],
+      "fact_checks_required": [
+        "Termo 'tela infinita' no anúncio versus dados mensuráveis",
+        "Modelo exato, compatibilidade e bateria documentadas",
+        "Evitar sobreposição com artigo #260",
+        "Rever links atuais sem mudar URL"
+      ],
+      "hub_link_candidate": "/smartwatches/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    },
+    {
+      "rank": 10,
+      "post_id": 24,
+      "post_status": "publish",
+      "permalink": "https://radartechbr.com.br/luz-rgb-portatil-video-celular-o-que-conferir/",
+      "current_title": "Luz RGB portátil para vídeo e celular: o que conferir",
+      "slug_locked": "luz-rgb-portatil-video-celular-o-que-conferir",
+      "current_category_id": 3,
+      "last_modified_reported": "2026-10-17T15:39:03",
+      "featured_media_id": 67,
+      "current_html_observations": {
+        "word_count_approx": 511,
+        "commercial_cards": 0,
+        "affiliate_anchor_count": 0,
+        "img_tags": 0,
+        "internal_anchor_count": 0,
+        "meta_contains_internal_reader_need": false
+      },
+      "priority": "P1",
+      "reason": "Artigo curto sem âncora afiliada, imagem inline ou links internos; faixa 3200K–6500K aparece no nome comercial, mas precisa de fonte.",
+      "search_intent": "Como escolher uma luz RGB portátil compatível com meu celular e suporte?",
+      "proposed_editorial_title": "Luz RGB para vídeos: alimentação e montagem",
+      "proposed_focus_keyword": "luz RGB portátil para vídeo",
+      "proposed_h2": [
+        "Diferença entre RGB e temperatura de cor",
+        "Alimentação, bateria e cabo",
+        "Montagem em tripé e compatibilidade física",
+        "Brilho e controles: dados a conferir",
+        "Checklist para gravação e anúncio"
+      ],
+      "faq_questions_only_if_supported": [
+        "Precisa de tripé separado?",
+        "A faixa 3200–6500 K é confirmada na ficha?"
+      ],
+      "fact_checks_required": [
+        "Faixa de temperatura de cor real e recursos",
+        "Tipo de alimentação e montagem",
+        "Oferta vinculada à campanha e imagem original",
+        "Ligação relevante a Smartphones/Gadgets sem atribuir specs não confirmadas"
+      ],
+      "hub_link_candidate": "/gadgets-conectividade/",
+      "write_action": "PLAN_ONLY",
+      "ready_to_rewrite": false,
+      "keep_permalink": true,
+      "keep_published_status_on_future_edit_only_after_review": true,
+      "before_write_requirements": [
+        "Full HTML backup + original meta + featured media + revision/modified time",
+        "GET verified product offer, image rights, affiliate destination and campaign",
+        "Review sources/facts; do not invent tests, prices, claims",
+        "Confirm outbound and internal links before/after",
+        "Draft preview and explicit editorial review before LIVE update"
+      ]
+    }
+  ],
+  "separate_out_of_niche_review": {
+    "post_id": 320,
+    "title": "Escolhendo Parafusadeiras para Trabalhos Diversos",
+    "reason": "Article title implies selecting a drill, but commercial card identifies a PH2 bit set; not in the technology top 10, flagged for isolated urgent curation. No automatic deletion or reclassification."
+  },
+  "excluded_from_rewrite_sample": {
+    "post_id": 324,
+    "reason": "More recently authored structured LED guide with one commercial offer and an FAQ; useful as quality comparison, not among ten most urgent. AIOSEO metadata missing may be fixed separately."
+  },
+  "instructions_to_resume": "Continue C115 checkpoint; NEVER write to WordPress until backup for each post, campaign verification, and approval for the rewrite operation. SAFE legacy writer must remain OFF."
+}
