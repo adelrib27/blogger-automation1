@@ -29,6 +29,9 @@ class DraftAdapterTests(unittest.TestCase):
             writer.writerow({"shopId":"10","itemId":"46","productName":"Liquidificador 1000W",
                              "productLink":"https://shopee.com.br/item-i.10.46",
                              "imageUrl":"https://cf.shopee.com.br/file/valid-product-photo"})
+            writer.writerow({"shopId":"10","itemId":"47","productName":"Smartwatch Bluetooth com Tela",
+                             "productLink":"https://shopee.com.br/item-i.10.47",
+                             "imageUrl":"https://cf.shopee.com.br/file/valid-product-photo"})
         self.cat=Catalog(base/"state.sqlite3")
         self.addCleanup(self.cat.close)
         self.cat.import_csv(feed,"feed1")
@@ -50,10 +53,14 @@ class DraftAdapterTests(unittest.TestCase):
         self.assertEqual(draft.status,"draft")
 
     def test_wordpress_draft_is_always_draft_and_escaped(self):
-        brief,key=self.ledger.next_brief("wordpress_radartechbr","shopee:10:45")
+        # Air Fryer deve ser bloqueada para o Radar especializado.
+        from affiliate_hub_v31.editorial import EditorialError
+        with self.assertRaisesRegex(EditorialError,"niche_outside_site"):
+            self.ledger.next_brief("wordpress_radartechbr","shopee:10:45")
+        brief,key=self.ledger.next_brief("wordpress_radartechbr","shopee:10:47")
         self.ledger.update_status(key,"APPROVED")
-        self.cat.cache_link("shopee:10:45","radarwp","https://s.shopee.com.br/example2")
-        text=paragraphs("air fryer")
+        self.cat.cache_link("shopee:10:47","radarwp","https://s.shopee.com.br/example2")
+        text=paragraphs("tecnologia")
         text[0]="<script>alert('x')</script> "+text[0]
         draft=prepare_draft(self.cat,"wordpress_radartechbr",key,text)
         self.assertEqual(draft.meta["status"],"draft")
