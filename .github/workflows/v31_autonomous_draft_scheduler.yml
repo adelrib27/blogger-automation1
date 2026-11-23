@@ -157,6 +157,8 @@ jobs:
           SITE: ${{ needs.choose-one.outputs.site }}
           DRAFT_RESULT: ${{ needs.draft.result }}
           LIVE_RESULT: ${{ needs.release.result }}
+          VERIFICATION_RECEIPT: ${{ needs.draft.outputs.verification_receipt }}
+          VERIFIED_DRAFT: ${{ needs.draft.outputs.verified_draft }}
           V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
           V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
@@ -166,6 +168,7 @@ jobs:
           from datetime import datetime, timezone
           from pathlib import Path
           from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
+          from affiliate_hub_v31.autodraft_schedule_outcome import summarize_draft_cycle
           from affiliate_hub_v31.routing import sites
           site = os.environ["SITE"]
           route = sites().get(site)
@@ -179,8 +182,12 @@ jobs:
           budget = query("""SELECT kind, used, max_allowed, blocked_until_epoch FROM v31_search_budget
                             WHERE site_key=? AND campaign=? AND day_utc=? ORDER BY kind""",
                          (*target, clock.date().isoformat()))
-          result = {"site": site, "draft_job": os.environ["DRAFT_RESULT"],
-                    "live_job": os.environ["LIVE_RESULT"], "jobs": jobs, "daily_research": budget}
+          outcome = summarize_draft_cycle(
+              site_key=site, verification_receipt=os.environ["VERIFICATION_RECEIPT"],
+              verified_draft=os.environ["VERIFIED_DRAFT"],
+              draft_job=os.environ["DRAFT_RESULT"], live_job=os.environ["LIVE_RESULT"])
+          result = {"site": site, "outcome": outcome,
+                    "jobs": jobs, "daily_research": budget}
           with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as summary:
               print("### Estado operacional V31", file=summary)
               print("```json", json.dumps(result, indent=2), "```", sep="\n", file=summary)
