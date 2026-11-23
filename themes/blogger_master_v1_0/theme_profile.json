@@ -1,0 +1,42 @@
+{
+  "theme_id": "blogger-master-v1",
+  "version": "1.0.0",
+  "status": "LAB_ONLY",
+  "target": "product_affiliate_blogs",
+  "design": {
+    "background": "#f7f7f5",
+    "surface": "#ffffff",
+    "text": "#1c1917",
+    "muted": "#57534e",
+    "accent": "#f97316",
+    "accent_strong": "#c2410c"
+  },
+  "automation_slots": {
+    "top_navigation": "topnav",
+    "affiliate_offer": "offerSection",
+    "main_posts": "main",
+    "sidebar": "sidebar",
+    "footer_links": "footerlinks"
+  },
+  "required_pages": [
+    "Sobre",
+    "Contato",
+    "Política de Privacidade",
+    "Termos de Uso",
+    "Aviso de Afiliados"
+  ],
+  "seo": {
+    "website_microdata": true,
+    "open_graph_baseline": true,
+    "robots_meta": "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+    "per_post_article_schema": "CONTENT_AUTOMATION",
+    "per_product_product_schema": "CONTENT_AUTOMATION"
+  },
+  "safety": {
+    "apply_only_after_backup": true,
+    "lab_blog_first": "99449222854490000",
+    "hardcoded_affiliate_links_allowed": false,
+    "external_javascript_allowed": false,
+    "secrets_allowed": false
+  }
+}

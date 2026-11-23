@@ -1,0 +1,61 @@
+{
+  "policy": {
+    "enabled": true,
+    "max_per_shop": 3,
+    "max_per_keyword": 4,
+    "max_per_category": 8,
+    "relaxed_caps": {
+      "max_per_shop": 5,
+      "max_per_keyword": 6,
+      "max_per_category": 10
+    },
+    "policy": "strict_first_then_relax_then_fill_without_using_standard_commission_if_extra_candidates_still_exist"
+  },
+  "selectionPasses": {
+    "strict": 5,
+    "relaxed": 0,
+    "fallback": 0
+  },
+  "shopDistribution": [
+    [
+      "1386775107",
+      3
+    ],
+    [
+      "1242226486",
+      1
+    ],
+    [
+      "736567489",
+      1
+    ]
+  ],
+  "keywordDistribution": [
+    [
+      "oculos uv400",
+      3
+    ],
+    [
+      "organizador banheiro",
+      1
+    ],
+    [
+      "organizador cozinha",
+      1
+    ]
+  ],
+  "categoryDistribution": [
+    [
+      "Moda & Beleza",
+      3
+    ],
+    [
+      "Casa & Decoracao",
+      1
+    ],
+    [
+      "Cozinha & Utilidades",
+      1
+    ]
+  ]
+}

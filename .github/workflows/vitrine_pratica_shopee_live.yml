@@ -1,0 +1,60 @@
+name: Vitrine Pratica - Shopee Live Fetch
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - blogger-safe-ui-provisioning-v0-2
+    paths:
+      - data/vitrine_pratica/shopee_fetch_trigger.txt
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-live-products:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+      SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+      SHOPEE_CATEGORY: all
+      SHOPEE_TOP_N: "5"
+      SHOPEE_OUTPUT_DIR: data/vitrine_pratica/shopee_live
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
+        with:
+          ref: blogger-safe-ui-provisioning-v0-2
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Consultar Shopee Affiliate API e gerar ranking
+        run: python -u src/shopee_oportunidades_v23.py
+
+      - name: Registrar origem da coleta
+        run: |
+          printf 'source=Shopee Affiliate Open API\ncollected_at=%s\ncommit=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$GITHUB_SHA" > data/vitrine_pratica/shopee_live/LIVE_SOURCE.txt
+
+      - name: Persistir ranking live no repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/vitrine_pratica/shopee_live/
+          if git diff --cached --quiet; then
+            echo "Sem alteracoes no ranking."
+          else
+            git commit -m "data: refresh live Shopee products for Vitrine Pratica"
+            git push origin HEAD:blogger-safe-ui-provisioning-v0-2
+          fi
+
+      - name: Publicar produtos reais como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitrine-pratica-shopee-live-${{ github.run_number }}
+          path: data/vitrine_pratica/shopee_live/
+          if-no-files-found: error
+          retention-days: 7

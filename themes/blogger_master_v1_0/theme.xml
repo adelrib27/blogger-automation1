@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false'
+      b:defaultwidgetversion='2'
+      b:layoutsVersion='3'
+      b:responsive='true'
+      b:templateVersion='1.0.0'
+      b:version='2'
+      expr:dir='data:blog.languageDirection'
+      xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:b='http://www.google.com/2005/gml/b'
+      xmlns:data='http://www.google.com/2005/gml/data'
+      xmlns:expr='http://www.google.com/2005/gml/expr'>
+  <head>
+    <b:include data='blog' name='all-head-content'/>
+    <meta content='width=device-width, initial-scale=1' name='viewport'/>
+    <meta content='#f97316' name='theme-color'/>
+    <meta content='index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' name='robots'/>
+    <meta expr:content='data:blog.pageTitle' property='og:title'/>
+    <meta expr:content='data:blog.url' property='og:url'/>
+    <meta content='website' property='og:type'/>
+    <title><data:blog.pageTitle/></title>
+
+    <b:skin><![CDATA[
+/*
+  Tema Mestre Blogger v1.0
+  Projeto: blogger-automation1
+  Perfil: editorial + afiliados + blogs de produto
+  Regra: personalizar por variáveis em :root; não hardcodar links de afiliado no tema.
+*/
+:root {
+  --tm-bg: #f7f7f5;
+  --tm-surface: #ffffff;
+  --tm-surface-soft: #fff7ed;
+  --tm-text: #1c1917;
+  --tm-muted: #57534e;
+  --tm-border: #e7e5e4;
+  --tm-accent: #f97316;
+  --tm-accent-strong: #c2410c;
+  --tm-success: #166534;
+  --tm-shadow: 0 12px 34px rgba(28, 25, 23, .08);
+  --tm-radius-sm: 12px;
+  --tm-radius: 18px;
+  --tm-radius-lg: 26px;
+  --tm-content: 760px;
+  --tm-shell: 1180px;
+  --tm-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--tm-bg);
+  color: var(--tm-text);
+  font: 400 16px/1.65 var(--tm-font);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, iframe, video { max-width: 100%; height: auto; }
+a { color: var(--tm-accent-strong); text-decoration-thickness: .08em; text-underline-offset: .16em; }
+a:hover { color: var(--tm-accent); }
+button, input, textarea, select { font: inherit; }
+
+.tm-skip {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 9999;
+  padding: 10px 14px;
+  background: var(--tm-text);
+  color: #fff;
+  border-radius: 10px;
+}
+.tm-skip:focus { left: 8px; }
+
+.tm-shell {
+  width: min(calc(100% - 32px), var(--tm-shell));
+  margin-inline: auto;
+}
+.tm-topbar {
+  background: var(--tm-text);
+  color: #fff;
+  font-size: 13px;
+}
+.tm-topbar .tm-shell {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.tm-header {
+  position: relative;
+  background:
+    radial-gradient(circle at 85% -10%, rgba(249,115,22,.22), transparent 32%),
+    linear-gradient(180deg, #fff, #fffdf9);
+  border-bottom: 1px solid var(--tm-border);
+}
+.tm-header-inner {
+  display: grid;
+  gap: 18px;
+  padding: 34px 0 22px;
+}
+.tm-brand {
+  display: inline-block;
+  color: var(--tm-text);
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: -.035em;
+  font-size: clamp(27px, 5vw, 44px);
+  line-height: 1.05;
+}
+.tm-tagline {
+  max-width: 680px;
+  margin: 0;
+  color: var(--tm-muted);
+  font-size: clamp(15px, 2vw, 18px);
+}
+.tm-nav-wrap {
+  border-top: 1px solid var(--tm-border);
+}
+.tm-nav {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.tm-nav .widget,
+.tm-nav .widget-content { width: 100%; }
+.tm-nav ul {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 0;
+  list-style: none;
+}
+.tm-nav li { margin: 0; }
+.tm-nav a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--tm-text);
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: 650;
+}
+.tm-nav a:hover {
+  background: var(--tm-surface-soft);
+  color: var(--tm-accent-strong);
+}
+
+.tm-offer-zone {
+  margin: 22px auto 0;
+}
+.tm-offer-zone:empty { display: none; }
+.tm-offer-zone .widget {
+  padding: 18px 20px;
+  border: 1px solid rgba(249,115,22,.28);
+  background: var(--tm-surface-soft);
+  border-radius: var(--tm-radius);
+  box-shadow: 0 8px 24px rgba(249,115,22,.08);
+}
+.tm-offer-zone .widget h2,
+.tm-offer-zone .widget h3 {
+  margin-top: 0;
+}
+.tm-offer-zone a {
+  font-weight: 750;
+}
+
+.tm-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: start;
+  margin-top: 28px;
+  margin-bottom: 42px;
+}
+.tm-main,
+.tm-sidebar .widget {
+  background: var(--tm-surface);
+  border: 1px solid var(--tm-border);
+  border-radius: var(--tm-radius-lg);
+  box-shadow: var(--tm-shadow);
+}
+.tm-main {
+  min-width: 0;
+  padding: clamp(18px, 4vw, 42px);
+}
+.tm-sidebar {
+  display: grid;
+  gap: 18px;
+}
+.tm-sidebar .widget {
+  padding: 22px;
+}
+.tm-sidebar h2,
+.tm-sidebar h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+.tm-sidebar ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.tm-sidebar li + li { margin-top: 7px; }
+
+.blog-posts { display: grid; gap: 28px; }
+.post-outer, .post-outer-container { margin: 0 !important; }
+.post {
+  margin: 0;
+  padding: 0 0 28px;
+  border-bottom: 1px solid var(--tm-border);
+}
+.post:last-child { border-bottom: 0; padding-bottom: 0; }
+.post-title, .post-title a, h3.post-title, h1.post-title {
+  color: var(--tm-text);
+  text-decoration: none;
+  letter-spacing: -.028em;
+  line-height: 1.15;
+}
+.post-title, h3.post-title {
+  font-size: clamp(25px, 4vw, 38px);
+  margin: 0 0 12px;
+}
+.post-header, .post-header-line-1, .post-timestamp {
+  color: var(--tm-muted);
+  font-size: 13px;
+}
+.post-body {
+  max-width: var(--tm-content);
+  color: var(--tm-text);
+  font-size: 17px;
+}
+.post-body h2 {
+  margin: 1.65em 0 .55em;
+  font-size: clamp(23px, 3.2vw, 31px);
+  line-height: 1.2;
+}
+.post-body h3 {
+  margin: 1.5em 0 .5em;
+  font-size: clamp(20px, 2.8vw, 25px);
+  line-height: 1.25;
+}
+.post-body p { margin: 0 0 1.15em; }
+.post-body ul, .post-body ol { padding-left: 1.35em; }
+.post-body blockquote {
+  margin: 1.5em 0;
+  padding: 16px 20px;
+  border-left: 4px solid var(--tm-accent);
+  background: var(--tm-surface-soft);
+  border-radius: 0 var(--tm-radius-sm) var(--tm-radius-sm) 0;
+}
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: var(--tm-radius-sm);
+}
+.post-body th, .post-body td {
+  padding: 11px 12px;
+  border: 1px solid var(--tm-border);
+  text-align: left;
+}
+.post-body .separator a { margin-inline: auto !important; }
+.post-body img {
+  border-radius: var(--tm-radius);
+}
+.jump-link a, .blog-pager a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--tm-accent);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 750;
+}
+.jump-link a:hover, .blog-pager a:hover {
+  background: var(--tm-accent-strong);
+  color: #fff;
+}
+
+.tm-footer {
+  margin-top: 32px;
+  background: #1c1917;
+  color: #e7e5e4;
+}
+.tm-footer a { color: #fed7aa; }
+.tm-footer-inner {
+  display: grid;
+  grid-template-columns: 1fr minmax(220px, 360px);
+  gap: 28px;
+  padding: 34px 0;
+}
+.tm-footer-brand {
+  margin: 0 0 8px;
+  font-weight: 800;
+  color: #fff;
+  font-size: 20px;
+}
+.tm-footer-note {
+  margin: 0;
+  max-width: 680px;
+  color: #d6d3d1;
+  font-size: 14px;
+}
+.tm-footer .widget {
+  padding: 0;
+}
+.tm-credit {
+  border-top: 1px solid rgba(255,255,255,.12);
+  color: #a8a29e;
+  font-size: 12px;
+  text-align: center;
+  padding: 14px 16px 18px;
+}
+
+.status-msg-wrap, .date-header { margin-bottom: 18px; }
+.status-msg-body {
+  padding: 12px 14px;
+  background: var(--tm-surface-soft);
+  border-radius: var(--tm-radius-sm);
+}
+.feed-links { display: none; }
+
+@media (max-width: 940px) {
+  .tm-grid { grid-template-columns: 1fr; }
+  .tm-sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .tm-shell { width: min(calc(100% - 20px), var(--tm-shell)); }
+  .tm-header-inner { padding-top: 26px; }
+  .tm-grid { gap: 18px; margin-top: 18px; }
+  .tm-main { border-radius: var(--tm-radius); padding: 20px 16px; }
+  .tm-sidebar { grid-template-columns: 1fr; }
+  .tm-footer-inner { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+    ]]></b:skin>
+  </head>
+
+  <body itemscope='itemscope' itemtype='https://schema.org/WebSite'>
+    <a class='tm-skip' href='#conteudo'>Pular para o conteúdo</a>
+    <meta expr:content='data:blog.title' itemprop='name'/>
+    <meta expr:content='data:blog.homepageUrl' itemprop='url'/>
+
+    <div class='tm-topbar'>
+      <div class='tm-shell'>Conteúdo editorial independente com foco em informação útil e decisões de compra.</div>
+    </div>
+
+    <header class='tm-header'>
+      <div class='tm-shell tm-header-inner'>
+        <div>
+          <a class='tm-brand' expr:href='data:blog.homepageUrl'><data:blog.title/></a>
+          <p class='tm-tagline'>Guias, comparativos, dicas práticas e oportunidades selecionadas.</p>
+        </div>
+      </div>
+
+      <div class='tm-nav-wrap'>
+        <div class='tm-shell tm-nav' aria-label='Navegação principal'>
+          <b:section class='navbar' id='topnav' maxwidgets='1' showaddelement='yes'>
+            <b:widget id='PageList1' locked='false' title='Páginas' type='PageList'/>
+          </b:section>
+        </div>
+      </div>
+    </header>
+
+    <div class='tm-shell'>
+      <b:section class='offer-section tm-offer-zone' id='offerSection' maxwidgets='1' showaddelement='yes'/>
+    </div>
+
+    <div class='tm-shell tm-grid'>
+      <main class='tm-main' id='conteudo' itemprop='mainContentOfPage'>
+        <b:section class='main' id='main' maxwidgets='1' showaddelement='no'>
+          <b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'/>
+        </b:section>
+      </main>
+
+      <aside class='tm-sidebar' aria-label='Conteúdo complementar'>
+        <b:section class='sidebar' id='sidebar' maxwidgets='5' showaddelement='yes'>
+          <b:widget id='Label1' locked='false' title='Tópicos' type='Label'/>
+          <b:widget id='PopularPosts1' locked='false' title='Mais lidos' type='PopularPosts'/>
+        </b:section>
+      </aside>
+    </div>
+
+    <footer class='tm-footer'>
+      <div class='tm-shell tm-footer-inner'>
+        <div>
+          <p class='tm-footer-brand'><data:blog.title/></p>
+          <p class='tm-footer-note'>
+            Alguns conteúdos podem conter links de afiliados. Isso pode gerar comissão sem custo adicional para o leitor.
+            Informações comerciais devem ser verificadas na página oficial da oferta antes da compra.
+          </p>
+        </div>
+        <div>
+          <b:section class='footer' id='footerlinks' maxwidgets='3' showaddelement='yes'/>
+        </div>
+      </div>
+      <div class='tm-credit'>Tema Mestre Blogger v1.0</div>
+    </footer>
+  </body>
+</html>
