@@ -289,6 +289,7 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 - `.github/workflows/v31_c133_autodraft_rollout_readiness_safe.yml`: informa prontidão sem publicar.
 - `.github/workflows/v31_c143_deleted_blogger_scope_readonly.yml`: audita escopo, bloqueios e simulações.
 - `.github/workflows/v31_continuity_guard.yml`: valida a consistência do estado documentado.
+- `.github/workflows/v31_lab_daily_autonomous_dispatch.yml`: ponte sem execução, agendamento ou permissão de escrita; permanece bloqueada porque o ID Blogger do destino consta na denylist de 24 identidades.
 
 **Distinção operacional obrigatória:** `workflow_dispatch`, `schedule`, `push`, `skipped`, `success`, `DRAFT_VERIFIED` e `LIVE` são estados diferentes. Não existe equivalência automática entre um disparo e uma postagem efetiva.
 
@@ -306,7 +307,7 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 
 ### P0 — Segurança e verdade operacional
 
-1. Manter a negação dos 24 IDs e a exclusão de destinos desautorizados em todos os writers e agendamentos.
+1. Manter a negação dos 24 IDs e a exclusão de destinos desautorizados em todos os writers, agendamentos e pontes de dispatch entre branches.
 2. Revalidar acesso, inventário, flags e cotas pela API real antes de atividades que possam consumir dados ou criar posts.
 3. Confrontar periodicamente jobs D1 `USED` com os DRAFTs autenticados do CMS; tratar ausências, divergências de hash/identidade e colisões sem sobrescrever nem duplicar artigos.
 4. Investigar a falha de disponibilidade da Shopee e os erros GraphQL `10000`, com limite de tentativa e circuit breaker.
