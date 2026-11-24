@@ -88,7 +88,7 @@ class C137CampaignCacheReadOnlyTests(unittest.TestCase):
             self.inspect()
 
     def test_publisher_route_not_allowed(self):
-        with self.assertRaisesRegex(m.CampaignCacheAuditError, "safe_blogger_route"):
+        with self.assertRaisesRegex(m.CampaignCacheAuditError, "safe_editorial_route"):
             self.inspect(route={**ROUTE,"publish_enabled":True})
 
     def test_cross_campaign_isolation(self):
