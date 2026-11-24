@@ -151,6 +151,16 @@ class DeletedTwentyFourBloggerSafetyTests(unittest.TestCase):
         self.assertNotIn("c102_verified_live_url",json.dumps(TOMBSTONES))
         self.assertNotIn("affiliate",json.dumps(TOMBSTONES).lower())
 
+    def test_request_queue_has_only_current_site_keys(self):
+        from affiliate_hub_v31.site_request_queue import load_requests
+        entries=load_requests()
+        allowed={x["site_key"] for x in POLICY["blogger"]["current_targets"]
+                 + POLICY["wordpress"]["current_targets"]}
+        self.assertTrue({r["site_key"] for r in entries}.issubset(allowed))
+        self.assertTrue(all(x["site_key"] not in {
+            dead["legacy_site_key"] for dead in TOMBSTONES["deleted_blogs"]}
+            for x in entries))
+
     def test_all_retired_store_workflows_have_no_schedule_and_job_disabled(self):
         self.assertEqual(len(old_audit.DELETED_BLOGGER_WRITER_WORKFLOWS),19)
         old_audit.audit_deleted_blogger_writers()
