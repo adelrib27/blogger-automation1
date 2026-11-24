@@ -62,6 +62,41 @@ class BloggerRetiredWorkflowAuditTests(unittest.TestCase):
         self.assertIn("BLOGGER_POLICY_REPO_AUDIT_PASS",result)
         self.assertIn("17/17 pares presentes protegidos",result)
 
+    def test_8_monthly_store_schedules_remain_guarded(self):
+        expected = {
+            "casa_em_ordem_store_autonomous.yml": "5 8 8 * *",
+            "escolha_certa_online_store_autonomous.yml": "20 8 13 * *",
+            "achados_que_valem_store_autonomous.yml": "50 9 3 * *",
+            "guia_achados_ofertas_store_autonomous.yml": "5 10 15 * *",
+            "moda_ofertas_store_autonomous.yml": "20 10 18 * *",
+            "achadinhos_beleza_store_autonomous.yml": "35 10 1 * *",
+            "radar_tech_blogger_store_autonomous.yml": "50 10 22 * *",
+            "cozinha_sem_complicacao_store_autonomous.yml": "5 11 11 * *",
+        }
+        audit_source=Path(checker.__file__).read_text(encoding="utf-8")
+        for name, cron in expected.items():
+            with self.subTest(name=name):
+                wf=(checker.ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
+                self.assertIn('cron: "' + cron + '"', wf)
+                self.assertIn('cron: "' + cron + '"', audit_source)
+
+    def test_legacy_reference_policy_auditor_is_still_readonly(self):
+        # A infraestrutura antiga permanece intacta; só a asserção
+        # acompanha o agendamento mensal já existente. Nada é implantado
+        # como subprojeto editorial do V31.
+        from src import blogger_new_blog_policy_repo_audit as legacy
+        with redirect_stdout(io.StringIO()) as captured:
+            legacy.main()
+        self.assertIn("PASS",captured.getvalue())
+
+    def test_legacy_reference_monthly_writer_not_executed_here(self):
+        file=(checker.ROOT / ".github/workflows" /
+              "vida_pet_pratica_store_page_autonomous.yml")
+        body=file.read_text(encoding="utf-8")
+        self.assertIn('cron: "35 11 26 * *"',body)
+        # Esta auditoria não aciona workflow_dispatch nem troca LIVE de site.
+        self.assertFalse(any("workflow_dispatch" in x for x in checker.RETIRED_ACHADOS_CASA_PAIR))
+
     def test_no_cms_or_network_dependency_in_auditor(self):
         # O auditor é estático: lê fontes do GitHub Actions checkout.
         src=Path(checker.__file__).read_text(encoding="utf-8")
