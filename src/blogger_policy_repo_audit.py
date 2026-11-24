@@ -14,7 +14,6 @@ SAFE_WORKFLOWS = [
     ".github/workflows/limpeza_inteligente_store_safe.yml",
     ".github/workflows/ventiladores_store_safe.yml",
     ".github/workflows/vitrine_pratica_store_safe.yml",
-    ".github/workflows/achados_casa_store_safe.yml",
     ".github/workflows/conecta_achados_store_safe.yml",
     ".github/workflows/estilo_dia_a_dia_store_safe.yml",
     ".github/workflows/casa_em_ordem_store_safe.yml",
@@ -34,7 +33,6 @@ LIVE_WORKFLOWS = [
     ".github/workflows/limpeza_inteligente_store_autonomous.yml",
     ".github/workflows/ventiladores_store_autonomous.yml",
     ".github/workflows/vitrine_pratica_store_autonomous.yml",
-    ".github/workflows/achados_casa_store_autonomous.yml",
     ".github/workflows/conecta_achados_store_autonomous.yml",
     ".github/workflows/estilo_dia_a_dia_store_autonomous.yml",
     ".github/workflows/casa_em_ordem_store_autonomous.yml",
@@ -46,6 +44,14 @@ LIVE_WORKFLOWS = [
     ".github/workflows/radar_tech_blogger_store_autonomous.yml",
     ".github/workflows/cozinha_sem_complicacao_store_autonomous.yml",
 ]
+
+# Um par legado foi removido do repo. Nunca recriar writer LIVE só para
+# fazer a auditoria passar; se voltar sem reintrodução consciente do guard,
+# a auditoria deve FALHAR. Não é a Loja WordPress Casa e Decoração.
+RETIRED_ACHADOS_CASA_PAIR = (
+    ".github/workflows/achados_casa_store_safe.yml",
+    ".github/workflows/achados_casa_store_autonomous.yml",
+)
 
 LEGACY_MANUAL_WORKFLOWS = {
     ".github/workflows/limpeza_store_autonomous.yml": "limpeza-inteligente-store-live",
@@ -84,6 +90,13 @@ def read(rel: str) -> str:
     if not p.exists():
         fail(f"arquivo obrigatório ausente: {rel}")
     return p.read_text(encoding="utf-8", errors="ignore")
+
+
+def audit_retired_achados_casa_pair(*, root: Path = ROOT) -> None:
+    """Só permite os DOIS workflows aposentados ausentes; não permite reaparição silenciosa."""
+    for rel in RETIRED_ACHADOS_CASA_PAIR:
+        if (root / rel).exists():
+            fail("workflow legado reapareceu sem Policy Guard revalidado: " + rel)
 
 
 def audit_workflows() -> None:
@@ -333,6 +346,7 @@ def audit_legacy_identity() -> None:
 
 
 def main() -> None:
+    audit_retired_achados_casa_pair()
     audit_workflows()
     audit_casa_schedule()
     audit_escolha_schedule()
@@ -346,7 +360,7 @@ def main() -> None:
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 18/18 protegidos; schedules finais validados até Cozinha Sem Complicação 11:05 America/Recife; writers legados manual-only; sem ocultação/desativação detectada do aviso nativo de cookies.")
+    print("SAFE/LIVE 17/17 pares presentes protegidos; par Achados para Casa aposentado DEVE permanecer ausente; schedules finais validados até Cozinha Sem Complicação 11:05 America/Recife; writers legados manual-only; cookies nativos preservados.")
 
 
 if __name__ == "__main__":
