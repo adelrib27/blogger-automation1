@@ -43,7 +43,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
       - name: C140 — 50 simulações universais antes da leitura e geração de DRAFT
-        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
       - id: read
         env:
           SITE: ${{ inputs.site_key }}
