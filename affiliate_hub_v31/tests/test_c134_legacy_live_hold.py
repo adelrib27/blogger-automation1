@@ -4,6 +4,7 @@ Mantém intactos os workflows de DRAFT do V31 e os acionamentos manuais
 independentes; zero I/O remoto e nenhuma operação de CMS.
 """
 from pathlib import Path
+import json
 import re
 import unittest
 
@@ -38,10 +39,15 @@ class LegacyLiveHoldTests(unittest.TestCase):
         self.assertIn("environment: v31-autonomous-live", s)
         self.assertIn("V31_AUTO_LIVE_APPROVED_POLICY_SHA256", s)
 
-    def test_radar_legacy_writer_remains_disabled(self):
-        s = self._content("radar_editorial_vnext_autonomous.yml")
-        self.assertRegex(s, r"(?m)^  autonomo:\n(?:    [^\n]*\n)*    if: \$\{\{ false \}\}")
-        self.assertIn('RADAR_LIVE_PUBLISH_ENABLED: "false"', s)
+    def test_radar_legacy_writer_is_retired_from_current_tree(self):
+        # C149: missing workflow is safer than a perpetual schedule of skipped jobs.
+        path="radar_editorial_vnext_autonomous.yml"
+        self.assertFalse((ROOT/path).exists())
+        manifest=json.loads((ROOT.parents[1]/
+            "affiliate_hub_v31/EDITORIAL_LEGACY_RADAR_RETIREMENT_C149.json"
+        ).read_text(encoding="utf-8"))
+        self.assertIn(".github/workflows/"+path,
+                      {x["path"] for x in manifest["retired_workflows"]})
 
 
 if __name__ == "__main__":

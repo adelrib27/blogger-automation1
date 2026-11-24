@@ -338,6 +338,18 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 8. **Validação offline mais recente:** [CI #45420704364](https://github.com/adelrib27/blogger-automation1/actions/runs/45420704364): **851/851 testes**, **50/50 simulações**, Casa 24/24, Oficina 21/21, Radar 15/15 e guarda cross-blog PASS. Essa aprovação não substitui o GET CMS do runner nem autoriza DRAFT ou LIVE do Radar.
 
 
+### C149 — desativação definitiva dos executores legados exclusivos do Radar Tech BR
+
+**Decisão do proprietário (24/11/2026):** novas pesquisas, conversões e artigos do Radar Tech BR pertencem ao V31 universal, nunca a workflows exclusivos herdados do projeto anterior. O Radar permanece **piloto primário**, não motor especial.
+
+- Foram retirados da árvore da `main` **dez workflows legados**; a lista exata e os motivos constam de `affiliate_hub_v31/EDITORIAL_LEGACY_RADAR_RETIREMENT_C149.json`. Os commits anteriores continuam acessíveis pelo histórico Git. A retirada inclui o editorial vNext com cinco crons diários, a fila Fase 3, a rotação isolada de Loja, as rotinas SAFE legadas e os one-shots de conversão Shopee C88/C92/C113/LG24. Nenhum desses executores deve ser reativado por `push`, `schedule` ou `workflow_dispatch`.
+- A origem da conversão de 24/11 está **comprovada** nos logs de [GitHub Actions #45372082046](https://github.com/adelrib27/blogger-automation1/actions/runs/45372082046): `LG24_RESERVED` e `LG24_CONVERTED` para SKU `shopee:822103155:58265302556`, campanha `radarwp`. O link gerado consta do log histórico, porém essa execução NÃO comprovou persistência do link no catálogo R2; não apagar o histórico e não efetuar uma segunda conversão para compensar.
+- D1 oficial em `SELECT` mostrou **três tentativas históricas** da campanha `radarwp`: duas em 23/11 (`shopee:1736335904:58267891881` e `shopee:889973435:18398298625`) e uma em 24/11 (SKU LG24 acima). O D1 registra tentativas; somente os logs LG24 comprovam retorno de shortlink. Não inferir sucesso de outras duas conversões, nem converter esses SKU novamente sem reconciliação.
+- O motor compartilhado `site_request_queue.claim_conversion_attempt()` usa uma reserva D1 com `NOT EXISTS` atômico por **campanha + SKU em qualquer dia UTC**. Assim, tentativas históricas de um workflow legado barram a reconversão on-demand/diária sem recibo; a mesma SKU em outra campanha permanece independente. Uma tentativa consumida sem cache exige reconciliação explícita; não há retry cego.
+- **Preservado:** `site_routes.json` com campanha `radarwp`, catálogo e links convertidos que já existirem no R2, histórico do D1, posts/drafts WordPress, `radar_tech_br/src` (incluindo self-tests), governança universal, 24 Blogger excluídos e todos os outros sites ativos.
+- **Loja mensal:** a rotação de produtos da página Loja exclusiva do Radar ficou **suspensa** junto ao workflow antigo, sem alterar a página pública atual. Ainda **não há sucessor de Loja homologado** neste fluxo editorial de artigos; um futuro módulo universal de vitrines deverá ser testado separadamente antes de reativar atualização mensal. Não confundir Loja estática com artigos DRAFT.
+- **Próximo passo universal:** resolver a credencial do WordPress Radar no ambiente protegido `v31-editorial-safe`, homologar oferta real, evidência factual e GET CMS/DRAFT/hash pelo V31, sem usar o gerador isolado. LIVE segue `pending_policy_approval`.
+
 ## 9. Roadmap técnico priorizado
 
 ### P0 — Segurança e verdade operacional

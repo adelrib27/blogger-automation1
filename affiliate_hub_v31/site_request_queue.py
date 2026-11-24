@@ -114,16 +114,28 @@ def reserved_pilot_sku(site_key: str) -> str | None:
 
 
 def claim_conversion_attempt(query, *, day_utc: str, campaign: str, product_key: str) -> bool:
-    """Reserve a global UTC slot before an outbound Shopee attempt."""
+    """Reserve a shared daily slot, but never reattempt this SKU+campaign on another day.
+
+    A D1 attempt is not proof of successful conversion: if the former
+    site-specific workflow got a shortlink without persisting R2, the universal
+    converter must reconcile that outcome instead of issuing another POST.
+    Keep other campaigns independent. The NOT EXISTS check lives in the
+    conditional INSERT, not in a separate read-and-write race.
+    """
     rows = query("""
       INSERT INTO v31_shopee_conversion_attempts (day_utc, slot, campaign, product_key)
       SELECT ?, COALESCE(max(slot), 0) + 1, ?, ?
       FROM v31_shopee_conversion_attempts WHERE day_utc=?
       HAVING COALESCE(max(slot), 0) < ?
+      AND NOT EXISTS (
+        SELECT 1 FROM v31_shopee_conversion_attempts
+        WHERE campaign=? AND product_key=?
+      )
       ON CONFLICT DO NOTHING
       RETURNING slot
-    """, (day_utc, campaign, product_key, day_utc, MAX_BUDGET))
-    return len(rows) == 1
+    """, (day_utc, campaign, product_key, day_utc, MAX_BUDGET,
+          campaign, product_key))
+    return isinstance(rows, list) and len(rows) == 1
 
 
 def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,

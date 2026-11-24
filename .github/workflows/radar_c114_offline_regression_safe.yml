@@ -34,13 +34,15 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
+          import json
           from pathlib import Path
-          s=Path(".github/workflows/radar_editorial_vnext_autonomous.yml").read_text()
-          assert ("if: " + chr(36) + "{{ false }}") in s
-          assert 'RADAR_LIVE_PUBLISH_ENABLED: "false"' in s
-          assert "RADAR_WORDPRESS_STATUS: draft" in s
-          from pathlib import Path
-          p=Path("radar_tech_br/src/publish_generated.py").read_text()
-          assert "OWNER_APPROVED" in p
-          print("C114: LIVE fail-closed verificado")
+          retired=Path(".github/workflows/radar_editorial_vnext_autonomous.yml")
+          assert not retired.exists()
+          manifest=json.loads(Path(
+              "affiliate_hub_v31/EDITORIAL_LEGACY_RADAR_RETIREMENT_C149.json"
+          ).read_text(encoding="utf-8"))
+          assert retired.as_posix() in {e["path"] for e in manifest["retired_workflows"]}
+          script=Path("radar_tech_br/src/publish_generated.py").read_text()
+          assert "OWNER_APPROVED" in script
+          print("C149: executor legado ausente e publisher antigo bloqueado")
           PY

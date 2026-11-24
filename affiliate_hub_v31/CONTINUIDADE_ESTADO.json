@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C145",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
@@ -85,17 +85,17 @@
     }
   },
   "active_work": {
-    "phase": "C148",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "C148 universal implementado, Radar Tech BR como piloto primário parametrizável. Configuração/50 simulações offline PASS; GET R2 e SELECT D1 reais para 7 sites PASS; CMS autenticado no runner GitHub bloqueado pela credencial WordPress específica do Radar ausente. DRAFT e LIVE não autorizados pelo piloto.",
-    "latest_verified_step": "PRs #153/#154 integradas na main. CI #45420704364 SUCCESS: 851/851 unitários, 50/50 simulações, 3 geradores WP PASS, cross-blog guard PASS. Canário real #45420858231: R2 READ_ONLY_CONFIRMED, D1 READ_ONLY_CONFIRMED para 7 destinos; radarwp com 4 candidatos na amostra, zero links no cache dessa amostra, D1 0 READY 0 USED, 1 tentativa de conversão 24/11; CMS BLOCKED_CMS_SITE_CREDENTIALS_UNAVAILABLE. Radar via WPVibe autenticou GET separadamente; isto NÃO comprova credenciais GitHub. Escritas do canário zero; LIVE OFF.",
-    "next_safe_step": "Após credencial WordPress Radar ser adicionada/ajustada pelo proprietário no segredo GitHub v31-editorial-safe/V31_WORDPRESS_SITE_CREDENTIALS_JSON, executar apenas workflow_dispatch v31_c148_universal_pilot_readonly.yml com primary_site_key=wordpress_radartechbr; conferir CMS_AUTHENTICATED_GET, R2_GET e D1_SELECT. Depois homologar oferta/fonte independente Radar, DRAFT only, um por ciclo com GET/hash; nunca LIVE sem aprovação política.",
-    "blocker": "AÇÃO DE CONFIGURAÇÃO NECESSÁRIA: ambiente GitHub v31-editorial-safe não disponibiliza par username/application_password na chave wordpress_radartechbr em V31_WORDPRESS_SITE_CREDENTIALS_JSON. Não é seguro contornar segredo de site nem aproveitar senha Casa ou de outro WP. Além disso Radar perfil factual independente ausente e site_requests.d/wordpress_radartechbr.json.enabled=false; não habilitar writer antes de oferta/SKU/foto/fatos verificados. Casa READY #314 ainda bloqueado.",
+    "phase": "C149",
+    "status": "EM_ANDAMENTO",
+    "objective": "C149: retirar executores do projeto exclusivo antigo Radar Tech BR (editorial/loja/fila e scripts Shopee one-shot), sem tocar scripts de qualidade compartilhados, histórico D1, catálogo R2, CMS nem outros sites. Centralizar autoria de novos artigos no V31 universal.",
+    "latest_verified_step": "Implementação C149 em branch: dez arquivos .github/workflows Radar-only retirados da árvore, mantendo histórico Git e arquivos src. Manifesto C149 documenta 3 reservas antigas radarwp, uma conversão LG24 confirmada por logs #45372082046 (sem prova R2). claim_conversion_attempt usa NOT EXISTS atômico por campanha+SKU em qualquer dia UTC, evitando reconversões legadas. Regressões específicas criadas; CI pendente antes de merge.",
+    "next_safe_step": "Rodar CI SAFE completo (50 simulações/WordPress regressões), confirmar bloqueio de reintrodução legada e validar ausência de workflow disparável. Após merge atualizar master/estado e verificar LIVE OFF. Radar continua pré-cadastro disabled e aguardando segredo CMS GitHub.",
+    "blocker": "C149 não restabelece rotação mensal de Loja Radar; foi suspensa pelo pedido de retirar o executor legado até sucessor universal homologado. Credenciais WordPress Radar no ambiente GitHub ainda ausentes, oferta factual do Radar ainda não assinada. Não retentar Shopee por SKU com slot D1 histórico.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "b3c6fae2de736281de9323aefdbbc2ca73aadc19",
-    "branch": "main",
+    "base_main_sha": "1b0a10b90dac92201364dfb0114300e3325c36a3",
+    "branch": "fix/v31-c149-retire-radar-legacy-20261124",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -124,7 +124,8 @@
       "https://github.com/adelrib27/blogger-automation1/pull/154",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45420704364",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45420162325",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45420858231"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45420858231",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45372082046"
     ]
   },
   "next_priorities": [
@@ -331,5 +332,25 @@
     "shopee_mutations_by_c148": 0,
     "live_policy": "pending_policy_approval",
     "next_phase": "C149"
+  },
+  "c149_retirement": {
+    "phase": "C149",
+    "legacy_workflows_removed": 10,
+    "historical_radar_campaign": "radarwp",
+    "d1_historical_attempts": 3,
+    "lg24_verified_shortlink_generated": true,
+    "lg24_run_id": 45372082046,
+    "r2_persistence_confirmed": false,
+    "global_conversion_guard": "D1_INSERT_NOT_EXISTS_CAMPAIGN_SKU_ALL_DAYS",
+    "other_campaigns_independent": true,
+    "site_sources_preserved": true,
+    "universal_writers_preserved": true,
+    "legacy_monthly_radar_store_rotation": "SUSPENDED_NOT_MIGRATED",
+    "cms_posts_changed": 0,
+    "d1_records_deleted": 0,
+    "r2_records_deleted": 0,
+    "automatic_live_authorized": false,
+    "ci_status": "PENDING",
+    "owner_approval_for_legacy_restore": false
   }
 }
