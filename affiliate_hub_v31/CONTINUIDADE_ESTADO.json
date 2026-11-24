@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C144",
-  "continuity_protocol_phase": "C145",
+  "last_checkpoint_phase": "C152_SAFE",
+  "continuity_protocol_phase": "C152",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
-  "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
+  "last_updated_source": "C152_RADAR_LEGACY_CMS_56_POSTS_READONLY_922_UNIT_TESTS_50_SIMULATIONS_NO_DRAFT",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C144_VIDA_PET_BLOGGER_ATIVO_DISTINCAO_C69_CI_768_2026-11-23.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C152_AUDITORIA_LEGADA_SAFE_2026-11-24.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C151",
+    "phase": "C152",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "C151 concluída em fonte real: canário R2/D1/CMS GET e artifact JSON sanitizado revelaram 4 SKU de smartwatch e acessórios para RadarWP; nenhum tem link radarwp no cache amostrado, fatos de fabricante ou revisão legacy suficiente para DRAFT. V31 permanece universal e sem escrita LIVE.",
-    "latest_verified_step": "PR #157 merge SHA 209bcf5f341600a02bf94ca20562de085b500799; CI #45433754617 888 testes/50 simulações PASS. PR #158 merge SHA 3472fb5e382d20bd6b0ee6388b9e7ccc393e11ac; CI #45434983529 893/893 testes/50 simulações e regressões WordPress PASS. Canário real #45435212469: steps do job remoto concluídos SUCCESS, artifact id 14941841023 baixado e JSON auditado; status READ_ONLY_SOURCES_CONFIRMED_NOT_DRAFT_AUTHORIZED (CMS GET AUTHENTICATED, R2/D1 read-only CONFIRMED). 4 candidatos: shopee:1585542716:22398817823, shopee:301592546:22192873783, shopee:1736228674:22295181772, shopee:1736228674:58267720942. Todos cached_for_exact_campaign=false, manufacturer_facts_verified=false, cms_legacy_duplicate_checked=false e eligible_for_draft_write=false. Radar 0 D1 READY/USED, 0 V31 slugs (não posts totais). GET conectado WordPress confirmou 37 publicados e 19 rascunhos; LG12 #356 legado. 0 writes CMS/D1/R2 e 0 mutações Shopee.",
-    "next_safe_step": "C152: implementar no núcleo universal auditoria real de duplicatas por produto/título/slug/URL em posts publicados + drafts legados, sem inferir do contador V31. Para os 4 SKU atuais Radar, validar compatibilidade e especificações via fabricante e oferta Shopee exata, evitando W99+ e kits de múltiplas variantes sem provas. Somente depois habilitar request Radar e perfil de fontes para 1 DRAFT revisado e autenticado, com hash/GET e bloqueio LIVE mantido. Não reconverter 3 SKU radarwp históricos. Loja mensal permanece suspensa até sucessor universal.",
-    "blocker": "DRAFT Radar continua desabilitado por falta de fonte independente e colisão legacy não verificada; 4 candidatos novos não têm cache radarwp. O canário C151 comprova apenas leitura/autenticação. V31 não deve converter API nem criar artigo para esses candidatos sem evidência. Não reativar workflows Radar exclusivos nem mudar LIVE.",
+    "objective": "Auditoria C152 com CMS Radar autenticado e 56 corpos RAW, módulo universal contra duplicação legada (SKU/URL direta/slug/título/ângulo), chamadas dos writers Blogger/WordPress revisado e diretos antes de AI ou POST. Produtos C151 ainda NÃO homologados, sem link radarwp cacheado, compatibilidade de modelo não atestada. LIVE desativado.",
+    "latest_verified_step": "GitHub HEAD main antes de mudanças e1a2fd180ce69e57f2ce3ee3e082c4618acaf8f9, compare identical. WordPress Radar remoto confirma 37 publish + 19 draft, 56/56 RAW não vazios (~517011 caracteres), 0 correspondências literais dos quatro itens; posts #138 e #260 sobre smartwatch requerem comparação de intenção. PR #159, CI SAFE #45446503885 (922 testes PASS/50 simulações PASS; Casa 24/24, Oficina 21/21, Radar 15/15 e cross-blog PASS), sem acesso de rede no CI. Nenhum novo DRAFT; nenhum CMS/D1/R2/Shopee write neste ciclo.",
+    "next_safe_step": "Rever CI final e merge somente da PR SAFE #159; confrontar D1/R2 atualizado em modo leitura; resolver URLs Shopee originais e compatibilidade fabricante/modelo/variante para produto Radar viável, incluindo links encurtados e duplicação semântica/intent. Após todos os gates, 1 conversão sob quota/campaign e DRAFT com GET+SHA. Blogger E2E real independente. LIVE continua desligado.",
+    "blocker": "Faltam evidência exata fabricante/SKU/variante/foto e prova de oferta Shopee da campanha radarwp; links encurtados legados ainda não reconciliados em todas as fontes. C152 valida mecanismo SAFE, NÃO um DRAFT E2E. Não converter, não habilitar Radar, não reativar antigos crons.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "3472fb5e382d20bd6b0ee6388b9e7ccc393e11ac",
+    "base_main_sha": "e1a2fd180ce69e57f2ce3ee3e082c4618acaf8f9",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -136,12 +136,13 @@
       "https://github.com/adelrib27/blogger-automation1/pull/158",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45433754617",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45434983529",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45435212469"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45435212469",
+      "https://github.com/adelrib27/blogger-automation1/pull/159",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45446503885"
     ]
   },
   "next_priorities": [
-    "C151 Radar inventário de SKU real concluído: 4 candidatos em artifact GitHub, 0 cache e 56 posts/drafts legados. C152 verificar duplicatas e fatos antes de DRAFT. LIVE OFF.",
-    "C150 Radar CMS autenticado no GitHub sem nova senha. C151: conferir SKU real, fontes independentes e duplicatas legadas antes do primeiro DRAFT Radar. Não reativar workflows antigos ou LIVE.",
+    "C152 SAFE dedup guard tested (PR #159): 56 Radar posts/drafts audited; still 0 actual E2E new DRAFT. Verify independent exact product source, affiliate cache, D1/R2, legacy shortlinks and semantic collisions before any CMS write.",
     "C149 concluída: não reativar 10 workflows antigos Radar; retomada agora somente dentro do V31 universal com GET CMS Radar e DRAFT factual, Loja mensal suspensa até sucessor universal.",
     "C148 Radar Tech piloto: resolver segredo GitHub WordPress por site sem compartilhar credencial no chat; repetir canário READ ONLY e só depois habilitar oferta/fonte independente para DRAFT.",
     "Preservar bloqueio integral dos 24 IDs Blogger, incluindo pontes entre branches, e não alterar a exclusão do blog Ar-Condicionado sem Dúvidas.",
@@ -152,50 +153,23 @@
     "Manter SYSTEM_MASTER.md como documento arquitetural canônico e a política de publicação automática LIVE em pending_policy_approval."
   ],
   "latest_verified_checkpoint": {
-    "phase": "C144",
-    "path": "affiliate_hub_v31/CHECKPOINT_C144_VIDA_PET_BLOGGER_ATIVO_DISTINCAO_C69_CI_768_2026-11-23.md",
-    "preview": "affiliate_hub_v31/CHECKPOINT_C144_PREVIEW_VIDA_PET_ATIVO_ESCOPO_2026-11-23.md",
-    "merged_prs": [
-      146,
-      147
-    ],
-    "merge_sha": "e81595124e93ac57c4461b0161c60def0cb8f1bd",
-    "current_scope": {
-      "blogger_registered": 4,
-      "blogger_active_unonboarded": 1,
-      "blogger_reachable": 6,
-      "blogger_excluded": 1,
-      "wordpress_registered": 3,
-      "total_v31_registered": 7,
-      "blogger_deleted_by_owner": 24
-    },
-    "universal_suite": {
-      "count": 768,
-      "failures": 0,
-      "errors": 0,
-      "github_run_id": 45301938515
-    },
-    "simulation_gate": {
-      "executed": 50,
-      "passed": 50,
-      "failed": 0,
-      "deleted_ids_checked": 24,
-      "live_authorized": false,
-      "remote_writes": 0
-    },
-    "real_cms_reads": {
-      "blogger_vida_pet_get_blog": "active_blog_verified",
-      "blogger_moveis_draft_id": "4106024906916105222",
-      "blogger_moveis_status": "draft",
-      "wordpress_casa_drafts": "remote_get_not_confirmed_in_this_session",
-      "blogger_vida_pet_published_count": 8,
-      "blogger_vida_pet_drafts_count": 1,
-      "blogger_vida_pet_preexisting_loja_draft_id": "7332800716046515902"
-    },
-    "published_articles_in_c144": 0,
-    "live_activation": "pending_policy_approval",
-    "next_phase": "C145",
-    "known_lab_error_run": 45300343177
+    "phase": "C152_SAFE",
+    "path": "affiliate_hub_v31/CHECKPOINT_C152_AUDITORIA_LEGADA_SAFE_2026-11-24.md",
+    "preview": "affiliate_hub_v31/CHECKPOINT_C152_PREVIEW_AUDITORIA_LEGADA_2026-11-24.md",
+    "pr_number": 159,
+    "ci_run": 45446503885,
+    "unit_tests_passed": 922,
+    "unit_tests_failed": 0,
+    "offline_simulations_passed": 50,
+    "cms_read_only_posts": 56,
+    "cms_reads_confirmed": true,
+    "cms_writes": 0,
+    "shopee_api_mutations": 0,
+    "r2_writes": 0,
+    "d1_writes": 0,
+    "real_draft_verified": false,
+    "live_authorized": false,
+    "next_phase": "C152_E2E_SOURCE_AND_CONVERSION_PENDING"
   },
   "continuity_contract": {
     "must_update_at_start": true,
@@ -464,5 +438,62 @@
     "radar_draft_enabled": false,
     "new_posts_created": 0,
     "shopee_conversions_performed": 0
+  },
+  "c152_legacy_cms_audit": {
+    "phase": "C152",
+    "date": "2026-11-24",
+    "status": "SAFE_DEDUP_GUARD_TESTED_NOT_DRAFT_AUTHORIZED",
+    "baseline_main_head": "e1a2fd180ce69e57f2ce3ee3e082c4618acaf8f9",
+    "preview_checkpoint": "affiliate_hub_v31/CHECKPOINT_C152_PREVIEW_AUDITORIA_LEGADA_2026-11-24.md",
+    "report": "affiliate_hub_v31/CHECKPOINT_C152_AUDITORIA_LEGADA_SAFE_2026-11-24.md",
+    "pr": 159,
+    "ci_run": 45446503885,
+    "ci_safe_unit_tests_passed": 922,
+    "ci_safe_unit_tests_failed": 0,
+    "offline_simulations_passed": 50,
+    "wordpress_selftests": {
+      "casa_decoracao": "24/24",
+      "oficina_garagem": "21/21",
+      "radar_tech_br": "15/15",
+      "cross_blog_guard": "PASS"
+    },
+    "radar_cms_identity": "https://radartechbr.com.br",
+    "radar_auth_cms_published": 37,
+    "radar_auth_cms_drafts": 19,
+    "radar_raw_bodies_checked": 56,
+    "radar_raw_total_characters": 517011,
+    "radar_sample_exact_item_id_literal_hits": 0,
+    "note": "ZERO literal matches does not rule out semantic overlap, shortlink targets, SKU without identifier or existing D1 job.",
+    "semantic_theme_overlaps": [
+      {
+        "post_id": 138,
+        "status": "publish",
+        "subject": "smartwatch com tela infinita"
+      },
+      {
+        "post_id": 260,
+        "status": "publish",
+        "subject": "smartwatch/frequencia cardiaca"
+      }
+    ],
+    "c151_skus_still_unverified": [
+      "shopee:1585542716:22398817823",
+      "shopee:301592546:22192873783",
+      "shopee:1736228674:22295181772",
+      "shopee:1736228674:58267720942"
+    ],
+    "exact_offer_verified": false,
+    "independent_manufacturer_facts_verified": false,
+    "campaign_cache_verified": false,
+    "live_activation": "pending_policy_approval",
+    "radar_request_enabled": false,
+    "writes": {
+      "cms": 0,
+      "d1": 0,
+      "r2": 0,
+      "shopee_api_mutations": 0,
+      "github_code_and_docs": true
+    },
+    "next_action": "Read R2/D1 and exact Shopee listing and current manufacturer facts after CI, then repeat 50 sims for critical E2E and verify one DRAFT by authenticated GET+hash; never enable LIVE automatically"
   }
 }

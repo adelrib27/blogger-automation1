@@ -52,7 +52,16 @@ class FakeWP:
     def site_settings(self):
         return {"url":self.url}
     def list_posts(self,*,include_unpublished):
-        return list(self.posts)
+        # context=edit real fornece RAW; prévia rendered é insuficiente para
+        # provar ausência de colisão SKU em artigos legados.
+        result=[]
+        for p in self.posts:
+            title=p["title"]
+            content=p["content"]
+            result.append({**p,
+                "title":{**title, "raw":title.get("raw", title.get("rendered", ""))},
+                "content":{**content, "raw":content.get("raw", content.get("rendered", ""))}})
+        return result
     def create_draft(self,*,title,slug,content):
         self.writes.append({"title":title,"slug":slug,"content":content,
                             "status":"draft"})
@@ -114,6 +123,24 @@ class WordPressUniversalDraftTests(unittest.TestCase):
         self.assertEqual(result["internal_links"],2)
         self.assertEqual(result["wordpress_posts_created"],0)
         self.assertEqual(len(wp.writes),0)
+
+    def test_legacy_same_title_blocks_direct_writer_before_ai_or_post(self):
+        wp=FakeWP()
+        wp.posts.append({"id":88,"status":"draft","slug":"legacy-vaso",
+                         "title":{"rendered":m._draft_title(TITLE)},
+                         "content":{"rendered":"<p>Guia anterior de vaso</p>"},
+                         "link":HOME+"?p=88"})
+        generator_calls=[]
+        def writer(**kwargs):
+            generator_calls.append(True)
+            return paras()
+        with Catalog(self.dbpath) as cat:
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                        "wordpress_legacy_collision_review_required"):
+                m.run(site_key=KEY,execute_draft=True,wp_client=wp,
+                      writer=writer,catalog=cat)
+        self.assertEqual(generator_calls,[])
+        self.assertEqual(wp.writes,[])
 
     def test_creates_only_draft_after_real_request_and_verifies_readback(self):
         wp=FakeWP()

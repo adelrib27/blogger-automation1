@@ -16,6 +16,7 @@ from .d1_http_runner import CloudflareD1HTTPRunner
 from .private_ready_envelope import ImmutablePrivateReadyEnvelope
 from .r2_private_ready_backend import R2PrivateReadyBackend
 from .routing import sites
+from .legacy_cms_collision import audit_candidate_history
 from .universal_evidence_ready import _fingerprint
 
 
@@ -75,11 +76,14 @@ def _blogger_draft(*, route, review, marker, content, authorize, service):
     if matches:
         post_id = matches[0].get("id")
     else:
-        if review["product_key"] in {
-            key for post in blogger._list_posts(service, blog_id, include_scheduled=True)
-            for key in blogger.KEY_PATTERN.findall(post.get("content") or "")
-        }:
-            raise ReviewedDraftError("reviewed_blogger_product_already_used")
+        prior_posts = blogger._list_posts(service, blog_id, include_scheduled=True)
+        prior_audit = audit_candidate_history(
+            platform="blogger", posts=prior_posts,
+            product_key=review["product_key"],
+            article_title=review["article_title"],
+        )
+        if prior_audit["status"] != "NO_DETECTED_COLLISION":
+            raise ReviewedDraftError("reviewed_blogger_legacy_collision_review_required")
         if not authorize():
             return None
         result = service.posts().insert(
@@ -130,10 +134,13 @@ def _wordpress_draft(*, route, review, content, authorize, client):
         post_id = matches[0].get("id")
     else:
         other_posts = client.list_posts(include_unpublished=True)
-        if any(product_key in blogger.KEY_PATTERN.findall(wordpress._html_text(post))
-               or slug in (post.get("slug"), post.get("generated_slug"))
-               for post in other_posts):
-            raise ReviewedDraftError("reviewed_wordpress_product_already_used")
+        prior_audit = audit_candidate_history(
+            platform="wordpress", posts=other_posts,
+            product_key=product_key, article_title=review["article_title"],
+            slug=slug,
+        )
+        if prior_audit["status"] != "NO_DETECTED_COLLISION":
+            raise ReviewedDraftError("reviewed_wordpress_legacy_collision_review_required")
         if not authorize():
             return None
         result = client.create_draft(title=review["article_title"],

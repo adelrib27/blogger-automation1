@@ -146,6 +146,7 @@ Os caminhos abaixo são relativos à raiz do repositório. A relação destaca o
 | `automatic_blogger_drafts.py` | Geração e inserção de um DRAFT Blogger com `isDraft=True`, identidade remota e deduplicação. |
 | `automatic_wordpress_drafts.py` | Geração e inserção de DRAFT WordPress com `status="draft"`, slug estável e readback. |
 | `reviewed_draft_delivery.py` | Consome um READY verificado e confirma o rascunho por ID, status e hash. |
+| `legacy_cms_collision.py` (C152) | Examina histórico RAW autenticado do MESMO CMS (posts publicados e rascunhos) para SKU, URL direta de produto, slug e título/ângulo próximos; retorno negativo NÃO libera escrita nem substitui D1, fatos ou revisão. Os writers Blogger/WordPress universais e o entregador revisado chamam o gate antes de AI/POST ou consumo. |
 | `ready_cms_collision_audit.py`, `audit_draft_pilots.py` | Reconciliam colisões READY/CMS e auditam jobs D1 `USED` por demanda real, com GET autenticado, identidade da rota, SKU e hash do conteúdo; ausência de jobs não conta como DRAFT verificado. |
 | `autodraft_rollout_readiness.py`, `autodraft_schedule_outcome.py` | Expõem prontidão e resultados sem equiparar sucesso de job à existência de artigo. |
 | `manual_live_release.py`, `autonomous_live.py` | Concentram os gates de liberação pública, sem autorização implícita do DRAFT. |
@@ -249,7 +250,7 @@ O cadastro de um novo blog somente ocorre após validação de propriedade/acess
 1. **Um DRAFT por execução controlada**, sujeito ao limite diário e à verificação de histórico do próprio destino.
 2. `articles: null` representa demanda contínua **sem limite total arbitrário**. Um valor numérico representa uma solicitação finita e não amplia o total sem nova autorização.
 3. `min_ready = 3` é meta de **buffer simultâneo**, nunca limite vitalício de artigos ou produtos.
-4. Fingerprints, slugs, IDs remotos, títulos e hashes impedem reenvio do mesmo conteúdo em caso de retry ou interrupção.
+4. Fingerprints, slugs, IDs remotos, títulos e hashes impedem reenvio do mesmo conteúdo em caso de retry ou interrupção. A C152 adiciona verificação de histórico **legado** no mesmo CMS e no contexto de escrita para identificação por SKU, URL de produto direta, slug e intenção editorial similar; status `REVIEW_REQUIRED` bloqueia DRAFT, e `NO_DETECTED_COLLISION` não significa autorização de escrita. Links afiliados abreviados não resolvidos e conteúdo sem identidade de SKU permanecem lacunas explícitas.
 5. O HTML recebido pelo CMS é o HTML aprovado: o sistema não regenera o corpo depois da revisão/assinatura.
 6. **Blogger:** criação de rascunho com `isDraft=True`. **WordPress:** criação com `status="draft"`.
 7. Um resultado `SUCCESS` do workflow não prova a criação do artigo; somente o recibo e o GET autenticado confirmam identidade, status e bytes.
@@ -304,6 +305,8 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 
 ### Evidências atuais de qualidade
 
+- **C152 (24/11/2026):** GET autenticado em Radar Tech BR confirmou 37 posts publicados e 19 rascunhos. Uma leitura paginada em contexto de edição de 56/56 corpos RAW verificou o histórico legado e não encontrou correspondência **literal** com os quatro IDs de item C151; o exame ainda identificou sobreposição temática genérica em #138 e #260. Ausência de match literal não comprova ausência de duplicata semântica, link encurtado ou colisão D1. Proteção universal proposta na [PR #159](https://github.com/adelrib27/blogger-automation1/pull/159), com atualização do estado SAFE no mesmo ciclo. **Nenhum novo DRAFT ou LIVE está autorizado por este levantamento.**
+- A interpretação de `raw` é restrita a resposta autenticada completa do CMS; `rendered` isolado não permite concluir ausência de duplicação. Sem resolução confiável de URL abreviada, a comparação por URL deve permanecer inconclusiva, e os demais gates não são dispensados.
 - A suíte SAFE da integração editorial registra **893 testes aprovados** e **50 simulações aprovadas** na execução [GitHub Actions #45434983529](https://github.com/adelrib27/blogger-automation1/actions/runs/45434983529). Inclui aposentadoria Radar, credenciais escopadas, inventário read-only de candidatos e artefato de auditoria sanitizado. Leitura CMS/D1/R2 real comprovada, sem novo DRAFT.
 - Os testes locais específicos de WordPress confirmam **Casa e Decoração 24/24**, **Oficina & Garagem 21/21**, **Radar Tech BR 15/15**, com guarda de colisão entre blogs aprovada nessa execução.
 - O rascunho Blogger Móveis para Cada Canto `4106024906916105222` aparece como `draft` em leitura autenticada.
