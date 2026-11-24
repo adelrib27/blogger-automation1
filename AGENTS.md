@@ -1,18 +1,34 @@
-# Instruções de continuidade — V31 e rede Blogger legada
+# Regras para agentes — V31 Hub Editorial Shopee (Blogger & WordPress)
 
-**Este repositório contém dois históricos operacionais diferentes.** A rede Blogger legada usa `CHECKPOINT_ATUAL.md` (2/11/2026); o **V31 Hub Editorial Shopee — Blogger & WordPress** usa o índice próprio [`V31_CONTINUAR_AQUI.md`](V31_CONTINUAR_AQUI.md). Não substituir nem misturar essas fontes.
+**PRIORIDADE ABSOLUTA C143 (23/11/2026):** o proprietário confirmou que os **24 blogs Blogger históricos** anteriormente descritos como "pendentes de autenticação" foram **DELETADOS POR ELE**. É proibido tratá-los como candidatos, buscar novas credenciais, reativar sites/Loja, tentar recuperação, gerar DRAFT, converter links ou publicar neles. Essas identidades só aparecem na lista mínima de negação [C143](affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json) para evitar reintrodução.
 
-## Para qualquer solicitação relativa ao V31
+O histórico C102/C141 que descrevia **28 Blogger candidatos e 24 pendentes** está **REVOGADO** para qualquer fluxo operacional. [Manifest C141](affiliate_hub_v31/EDITORIAL_GLOBAL_PORTFOLIO_C141.json) marcado `SUPERSEDED`. Commits e checkpoints antigos são evidência temporal, não tarefas a retomar. **NÃO usar `CHECKPOINT_ATUAL.md` para escolher blogs V31** — ele pertence à antiga rede Blogger e não autoriza ação em sites apagados.
 
-1. **ANTES de programar ou executar**, ler da `main`: `V31_CONTINUAR_AQUI.md` → `affiliate_hub_v31/CONTINUIDADE_ESTADO.json` → arquivo `checkpoint_detail` → [issue #54](https://github.com/adelrib27/blogger-automation1/issues/54).
-2. Se `continuity_status` ou `active_work.status` for `EM_ANDAMENTO`, retomar pelo `latest_verified_step` e inspecionar as mutações existentes para não repetir Blogger POST/Shopee/R2.
-3. Salvar **prévia em commit** no `CONTINUIDADE_ESTADO.json` antes de trabalho longo, atualizar durante cada marco e registrar fechamento; seguir [`CONTINUIDADE_PROTOCOLO.md`](affiliate_hub_v31/CONTINUIDADE_PROTOCOLO.md).
-4. Usar evidência verificável por repositório, API, Workflow e R2. Se um teste for offline ou somente preview, **não afirmar** que postagem, deploy, cron ou conversão real ocorreu.
-5. Manter o V31 **UNIVERSAL**: os dois CSVs constituem biblioteca de todos os nichos, independente de blogs presentes/futuros; só selecionar produto por tema/campanha real quando o proprietário definir o blog. Respeitar revisão e veto por origem.
-6. Cada artigo afiliado comercial deve associar o SKU correto, imagem REAL do CSV/R2, link da campanha correta, palavra-chave, CTA Shopee, transparência, links internos existentes e conteúdo original. Nunca inventar preço/venda/estoque.
-7. Não ativar LIVE, Pinterest ou publicar artigos adicionais sem autorização. Em particular, o blog `blogger_moveis_para_cada_canto` recebeu pedido **de três artigos** e já possui três LIVE; o quarto exige pedido novo. Criação de rascunhos não é autorização automática de publicação.
-8. Mudança de tema do Blogger Local Runner foi adiada pelo proprietário; PR #69 é laboratório não implantado no Windows.
+## Ordem de leitura antes de alterar o V31
 
-**Para a rede legada**, seguir o `CHECKPOINT_ATUAL.md` do Blogger e seu guard; esta instrução V31 não altera os 18 blogs legados.
+1. [`V31_CONTINUAR_AQUI.md`](V31_CONTINUAR_AQUI.md) — índice CANÔNICO C143.
+2. [`CONTINUIDADE_ESTADO.json`](affiliate_hub_v31/CONTINUIDADE_ESTADO.json) — estado limpo (a versão anterior extensa foi substituída).
+3. `checkpoint_detail` do JSON, atualmente [C143](affiliate_hub_v31/CHECKPOINT_C143_RETIRO_24_BLOGGER_APAGADOS_19_WORKFLOWS_760_TESTES_2026-11-23.md), e [política de escopo](affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json).
+4. Confirmar o estado LIVE `affiliate_hub_v31/autonomous_live_policy.json` antes de qualquer writer. `activation=pending_policy_approval`; jamais ativar sem homologação e autorização expressa final.
 
-**Limitação real:** um agente novo não recebe automaticamente o conteúdo desta conversa. É necessário efetivamente abrir os arquivos do GitHub; este arquivo facilita a descoberta por agentes que leem a raiz do repositório.
+## Portfólio editorial atual
+
+**4 Blogger:** Móveis para Cada Canto, Limpeza Inteligente, Estilo no Dia a Dia e Acessórios, Cozinha Sem Complicação. **3 WordPress:** Casa e Decoração, Oficina & Garagem, Radar Tech BR. Os nomes e IDs exatos estão na política C143. Esse número NÃO cria limite para futuros blogs genuinamente novos e autenticados.
+
+`Ar-Condicionado sem Dúvidas` permanece EXCLUÍDO do V31 (não apagado pelo V31); `Vida Pet Prática` representa SOMENTE metodologias já universalizadas no V31, **NÃO uma frente, blog-alvo ou automação editorial separada**. Os 24 outros Blogger históricos estão deletados pelo proprietário, **não pendentes**.
+
+## Segurança e execução
+
+- Cada ciclo crítico de conversão/DRAFT deve executar **50 simulações offline** (suportar 10–50), e depois QA E2E real quando aplicável; PASS em simulação não é autorização para LIVE.
+- Implementação universal por temas e campanhas reais: SKU/variante exatos, fotos oficiais CSV/R2, fontes independentes confiáveis, SEO original, links internos pertinentes, aviso de afiliados, CTA contextual e deduplicação global/por blog. Nunca inventar produto, comissão, preço, estoque, fonte ou link convertido.
+- **18 workflows antigos de Loja dos blogs apagados não têm `schedule` e seus jobs usam `if:false`; um 19º writer manual também está bloqueado.** Nunca reintroduzir cron/job desses sites. O repo auditor Blogger faz validação fail-closed. Não confundir com workflows Blogger/WordPress dos sites atuais.
+- Não alterar D1/R2/Shopee ou CMS sem verificar estado/limites, e nunca repetir POST/conversão por ausência de log. WordPress Casa READY com conflito DRAFT #314 permanece bloqueado; DRAFTs Móveis #4106024906916105222 e WP Casa #321 são registros legítimos existentes.
+- Salvar preview antes de etapas longas, checkpoint, CI com regressões e relatório de evidência após mudanças; nunca afirmar sucesso remoto com base apenas em simulação.
+- Pinterest e Mercado Livre são projetos separados; não misturar pipelines.
+- Para sites Blogger genuinamente criados no futuro, exigir nova identidade CMS atual que NÃO esteja nos 24 tombstones e campanha verificada antes de registrar rota e perfil.
+
+## Limites do histórico
+
+O repositório retém commits antigos para auditoria; **não reescrever a história Git para encobrir o passado**. As referências antigas C102/C141/C142 e `CHECKPOINT_ATUAL.md` nunca sobrepõem a decisão C143 nem justificam ações nos blogs apagados. O projeto V31 não deve administrar a antiga rede Blogger legada sem uma demanda específica e verificações próprias.
+
+**Continuidade segura:** um chat novo precisa ler os arquivos atuais da `main`; não inferir o estado por memória ou por um checkpoint histórico isolado.
