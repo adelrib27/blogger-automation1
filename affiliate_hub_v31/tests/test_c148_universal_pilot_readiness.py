@@ -59,10 +59,13 @@ class UniversalPilotTests(unittest.TestCase):
                   request_modes=self.request_modes,reviewer_profiles=self.profiles,
                   query=query,storage=self.storage,
                   history_reader=lambda site:{"site_key":site,"keys":[],"slugs":[],"prose":[],"count":5})
+        inspector=kw.pop("sample_provider", None)
         args.update(kw)
-        with patch.object(m,"inspect_campaign_cache",
-                          side_effect=lambda catalog,route:{"catalog_candidates":2,
-                                                            "cached_exact_campaign":1}), \
+        if inspector is None:
+            inspector=lambda catalog,route:{"catalog_candidates":2,
+                                           "cached_exact_campaign":1,
+                                           "items":[]}
+        with patch.object(m,"inspect_campaign_cache",side_effect=inspector), \
              patch.object(m,"verify_database",return_value=None):
             return m.live_readonly(**args)
 
@@ -166,7 +169,7 @@ class UniversalPilotTests(unittest.TestCase):
     def test_real_readonly_d1_r2_cms_success_is_not_post_proof(self):
         result=self.real()
         self.assertEqual(result["status"],"READ_ONLY_SOURCES_CONFIRMED_NOT_DRAFT_AUTHORIZED")
-        self.assertEqual(result["reports"][0]["cms_history_records_scanned"],5)
+        self.assertEqual(result["reports"][0]["cms_v31_prefixed_slugs_detected"],5)
         self.assertEqual(result["reports"][0]["d1_used_jobs"],1)
         self.assertEqual(result["reports"][0]["cached_links_exact_campaign_sample"],1)
         self.assertEqual(result["new_drafts_proven"],0)
@@ -218,6 +221,48 @@ class UniversalPilotTests(unittest.TestCase):
     def test_duplicate_status_rejected(self):
         with self.assertRaisesRegex(m.PilotAuditError,"pilot_d1_duplicate_job_status"):
             m._valid_d1_counts([{"status":"USED","total":1},{"status":"USED","total":1}])
+
+    def test_c151_primary_sample_reports_exact_sku_not_draft_authorization(self):
+        sku="shopee:822103155:58265302556"
+        def sample(cat,route):
+            return {"catalog_candidates":1,"cached_exact_campaign":0,
+                    "items":[{"product_key":sku,"title":"Ar Condicionado LG Dual Inverter Compact 12000",
+                              "cached_for_exact_campaign":False}]}
+        result=self.real(sample_provider=sample)
+        radar=result["reports"][0]
+        self.assertEqual(radar["primary_candidate_sample"][0]["product_key"],sku)
+        self.assertFalse(radar["primary_candidate_sample"][0]["cms_legacy_duplicate_checked"])
+        self.assertFalse(radar["primary_candidate_sample"][0]["eligible_for_draft_write"])
+        self.assertNotIn("cms_history_records_scanned",radar)
+        self.assertEqual(radar["cms_legacy_duplicate_crosscheck"],"NOT_PERFORMED")
+        self.assertFalse(result["automatic_live_authorized"])
+
+    def test_c151_sample_invalid_sku_blocks_r2_without_leaking_content(self):
+        bad=lambda cat,route:{"catalog_candidates":1,"cached_exact_campaign":0,
+             "items":[{"product_key":"https://secret.example/abc",
+                       "title":"Produto fake com URL", "cached_for_exact_campaign":False}]}
+        result=self.real(sample_provider=bad)
+        self.assertEqual(result["checks"]["r2"],"BLOCKED_R2_READ")
+        self.assertNotIn("secret.example",json.dumps(result))
+        self.assertEqual(result["cms_writes"],0)
+
+    def test_c151_primary_title_control_chars_sanitized(self):
+        provider=lambda cat,route:{"catalog_candidates":1,"cached_exact_campaign":0,
+             "items":[{"product_key":"shopee:123:456",
+                       "title":"Produto para teste\\ncom controle\\tde log",
+                       "cached_for_exact_campaign":False}]}
+        result=self.real(sample_provider=provider)
+        item=result["reports"][0]["primary_candidate_sample"][0]
+        self.assertNotIn("\\n",item["title"])
+        self.assertNotIn("\\t",item["title"])
+        self.assertFalse(item["manufacturer_facts_verified"])
+
+    def test_c151_primary_sample_never_implies_legacy_duplicate_cleared(self):
+        out=self.real()
+        radar=out["reports"][0]
+        self.assertEqual(radar["cms_v31_prefixed_slugs_detected"],5)
+        self.assertEqual(radar["cms_legacy_duplicate_crosscheck"],"NOT_PERFORMED")
+        self.assertFalse(radar["can_write_draft"])
 
     def test_untrusted_d1_count_rejected(self):
         with self.assertRaisesRegex(m.PilotAuditError,"pilot_d1_job_counts_untrusted"):
