@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C145",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
@@ -85,17 +85,17 @@
     }
   },
   "active_work": {
-    "phase": "C149",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "C149 concluída: motores autônomos antigos exclusivos Radar Tech BR aposentados, sem eliminar scripts/referências históricas e sem mexer no WordPress. Apenas o V31 universal deve evoluir como gerador/conversor editorial do Radar; Radar é piloto primário, não sistema paralelo.",
-    "latest_verified_step": "PR #155 merge SHA 72c6da5762c95cd62031e06b06c4980748004055. GitHub tree main: 10/10 workflows Radar WordPress antigos ausentes; V31 universal DRAFT Blogger/WordPress e C148 canário preservados; LIVE pending_policy_approval; Radar pedido enabled=false. CI #45424445960 867/867 tests + 50/50 simulations e WP Casa24/24 Oficina21/21 Radar15/15 cross-blog PASS; C114 #45424446059 SUCCESS. D1 histórico radarwp 3 tentativas (23/11 duas, 24/11 LG24), link LG24 comprovado por log #45372082046 sem R2 PUT confirmado; reserva atômica por campanha+SKU impede reconversão em dias futuros. Nenhuma chamada Shopee ou CMS nova feita nesta migração.",
-    "next_safe_step": "C150: manter o Radar Tech BR como piloto primário. Para liberar primeiro DRAFT homologado via V31, configurar credencial do site wordpress_radartechbr no GitHub environment v31-editorial-safe, repetir canário universal de GET CMS, validar oferta Shopee exata/links/campanha/foto/fatos e histórico CMS, depois habilitar request Radar DRAFT only com autorização de conteúdo. Avaliar sucessor UNIVERSAL para rotação de Loja mensal, hoje suspensa; não recriar o workflow antigo. LIVE OFF.",
-    "blocker": "A única intervenção externa ainda necessária para o GET CMS do runner é a credencial por site no GitHub (wordpress_radartechbr em V31_WORDPRESS_SITE_CREDENTIALS_JSON). Radar demanda editorial segue desabilitada e sem perfil factual verificado. A Loja mensal Radar antiga foi interrompida e não há substituto universal homologado; não prometer atualização automática da página Loja até criar um novo fluxo. Não reconverter três SKU radarwp históricos sem conciliação.",
+    "phase": "C150",
+    "status": "EM_ANDAMENTO",
+    "objective": "C150: reutilização CONTROLADA de segredos históricos WordPress do Radar no motor V31 universal para permitir GET CMS pelo GitHub sem pedir nova senha; nunca reativar workflows antigos. JSON universal continua prioritário, bridge exclusivamente wordpress_radartechbr e limitado aos workflows SAFE/DRAFT; LIVE fora do escopo.",
+    "latest_verified_step": "A auditoria C149 comprovou que os workflows antigos Radar usavam segredos WORDPRESS_USERNAME/WORDPRESS_APP_PASSWORD; isso não prova que ainda existam ou estejam válidos. Em branch C150, credentials_for() recebeu bridge opt-in somente Radar, usa variáveis scoped V31_RADAR_LEGACY_*; JSON universal ganha prioridade, entrada inválida do Radar falha fechada. Injetado somente em canário C148, WordPress DRAFT, revisão independente e observação SAFE. LIVE job de v31-autonomous-live NÃO recebe variáveis da bridge. 17 testes offline novos. CI remoto e GET CMS pendentes.",
+    "next_safe_step": "Executar suíte SAFE completa e 50 simulações em PR C150; depois merge e acompanhar canário C148 com GET CMS e identidade. Se segredo histórico indisponível ou rejeitado, registrar bloqueio concreto e solicitar intervenção mínima no GitHub. Se passar, ainda exige oferta/fonte verificada + DRAFT oficial e hash antes de liberar request Radar. LIVE OFF.",
+    "blocker": "Não há comprovação de existência/validade de antigos segredos GitHub WORDPRESS_USERNAME e WORDPRESS_APP_PASSWORD. Canário C148 GET autenticado do Radar permanece fail-closed até nova execução. Oferta/fatos independentes para novo DRAFT Radar ainda ausentes. Loja Radar mensal suspensa, não migrada.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "72c6da5762c95cd62031e06b06c4980748004055",
-    "branch": "main",
+    "base_main_sha": "090234c86f1fafd807e23fc653d10813be9bb811",
+    "branch": "fix/v31-c150-radar-scoped-legacy-cms-bridge-20261124",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -371,5 +371,29 @@
     "authenticated_radar_cms_github": "BLOCKED_CMS_SITE_CREDENTIALS_UNAVAILABLE",
     "operational_e2e_draft_created_this_cycle": false,
     "new_shopee_calls_this_cycle": 0
+  },
+  "c150_radar_scoped_legacy_bridge": {
+    "phase": "C150",
+    "site_key": "wordpress_radartechbr",
+    "feature_flag": "V31_RADAR_LEGACY_CMS_BRIDGE_ENABLED",
+    "source_legacy_secret_names": [
+      "WORDPRESS_USERNAME",
+      "WORDPRESS_APP_PASSWORD"
+    ],
+    "site_scoped_env_keys": [
+      "V31_RADAR_LEGACY_WORDPRESS_USERNAME",
+      "V31_RADAR_LEGACY_WORDPRESS_APP_PASSWORD"
+    ],
+    "canonical_site_credentials_precedence": true,
+    "never_use_legacy_when_canonical_site_entry_invalid": true,
+    "site_identity_get_required": true,
+    "write_prohibited_until_enabled_owner_request_and_fact_checks": true,
+    "live_credentials_bridge": false,
+    "remaining_old_executors": 0,
+    "new_cms_writes": 0,
+    "new_shopee_calls": 0,
+    "tests_added": 17,
+    "real_cms_status": "PENDING_CANARY",
+    "ci_status": "PENDING"
   }
 }
