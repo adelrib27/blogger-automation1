@@ -1,0 +1,41 @@
+name: V31 C142 - Auditoria Blogger Policy Guard (somente leitura)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c142_blogger_policy_repo_audit_readonly.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-c142-blogger-policy-audit-readonly
+  cancel-in-progress: false
+
+jobs:
+  audit-bilingual-blogger-policy:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: C142 — 50 simulacoes de escopo global antes de auditoria
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
+      - name: C142 — nove testes fail-closed de par aposentado
+        run: python -m unittest affiliate_hub_v31.tests.test_c142_legacy_blogger_policy_audit -v
+      - name: Guard Blogger de produto, somente validacao local
+        run: PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+      - name: Auditoria integral de 17 pares ativos e 1 par legado ausente
+        run: PYTHONPATH=src python src/blogger_policy_repo_audit.py
+      - name: Registrar resumo de segurança
+        run: |
+          echo 'C142: auditoria estatica Blogger, um par Loja legado ausente e proibido de reaparecer sem revisao. Zero LIVE, D1/R2/CMS/Shopee writes.' >> "$GITHUB_STEP_SUMMARY"

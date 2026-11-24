@@ -56,7 +56,7 @@ def main() -> None:
         fail("SAFE não pode ter schedule")
 
     require(live, [
-        "workflow_dispatch:", 'cron: "35 11 * * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "35 11 26 * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02", "FINAL_WRITER_NO_PUSH_2026_11_02",
         f'BLOGGER_BLOG_ID: "{BLOG_ID}"', f'BLOGGER_STORE_PAGE_ID: "{PAGE_ID}"',
         f'BLOGGER_STORE_POST_ID: "{POST_ID}"', f'BLOGGER_STORE_PAGE_URL: "{PAGE_URL}"',
@@ -168,7 +168,7 @@ def main() -> None:
         fail("Vida Pet Prática foi indevidamente misturado ao inventário legado")
 
     print("BLOGGER_NEW_BLOG_POLICY_REPO_AUDIT_PASS")
-    print("Vida Pet Prática: SAFE + Page-target com Loja nativa Tema V20 + identidade isolada + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente + schedule 11:35 protegidos; patch de layout em conteúdo proibido; migração recovery manual-only; rede legada 18/18 preservada.")
+    print("Vida Pet Prática: SAFE + Page-target com Loja nativa Tema V20 + identidade isolada + staging DRAFT + 5x4 semântico + Policy Guard + auditor permanente + schedule mensal dia 26 11:35 protegido; patch de layout em conteúdo proibido; migração recovery manual-only; rede legada 18/18 preservada.")
 
 
 if __name__ == "__main__":
