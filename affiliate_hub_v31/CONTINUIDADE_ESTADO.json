@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C145",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
@@ -86,16 +86,16 @@
   },
   "active_work": {
     "phase": "C149",
-    "status": "EM_ANDAMENTO",
-    "objective": "C149: retirar executores do projeto exclusivo antigo Radar Tech BR (editorial/loja/fila e scripts Shopee one-shot), sem tocar scripts de qualidade compartilhados, histórico D1, catálogo R2, CMS nem outros sites. Centralizar autoria de novos artigos no V31 universal.",
-    "latest_verified_step": "Implementação C149 em branch: dez arquivos .github/workflows Radar-only retirados da árvore, mantendo histórico Git e arquivos src. Manifesto C149 documenta 3 reservas antigas radarwp, uma conversão LG24 confirmada por logs #45372082046 (sem prova R2). claim_conversion_attempt usa NOT EXISTS atômico por campanha+SKU em qualquer dia UTC, evitando reconversões legadas. Regressões específicas criadas; CI pendente antes de merge.",
-    "next_safe_step": "Rodar CI SAFE completo (50 simulações/WordPress regressões), confirmar bloqueio de reintrodução legada e validar ausência de workflow disparável. Após merge atualizar master/estado e verificar LIVE OFF. Radar continua pré-cadastro disabled e aguardando segredo CMS GitHub.",
-    "blocker": "C149 não restabelece rotação mensal de Loja Radar; foi suspensa pelo pedido de retirar o executor legado até sucessor universal homologado. Credenciais WordPress Radar no ambiente GitHub ainda ausentes, oferta factual do Radar ainda não assinada. Não retentar Shopee por SKU com slot D1 histórico.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "objective": "C149 concluída: motores autônomos antigos exclusivos Radar Tech BR aposentados, sem eliminar scripts/referências históricas e sem mexer no WordPress. Apenas o V31 universal deve evoluir como gerador/conversor editorial do Radar; Radar é piloto primário, não sistema paralelo.",
+    "latest_verified_step": "PR #155 merge SHA 72c6da5762c95cd62031e06b06c4980748004055. GitHub tree main: 10/10 workflows Radar WordPress antigos ausentes; V31 universal DRAFT Blogger/WordPress e C148 canário preservados; LIVE pending_policy_approval; Radar pedido enabled=false. CI #45424445960 867/867 tests + 50/50 simulations e WP Casa24/24 Oficina21/21 Radar15/15 cross-blog PASS; C114 #45424446059 SUCCESS. D1 histórico radarwp 3 tentativas (23/11 duas, 24/11 LG24), link LG24 comprovado por log #45372082046 sem R2 PUT confirmado; reserva atômica por campanha+SKU impede reconversão em dias futuros. Nenhuma chamada Shopee ou CMS nova feita nesta migração.",
+    "next_safe_step": "C150: manter o Radar Tech BR como piloto primário. Para liberar primeiro DRAFT homologado via V31, configurar credencial do site wordpress_radartechbr no GitHub environment v31-editorial-safe, repetir canário universal de GET CMS, validar oferta Shopee exata/links/campanha/foto/fatos e histórico CMS, depois habilitar request Radar DRAFT only com autorização de conteúdo. Avaliar sucessor UNIVERSAL para rotação de Loja mensal, hoje suspensa; não recriar o workflow antigo. LIVE OFF.",
+    "blocker": "A única intervenção externa ainda necessária para o GET CMS do runner é a credencial por site no GitHub (wordpress_radartechbr em V31_WORDPRESS_SITE_CREDENTIALS_JSON). Radar demanda editorial segue desabilitada e sem perfil factual verificado. A Loja mensal Radar antiga foi interrompida e não há substituto universal homologado; não prometer atualização automática da página Loja até criar um novo fluxo. Não reconverter três SKU radarwp históricos sem conciliação.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "1b0a10b90dac92201364dfb0114300e3325c36a3",
-    "branch": "fix/v31-c149-retire-radar-legacy-20261124",
+    "base_main_sha": "72c6da5762c95cd62031e06b06c4980748004055",
+    "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -125,10 +125,14 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45420704364",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45420162325",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45420858231",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45372082046"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45372082046",
+      "https://github.com/adelrib27/blogger-automation1/pull/155",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45424445960",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45424446059"
     ]
   },
   "next_priorities": [
+    "C149 concluída: não reativar 10 workflows antigos Radar; retomada agora somente dentro do V31 universal com GET CMS Radar e DRAFT factual, Loja mensal suspensa até sucessor universal.",
     "C148 Radar Tech piloto: resolver segredo GitHub WordPress por site sem compartilhar credencial no chat; repetir canário READ ONLY e só depois habilitar oferta/fonte independente para DRAFT.",
     "Preservar bloqueio integral dos 24 IDs Blogger, incluindo pontes entre branches, e não alterar a exclusão do blog Ar-Condicionado sem Dúvidas.",
     "Manter auditoria diária D1 USED + GET CMS por demanda real, contabilizando apenas DRAFT_VERIFIED com SKU/hash exatos; sem inferir criação de artigo a partir de job.",
@@ -350,7 +354,22 @@
     "d1_records_deleted": 0,
     "r2_records_deleted": 0,
     "automatic_live_authorized": false,
-    "ci_status": "PENDING",
-    "owner_approval_for_legacy_restore": false
+    "ci_status": "PASSED",
+    "owner_approval_for_legacy_restore": false,
+    "merge_sha": "72c6da5762c95cd62031e06b06c4980748004055",
+    "ci_run": 45424445960,
+    "tests_passed": 867,
+    "simulations_passed": 50,
+    "radar_c114_ci_run": 45424446059,
+    "radar_c114_ci_status": "SUCCESS",
+    "removed_from_main_workflows_confirmed": 10,
+    "universal_editorial_workflows_preserved": true,
+    "legacy_5x_schedule_removed": true,
+    "legacy_radar_daily_queue_removed": true,
+    "legacy_radar_monthly_store_removed": true,
+    "legacy_radar_one_shot_converters_removed": 4,
+    "authenticated_radar_cms_github": "BLOCKED_CMS_SITE_CREDENTIALS_UNAVAILABLE",
+    "operational_e2e_draft_created_this_cycle": false,
+    "new_shopee_calls_this_cycle": 0
   }
 }
