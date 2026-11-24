@@ -1,0 +1,99 @@
+name: "V31 RadarWP LG12 - conversao unica 20261124"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/v31_radarwp_lg12_20261124_once.yml"]
+permissions: {contents: read}
+concurrency:
+  group: v31-editorial-catalog-single-writer
+  cancel-in-progress: false
+jobs:
+  convert-one-verified-offer:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: "Confirmar LG exato e cota global; converter uma vez RADARWP"
+        env:
+          V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
+          V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
+        run: |
+          python - <<'PY'
+          import os,json,time,re,urllib.request
+          from datetime import datetime,timezone
+          from urllib.parse import urlsplit
+          from affiliate_hub_v31.shopee_probe import authorization,ENDPOINT
+          from affiliate_hub_v31.converter import valid_campaign,generate_shortlink
+          from affiliate_hub_v31.catalog import host_allowed
+          from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
+          from affiliate_hub_v31.routing import sites
+          route=sites()["wordpress_radartechbr"]
+          campaign=route["campaign"]
+          if route["identifier"]!="https://radartechbr.com.br/" or campaign!="radarwp" or route["publish_enabled"] is not False or "climatizacao/ar_condicionado" not in route["allowed_niches"]:raise SystemExit("LG24_RADAR_ROUTE_NOT_SAFE")
+          if valid_campaign(campaign)!="RADARWP":raise SystemExit("LG24_INVALID_SUBID")
+          a=os.getenv("V31_EDITORIAL_SHOPEE_APP_ID","")
+          s=os.getenv("V31_EDITORIAL_SHOPEE_APP_SECRET","")
+          if not a or not s:raise SystemExit("LG24_SHOPEE_CREDENTIALS_MISSING")
+          db=CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
+          day=datetime.now(timezone.utc).date().isoformat()
+          items=[("lg12","822103155","58265302556",("lg","12000","inverter","dual","compact"))]
+          count=0
+          for label,shop,item,terms in items:
+              sku=f"shopee:{shop}:{item}"
+              prev=db("SELECT day_utc,slot FROM v31_shopee_conversion_attempts WHERE campaign=? AND product_key=? LIMIT 1",(campaign,sku))
+              if prev:
+                  print("LG24_ALREADY_ATTEMPTED "+sku)
+                  continue
+              query=f"query V31LG24Exact {{ productOfferV2(itemId:{item},page:1,limit:5) {{ nodes {{ itemId shopId productName productLink imageUrl priceMin periodEndTime }} }} }}"
+              body=json.dumps({"query":query,"operationName":"V31LG24Exact"},separators=(',',':'))
+              req=urllib.request.Request(ENDPOINT,data=body.encode(),method="POST",headers={"Authorization":authorization(a,s,body,int(time.time())),"Content-Type":"application/json","Accept":"application/json","User-Agent":"V31-LG24-RadarWP-Single/1.0"})
+              try:
+                  with urllib.request.urlopen(req,timeout=24) as resp:
+                      raw=resp.read(131073)
+                      if resp.status!=200 or len(raw)>131072:raise ValueError("api_status_or_size")
+                  obj=json.loads(raw)
+                  if obj.get("errors"):raise ValueError("graphql_error")
+                  nodes=((obj.get("data")or{}).get("productOfferV2")or{}).get("nodes")or[]
+                  matches=[n for n in nodes if str(n.get("shopId"))==shop and str(n.get("itemId"))==item]
+                  if len(matches)!=1:raise ValueError("not_one_exact_offer")
+                  n=matches[0]
+                  normalized=re.sub(r"[^a-z0-9]","",str(n.get("productName")or"").lower())
+                  canonical=f"https://shopee.com.br/product/{shop}/{item}"
+                  image=str(n.get("imageUrl")or"")
+                  price=float(n.get("priceMin") or 0)
+                  end=n.get("periodEndTime")
+                  if n.get("productLink")!=canonical or not all(term in normalized for term in terms) or price<=0 or urlsplit(image).scheme!="https" or urlsplit(image).hostname not in ("cf.shopee.com.br","down-br.img.susercontent.com") or (end and int(end)<=int(time.time())):raise ValueError("offer_identity_or_image_unverified")
+              except Exception:
+                  print("LG24_EXACT_OFFER_UNCONFIRMED "+sku)
+                  continue
+              try:
+                  rows=db("""
+                    INSERT INTO v31_shopee_conversion_attempts(day_utc,slot,campaign,product_key)
+                    SELECT ?,COALESCE(MAX(slot),0)+1,?,?
+                    FROM v31_shopee_conversion_attempts WHERE day_utc=?
+                    HAVING COALESCE(MAX(slot),0)<3
+                    AND NOT EXISTS(SELECT 1 FROM v31_shopee_conversion_attempts WHERE campaign=? AND product_key=?)
+                    ON CONFLICT DO NOTHING RETURNING slot
+                  """,(day,campaign,sku,day,campaign,sku))
+              except Exception:raise SystemExit("LG24_D1_QUOTA_RESERVATION_FAILED") from None
+              if len(rows)!=1:
+                  print("LG24_GLOBAL_QUOTA_EXHAUSTED_OR_DUPLICATE "+sku)
+                  break
+              print("LG24_RESERVED "+sku+" slot="+str(rows[0]["slot"]))
+              try:link=generate_shortlink(canonical,campaign,a,s)
+              except Exception:raise SystemExit("LG24_SHORTLINK_UNCERTAIN_NO_AUTORETRY") from None
+              if not host_allowed(link,allow_short=True) or urlsplit(link).hostname not in ("s.shopee.com.br","shope.ee"):raise SystemExit("LG24_AFFILIATE_LINK_HOST_INVALID")
+              print("LG24_CONVERTED "+json.dumps({"site_key":"wordpress_radartechbr","campaign":campaign,"sub_id":"RADARWP","sku":sku,"shortlink":link,"image":image,"offer_identified":True,"stock_confirmed":False},ensure_ascii=False,separators=(',',':')))
+              count+=1
+          print("V31_LG24_DONE converted="+str(count)+" no_publication=1")
+          if count<1:raise SystemExit("V31_LG24_PARTIAL_CONVERSION_CHECK_LOG_NO_RETRY")
+          PY
