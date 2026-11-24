@@ -51,9 +51,10 @@ def preview_site_launch(
         # e conversão; rota histórica não é permissão para usar o blog.
         if registered is not None:
             status = scope_status(load_policy(), registered)
-            if status in {"EXCLUDED_BY_OWNER", "DELETED_BY_OWNER",
-                          "REFERENCE_ONLY_NOT_V31_DESTINATION"}:
-                raise SiteLaunchError("owner_excluded_or_deleted_editorial_site")
+            if status == "EXCLUDED_BY_OWNER":
+                raise SiteLaunchError("owner_excluded_editorial_site")
+            if status in {"DELETED_BY_OWNER", "REFERENCE_ONLY_NOT_V31_DESTINATION"}:
+                raise SiteLaunchError("owner_deleted_or_reference_only_editorial_site")
         if registered is None:
             raise SiteLaunchError("site_not_registered")
         if registered["platform"]!=platform or registered["publish_enabled"] is not False:
