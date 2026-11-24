@@ -138,7 +138,7 @@ Os caminhos abaixo são relativos à raiz do repositório. A relação destaca o
 | `automatic_blogger_drafts.py` | Geração e inserção de um DRAFT Blogger com `isDraft=True`, identidade remota e deduplicação. |
 | `automatic_wordpress_drafts.py` | Geração e inserção de DRAFT WordPress com `status="draft"`, slug estável e readback. |
 | `reviewed_draft_delivery.py` | Consome um READY verificado e confirma o rascunho por ID, status e hash. |
-| `ready_cms_collision_audit.py`, `audit_draft_pilots.py` | Verificam sobreposição de jobs e posts e a identidade dos pilotos quando há acesso remoto válido. |
+| `ready_cms_collision_audit.py`, `audit_draft_pilots.py` | Reconciliam colisões READY/CMS e auditam jobs D1 `USED` por demanda real, com GET autenticado, identidade da rota, SKU e hash do conteúdo; ausência de jobs não conta como DRAFT verificado. |
 | `autodraft_rollout_readiness.py`, `autodraft_schedule_outcome.py` | Expõem prontidão e resultados sem equiparar sucesso de job à existência de artigo. |
 | `manual_live_release.py`, `autonomous_live.py` | Concentram os gates de liberação pública, sem autorização implícita do DRAFT. |
 | `continuity_guard.py` | Audita coerência do registro de continuidade sem realizar escrita externa. |
@@ -297,7 +297,7 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 - A suíte SAFE da integração editorial registra **768 testes aprovados** e **50 simulações aprovadas** na execução [GitHub Actions #45301938515](https://github.com/adelrib27/blogger-automation1/actions/runs/45301938515).
 - Os testes locais específicos de WordPress confirmam **Casa e Decoração 24/24**, **Oficina & Garagem 21/21**, **Radar Tech BR 15/15**, com guarda de colisão entre blogs aprovada nessa execução.
 - O rascunho Blogger Móveis para Cada Canto `4106024906916105222` aparece como `draft` em leitura autenticada.
-- A colisão de READY da Casa e Decoração para `shopee:306698991:8503898928` com o post `#314` permanece bloqueada. O post Casa `#321` requer nova confirmação autenticada antes de qualquer operação relacionada.
+- Em leitura autenticada de 24/11/2026, os posts Casa e Decoração `#314` e `#321` continuam com `status=draft`; o registro READY para `shopee:306698991:8503898928` continua inelegível para novo envio sem reconciliação D1/CMS. A existência de DRAFT no CMS não prova por si só o estado `USED` do D1.
 - O scanner de ofertas registra um bloqueio seguro para **Cozinha / fatiador de legumes** quando não há produto elegível; mensagens Shopee GraphQL `10000` requerem diagnóstico específico, sem liberação por fallback não verificado.
 
 **Aceite de entrega editorial real:** identidade CMS correta + campanha correta + produto/foto exatos + fatos autorizados e dentro da validade + SEO + assinatura/revisão válida + R2 HTML idêntico + D1 consistente + ausência de duplicata + POST DRAFT + GET remoto confirmando `draft` e hash + recibo auditável. Todos esses critérios precisam ocorrer **na mesma operação** antes da expansão da rotina.
@@ -308,7 +308,7 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 
 1. Manter a negação dos 24 IDs e a exclusão de destinos desautorizados em todos os writers e agendamentos.
 2. Revalidar acesso, inventário, flags e cotas pela API real antes de atividades que possam consumir dados ou criar posts.
-3. Resolver divergências de auditoria de CMS, incluindo o GET dos posts WordPress Casa `#314` e `#321`, sem sobrescrever ou duplicar artigos.
+3. Confrontar periodicamente jobs D1 `USED` com os DRAFTs autenticados do CMS; tratar ausências, divergências de hash/identidade e colisões sem sobrescrever nem duplicar artigos.
 4. Investigar a falha de disponibilidade da Shopee e os erros GraphQL `10000`, com limite de tentativa e circuit breaker.
 
 ### P1 — Integração e homologação DRAFT
