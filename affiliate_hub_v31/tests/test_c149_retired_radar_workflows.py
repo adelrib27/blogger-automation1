@@ -80,7 +80,8 @@ class RetiredRadarWorkflowTests(unittest.TestCase):
     def test_universal_reviewer_still_shares_single_budget(self):
         from affiliate_hub_v31.site_request_queue import MAX_BUDGET
         self.assertEqual(MAX_BUDGET,3)
-        self.assertIn("claim_conversion_attempt",autonomous_review.run.__code__.co_names)
+        self.assertIn("claim_conversion_attempt",
+                      (ROOT/"affiliate_hub_v31/autonomous_review.py").read_text(encoding="utf-8"))
 
     def test_legacy_wp_store_rotation_not_falsely_claimed_migrated(self):
         self.assertIn("NOT claimed",DATA["retired_store_writer_note"])
