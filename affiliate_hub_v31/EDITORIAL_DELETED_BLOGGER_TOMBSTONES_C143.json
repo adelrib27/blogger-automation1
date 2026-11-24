@@ -2,7 +2,7 @@
   "schema": "v31_deleted_blogger_tombstones_c143/v1",
   "source": "user_explicit_2026_11_23_deleted_all_24_historical_blogger",
   "state": "DELETED_BY_OWNER_DO_NOT_RECREATE_OR_REAUTHENTICATE",
-  "purpose": "Minimal ID/site-key denylist; never an editorial candidate inventory, no historical posts, products, URLs, or campaigns.",
+  "purpose": "24-entry permanent deleted-ID denylist; existing active Blogger blog Vida Pet Prática is a separate non-deleted identity, not a methodology-only reference. Historical C143 label corrected C144.",
   "deleted_count": 24,
   "deleted_blogs": [
     {
@@ -221,10 +221,6 @@
     "blog_id": "2228849984262880811",
     "state": "EXCLUDE_FROM_EDITORIAL_NOT_DELETED_BY_V31"
   },
-  "methodology_only": {
-    "blog_id": "8052455848487624244",
-    "state": "REFERENCE_ONLY_NO_INDIVIDUAL_V31_EDITORIAL"
-  },
   "wordpress_targets": [
     {
       "site_key": "wordpress_casa_decoracao",
@@ -240,5 +236,10 @@
     }
   ],
   "not_a_site_count_ceiling": true,
-  "explicit_rule": "Deleted blogs may never be offered for future reauthentication, profile, route, campaign, queue, conversion, DRAFT, scheduled or LIVE operations. New blogs created in the future may be added only with a new exact CMS identity not on this list."
+  "explicit_rule": "Deleted blogs may never be offered for future reauthentication, profile, route, campaign, queue, conversion, DRAFT, scheduled or LIVE operations. New blogs created in the future may be added only with a new exact CMS identity not on this list. The existing active Vida Pet Prática blog ID is NOT deleted; its V31 route/campaign onboarding remains pending. C69 universal methodology is separate.",
+  "existing_active_blogger_not_onboarded": {
+    "blog_id": "8052455848487624244",
+    "site_key": "blogger_vida_pet_pratica",
+    "state": "EXISTING_ACTIVE_BLOGGER_CMS_VERIFIED_V31_ROUTE_CAMPAIGN_PENDING"
+  }
 }

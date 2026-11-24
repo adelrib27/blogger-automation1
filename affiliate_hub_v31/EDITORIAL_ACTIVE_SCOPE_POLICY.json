@@ -5,7 +5,7 @@
   "priority": "QUALITY_BEFORE_VOLUME",
   "enrollment": "CURRENTLY_AUTHENTICATED_ACTIVE_BLOGGER_AND_WORDPRESS_EXCEPT_DELETED_OR_EXCLUDED",
   "blogger": {
-    "source": "Blogger Bridge V2 and Achados connector list_blogs, both same connected account 2026-11-23, 6 accessible: 4 V31 targets, Ar-Condicionado excluded, Vida Pet methodological reference only. Owner explicitly confirms all 24 prior historical candidates were deleted.",
+    "source": "Blogger Bridge V2 get_blog + two independent connected list_blogs on 2026-11-23/24 confirm 6 reachable: 4 V31 registered, 1 real active blog Vida Pet Prática requiring V31 onboarding, Ar-Condicionado excluded; 24 separately deleted by owner.",
     "source_total_reachable": 6,
     "current_targets": [
       {
@@ -43,11 +43,23 @@
         "do_not_delete_without_separate_command": true
       }
     ],
-    "legacy_inventory_note": "C143 OVERRIDES C141: all 24 historical Blogger candidates previously labeled pending authentication were DELETED by owner. C141 manifest is RETIRED and MUST NOT be loaded as active portfolio. Do not reauthenticate, recover, onboard or publish to deleted identities. Four current Blogger are real V31 targets, plus three WordPress. Ar-Condicionado excluded but still accessible. Vida Pet Pratica remains universal engineering reference ONLY, not standalone editorial project/target.",
+    "legacy_inventory_note": "C144 corrects C143's conflation: 24 historical Blogger were deleted; four Blogger currently have V31 editorial routes, Vida Pet Prática is a FIFTH existing non-excluded ACTIVE Blogger not yet onboarded to V31, Ar-Condicionado remains explicitly excluded. The engineering methodology inspired by Vida Pet was merged universally at C69, independent of the existing blog. No auto publication, invented route or campaign.",
     "future_connected_active_blogs": "New future Blogger may join only after current authenticated CMS ownership validation, exact new ID not in deleted tombstones, actual campaign and universal quality gates. No fixed limit.",
-    "current_targets_connection_scope": "FOUR_CURRENTLY_VERIFIED_EDITORIAL_BLOGGER_NOT_A_LIMIT_FOR_NEW_FUTURE_BLOGS",
+    "current_targets_connection_scope": "FOUR_V31_REGISTERED_BLOGGER_PLUS_ONE_EXISTING_ACTIVE_UNONBOARDED_NOT_A_CEILING",
     "deleted_tombstones_manifest": "affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json",
-    "deleted_by_owner_count": 24
+    "deleted_by_owner_count": 24,
+    "connected_active_blogs_pending_onboarding": [
+      {
+        "site_key": "blogger_vida_pet_pratica",
+        "id": "8052455848487624244",
+        "name": "Vida Pet Prática",
+        "url": "https://vida-pet-pratica.blogspot.com/",
+        "cms_verified": true,
+        "route_registered": false,
+        "campaign_verified": false,
+        "editorial_status": "CMS_ACTIVE_ONBOARDING_REQUIRED_NO_CMS_WRITES"
+      }
+    ]
   },
   "wordpress": {
     "source": "Authenticated GET posts from three connected WordPress endpoints (Casa e Decoração, Oficina & Garagem, Radar Tech BR) as of 2026-11-23",
@@ -93,25 +105,28 @@
       "Mercado Livre"
     ],
     "do_not_invent_unverified_campaign_for_any_site": true,
-    "generic_site_identity_gate": "Every new Blogger/WordPress editorial destination must be a user-authorized active CMS site verified and explicitly added to the universal policy; named methodological references are not destinations.",
-    "global_inventory_status": "C143_4_BLOGGER_CURRENT_3_WORDPRESS_24_HISTORICALLY_DELETED_BY_OWNER_NOT_PENDING",
+    "generic_site_identity_gate": "A real currently accessible Blogger may exist before V31 onboarding. Editorial eligibility requires verified CMS identity, registered V31 route, actual Shopee campaign and quality/SEO/idempotency gates. The universal methodology is not a blog route.",
+    "global_inventory_status": "C144_FOUR_BLOGGER_ONBOARDED_ONE_ACTIVE_BLOGGER_PENDING_CAMPAIGN_THREE_WORDPRESS_24_DELETED",
     "block_deleted_blogger_ids": true
   },
   "snapshot_counts": {
     "blogger_targets": 4,
     "blogger_excluded": 1,
-    "blogger_reference_only": 1,
+    "blogger_reference_only": 0,
     "wordpress_targets": 3,
     "total_current_targets": 7,
     "blogger_connected_verified_subset": 4,
     "blogger_deleted_by_owner": 24,
     "deleted_blogger_pending_authentication": 0,
     "global_total_is_currently_active_confirmed": true,
-    "future_blogs_allowed_after_verification": true
+    "future_blogs_allowed_after_verification": true,
+    "blogger_active_connected_non_excluded": 5,
+    "blogger_active_pending_v31_onboarding": 1,
+    "blogger_connected_verified_cms_total": 6
   },
-  "notes": "C143 authoritative latest decision: 24 Blogger historic candidates were deleted by owner, NOT pending. Four connected active Blogger targets + three WordPress; Ar-Condicionado excluded; Vida Pet used solely as universal methodology (existing CMS record not a special project). Count 7 is a current snapshot, not permanent cap; deleted 24 remain blocked. C102/C141 past checklists are audit-only.",
+  "notes": "C144 verified Blogger API: Vida Pet Prática is an existing active blog (ID 8052455848487624244), NOT the engineering methodology; it is safe to register after real campaign/route checks, but no writer/post is authorized yet. 4 Blogger registered V31 + 1 active Blogger pending onboarding; Ar-Condicionado excluded; 3 WP registered; 24 historical blogs deleted and blocked. Methods from Vida Pet C69 are universal, without pet-specific automation.",
   "universal_reference_methodology": {
-    "origin_context": "C69 merger of the ideas/methods from a prior Vida Pet Prática reference into V31 universally; the reference itself is NOT a V31 editorial site, pipeline or separate project",
+    "origin_context": "C69 merged engineering principles developed around the Vida Pet case into the universal V31 motor. This methodology is a distinct concept from the existing active Blogger blog named Vida Pet Prática, CMS ID 8052455848487624244.",
     "architectural_status": "FUSED_INTO_ONE_UNIVERSAL_BLOGGER_WORDPRESS_V31_ENGINE_NOT_SEPARATE_SUBPROJECT",
     "components": [
       "Evidence Engine",
@@ -135,10 +150,11 @@
       "pet-only policy exemptions",
       "special rate budget or priority for pet-related site",
       "copying old Vida Pet storage or legacy project state into V31 without evidence",
-      "treating the Vida Pet Prática reference as an active V31 blog/site or onboarding target",
-      "setting up special 'Vida Pet Prática' profiles, requests, sources, campaigns, writers, quotas or posts in V31"
+      "blocking the real, currently active Vida Pet Prática blog permanently just because its name matches the C69 methodology",
+      "granting the real blog unverified route, campaign, SEO, budget, special treatment or CMS write"
     ],
-    "treatment_of_any_current_blog": "Same universal route, credential, campaign, independent evidence, SEO, idempotence and DRAFT gates; no name-based exemptions"
+    "treatment_of_any_current_blog": "Same universal route, credential, campaign, independent evidence, SEO, idempotence and DRAFT gates; no name-based exemptions",
+    "existing_active_blog_distinction": "Vida Pet Prática is a real Blogger site accessible via authenticated Blogger API, not a methodology-only phantom; its V31 onboarding needs a verified route and campaign before any DRAFT."
   },
   "simulation_gate": {
     "minimum_cases_per_validation_cycle": 10,

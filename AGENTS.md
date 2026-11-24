@@ -13,9 +13,9 @@ O histórico C102/C141 que descrevia **28 Blogger candidatos e 24 pendentes** es
 
 ## Portfólio editorial atual
 
-**4 Blogger:** Móveis para Cada Canto, Limpeza Inteligente, Estilo no Dia a Dia e Acessórios, Cozinha Sem Complicação. **3 WordPress:** Casa e Decoração, Oficina & Garagem, Radar Tech BR. Os nomes e IDs exatos estão na política C143. Esse número NÃO cria limite para futuros blogs genuinamente novos e autenticados.
+**4 Blogger:** Móveis para Cada Canto, Limpeza Inteligente, Estilo no Dia a Dia e Acessórios, Cozinha Sem Complicação. **3 WordPress:** Casa e Decoração, Oficina & Garagem, Radar Tech BR. **Mais 1 Blogger CMS ativo sem rota V31 homologada:** Vida Pet Prática (não confundir com a metodologia C69); não criar artigos antes de campanha/rota verificadas. Os nomes e IDs exatos estão na política C143. Esse número NÃO cria limite para futuros blogs genuinamente novos e autenticados.
 
-`Ar-Condicionado sem Dúvidas` permanece EXCLUÍDO do V31 (não apagado pelo V31); `Vida Pet Prática` representa SOMENTE metodologias já universalizadas no V31, **NÃO uma frente, blog-alvo ou automação editorial separada**. Os 24 outros Blogger históricos estão deletados pelo proprietário, **não pendentes**.
+`Ar-Condicionado sem Dúvidas` permanece EXCLUÍDO do V31 (não apagado pelo V31). **`Vida Pet Prática` é um blog Blogger REAL e ATIVO**, ID `8052455848487624244`, confirmado por API autenticada; o CMS não foi apagado nem é um mero exemplo conceitual. Ele está **aguardando onboarding V31 de rota/campanha**, portanto ainda NÃO tem writer V31 autorizado. Separadamente, **os princípios de engenharia derivados do estudo Vida Pet na C69** foram incorporados UNIVERSALMENTE ao motor V31, sem frente pet-only. Os 24 outros Blogger históricos estão deletados pelo proprietário, **não pendentes**.
 
 ## Segurança e execução
 

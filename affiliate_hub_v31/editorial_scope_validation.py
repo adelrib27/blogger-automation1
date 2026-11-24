@@ -38,7 +38,7 @@ EXPECTED_BY_CLASS = {
     ),
     "deleted_by_owner": ("DELETED_BY_OWNER",) * 5,
     "explicitly_excluded": ("EXCLUDED_BY_OWNER",) * 5,
-    "reference_only": ("REFERENCE_ONLY_NOT_V31_DESTINATION",) * 5,
+    "active_unonboarded": ("CMS_ACTIVE_ONBOARDING_REQUIRED",) * 5,
     "unregistered": ("ROUTE_NOT_REGISTERED",) * 5,
 }
 
@@ -84,9 +84,22 @@ def load_tombstones(policy: dict) -> dict:
     active = policy.get("blogger", {}).get("current_targets", [])
     exclusions = policy.get("blogger", {}).get("exclusions", [])
     all_current_ids = {x.get("id") for x in active + exclusions}
-    ref_id = doc.get("methodology_only", {}).get("blog_id")
-    if (not isinstance(ref_id, str)
-            or ref_id in ids or ref_id in all_current_ids
+    pending = policy.get("blogger", {}).get("connected_active_blogs_pending_onboarding", [])
+    existing = doc.get("existing_active_blogger_not_onboarded", {})
+    if (not isinstance(pending, list) or not pending
+            or not isinstance(existing, dict)
+            or not isinstance(existing.get("blog_id"), str)
+            or existing.get("state") != "EXISTING_ACTIVE_BLOGGER_CMS_VERIFIED_V31_ROUTE_CAMPAIGN_PENDING"):
+        raise EditorialScopeError("existing_blogger_identity_contract_invalid")
+    pending_ids = {x.get("id") for x in pending if isinstance(x, dict)}
+    pending_keys = {x.get("site_key") for x in pending if isinstance(x, dict)}
+    if (existing["blog_id"] in ids or existing["blog_id"] in all_current_ids
+            or ids & pending_ids or keys & pending_keys or routekeys & pending_keys
+            or pending_ids & all_current_ids
+            or len(pending_ids) != len(pending) or len(pending_keys) != len(pending)
+            or sum(x.get("id") == existing["blog_id"] and
+                   x.get("site_key") == existing.get("site_key")
+                   for x in pending if isinstance(x, dict)) != 1
             or ids & all_current_ids
             or keys & {x.get("site_key") for x in active + exclusions}
             or routekeys & {x.get("site_key") for x in active + exclusions}):
@@ -149,10 +162,29 @@ def validate_policy(policy: dict) -> None:
     if any(e.get("exclude_from_new_v31_editorial_article_automation") is not True
            for e in exclusions):
         raise EditorialScopeError("scope_exclusion_not_enforced")
+    pending = policy.get("blogger", {}).get("connected_active_blogs_pending_onboarding", [])
+    if not isinstance(pending, list) or not pending:
+        raise EditorialScopeError("active_blogger_pending_inventory_missing")
+    for entry in pending:
+        if (not isinstance(entry, dict) or
+                not isinstance(entry.get("site_key"), str) or
+                not re.fullmatch(r"[a-z0-9_]{3,50}", entry["site_key"]) or
+                not isinstance(entry.get("id"), str) or
+                not re.fullmatch(r"\d{10,24}", entry["id"]) or
+                entry.get("cms_verified") is not True or
+                entry.get("route_registered") is not False or
+                entry.get("campaign_verified") is not False or
+                entry.get("editorial_status") != "CMS_ACTIVE_ONBOARDING_REQUIRED_NO_CMS_WRITES"):
+            raise EditorialScopeError("pending_blogger_untrusted")
+    if (set(allkeys) & {x["site_key"] for x in pending}
+            or set(allids) & {x["id"] for x in pending}):
+        raise EditorialScopeError("pending_blogger_identity_collision")
     counts = policy.get("snapshot_counts", {})
     if (counts.get("blogger_targets") != len(policy["blogger"]["current_targets"])
             or counts.get("wordpress_targets") != len(policy["wordpress"]["current_targets"])
             or counts.get("total_current_targets") != len(targets)
+            or counts.get("blogger_active_pending_v31_onboarding") != len(pending)
+            or counts.get("blogger_active_connected_non_excluded") != len(policy["blogger"]["current_targets"]) + len(pending)
             or counts.get("blogger_deleted_by_owner") != policy["blogger"].get("deleted_by_owner_count")
             or counts.get("deleted_blogger_pending_authentication") != 0):
         raise EditorialScopeError("active_snapshot_counts_invalid")
@@ -174,8 +206,9 @@ def scope_status(policy: dict, route: dict | None, *, site_key: str | None = Non
     excluded = policy["blogger"]["exclusions"]
     if any(key == x["site_key"] or rid is not None and rid == x["id"] for x in excluded):
         return "EXCLUDED_BY_OWNER"
-    if rid is not None and rid == tombstones["methodology_only"]["blog_id"]:
-        return "REFERENCE_ONLY_NOT_V31_DESTINATION"
+    pending = policy["blogger"]["connected_active_blogs_pending_onboarding"]
+    if any((rid is not None and rid == x["id"]) or key == x["site_key"] for x in pending):
+        return "CMS_ACTIVE_ONBOARDING_REQUIRED"
     if route is None:
         return "ROUTE_NOT_REGISTERED"
     if not isinstance(key, str) or not re.fullmatch(r"[a-z0-9_]{3,50}", key):
@@ -274,11 +307,12 @@ def simulation_cases(policy: dict, *, cycle_index: int = 0) -> list[dict]:
         "site_key": excluded["site_key"], "platform": "blogger",
         "identifier": excluded["id"], "campaign": "legacyfixture",
         "publish_enabled": False}, "explicitly_excluded"), "complete_simulated_preflight"))
-    cases.append((("blogger_reference_only", {
-        "site_key": "blogger_reference_only", "platform": "blogger",
-        "identifier": guard["methodology_only"]["blog_id"],
-        "campaign": "legacyfixture", "publish_enabled": False},
-        "reference_only"), "complete_simulated_preflight"))
+    existing = policy["blogger"]["connected_active_blogs_pending_onboarding"][0]
+    cases.append(((existing["site_key"], {
+        "site_key": existing["site_key"], "platform": "blogger",
+        "identifier": existing["id"],
+        "campaign": "not_verified", "publish_enabled": False},
+        "active_unonboarded"), "complete_simulated_preflight"))
     cases.append((("blogger_new_future_without_route", None, "unregistered"),
                   "complete_simulated_preflight"))
     if len(cases) > 50:
