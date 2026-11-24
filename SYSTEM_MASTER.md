@@ -36,7 +36,13 @@ Datafeed CSV 2 ─┘                                │                    │
                                                              │
 Tema + site verificado + campanha ──> roteamento/escopo ──> oferta elegível
                                                              │
-                                              conversor Shopee por campanha
+                                      cache afiliado da campanha disponível?
+                                               │                  │
+                                              SIM                NÃO
+                                               │                  │
+                                      reutiliza link      converte um SKU elegível
+                                                        em tempo real (C147)
+                                               └─────── R2 cache ────────┘
                                                              │
                                             evidência exata e revisão factual
                                                              │
@@ -114,6 +120,7 @@ Os caminhos abaixo são relativos à raiz do repositório. A relação destaca o
 | `site_request_queue.py` | Organiza solicitações reais, seleção por rodada, orçamento de conversão e critérios de autorização. |
 | `product_discovery.py`, `verified_supply.py` | Pesquisam e filtram ofertas compatíveis com o assunto e a rota. |
 | `converter.py`, `universal_conversion.py` | Assinam chamadas Shopee, geram links por campanha e mantêm cache validado. |
+| `on_demand_conversion.py` | Fallback C147 integrado ao verificador: reserva um slot global D1, converte no máximo um SKU aprovado por ciclo DRAFT, persiste no R2, relê o link da campanha exata e bloqueia ante incerteza; não publica. |
 | `campaign_cache_readiness.py` | Audita links já persistidos para a campanha exata, apenas em leitura. |
 | `article_commerce.py` | Gera bloco comercial com imagem real, CTA, link afiliado e links editoriais pertinentes. |
 | `universal_brief.py`, `universal_editorial_handoff.py` | Criam propostas editoriais e handoff estruturado por demanda real. |
@@ -154,7 +161,7 @@ Os caminhos abaixo são relativos à raiz do repositório. A relação destaca o
 - **Ponteiro de índice independente:** `v31-editorial/UNIVERSAL_INDEX_CURRENT.json`.
 - **Envelope editorial privado:** namespace `v31/private-ready/v1/<site_key>/<campaign>/<prefixo_hash>/<sha256>.json`.
 
-O R2 utiliza acesso S3 compatível, validação de SHA-256 e verificação de leitura. O envelope aplica `If-None-Match: *` para impedir que a gravação de um objeto com a mesma chave substitua bytes existentes. Um objeto isolado não é artigo aprovado e não autoriza o CMS.
+O R2 utiliza acesso S3 compatível, validação de SHA-256 e verificação de leitura. A conversão on-demand só torna o SKU utilizável pelo verificador depois da escrita do snapshot atualizado, restauração e leitura do link exato na campanha correspondente. O envelope aplica `If-None-Match: *` para impedir que a gravação de um objeto com a mesma chave substitua bytes existentes. Um objeto isolado não é artigo aprovado e não autoriza o CMS.
 
 ### 4.2 Cloudflare D1
 
@@ -220,10 +227,11 @@ O cadastro de um novo blog somente ocorre após validação de propriedade/acess
 ### 6.2 Campanha, oferta e veracidade
 
 1. A identidade de consumo é composta por **destino + campanha + produto exato**; o cache de um blog não pode satisfazer outro.
-2. O conversor trabalha sob demanda e `dry-run` por padrão; o fluxo de conversão autoriza no máximo **3 mutações Shopee por execução** em seu comando global, quando os gates permitem.
-3. Foto, variante e link comercial pertencem ao mesmo SKU e à campanha correta.
-4. A indisponibilidade de oferta segura interrompe a operação (`fail closed`). O sistema não substitui produto por outro arbitrariamente e não transforma erro de API em aprovação.
-5. Texto editorial não reproduz como fato preço, comissão, estoque, cupom, frete, avaliação ou especificação sem fonte pertinente.
+2. O conversor de fila funciona em `dry-run` por padrão, com até **3 tentativas Shopee no comando global** sob autorização. Na execução autônoma de artigo (C147), os produtos já convertidos da campanha são priorizados; se não houver candidato aproveitável, a própria execução pode selecionar um SKU elegível ainda sem link e realizar **uma conversão on-demand**, com histórico CMS autenticado, D1 e R2. Isso não libera o artigo sem evidência factual, revisão e assinatura.
+3. A cota global de conversão segue limitada a **3 tentativas Shopee por dia em D1**, compartilhada com a fila; a fila agendada usa no máximo **2** por ciclo para preservar ao menos um slot potencial para o fallback na execução de artigo. Se não houver slot, credencial, produto permitido ou confirmação de persistência, a conversão não é repetida nem tratada como sucesso. A reserva é tentativa, não prova de link convertido.
+4. Foto, variante e link comercial pertencem ao mesmo SKU e à campanha correta.
+5. A indisponibilidade de oferta segura interrompe a operação (`fail closed`). O sistema pode procurar **outro candidato moderado e compatível na biblioteca** para a mesma demanda, mas nunca substituir arbitrariamente SKU ou usar outro produto sem reexecutar a verificação individual. Erro de API não significa aprovação.
+6. Texto editorial não reproduz como fato preço, comissão, estoque, cupom, frete, avaliação ou especificação sem fonte pertinente.
 
 ### 6.3 Conteúdo, SEO e revisão
 
