@@ -1,3 +1,4 @@
+# V31 C143: Blogger Ventiladores em Foco deleted by owner; manual writer disabled.
 name: Ventiladores em Foco — LEGACY MANUAL / RECOVERY
 
 # Writer legado preservado apenas para recuperação manual.
@@ -15,6 +16,7 @@ concurrency:
 
 jobs:
   atualizar-loja:
+    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
