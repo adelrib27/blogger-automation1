@@ -289,7 +289,7 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 - `.github/workflows/v31_c133_autodraft_rollout_readiness_safe.yml`: informa prontidão sem publicar.
 - `.github/workflows/v31_c143_deleted_blogger_scope_readonly.yml`: audita escopo, bloqueios e simulações.
 - `.github/workflows/v31_continuity_guard.yml`: valida a consistência do estado documentado.
-- `.github/workflows/v31_lab_daily_autonomous_dispatch.yml`: ponte sem execução, agendamento ou permissão de escrita; permanece bloqueada porque o ID Blogger do destino consta na denylist de 24 identidades.
+- `.github/workflows/v31_lab_daily_autonomous_dispatch.yml`: ponte sem execução, agendamento ou permissão de escrita; o job comercial correspondente na branch LAB está igualmente bloqueado por `if: false`. O destino consta na denylist oficial de 24 identidades.
 
 **Distinção operacional obrigatória:** `workflow_dispatch`, `schedule`, `push`, `skipped`, `success`, `DRAFT_VERIFIED` e `LIVE` são estados diferentes. Não existe equivalência automática entre um disparo e uma postagem efetiva.
 
