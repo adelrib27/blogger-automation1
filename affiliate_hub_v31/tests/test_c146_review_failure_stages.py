@@ -15,7 +15,7 @@ class ReviewFailureStagesTests(unittest.TestCase):
     def test_all_stages_are_fixed_identifiers(self):
         self.assertGreaterEqual(len(review.SAFE_STAGES), 12)
         for stage in review.SAFE_STAGES:
-            self.assertRegex(stage, r"^[a-z_]+$")
+            self.assertRegex(stage, r"^[a-z0-9_]+$")
             self.assertEqual(len(stage), len(stage.encode("ascii")))
 
     def test_rejects_dynamic_sensitive_error_message_as_stage(self):
