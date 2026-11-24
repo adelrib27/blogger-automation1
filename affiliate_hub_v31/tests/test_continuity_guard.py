@@ -16,7 +16,7 @@ class V31ContinuityTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root=Path(self.tmp.name)
         actual=Path(__file__).resolve().parents[2]
-        for name in ("V31_CONTINUAR_AQUI.md", "AGENTS.md"):
+        for name in ("SYSTEM_MASTER.md", "V31_CONTINUAR_AQUI.md", "AGENTS.md"):
             shutil.copy2(actual/name, self.root/name)
         folder=self.root/"affiliate_hub_v31"
         folder.mkdir()
@@ -86,10 +86,11 @@ class V31ContinuityTests(unittest.TestCase):
         after=self.state_path.read_bytes()
         self.assertEqual(before,after)
 
-    def test_legacy_checkpoint_kept_separate(self):
+    def test_canonical_master_is_first_entrypoint(self):
         doc=(self.root/"V31_CONTINUAR_AQUI.md").read_text(encoding="utf-8")
-        self.assertIn("CHECKPOINT_ATUAL.md",doc)
+        self.assertIn("SYSTEM_MASTER.md",doc)
         self.assertIn("CONTINUIDADE_ESTADO.json",doc)
+        self.assertIn("# SYSTEM MASTER", (self.root/"SYSTEM_MASTER.md").read_text(encoding="utf-8"))
 
 
 if __name__=="__main__":

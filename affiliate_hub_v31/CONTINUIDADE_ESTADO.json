@@ -6,9 +6,9 @@
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C144",
   "continuity_status": "EM_ANDAMENTO",
-  "last_updated_date": "2026-11-23",
-  "last_updated_source": "C144_BLOGGER_API_VERIFIED_VIDA_PET_REAL_BLOG_PR147_MERGED_CI768",
-  "start_here": "V31_CONTINUAR_AQUI.md",
+  "last_updated_date": "2026-11-24",
+  "last_updated_source": "SYSTEM_MASTER_ROOT_CLEANUP_PR_PENDING_VALIDATION",
+  "start_here": "SYSTEM_MASTER.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C144_VIDA_PET_BLOGGER_ATIVO_DISTINCAO_C69_CI_768_2026-11-23.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
@@ -18,7 +18,8 @@
     "previous_portfolio_status": "SUPERSEDED_DO_NOT_USE",
     "records_before_C143": "GIT_HISTORY_FORENSIC_ONLY_NOT_OPERATIONAL",
     "authoritative_owner_instruction": "All 24 Blogger previously marked historical/pending were DELETED by owner; do not reauthenticate, restore, or schedule them.",
-    "prior_counts_28_and_pending_24": "INVALID_AFTER_C143_NEVER_USE_IN_NEXT_STEPS"
+    "prior_counts_28_and_pending_24": "INVALID_AFTER_C143_NEVER_USE_IN_NEXT_STEPS",
+    "primary_architecture": "SYSTEM_MASTER.md"
   },
   "site_scope_policy": {
     "phase": "C143",
@@ -86,9 +87,9 @@
   "active_work": {
     "phase": "C144",
     "status": "EM_ANDAMENTO",
-    "objective": "C144 identity correction implemented: distinguish 5th active existing Blogger Vida Pet Prática (not V31-onboarded) from universal C69 methodology. Protect deleted 24 and seven routed V31 sites. Next C145 validate campaign/route or advance eligible DRAFT safely; LIVE OFF.",
+    "objective": "Manter V31 universal seguro e consolidar a documentacao sob SYSTEM_MASTER.md, preservando catalogo, rotas, tombstones, SEO, QA, DRAFTs idempotentes e LIVE desativado. Proximo ciclo: homologacao DRAFT com as validacoes exigidas.",
     "latest_verified_step": "C144 PR #147 merged SHA e81595124e93ac57c4461b0161c60def0cb8f1bd; Blogger API get_blog Vida Pet id 8052455848487624244 and two list_blogs confirm real active site; policy now CMS_ACTIVE_ONBOARDING_REQUIRED, no writer; 768 tests PASS + 50 simulations at #45301938515; Blogger Móveis draft GET remains draft. All 24 deleted identities blocked, 19 legacy writers remain OFF. Continuity run #45300690268 SUCCESS. No CMS/Shopee/R2/D1 writes. Blogger Vida Pet list_published_posts=8 LIVE and list_drafts=1 pre-existing Loja DRAFT id 7332800716046515902 (no edits).",
-    "next_safe_step": "C145: Reconcile Vida Pet real Blogger CMS with independently verified V31 route+Shopee campaign; never infer campaign from its methodology origin. Until fully onboarded, keep status CMS_ACTIVE_ONBOARDING_REQUIRED and block drafts. For 4 Blogger+3 WordPress already routed, run 50 simulations, exact SKU/image/affiliate/evidence/SEO/dedup before any single CMS DRAFT E2E. Diagnose LAB Shopee SafeScanError fatiador legumes from #45300343177 separately; no blind retry. LIVE OFF. Preserve pre-existing Vida Pet Loja DRAFT #7332800716046515902; no duplicate.",
+    "next_safe_step": "Verificar CI de saneamento documental e a main; depois prosseguir com homologacao real de DRAFT por site registrado, 50 simulacoes, oferta/SKU/foto/fatos/SEO, GET e hash. Vida Pet so apos rota/campanha verificadas; 24 IDs negados e LIVE OFF. Não repetir posts em colisao, e diagnosticar erros Shopee com fail-closed.",
     "blocker": "Vida Pet Prática CMS is active but V31 route/campaign unverified; do not fabricate credentials, link or writer. LAB #45300343177 lacked safe fatiador legumes offers. WP Casa READY collides with draft #314; do not consume; WP Casa #321 remote GET unavailable in this session, do not assume absence.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
@@ -166,6 +167,6 @@
     "must_finalize_before_ending_turn": true,
     "should_validate_on_git_push": true,
     "contains_secrets": false,
-    "on_chat_resume": "Read V31_CONTINUAR_AQUI.md then CONTINUIDADE_ESTADO.json then C144 checkpoint. Vida Pet Prática Blogger is a real active blog but not yet V31 onboarded; do not confuse with universal C69 methodology. 24 deleted Blogger remain blocked. Validate campaign before any writer; live OFF."
+    "on_chat_resume": "Read SYSTEM_MASTER.md first; then inspect main, CONTINUIDADE_ESTADO.json, editorial scope, tombstones, LIVE policy, Actions and authenticated service data. Preserve 24 denied Blogger identities, seven routed editorial sites, Vida Pet onboarding block and LIVE OFF. Reconcile remote state before writes."
   }
 }

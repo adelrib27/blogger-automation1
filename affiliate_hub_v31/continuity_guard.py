@@ -27,11 +27,12 @@ class ContinuityGuardError(ValueError):
 
 def check_repository(root: Path) -> dict:
     root = Path(root)
+    master = root / "SYSTEM_MASTER.md"
     index = root / "V31_CONTINUAR_AQUI.md"
     protocol = root / "affiliate_hub_v31" / "CONTINUIDADE_PROTOCOLO.md"
     state_file = root / "affiliate_hub_v31" / "CONTINUIDADE_ESTADO.json"
     agents = root / "AGENTS.md"
-    if not all(p.is_file() for p in (index, protocol, state_file, agents)):
+    if not all(p.is_file() for p in (master, index, protocol, state_file, agents)):
         raise ContinuityGuardError("continuity_entrypoint_missing")
 
     try:
@@ -68,17 +69,23 @@ def check_repository(root: Path) -> dict:
         pointer.startswith("/") or ".." in Path(pointer).parts or
         not (root / pointer).is_file()):
         raise ContinuityGuardError("continuity_checkpoint_not_found")
-    if (state.get("start_here") != "V31_CONTINUAR_AQUI.md" or
+    if (state.get("start_here") != "SYSTEM_MASTER.md" or
         not isinstance(state.get("next_priorities"), list) or
         not state["next_priorities"] or
         any(not isinstance(s, str) or not s.strip()
             for s in state["next_priorities"])):
         raise ContinuityGuardError("continuity_missing_next_steps")
 
+    master_text = master.read_text(encoding="utf-8")
+    if (len(master_text) < 15000 or
+        "# SYSTEM MASTER" not in master_text or
+        "Cloudflare D1" not in master_text or
+        "Roadmap" not in master_text):
+        raise ContinuityGuardError("continuity_master_incomplete")
     content = index.read_text(encoding="utf-8")
     if (len(content) < 1000 or
         "CONTINUIDADE_ESTADO.json" not in content or
-        "CHECKPOINT_ATUAL.md" not in content or
+        "SYSTEM_MASTER.md" not in content or
         "Shopee" not in content or "universal" not in content.lower()):
         raise ContinuityGuardError("continuity_index_incomplete")
 
@@ -130,8 +137,8 @@ def main() -> int:
                     f"- Checkpoint: `{report['checkpoint_detail']}`\n"
                     f"- Última evidência: {report['latest_verified_step']}\n"
                     f"- Próximo passo: {report['next_safe_step']}\n"
-                    "- Entrada: [V31_CONTINUAR_AQUI.md]"
-                    "(../blob/main/V31_CONTINUAR_AQUI.md)\n")
+                    "- Entrada: [SYSTEM_MASTER.md]"
+                    "(../blob/main/SYSTEM_MASTER.md)\n")
         return 0
     except ContinuityGuardError as exc:
         print("V31_CONTINUITY_GUARD_FAILED_" + str(exc))
