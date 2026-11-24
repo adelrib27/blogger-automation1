@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C145",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
@@ -86,16 +86,16 @@
   },
   "active_work": {
     "phase": "C147",
-    "status": "EM_ANDAMENTO",
-    "objective": "C147: usuário autorizou conversão Shopee em tempo real dentro da criação do DRAFT quando cache não tem candidato aproveitável. Testar pipeline cache-primeiro, um fallback por execução, reserva global D1, SKU/campanha exatos, R2 readback, sem LIVE.",
-    "latest_verified_step": "Código implementado em branch C147: on_demand_conversion.py com D1 global slot + conversor Shopee + snapshot R2 lido de volta. autonomous_review.py testa links em cache antes de um fallback SKU elegível sem cache. Workflow proverá credenciais Shopee sob v31-editorial-safe. Agendamento regular reduzido a 2 das 3 tentativas globais por dia para preservar slot on-demand. Ainda em homologação, não acionar API real até CI.",
-    "next_safe_step": "Completar testes offline cobrindo cache preferencial, SKU bloqueado, CMS duplicado, limite diário, erro API, R2 falho; CI universal 50 simulações; revisão e merge. Observar próximo ciclo regular sem disparar testes pagos. LIVE OFF.",
-    "blocker": "Ativação e2e DRAFT ainda depende da validação factual independente e da disponibilidade da API Shopee; no momento código e testes em branch sem publicação. A falha do verificador de 24/11 antes C146 segue sem causa exata.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "objective": "C147 implantada: cache afiliado Shopee por campanha é primeira prioridade no verificador DRAFT. Se nenhum candidato cacheado resultar em artigo verificado, um SKU alternativo aprovado pode ser convertido no MESMO ciclo com tentativa global D1, persistência e GET do R2, sem liberar LIVE.",
+    "latest_verified_step": "PR #152 integrada na main SHA c6a2bff8f2bdfe7930f422fb8ebb0e5104252bc0. CI #45409485084 SUCCESS: 821/821 testes offline (24 novos C147), 50/50 simulações SAFE, WP Casa 24/24, Oficina 21/21, Radar 15/15 e cross-blog guard PASS. Sem chamada real Shopee ou novo DRAFT durante PR. No fluxo de verificação independente da main foi habilitada V31_ON_DEMAND_CONVERSION=true com segredos próprios em v31-editorial-safe; fila agendada usa máximo 2 slots diários para reservar 1 dos 3 slots globais D1 a on-demand. R2 salva + relê link por SKU/campanha antes de fact gate. D1 USED/READY pré-existente impede mutação desnecessária. LIVE OFF.",
+    "next_safe_step": "C148: observar próxima execução programada do verificador DRAFT e, caso cache falhe, validar recibo de 1 conversão real da API Shopee vinculada ao SKU/campanha e persistida no R2. Confirmar por D1 SELECT, R2 e CMS GET. Não disparar conversão extra se cota diária 3/3 ou se o verificador parar por fonte e timeout. Investigar falha C146 por estágio e finalizar homologação de fluxo DRAFT. Preservar LIVE OFF.",
+    "blocker": "E2E de conversão in-cycle ainda depende de futura execução real com produto elegível, vaga D1 e API Shopee disponível. Não declarar conversão real ou DRAFT novo antes de recibos verificáveis. Causa exata da antiga falha do verificador independente ainda não confirmada; Casa READY colide com DRAFT #314 e continua bloqueado.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "0a470137af9032d94817166a0af8556d3561e974",
-    "branch": "feat/v31-c147-on-demand-affiliate-conversion-20261124",
+    "base_main_sha": "c6a2bff8f2bdfe7930f422fb8ebb0e5104252bc0",
+    "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -117,7 +117,9 @@
       "https://github.com/adelrib27/blogger-automation1/commit/748c61601f851d7fa0a6ce88ef969dddf604dbed",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45330112636",
       "https://github.com/adelrib27/blogger-automation1/pull/151",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45407555747"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45407555747",
+      "https://github.com/adelrib27/blogger-automation1/pull/152",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45409485084"
     ]
   },
   "next_priorities": [
@@ -238,6 +240,27 @@
     "probe_and_pilot_conversion_disabled": true,
     "affiliate_mutation_retry": false,
     "live_policy": "pending_policy_approval",
-    "acceptance_state": "CI_PENDING"
+    "acceptance_state": "MERGED_OFFLINE_CI_VERIFIED_E2E_PENDING",
+    "pr_number": 152,
+    "ci_run_id": 45409485084,
+    "tests_passed": 821,
+    "offline_simulations_passed": 50
+  },
+  "c147_verified_operational_result": {
+    "phase": "C147",
+    "merged_main_sha": "c6a2bff8f2bdfe7930f422fb8ebb0e5104252bc0",
+    "ci_run_id": 45409485084,
+    "ci_passed": true,
+    "tests_passed": 821,
+    "simulations_passed": 50,
+    "new_affiliate_api_calls_by_ci": 0,
+    "new_cms_drafts_by_ci": 0,
+    "live_policy": "pending_policy_approval",
+    "on_demand_enabled_in_draft_workflow": true,
+    "scheduled_conversion_budget": 2,
+    "global_d1_conversion_daily_limit": 3,
+    "on_demand_attempts_per_review": 1,
+    "in_cycle_live_e2e_confirmed": false,
+    "next_phase": "C148"
   }
 }
