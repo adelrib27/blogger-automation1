@@ -253,6 +253,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Homologação universal SAFE do V31")
     parser.add_argument("--primary-site-key", default=DEFAULT_PRIMARY)
     parser.add_argument("--real-readonly", action="store_true")
+    # C151: destino local fixo. Nunca aceitar nome arbitrario nem subir segredos.
+    parser.add_argument("--report-json", choices=["v31_pilot_readonly_report.json"],
+                        default=None)
     args = parser.parse_args()
     try:
         output = (live_readonly(primary=args.primary_site_key)
@@ -260,7 +263,14 @@ def main() -> int:
     except Exception:
         print("V31_PILOT_READINESS_FAILED_CLOSED")
         return 2
-    print("V31_PILOT_READINESS=" + json.dumps(output, ensure_ascii=False, sort_keys=True))
+    sanitized = json.dumps(output, ensure_ascii=False, sort_keys=True)
+    print("V31_PILOT_READINESS=" + sanitized)
+    if args.report_json:
+        try:
+            Path(args.report_json).write_text(sanitized + "\n", encoding="utf-8")
+        except OSError:
+            print("V31_PILOT_REPORT_PERSISTENCE_FAILED_CLOSED")
+            return 4
     # Em teste real, uma fonte inacessível torna a homologação incompleta.
     # Nunca publicar status SUCCESS de canário se CMS, D1 ou R2 não responder.
     if args.real_readonly and output["status"] != "READ_ONLY_SOURCES_CONFIRMED_NOT_DRAFT_AUTHORIZED":
