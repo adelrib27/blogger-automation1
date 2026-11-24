@@ -284,7 +284,7 @@ def evaluate_preflight(policy: dict, route: dict | None,
     }
 
 
-def simulation_cases(policy: dict) -> list[dict]:
+def simulation_cases(policy: dict, *, cycle_index: int = 0) -> list[dict]:
     """50 verificações sem rede: 28 Blogger históricos + 3 WP e riscos globais.
 
     Blogs adicionais permanecem suportados: se houver mais de 31 destinos,
@@ -321,7 +321,9 @@ def simulation_cases(policy: dict) -> list[dict]:
     # Um ciclo não é limitado ao tamanho da conta Google conectada.
     # O inventário integral é validado antes; se houver >31 blogs futuros,
     # a escolha de 31 gira entre ciclos sem que nenhum seja 'inativo'.
-    cycle = 0
+    if type(cycle_index) is not int or cycle_index < 0 or cycle_index > 1_000_000_000:
+        raise EditorialScopeError("invalid_simulation_cycle_index")
+    cycle = cycle_index
     selected = (actors[cycle % len(actors):] + actors[:cycle % len(actors)])[:31]
     while len(selected) < 31:
         selected.append(actors[len(selected) % len(actors)])
@@ -380,12 +382,13 @@ def simulation_cases(policy: dict) -> list[dict]:
     return cases
 
 
-def run_simulations(*, count: int = 50, policy: dict | None = None) -> dict:
+def run_simulations(*, count: int = 50, policy: dict | None = None,
+                    cycle_index: int = 0) -> dict:
     if type(count) is not int or not 10 <= count <= 50:
         raise EditorialScopeError("simulation_count_must_be_10_to_50")
     policy = load_policy() if policy is None else policy
     inventory = load_global_inventory(policy)
-    cases = simulation_cases(policy)[:count]
+    cases = simulation_cases(policy, cycle_index=cycle_index)[:count]
     counts = {}
     for case in cases:
         actual = evaluate_preflight(policy, case["route"], case["quality"],
@@ -401,6 +404,14 @@ def run_simulations(*, count: int = 50, policy: dict | None = None) -> dict:
         "executed": len(cases),
         "passed": len(cases),
         "failed": 0,
+        "cycle_index": cycle_index,
+        "distinct_candidate_sites_simulated": len({
+            x["site_key"] for x in cases if x["site_key"] not in {
+                "blogger_reference_only_not_a_destination",
+                "blogger_future_site_pending",
+                policy["blogger"]["exclusions"][0]["site_key"],
+            }
+        }),
         "outcomes": counts,
         "global_coverage_audit": inventory["summary"],
         "cms_writes": 0,
@@ -414,9 +425,10 @@ def run_simulations(*, count: int = 50, policy: dict | None = None) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description="V31 10 a 50 simulações universais offline")
     parser.add_argument("--cases", type=int, default=50)
+    parser.add_argument("--cycle-index", type=int, default=0)
     args = parser.parse_args()
     try:
-        result = run_simulations(count=args.cases)
+        result = run_simulations(count=args.cases, cycle_index=args.cycle_index)
     except Exception:
         print("V31_SCOPE_SIMULATIONS_FAILED_CLOSED")
         return 1
