@@ -407,8 +407,28 @@ def compose_article(plan:dict,paragraphs:list[str], *,
         +body+'</section>'+plan["offer_html"]+internal+"</article>")
 
 
+def _radar_scoped_legacy_credentials(site_key: str, *, raw_was_explicit: bool):
+    """Ponte C150 TEMPORÁRIA para segredos históricos exclusivamente Radar.
+
+    Só pode ser ligada por workflow SAFE com env explícito; não basta existir
+    WORDPRESS_USERNAME no runner. Não aceita credenciais de outro site, não
+    altera o cadastro principal, não revela segredos e não autoriza POST.
+    A identificação real da instância continua no GET remoto autenticado.
+    """
+    if (site_key != "wordpress_radartechbr" or raw_was_explicit
+            or os.getenv("V31_RADAR_LEGACY_CMS_BRIDGE_ENABLED") != "true"):
+        return None
+    user = os.getenv("V31_RADAR_LEGACY_WORDPRESS_USERNAME", "")
+    password = os.getenv("V31_RADAR_LEGACY_WORDPRESS_APP_PASSWORD", "")
+    if (not isinstance(user, str) or not isinstance(password, str)
+            or not user.strip() or not password.strip()):
+        return None
+    return user, password
+
+
 def credentials_for(site_key:str,*,raw:str|None=None)->tuple[str,str]:
-    # Um segredo JSON adiciona sites livremente sem mudar código; nunca logar.
+    # O JSON universal continua primário; ponte apenas para Radar ausente.
+    # Nunca logar credencial ou redirecionar conexão para outro site.
     secret=raw if raw is not None else os.getenv(
         "V31_WORDPRESS_SITE_CREDENTIALS_JSON","")
     if not secret:
@@ -420,6 +440,10 @@ def credentials_for(site_key:str,*,raw:str|None=None)->tuple[str,str]:
             legacy_password = os.getenv("CASA_WORDPRESS_APP_PASSWORD", "")
             if legacy_user.strip() and legacy_password.strip():
                 return legacy_user, legacy_password
+        legacy = _radar_scoped_legacy_credentials(
+            site_key, raw_was_explicit=raw is not None)
+        if legacy is not None:
+            return legacy
         raise WordPressAutoDraftError("wordpress_credentials_not_configured")
     try:
         mapping=json.loads(secret)
@@ -428,6 +452,11 @@ def credentials_for(site_key:str,*,raw:str|None=None)->tuple[str,str]:
     if not isinstance(mapping,dict):
         raise WordPressAutoDraftError("wordpress_credentials_schema_invalid")
     config=mapping.get(site_key)
+    if config is None and site_key not in mapping:
+        legacy = _radar_scoped_legacy_credentials(
+            site_key, raw_was_explicit=raw is not None)
+        if legacy is not None:
+            return legacy
     if (not isinstance(config,dict) or
         set(config)!={"username","application_password"} or
         not all(isinstance(config[k],str) and config[k].strip()
