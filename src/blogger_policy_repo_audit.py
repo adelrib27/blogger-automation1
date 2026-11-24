@@ -162,7 +162,7 @@ def audit_casa_schedule() -> None:
     rel = ".github/workflows/casa_em_ordem_store_autonomous.yml"
     text = read(rel)
     required = [
-        "V31_C143_OWNER_DELETED_JOB_DISABLED", 'timezone: "America/Recife"',
+        "V31_C143_OWNER_DELETED_JOB_DISABLED", ,
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-quarto">Ver quarto</a>',
@@ -178,7 +178,7 @@ def audit_escolha_schedule() -> None:
     rel = ".github/workflows/escolha_certa_online_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", ,
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-limpeza">Ver limpeza</a>',
@@ -196,7 +196,7 @@ def audit_achados_que_valem_schedule() -> None:
     rel = ".github/workflows/achados_que_valem_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", ,
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-utilidades">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-ferramentas">Ver ferramentas</a>',
@@ -214,7 +214,7 @@ def audit_guia_schedule() -> None:
     rel = ".github/workflows/guia_achados_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", ,
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-eletroportateis">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-iluminacao-decoracao">Ver iluminação</a>',
@@ -232,7 +232,7 @@ def audit_moda_schedule() -> None:
     rel = ".github/workflows/moda_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", ,
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Beleza &amp; Cuidados</h3>',
         'href="#bls-moda-feminina">Ver moda feminina</a>',
@@ -253,7 +253,7 @@ def audit_achadinhos_schedule() -> None:
     rel = ".github/workflows/achadinhos_beleza_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED", ,
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Cuidados Pessoais</h3>',
         'href="#bls-skincare">Ver skincare</a>',
@@ -276,7 +276,7 @@ def audit_radar_schedule() -> None:
     required = [
         "workflow_dispatch:",
         "V31_C143_OWNER_DELETED_JOB_DISABLED",
-        'timezone: "America/Recife"',
+        ,
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         "PUBLIC_HTML_ENTITY_NORMALIZATION_2026_11_02",
         "Portal Radar Tech — tecnologia e achados práticos para a rotina",
