@@ -88,9 +88,9 @@
     "phase": "C149",
     "status": "EM_ANDAMENTO",
     "objective": "C149: retirar executores do projeto exclusivo antigo Radar Tech BR (editorial/loja/fila e scripts Shopee one-shot), sem tocar scripts de qualidade compartilhados, histórico D1, catálogo R2, CMS nem outros sites. Centralizar autoria de novos artigos no V31 universal.",
-    "latest_verified_step": "GitHub Actions #45372082046: one-shot dedicado v31_radarwp_lg12_20261124_once.yml CONVERTED SKU shopee:822103155:58265302556 campanha radarwp, sem publicação e sem persistência R2 comprovada. D1 SELECT oficial: 24/11 SKU LG e 23/11 dois SKU radarwp, sem READY/USED de Radar. Legacy editorial vNext agendado 5x/dia mas skipped por if:false; fila antiga diária, loja mensal e scripts one-shot ainda presentes com gatilhos. Retirar executores históricos e manter prova sem retentar SKU.",
-    "next_safe_step": "C149 checkpoint preview criado; desativar ou remover workflows específicos Radar WordPress antigos sem apagar scripts/testes usados pelo V31 universal. Testar ausência de cron/push/manual mutantes e compartilhamento de cota D1 sem reuso de SKU; depois CI 50 simulações e merge; registrar rollback e estado.",
-    "blocker": "Não reexecutar LG24 nem converter os mesmos SKU antigos sem reconciliação; preservar tentativas D1 e quaisquer links afiliados existentes. Radar universal segue request.enabled=false por faltar credencial WordPress no GitHub e perfil factual independente. LIVE OFF.",
+    "latest_verified_step": "Implementação C149 em branch: dez arquivos .github/workflows Radar-only retirados da árvore, mantendo histórico Git e arquivos src. Manifesto C149 documenta 3 reservas antigas radarwp, uma conversão LG24 confirmada por logs #45372082046 (sem prova R2). claim_conversion_attempt usa NOT EXISTS atômico por campanha+SKU em qualquer dia UTC, evitando reconversões legadas. Regressões específicas criadas; CI pendente antes de merge.",
+    "next_safe_step": "Rodar CI SAFE completo (50 simulações/WordPress regressões), confirmar bloqueio de reintrodução legada e validar ausência de workflow disparável. Após merge atualizar master/estado e verificar LIVE OFF. Radar continua pré-cadastro disabled e aguardando segredo CMS GitHub.",
+    "blocker": "C149 não restabelece rotação mensal de Loja Radar; foi suspensa pelo pedido de retirar o executor legado até sucessor universal homologado. Credenciais WordPress Radar no ambiente GitHub ainda ausentes, oferta factual do Radar ainda não assinada. Não retentar Shopee por SKU com slot D1 histórico.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -332,5 +332,25 @@
     "shopee_mutations_by_c148": 0,
     "live_policy": "pending_policy_approval",
     "next_phase": "C149"
+  },
+  "c149_retirement": {
+    "phase": "C149",
+    "legacy_workflows_removed": 10,
+    "historical_radar_campaign": "radarwp",
+    "d1_historical_attempts": 3,
+    "lg24_verified_shortlink_generated": true,
+    "lg24_run_id": 45372082046,
+    "r2_persistence_confirmed": false,
+    "global_conversion_guard": "D1_INSERT_NOT_EXISTS_CAMPAIGN_SKU_ALL_DAYS",
+    "other_campaigns_independent": true,
+    "site_sources_preserved": true,
+    "universal_writers_preserved": true,
+    "legacy_monthly_radar_store_rotation": "SUSPENDED_NOT_MIGRATED",
+    "cms_posts_changed": 0,
+    "d1_records_deleted": 0,
+    "r2_records_deleted": 0,
+    "automatic_live_authorized": false,
+    "ci_status": "PENDING",
+    "owner_approval_for_legacy_restore": false
   }
 }
