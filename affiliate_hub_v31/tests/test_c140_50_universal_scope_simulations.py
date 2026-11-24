@@ -1,4 +1,4 @@
-"""C140/C141 — 50 cenários individuais, portfólio global e guardas.
+"""C143 — 50 cenários individuais, 24 Blogger excluídos e guardas atuais.
 
 Casos synthetic-only; nenhum login CMS, nenhuma chamada Shopee/D1/R2, nem
 mutação de arquivos de produção. A métrica é testes executados, não DRAFTs.
@@ -68,8 +68,9 @@ class ScopeGuardContractTests(unittest.TestCase):
         self.assertEqual(result["affiliate_mutations"], 0)
         self.assertFalse(result["live_authorized"])
         self.assertGreaterEqual(result["outcomes"]["PREFLIGHT_ONLY_NOT_AUTHORIZED"], 1)
-        self.assertEqual(result["global_coverage_audit"]["global_candidates"], 28)
-        self.assertEqual(result["global_coverage_audit"]["cross_account_pending"], 24)
+        self.assertEqual(result["global_coverage_audit"]["global_candidates"], 4)
+        self.assertEqual(result["global_coverage_audit"]["cross_account_pending"], 0)
+        self.assertEqual(result["global_coverage_audit"]["deleted_by_owner"], 24)
 
     def test_ten_to_fifty_enforced(self):
         self.assertEqual(gate.run_simulations(count=10)["passed"], 10)
@@ -87,7 +88,7 @@ class ScopeGuardContractTests(unittest.TestCase):
         self.assertNotIn("8052455848487624244",
                          [x["id"] for x in POLICY["blogger"]["current_targets"]])
         self.assertEqual(len(POLICY["blogger"]["current_targets"]), 4)
-        self.assertEqual(POLICY["snapshot_counts"]["total_current_targets"], 31)
+        self.assertEqual(POLICY["snapshot_counts"]["total_current_targets"], 7)
         self.assertEqual(POLICY["snapshot_counts"]["blogger_connected_verified_subset"], 4)
 
     def test_policy_tampering_fails_closed(self):
@@ -132,14 +133,19 @@ class ScopeGuardContractTests(unittest.TestCase):
             with self.assertRaisesRegex(RequestQueueError,"site_outside_verified_active_scope"):
                 load_requests(Path(d))
 
-    def test_live_queue_rejects_old_blogger_outside_active_inventory(self):
+    def test_live_queue_rejects_deleted_blogger_even_if_old_route_is_in_request(self):
         from affiliate_hub_v31.site_request_queue import load_requests, RequestQueueError
+        from affiliate_hub_v31.editorial_scope_validation import scope_status
         from affiliate_hub_v31.routing import sites
-        old_route=sites()["blogger_ventiladores"]
+        old_route={"site_key":"blogger_ventiladores","platform":"blogger",
+                   "identifier":"4473989735719981382","campaign":"ventiladores",
+                   "allowed_niches":["climatizacao/ventilacao"],"publish_enabled":False}
+        self.assertEqual(scope_status(POLICY,old_route),"DELETED_BY_OWNER")
+        self.assertNotIn(old_route["site_key"],sites())
         with tempfile.TemporaryDirectory() as d:
             Path(d, old_route["site_key"] + ".json").write_text(
                 json.dumps(self.request_doc(old_route)),encoding="utf-8")
-            with self.assertRaisesRegex(RequestQueueError,"site_outside_verified_active_scope"):
+            with self.assertRaisesRegex(RequestQueueError,"real_registered_site_required"):
                 load_requests(Path(d))
 
     def test_live_queue_accepts_registered_active_pilot_without_publication(self):
