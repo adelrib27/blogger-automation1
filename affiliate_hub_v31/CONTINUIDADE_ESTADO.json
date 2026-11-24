@@ -4,10 +4,10 @@
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
   "last_checkpoint_phase": "C144",
-  "continuity_protocol_phase": "C144",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_protocol_phase": "C145",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
-  "last_updated_source": "SYSTEM_MASTER_PR148_MERGED_CI768_SIM50_CONTINUITY_PASS",
+  "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C144_VIDA_PET_BLOGGER_ATIVO_DISTINCAO_C69_CI_768_2026-11-23.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
@@ -86,16 +86,16 @@
   },
   "active_work": {
     "phase": "C145",
-    "status": "EM_ANDAMENTO",
-    "objective": "Corrigir monitor V31 DRAFT desacoplado de active_work.draft_pilots: consultar D1 USED somente leitura, confrontar registros CMS autenticados por site/campanha/SKU/hash, manter fail-closed e evitar POST duplicado. LIVE OFF.",
-    "latest_verified_step": "P0: GitHub Action #45345469949 audit-existing-draft-pilots falha KeyError draft_pilots ausente; action scheduler #45330112636 verifier falha fechado; CMS GET Blogger Moveis draft e WordPress Casa #314/#321 continuam drafts (24/11). Nenhum CMS write nesta etapa.",
-    "next_safe_step": "Implementar auditoria generica com D1 SELECT + CMS GET; casos offline para D1 USED, ausencia, colisao e identidade; executar CI e 50 simulacoes; depois rodar monitor real readonly. Preservar 24 bloqueios, LIVE OFF.",
-    "blocker": "Auditoria agendada depende de campo temporario ausente, nao possui reconciliação remota; verificador independente bloqueado e LAB isolado exige diagnostico sem retry.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "objective": "C145 executada: monitor read-only de D1 USED versus CMS autenticado independe de checkpoint temporario, dois DRAFTs verificados em Blogger e WordPress; ponte para Blogger inelegivel bloqueada tanto na main quanto na branch LAB. LIVE OFF.",
+    "latest_verified_step": "PR #149 merged SHA 3f029575017250f0ffd9043bd4ac88cc367162e4. CI #45397778305: 782/782 testes e 50/50 simulacoes; monitor #45397939740 SUCCESS: dois jobs D1 USED e dois DRAFTs com CMS GET, SKU e SHA exatos (blogger_moveis_para_cada_canto 1; wordpress_casa_decoracao 1), zero writes. Casa #314 e #321 confirmados DRAFT autenticados sem reenvio. PR #150 merged SHA df2f110b127258d72bf3fe880b1192268dce5441. CI #45398455042: 789/789 e 50/50. Ponte main .github/workflows/v31_lab_daily_autonomous_dispatch.yml sem schedule/push e com if:false; branch LAB workflow comercial if:false e sem contents:write no commit 748c61601f851d7fa0a6ce88ef969dddf604dbed. Blog LAB 4739187376492839837 na denylist dos 24. Nenhuma publicacao LIVE.",
+    "next_safe_step": "C146: diagnosticar a falha fechada do verificador independente da fila DRAFT (#45330112636) por fontes confiaveis, cota e tempos de rede sem liberar artigos sem evidencias ou retentar POST; manter reconciliação READY/CMS por SELECT+GET; validar campanha/rota de Vida Pet Prática antes de qualquer writer; preservar SAFE e LIVE OFF. Diagnosticar LAB Shopee sem novos disparos ao blog excluido.",
+    "blocker": "Verificador independente #45330112636 falhou fechado com autonomous_verification_failed_closed apos ~40 s; causa remota exata nao esta provada. LAB Shopee com erros 10000 nao deve ser reexecutado no blog excluido. READY Casa colisao com DRAFT #314 continua bloqueado; GET de #314/#321 confirma somente status CMS, nao permissão de consumo D1.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "256fe74c9555bd89cca3680f40bc97f0969ef317",
-    "branch": "fix/v31-c145-auditoria-draft-d1-cms-20261124",
+    "base_main_sha": "3c0d184880a8cb453d7657ce6b118b7c7310377b",
+    "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -108,16 +108,22 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300343177",
       "https://github.com/adelrib27/blogger-automation1/pull/148",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45395421726",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45395623969"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45395623969",
+      "https://github.com/adelrib27/blogger-automation1/pull/149",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45397778305",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45397939740",
+      "https://github.com/adelrib27/blogger-automation1/pull/150",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45398455042",
+      "https://github.com/adelrib27/blogger-automation1/commit/748c61601f851d7fa0a6ce88ef969dddf604dbed"
     ]
   },
   "next_priorities": [
-    "Preservar a denylist dos 24 Blogger indisponíveis, o bloqueio dos writers correspondentes e a exclusão de Ar-Condicionado sem Dúvidas.",
-    "Verificar Vida Pet Prática como CMS Blogger real ainda sem rota/campanha V31 autorizadas; não criar conteúdo nem alterar o rascunho preexistente.",
-    "Homologar DRAFTs nos 7 destinos V31 já roteados; 50 simulações, verificação do SKU, imagem, link de campanha, fatos, SEO, duplicidade e GET/hash do CMS.",
-    "Reconciliar a colisão READY Casa WordPress com post #314 e verificar o post #321 antes de novos envios; não repetir POST sem evidência.",
-    "Diagnosticar os erros de ofertas Shopee em modo SAFE sem forçar API ou consumo de cota.",
-    "Manter SYSTEM_MASTER.md como referência de arquitetura e a política LIVE automática pending_policy_approval."
+    "Preservar bloqueio integral dos 24 IDs Blogger, incluindo pontes entre branches, e não alterar a exclusão do blog Ar-Condicionado sem Dúvidas.",
+    "Manter auditoria diária D1 USED + GET CMS por demanda real, contabilizando apenas DRAFT_VERIFIED com SKU/hash exatos; sem inferir criação de artigo a partir de job.",
+    "Investigar falha segura da verificação independente de fontes/cotas/timeout na fila DRAFT com diagnósticos sanitizados e sem POST ou consumo duplicado.",
+    "Reconciliar READY Casa com DRAFT #314, preservar Casa #321 e Móveis, não produzir rascunhos duplicados.",
+    "Concluir onboarding do Blogger Vida Pet Prática apenas após prova de rota e campanha Shopee; aplicar motor universal sem exceções por nicho.",
+    "Manter SYSTEM_MASTER.md como documento arquitetural canônico e a política de publicação automática LIVE em pending_policy_approval."
   ],
   "latest_verified_checkpoint": {
     "phase": "C144",
@@ -172,5 +178,21 @@
     "should_validate_on_git_push": true,
     "contains_secrets": false,
     "on_chat_resume": "Read SYSTEM_MASTER.md first; then inspect main, CONTINUIDADE_ESTADO.json, editorial scope, tombstones, LIVE policy, Actions and authenticated service data. Preserve 24 denied Blogger identities, seven routed editorial sites, Vida Pet onboarding block and LIVE OFF. Reconcile remote state before writes."
+  },
+  "c145_verified_operational_result": {
+    "phase": "C145",
+    "cms_audit": "D1_USED_CMS_GET_SUCCEEDED",
+    "github_run_id": 45397939740,
+    "sites_audited": 2,
+    "d1_used_jobs_checked": 2,
+    "cms_drafts_hash_verified": 2,
+    "did_create_articles": false,
+    "live_policy": "pending_policy_approval",
+    "deleted_blogger_dispatch_blocked": true,
+    "deleted_blogger_lab_target": "4739187376492839837",
+    "lab_branch_direct_job_disabled": true,
+    "safe_tests": 789,
+    "offline_simulations": 50,
+    "next_phase": "C146"
   }
 }
