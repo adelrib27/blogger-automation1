@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C145",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
@@ -86,16 +86,16 @@
   },
   "active_work": {
     "phase": "C146",
-    "status": "EM_ANDAMENTO",
-    "objective": "Diagnóstico de falhas do verificador independente sem repetir pesquisa, conversão ou DRAFT: rótulos de fase seguros e testes de ausência de exposição.",
-    "latest_verified_step": "Análise Action #45330112636: authenticated-history SUCCESS, independent-verifier FAIL após ~40s com autonomous_verification_failed_closed; deliver-draft e release SKIPPED. Cloudflare D1 oficial (read-only, 24/11): Móveis USED=1; Casa USED=1, READY=1; budget Móveis dia 24 SEARCH=2/3, HTTP=2/3; nenhuma lease ativa. Exceção exata ainda não demonstrada. PR C146 introduz rótulos fixos de diagnóstico, sem novos retries.",
-    "next_safe_step": "Revisar PR C146 com 50 simulações e suíte SAFE; após merge observar próxima execução regular já agendada, sem dispatch de criação adicional. Observar rótulo sanitizado da fase e corrigir causa específica com evidência; evitar duplicação.",
-    "blocker": "Causa específica da exceção genérica de independent-verifier permanece sem prova. Não repetir requests pagas nem criar DRAFT até diagnóstico seguro. Casa READY colisão segue bloqueada. LIVE OFF.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "objective": "C146 implantada: diagnósticos sanitizados por fase do verificador independente, sem retries, sem publicação, sem expor exceções, com evidências D1 oficiais em READ ONLY. Aguarda observação da próxima execução recorrente para causa exata.",
+    "latest_verified_step": "PR #151 integrada na main commit 99f96b1ce9ee982f29d7b8c432f345bf04def4b5. CI #45407555747 SUCCESS: 797/797 testes, 50/50 simulações, WP Casa 24/24 Oficina 21/21 Radar 15/15 e cross-blog guard PASS. D1 Cloudflare oficial SELECT: 1 USED Móveis, 1 USED Casa, 1 READY Casa; SEARCH 2/3 e HTTP 2/3 Móveis em 24/11; leases ativas=0. Verificador não reexecutado, causa remota exata ainda não confirmada.",
+    "next_safe_step": "C147: observar execução programada DRAFT da main com logging sanitizado do verificador, classificar estágio e investigar causa concreta antes de qualquer correção funcional; sem novo dispatch/POST/cota paga. Reconciliar READY Casa com #314 sem consumir. Homologar E2E DRAFT apenas com produto e fonte factual verificáveis. LIVE OFF.",
+    "blocker": "Último verificador independente (#45330112636) falhou antes da instrumentação; causa exata desconhecida. Casa READY colide com DRAFT #314 e não pode ser consumido automaticamente. API Shopee instável; não repetir conversões sem prova. Os jobs SAFE da C146 não criaram artigos.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "0f1bf54e630623faf3275a6b14ff829f3578d1c1",
-    "branch": "fix/v31-c146-autonomous-review-failure-stages-20261124",
+    "base_main_sha": "99f96b1ce9ee982f29d7b8c432f345bf04def4b5",
+    "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -115,7 +115,9 @@
       "https://github.com/adelrib27/blogger-automation1/pull/150",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45398455042",
       "https://github.com/adelrib27/blogger-automation1/commit/748c61601f851d7fa0a6ce88ef969dddf604dbed",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45330112636"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45330112636",
+      "https://github.com/adelrib27/blogger-automation1/pull/151",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45407555747"
     ]
   },
   "next_priorities": [
@@ -195,5 +197,28 @@
     "safe_tests": 789,
     "offline_simulations": 50,
     "next_phase": "C146"
+  },
+  "c146_verified_operational_result": {
+    "phase": "C146",
+    "ci_run_id": 45407555747,
+    "ci_passed": true,
+    "tests_passed": 797,
+    "offline_simulations_passed": 50,
+    "d1_read_only_inventory": {
+      "blogger_moveis_used": 1,
+      "wordpress_casa_used": 1,
+      "wordpress_casa_ready": 1,
+      "moveis_search_budget_used_today": 2,
+      "moveis_search_budget_max_today": 3,
+      "moveis_http_budget_used_today": 2,
+      "moveis_http_budget_max_today": 3,
+      "active_leases": 0
+    },
+    "review_failure_classification": "INSTRUMENTED_AWAITING_NEXT_SCHEDULED_RUN",
+    "confirmed_exception_cause": null,
+    "new_cms_posts_created": 0,
+    "shopee_or_d1_or_r2_writes_by_this_cycle": 0,
+    "live_policy": "pending_policy_approval",
+    "next_phase": "C147"
   }
 }
