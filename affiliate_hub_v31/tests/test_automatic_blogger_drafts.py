@@ -105,7 +105,7 @@ class AutoBloggerDraftTests(unittest.TestCase):
     def test_legacy_title_blocks_blogger_direct_writer_before_ai_or_insert(self):
         api=self._service(2)
         old=article_list(2)
-        old[0]["title"]="Guia de compra: "+NAME
+        old[0]["title"]="Guia da escolha do sofá retrátil 2 lugares suede cinza"
         def listings(**params):
             response=Mock()
             response.execute.return_value={"items":old if "LIVE" in params["status"] else []}
