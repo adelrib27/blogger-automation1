@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  bloquear-destino-inelegivel:
+  chamar-somente-workflow-v31-na-branch-lab:
     if: false
     runs-on: ubuntu-latest
     steps:
