@@ -174,6 +174,33 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                     entry["catalog_candidates_sample"] = result["catalog_candidates"]
                     entry["cached_links_exact_campaign_sample"] = result["cached_exact_campaign"]
                     entry["affiliate_link_verified_for_draft"] = False
+                    if entry["is_primary"]:
+                        items = result.get("items", [])
+                        if not isinstance(items, list) or len(items) > 4:
+                            raise PilotAuditError("pilot_primary_sample_untrusted")
+                        sample = []
+                        for item in items:
+                            sku = item.get("product_key") if isinstance(item, dict) else None
+                            title = item.get("title") if isinstance(item, dict) else None
+                            cached = item.get("cached_for_exact_campaign") if isinstance(item, dict) else None
+                            if (not isinstance(sku, str)
+                                    or not re.fullmatch(r"shopee:[0-9]+:[0-9]+", sku)
+                                    or not isinstance(title, str)
+                                    or not 1 <= len(title) <= 145
+                                    or type(cached) is not bool):
+                                raise PilotAuditError("pilot_primary_sample_untrusted")
+                            safe_title = re.sub(r"\\[nrt]", " ", title)
+                            safe_title = re.sub(r"[\x00-\x1f\x7f]", " ", safe_title).strip()
+                            if not safe_title:
+                                raise PilotAuditError("pilot_primary_sample_untrusted")
+                            sample.append({
+                                "product_key": sku, "title": safe_title,
+                                "cached_for_exact_campaign": cached,
+                                "manufacturer_facts_verified": False,
+                                "cms_legacy_duplicate_checked": False,
+                                "eligible_for_draft_write": False,
+                            })
+                        entry["primary_candidate_sample"] = sample
             finally:
                 db.close()
         check["r2"] = "READ_ONLY_CONFIRMED"
@@ -200,7 +227,10 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                                for field in ("keys", "slugs", "prose"))):
                 raise PilotAuditError("pilot_cms_history_untrusted")
             rows[0]["cms_history_read"] = True
-            rows[0]["cms_history_records_scanned"] = cms["count"]
+            # _check_history devolve numero de slugs V31, e NAO o total
+            # de posts nem a revisao de possiveis duplicatas legadas.
+            rows[0]["cms_v31_prefixed_slugs_detected"] = cms["count"]
+            rows[0]["cms_legacy_duplicate_crosscheck"] = "NOT_PERFORMED"
             # Histórico por si só NÃO equivale a DRAFT V31 confirmado.
             check["cms"] = "AUTHENTICATED_GET_CONFIRMED"
         except Exception:

@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C145",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
@@ -85,17 +85,17 @@
     }
   },
   "active_work": {
-    "phase": "C150",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "C150 concluída: ponte de credenciais legadas Radar estritamente por site dentro do V31 universal, JSON canônico prioritário, autenticada em GET CMS REAL via GitHub SAFE. Nem jobs antigos, nem LIVE reativados. C151 deverá escolher oferta/fonte factual verificável com anti-duplicação antes de um único DRAFT.",
-    "latest_verified_step": "PR #156 integrada commit a26059e412f4e65b51a1675e91c689c94075884c. SAFE CI #45432219242 SUCCESS: 884/884 unitários, 50/50 simulações, WP Casa24/24 Oficina21/21 Radar15/15 e cross-blog PASS. Canário GitHub C148 #45432426087 SUCCESS: AUTHENTICATED_GET_CONFIRMED Radar, D1 READ_ONLY_CONFIRMED, R2 READ_ONLY_CONFIRMED, 7 sites auditados, 4 candidatos amostrados para Radar, 0 links cacheados naquela amostra, D1 Radar READY=0 USED=0, uma reserva Shopee antiga em 24/11. NOVO DRAFT=0 e CMS/D1/R2/Shopee writes=0. O contador cms_history_records_scanned=0 corresponde a slugs V31 (não todos os posts WordPress); legados existentes. Job observe-homologation em push, choose-one/draft/release SKIPPED.",
-    "next_safe_step": "C151: preparar teste real de pré-seleção Radar no catálogo universal R2 sem escrita, cruzando os quatro SKUs e títulos de candidatos com a lista autenticada de posts e DRAFTs legados do WordPress. Corrigir rótulo ambíguo cms_history_records_scanned, validar fonte independente fabricante e link da campanha radarwp, só então passar pelo reviewer e habilitar 1 DRAFT com GET/hash. Manter fila antiga aposentada, LIVE OFF; rotação de Loja Radar suspensa até módulo universal homologado.",
-    "blocker": "CMS Radar autenticado no GitHub C150: resolvido sem intervenção. Pendem fonte factual independente, oferta exata/URL/foto e reconciliação com 37 posts públicos e DRAFTs antigos (não inferir ausência de duplicatas do contador V31=0); cadastro Radar enabled=false e sem profile; nenhum SKU do cache amostrado com link radarwp. C151 deverá avaliar critérios sem forçar API. Loja mensal antiga segue suspensa.",
+    "phase": "C151",
+    "status": "EM_ANDAMENTO",
+    "objective": "C151: tornar auditáveis os SKUs do catálogo R2 para piloto Radar sem converter nem publicar; corrigir o indicador CMS de slugs V31, que não é contagem de posts legados. O mesmo relatório funciona para Blogger e WordPress.",
+    "latest_verified_step": "C150 comprovada: 884 SAFE tests + 50/50 simulações, canário remoto #45432426087 cms AUTHENTICATED_GET_CONFIRMED, D1 e R2 read-only CONFIRMED. Branch C151 introduz até 4 candidatos do catálogo por SKU e título no relatório primário, com manufacturer_facts_verified=false, cms_legacy_duplicate_checked=false, eligible_for_draft_write=false. Substitui ambíguo cms_history_records_scanned por cms_v31_prefixed_slugs_detected e NOT_PERFORMED. Ainda sem PR CI/merge.",
+    "next_safe_step": "Executar PR C151 CI SAFE 50 simulações e canário remoto acionado após merge para listar 4 SKUs. Investigar fontes e CMS legados; escolher um produto não duplicado com fonte independente, verificar oferta e link antes de DRAFT real.",
+    "blocker": "Ainda não foi homologada uma pauta/oferta SKU/fonte independente e não há link radarwp confirmado no cache amostrado. Request Radar.enabled=false, sem perfil factual, LIVE OFF. Mesmo com GET CMS confirmado, slugs V31=0 não prova posts legados ausentes.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "a26059e412f4e65b51a1675e91c689c94075884c",
-    "branch": "main",
+    "base_main_sha": "bf4dcc31641921567b25fa048ffe8f16addb1865",
+    "branch": "feat/v31-c151-primary-candidate-readonly-report-20261124",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -412,5 +412,19 @@
     "active_sites_audited": 7,
     "cms_history_count_definition": "v31_prefix_slug_count_not_total_posts",
     "next_phase": "C151"
+  },
+  "c151_candidate_pilot": {
+    "phase": "C151",
+    "primary": "wordpress_radartechbr",
+    "sample_limit": 4,
+    "exact_campaign": "radarwp",
+    "source": "R2_CATALOG_READ_ONLY",
+    "fact_verified": false,
+    "legacy_cms_crosscheck_verified": false,
+    "draft_enabled": false,
+    "shopee_api_calls": 0,
+    "live_authorized": false,
+    "ci_status": "PENDING",
+    "real_report_status": "PENDING"
   }
 }

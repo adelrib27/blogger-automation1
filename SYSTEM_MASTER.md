@@ -365,6 +365,12 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 - **Próxima etapa:** C151 — provar oferta/URL/foto/SKU e fatos independentes para uma nova pauta Radar; cruzar com posts públicos e drafts legados, converter link apenas quando necessário e com D1, rodar revisão + assinatura + GET/hash, e habilitar **somente DRAFT** mediante evidências. `site_requests.d/wordpress_radartechbr.json.enabled` segue `false`, sem perfil factual; LIVE segue desligado.
 
 
+### C151 — identificar candidatos do catálogo e distinguir histórico legado de slugs V31
+
+- Radar Tech BR permanece piloto inicial configurável; o canário `pilot_homologation.py` consulta R2, D1 e GET CMS em modo read-only para os sete sites ativos. Para o **site primário** escolhido, devolve no máximo quatro SKUs e títulos da biblioteca moderada, com `cached_for_exact_campaign` e três proteções explícitas: `manufacturer_facts_verified=false`, `cms_legacy_duplicate_checked=false` e `eligible_for_draft_write=false`. Nenhuma recomendação é habilitada pela simples listagem.
+- A linha `cms_history_records_scanned` era potencialmente enganosa: `read_draft_history.count` mede **slugs prefixados do V31**, não o total de posts existentes. O relatório passa a expor `cms_v31_prefixed_slugs_detected` e `cms_legacy_duplicate_crosscheck=NOT_PERFORMED`; a verificação de duplicidade com títulos e URLs legados precisa de uma etapa separada antes de criar conteúdo.
+- O módulo é genérico: troca-se `--primary-site-key` para outro Blogger ou WordPress cadastrado, sem duplicar algoritmo por nicho. Não gera links, não altera posts, não consome cota Shopee e não libera DRAFT/LIVE. O histórico de 3 tentativas `radarwp` continua impedindo conversões repetidas do mesmo SKU+campanha por `claim_conversion_attempt`.
+
 ## 9. Roadmap técnico priorizado
 
 ### P0 — Segurança e verdade operacional
