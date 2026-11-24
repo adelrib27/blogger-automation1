@@ -2,6 +2,7 @@
 import json
 import tempfile
 import unittest
+from affiliate_hub_v31.tests.synthetic_site_routes import synthetic_routes
 from pathlib import Path
 from unittest.mock import patch
 
@@ -15,6 +16,9 @@ from affiliate_hub_v31.source_category_index import create_source_category_schem
 
 class ReviewProposalsTests(unittest.TestCase):
     def setUp(self):
+        ctx=synthetic_routes()
+        ctx.__enter__()
+        self.addCleanup(ctx.__exit__,None,None,None)
         temp=tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.db=Path(temp.name)/"state.sqlite3"
@@ -167,7 +171,7 @@ class ReviewProposalsTests(unittest.TestCase):
                 """,("shopee:900:9","feed","health","nutrition","","matched"))
             ledger=EditorialLedger(cat)
             with self.assertRaisesRegex(EditorialError,"product_source_policy_blocked"):
-                ledger.next_brief("blogger_air_fryers","shopee:900:9")
+                ledger.next_brief("test_blogger_air_fryers","shopee:900:9")
             self.assertEqual(ledger.statistics(),{})
             self.assertEqual(cat.stats()["cached_affiliate_links"],0)
 
