@@ -1,0 +1,91 @@
+{
+  "schema": "v31_retired_legacy_radar_workflows/v1",
+  "local_date": "2026-11-24",
+  "source_repository": "adelrib27/blogger-automation1",
+  "source_main_before_changes": "1b0a10b90dac92201364dfb0114300e3325c36a3",
+  "retirement_mode": "remove_workflow_files_from_main_preserve_git_history_and_universal_scripts",
+  "goal": "Only the universal V31 system should own new editorial draft workflows, exact campaign cache and affiliate conversions. Radar Tech BR is the primary homologation site, not a special writer.",
+  "retired_workflows": [
+    {
+      "path": ".github/workflows/radar_editorial_vnext_autonomous.yml",
+      "why": "retired_5x_daily_standalone_article_generator"
+    },
+    {
+      "path": ".github/workflows/radar_editorial_vnext_safe.yml",
+      "why": "retired_standalone_validation_trigger_universal_ci_replaces"
+    },
+    {
+      "path": ".github/workflows/radar_fase3_fila_diaria.yml",
+      "why": "retired_legacy_daily_product_queue"
+    },
+    {
+      "path": ".github/workflows/radar_fase3_publicacao.yml",
+      "why": "retired_legacy_manual_publication_stub"
+    },
+    {
+      "path": ".github/workflows/radar_store_autonomous.yml",
+      "why": "retired_monthly_radar_specific_store_writer"
+    },
+    {
+      "path": ".github/workflows/radar_store_safe.yml",
+      "why": "retired_radar_specific_store_scanner"
+    },
+    {
+      "path": ".github/workflows/v31_radarwp_lg12_20261124_once.yml",
+      "why": "retired_one_shot_radar_affiliate_converter_20261124"
+    },
+    {
+      "path": ".github/workflows/v31_c113_radarwp_arcond_convert_two_once.yml",
+      "why": "retired_one_shot_radar_affiliate_converter"
+    },
+    {
+      "path": ".github/workflows/v31_c88_arcond_convert_exact_once.yml",
+      "why": "retired_one_shot_radar_affiliate_converter"
+    },
+    {
+      "path": ".github/workflows/v31_c92_arcond_midea_9k_convert_once.yml",
+      "why": "retired_one_shot_radar_affiliate_converter"
+    }
+  ],
+  "no_other_site_removed": true,
+  "preserve_site_and_content": true,
+  "preserved_components": [
+    "radar_tech_br/src/self_test.py",
+    "radar_tech_br/src/generate_articles.py",
+    "radar_tech_br/src/publish_generated.py",
+    "affiliate_hub_v31/site_routes.json",
+    "affiliate_hub_v31/catalog.py",
+    "affiliate_hub_v31/CONTINUIDADE_ESTADO.json",
+    "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
+    "affiliate_hub_v31/site_requests.d/wordpress_radartechbr.json"
+  ],
+  "retired_store_writer_note": "The old site-specific monthly Radar Loja scheduler is also retired. Monthly store rotation is NOT claimed as migrated to the article V31 writer. A future universal storefront workflow must be homologated before enabling a new monthly updater.",
+  "historical_attempts_radarwp": [
+    {
+      "day_utc": "2026-11-23",
+      "sku": "shopee:1736335904:58267891881",
+      "status": "D1_ATTEMPT_ONLY_NOT_AFFILIATE_RECEIPT"
+    },
+    {
+      "day_utc": "2026-11-23",
+      "sku": "shopee:889973435:18398298625",
+      "status": "D1_ATTEMPT_ONLY_NOT_AFFILIATE_RECEIPT"
+    },
+    {
+      "day_utc": "2026-11-24",
+      "sku": "shopee:822103155:58265302556",
+      "status": "LG24_LOG_CONFIRMED_SHORTLINK_GENERATED_NO_R2_PERSISTENCE_PROOF",
+      "source_run": 45372082046
+    }
+  ],
+  "historical_shortlink_location": "Existing GitHub Actions #45372082046 logs. Do not publish the URL in a source manifest or call Shopee again as a reconstruction strategy.",
+  "historical_d1_records_preserved": true,
+  "historical_r2_records_preserved": true,
+  "universal_conversion_guard": "claim_conversion_attempt atomically refuses any previously attempted (campaign,SKU) across all UTC days even when cache is missing; other campaigns remain independent.",
+  "radar_universal_route": "wordpress_radartechbr",
+  "radar_universal_campaign": "radarwp",
+  "radar_universal_draft_request_enabled": false,
+  "radar_universal_new_draft_approval": false,
+  "automatic_live_authorized": false,
+  "legacy_restoration_requires_new_review": true
+}
