@@ -483,11 +483,26 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                         return {"site_key": site_key, "status": "NO_NEW_OFFER",
                                 "reason": "pilot_offer_already_present"}
                     continue
+                fingerprint = _fingerprint(selected, profile["query"], ANGLE)
+                _mark_stage("d1_job_check")
+                existing = state.get_job(**tenant, fingerprint=fingerprint)
+                if cap_reached and (existing is None or existing["status"] != "USED"):
+                    continue
+                if existing and not probe and (existing["status"] == "USED"
+                        or state.ready_has_fresh_evidence(**tenant, fingerprint=fingerprint,
+                                                          now_epoch=int(utcnow().timestamp()))):
+                    envelope.load(**tenant, html_sha256=existing["html_sha256"],
+                                  release_public_key_sha256=public_key_sha256)
+                    return {"site_key": site_key, "fingerprint": fingerprint,
+                            "public_key_sha256": public_key_sha256,
+                            "status": existing["status"]}
                 if not catalog.cached_link(selected, route["campaign"]):
+                    # Um job pré-existente SEM link verificável não autoriza
+                    # outra mutação Shopee nem reenvio de conteúdo.
+                    if existing is not None:
+                        raise VerificationError("on_demand_existing_job_missing_cache")
                     if not allow_on_demand or cap_reached or on_demand_attempted:
                         continue
-                    # O histórico CMS foi autenticado antes deste ponto. A
-                    # reserva global D1 evita exceder os limites e retries.
                     on_demand_attempted = True
                     _mark_stage("affiliate_conversion")
                     try:
@@ -508,19 +523,6 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                                 "reason": "conversion_daily_budget_exhausted"}
                     if outcome not in ("CONVERTED", "CACHED"):
                         raise VerificationError("on_demand_conversion_untrusted")
-                fingerprint = _fingerprint(selected, profile["query"], ANGLE)
-                _mark_stage("d1_job_check")
-                existing = state.get_job(**tenant, fingerprint=fingerprint)
-                if cap_reached and (existing is None or existing["status"] != "USED"):
-                    continue
-                if existing and not probe and (existing["status"] == "USED"
-                        or state.ready_has_fresh_evidence(**tenant, fingerprint=fingerprint,
-                                                          now_epoch=int(utcnow().timestamp()))):
-                    envelope.load(**tenant, html_sha256=existing["html_sha256"],
-                                  release_public_key_sha256=public_key_sha256)
-                    return {"site_key": site_key, "fingerprint": fingerprint,
-                            "public_key_sha256": public_key_sha256,
-                            "status": existing["status"]}
                 _mark_stage("offer_affiliate")
                 try:
                     article = verify_offer(policy=policy, profile=profile, route=route, sku=selected,
