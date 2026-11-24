@@ -2,6 +2,7 @@
 import csv
 import tempfile
 import unittest
+from affiliate_hub_v31.tests.synthetic_site_routes import synthetic_routes
 from pathlib import Path
 
 from affiliate_hub_v31.catalog import Catalog
@@ -16,6 +17,9 @@ def paragraphs(keyword):
 
 class DraftAdapterTests(unittest.TestCase):
     def setUp(self):
+        ctx=synthetic_routes()
+        ctx.__enter__()
+        self.addCleanup(ctx.__exit__,None,None,None)
         temp=tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         base=Path(temp.name)
@@ -38,18 +42,18 @@ class DraftAdapterTests(unittest.TestCase):
         self.ledger=EditorialLedger(self.cat)
 
     def test_blogger_draft_requires_approval_and_affiliate(self):
-        brief,key=self.ledger.next_brief("blogger_air_fryers","shopee:10:45")
+        brief,key=self.ledger.next_brief("test_blogger_air_fryers","shopee:10:45")
         with self.assertRaisesRegex(DraftError,"brief_not_approved"):
-            prepare_draft(self.cat,"blogger_air_fryers",key,paragraphs("air fryer"))
+            prepare_draft(self.cat,"test_blogger_air_fryers",key,paragraphs("air fryer"))
         self.ledger.update_status(key,"APPROVED")
         with self.assertRaisesRegex(DraftError,"affiliate_link_not_verified"):
-            prepare_draft(self.cat,"blogger_air_fryers",key,paragraphs("air fryer"))
+            prepare_draft(self.cat,"test_blogger_air_fryers",key,paragraphs("air fryer"))
         self.cat.cache_link("shopee:10:45","airfryers","https://s.shopee.com.br/example")
-        draft=prepare_draft(self.cat,"blogger_air_fryers",key,paragraphs("air fryer"))
+        draft=prepare_draft(self.cat,"test_blogger_air_fryers",key,paragraphs("air fryer"))
         self.assertEqual(draft.platform,"blogger")
         self.assertTrue(draft.meta["isDraft"])
         self.assertIn('rel="nofollow sponsored',draft.content_html)
-        self.assertEqual(draft.meta["blog"]["id"],"9113728635217260884")
+        self.assertEqual(draft.meta["blog"]["id"],"111111111111111111")
         self.assertEqual(draft.status,"draft")
 
     def test_wordpress_draft_is_always_draft_and_escaped(self):
@@ -72,7 +76,7 @@ class DraftAdapterTests(unittest.TestCase):
     def test_old_approved_brief_cannot_bypass_new_site_niche(self):
         # Simula briefing legado criado quando outro blog aceitava Air Fryer.
         # Mesmo com link radarwp válido no cache, a rota ATUAL é soberana.
-        brief,key=self.ledger.next_brief("blogger_air_fryers","shopee:10:45")
+        brief,key=self.ledger.next_brief("test_blogger_air_fryers","shopee:10:45")
         self.ledger.update_status(key,"APPROVED")
         self.cat.cache_link("shopee:10:45","radarwp",
                             "https://s.shopee.com.br/old-cuisine-link")
@@ -84,13 +88,13 @@ class DraftAdapterTests(unittest.TestCase):
             prepare_draft(self.cat,"wordpress_radartechbr",key,paragraphs("air fryer"))
 
     def test_missing_affiliate_and_keyword_blocks(self):
-        brief,key=self.ledger.next_brief("blogger_liquidificadores","shopee:10:46")
+        brief,key=self.ledger.next_brief("test_blogger_liquidificadores","shopee:10:46")
         self.ledger.update_status(key,"APPROVED")
         self.cat.cache_link("shopee:10:46","liquidificadores","https://s.shopee.com.br/abc")
         with self.assertRaisesRegex(DraftError,"seo_keyword_missing_from_body"):
-            prepare_draft(self.cat,"blogger_liquidificadores",key,paragraphs("utensílio"))
+            prepare_draft(self.cat,"test_blogger_liquidificadores",key,paragraphs("utensílio"))
         with self.assertRaisesRegex(DraftError,"body_not_ready"):
-            prepare_draft(self.cat,"blogger_liquidificadores",key,["apenas um parágrafo"])
+            prepare_draft(self.cat,"test_blogger_liquidificadores",key,["apenas um parágrafo"])
 
 if __name__=="__main__":
     unittest.main()

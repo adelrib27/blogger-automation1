@@ -1,10 +1,8 @@
+# V31 C143: owner deleted this Blogger; cron removed and job disabled. DO NOT reenable.
 name: Portal Radar Tech Blogger — Loja Shopee 10:50
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "50 10 22 * *"
-      timezone: "America/Recife"
 
 permissions:
   contents: write
@@ -15,6 +13,7 @@ concurrency:
 
 jobs:
   atualizar-loja:
+    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:

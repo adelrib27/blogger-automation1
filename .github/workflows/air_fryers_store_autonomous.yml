@@ -1,10 +1,8 @@
+# V31 C143: owner deleted this Blogger; cron removed and job disabled. DO NOT reenable.
 name: Air Fryers em Foco — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
-  schedule:
-    # 09:05 America/Recife (UTC-3)
-    - cron: "5 12 4 * *"
   push:
     paths:
       - "air_fryers_store/store_live_kickoff.txt"
@@ -18,6 +16,7 @@ concurrency:
 
 jobs:
   atualizar-loja:
+    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:

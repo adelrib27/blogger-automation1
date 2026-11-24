@@ -1,3 +1,4 @@
+# V31 C143: owner deleted this Blogger; cron removed and job disabled. DO NOT reenable.
 name: V31 Achados da Rotina - Shopee Loja mensal (isolado)
 on:
   pull_request:
@@ -9,9 +10,6 @@ on:
     paths:
       - "achados_da_rotina/rotation_v31.py"
   workflow_dispatch:
-  schedule:
-    # Uma rotação mensal no dia 2 às 09:00 UTC (06:00 Recife); GitHub pode atrasar.
-    - cron: "0 9 2 * *"
 
 permissions:
   contents: read
@@ -22,6 +20,7 @@ concurrency:
 
 jobs:
   rotacao-loja:
+    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED
     runs-on: ubuntu-latest
     timeout-minutes: 16
     env:

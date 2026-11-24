@@ -10,6 +10,7 @@ from .catalog import Catalog
 from .taxonomy import rules
 from .taxonomy import normalize
 from .curation_audit import PROTECTED_ROOTS
+from .editorial_scope_validation import load_policy, load_tombstones
 
 ROUTES_PATH = Path(__file__).with_name("site_routes.json")
 # Cadastro extensível: cada blog novo acrescenta somente um arquivo JSON.
@@ -37,7 +38,16 @@ def sites() -> dict:
     mappings = {}
     campaigns = set()
     identities = set()
+    # C143: impedir que um JSON legado reintroduza um blog que o dono apagou.
+    deny = load_tombstones(load_policy())
+    deleted_ids = {x["blog_id"] for x in deny["deleted_blogs"]}
+    deleted_keys = {x[k] for x in deny["deleted_blogs"]
+                    for k in ("legacy_site_key","old_route_key") if x[k]}
     for route in [*doc.get("sites", []), *extra_routes]:
+        if (route.get("platform") == "blogger"
+                and (str(route.get("identifier")) in deleted_ids
+                     or route.get("site_key") in deleted_keys)):
+            raise ValueError("blogger_deleted_by_owner_route_forbidden")
         required={"site_key","platform","identifier","campaign","allowed_niches","publish_enabled"}
         if not required.issubset(route) or set(route)-required-{"allowed_source_paths"}:
             raise ValueError("Chaves inesperadas em rota")

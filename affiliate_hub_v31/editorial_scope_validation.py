@@ -1,7 +1,7 @@
-"""C140 — guard universal de escopo e 50 simulações OFFLINE de preflight.
+"""V31 C143: current authenticated Blogger/WordPress scope; deleted Blogger denylist.
 
-Nenhuma leitura externa, criação de post ou mutação de campanha. A elegibilidade
-para preflight NUNCA é autorização de DRAFT ou LIVE.
+The C102/C141 historical site manifest is RETIRED. Never use it for planning.
+50 deterministic offline simulations per critical workflow, no network or writes.
 """
 from __future__ import annotations
 
@@ -11,8 +11,9 @@ import re
 from pathlib import Path
 
 POLICY_PATH = Path(__file__).with_name("EDITORIAL_ACTIVE_SCOPE_POLICY.json")
-HISTORICAL_PATH = Path(__file__).with_name("EDITORIAL_GLOBAL_PORTFOLIO_C141.json")
+TOMBSTONES_PATH = Path(__file__).with_name("EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json")
 EXPECTED_SCHEMA = "v31_editorial_active_scope_policy/v1"
+TOMBSTONE_SCHEMA = "v31_deleted_blogger_tombstones_c143/v1"
 REQUIRED_FLAGS = (
     "affiliate_campaign_verified",
     "independent_facts_verified",
@@ -27,13 +28,6 @@ VARIANTS = (
     "cms_duplicate",
     "live_requested",
 )
-OLD_SOURCE_ROUTE = {
-    "site_key": "blogger_ventiladores",
-    "platform": "blogger",
-    "identifier": "4473989735719981382",
-    "campaign": "ventiladores",
-    "publish_enabled": False,
-}
 EXPECTED_BY_CLASS = {
     "registered_active": (
         "PREFLIGHT_ONLY_NOT_AUTHORIZED",
@@ -42,11 +36,10 @@ EXPECTED_BY_CLASS = {
         "CMS_DUPLICATE_OR_CONFLICT",
         "LIVE_NOT_AUTHORIZED",
     ),
-    "unregistered_active": ("ROUTE_NOT_REGISTERED",) * 5,
+    "deleted_by_owner": ("DELETED_BY_OWNER",) * 5,
     "explicitly_excluded": ("EXCLUDED_BY_OWNER",) * 5,
-    "historical_pending": ("PENDING_ACCOUNT_AUTHENTICATION",) * 5,
-    "unregistered_pending": ("ROUTE_NOT_REGISTERED",) * 5,
     "reference_only": ("REFERENCE_ONLY_NOT_V31_DESTINATION",) * 5,
+    "unregistered": ("ROUTE_NOT_REGISTERED",) * 5,
 }
 
 
@@ -54,110 +47,72 @@ class EditorialScopeError(ValueError):
     pass
 
 
+def load_tombstones(policy: dict) -> dict:
+    """Minimal denylist; no post/affiliate history and never a source of offers."""
+    path = policy.get("blogger", {}).get("deleted_tombstones_manifest")
+    if path != "affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json":
+        raise EditorialScopeError("deleted_tombstones_path_untrusted")
+    try:
+        doc = json.loads(TOMBSTONES_PATH.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, ValueError):
+        raise EditorialScopeError("deleted_tombstones_unreadable") from None
+    if (not isinstance(doc, dict) or doc.get("schema") != TOMBSTONE_SCHEMA
+            or doc.get("state") != "DELETED_BY_OWNER_DO_NOT_RECREATE_OR_REAUTHENTICATE"
+            or not isinstance(doc.get("deleted_blogs"), list)):
+        raise EditorialScopeError("deleted_tombstones_schema_invalid")
+    rows = doc["deleted_blogs"]
+    ids, keys, routekeys = set(), set(), set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise EditorialScopeError("deleted_tombstone_row_invalid")
+        bid, key, oldroute = row.get("blog_id"), row.get("legacy_site_key"), row.get("old_route_key")
+        if (not isinstance(bid, str) or not re.fullmatch(r"\d{10,24}", bid)
+                or not isinstance(key, str) or not re.fullmatch(r"[a-z0-9_]{3,50}", key)
+                or oldroute is not None and (
+                    not isinstance(oldroute, str) or not re.fullmatch(r"[a-z0-9_]{3,50}", oldroute))
+                or row.get("deleted_by_owner") is not True
+                or row.get("eligible_for_editorial") is not False
+                or row.get("allow_reenroll") is not False
+                or bid in ids or key in keys or oldroute is not None and oldroute in routekeys):
+            raise EditorialScopeError("deleted_tombstone_identity_or_guard_invalid")
+        ids.add(bid)
+        keys.add(key)
+        if oldroute:
+            routekeys.add(oldroute)
+    if len(rows) != doc.get("deleted_count") or len(rows) != policy.get("blogger", {}).get("deleted_by_owner_count"):
+        raise EditorialScopeError("deleted_tombstone_count_mismatch")
+    active = policy.get("blogger", {}).get("current_targets", [])
+    exclusions = policy.get("blogger", {}).get("exclusions", [])
+    all_current_ids = {x.get("id") for x in active + exclusions}
+    ref_id = doc.get("methodology_only", {}).get("blog_id")
+    if (not isinstance(ref_id, str)
+            or ref_id in ids or ref_id in all_current_ids
+            or ids & all_current_ids
+            or keys & {x.get("site_key") for x in active + exclusions}
+            or routekeys & {x.get("site_key") for x in active + exclusions}):
+        raise EditorialScopeError("deleted_identity_overlaps_current")
+    scope_ids = {x.get("blog_id") for x in doc.get("current_blogger_targets", [])}
+    if scope_ids != {x.get("id") for x in active}:
+        raise EditorialScopeError("deleted_manifest_current_identity_mismatch")
+    owner_exclusion = doc.get("excluded_existing", {})
+    if {owner_exclusion.get("blog_id")} != {e.get("id") for e in exclusions}:
+        raise EditorialScopeError("deleted_manifest_exclusion_mismatch")
+    return doc
+
+
 def load_policy(path: Path = POLICY_PATH) -> dict:
     try:
         policy = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError, UnicodeError):
+    except (OSError, UnicodeError, ValueError):
         raise EditorialScopeError("scope_policy_unreadable") from None
     validate_policy(policy)
     return policy
 
 
-def load_global_inventory(policy: dict) -> dict:
-    """Histórico de IDs C102, nunca uma autorização remota de escrita."""
-    if not isinstance(policy, dict) or policy.get("blogger", {}).get(
-            "historical_inventory_manifest") != (
-            "affiliate_hub_v31/EDITORIAL_GLOBAL_PORTFOLIO_C141.json"):
-        raise EditorialScopeError("portfolio_manifest_untrusted")
-    try:
-        doc = json.loads(HISTORICAL_PATH.read_text(encoding="utf-8"))
-    except (OSError, ValueError, UnicodeError):
-        raise EditorialScopeError("global_portfolio_unreadable") from None
-    if (not isinstance(doc, dict)
-            or doc.get("schema") != "v31_editorial_global_inventory_c141/v1"
-            or not isinstance(doc.get("sites"), list)
-            or not isinstance(doc.get("summary"), dict)):
-        raise EditorialScopeError("global_portfolio_schema_invalid")
-    rows = doc["sites"]
-    if not rows or len(rows) != len({
-            z.get("blog_id") for z in rows if isinstance(z, dict)}):
-        raise EditorialScopeError("global_portfolio_duplicates_or_empty")
-    types = {
-        "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET": 0,
-        "HISTORICALLY_VERIFIED_PENDING_CROSS_ACCOUNT_AUTH": 0,
-        "EXCLUDED_BY_OWNER": 0,
-        "REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION": 0,
-    }
-    identities = set()
-    route_keys = set()
-    for row in rows:
-        if not isinstance(row, dict):
-            raise EditorialScopeError("global_portfolio_row_invalid")
-        key = row.get("legacy_site_key")
-        bid = row.get("blog_id")
-        kind = row.get("current_access_class")
-        route_key = row.get("existing_universal_route")
-        if (not isinstance(key, str)
-                or not re.fullmatch(r"[a-z0-9_]{3,50}", key)
-                or not isinstance(bid, str) or not bid.isdecimal()
-                or kind not in types
-                or type(row.get("editorial_candidate")) is not bool
-                or (route_key is not None and
-                    (not isinstance(route_key, str) or
-                     not re.fullmatch(r"[a-z0-9_]{3,50}", route_key)))
-                or not isinstance(row.get("c102_verified_live_post_id"), str)
-                or not row["c102_verified_live_post_id"].isdecimal()
-                or not isinstance(row.get("c102_verified_live_url"), str)
-                or not row["c102_verified_live_url"].startswith("https://")):
-            raise EditorialScopeError("global_portfolio_row_invalid")
-        if row["editorial_candidate"] != (kind in {
-                "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET",
-                "HISTORICALLY_VERIFIED_PENDING_CROSS_ACCOUNT_AUTH"}):
-            raise EditorialScopeError("global_portfolio_candidate_mismatch")
-        if key in identities or (route_key is not None and route_key in route_keys):
-            raise EditorialScopeError("global_portfolio_key_reused")
-        identities.add(key)
-        if route_key:
-            route_keys.add(route_key)
-        types[kind] += 1
-    expected = {
-        "history_total": len(rows),
-        "global_candidates": sum(r["editorial_candidate"] for r in rows),
-        "currently_authenticated_candidates": types["AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET"],
-        "cross_account_pending": types["HISTORICALLY_VERIFIED_PENDING_CROSS_ACCOUNT_AUTH"],
-        "owner_excluded": types["EXCLUDED_BY_OWNER"],
-        "reference_only": types["REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION"],
-        "routed_candidates": sum(r["editorial_candidate"] and bool(r["existing_universal_route"]) for r in rows),
-        "without_route": sum(r["editorial_candidate"] and not r["existing_universal_route"] for r in rows),
-    }
-    if expected != doc["summary"]:
-        raise EditorialScopeError("global_portfolio_summary_mismatch")
-    policy_counts = policy.get("snapshot_counts", {})
-    if (policy_counts.get("blogger_targets") != expected["global_candidates"]
-            or policy_counts.get("blogger_connected_verified_subset") != expected[
-                "currently_authenticated_candidates"]
-            or policy_counts.get("blogger_candidates_pending_current_account_auth") != expected[
-                "cross_account_pending"]
-            or policy_counts.get("reference_only") != expected["reference_only"]
-            or policy_counts.get("blogger_excluded") != expected["owner_excluded"]):
-        raise EditorialScopeError("global_portfolio_policy_counts_mismatch")
-    auth_ids = {r["blog_id"] for r in rows if r["current_access_class"] ==
-                "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET"}
-    policy_ids = {p.get("id") for p in policy.get("blogger", {}).get("current_targets", [])}
-    if auth_ids != policy_ids or None in policy_ids:
-        raise EditorialScopeError("global_portfolio_connected_identity_mismatch")
-    exclusions = {x.get("id") for x in policy.get("blogger", {}).get("exclusions", [])}
-    inventory_exclusions = {r["blog_id"] for r in rows if r["current_access_class"] ==
-                             "EXCLUDED_BY_OWNER"}
-    if inventory_exclusions != exclusions:
-        raise EditorialScopeError("global_portfolio_owner_exclusion_mismatch")
-    return doc
-
-
 def validate_policy(policy: dict) -> None:
     if (not isinstance(policy, dict) or policy.get("schema") != EXPECTED_SCHEMA
             or policy.get("enrollment") !=
-            "ALL_CURRENTLY_ACTIVE_BLOGGER_ACROSS_ACCOUNTS_AND_WORDPRESS_EXCEPT_EXPLICIT_EXCLUSIONS"
+                "CURRENTLY_AUTHENTICATED_ACTIVE_BLOGGER_AND_WORDPRESS_EXCEPT_DELETED_OR_EXCLUDED"
             or policy.get("rollout", {}).get("global_third_party_writes_now_authorized") is not False
             or policy.get("rollout", {}).get("do_not_activate_live_during_onboarding") is not True):
         raise EditorialScopeError("scope_contract_invalid")
@@ -176,45 +131,55 @@ def validate_policy(policy: dict) -> None:
         *(dict(x, platform="blogger") for x in policy.get("blogger", {}).get("current_targets", [])),
         *(dict(x, platform="wordpress") for x in policy.get("wordpress", {}).get("current_targets", [])),
     ]
-    excluded = policy.get("blogger", {}).get("exclusions", [])
-    if not targets or not excluded:
+    exclusions = policy.get("blogger", {}).get("exclusions", [])
+    if not targets or not exclusions:
         raise EditorialScopeError("active_targets_or_exclusions_missing")
-    all_keys, all_ids = [], []
-    for entry in targets + excluded:
+    allkeys, allids = [], []
+    for entry in targets + exclusions:
         key = entry.get("site_key")
-        identifier = entry.get("id") if "id" in entry else entry.get("url")
+        identifier = entry.get("id", entry.get("url"))
         if (not isinstance(key, str) or not re.fullmatch(r"[a-z0-9_]{3,50}", key)
                 or not isinstance(identifier, str) or not identifier
-                or (entry in targets and type(entry.get("route_registered")) is not bool)):
+                or entry in targets and type(entry.get("route_registered")) is not bool):
             raise EditorialScopeError("scope_identity_invalid")
-        all_keys.append(key)
-        all_ids.append(identifier)
-    if len(set(all_keys)) != len(all_keys) or len(set(all_ids)) != len(all_ids):
+        allkeys.append(key)
+        allids.append(identifier)
+    if len(set(allkeys)) != len(allkeys) or len(set(allids)) != len(allids):
         raise EditorialScopeError("scope_duplicate_identity")
     if any(e.get("exclude_from_new_v31_editorial_article_automation") is not True
-           for e in excluded):
+           for e in exclusions):
         raise EditorialScopeError("scope_exclusion_not_enforced")
-    # A validação das 50 simulações sempre lê TODAS as identidades C102.
-    load_global_inventory(policy)
+    counts = policy.get("snapshot_counts", {})
+    if (counts.get("blogger_targets") != len(policy["blogger"]["current_targets"])
+            or counts.get("wordpress_targets") != len(policy["wordpress"]["current_targets"])
+            or counts.get("total_current_targets") != len(targets)
+            or counts.get("blogger_deleted_by_owner") != policy["blogger"].get("deleted_by_owner_count")
+            or counts.get("deleted_blogger_pending_authentication") != 0):
+        raise EditorialScopeError("active_snapshot_counts_invalid")
+    load_tombstones(policy)
 
 
-def scope_status(policy: dict, route: dict | None,
-                 *, site_key: str | None = None) -> str:
-    """Escopo para QUALQUER site pelo mesmo contrato, sem exceção por nicho."""
+def scope_status(policy: dict, route: dict | None, *, site_key: str | None = None) -> str:
+    """Fail closed for deleted IDs even if a caller spoofs the site key."""
     validate_policy(policy)
     if route is not None and not isinstance(route, dict):
         return "ROUTE_UNTRUSTED"
-    key = site_key if site_key is not None else (
-        route.get("site_key") if route else None)
-    if not isinstance(key, str) or not re.fullmatch(r"[a-z0-9_]{3,50}", key):
-        return "SITE_ID_INVALID"
-    route_id = route.get("identifier") if route else None
+    key = site_key if site_key is not None else route.get("site_key") if route else None
+    rid = route.get("identifier") if route else None
+    tombstones = load_tombstones(policy)
+    if any((rid is not None and rid == x["blog_id"])
+           or key in (x["legacy_site_key"], x["old_route_key"])
+           for x in tombstones["deleted_blogs"]):
+        return "DELETED_BY_OWNER"
     excluded = policy["blogger"]["exclusions"]
-    if any(key == e["site_key"] or (route_id is not None and route_id == e["id"])
-           for e in excluded):
+    if any(key == x["site_key"] or rid is not None and rid == x["id"] for x in excluded):
         return "EXCLUDED_BY_OWNER"
+    if rid is not None and rid == tombstones["methodology_only"]["blog_id"]:
+        return "REFERENCE_ONLY_NOT_V31_DESTINATION"
     if route is None:
         return "ROUTE_NOT_REGISTERED"
+    if not isinstance(key, str) or not re.fullmatch(r"[a-z0-9_]{3,50}", key):
+        return "SITE_ID_INVALID"
     if route.get("site_key") != key:
         return "ROUTE_IDENTITY_MISMATCH"
     if (route.get("platform") not in ("blogger", "wordpress")
@@ -222,39 +187,26 @@ def scope_status(policy: dict, route: dict | None,
             or not isinstance(route.get("campaign"), str)
             or not re.fullmatch(r"[a-z0-9_-]{1,32}", route["campaign"])):
         return "ROUTE_UNSAFE"
-    possible = [
+    entries = [
         *(dict(x, platform="blogger") for x in policy["blogger"]["current_targets"]),
         *(dict(x, platform="wordpress") for x in policy["wordpress"]["current_targets"]),
     ]
-    match = next((x for x in possible if x["site_key"] == key), None)
-    if match is None:
-        # Uma conta parcial não significa que os outros blogs deixaram de
-        # existir. C102 os documentou por ID e LIVE; o acesso atual é pendente.
-        historic = next((entry for entry in load_global_inventory(policy)["sites"]
-                         if entry["blog_id"] == route_id), None)
-        if historic and historic["editorial_candidate"]:
-            existing = historic.get("existing_universal_route")
-            if existing and existing != key:
-                return "ROUTE_IDENTITY_MISMATCH"
-            return "PENDING_ACCOUNT_AUTHENTICATION"
-        if historic and historic["current_access_class"] == "REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION":
-            return "REFERENCE_ONLY_NOT_V31_DESTINATION"
-        return "NOT_IN_VERIFIED_ACTIVE_INVENTORY"
-    expected_id = match.get("id", match.get("url"))
-    if match["platform"] != route["platform"] or expected_id != route_id:
+    target = next((x for x in entries if x["site_key"] == key), None)
+    if target is None:
+        return "NOT_IN_CURRENT_VERIFIED_ACTIVE_INVENTORY"
+    if target["platform"] != route["platform"] or target.get("id", target.get("url")) != rid:
         return "ROUTE_IDENTITY_MISMATCH"
-    if match["route_registered"] is not True:
+    if target["route_registered"] is not True:
         return "ROUTE_NOT_VERIFIED"
     return "IN_SCOPE"
 
 
 def is_route_in_active_scope(route: dict) -> bool:
-    """Usado nos pontos de entrada universais de requests; não autoriza LIVE."""
+    """Used by universal request queue, not a LIVE release permission."""
     return scope_status(load_policy(), route) == "IN_SCOPE"
 
 
-def evaluate_preflight(policy: dict, route: dict | None,
-                       quality: dict, *, site_key: str) -> dict:
+def evaluate_preflight(policy: dict, route: dict | None, quality: dict, *, site_key: str) -> dict:
     status = scope_status(policy, route, site_key=site_key)
     if status == "IN_SCOPE":
         if not isinstance(quality, dict) or any(
@@ -285,82 +237,59 @@ def evaluate_preflight(policy: dict, route: dict | None,
 
 
 def simulation_cases(policy: dict, *, cycle_index: int = 0) -> list[dict]:
-    """50 verificações sem rede: 28 Blogger históricos + 3 WP e riscos globais.
+    """50 offline cases: all 24 deleted IDs every cycle + 7 current sites + risks.
 
-    Blogs adicionais permanecem suportados: se houver mais de 31 destinos,
-    os lotes seguintes rotacionam com cycle_index sem ampliar o limite 50.
+    Future additional sites rotate through the 23 available active slots.
+    No fixed limit on number of sites in the universal architecture.
     """
     validate_policy(policy)
-    inventory = load_global_inventory(policy)
-    actors = []
-    for row in inventory["sites"]:
-        if not row["editorial_candidate"]:
-            continue
-        key = row["existing_universal_route"] or row["legacy_site_key"]
-        ident = row["blog_id"]
-        route = ({
-            "site_key": key, "platform": "blogger", "identifier": ident,
-            "campaign": "simulatedcamp", "publish_enabled": False,
-        } if row["existing_universal_route"] else None)
-        if row["current_access_class"] == "AUTHENTICATED_CONNECTED_ACCOUNT_SUBSET":
-            kind = "registered_active"
-        elif route is None:
-            kind = "unregistered_pending"
-        else:
-            kind = "historical_pending"
-        actors.append((key, route, kind))
-    for wp in policy["wordpress"]["current_targets"]:
-        key = wp["site_key"]
-        route = ({
-            "site_key": key, "platform": "wordpress", "identifier": wp["url"],
-            "campaign": "simulatedcamp", "publish_enabled": False,
-        } if wp["route_registered"] else None)
-        actors.append((key, route, "registered_active" if route else "unregistered_pending"))
-    if not actors:
-        raise EditorialScopeError("no_real_portfolio_candidates")
-    # Um ciclo não é limitado ao tamanho da conta Google conectada.
-    # O inventário integral é validado antes; se houver >31 blogs futuros,
-    # a escolha de 31 gira entre ciclos sem que nenhum seja 'inativo'.
-    if type(cycle_index) is not int or cycle_index < 0 or cycle_index > 1_000_000_000:
+    if type(cycle_index) is not int or not 0 <= cycle_index <= 1_000_000_000:
         raise EditorialScopeError("invalid_simulation_cycle_index")
-    cycle = cycle_index
-    selected = (actors[cycle % len(actors):] + actors[:cycle % len(actors)])[:31]
-    while len(selected) < 31:
-        selected.append(actors[len(selected) % len(actors)])
-    excluded = policy["blogger"]["exclusions"][0]
-    excluded_route = {
-        "site_key": excluded["site_key"], "platform": "blogger",
-        "identifier": excluded["id"], "campaign": "historicalcamp",
-        "publish_enabled": False,
-    }
-    reference = next((r for r in inventory["sites"] if r["current_access_class"]
-                      == "REFERENCE_ONLY_NOT_V31_EDITORIAL_DESTINATION"), None)
-    if reference is None:
-        raise EditorialScopeError("universal_reference_identity_missing")
-    reference_route = {
-        "site_key": "blogger_reference_only_not_a_destination",
-        "platform": "blogger", "identifier": reference["blog_id"],
-        "campaign": "historicalcamp", "publish_enabled": False,
-    }
-    extras = [
-        (excluded["site_key"], excluded_route, "explicitly_excluded"),
-        ("blogger_reference_only_not_a_destination", reference_route, "reference_only"),
-        ("blogger_future_site_pending", None, "unregistered_pending"),
+    guard = load_tombstones(policy)
+    active = [
+        *(dict(x, platform="blogger") for x in policy["blogger"]["current_targets"]),
+        *(dict(x, platform="wordpress") for x in policy["wordpress"]["current_targets"]),
     ]
-    # 31 originais + 5 exclusões + 5 referências negadas + 5 futuros + 4
-    # repetições de riscos independentes = 50, todos sem API.
-    selection = [(a, VARIANTS[i % len(VARIANTS)])
-                 for i, a in enumerate(selected)]
-    selection += [(a, v) for a in extras for v in VARIANTS]
-    active = [a for a in actors if a[2] == "registered_active"]
     if not active:
-        raise EditorialScopeError("no_verified_active_pilot")
-    selection += [(active[i % len(active)], VARIANTS[(i + 1) % len(VARIANTS)])
-                  for i in range(4)]
-    if len(selection) != 50:
-        raise EditorialScopeError("fifty_simulation_matrix_invalid")
-    cases = []
-    for actor, variant in selection:
+        raise EditorialScopeError("no_current_site_targets")
+    eligible_actors = []
+    for x in active:
+        route = {"site_key": x["site_key"], "platform": x["platform"],
+                 "identifier": x.get("id", x.get("url")),
+                 "campaign": "simulatedcamp", "publish_enabled": False}
+        eligible_actors.append((x["site_key"], route, "registered_active"))
+    size = min(len(eligible_actors), 23)
+    start = cycle_index % len(eligible_actors)
+    rotated = (eligible_actors[start:] + eligible_actors[:start])[:size]
+    cases = [(actor, VARIANTS[(cycle_index + i) % 5])
+             for i, actor in enumerate(rotated)]
+    for x in guard["deleted_blogs"]:
+        key = x["old_route_key"] or x["legacy_site_key"]
+        route = {"site_key": key, "platform": "blogger",
+                 "identifier": x["blog_id"],
+                 "campaign": "legacyfixture", "publish_enabled": False}
+        cases.append(((key, route, "deleted_by_owner"), "complete_simulated_preflight"))
+    excluded = policy["blogger"]["exclusions"][0]
+    cases.append(((excluded["site_key"], {
+        "site_key": excluded["site_key"], "platform": "blogger",
+        "identifier": excluded["id"], "campaign": "legacyfixture",
+        "publish_enabled": False}, "explicitly_excluded"), "complete_simulated_preflight"))
+    cases.append((("blogger_reference_only", {
+        "site_key": "blogger_reference_only", "platform": "blogger",
+        "identifier": guard["methodology_only"]["blog_id"],
+        "campaign": "legacyfixture", "publish_enabled": False},
+        "reference_only"), "complete_simulated_preflight"))
+    cases.append((("blogger_new_future_without_route", None, "unregistered"),
+                  "complete_simulated_preflight"))
+    if len(cases) > 50:
+        raise EditorialScopeError("too_many_base_simulation_cases")
+    i = 0
+    while len(cases) < 50:
+        actor = eligible_actors[(cycle_index + i) % len(eligible_actors)]
+        cases.append((actor, VARIANTS[(i + 1) % 5]))
+        i += 1
+    out = []
+    for i, (actor, variant) in enumerate(cases):
         key, route, kind = actor
         quality = {flag: True for flag in REQUIRED_FLAGS}
         quality["manual_live_requested"] = False
@@ -372,14 +301,12 @@ def simulation_cases(policy: dict, *, cycle_index: int = 0) -> list[dict]:
             quality["cms_no_duplicate_or_conflict"] = False
         elif variant == "live_requested":
             quality["manual_live_requested"] = True
-        index = VARIANTS.index(variant)
-        cases.append({
-            "id": f"simulation_{len(cases)+1:02d}",
+        out.append({
+            "id": f"simulation_{i + 1:02d}",
             "site_key": key, "route": route, "quality": quality,
-            "variant": variant,
-            "expected": EXPECTED_BY_CLASS[kind][index],
+            "variant": variant, "expected": EXPECTED_BY_CLASS[kind][VARIANTS.index(variant)],
         })
-    return cases
+    return out
 
 
 def run_simulations(*, count: int = 50, policy: dict | None = None,
@@ -387,43 +314,41 @@ def run_simulations(*, count: int = 50, policy: dict | None = None,
     if type(count) is not int or not 10 <= count <= 50:
         raise EditorialScopeError("simulation_count_must_be_10_to_50")
     policy = load_policy() if policy is None else policy
-    inventory = load_global_inventory(policy)
     cases = simulation_cases(policy, cycle_index=cycle_index)[:count]
-    counts = {}
+    totals = {}
     for case in cases:
-        actual = evaluate_preflight(policy, case["route"], case["quality"],
-                                    site_key=case["site_key"])
-        if (actual["status"] != case["expected"]
-                or any((actual["allows_cms_write"], actual["allows_live"],
-                        actual["allows_affiliate_mutation"], actual["network_calls"]))):
+        result = evaluate_preflight(policy, case["route"], case["quality"], site_key=case["site_key"])
+        if result["status"] != case["expected"] or any((
+                result["allows_cms_write"], result["allows_live"],
+                result["allows_affiliate_mutation"], result["network_calls"])):
             raise EditorialScopeError("simulation_failed_closed_" + case["id"])
-        counts[actual["status"]] = counts.get(actual["status"], 0) + 1
+        totals[result["status"]] = totals.get(result["status"], 0) + 1
+    tombstones = load_tombstones(policy)
     return {
-        "phase": "C141",
+        "phase": "C143",
         "mode": "OFFLINE_SIMULATIONS_NO_REMOTE_WRITES",
-        "executed": len(cases),
-        "passed": len(cases),
-        "failed": 0,
+        "executed": len(cases), "passed": len(cases), "failed": 0,
         "cycle_index": cycle_index,
-        "distinct_candidate_sites_simulated": len({
-            x["site_key"] for x in cases if x["site_key"] not in {
-                "blogger_reference_only_not_a_destination",
-                "blogger_future_site_pending",
-                policy["blogger"]["exclusions"][0]["site_key"],
-            }
-        }),
-        "outcomes": counts,
-        "global_coverage_audit": inventory["summary"],
-        "cms_writes": 0,
-        "r2_writes": 0,
-        "d1_writes": 0,
-        "affiliate_mutations": 0,
-        "live_authorized": False,
+        "distinct_candidate_sites_simulated": len(set(c["site_key"] for c in cases) - {
+            x["old_route_key"] or x["legacy_site_key"] for x in tombstones["deleted_blogs"]
+        } - {"blogger_reference_only", "blogger_new_future_without_route",
+             policy["blogger"]["exclusions"][0]["site_key"]}),
+        "current_active_sites": len(policy["blogger"]["current_targets"]) + len(policy["wordpress"]["current_targets"]),
+        "deleted_blogger_blocked": len(tombstones["deleted_blogs"]),
+        "global_coverage_audit": {
+            "global_candidates": len(policy["blogger"]["current_targets"]),
+            "cross_account_pending": 0,
+            "deleted_by_owner": len(tombstones["deleted_blogs"]),
+            "current_wordpress": len(policy["wordpress"]["current_targets"]),
+        },
+        "outcomes": totals,
+        "cms_writes": 0, "d1_writes": 0, "r2_writes": 0,
+        "affiliate_mutations": 0, "live_authorized": False,
     }
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="V31 10 a 50 simulações universais offline")
+    parser = argparse.ArgumentParser(description="V31 50 simulations current CMS and 24 deleted tombstones")
     parser.add_argument("--cases", type=int, default=50)
     parser.add_argument("--cycle-index", type=int, default=0)
     args = parser.parse_args()

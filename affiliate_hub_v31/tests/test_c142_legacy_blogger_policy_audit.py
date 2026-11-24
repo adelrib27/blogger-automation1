@@ -60,25 +60,46 @@ class BloggerRetiredWorkflowAuditTests(unittest.TestCase):
             checker.main()
         result=output.getvalue()
         self.assertIn("BLOGGER_POLICY_REPO_AUDIT_PASS",result)
-        self.assertIn("17/17 pares presentes protegidos",result)
+        self.assertIn("17/17 pares existentes protegidos",result)
 
-    def test_8_monthly_store_schedules_remain_guarded(self):
-        expected = {
-            "casa_em_ordem_store_autonomous.yml": "5 8 8 * *",
-            "escolha_certa_online_store_autonomous.yml": "20 8 13 * *",
-            "achados_que_valem_store_autonomous.yml": "50 9 3 * *",
-            "guia_achados_ofertas_store_autonomous.yml": "5 10 15 * *",
-            "moda_ofertas_store_autonomous.yml": "20 10 18 * *",
-            "achadinhos_beleza_store_autonomous.yml": "35 10 1 * *",
-            "radar_tech_blogger_store_autonomous.yml": "50 10 22 * *",
-            "cozinha_sem_complicacao_store_autonomous.yml": "5 11 11 * *",
-        }
+    def test_deleted_blogger_monthly_schedules_are_disabled(self):
+        disabled = (
+            "casa_em_ordem_store_autonomous.yml",
+            "escolha_certa_online_store_autonomous.yml",
+            "achados_que_valem_store_autonomous.yml",
+            "guia_achados_ofertas_store_autonomous.yml",
+            "moda_ofertas_store_autonomous.yml",
+            "achadinhos_beleza_store_autonomous.yml",
+            "radar_tech_blogger_store_autonomous.yml",
+        )
         audit_source=Path(checker.__file__).read_text(encoding="utf-8")
-        for name, cron in expected.items():
+        for name in disabled:
             with self.subTest(name=name):
-                wf=(checker.ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
-                self.assertIn('cron: "' + cron + '"', wf)
-                self.assertIn('cron: "' + cron + '"', audit_source)
+                workflow=(checker.ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
+                self.assertNotIn("  schedule:",workflow)
+                self.assertIn("V31_C143_OWNER_DELETED_JOB_DISABLED", workflow)
+                self.assertIn("V31_C143_OWNER_DELETED_JOB_DISABLED", audit_source)
+        active=(checker.ROOT / ".github/workflows" /
+                "cozinha_sem_complicacao_store_autonomous.yml").read_text(encoding="utf-8")
+        self.assertIn('cron: "5 11 11 * *"',active)
+        checker.audit_deleted_blogger_writers()
+
+    def test_all_nineteen_deleted_writer_jobs_skip_and_have_no_schedule(self):
+        self.assertEqual(len(checker.DELETED_BLOGGER_WRITER_WORKFLOWS),19)
+        checker.audit_deleted_blogger_writers()
+
+    def test_old_writer_reappearance_of_schedule_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            for rel in checker.DELETED_BLOGGER_WRITER_WORKFLOWS:
+                path=root / rel
+                path.parent.mkdir(parents=True,exist_ok=True)
+                path.write_text("jobs:\n  test:\n    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED\n",encoding="utf-8")
+            checker.audit_deleted_blogger_writers(root=root)
+            target=root / checker.DELETED_BLOGGER_WRITER_WORKFLOWS[0]
+            target.write_text("  schedule:\n    - cron: \"0 0 * * *\"\n" + target.read_text(),encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit,"cron automático"):
+                checker.audit_deleted_blogger_writers(root=root)
 
     def test_legacy_reference_policy_auditor_is_still_readonly(self):
         # A infraestrutura antiga permanece intacta; só a asserção

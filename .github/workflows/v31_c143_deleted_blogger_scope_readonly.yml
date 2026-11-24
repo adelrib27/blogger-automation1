@@ -1,0 +1,37 @@
+name: V31 C143 - 24 Blogger apagados, escopo atual e 50 simulacoes (READ ONLY)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c143_deleted_blogger_scope_readonly.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-c143-deleted-blogger-readonly
+  cancel-in-progress: false
+jobs:
+  audit-no-deleted-writers:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: C143 - Simular 50 riscos inclusive 24 Blogger apagados
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
+      - name: C143 - 17 testes de apagados, rotas, 19 workflows sem cron
+        run: python -m unittest affiliate_hub_v31.tests.test_c143_deleted_blogger_cleanup -v
+      - name: C143 - 50 testes de casos, idem sem LIVE
+        run: python -m unittest affiliate_hub_v31.tests.test_c140_50_universal_scope_simulations -q
+      - name: Auditoria de politica Blogger sem writers apagados
+        run: |
+          PYTHONPATH=src python src/blogger_policy_guard_self_test.py
+          PYTHONPATH=src python src/blogger_policy_repo_audit.py
+      - name: Resumo
+        run: |
+          echo 'C143: 4 Blogger atuais + 3 WordPress; 24 Blogger apagados pelo dono bloqueados por ID/rota; 19 workflows de Loja antiga sem schedule e com jobs if:false. 50 simulacoes offline, zero publicacoes.' >> "$GITHUB_STEP_SUMMARY"

@@ -53,6 +53,30 @@ RETIRED_ACHADOS_CASA_PAIR = (
     ".github/workflows/achados_casa_store_autonomous.yml",
 )
 
+# C143: workflows que apontavam para Blogger APAGADOS pelo dono;
+# todos têm o cron REMOVIDO e o job BLOQUEADO. Falhar se reativarem.
+DELETED_BLOGGER_WRITER_WORKFLOWS = (
+    ".github/workflows/achadinhos_beleza_store_autonomous.yml",
+    ".github/workflows/achados_que_valem_store_autonomous.yml",
+    ".github/workflows/air_fryers_store_autonomous.yml",
+    ".github/workflows/atelie_criativo_rotation_v31.yml",
+    ".github/workflows/blogger_liquidificador_store_autonomous.yml",
+    ".github/workflows/cabelos_store_autonomous.yml",
+    ".github/workflows/casa_em_ordem_store_autonomous.yml",
+    ".github/workflows/conecta_achados_store_autonomous.yml",
+    ".github/workflows/eletroportateis_store_autonomous.yml",
+    ".github/workflows/escolha_certa_online_store_autonomous.yml",
+    ".github/workflows/guia_achados_ofertas_store_autonomous.yml",
+    ".github/workflows/moda_ofertas_store_autonomous.yml",
+    ".github/workflows/radar_tech_blogger_store_autonomous.yml",
+    ".github/workflows/ventiladores_store_autonomous.yml",
+    ".github/workflows/vitrine_pratica_store_autonomous.yml",
+    ".github/workflows/achados_da_rotina_rotation_v31.yml",
+    ".github/workflows/mala_pronta_rotation_daily_v31.yml",
+    ".github/workflows/pedal_leve_rotation_v31.yml",
+    ".github/workflows/ventiladores_em_foco_store_autonomous.yml",
+)
+
 LEGACY_MANUAL_WORKFLOWS = {
     ".github/workflows/limpeza_store_autonomous.yml": "limpeza-inteligente-store-live",
     ".github/workflows/ventiladores_em_foco_store_autonomous.yml": "ventiladores-store-live",
@@ -92,6 +116,18 @@ def read(rel: str) -> str:
     return p.read_text(encoding="utf-8", errors="ignore")
 
 
+def audit_deleted_blogger_writers(*, root: Path = ROOT) -> None:
+    for rel in DELETED_BLOGGER_WRITER_WORKFLOWS:
+        path = root / rel
+        if not path.is_file():
+            fail("writer antigo apagado ou alterado sem revisão: " + rel)
+        body = path.read_text(encoding="utf-8")
+        if re.search(r"(?m)^\s*schedule\s*:", body):
+            fail("blog apagado voltou a ter cron automático: " + rel)
+        if not re.search(r"(?m)^    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED$", body):
+            fail("blog apagado voltou a ter job executável: " + rel)
+
+
 def audit_retired_achados_casa_pair(*, root: Path = ROOT) -> None:
     """Só permite os DOIS workflows aposentados ausentes; não permite reaparição silenciosa."""
     for rel in RETIRED_ACHADOS_CASA_PAIR:
@@ -126,7 +162,7 @@ def audit_casa_schedule() -> None:
     rel = ".github/workflows/casa_em_ordem_store_autonomous.yml"
     text = read(rel)
     required = [
-        'cron: "5 8 8 * *"', 'timezone: "America/Recife"',
+        "V31_C143_OWNER_DELETED_JOB_DISABLED",
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-quarto">Ver quarto</a>',
@@ -142,7 +178,7 @@ def audit_escolha_schedule() -> None:
     rel = ".github/workflows/escolha_certa_online_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "20 8 13 * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED",
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-limpeza">Ver limpeza</a>',
@@ -160,7 +196,7 @@ def audit_achados_que_valem_schedule() -> None:
     rel = ".github/workflows/achados_que_valem_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "50 9 3 * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED",
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-utilidades">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-ferramentas">Ver ferramentas</a>',
@@ -178,7 +214,7 @@ def audit_guia_schedule() -> None:
     rel = ".github/workflows/guia_achados_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "5 10 15 * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED",
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-eletroportateis">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-iluminacao-decoracao">Ver iluminação</a>',
@@ -196,7 +232,7 @@ def audit_moda_schedule() -> None:
     rel = ".github/workflows/moda_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "20 10 18 * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED",
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Beleza &amp; Cuidados</h3>',
         'href="#bls-moda-feminina">Ver moda feminina</a>',
@@ -217,7 +253,7 @@ def audit_achadinhos_schedule() -> None:
     rel = ".github/workflows/achadinhos_beleza_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "35 10 1 * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", "V31_C143_OWNER_DELETED_JOB_DISABLED",
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Cuidados Pessoais</h3>',
         'href="#bls-skincare">Ver skincare</a>',
@@ -239,8 +275,7 @@ def audit_radar_schedule() -> None:
     text = read(rel)
     required = [
         "workflow_dispatch:",
-        'cron: "50 10 22 * *"',
-        'timezone: "America/Recife"',
+        "V31_C143_OWNER_DELETED_JOB_DISABLED",
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         "PUBLIC_HTML_ENTITY_NORMALIZATION_2026_11_02",
         "Portal Radar Tech — tecnologia e achados práticos para a rotina",
@@ -347,6 +382,7 @@ def audit_legacy_identity() -> None:
 
 def main() -> None:
     audit_retired_achados_casa_pair()
+    audit_deleted_blogger_writers()
     audit_workflows()
     audit_casa_schedule()
     audit_escolha_schedule()
@@ -360,7 +396,7 @@ def main() -> None:
     audit_cookie_safety()
     audit_legacy_identity()
     print("BLOGGER_POLICY_REPO_AUDIT_PASS")
-    print("SAFE/LIVE 17/17 pares presentes protegidos; par Achados para Casa aposentado DEVE permanecer ausente; schedules finais validados até Cozinha Sem Complicação 11:05 America/Recife; writers legados manual-only; cookies nativos preservados.")
+    print("SAFE/LIVE 17/17 pares existentes protegidos; 19 writers de Blogger apagados sem cron e com job bloqueado; Cozinha atual mantém cron mensal; par antigo Achados para Casa ausente; cookies nativos preservados.")
 
 
 if __name__ == "__main__":
