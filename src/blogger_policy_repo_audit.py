@@ -126,7 +126,7 @@ def audit_casa_schedule() -> None:
     rel = ".github/workflows/casa_em_ordem_store_autonomous.yml"
     text = read(rel)
     required = [
-        'cron: "5 8 * * *"', 'timezone: "America/Recife"',
+        'cron: "5 8 8 * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-quarto">Ver quarto</a>',
@@ -142,7 +142,7 @@ def audit_escolha_schedule() -> None:
     rel = ".github/workflows/escolha_certa_online_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "20 8 * * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "20 8 13 * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-organizacao">Ver organização</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-limpeza">Ver limpeza</a>',
@@ -160,7 +160,7 @@ def audit_achados_que_valem_schedule() -> None:
     rel = ".github/workflows/achados_que_valem_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "50 9 * * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "50 9 3 * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-utilidades">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-ferramentas">Ver ferramentas</a>',
@@ -178,7 +178,7 @@ def audit_guia_schedule() -> None:
     rel = ".github/workflows/guia_achados_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "5 10 * * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "5 10 15 * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<a class="bls-btn bls-btn-main" href="#bls-cozinha-eletroportateis">Ver cozinha</a>',
         '<a class="bls-btn bls-btn-soft" href="#bls-iluminacao-decoracao">Ver iluminação</a>',
@@ -196,7 +196,7 @@ def audit_moda_schedule() -> None:
     rel = ".github/workflows/moda_ofertas_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "20 10 * * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "20 10 18 * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Beleza &amp; Cuidados</h3>',
         'href="#bls-moda-feminina">Ver moda feminina</a>',
@@ -217,7 +217,7 @@ def audit_achadinhos_schedule() -> None:
     rel = ".github/workflows/achadinhos_beleza_store_autonomous.yml"
     text = read(rel)
     required = [
-        "workflow_dispatch:", 'cron: "35 10 * * *"', 'timezone: "America/Recife"',
+        "workflow_dispatch:", 'cron: "35 10 1 * *"', 'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         '<h3>Cuidados Pessoais</h3>',
         'href="#bls-skincare">Ver skincare</a>',
@@ -239,7 +239,7 @@ def audit_radar_schedule() -> None:
     text = read(rel)
     required = [
         "workflow_dispatch:",
-        'cron: "50 10 * * *"',
+        'cron: "50 10 22 * *"',
         'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         "PUBLIC_HTML_ENTITY_NORMALIZATION_2026_11_02",
@@ -266,7 +266,7 @@ def audit_cozinha_schedule() -> None:
     text = read(rel)
     required = [
         "workflow_dispatch:",
-        'cron: "5 11 * * *"',
+        'cron: "5 11 11 * *"',
         'timezone: "America/Recife"',
         "SCHEDULE_ENABLED_AFTER_VALIDATION_2026_11_02",
         "PUBLIC_RATE_LIMIT_RETRY_2026_11_02",
