@@ -3,6 +3,7 @@ import csv
 import json
 import tempfile
 import unittest
+from affiliate_hub_v31.tests.synthetic_site_routes import synthetic_routes
 from pathlib import Path
 
 from affiliate_hub_v31.catalog import Catalog
@@ -14,6 +15,9 @@ from affiliate_hub_v31.source_category_index import import_source_categories
 
 class LaunchPlanTests(unittest.TestCase):
     def setUp(self):
+        ctx=synthetic_routes()
+        ctx.__enter__()
+        self.addCleanup(ctx.__exit__,None,None,None)
         tmp=tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         root=Path(tmp.name)
@@ -53,7 +57,7 @@ class LaunchPlanTests(unittest.TestCase):
         with Catalog(self.db) as cat:
             first=cat.stats()
             plan=preview_site_launch(cat,topic="Air Fryer",platform="blogger",
-                                     site_key="blogger_air_fryers")
+                                     site_key="test_blogger_air_fryers")
             after=cat.stats()
         self.assertEqual(first,after)
         self.assertTrue(plan["registered_site"])
@@ -123,13 +127,13 @@ class LaunchPlanTests(unittest.TestCase):
             cases=[
                 dict(platform="pinterest"),
                 dict(platform="blogger",campaign="outra"),
-                dict(platform="wordpress",site_key="blogger_air_fryers"),
+                dict(platform="wordpress",site_key="test_blogger_air_fryers"),
                 dict(platform="blogger",site_key="ghost"),
-                dict(platform="blogger",site_key="blogger_air_fryers",
+                dict(platform="blogger",site_key="test_blogger_air_fryers",
                      campaign="wrongcampaign"),
-                dict(platform="blogger",site_key="blogger_air_fryers",
+                dict(platform="blogger",site_key="test_blogger_air_fryers",
                      max_items=0),
-                dict(platform="blogger",site_key="blogger_air_fryers",
+                dict(platform="blogger",site_key="test_blogger_air_fryers",
                      max_per_shop=0),
             ]
             for case in cases:
@@ -139,10 +143,10 @@ class LaunchPlanTests(unittest.TestCase):
     def test_sanitized_site_summary_does_not_leak_site_campaign_or_products(self):
         with Catalog(self.db) as cat:
             plan=preview_site_launch(cat,topic="Air Fryer",platform="blogger",
-                                     site_key="blogger_air_fryers")
+                                     site_key="test_blogger_air_fryers")
         report=summarize_site_launch(plan)
         raw=json.dumps(report,ensure_ascii=False)
-        for forbidden in ("Air Fryer","blogger_air_fryers","airfryers",
+        for forbidden in ("Air Fryer","test_blogger_air_fryers","airfryers",
                           "shopee:","s.shopee.com.br","old-airfryers",
                           "Digital 5 litros"):
             self.assertNotIn(forbidden,raw)
