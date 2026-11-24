@@ -39,9 +39,6 @@ class WorkflowGatesTests(unittest.TestCase):
             ("oficina_editorial_autonomous.yml",
              "V31_OFICINA_R2_FALLBACK_ENABLED","v31_oficina_discovery",
              "oficina_garagem/src/shopee_oportunidades_oficina.py",2),
-            ("radar_fase3_fila_diaria.yml",
-             "V31_RADAR_R2_FALLBACK_ENABLED","v31_radar_discovery",
-             "src/fase3_fila_radar.py build",5),
         ]:
             with self.subTest(workflow=workflow):
                 text=(ROOT/".github/workflows"/workflow).read_text()
@@ -59,9 +56,15 @@ class WorkflowGatesTests(unittest.TestCase):
         casa=(ROOT/".github/workflows/casa_editorial_generate_schedule.yml").read_text()
         self.assertIn("src/editorial_cross_blog_guard.py --project casa_decoracao",casa)
         self.assertIn("V31_EDITORIAL_C9_RELEASE_ENABLED == 'true'",casa)
-        radar=(ROOT/".github/workflows/radar_fase3_fila_diaria.yml").read_text()
-        self.assertIn("python -m affiliate_hub_v31.radar_legacy_adapter",radar)
-        self.assertIn("Validar fila completa de cinco categorias",radar)
+        # C149: Radar's standalone Fase3 queue is retired, not silently
+        # carried over as a separate writer; the universal V31 engine owns it.
+        radar=ROOT/".github/workflows/radar_fase3_fila_diaria.yml"
+        self.assertFalse(radar.exists())
+        archive=json.loads((ROOT/
+            "affiliate_hub_v31/EDITORIAL_LEGACY_RADAR_RETIREMENT_C149.json"
+        ).read_text(encoding="utf-8"))
+        self.assertIn(".github/workflows/"+radar.name,
+                      {row["path"] for row in archive["retired_workflows"]})
 
     def test_reuse_requires_three_independent_flags(self):
         for path,blog_flag in (
