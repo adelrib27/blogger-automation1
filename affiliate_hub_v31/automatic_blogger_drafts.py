@@ -28,6 +28,7 @@ from .routing import sites
 from .site_request_queue import load_requests
 from .site_launch_plan import preview_site_launch
 from .taxonomy import normalize
+from .legacy_cms_collision import audit_candidate_history
 
 MAX_DRAFTS_PER_RUN=1
 WORKERS_MODEL="@cf/meta/llama-3.3-70b-instruct-fp8-fast"
@@ -378,6 +379,12 @@ def draft_next(*,site_key:str,execute:bool=False,
             return {"mode":"C55_DRY_RUN","status":plan["status"],
                     "publication_calls":0,"draft_creation_calls":0,
                     "campaign_from_registry":True}
+        initial_collision = audit_candidate_history(
+            platform="blogger", posts=history,
+            product_key=plan["product_key"], article_title=plan["title"],
+        )
+        if initial_collision["status"] != "NO_DETECTED_COLLISION":
+            raise AutoDraftError("blogger_legacy_collision_review_required")
         generator=workers_writer or generate_original_paragraphs
         body=generator(product_name=plan["product_title"],
             topic=plan["keyword"],
@@ -391,6 +398,12 @@ def draft_next(*,site_key:str,execute:bool=False,
             request=request,existing_posts=recent)
         if again.get("product_key")!=plan["product_key"]:
             raise AutoDraftError("blogger_draft_race_detected")
+        latest_collision = audit_candidate_history(
+            platform="blogger", posts=recent,
+            product_key=plan["product_key"], article_title=plan["title"],
+        )
+        if latest_collision["status"] != "NO_DETECTED_COLLISION":
+            raise AutoDraftError("blogger_legacy_collision_review_required")
         result=service.posts().insert(
             blogId=route["identifier"],
             body={"kind":"blogger#post",
