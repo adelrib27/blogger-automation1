@@ -1,11 +1,11 @@
 {
   "schema": "v31_editorial_active_scope_policy/v1",
   "decided_local_date": "2026-11-23",
-  "status": "UNIVERSAL_MULTICONNECTION_COVERAGE_RECONCILED_NOT_ALL_ACCOUNTS_AUTHENTICATED",
+  "status": "OWNER_CONFIRMED_24_DELETED_BLOGGER_C143_ACTIVE_INVENTORY_ONLY",
   "priority": "QUALITY_BEFORE_VOLUME",
-  "enrollment": "ALL_CURRENTLY_ACTIVE_BLOGGER_ACROSS_ACCOUNTS_AND_WORDPRESS_EXCEPT_EXPLICIT_EXCLUSIONS",
+  "enrollment": "CURRENTLY_AUTHENTICATED_ACTIVE_BLOGGER_AND_WORDPRESS_EXCEPT_DELETED_OR_EXCLUDED",
   "blogger": {
-    "source": "C102 four source batches (30 distinct authenticated blog IDs / LIVE article readbacks on 2026-11-23), plus current Blogger Bridge V2 and Achados list_blogs (same one connection, 6 IDs); eight historical get_blog checks rejected outside this connection. No claim of full cross-account present access.",
+    "source": "Blogger Bridge V2 and Achados connector list_blogs, both same connected account 2026-11-23, 6 accessible: 4 V31 targets, Ar-Condicionado excluded, Vida Pet methodological reference only. Owner explicitly confirms all 24 prior historical candidates were deleted.",
     "source_total_reachable": 6,
     "current_targets": [
       {
@@ -43,15 +43,11 @@
         "do_not_delete_without_separate_command": true
       }
     ],
-    "legacy_inventory_note": "C141 CORRECTION: Four entries in current_targets are only CMS-authenticated subset of one connected Blogger account. C102 proved 30 distinct production Blogger identities (all had LIVE readbacks on 2026-11-23). User wants ALL currently active, not four. Twenty-four eligible historical identities remain PENDING_ACCOUNT_AUTHENTICATION, not 'inactive' or deleted. Ar-Condicionado excluded. The historical Vida Pet Prática example is architectural method only, no V31 special standalone project/route/target; existing CMS and legacy workflows untouched. C103 proposal to freeze 23 blogs was NEVER executed and is superseded by latest user decision.",
-    "future_connected_active_blogs": "Account-by-account reconciliation, verify CMS blog ID and author permissions and register authentic site route/campaign/profile/request; no fixed number. Never consider out-of-current-account a reason to call a site inactive.",
-    "current_targets_connection_scope": "SUBSET_ONLY_CURRENTLY_AUTHENTICATED_IN_THIS_BLOGGER_CONNECTION_NOT_THE_COMPLETE_UNIVERSAL_PORTFOLIO",
-    "historical_inventory_manifest": "affiliate_hub_v31/EDITORIAL_GLOBAL_PORTFOLIO_C141.json",
-    "historical_editorial_count": 30,
-    "global_editorial_candidates": 28,
-    "historical_candidates_pending_authentication": 24,
-    "historical_candidates_existing_universal_route": 20,
-    "historical_candidates_need_route": 8
+    "legacy_inventory_note": "C143 OVERRIDES C141: all 24 historical Blogger candidates previously labeled pending authentication were DELETED by owner. C141 manifest is RETIRED and MUST NOT be loaded as active portfolio. Do not reauthenticate, recover, onboard or publish to deleted identities. Four current Blogger are real V31 targets, plus three WordPress. Ar-Condicionado excluded but still accessible. Vida Pet Pratica remains universal engineering reference ONLY, not standalone editorial project/target.",
+    "future_connected_active_blogs": "New future Blogger may join only after current authenticated CMS ownership validation, exact new ID not in deleted tombstones, actual campaign and universal quality gates. No fixed limit.",
+    "current_targets_connection_scope": "FOUR_CURRENTLY_VERIFIED_EDITORIAL_BLOGGER_NOT_A_LIMIT_FOR_NEW_FUTURE_BLOGS",
+    "deleted_tombstones_manifest": "affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json",
+    "deleted_by_owner_count": 24
   },
   "wordpress": {
     "source": "Authenticated GET posts from three connected WordPress endpoints (Casa e Decoração, Oficina & Garagem, Radar Tech BR) as of 2026-11-23",
@@ -87,7 +83,7 @@
     "per_site_daily_rate_limits_without_global_article_count_cap"
   ],
   "rollout": {
-    "strategy": "all_authenticated_active_editorial_sites_across_accounts_one_by_one_DRAFT_quality_gate_no_fixed_blog_limit",
+    "strategy": "SITE_BY_SITE_DRAFT_HOMOLOGATION_OF_4_CURRENT_BLOGGER_AND_3_WORDPRESS_PLUS_NEW_VERIFIED_FUTURE",
     "global_third_party_writes_now_authorized": false,
     "do_not_activate_live_during_onboarding": true,
     "live_activation": "REQUIRES_SUCCESSFUL_E2E_HOMOLOGATION_AND_EXPLICIT_FINAL_USER_AUTHORIZATION",
@@ -98,20 +94,22 @@
     ],
     "do_not_invent_unverified_campaign_for_any_site": true,
     "generic_site_identity_gate": "Every new Blogger/WordPress editorial destination must be a user-authorized active CMS site verified and explicitly added to the universal policy; named methodological references are not destinations.",
-    "global_inventory_status": "HISTORICALLY_DOCUMENTED_28_BLOGGER_3_WORDPRESS__ONLY_FOUR_BLOGGER_AUTHENTICATED_BY_CURRENT_CONNECTOR__24_PENDING_ACCOUNT_VERIFICATION"
+    "global_inventory_status": "C143_4_BLOGGER_CURRENT_3_WORDPRESS_24_HISTORICALLY_DELETED_BY_OWNER_NOT_PENDING",
+    "block_deleted_blogger_ids": true
   },
   "snapshot_counts": {
-    "blogger_targets": 28,
+    "blogger_targets": 4,
     "blogger_excluded": 1,
+    "blogger_reference_only": 1,
     "wordpress_targets": 3,
-    "total_current_targets": 31,
+    "total_current_targets": 7,
     "blogger_connected_verified_subset": 4,
-    "blogger_candidates_pending_current_account_auth": 24,
-    "blogger_historical_documented_production": 30,
-    "reference_only": 1,
-    "global_total_is_currently_active_confirmed": false
+    "blogger_deleted_by_owner": 24,
+    "deleted_blogger_pending_authentication": 0,
+    "global_total_is_currently_active_confirmed": true,
+    "future_blogs_allowed_after_verification": true
   },
-  "notes": "C141 supersedes invalid C139/C140 4/7 global coverage claim. GitHub C102 proves 30 distinct historical production Blogger with LIVE posts, of which 28 are eligible for current universal editorial coverage after excluding owner Ar-Condicionado and method-only Vida Pet reference. Four authenticated in available connection, 24 require distinct account authentication. Three WordPress are currently authenticated. 31 is a planning candidate tally, NOT confirmation of 31 active credentials today nor a permanent maximum. No automatic LIVE release.",
+  "notes": "C143 authoritative latest decision: 24 Blogger historic candidates were deleted by owner, NOT pending. Four connected active Blogger targets + three WordPress; Ar-Condicionado excluded; Vida Pet used solely as universal methodology (existing CMS record not a special project). Count 7 is a current snapshot, not permanent cap; deleted 24 remain blocked. C102/C141 past checklists are audit-only.",
   "universal_reference_methodology": {
     "origin_context": "C69 merger of the ideas/methods from a prior Vida Pet Prática reference into V31 universally; the reference itself is NOT a V31 editorial site, pipeline or separate project",
     "architectural_status": "FUSED_INTO_ONE_UNIVERSAL_BLOGGER_WORDPRESS_V31_ENGINE_NOT_SEPARATE_SUBPROJECT",
