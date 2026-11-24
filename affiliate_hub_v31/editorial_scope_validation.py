@@ -399,7 +399,7 @@ def run_simulations(*, count: int = 50, policy: dict | None = None,
             raise EditorialScopeError("simulation_failed_closed_" + case["id"])
         counts[actual["status"]] = counts.get(actual["status"], 0) + 1
     return {
-        "phase": "C140",
+        "phase": "C141",
         "mode": "OFFLINE_SIMULATIONS_NO_REMOTE_WRITES",
         "executed": len(cases),
         "passed": len(cases),
