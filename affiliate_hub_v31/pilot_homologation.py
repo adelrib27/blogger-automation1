@@ -219,6 +219,10 @@ def main() -> int:
         print("V31_PILOT_READINESS_FAILED_CLOSED")
         return 2
     print("V31_PILOT_READINESS=" + json.dumps(output, ensure_ascii=False, sort_keys=True))
+    # Em teste real, uma fonte inacessível torna a homologação incompleta.
+    # Nunca publicar status SUCCESS de canário se CMS, D1 ou R2 não responder.
+    if args.real_readonly and output["status"] != "READ_ONLY_SOURCES_CONFIRMED_NOT_DRAFT_AUTHORIZED":
+        return 3
     return 0
 
 
