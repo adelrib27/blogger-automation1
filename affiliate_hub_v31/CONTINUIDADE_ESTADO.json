@@ -262,5 +262,39 @@
     "on_demand_attempts_per_review": 1,
     "in_cycle_live_e2e_confirmed": false,
     "next_phase": "C148"
+  },
+  "radartechbr_live_wordpress_audit_20261124": {
+    "site": "https://radartechbr.com.br",
+    "verified_admin_connections": [
+      "WPVibe"
+    ],
+    "post_count_published": 37,
+    "category_counts_after_changes": {
+      "tecnologia": 16,
+      "guias_de_compra": 21,
+      "ar_condicionado": 0
+    },
+    "completed": [
+      "wp_template #65: prior/next navigation now taxonomy category",
+      "post #324: two dead internal links replaced with existing guias-tecnologia and computacao hub URLs",
+      "post #324: original Shopee-image asset imported as media #399 and set as featured; duplicate body figure removed, attribution retained",
+      "post #324: affiliate button and disclosure preserved, public HTML verified",
+      "post #238: ventilador de teto moved to Tecnologia without changing URL",
+      "category #1: legacy editorial description clarified, slug preserved",
+      "five homepage carousel highlights reviewed as technology relevant",
+      "LiteSpeed Cache purged and public post HTML re-read"
+    ],
+    "remaining_nonblocking": [
+      "Do not create 301s, delete posts, or noindex legacy content without exact destination and traffic/indexation evidence",
+      "Future product-specific posts for Smartphones, Computacao, TVs via V31 only after factual/commercial eligibility and autonomous SAFE validation",
+      "No new verified commercial price/freight/stock specifics for Shopee item 1579483292:22694332797; listing unreachable from verification source"
+    ],
+    "cms_post_writes": 2,
+    "template_edits": 2,
+    "taxonomy_edits": 2,
+    "media_attachments_created": 1,
+    "livesite_changed": true,
+    "v31_automatic_live_authorized": false,
+    "checkpoint_master": "SYSTEM_MASTER.md"
   }
 }
