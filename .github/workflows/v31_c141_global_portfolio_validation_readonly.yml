@@ -1,0 +1,63 @@
+name: V31 C141 - Cobertura Blogger multicontas e 50 simulacoes (sem writes)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c141_global_portfolio_validation_readonly.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-c141-global-portfolio-offline-readonly
+  cancel-in-progress: false
+
+jobs:
+  verify-global-portfolio-no-writes:
+    if: >-
+      github.repository == 'adelrib27/blogger-automation1' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: C141 — 18 verificacoes extras de inventario, rotas e limites
+        run: |
+          python -m unittest affiliate_hub_v31.tests.test_c141_global_blogger_portfolio -v
+          python -m unittest affiliate_hub_v31.tests.test_c140_50_universal_scope_simulations -q
+      - name: C141 — executar 50 cenarios e auditar todos os 30 IDs C102
+        run: |
+          set -euo pipefail
+          python -m affiliate_hub_v31.editorial_scope_validation --cases 50
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from affiliate_hub_v31.editorial_scope_validation import load_policy, load_global_inventory
+          policy=load_policy()
+          portfolio=load_global_inventory(policy)
+          summary=portfolio["summary"]
+          assert summary["history_total"]==30 and summary["global_candidates"]==28
+          assert summary["currently_authenticated_candidates"]==4
+          assert summary["cross_account_pending"]==24
+          assert len(portfolio["wordpress"])==3
+          live=json.loads(Path("affiliate_hub_v31/autonomous_live_policy.json").read_text())
+          assert live["activation"]=="pending_policy_approval"
+          print("C141_PORTFOLIO_READONLY=" + json.dumps({
+              "history_blogger":30,"global_editorial_candidates":28,
+              "currently_connected_verified_subset":4,
+              "cross_account_pending":24,"wordpress":3,
+              "owner_excluded":1,"reference_only":1,
+              "live_authorized":False,"cms_writes":0,
+              "d1_writes":0,"r2_writes":0,
+          },sort_keys=True))
+          PY
+      - name: Resumo de seguranca
+        run: |
+          echo 'C141: 30 identidades Blogger historicas, 28 candidatas, 24 aguardando autenticacao multicontas; 3 WP; 50 simulacoes offline; LIVE OFF; sem escrita CMS/D1/R2.' >> "$GITHUB_STEP_SUMMARY"
