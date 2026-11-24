@@ -25,6 +25,10 @@ O sistema não promete tráfego, vendas, comissão, posição em buscadores ou d
 4. Evitar cruzamento entre blogs/campanhas, repetição de artigos, consumo duplicado de jobs e publicação indevida.
 5. Expandir a produção por site de forma controlada, com observabilidade e sem teto global artificial de artigos.
 
+## 1.1. C153 — Independência comercial
+
+C153: fila comercial regular não depende de fonte factual, template ou revisão de artigo. Perfil factual é prioridade opcional, não veto. Mantêm-se moderação, origem, campanha real, escopo, cache, reserva D1 na fila diária e single writer; a recuperação pontual editorial continua restrita. LIVE e flags de DRAFT inalterados. PR #160 mesclada em 60db4b0eda1c216a6ed34e028d5e264d904807ef; CI 45448688104: 922 testes e 50 simulações PASS. Sem nova conversão real confirmada; dispatch indisponível no conector GitHub atual. A próxima execução regular deve ser auditada antes de qualquer retry.
+
 ## 2. Arquitetura lógica
 
 ```text
