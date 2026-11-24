@@ -87,13 +87,13 @@
     "phase": "C144",
     "status": "EM_ANDAMENTO",
     "objective": "C144 identity correction implemented: distinguish 5th active existing Blogger Vida Pet Prática (not V31-onboarded) from universal C69 methodology. Protect deleted 24 and seven routed V31 sites. Next C145 validate campaign/route or advance eligible DRAFT safely; LIVE OFF.",
-    "latest_verified_step": "C144 PR #147 merged SHA e81595124e93ac57c4461b0161c60def0cb8f1bd; Blogger API get_blog Vida Pet id 8052455848487624244 and two list_blogs confirm real active site; policy now CMS_ACTIVE_ONBOARDING_REQUIRED, no writer; 768 tests PASS + 50 simulations at #45301938515; Blogger Móveis draft GET remains draft. All 24 deleted identities blocked, 19 legacy writers remain OFF. Continuity run #45300690268 SUCCESS. No CMS/Shopee/R2/D1 writes.",
-    "next_safe_step": "C145: Reconcile Vida Pet real Blogger CMS with independently verified V31 route+Shopee campaign; never infer campaign from its methodology origin. Until fully onboarded, keep status CMS_ACTIVE_ONBOARDING_REQUIRED and block drafts. For 4 Blogger+3 WordPress already routed, run 50 simulations, exact SKU/image/affiliate/evidence/SEO/dedup before any single CMS DRAFT E2E. Diagnose LAB Shopee SafeScanError fatiador legumes from #45300343177 separately; no blind retry. LIVE OFF.",
+    "latest_verified_step": "C144 PR #147 merged SHA e81595124e93ac57c4461b0161c60def0cb8f1bd; Blogger API get_blog Vida Pet id 8052455848487624244 and two list_blogs confirm real active site; policy now CMS_ACTIVE_ONBOARDING_REQUIRED, no writer; 768 tests PASS + 50 simulations at #45301938515; Blogger Móveis draft GET remains draft. All 24 deleted identities blocked, 19 legacy writers remain OFF. Continuity run #45300690268 SUCCESS. No CMS/Shopee/R2/D1 writes. Blogger Vida Pet list_published_posts=8 LIVE and list_drafts=1 pre-existing Loja DRAFT id 7332800716046515902 (no edits).",
+    "next_safe_step": "C145: Reconcile Vida Pet real Blogger CMS with independently verified V31 route+Shopee campaign; never infer campaign from its methodology origin. Until fully onboarded, keep status CMS_ACTIVE_ONBOARDING_REQUIRED and block drafts. For 4 Blogger+3 WordPress already routed, run 50 simulations, exact SKU/image/affiliate/evidence/SEO/dedup before any single CMS DRAFT E2E. Diagnose LAB Shopee SafeScanError fatiador legumes from #45300343177 separately; no blind retry. LIVE OFF. Preserve pre-existing Vida Pet Loja DRAFT #7332800716046515902; no duplicate.",
     "blocker": "Vida Pet Prática CMS is active but V31 route/campaign unverified; do not fabricate credentials, link or writer. LAB #45300343177 lacked safe fatiador legumes offers. WP Casa READY collides with draft #314; do not consume; WP Casa #321 remote GET unavailable in this session, do not assume absence.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "c40bb5ea2c78edf45d6b24e16f211c92617e2555",
+    "base_main_sha": "cdb52a3b71f6464293ad120c89de25492a8bbf22",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -150,7 +150,10 @@
       "blogger_vida_pet_get_blog": "active_blog_verified",
       "blogger_moveis_draft_id": "4106024906916105222",
       "blogger_moveis_status": "draft",
-      "wordpress_casa_drafts": "remote_get_not_confirmed_in_this_session"
+      "wordpress_casa_drafts": "remote_get_not_confirmed_in_this_session",
+      "blogger_vida_pet_published_count": 8,
+      "blogger_vida_pet_drafts_count": 1,
+      "blogger_vida_pet_preexisting_loja_draft_id": "7332800716046515902"
     },
     "published_articles_in_c144": 0,
     "live_activation": "pending_policy_approval",
