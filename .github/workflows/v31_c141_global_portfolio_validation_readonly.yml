@@ -35,7 +35,7 @@ jobs:
       - name: C141 — executar 50 cenarios e auditar todos os 30 IDs C102
         run: |
           set -euo pipefail
-          python -m affiliate_hub_v31.editorial_scope_validation --cases 50
+          python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
           python - <<'PY'
           import json
           from pathlib import Path
