@@ -1,10 +1,8 @@
+# V31 C143: owner deleted this Blogger; cron removed and job disabled. DO NOT reenable.
 name: Eletroportáteis na Cozinha — Loja Shopee LIVE
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "5 9 12 * *"
-      timezone: "America/Recife"
   push:
     paths:
       - "eletroportateis_store/store_live_kickoff.txt"
@@ -18,6 +16,7 @@ concurrency:
 
 jobs:
   atualizar-loja:
+    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
