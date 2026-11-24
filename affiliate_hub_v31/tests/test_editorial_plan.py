@@ -2,6 +2,7 @@
 import csv
 import tempfile
 import unittest
+from affiliate_hub_v31.tests.synthetic_site_routes import synthetic_routes
 from pathlib import Path
 
 from affiliate_hub_v31.catalog import Catalog
@@ -9,6 +10,11 @@ from affiliate_hub_v31.editorial_plan import plan
 
 
 class PlannerTests(unittest.TestCase):
+    def setUp(self):
+        ctx=synthetic_routes()
+        ctx.__enter__()
+        self.addCleanup(ctx.__exit__,None,None,None)
+
     def test_reserves_unique_briefs_and_reuses_products(self):
         with tempfile.TemporaryDirectory() as d:
             base=Path(d)
@@ -21,8 +27,8 @@ class PlannerTests(unittest.TestCase):
                                  "imageUrl":"https://img.example.invalid/a.jpg"})
             with Catalog(base/"state.db") as cat:
                 cat.import_csv(feed,"feed1")
-                first=plan(cat,"blogger_air_fryers",1)
-                second=plan(cat,"blogger_air_fryers",1)
+                first=plan(cat,"test_blogger_air_fryers",1)
+                second=plan(cat,"test_blogger_air_fryers",1)
                 self.assertEqual(first["reserved_for_review"],1)
                 self.assertEqual(second["reserved_for_review"],1)
                 result=cat.db.execute("SELECT COUNT(DISTINCT product_key),COUNT(DISTINCT title),COUNT(DISTINCT angle) FROM editorial_briefs").fetchone()
@@ -35,7 +41,7 @@ class PlannerTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 plan(c,"pinterest",1)
             with self.assertRaises(ValueError):
-                plan(c,"blogger_air_fryers",0)
+                plan(c,"test_blogger_air_fryers",0)
 
 
 if __name__ == "__main__":
