@@ -209,7 +209,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 campaign=route["campaign"]
                 plan=preview_site_launch(
                     cat,topic=request["topic"],platform=request["platform"],
-                    site_key=key,max_items=(24 if request["articles"] is None else request["articles"]),max_per_shop=1)
+                    site_key=key,max_items=(24 if request["articles"] is None else request["articles"]),max_per_shop=1, commercial_only=True)
                 if not plan["registered_site"] or plan["can_publish"] is not False:
                     raise RequestQueueError("request_plan_unsafe")
                 before_campaign[campaign]=cat.db.execute(
@@ -218,9 +218,8 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 ready=plan["cached_for_campaign"]
                 available=[]
                 approved = plan["approved_catalog_candidates"]
-                # A rota migrada só consome uma cota de conversão em produtos
-                # que já têm caminho comprovável (fabricante/modelo ou GTIN).
-                # Outros blogs continuam com a fila universal anterior.
+                # Perfil factual é prioridade opcional; nunca bloqueia cache comercial.
+                # A recuperação pontual mantém os seus gates independentes.
                 preferred = (list(conversion_priority_keys(
                     cat, route, verified_routes.get(key, {})))
                     if key in migrated_sites else [])
@@ -232,7 +231,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 pending_profiles = {sku for sku in profiled if cat.cached_link(sku, campaign) is None}
                 if pending_profiles or pilot_sku:
                     wider = preview_site_launch(cat, topic=request["topic"], platform=request["platform"],
-                                                site_key=key, max_items=24, max_per_shop=4)
+                                                site_key=key, max_items=24, max_per_shop=4, commercial_only=True)
                     priority = [item for item in wider["approved_catalog_candidates"]
                                 if item["product_key"] in pending_profiles]
                     priority_keys = {item["product_key"] for item in priority}
@@ -246,9 +245,8 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 if pilot_sku:
                     # A operação de um piloto permanece exatamente isolada.
                     preferred = [sku for sku in preferred if sku == pilot_sku]
-                elif key in migrated_sites:
-                    # Sem fonte confiável, não desperdiçar quota Shopee em
-                    # ofertas que o verificador autônomo não poderá autorizar.
+                elif target_site_key is not None:
+                    # Recuperação pontual do writer continua restrita ao SKU exato.
                     approved = []
                 covered = {item["product_key"] for item in approved}
                 priority = [{"product_key": sku, "affiliate_status": "requires_conversion"}

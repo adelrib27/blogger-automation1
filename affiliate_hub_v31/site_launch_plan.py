@@ -26,7 +26,7 @@ class SiteLaunchError(ValueError):
 def preview_site_launch(
     catalog: Catalog, *, topic: str, platform: str,
     site_key: str | None=None, campaign: str | None=None,
-    max_items: int=12, max_per_shop: int=1,
+    max_items: int=12, max_per_shop: int=1, commercial_only: bool=False,
 ) -> dict:
     """Prepara a intenção de compra sem criar site, converter ou publicar.
 
@@ -94,7 +94,7 @@ def preview_site_launch(
         if item["affiliate_url"] is not None and campaign is None:
             raise SiteLaunchError("campaign_link_leak")
         editorial=None
-        if registered:
+        if registered and not commercial_only:
             try:
                 brief=make_brief(site_key,item["product_key"],item["title"],
                                 category,niche,"criterios")

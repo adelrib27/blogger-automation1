@@ -41,7 +41,7 @@ def _candidates(catalog: Catalog, *, site_key: str, topic: str,
     campaign=route["campaign"]
     plan=preview_site_launch(catalog,topic=topic,
         platform=route["platform"],site_key=site_key,
-        max_items=24,max_per_shop=1)
+        max_items=24,max_per_shop=1,commercial_only=True)
     selected=[]
     for item in plan["approved_catalog_candidates"]:
         key=item["product_key"]
