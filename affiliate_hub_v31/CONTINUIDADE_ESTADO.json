@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C144",
   "continuity_protocol_phase": "C145",
-  "continuity_status": "EM_ANDAMENTO",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C145_CMS_D1_READBACK_VERIFIED_AND_DELETED_LAB_DISPATCH_DISABLED",
   "start_here": "SYSTEM_MASTER.md",
@@ -86,16 +86,16 @@
   },
   "active_work": {
     "phase": "C150",
-    "status": "EM_ANDAMENTO",
-    "objective": "C150: reutilização CONTROLADA de segredos históricos WordPress do Radar no motor V31 universal para permitir GET CMS pelo GitHub sem pedir nova senha; nunca reativar workflows antigos. JSON universal continua prioritário, bridge exclusivamente wordpress_radartechbr e limitado aos workflows SAFE/DRAFT; LIVE fora do escopo.",
-    "latest_verified_step": "A auditoria C149 comprovou que os workflows antigos Radar usavam segredos WORDPRESS_USERNAME/WORDPRESS_APP_PASSWORD; isso não prova que ainda existam ou estejam válidos. Em branch C150, credentials_for() recebeu bridge opt-in somente Radar, usa variáveis scoped V31_RADAR_LEGACY_*; JSON universal ganha prioridade, entrada inválida do Radar falha fechada. Injetado somente em canário C148, WordPress DRAFT, revisão independente e observação SAFE. LIVE job de v31-autonomous-live NÃO recebe variáveis da bridge. 17 testes offline novos. CI remoto e GET CMS pendentes.",
-    "next_safe_step": "Executar suíte SAFE completa e 50 simulações em PR C150; depois merge e acompanhar canário C148 com GET CMS e identidade. Se segredo histórico indisponível ou rejeitado, registrar bloqueio concreto e solicitar intervenção mínima no GitHub. Se passar, ainda exige oferta/fonte verificada + DRAFT oficial e hash antes de liberar request Radar. LIVE OFF.",
-    "blocker": "Não há comprovação de existência/validade de antigos segredos GitHub WORDPRESS_USERNAME e WORDPRESS_APP_PASSWORD. Canário C148 GET autenticado do Radar permanece fail-closed até nova execução. Oferta/fatos independentes para novo DRAFT Radar ainda ausentes. Loja Radar mensal suspensa, não migrada.",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
+    "objective": "C150 concluída: ponte de credenciais legadas Radar estritamente por site dentro do V31 universal, JSON canônico prioritário, autenticada em GET CMS REAL via GitHub SAFE. Nem jobs antigos, nem LIVE reativados. C151 deverá escolher oferta/fonte factual verificável com anti-duplicação antes de um único DRAFT.",
+    "latest_verified_step": "PR #156 integrada commit a26059e412f4e65b51a1675e91c689c94075884c. SAFE CI #45432219242 SUCCESS: 884/884 unitários, 50/50 simulações, WP Casa24/24 Oficina21/21 Radar15/15 e cross-blog PASS. Canário GitHub C148 #45432426087 SUCCESS: AUTHENTICATED_GET_CONFIRMED Radar, D1 READ_ONLY_CONFIRMED, R2 READ_ONLY_CONFIRMED, 7 sites auditados, 4 candidatos amostrados para Radar, 0 links cacheados naquela amostra, D1 Radar READY=0 USED=0, uma reserva Shopee antiga em 24/11. NOVO DRAFT=0 e CMS/D1/R2/Shopee writes=0. O contador cms_history_records_scanned=0 corresponde a slugs V31 (não todos os posts WordPress); legados existentes. Job observe-homologation em push, choose-one/draft/release SKIPPED.",
+    "next_safe_step": "C151: preparar teste real de pré-seleção Radar no catálogo universal R2 sem escrita, cruzando os quatro SKUs e títulos de candidatos com a lista autenticada de posts e DRAFTs legados do WordPress. Corrigir rótulo ambíguo cms_history_records_scanned, validar fonte independente fabricante e link da campanha radarwp, só então passar pelo reviewer e habilitar 1 DRAFT com GET/hash. Manter fila antiga aposentada, LIVE OFF; rotação de Loja Radar suspensa até módulo universal homologado.",
+    "blocker": "CMS Radar autenticado no GitHub C150: resolvido sem intervenção. Pendem fonte factual independente, oferta exata/URL/foto e reconciliação com 37 posts públicos e DRAFTs antigos (não inferir ausência de duplicatas do contador V31=0); cadastro Radar enabled=false e sem profile; nenhum SKU do cache amostrado com link radarwp. C151 deverá avaliar critérios sem forçar API. Loja mensal antiga segue suspensa.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "090234c86f1fafd807e23fc653d10813be9bb811",
-    "branch": "fix/v31-c150-radar-scoped-legacy-cms-bridge-20261124",
+    "base_main_sha": "a26059e412f4e65b51a1675e91c689c94075884c",
+    "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -128,10 +128,14 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45372082046",
       "https://github.com/adelrib27/blogger-automation1/pull/155",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45424445960",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45424446059"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45424446059",
+      "https://github.com/adelrib27/blogger-automation1/pull/156",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45432219242",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45432426087"
     ]
   },
   "next_priorities": [
+    "C150 Radar CMS autenticado no GitHub sem nova senha. C151: conferir SKU real, fontes independentes e duplicatas legadas antes do primeiro DRAFT Radar. Não reativar workflows antigos ou LIVE.",
     "C149 concluída: não reativar 10 workflows antigos Radar; retomada agora somente dentro do V31 universal com GET CMS Radar e DRAFT factual, Loja mensal suspensa até sucessor universal.",
     "C148 Radar Tech piloto: resolver segredo GitHub WordPress por site sem compartilhar credencial no chat; repetir canário READ ONLY e só depois habilitar oferta/fonte independente para DRAFT.",
     "Preservar bloqueio integral dos 24 IDs Blogger, incluindo pontes entre branches, e não alterar a exclusão do blog Ar-Condicionado sem Dúvidas.",
@@ -393,7 +397,20 @@
     "new_cms_writes": 0,
     "new_shopee_calls": 0,
     "tests_added": 17,
-    "real_cms_status": "PENDING_CANARY",
-    "ci_status": "PENDING"
+    "real_cms_status": "AUTHENTICATED_GET_CONFIRMED",
+    "ci_status": "SUCCESS",
+    "merge_sha": "a26059e412f4e65b51a1675e91c689c94075884c",
+    "ci_run": 45432219242,
+    "unit_tests_passed": 884,
+    "simulations_passed": 50,
+    "radar_cms_authenticated_in_github": true,
+    "remote_canary_run": 45432426087,
+    "remote_canary_status": "SUCCESS",
+    "remote_cms": "AUTHENTICATED_GET_CONFIRMED",
+    "remote_r2": "READ_ONLY_CONFIRMED",
+    "remote_d1": "READ_ONLY_CONFIRMED",
+    "active_sites_audited": 7,
+    "cms_history_count_definition": "v31_prefix_slug_count_not_total_posts",
+    "next_phase": "C151"
   }
 }
