@@ -179,20 +179,32 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
         check["r2"] = "READ_ONLY_CONFIRMED"
     except Exception:
         check["r2"] = "BLOCKED_R2_READ"
-    try:
-        read = read_draft_history if history_reader is None else history_reader
-        cms = read(primary)
-        if (not isinstance(cms, dict) or cms.get("site_key") != primary
-                or type(cms.get("count")) is not int or cms["count"] < 0
-                or not all(isinstance(cms.get(field), list)
-                           for field in ("keys", "slugs", "prose"))):
-            raise PilotAuditError("pilot_cms_history_untrusted")
-        rows[0]["cms_history_read"] = True
-        rows[0]["cms_history_records_scanned"] = cms["count"]
-        # Histórico por si só NÃO equivale a DRAFT V31 confirmado.
-        check["cms"] = "AUTHENTICATED_GET_CONFIRMED"
-    except Exception:
-        check["cms"] = "BLOCKED_AUTHENTICATED_CMS_GET"
+    # Ações autenticadas feitas por outros conectores não comprovam que os
+    # segredos de GitHub Actions estão configurados para o MESMO site.
+    # Não mostrar nomes de usuário, tokens, corpos de erro ou URLs privadas.
+    missing_cms_credentials = False
+    if history_reader is None and registry[primary]["platform"] == "wordpress":
+        from .automatic_wordpress_drafts import credentials_for
+        try:
+            credentials_for(primary)
+        except Exception:
+            missing_cms_credentials = True
+            check["cms"] = "BLOCKED_CMS_SITE_CREDENTIALS_UNAVAILABLE"
+    if not missing_cms_credentials:
+        try:
+            read = read_draft_history if history_reader is None else history_reader
+            cms = read(primary)
+            if (not isinstance(cms, dict) or cms.get("site_key") != primary
+                    or type(cms.get("count")) is not int or cms["count"] < 0
+                    or not all(isinstance(cms.get(field), list)
+                               for field in ("keys", "slugs", "prose"))):
+                raise PilotAuditError("pilot_cms_history_untrusted")
+            rows[0]["cms_history_read"] = True
+            rows[0]["cms_history_records_scanned"] = cms["count"]
+            # Histórico por si só NÃO equivale a DRAFT V31 confirmado.
+            check["cms"] = "AUTHENTICATED_GET_CONFIRMED"
+        except Exception:
+            check["cms"] = "BLOCKED_AUTHENTICATED_CMS_GET"
     success = all(value in ("READ_ONLY_CONFIRMED", "AUTHENTICATED_GET_CONFIRMED")
                   for value in check.values())
     return {

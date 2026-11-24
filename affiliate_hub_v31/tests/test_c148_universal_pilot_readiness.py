@@ -184,6 +184,28 @@ class UniversalPilotTests(unittest.TestCase):
         self.assertEqual(result["checks"]["r2"],"BLOCKED_R2_READ")
         self.assertEqual(result["r2_writes"],0)
 
+    def test_missing_github_site_credentials_diagnosed_without_exposing_secret(self):
+        from affiliate_hub_v31 import automatic_wordpress_drafts as wp
+        fake_cms={"site_key":"wordpress_radartechbr","keys":[],"slugs":[],
+                  "prose":[],"count":1}
+        with patch.object(wp,"credentials_for",
+                          side_effect=ValueError("private credential secret")), \
+             patch.object(m,"read_draft_history",return_value=fake_cms):
+            result=self.real(history_reader=None)
+        self.assertEqual(result["checks"]["cms"],"BLOCKED_CMS_SITE_CREDENTIALS_UNAVAILABLE")
+        self.assertNotIn("private credential secret",json.dumps(result))
+        self.assertEqual(result["cms_writes"],0)
+
+    def test_present_github_site_credentials_allows_authenticated_read(self):
+        from affiliate_hub_v31 import automatic_wordpress_drafts as wp
+        fake_cms={"site_key":"wordpress_radartechbr","keys":[],"slugs":[],
+                  "prose":[],"count":1}
+        with patch.object(wp,"credentials_for",return_value=("masked","masked")), \
+             patch.object(m,"read_draft_history",return_value=fake_cms):
+            result=self.real(history_reader=None)
+        self.assertEqual(result["checks"]["cms"],"AUTHENTICATED_GET_CONFIRMED")
+        self.assertEqual(result["new_drafts_proven"],0)
+
     def test_real_cms_auth_failure_still_zero_writes(self):
         result=self.real(history_reader=lambda site:(_ for _ in ()).throw(ValueError("secret")))
         self.assertEqual(result["checks"]["cms"],"BLOCKED_AUTHENTICATED_CMS_GET")
