@@ -1,0 +1,226 @@
+"""C148 — homologação universal SAFE: um piloto primário, todos os sites.
+
+Radar Tech BR é somente a preferência inicial do CLI. Nenhum cadastro, limite,
+nicho ou regra de geração no núcleo depende do Radar. A rotina só consulta
+CMS (GET autenticado), D1 (SELECT) e snapshot R2 (GET + SQLite read-only).
+
+NÃO gera texto, não chama conversor Shopee, não altera CMS/D1/R2, não publica.
+Um resultado de prontidão de leitura NÃO autoriza DRAFT nem LIVE.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sqlite3
+import tempfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+from .campaign_cache_readiness import inspect_campaign_cache
+from .catalog import Catalog
+from .d1_http_runner import CloudflareD1HTTPRunner
+from .editorial_scope_validation import is_route_in_active_scope
+from .r2_state import R2State, verify_database
+from .reviewed_draft_delivery import read_draft_history
+from .routing import sites
+from .site_request_queue import REQUESTS_DIR, VERIFIER_PROFILES, load_requests
+
+DEFAULT_PRIMARY = "wordpress_radartechbr"  # ordem da auditoria, nunca writer
+SAFE_STATUSES = frozenset({"READY", "USED"})
+SITE_KEY = re.compile(r"[a-z0-9_]{3,50}\Z")
+
+
+class PilotAuditError(ValueError):
+    """Sem strings da rede, URLs assinadas, segredos, SQL ou HTML."""
+
+
+def _request_modes(directory: Path = REQUESTS_DIR) -> dict[str, str]:
+    """Consulta arquivos já validados por load_requests: enabled ou staged."""
+    load_requests(directory)  # valida esquema/escopo de todas as demandas
+    result = {}
+    for path in sorted(directory.glob("*.json")):
+        item = json.loads(path.read_text(encoding="utf-8"))
+        result[item["site_key"]] = ("ENABLED" if item["enabled"] else "STAGED_DISABLED")
+    return result
+
+
+def plan(*, primary: str = DEFAULT_PRIMARY, routes: dict | None = None,
+         request_modes: dict | None = None,
+         reviewer_profiles: dict | None = None) -> dict:
+    """Monta carteira a partir de rotas verificadas; injeção só para simulações."""
+    routes = sites() if routes is None else routes
+    request_modes = _request_modes() if request_modes is None else request_modes
+    reviewer_profiles = (json.loads(VERIFIER_PROFILES.read_text(encoding="utf-8"))
+                         if reviewer_profiles is None else reviewer_profiles)
+    if (not isinstance(primary, str) or not SITE_KEY.fullmatch(primary)
+            or not isinstance(routes, dict) or not isinstance(request_modes, dict)
+            or not isinstance(reviewer_profiles, dict)):
+        raise PilotAuditError("pilot_inputs_invalid")
+    active = {}
+    for key, route in routes.items():
+        if (not isinstance(key, str) or not isinstance(route, dict)
+                or route.get("site_key") != key):
+            raise PilotAuditError("pilot_route_untrusted")
+        if not is_route_in_active_scope(route):
+            continue
+        if (route.get("platform") not in ("blogger", "wordpress")
+                or route.get("publish_enabled") is not False
+                or not isinstance(route.get("campaign"), str)
+                or not isinstance(route.get("allowed_niches"), list)):
+            raise PilotAuditError("pilot_active_route_invalid")
+        active[key] = route
+    if primary not in active:
+        raise PilotAuditError("pilot_primary_not_in_active_scope")
+    ordered = [primary, *sorted(x for x in active if x != primary)]
+    reports = []
+    for key in ordered:
+        route = active[key]
+        mode = request_modes.get(key, "MISSING")
+        profile = reviewer_profiles.get(key)
+        has_profile = isinstance(profile, dict) and bool(profile.get("offers"))
+        identity_match = (has_profile and isinstance(profile.get("home"), str)
+                          and (route["platform"] != "wordpress" or
+                               profile["home"] == route["identifier"]))
+        if mode != "ENABLED":
+            blocker = ("PILOT_REQUEST_DISABLED" if mode == "STAGED_DISABLED"
+                       else "NO_EDITORIAL_REQUEST")
+        elif not has_profile:
+            blocker = "VERIFIED_SOURCE_PROFILE_MISSING"
+        elif not identity_match:
+            blocker = "REVIEW_PROFILE_IDENTITY_MISMATCH"
+        else:
+            blocker = "E2E_DRAFT_NOT_PROVEN_BY_READONLY"
+        reports.append({
+            "site_key": key, "platform": route["platform"], "campaign": route["campaign"],
+            "is_primary": key == primary,
+            "request_state": mode,
+            "review_profile_present": bool(has_profile),
+            "configured_for_independent_review": blocker == "E2E_DRAFT_NOT_PROVEN_BY_READONLY",
+            "blocker": blocker,
+            "can_write_draft": False, "can_publish_live": False,
+        })
+    return {
+        "mode": "UNIVERSAL_CONFIG_SCOPE_READ_ONLY",
+        "primary": primary, "active_sites": len(reports),
+        "platforms": {platform: sum(x["platform"] == platform for x in reports)
+                      for platform in ("blogger", "wordpress")},
+        "reports": reports, "cms_writes": 0, "d1_writes": 0,
+        "r2_writes": 0, "affiliate_mutations": 0, "automatic_live_authorized": False,
+    }
+
+
+def _valid_d1_counts(rows) -> dict:
+    if (not isinstance(rows, list) or len(rows) > 5
+            or any(not isinstance(x, dict) or x.get("status") not in SAFE_STATUSES
+                   or type(x.get("total")) is not int or not 0 <= x["total"] <= 5000
+                   for x in rows)):
+        raise PilotAuditError("pilot_d1_job_counts_untrusted")
+    if len(set(x["status"] for x in rows)) != len(rows):
+        raise PilotAuditError("pilot_d1_duplicate_job_status")
+    return {x["status"]: x["total"] for x in rows}
+
+
+def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
+                  storage=None, history_reader=None,
+                  routes: dict | None = None, request_modes=None,
+                  reviewer_profiles=None) -> dict:
+    """Read-only remoto: falha de qualquer fonte não libera artefatos."""
+    blueprint = plan(primary=primary, routes=routes, request_modes=request_modes,
+                     reviewer_profiles=reviewer_profiles)
+    registry = sites() if routes is None else routes
+    check = {"cms": "NOT_CHECKED", "d1": "NOT_CHECKED", "r2": "NOT_CHECKED"}
+    rows = [dict(item) for item in blueprint["reports"]]
+    # Não passar runner D1 com allow_mutations: leitura SELECT é suficiente.
+    try:
+        sql = (CloudflareD1HTTPRunner.from_environment(allow_mutations=False)
+               if query is None else query)
+        if not callable(sql):
+            raise PilotAuditError("pilot_d1_reader_invalid")
+        today = datetime.now(timezone.utc).date().isoformat()
+        for entry in rows:
+            tenant = (entry["site_key"], entry["campaign"])
+            counts = _valid_d1_counts(sql(
+                "SELECT status, COUNT(*) AS total FROM v31_ready_jobs "
+                "WHERE site_key=? AND campaign=? AND status IN ('READY','USED') "
+                "GROUP BY status ORDER BY status", tenant))
+            attempts = sql(
+                "SELECT COUNT(*) AS total FROM v31_shopee_conversion_attempts "
+                "WHERE campaign=? AND day_utc=?", (entry["campaign"], today))
+            if (not isinstance(attempts, list) or len(attempts) != 1
+                    or type(attempts[0].get("total")) is not int
+                    or not 0 <= attempts[0]["total"] <= 3):
+                raise PilotAuditError("pilot_affiliate_attempts_untrusted")
+            entry["d1_ready_jobs"] = counts.get("READY", 0)
+            entry["d1_used_jobs"] = counts.get("USED", 0)
+            entry["affiliate_attempts_today"] = attempts[0]["total"]
+        check["d1"] = "READ_ONLY_CONFIRMED"
+    except Exception:
+        check["d1"] = "BLOCKED_D1_SELECT"
+    try:
+        store = R2State.from_env() if storage is None else storage
+        with tempfile.TemporaryDirectory(prefix="v31-pilot-readonly-") as tmp:
+            snapshot = Path(tmp) / "catalog.sqlite3"
+            if store.restore_to(snapshot) is not True:
+                raise PilotAuditError("pilot_snapshot_missing")
+            verify_database(snapshot)
+            db = sqlite3.connect("file:" + str(snapshot) + "?mode=ro", uri=True)
+            try:
+                db.execute("PRAGMA query_only=ON")
+                catalog = Catalog.__new__(Catalog)
+                catalog.db = db
+                for entry in rows:
+                    result = inspect_campaign_cache(catalog, registry[entry["site_key"]])
+                    entry["catalog_candidates_sample"] = result["catalog_candidates"]
+                    entry["cached_links_exact_campaign_sample"] = result["cached_exact_campaign"]
+                    entry["affiliate_link_verified_for_draft"] = False
+            finally:
+                db.close()
+        check["r2"] = "READ_ONLY_CONFIRMED"
+    except Exception:
+        check["r2"] = "BLOCKED_R2_READ"
+    try:
+        read = read_draft_history if history_reader is None else history_reader
+        cms = read(primary)
+        if (not isinstance(cms, dict) or cms.get("site_key") != primary
+                or type(cms.get("count")) is not int or cms["count"] < 0
+                or not all(isinstance(cms.get(field), list)
+                           for field in ("keys", "slugs", "prose"))):
+            raise PilotAuditError("pilot_cms_history_untrusted")
+        rows[0]["cms_history_read"] = True
+        rows[0]["cms_history_records_scanned"] = cms["count"]
+        # Histórico por si só NÃO equivale a DRAFT V31 confirmado.
+        check["cms"] = "AUTHENTICATED_GET_CONFIRMED"
+    except Exception:
+        check["cms"] = "BLOCKED_AUTHENTICATED_CMS_GET"
+    success = all(value in ("READ_ONLY_CONFIRMED", "AUTHENTICATED_GET_CONFIRMED")
+                  for value in check.values())
+    return {
+        **blueprint, "mode": "UNIVERSAL_REAL_READONLY_CHECK",
+        "checks": check,
+        "status": "READ_ONLY_SOURCES_CONFIRMED_NOT_DRAFT_AUTHORIZED" if success
+                  else "READ_ONLY_SOURCE_CHECK_INCOMPLETE",
+        "reports": rows,
+        "new_drafts_proven": 0,
+        "cms_writes": 0, "d1_writes": 0, "r2_writes": 0,
+        "affiliate_mutations": 0, "automatic_live_authorized": False,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Homologação universal SAFE do V31")
+    parser.add_argument("--primary-site-key", default=DEFAULT_PRIMARY)
+    parser.add_argument("--real-readonly", action="store_true")
+    args = parser.parse_args()
+    try:
+        output = (live_readonly(primary=args.primary_site_key)
+                  if args.real_readonly else plan(primary=args.primary_site_key))
+    except Exception:
+        print("V31_PILOT_READINESS_FAILED_CLOSED")
+        return 2
+    print("V31_PILOT_READINESS=" + json.dumps(output, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
