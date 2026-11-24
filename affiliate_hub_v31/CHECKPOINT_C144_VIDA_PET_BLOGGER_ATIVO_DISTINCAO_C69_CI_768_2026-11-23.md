@@ -27,6 +27,7 @@ Dois conectores independentes `list_blogs` e `Blogger Bridge V2.get_blog` consul
 ## 4. Provas GitHub
 - [PR #147 CI #45301938515](https://github.com/adelrib27/blogger-automation1/actions/runs/45301938515): **SUCCESS**, **768 testes Python**, incluindo 8 testes novos, **50 simulações universais** PASS; regressões: Casa WP 24/24, Oficina WP 21/21, Radar WP 15/15, cross-blog PASS. Nenhum segredo ou write remoto nos testes.
 - Blogger GET real em Móveis para Cada Canto, post `4106024906916105222`: `status=draft` no momento da leitura. **Não houve alteração do CMS.**
+- **C144 leitura adicional Vida Pet Prática (Blogger API real):** listagem autenticada encontrou **8 posts LIVE** e **1 DRAFT chamado `Loja` (ID `7332800716046515902`)**, com paginação completa nesta consulta. Esse DRAFT já existe: **não recriar nem publicar**. Os 8 LIVE são histórico do blog, não foram criados pelo V31 nesta etapa e não são autorização para mais publicações.
 - GET do plugin WordPress Casa dos posts #321/#314 nesta sessão retornou objeto vazio, então o estado remoto atual não foi confirmado novamente; manter a evidência anterior C143 e **não criar/consumir duplicata**.
 - [LAB #45300343177](https://github.com/adelrib27/blogger-automation1/actions/runs/45300343177): FAILED em `V31_SHOPEE_SAFE_BLOCKED`, **nenhuma oferta segura para Cozinha / fatiador legumes**, com respostas GraphQL 10000 durante scanner. Passo de ciclo transacional skipped; não reexecutar PUT às cegas nem reinterpretar como falha universal.
 
