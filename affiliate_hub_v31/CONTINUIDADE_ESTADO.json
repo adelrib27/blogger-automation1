@@ -5,7 +5,7 @@
   "branch": "main",
   "last_checkpoint_phase": "C152_SAFE",
   "continuity_protocol_phase": "C152",
-  "continuity_status": "C152_LEGACY_CMS_COLLISION_GUARD_TESTED_DRAFT_GATES_BLOCKED",
+  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
   "last_updated_source": "C152_RADAR_LEGACY_CMS_56_POSTS_READONLY_922_UNIT_TESTS_50_SIMULATIONS_NO_DRAFT",
   "start_here": "SYSTEM_MASTER.md",
@@ -86,7 +86,7 @@
   },
   "active_work": {
     "phase": "C152",
-    "status": "LEGACY_CMS_DEDUP_GUARD_SAFE_VERIFIED_E2E_DRAFT_NOT_AUTHORIZED",
+    "status": "PRONTO_PARA_PROXIMA_ETAPA",
     "objective": "Auditoria C152 com CMS Radar autenticado e 56 corpos RAW, módulo universal contra duplicação legada (SKU/URL direta/slug/título/ângulo), chamadas dos writers Blogger/WordPress revisado e diretos antes de AI ou POST. Produtos C151 ainda NÃO homologados, sem link radarwp cacheado, compatibilidade de modelo não atestada. LIVE desativado.",
     "latest_verified_step": "GitHub HEAD main antes de mudanças e1a2fd180ce69e57f2ce3ee3e082c4618acaf8f9, compare identical. WordPress Radar remoto confirma 37 publish + 19 draft, 56/56 RAW não vazios (~517011 caracteres), 0 correspondências literais dos quatro itens; posts #138 e #260 sobre smartwatch requerem comparação de intenção. PR #159, CI SAFE #45446503885 (922 testes PASS/50 simulações PASS; Casa 24/24, Oficina 21/21, Radar 15/15 e cross-blog PASS), sem acesso de rede no CI. Nenhum novo DRAFT; nenhum CMS/D1/R2/Shopee write neste ciclo.",
     "next_safe_step": "Rever CI final e merge somente da PR SAFE #159; confrontar D1/R2 atualizado em modo leitura; resolver URLs Shopee originais e compatibilidade fabricante/modelo/variante para produto Radar viável, incluindo links encurtados e duplicação semântica/intent. Após todos os gates, 1 conversão sob quota/campaign e DRAFT com GET+SHA. Blogger E2E real independente. LIVE continua desligado.",
