@@ -15,6 +15,13 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
+## Posição C152 SAFE (24/11/2026)
+
+- Checkpoint assinado no GitHub: [C152 — auditoria legada e guarda universal](affiliate_hub_v31/CHECKPOINT_C152_AUDITORIA_LEGADA_SAFE_2026-11-24.md). Prévia anterior à mudança: [C152 PREVIEW](affiliate_hub_v31/CHECKPOINT_C152_PREVIEW_AUDITORIA_LEGADA_2026-11-24.md).
+- Radar Tech BR **56 artigos existentes** (37 publicados + 19 drafts) com histórico RAW autenticado conferido. Quatro produtos C151 ainda não homologados; **nenhum DRAFT novo**.
+- PR [#159](https://github.com/adelrib27/blogger-automation1/pull/159): guarda `legacy_cms_collision.py` e integração nos writers Blogger/WordPress revisado e direto. SAFE CI [#45446503885](https://github.com/adelrib27/blogger-automation1/actions/runs/45446503885): **922/922** testes, **50/50** simulações, regressões WordPress PASS. Validar CI mais recente antes de qualquer merge.
+- Radar request continua desativado; LIVE `pending_policy_approval`. Próxima obrigação é verificar oferta real, fabricante, campanha/cache e D1/R2 atuais, sem reativar cron ou repetir conversão.
+
 ## Próxima operação segura
 
 1. Confirmar a `main` e os workflows recentes, verificando novos commits antes de mutações.
