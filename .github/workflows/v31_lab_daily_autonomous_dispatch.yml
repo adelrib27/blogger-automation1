@@ -34,10 +34,9 @@ jobs:
           echo 'V31_LAB_SCHEDULER_BRIDGE_PROBE_PASS; blogger_put=false; shopee_api=false; git_write=false'
 
   executar-ciclo-diario-exclusivo-lab:
-    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31r1-shopee-safe-20261103' && github.event_name == 'workflow_dispatch' && inputs.origin == 'MAIN_SCHEDULE_LAB_ONLY' && github.run_attempt == 1
+    if: false # ID Blogger 4739187376492839837 tombstoned; no commercial or CMS action authorized
     permissions:
-      contents: write
-      actions: read
+      contents: read
     environment: v31-lab
     runs-on: ubuntu-latest
     timeout-minutes: 55
