@@ -52,7 +52,16 @@ class FakeWP:
     def site_settings(self):
         return {"url":self.url}
     def list_posts(self,*,include_unpublished):
-        return list(self.posts)
+        # context=edit real fornece RAW; prévia rendered é insuficiente para
+        # provar ausência de colisão SKU em artigos legados.
+        result=[]
+        for p in self.posts:
+            title=p["title"]
+            content=p["content"]
+            result.append({**p,
+                "title":{**title, "raw":title.get("raw", title.get("rendered", ""))},
+                "content":{**content, "raw":content.get("raw", content.get("rendered", ""))}})
+        return result
     def create_draft(self,*,title,slug,content):
         self.writes.append({"title":title,"slug":slug,"content":content,
                             "status":"draft"})
