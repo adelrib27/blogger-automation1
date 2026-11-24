@@ -1,5 +1,8 @@
 """C152: regressões SAFE da colisão legada Blogger + WordPress."""
 import unittest
+from unittest.mock import MagicMock, patch
+
+from affiliate_hub_v31 import reviewed_draft_delivery as delivery
 
 from affiliate_hub_v31.legacy_cms_collision import (
     CMSLegacyCollisionError, audit_candidate_history, normalized,
@@ -142,6 +145,44 @@ class LegacyCMSCollisionTests(unittest.TestCase):
         other_site = [wp(title=TITLE)]
         self.assertEqual(check("wordpress", [])["status"], "NO_DETECTED_COLLISION")
         self.assertEqual(check("wordpress", other_site)["status"], "REVIEW_REQUIRED")
+
+    def test_reviewed_wordpress_writer_checks_history_before_claim_or_post(self):
+        route = {"site_key": "wordpress_test", "platform": "wordpress",
+                 "identifier": "https://example.com/"}
+        review = {"site_url": "https://example.com/", "product_key": KEY,
+                  "article_title": TITLE}
+        client = MagicMock()
+        client.site_settings.return_value = {"url": "https://example.com/"}
+        client.list_posts.side_effect = [[], [wp(body="<p>"+KEY+"</p>")]]
+        authorizer = MagicMock(return_value=True)
+        with self.assertRaises(delivery.ReviewedDraftError):
+            delivery._wordpress_draft(
+                route=route, review=review,
+                content='<section data-v31-product-key="'+KEY+'"></section>',
+                authorize=authorizer, client=client,
+            )
+        authorizer.assert_not_called()
+        client.create_draft.assert_not_called()
+
+    def test_reviewed_blogger_writer_checks_history_before_claim_or_post(self):
+        route = {"site_key": "blogger_test", "platform": "blogger",
+                 "identifier": "1439741542627895062"}
+        review = {"site_url": "https://sample.blogspot.com/",
+                  "product_key": KEY, "article_title": TITLE}
+        service = MagicMock()
+        authorizer = MagicMock(return_value=True)
+        with patch.object(delivery.blogger, "validate_remote_identity",
+                          return_value="https://sample.blogspot.com/"), \
+             patch.object(delivery.blogger, "_list_posts",
+                          side_effect=[[], [blog(body="<p>"+KEY+"</p>")]]):
+            with self.assertRaises(delivery.ReviewedDraftError):
+                delivery._blogger_draft(
+                    route=route, review=review, marker="v31-test",
+                    content='<section data-v31-product-key="'+KEY+'"></section>',
+                    authorize=authorizer, service=service,
+                )
+        authorizer.assert_not_called()
+        service.posts.return_value.insert.assert_not_called()
 
     def test_normalization_does_not_erase_model_digits(self):
         self.assertIn("3", normalized("Samsung Galaxy Fit 3"))
