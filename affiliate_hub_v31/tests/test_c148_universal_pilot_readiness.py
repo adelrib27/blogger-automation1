@@ -139,7 +139,7 @@ class UniversalPilotTests(unittest.TestCase):
 
     def test_future_blog_enrollment_is_dynamic(self):
         newkey="wordpress_blog_futuro"
-        routes=dict(self.routes)
+        routes={k:v for k,v in self.routes.items() if m.is_route_in_active_scope(v)}
         routes[newkey]=dict(self.routes["wordpress_radartechbr"],
                             site_key=newkey,identifier="https://novo.example/",
                             campaign="novafiliacao")
@@ -151,7 +151,7 @@ class UniversalPilotTests(unittest.TestCase):
 
     def test_future_blogger_enrollment_is_dynamic(self):
         newkey="blogger_blog_futuro"
-        routes=dict(self.routes)
+        routes={k:v for k,v in self.routes.items() if m.is_route_in_active_scope(v)}
         routes[newkey]=dict(self.routes["blogger_moveis_para_cada_canto"],
                             site_key=newkey,identifier="919191919191919",
                             campaign="novoblogger")
