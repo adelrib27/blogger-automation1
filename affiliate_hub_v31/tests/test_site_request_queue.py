@@ -207,7 +207,35 @@ class RequestQueueTests(unittest.TestCase):
         self.assertTrue(claim("campanha_b", "shopee:100:1"))
         self.assertTrue(claim("campanha_b", "shopee:100:2"))
         self.assertFalse(claim("campanha_a", "shopee:100:3"))
-        self.assertTrue(claim("campanha_a", "shopee:100:1", day="2026-11-22"))
+        # C149: a reserva antiga existe mesmo se o shortlink nao foi
+        # persistido no R2. Nunca repetir automaticamente em outro dia.
+        self.assertFalse(claim("campanha_a", "shopee:100:1", day="2026-11-22"))
+        # Outro SKU e outra campanha continuam independentes.
+        self.assertTrue(claim("campanha_a", "shopee:100:3", day="2026-11-22"))
+        self.assertTrue(claim("campanha_c", "shopee:100:1", day="2026-11-22"))
+
+    def test_historical_radarwp_conversion_cannot_be_retried_across_days(self):
+        schema = Path(__file__).resolve().parents[1] / "migrations" / "c81_shopee_conversion_budget.sql"
+        state = sqlite3.connect(self.root / "radarwp-historical.sqlite3", isolation_level=None)
+        self.addCleanup(state.close)
+        state.executescript(schema.read_text(encoding="utf-8"))
+        history = [
+            ("2026-11-23", 2, "radarwp", "shopee:1736335904:58267891881"),
+            ("2026-11-23", 3, "radarwp", "shopee:889973435:18398298625"),
+            ("2026-11-24", 1, "radarwp", "shopee:822103155:58265302556"),
+        ]
+        state.executemany(
+            "INSERT INTO v31_shopee_conversion_attempts(day_utc,slot,campaign,product_key) VALUES(?,?,?,?)",
+            history)
+        query = lambda sql, args: state.execute(sql, args).fetchall()
+        for _, _, campaign, sku in history:
+            with self.subTest(product_key=sku):
+                self.assertFalse(claim_conversion_attempt(
+                    query, day_utc="2026-11-25", campaign=campaign, product_key=sku))
+        self.assertEqual(state.execute(
+            "SELECT COUNT(*) FROM v31_shopee_conversion_attempts").fetchone()[0], 3)
+        self.assertTrue(claim_conversion_attempt(
+            query, day_utc="2026-11-25", campaign="outra", product_key=history[0][3]))
 
     def test_pilot_selects_only_registered_sku_and_honors_denied_reservation(self):
         self._write("novo_blog_a")
