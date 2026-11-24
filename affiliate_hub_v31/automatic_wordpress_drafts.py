@@ -36,6 +36,7 @@ from .routing import sites
 from .site_launch_plan import preview_site_launch
 from .site_request_queue import load_requests
 from .taxonomy import normalize
+from .legacy_cms_collision import audit_candidate_history
 
 
 class WordPressAutoDraftError(ValueError):
@@ -515,6 +516,13 @@ def run(*,site_key:str,preview_topic:str|None=None,
                 "real_product_image":True,"exact_campaign":True,
                 "internal_links":len(plan["related"]),
                 "wordpress_posts_created":0,"publication_calls":0}
+        initial_collision = audit_candidate_history(
+            platform="wordpress", posts=history,
+            product_key=plan["product_key"],
+            article_title=_draft_title(plan["title"]), slug=plan["slug"],
+        )
+        if initial_collision["status"] != "NO_DETECTED_COLLISION":
+            raise WordPressAutoDraftError("wordpress_legacy_collision_review_required")
         generator=writer or generate_original_paragraphs
         # O modelo pode devolver alegação arriscada de forma intermitente.
         # Só refazer a redação gerada por IA (nunca POST/afiliado/R2);
@@ -542,6 +550,13 @@ def run(*,site_key:str,preview_topic:str|None=None,
         if (last.get("status")!="READY_FOR_DRAFT_REVIEW"
             or last.get("product_key")!=plan["product_key"]):
             raise WordPressAutoDraftError("wordpress_draft_race_detected")
+        latest_collision = audit_candidate_history(
+            platform="wordpress", posts=recent,
+            product_key=plan["product_key"],
+            article_title=_draft_title(plan["title"]), slug=plan["slug"],
+        )
+        if latest_collision["status"] != "NO_DETECTED_COLLISION":
+            raise WordPressAutoDraftError("wordpress_legacy_collision_review_required")
         created=wp_client.create_draft(
             title=_draft_title(plan["title"]),
             slug=plan["slug"],content=content)
