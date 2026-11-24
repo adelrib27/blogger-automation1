@@ -33,7 +33,7 @@ class DurablePilotReceiptTests(unittest.TestCase):
             code=m.main()
         self.assertEqual(code,0)
         self.assertEqual(write.call_count,1)
-        obj=json.loads(write.call_args.args[0].name and write.call_args.args[1])
+        obj=json.loads(write.call_args.args[-1])
         self.assertEqual(obj["reports"][0]["primary_candidate_sample"][0]["product_key"],"shopee:123:456")
         self.assertFalse(obj["automatic_live_authorized"])
         self.assertEqual(obj["cms_writes"],0)
