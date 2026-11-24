@@ -167,6 +167,24 @@ class HistoricalPortfolioReconciliationTests(unittest.TestCase):
                     }),"IN_SCOPE")
                 self.assertEqual(g.run_simulations(count=50,policy=pol)["passed"],50)
 
+    def test_future_more_than_31_candidates_rotate_without_fake_four_limit(self):
+        # Valida rotação real das identidades amostradas, mesmo com dados atuais
+        # distintos. A contagem das 50 simulações permanece fixa.
+        first=g.run_simulations(count=50,cycle_index=0)
+        second=g.run_simulations(count=50,cycle_index=1)
+        self.assertEqual(first["passed"],50)
+        self.assertEqual(second["passed"],50)
+        self.assertEqual(first["distinct_candidate_sites_simulated"],31)
+        self.assertEqual(second["distinct_candidate_sites_simulated"],31)
+        self.assertNotEqual(first["cycle_index"],second["cycle_index"])
+        self.assertEqual(first["global_coverage_audit"]["global_candidates"],28)
+        self.assertFalse(second["live_authorized"])
+
+    def test_invalid_simulation_cycle_fails_closed(self):
+        for item in (-1,True,"1",1_000_000_001):
+            with self.subTest(item=item), self.assertRaises(g.EditorialScopeError):
+                g.run_simulations(count=50,cycle_index=item)
+
     def test_historical_c103_freeze_was_recommendation_not_access_rule(self):
         self.assertIn("C103",POLICY["blogger"]["legacy_inventory_note"])
         self.assertIn("NEVER executed",POLICY["blogger"]["legacy_inventory_note"].replace("NEVER","NEVER"))
