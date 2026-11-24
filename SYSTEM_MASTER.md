@@ -304,7 +304,7 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 
 ### Evidências atuais de qualidade
 
-- A suíte SAFE da integração editorial registra **851 testes aprovados** e **50 simulações aprovadas** na execução [GitHub Actions #45420704364](https://github.com/adelrib27/blogger-automation1/actions/runs/45420704364). Os testes C147 de conversão on-demand e C148 de homologação universal são offline; nenhum PASS dessa suíte comprova novo DRAFT real.
+- A suíte SAFE da integração editorial registra **867 testes aprovados** e **50 simulações aprovadas** na execução [GitHub Actions #45424445960](https://github.com/adelrib27/blogger-automation1/actions/runs/45424445960). Inclui C149: aposentadoria de 10 executores Radar e trava de reconversão do mesmo SKU+campanha em qualquer dia. Nenhum PASS dessa suíte comprova novo DRAFT real.
 - Os testes locais específicos de WordPress confirmam **Casa e Decoração 24/24**, **Oficina & Garagem 21/21**, **Radar Tech BR 15/15**, com guarda de colisão entre blogs aprovada nessa execução.
 - O rascunho Blogger Móveis para Cada Canto `4106024906916105222` aparece como `draft` em leitura autenticada.
 - A auditoria autenticada [#45397939740](https://github.com/adelrib27/blogger-automation1/actions/runs/45397939740) encontra **2 jobs D1 `USED` e 2 DRAFTs verificados por GET, SKU e SHA-256**: um no Blogger Móveis para Cada Canto e um no WordPress Casa e Decoração; nenhuma escrita remota, postagem nova ou liberação LIVE.
@@ -349,6 +349,7 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 - **Preservado:** `site_routes.json` com campanha `radarwp`, catálogo e links convertidos que já existirem no R2, histórico do D1, posts/drafts WordPress, `radar_tech_br/src` (incluindo self-tests), governança universal, 24 Blogger excluídos e todos os outros sites ativos.
 - **Loja mensal:** a rotação de produtos da página Loja exclusiva do Radar ficou **suspensa** junto ao workflow antigo, sem alterar a página pública atual. Ainda **não há sucessor de Loja homologado** neste fluxo editorial de artigos; um futuro módulo universal de vitrines deverá ser testado separadamente antes de reativar atualização mensal. Não confundir Loja estática com artigos DRAFT.
 - **Próximo passo universal:** resolver a credencial do WordPress Radar no ambiente protegido `v31-editorial-safe`, homologar oferta real, evidência factual e GET CMS/DRAFT/hash pelo V31, sem usar o gerador isolado. LIVE segue `pending_policy_approval`.
+- **Evidência de implantação C149:** [PR #155](https://github.com/adelrib27/blogger-automation1/pull/155) integrada na `main` em `72c6da5762c95cd62031e06b06c4980748004055`; [CI #45424445960](https://github.com/adelrib27/blogger-automation1/actions/runs/45424445960) 867/867 testes, 50/50 simulações, regressões WP Casa 24/24, Oficina 21/21, Radar 15/15 e cross-blog PASS; [regressão C114 #45424446059](https://github.com/adelrib27/blogger-automation1/actions/runs/45424446059) SUCCESS. Leitura do tree `main` confirma que os 10 workflows não existem mais, e os fluxos universais continuam presentes.
 
 ## 9. Roadmap técnico priorizado
 
