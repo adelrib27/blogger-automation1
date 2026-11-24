@@ -43,6 +43,29 @@ class VerificationError(ValueError):
     pass
 
 
+# Diagnóstico C146: rótulos estáticos, sem exceções, URL, parâmetros ou segredos.
+# Só executado pelo CLI serial; não altera a política de aprovação de artigos.
+SAFE_STAGES = frozenset({
+    "boot", "registered_site", "cms_history", "r2_connect", "d1_connect",
+    "draft_quota", "r2_catalog_restore", "catalog_open", "candidate_selection",
+    "d1_job_check", "offer_affiliate", "offer_image", "external_research",
+    "related_article", "article_render", "article_review", "ready_promotion",
+    "complete",
+})
+_CURRENT_STAGE = "boot"
+
+
+def _mark_stage(stage: str) -> None:
+    global _CURRENT_STAGE
+    if stage not in SAFE_STAGES:
+        raise VerificationError("diagnostic_stage_untrusted")
+    _CURRENT_STAGE = stage
+
+
+def _safe_failure_stage() -> str:
+    return _CURRENT_STAGE if _CURRENT_STAGE in SAFE_STAGES else "boot"
+
+
 def utcnow():
     return datetime.now(timezone.utc)
 
@@ -280,7 +303,9 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
                                                      product_key=sku, verified_site_route=route)
     if not all(marker in title.casefold() for marker in profile.get("catalog_identity", ())):
         raise VerificationError("catalog_product_identity_changed")
+    _mark_stage("offer_affiliate")
     verify_affiliate_target(affiliate, sku)
+    _mark_stage("offer_image")
     image_hash = verify_image(image)
 
     def fetch(paid):
@@ -357,10 +382,13 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
             raise VerificationError("search_intent_unverified")
         return claims, hashlib.sha256(markdown.encode()).hexdigest(), payload_digest(search)
 
+    _mark_stage("external_research")
     claims, source_hash, search_hash = _research(
         state=state, tenant={"site_key": route["site_key"], "campaign": route["campaign"]},
         cap=policy["daily_research_attempts"], callback=fetch)
+    _mark_stage("related_article")
     related = verified_related_post(policy, profile)
+    _mark_stage("article_render")
     return render_article(policy=policy, profile=profile, route=route, sku=sku, title=title,
                           image=image, affiliate=affiliate, claims=claims, source_hash=source_hash,
                           image_hash=image_hash, related=related,
@@ -379,6 +407,7 @@ def _selection(catalog, route, request, policy, sku):
 
 
 def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=False):
+    _mark_stage("registered_site")
     registry = json.loads(PROFILE.read_text(encoding="utf-8"))
     policy = registry.get(site_key)
     route = sites().get(site_key)
@@ -386,6 +415,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
     if (not policy or not route or route["publish_enabled"] is not False or not request
             or route["platform"] == "wordpress" and policy["home"] != route["identifier"]):
         raise VerificationError("autonomous_site_not_enabled")
+    _mark_stage("cms_history")
     if (history.get("site_key") != site_key or not isinstance(history.get("keys"), list)
             or not isinstance(history.get("slugs"), list)
             or not isinstance(history.get("prose"), list) or type(history.get("count")) is not int):
@@ -395,6 +425,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
     prior_keys = set(history["keys"])
     prior_slugs = set(history["slugs"])
     prior_prose = set(history["prose"])
+    _mark_stage("r2_connect")
     storage = _official_storage()
     sku = None
     if pilot:
@@ -405,6 +436,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
         hint = decode_candidate(read_candidate(storage, site_key=site_key, digest=digest), digest=digest)
         sku = hint["product_key"]
 
+    _mark_stage("d1_connect")
     state = UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(allow_mutations=True))
     envelope = ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage))
     if not probe:
@@ -416,14 +448,18 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
             raise VerificationError("independent_public_key_configuration_mismatch")
         public_key_sha256 = hashlib.sha256(bytes.fromhex(public_key)).hexdigest()
     tenant = {"site_key": site_key, "campaign": route["campaign"]}
+    _mark_stage("draft_quota")
     cap_reached = (not probe and state.count_draft_attempts_today(
         **tenant, now_epoch=int(utcnow().timestamp())) >= policy["max_drafts_per_day"])
     with tempfile.TemporaryDirectory(prefix="v31-autonomous-verify-") as tmp:
         file = Path(tmp) / "catalog.sqlite3"
+        _mark_stage("r2_catalog_restore")
         if not storage.restore_to(file):
             raise VerificationError("official_catalog_missing")
+        _mark_stage("catalog_open")
         with Catalog(file) as catalog:
             rejected = []
+            _mark_stage("candidate_selection")
             for selected, profile in _selection(catalog, route, request, policy, sku):
                 if route["platform"] == "wordpress":
                     from .automatic_wordpress_drafts import _product_slug
@@ -438,6 +474,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 if not catalog.cached_link(selected, route["campaign"]):
                     continue
                 fingerprint = _fingerprint(selected, profile["query"], ANGLE)
+                _mark_stage("d1_job_check")
                 existing = state.get_job(**tenant, fingerprint=fingerprint)
                 if cap_reached and (existing is None or existing["status"] != "USED"):
                     continue
@@ -449,6 +486,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     return {"site_key": site_key, "fingerprint": fingerprint,
                             "public_key_sha256": public_key_sha256,
                             "status": existing["status"]}
+                _mark_stage("offer_affiliate")
                 try:
                     article = verify_offer(policy=policy, profile=profile, route=route, sku=selected,
                                            catalog=catalog, state=state,
@@ -488,6 +526,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 return {"site_key": site_key, "status": "NO_NEW_OFFER",
                         "reason": "no_new_offer_with_trusted_source"}
             now = utcnow()
+            _mark_stage("article_review")
             try:
                 payload = prepare_review_payload(article=article, catalog=catalog, now=now)
             except ValueError as error:
@@ -499,6 +538,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
             receipt = approval_receipt(candidate_sha256=candidate_sha, payload_sha256=payload_digest(payload),
                                        key=hmac_key)
             signature = sign_release(receipt, private_key=private_key)
+            _mark_stage("ready_promotion")
             try:
                 result = stage_reviewed_ready(
                     **article, catalog=catalog, owner_nonce=token_hex(16), now=now,
@@ -511,12 +551,14 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 raise VerificationError(str(error)) from None
     if result.get("job_status") not in ("READY", "USED"):
         raise VerificationError("ready_reservation_unverified")
+    _mark_stage("complete")
     return {"site_key": site_key, "fingerprint": result["fingerprint"],
             "public_key_sha256": public_key_sha256,
             "status": result["job_status"]}
 
 
 def main():
+    _mark_stage("boot")
     parser = argparse.ArgumentParser(description="Verificar fontes e preparar artigo V31")
     parser.add_argument("--site-key", required=True)
     parser.add_argument("--digest")
@@ -534,7 +576,7 @@ def main():
         print(str(error))
         return 1
     except (OSError, ValueError, KeyError, TypeError, AttributeError):
-        print("autonomous_verification_failed_closed")
+        print("autonomous_verification_failed_closed:" + _safe_failure_stage())
         return 1
     return 0
 
