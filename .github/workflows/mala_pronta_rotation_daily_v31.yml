@@ -1,3 +1,4 @@
+# V31 C143: owner deleted this Blogger; cron removed and job disabled. DO NOT reenable.
 name: V31 Mala Pronta - Shopee Loja mensal (isolado)
 on:
   pull_request:
@@ -9,9 +10,6 @@ on:
     paths:
       - "mala_pronta_viagem_pratica/rotation_daily_v31.py"
   workflow_dispatch:
-  schedule:
-    # 09:17 UTC = 06:17 Recife (GMT-3); GitHub pode atrasar.
-    - cron: "17 9 17 * *"
 permissions:
   contents: read
 concurrency:
@@ -19,6 +17,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   rotacao-mensal:
+    if: false # V31_C143_OWNER_DELETED_JOB_DISABLED
     runs-on: ubuntu-latest
     timeout-minutes: 18
     env:
