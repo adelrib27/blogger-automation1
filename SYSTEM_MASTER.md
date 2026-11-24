@@ -122,6 +122,7 @@ Os caminhos abaixo são relativos à raiz do repositório. A relação destaca o
 | `converter.py`, `universal_conversion.py` | Assinam chamadas Shopee, geram links por campanha e mantêm cache validado. |
 | `on_demand_conversion.py` | Fallback C147 integrado ao verificador: reserva um slot global D1, converte no máximo um SKU aprovado por ciclo DRAFT, persiste no R2, relê o link da campanha exata e bloqueia ante incerteza; não publica. |
 | `campaign_cache_readiness.py` | Audita links já persistidos para a campanha exata, apenas em leitura. |
+| `pilot_homologation.py` | C148: forma carteira universal de destinos elegíveis, prioriza um site configurável, consulta D1/R2/CMS em modo read-only e separa tentativas comerciais de jobs READY/USED e DRAFT comprovado. Não altera APIs externas. |
 | `article_commerce.py` | Gera bloco comercial com imagem real, CTA, link afiliado e links editoriais pertinentes. |
 | `universal_brief.py`, `universal_editorial_handoff.py` | Criam propostas editoriais e handoff estruturado por demanda real. |
 
@@ -323,6 +324,15 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 - **Verificação de produção:** LiteSpeed Cache purgado; GET do HTML renderizado confirmou imagem destacada única, ausência dos links internos quebrados e manutenção do botão afiliado. V31 LIVE permanece `pending_policy_approval`; essas edições não autorizaram o writer do V31 nem promoveram um novo DRAFT.
 
 **Aceite de entrega editorial real:** identidade CMS correta + campanha correta + produto/foto exatos + fatos autorizados e dentro da validade + SEO + assinatura/revisão válida + R2 HTML idêntico + D1 consistente + ausência de duplicata + POST DRAFT + GET remoto confirmando `draft` e hash + recibo auditável. Todos esses critérios precisam ocorrer **na mesma operação** antes da expansão da rotina.
+
+### C148 — Radar Tech BR como piloto primário, sem especialização do motor
+
+1. **Prioridade ≠ exclusividade:** `wordpress_radartechbr` é o piloto inicial do canário; `--primary-site-key` admite qualquer site ativo e cadastrado. A carteira é obtida por `routing.sites()` e política de escopo, sem lista codificada de 7 blogs nem teto para novos destinos. Os quatro Blogger e os três WordPress atuais permanecem na cobertura; IDs excluídos são vetados.
+2. **Pré-cadastro seguro:** o arquivo `site_requests.d/wordpress_radartechbr.json` permanece `enabled=false`, demanda contínua, até existir perfil de oferta exata e fonte factual independentes. O fato de a rota `radarwp` existir e haver um link no cache não equivale a autorização DRAFT. Adicionar só um JSON ou executar testes não autoriza LIVE.
+3. **Canário real somente leitura:** `pilot_homologation.py` consulta D1 por `SELECT`, restaura snapshot R2 em SQLite `query_only`, usa as mesmas regras de cache afiliado de Blogger e WordPress e faz GET autenticado do histórico CMS do piloto primário. Os retornos distinguem `request_state`, `review_profile_present`, `d1_ready_jobs`, `d1_used_jobs`, tentativas Shopee por campanha e links de cache. `READ_ONLY_SOURCES_CONFIRMED_NOT_DRAFT_AUTHORIZED` **não é comprovação de novo artigo**.
+4. **Simulações e regressões universais:** `.github/workflows/v31_c148_universal_pilot_readonly.yml` executa 50 cenários de segurança, testes de Blogger/WordPress e canário remoto protegido, sem POST CMS, mutação Shopee, SQL D1 de escrita ou R2 PUT. Fonte inacessível reprova a homologação remota. Testes adicionais exercitam rotas futuras, troca de piloto, campanha isolada, histórico CMS contestado, falha R2 e exclusão por política.
+5. **Constatação inicial autenticada (24/11/2026):** o Radar Tech BR possui rascunhos legados, incluindo `#353–#356` sobre ar-condicionado; não se pode atribuí-los ao V31 sem recibo e hash. Consulta D1 oficial encontrou **uma tentativa Shopee em `radarwp` no dia UTC 24/11** e **zero READY/USED** para essa campanha; não tratar a tentativa como conversão efetiva. A homologação E2E permanece pendente.
+6. **Próxima promoção:** somente depois de confirmar fotografia/SKU, destino afiliado da campanha, fabricante ou fonte independente, anti-duplicação CMS e demais políticas, registrar o perfil editorial real e habilitar DRAFT especificamente; conservar limite diário e LIVE `pending_policy_approval`. Generalizar correções ao núcleo antes de ampliar outros sites.
 
 ## 9. Roadmap técnico priorizado
 
