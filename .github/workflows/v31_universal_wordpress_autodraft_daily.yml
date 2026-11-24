@@ -59,6 +59,11 @@ jobs:
           # C65: ponte das credenciais legadas de UM site real, sem afetar sites futuros.
           CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
           CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+          # Ponte temporária C150: somente o site wordpress_radartechbr,
+          # via credenciais herdadas do projeto antigo. JSON universal prioritário.
+          V31_RADAR_LEGACY_CMS_BRIDGE_ENABLED: 'true'
+          V31_RADAR_LEGACY_WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+          V31_RADAR_LEGACY_WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
           V31_WP_SITE_KEY: ${{ inputs.site_key || '' }}
           V31_WP_PREVIEW_TOPIC: ${{ inputs.preview_topic || '' }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
