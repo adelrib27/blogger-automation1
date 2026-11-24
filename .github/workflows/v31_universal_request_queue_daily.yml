@@ -2,7 +2,9 @@ name: V31 Universal — conversor diario por pedidos reais sem posts
 run-name: ${{ github.event_name == 'workflow_dispatch' && inputs.pilot_site_key != '' && format('V31 | conversão isolada {0}', inputs.pilot_site_key) || 'V31 | conversão regular' }}
 on:
   schedule:
-    # Diariamente 08:47 America/Recife. Só converte quando há pedido real.
+    # Diariamente 08:47 America/Recife. Converte no maximo 2 por ciclo
+    # programado, reservando 1 dos 3 slots globais D1 para o fallback
+    # on-demand durante a geracao do artigo (C147).
     - cron: '47 11 * * *'
   workflow_dispatch:
     inputs:
@@ -56,7 +58,7 @@ jobs:
           V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
-          V31_BUDGET: ${{ github.event_name == 'schedule' && '3' || inputs.budget }}
+          V31_BUDGET: ${{ github.event_name == 'schedule' && '2' || inputs.budget }}
           V31_PILOT_SITE: ${{ inputs.pilot_site_key }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
           V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
@@ -73,7 +75,7 @@ jobs:
           V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
           V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
           V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
-          V31_BUDGET: ${{ github.event_name == 'schedule' && '3' || inputs.budget }}
+          V31_BUDGET: ${{ github.event_name == 'schedule' && '2' || inputs.budget }}
           V31_PILOT_SITE: ${{ inputs.pilot_site_key }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
           V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}

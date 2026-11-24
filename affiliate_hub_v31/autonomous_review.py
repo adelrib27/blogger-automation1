@@ -27,7 +27,9 @@ from .r2_private_ready_backend import R2PrivateReadyBackend
 from .review_signatures import approval_receipt, configured_signing_keys, payload_digest, sign_release
 from .reviewed_ready_promotion import stage_reviewed_ready
 from .routing import sites
-from .site_request_queue import VERIFIER_PROFILES as PROFILE, load_requests
+from .site_request_queue import (VERIFIER_PROFILES as PROFILE, load_requests,
+                                 claim_conversion_attempt)
+from .on_demand_conversion import OnDemandConversionError, convert_for_review
 from .site_launch_plan import preview_site_launch
 from .structured_review_source import catalog_gtin, gtin_facts
 from .manufacturer_review import (ManufacturerEvidenceError, source_page_allowed,
@@ -48,7 +50,7 @@ class VerificationError(ValueError):
 SAFE_STAGES = frozenset({
     "boot", "registered_site", "cms_history", "r2_connect", "d1_connect",
     "draft_quota", "r2_catalog_restore", "catalog_open", "candidate_selection",
-    "d1_job_check", "offer_affiliate", "offer_image", "external_research",
+    "d1_job_check", "offer_affiliate", "offer_image", "affiliate_conversion", "external_research",
     "related_article", "article_render", "article_review", "ready_promotion",
     "complete",
 })
@@ -437,7 +439,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
         sku = hint["product_key"]
 
     _mark_stage("d1_connect")
-    state = UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment(allow_mutations=True))
+    query = CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
+    state = UniversalD1ReadyState(query)
     envelope = ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend(storage))
     if not probe:
         private_key, hmac_key, public_key = configured_signing_keys(
@@ -460,7 +463,16 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
         with Catalog(file) as catalog:
             rejected = []
             _mark_stage("candidate_selection")
-            for selected, profile in _selection(catalog, route, request, policy, sku):
+            # Cache primeiro. Após esgotar os candidatos já convertidos,
+            # considerar UM SKU elegível sem link, durante o MESMO ciclo DRAFT.
+            # Revisão factual, assinaturas e gates continuam obrigatórios.
+            candidates = list(_selection(catalog, route, request, policy, sku))
+            candidates.sort(key=lambda entry: catalog.cached_link(
+                entry[0], route["campaign"]) is None)
+            on_demand_attempted = False
+            allow_on_demand = (os.environ.get("V31_ON_DEMAND_CONVERSION") == "true"
+                               and not pilot and not probe and digest is None)
+            for selected, profile in candidates:
                 if route["platform"] == "wordpress":
                     from .automatic_wordpress_drafts import _product_slug
                     in_cms = hashlib.sha256(_product_slug(site_key, selected).encode()).hexdigest() in prior_slugs
@@ -470,8 +482,6 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     if pilot:
                         return {"site_key": site_key, "status": "NO_NEW_OFFER",
                                 "reason": "pilot_offer_already_present"}
-                    continue
-                if not catalog.cached_link(selected, route["campaign"]):
                     continue
                 fingerprint = _fingerprint(selected, profile["query"], ANGLE)
                 _mark_stage("d1_job_check")
@@ -486,6 +496,33 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     return {"site_key": site_key, "fingerprint": fingerprint,
                             "public_key_sha256": public_key_sha256,
                             "status": existing["status"]}
+                if not catalog.cached_link(selected, route["campaign"]):
+                    # Um job pré-existente SEM link verificável não autoriza
+                    # outra mutação Shopee nem reenvio de conteúdo.
+                    if existing is not None:
+                        raise VerificationError("on_demand_existing_job_missing_cache")
+                    if not allow_on_demand or cap_reached or on_demand_attempted:
+                        continue
+                    on_demand_attempted = True
+                    _mark_stage("affiliate_conversion")
+                    try:
+                        outcome = convert_for_review(
+                            catalog=catalog, storage=storage, route=route,
+                            product_key=selected,
+                            app_id=os.environ.get("V31_EDITORIAL_SHOPEE_APP_ID", ""),
+                            app_secret=os.environ.get("V31_EDITORIAL_SHOPEE_APP_SECRET", ""),
+                            reserve_attempt=lambda campaign, product_key: claim_conversion_attempt(
+                                query, day_utc=utcnow().date().isoformat(),
+                                campaign=campaign, product_key=product_key),
+                            verification_path=Path(tmp) / "converted_cache_readback.sqlite3",
+                        )
+                    except OnDemandConversionError as error:
+                        raise VerificationError(str(error)) from None
+                    if outcome == "BUDGET_DENIED":
+                        return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                                "reason": "conversion_daily_budget_exhausted"}
+                    if outcome not in ("CONVERTED", "CACHED"):
+                        raise VerificationError("on_demand_conversion_untrusted")
                 _mark_stage("offer_affiliate")
                 try:
                     article = verify_offer(policy=policy, profile=profile, route=route, sku=selected,
