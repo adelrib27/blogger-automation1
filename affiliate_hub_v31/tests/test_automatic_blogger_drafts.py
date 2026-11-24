@@ -102,6 +102,27 @@ class AutoBloggerDraftTests(unittest.TestCase):
         api.posts.return_value.insert.assert_called_once()
         self.assertTrue(api.posts.return_value.insert.call_args.kwargs["isDraft"])
 
+    def test_legacy_title_blocks_blogger_direct_writer_before_ai_or_insert(self):
+        api=self._service(2)
+        old=article_list(2)
+        old[0]["title"]="Guia de compra: "+NAME
+        def listings(**params):
+            response=Mock()
+            response.execute.return_value={"items":old if "LIVE" in params["status"] else []}
+            return response
+        api.posts.return_value.list.side_effect=listings
+        generator_calls=[]
+        def writer(**kwargs):
+            generator_calls.append(True)
+            return worker_paragraphs()
+        with Catalog(self.path) as cat:
+            with self.assertRaisesRegex(m.AutoDraftError,
+                                        "blogger_legacy_collision_review_required"):
+                m.draft_next(site_key=KEY,execute=True,blogger_service=api,
+                             catalog=cat,workers_writer=writer)
+        self.assertEqual(generator_calls,[])
+        api.posts.return_value.insert.assert_not_called()
+
     def test_original_html_includes_exact_photo_cta_and_two_internal_links(self):
         with Catalog(self.path) as cat:
             plan=m.select_next(cat,site_key=KEY,
