@@ -1,0 +1,82 @@
+name: V31 C148 — piloto Radar Tech e homologação universal SAFE
+
+on:
+  workflow_dispatch:
+    inputs:
+      primary_site_key:
+        description: 'Site primário cadastrado (qualquer Blogger ou WordPress ativo)'
+        type: string
+        required: true
+        default: wordpress_radartechbr
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c148_universal_pilot_readonly.yml'
+      - 'affiliate_hub_v31/pilot_homologation.py'
+      - 'affiliate_hub_v31/campaign_cache_readiness.py'
+      - 'affiliate_hub_v31/site_requests.d/wordpress_radartechbr.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-c148-universal-readonly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  universal-offline:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 50 simulações universais sem rede e sem mutação
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
+      - name: Regressão C137 + 26 casos C148 multi-site
+        run: python -m unittest affiliate_hub_v31.tests.test_c137_campaign_cache_readiness affiliate_hub_v31.tests.test_c148_universal_pilot_readiness -v
+      - name: Relatório universal do cadastro (sem segredos e sem calls remotas)
+        env:
+          PRIMARY: ${{ github.event_name == 'workflow_dispatch' && inputs.primary_site_key || 'wordpress_radartechbr' }}
+        run: python -m affiliate_hub_v31.pilot_homologation --primary-site-key "$PRIMARY"
+
+  remote-readonly:
+    needs: universal-offline
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dependências para GET autenticado e consultas R2 / D1
+        run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42' requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - name: C148 — Radar primeiro, todos os sites, D1 SELECT + R2 GET + CMS GET
+        env:
+          PRIMARY: ${{ github.event_name == 'workflow_dispatch' && inputs.primary_site_key || 'wordpress_radartechbr' }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Não fornecer flag de escrita; o módulo rejeita qualquer estado
+          # com fonte CMS/D1/R2 incompleta, sem tentar publicar ou converter.
+          python -m affiliate_hub_v31.pilot_homologation --primary-site-key "$PRIMARY" --real-readonly
