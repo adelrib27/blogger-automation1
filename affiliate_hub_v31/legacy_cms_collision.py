@@ -19,6 +19,7 @@ STOP = frozenset({"a", "as", "o", "os", "de", "da", "do", "dos", "em", "um",
                   "uma", "e", "ou", "com", "para", "por", "sobre", "como",
                   "escolher", "guia", "compra", "antes", "verificar", "confira",
                   "produto", "pratico", "pratica"})
+VARIANT_LABELS = frozenset({"active", "lite", "pro", "plus", "ultra", "max", "mini", "se"})
 STATUSES = {"wordpress": {"publish", "draft", "pending", "future", "private"},
             "blogger": {"live", "draft", "scheduled"}}
 
@@ -86,6 +87,10 @@ def _semantic_reason(candidate: str, existing: str) -> str | None:
     nums_a = {s for s in words_a if s.isdecimal()}
     nums_b = {s for s in words_b if s.isdecimal()}
     if nums_a and nums_b and nums_a != nums_b:
+        return None
+    # O nome compartilhado não une variantes explicitamente diferentes.
+    if ((words_a - words_b) & VARIANT_LABELS
+            and (words_b - words_a) & VARIANT_LABELS):
         return None
     union = words_a | words_b
     if (len(shared) >= 3 and len(shared) / max(1, len(union)) >= .70):
