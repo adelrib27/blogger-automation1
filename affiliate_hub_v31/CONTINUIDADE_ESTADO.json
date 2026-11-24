@@ -87,15 +87,15 @@
   "active_work": {
     "phase": "C151",
     "status": "EM_ANDAMENTO",
-    "objective": "C151: tornar auditáveis os SKUs do catálogo R2 para piloto Radar sem converter nem publicar; corrigir o indicador CMS de slugs V31, que não é contagem de posts legados. O mesmo relatório funciona para Blogger e WordPress.",
-    "latest_verified_step": "C150 comprovada: 884 SAFE tests + 50/50 simulações, canário remoto #45432426087 cms AUTHENTICATED_GET_CONFIRMED, D1 e R2 read-only CONFIRMED. Branch C151 introduz até 4 candidatos do catálogo por SKU e título no relatório primário, com manufacturer_facts_verified=false, cms_legacy_duplicate_checked=false, eligible_for_draft_write=false. Substitui ambíguo cms_history_records_scanned por cms_v31_prefixed_slugs_detected e NOT_PERFORMED. Ainda sem PR CI/merge.",
-    "next_safe_step": "Executar PR C151 CI SAFE 50 simulações e canário remoto acionado após merge para listar 4 SKUs. Investigar fontes e CMS legados; escolher um produto não duplicado com fonte independente, verificar oferta e link antes de DRAFT real.",
-    "blocker": "Ainda não foi homologada uma pauta/oferta SKU/fonte independente e não há link radarwp confirmado no cache amostrado. Request Radar.enabled=false, sem perfil factual, LIVE OFF. Mesmo com GET CMS confirmado, slugs V31=0 não prova posts legados ausentes.",
+    "objective": "C151.1: canário SKU primário aprovado 888/888 tests +50 simulações e leitura remota #45433951798 SUCCESS, mas o blob de logs não é recuperável pelo GitHub connector. Implantar recibo JSON sanitizado no artifact do GitHub para preservar amostra SKU/títulos e bloqueios sem credenciais, sem novas escritas comerciais.",
+    "latest_verified_step": "PR #157 merged main 209bcf5f341600a02bf94ca20562de085b500799. CI #45433754617 888/888 tests, 50/50 simulations, WP regressions PASS. Real canary #45433951798 success R2/D1/CMS GET; job logs fetch BlobNotFound apesar da execução SUCCESS; não inferir quais 4 SKUs são candidatos sem recibo. WPVibe GET autenticado: 37 posts públicos, 19 rascunhos (inclui LG Dual Inverter Compact 12.000 #356); cms_v31_prefixed_slugs_detected é contagem de prefixos V31, não de posts totais. Branch C151.1 implementa --report-json com nome fixo e upload artifact de 14 dias, além de testes offline. CI pendente.",
+    "next_safe_step": "CI SAFE universal e 50 simulações para artifact C151.1; merge; executar canário read-only automaticamente; baixar JSON artifact via GitHub e cruzar 4 SKUs de Radar com 37 posts públicos e 19 DRAFTs antigos. Só selecionar produto não duplicado se houver fonte fabricante confiável e link radarwp elegível. LIVE OFF.",
+    "blocker": "Amostra SKU em #45433951798 não pôde ser lida pelo conector devido a BlobNotFound dos logs, apesar de canário SUCCESS. Recibo JSON independente em implantação. Nenhuma oferta/fato independentemente homologada. Radar request.disabled, LIVE OFF.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "bf4dcc31641921567b25fa048ffe8f16addb1865",
-    "branch": "feat/v31-c151-primary-candidate-readonly-report-20261124",
+    "base_main_sha": "209bcf5f341600a02bf94ca20562de085b500799",
+    "branch": "fix/v31-c151-durable-candidate-report-artifact-20261124",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -424,7 +424,17 @@
     "draft_enabled": false,
     "shopee_api_calls": 0,
     "live_authorized": false,
-    "ci_status": "PENDING",
-    "real_report_status": "PENDING"
+    "ci_status": "SUCCESS",
+    "real_report_status": "CANARY_SUCCESS_LOG_BLOB_UNAVAILABLE",
+    "pr_number": 157,
+    "merge_sha": "209bcf5f341600a02bf94ca20562de085b500799",
+    "ci_run": 45433754617,
+    "tests_passed": 888,
+    "simulations_passed": 50,
+    "real_run": 45433951798,
+    "site_wp_live_published_posts": 37,
+    "site_wp_legacy_drafts": 19,
+    "primary_skus_proven_in_chat": false,
+    "report_artifact_branch": "fix/v31-c151-durable-candidate-report-artifact-20261124"
   }
 }
