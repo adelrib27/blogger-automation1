@@ -69,7 +69,7 @@ jobs:
       - name: Instalar dependências da seleção sem credenciais nem writes
         run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42' requests
       - name: C140 — validar 50 cenários antes de selecionar site e DRAFT
-        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
       - id: site
         env:
           REQUESTED: ${{ inputs.site_key }}

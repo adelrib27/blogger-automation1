@@ -46,7 +46,7 @@ jobs:
       - name: Compilar modulos sem importar segredos
         run: python -m compileall -q affiliate_hub_v31
       - name: C140 — executar 50 simulações universais sem chamadas externas
-        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
       - name: Testes offline isolados, sem tokens nem rede
         env:
           PYTHONDONTWRITEBYTECODE: '1'
