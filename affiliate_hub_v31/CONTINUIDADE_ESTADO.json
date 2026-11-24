@@ -86,7 +86,7 @@
   },
   "active_work": {
     "phase": "C146",
-    "status": "EM_HOMOLOGACAO",
+    "status": "EM_ANDAMENTO",
     "objective": "Diagnóstico de falhas do verificador independente sem repetir pesquisa, conversão ou DRAFT: rótulos de fase seguros e testes de ausência de exposição.",
     "latest_verified_step": "Análise Action #45330112636: authenticated-history SUCCESS, independent-verifier FAIL após ~40s com autonomous_verification_failed_closed; deliver-draft e release SKIPPED. Cloudflare D1 oficial (read-only, 24/11): Móveis USED=1; Casa USED=1, READY=1; budget Móveis dia 24 SEARCH=2/3, HTTP=2/3; nenhuma lease ativa. Exceção exata ainda não demonstrada. PR C146 introduz rótulos fixos de diagnóstico, sem novos retries.",
     "next_safe_step": "Revisar PR C146 com 50 simulações e suíte SAFE; após merge observar próxima execução regular já agendada, sem dispatch de criação adicional. Observar rótulo sanitizado da fase e corrigir causa específica com evidência; evitar duplicação.",
