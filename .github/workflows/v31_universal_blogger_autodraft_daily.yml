@@ -46,7 +46,7 @@ jobs:
           python oficina_garagem/src/self_test.py
           python src/editorial_cross_blog_guard_self_test.py
       - name: C140 — simular 50 cenários universais antes do DRAFT Blogger
-        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50
+        run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
       - name: Um novo artigo ORIGINAL somente em RASCUNHO e respeitando a quantidade pedida
         env:
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
