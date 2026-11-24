@@ -189,7 +189,8 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                                     or not 1 <= len(title) <= 145
                                     or type(cached) is not bool):
                                 raise PilotAuditError("pilot_primary_sample_untrusted")
-                            safe_title = re.sub(r"[\x00-\x1f\x7f]", " ", title).strip()
+                            safe_title = re.sub(r"\\[nrt]", " ", title)
+                            safe_title = re.sub(r"[\x00-\x1f\x7f]", " ", safe_title).strip()
                             if not safe_title:
                                 raise PilotAuditError("pilot_primary_sample_untrusted")
                             sample.append({
