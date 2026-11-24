@@ -303,12 +303,13 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 
 ### Evidências atuais de qualidade
 
-- A suíte SAFE da integração editorial registra **789 testes aprovados** e **50 simulações aprovadas** na execução [GitHub Actions #45398455042](https://github.com/adelrib27/blogger-automation1/actions/runs/45398455042).
+- A suíte SAFE da integração editorial registra **821 testes aprovados** e **50 simulações aprovadas** na execução [GitHub Actions #45409485084](https://github.com/adelrib27/blogger-automation1/actions/runs/45409485084). A C147 acrescentou 24 testes específicos de fallback afiliado durante a verificação DRAFT, sem rede real.
 - Os testes locais específicos de WordPress confirmam **Casa e Decoração 24/24**, **Oficina & Garagem 21/21**, **Radar Tech BR 15/15**, com guarda de colisão entre blogs aprovada nessa execução.
 - O rascunho Blogger Móveis para Cada Canto `4106024906916105222` aparece como `draft` em leitura autenticada.
 - A auditoria autenticada [#45397939740](https://github.com/adelrib27/blogger-automation1/actions/runs/45397939740) encontra **2 jobs D1 `USED` e 2 DRAFTs verificados por GET, SKU e SHA-256**: um no Blogger Móveis para Cada Canto e um no WordPress Casa e Decoração; nenhuma escrita remota, postagem nova ou liberação LIVE.
 - Em leitura autenticada de 24/11/2026, os posts Casa e Decoração `#314` e `#321` continuam com `status=draft`; o registro READY para `shopee:306698991:8503898928` continua inelegível para novo envio sem reconciliação D1/CMS. A existência de DRAFT no CMS não prova por si só o estado `USED` do D1.
 - O scanner de ofertas registra um bloqueio seguro para **Cozinha / fatiador de legumes** quando não há produto elegível; mensagens Shopee GraphQL `10000` requerem diagnóstico específico, sem liberação por fallback não verificado.
+- A fallback C147 está implantada na `main` [PR #152](https://github.com/adelrib27/blogger-automation1/pull/152) e foi verificada em CI offline, mas **a conversão Shopee em execução operacional real e o novo DRAFT resultante ainda não foram comprovados**. A C148 deve medir os resultados sem criar duplicatas ou contornar fontes, budgets e gates.
 
 **Aceite de entrega editorial real:** identidade CMS correta + campanha correta + produto/foto exatos + fatos autorizados e dentro da validade + SEO + assinatura/revisão válida + R2 HTML idêntico + D1 consistente + ausência de duplicata + POST DRAFT + GET remoto confirmando `draft` e hash + recibo auditável. Todos esses critérios precisam ocorrer **na mesma operação** antes da expansão da rotina.
 
