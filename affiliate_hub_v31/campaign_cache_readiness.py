@@ -1,4 +1,4 @@
-"""C137: inspecionar cache de URL afiliada de campanha exata na snapshot R2.
+"""C137/C148: inspecionar cache afiliado de qualquer Blogger/WordPress na snapshot R2.
 
 Leitura apenas: R2 GET + SQLite query_only; não valida redirecionamento,
 estoque, fabricante ou identidade final da oferta; não habilita publicações.
@@ -34,14 +34,14 @@ class CampaignCacheAuditError(ValueError):
 
 def inspect_campaign_cache(catalog: Catalog, route: dict,
                            *, limit: int = MAX_RESULTS) -> dict:
-    if (not isinstance(route, dict) or route.get("platform") != "blogger"
+    if (not isinstance(route, dict) or route.get("platform") not in ("blogger", "wordpress")
             or route.get("publish_enabled") is not False
             or not isinstance(route.get("campaign"), str)
             or not re.fullmatch(r"[a-z0-9_-]{1,32}", route["campaign"])
             or not isinstance(route.get("allowed_niches"), list)
             or not isinstance(route.get("site_key"), str)
             or type(limit) is not int or not 1 <= limit <= MAX_RESULTS):
-        raise CampaignCacheAuditError("safe_blogger_route_required")
+        raise CampaignCacheAuditError("safe_editorial_route_required")
     campaign = route["campaign"]
     seen = set()
     candidates = []

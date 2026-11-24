@@ -87,8 +87,26 @@ class C137CampaignCacheReadOnlyTests(unittest.TestCase):
         with self.assertRaisesRegex(m.CampaignCacheAuditError, "cached_link_untrusted"):
             self.inspect()
 
+    def test_same_affiliate_cache_guard_accepts_wordpress(self):
+        wp = {**ROUTE, "platform": "wordpress",
+              "site_key": "wordpress_test_scoped",
+              "identifier": "https://editorial.example/"}
+        x = self.inspect(route=wp, cached=True)
+        self.assertEqual(x["cached_exact_campaign"], 1)
+        self.assertFalse(x["items"][0]["eligible_for_draft_write"])
+        self.assertEqual(x["site_key"], "wordpress_test_scoped")
+
+    def test_wordpress_wrong_campaign_not_reused(self):
+        wp = {**ROUTE, "platform": "wordpress",
+              "site_key": "wordpress_test_scoped",
+              "identifier": "https://editorial.example/",
+              "campaign": "anotherwp"}
+        x = self.inspect(route=wp, cached=True)
+        self.assertEqual(x["cached_exact_campaign"], 0)
+        self.assertFalse(x["automatic_live_authorized"])
+
     def test_publisher_route_not_allowed(self):
-        with self.assertRaisesRegex(m.CampaignCacheAuditError, "safe_blogger_route"):
+        with self.assertRaisesRegex(m.CampaignCacheAuditError, "safe_editorial_route"):
             self.inspect(route={**ROUTE,"publish_enabled":True})
 
     def test_cross_campaign_isolation(self):
@@ -117,7 +135,7 @@ class C137CampaignCacheReadOnlyTests(unittest.TestCase):
         self.assertEqual(self.inspect()["catalog_candidates"], 0)
 
     def test_strict_max_four(self):
-        with self.assertRaisesRegex(m.CampaignCacheAuditError, "safe_blogger_route"):
+        with self.assertRaisesRegex(m.CampaignCacheAuditError, "safe_editorial_route"):
             with Catalog(self.path) as c:
                 m.inspect_campaign_cache(c, ROUTE, limit=5)
 
