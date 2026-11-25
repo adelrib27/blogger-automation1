@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C157_READY_RECOVERY_PRIORITY",
-  "continuity_protocol_phase": "C157",
+  "last_checkpoint_phase": "C158_SCHEDULED_DRAFT_VERIFIED",
+  "continuity_protocol_phase": "C158",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-25",
-  "last_updated_source": "C157 real scheduler result and ready priority repair",
+  "last_updated_source": "C158 authenticated scheduled DRAFT verification",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C157_PRIORIDADE_READY.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C158_HOMOLOGACAO_DRAFT_AUTOMATICO.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C157",
+    "phase": "C158",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Recuperar trabalho READY válido antes de nova pesquisa, sem bloquear biblioteca ou repetir conversões.",
-    "latest_verified_step": "C157: run 45630060213 terminou SUCCESS sem entrega (NO_NEW_OFFER/research_budget_exhausted). READY Buriti continua no D1; HTTP e SEARCH 3/3. Recuperação assinada agora consulta READY frescos por tenant antes do ranking e pesquisa; valida escopo/catálogo/cache/foto, envelope e binding, histórico e cap. Adicionada sondagem READ_ONLY no catálogo R2 atualizado. CI/merge/prova real pendentes; não repetir refresh ou alterar cota. LIVE OFF.",
-    "next_safe_step": "Validar CI e merge, verificar sondagem real do catálogo atual, depois executar DRAFT pelo workflow corrigido.",
-    "blocker": "Entrega não executada; cota de pesquisa esgotada antes da recuperação; prova real pendente.",
+    "objective": "Consolidar homologação DRAFT real e avançar cobertura universal sem liberar LIVE.",
+    "latest_verified_step": "C158: entrega automática Blogger comprovada no run agendado 45639927141, DRAFT 5901505853451174265, GET CMS e HTML idêntico R2, D1 USED, replay sem duplicata. Manual 45678855827 SUCCESS/draft_daily_cap_reached, sem POST adicional. C157 merge a53464bfe29e3eb48bd464e5a3ca59925bcc1b1e, 930 testes e 50 simulações PASS. C156 biblioteca 286152 produtos, 53 links preservados. LIVE pending_policy_approval. Cobertura de todos os sites ainda não homologada.",
+    "next_safe_step": "Auditar prontidão dos demais sites ativos e resolver pendências de rota/cache/fonte, verificar WordPress revisado e agendamentos sem duplicação.",
+    "blocker": "Nenhum bloqueio da entrega Blogger piloto. Cobertura universal, demais sites e aprovação LIVE ainda pendentes.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "e0b96d931fadb6840cc4583a55859f42f94a9790",
+    "base_main_sha": "a53464bfe29e3eb48bd464e5a3ca59925bcc1b1e",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -150,10 +150,14 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45624408248",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45626464263",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45627622648",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45630060213"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45630060213",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45639927141",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45678855827",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45632981124"
     ]
   },
   "next_priorities": [
+    "C158: Blogger piloto homologado; não repetir Buriti; expandir diagnóstico de cobertura universal com gates intactos.",
     "C157: validar recuperação READY com catálogo vigente, sem nova pesquisa; comprovar entrega DRAFT pelo CMS.",
     "C156: concluir homologação de entrega com trava única; não repetir atualização do catálogo já comprovada.",
     "C155: conferir resultado da sondagem de entrega somente leitura e resolver causa exata; sem terceiro retry cego.",
@@ -584,6 +588,22 @@
     "ready_fingerprint": "86f6170f329cf435fe9ee1898f602b43c185d5c2eb43667ecddd64c5402e70f6",
     "http_used": 3,
     "search_used": 3,
+    "live_changed": false
+  },
+  "c158_runtime_homologation": {
+    "status": "SCHEDULED_BLOGGER_DRAFT_VERIFIED",
+    "run": 45639927141,
+    "job": 139296198944,
+    "blog_id": "1439741542627895062",
+    "draft_id": "5901505853451174265",
+    "html_sha256": "822effa99a6efb77a2df6d911361131bbd3af159c5711103baa9c8d0e8c2405f",
+    "cms_exact_match": true,
+    "replay_verified": true,
+    "d1_status": "USED",
+    "daily_cap_run": 45678855827,
+    "ci_run": 45632981124,
+    "tests": 930,
+    "simulations": 50,
     "live_changed": false
   }
 }
