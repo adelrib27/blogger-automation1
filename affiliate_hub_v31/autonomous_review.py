@@ -541,6 +541,10 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 if existing and not probe and (existing["status"] == "USED"
                         or state.ready_has_fresh_evidence(**tenant, fingerprint=fingerprint,
                                                           now_epoch=int(utcnow().timestamp()))):
+                    # Regular READY recovery has already checked current scope,
+                    # media, link and history. Never bypass a rejection here.
+                    if existing["status"] == "READY" and not (pilot or digest):
+                        continue
                     envelope.load(**tenant, html_sha256=existing["html_sha256"],
                                   release_public_key_sha256=public_key_sha256)
                     return {"site_key": site_key, "fingerprint": fingerprint,
