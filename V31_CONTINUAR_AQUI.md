@@ -15,7 +15,13 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C153 (atual)
+## Posição C154 (atual)
+
+C154 — PR #162: correção de dependência cryptography em cinco workflows; aguarda CI/merge e execução real do refresh. C153 runtime confirmado: 2 links convertidos e persistidos, run 45492088943. Casa #334 confirmado em DRAFT por CMS; hash envelope não verificado. Móveis READY shopee:1235923910:19299550912 sem consumo no D1, 7 drafts + 5 publicados sem ID literal; log deliver-draft indisponível (404). Não repetir POST até reconciliação. LIVE OFF, sem alterar cron.
+
+[Checkpoint C154](affiliate_hub_v31/CHECKPOINT_C154_RECUPERACAO_AUTOMACOES.md).
+
+## Posição C153
 
 C153: fila comercial regular não depende de fonte factual, template ou revisão de artigo. Perfil factual é prioridade opcional, não veto. Mantêm-se moderação, origem, campanha real, escopo, cache, reserva D1 na fila diária e single writer; a recuperação pontual editorial continua restrita. LIVE e flags de DRAFT inalterados. PR #160 mesclada em 60db4b0eda1c216a6ed34e028d5e264d904807ef; CI 45448688104: 922 testes e 50 simulações PASS. Sem nova conversão real confirmada; dispatch indisponível no conector GitHub atual. A próxima execução regular deve ser auditada antes de qualquer retry.
 
