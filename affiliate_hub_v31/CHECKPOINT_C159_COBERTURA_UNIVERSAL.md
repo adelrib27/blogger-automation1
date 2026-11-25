@@ -1,0 +1,3 @@
+# C159 — cobertura universal e disponibilidade real
+
+25/11/2026. Base main c39eea8a48e27c66118ee2afbe161222d21acc3c (C158 PR 168 merged). PREVIEW. 7 rotas ativas cadastradas, 2 pedidos habilitados e 2 perfis independentes; Radar desabilitado, 4 sem pedido. Vida Pet ativo fora do cadastro. Diagnóstico atual C148 só lê CMS primário; amostra de 4 produtos recentes não representa total de cache. Expandir auditoria para GET autenticado de cada rota e inventário exato de cache por campanha, preservar comportamento padrão e gates. Nenhuma ativação DRAFT/LIVE, sem converter ou alterar CMS/R2/D1. Registrar resultados e decidir próxima configuração com base em evidência.
