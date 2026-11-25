@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C158_SCHEDULED_DRAFT_VERIFIED",
-  "continuity_protocol_phase": "C158",
+  "last_checkpoint_phase": "C159_UNIVERSAL_READINESS_AUDIT",
+  "continuity_protocol_phase": "C159",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-25",
-  "last_updated_source": "C158 authenticated scheduled DRAFT verification",
+  "last_updated_source": "C159 universal registered scope audit",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C158_HOMOLOGACAO_DRAFT_AUTOMATICO.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C159_COBERTURA_UNIVERSAL.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C158",
+    "phase": "C159",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Consolidar homologação DRAFT real e avançar cobertura universal sem liberar LIVE.",
-    "latest_verified_step": "C158: entrega automática Blogger comprovada no run agendado 45639927141, DRAFT 5901505853451174265, GET CMS e HTML idêntico R2, D1 USED, replay sem duplicata. Manual 45678855827 SUCCESS/draft_daily_cap_reached, sem POST adicional. C157 merge a53464bfe29e3eb48bd464e5a3ca59925bcc1b1e, 930 testes e 50 simulações PASS. C156 biblioteca 286152 produtos, 53 links preservados. LIVE pending_policy_approval. Cobertura de todos os sites ainda não homologada.",
-    "next_safe_step": "Auditar prontidão dos demais sites ativos e resolver pendências de rota/cache/fonte, verificar WordPress revisado e agendamentos sem duplicação.",
-    "blocker": "Nenhum bloqueio da entrega Blogger piloto. Cobertura universal, demais sites e aprovação LIVE ainda pendentes.",
+    "objective": "Auditar cobertura e prontidão real de todos os sites sem liberar publicações.",
+    "latest_verified_step": "C159: PR #168 mesclada c39eea8a48e27c66118ee2afbe161222d21acc3c. Cadastro: 7 rotas ativas, 2 pedidos/perfis habilitados, Radar staged disabled, quatro rotas sem pedido/perfil. Blogger API list confirma Móveis, Limpeza, Estilo, Cozinha, Vida Pet (ID 8052455848487624244, sem rota), Ar-Condicionado explicitamente excluído. Ampliação do diagnóstico C148 com --all-cms: uma restauração R2, contagem total de links armazenados por campanha (não prova de validade), amostras por site e GET CMS de todas as rotas, falhas isoladas, sem writes. Dois testes novos. CI e prova real pendentes; sem ativar sites.",
+    "next_safe_step": "Validar CI/merge, ler auditoria real de todos os sites, escolher próxima rota e preparar pedido/perfil sem alterar LIVE.",
+    "blocker": "Cinco rotas registradas não possuem pedido habilitado/perfil; Vida Pet não cadastrado; auditoria completa do runtime pendente.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "a53464bfe29e3eb48bd464e5a3ca59925bcc1b1e",
+    "base_main_sha": "c39eea8a48e27c66118ee2afbe161222d21acc3c",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -157,6 +157,7 @@
     ]
   },
   "next_priorities": [
+    "C159: auditoria real de todos os sites; priorizar próximo cadastro com evidência e campanha correta.",
     "C158: Blogger piloto homologado; não repetir Buriti; expandir diagnóstico de cobertura universal com gates intactos.",
     "C157: validar recuperação READY com catálogo vigente, sem nova pesquisa; comprovar entrega DRAFT pelo CMS.",
     "C156: concluir homologação de entrega com trava única; não repetir atualização do catálogo já comprovada.",
@@ -604,6 +605,14 @@
     "ci_run": 45632981124,
     "tests": 930,
     "simulations": 50,
+    "live_changed": false
+  },
+  "c159_universal_readiness": {
+    "status": "AUDIT_EXPANSION_STAGED",
+    "registered_active": 7,
+    "enabled_requests": 2,
+    "review_profiles": 2,
+    "vida_pet_active_unregistered": true,
     "live_changed": false
   }
 }

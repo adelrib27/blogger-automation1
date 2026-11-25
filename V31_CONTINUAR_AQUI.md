@@ -15,7 +15,13 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C158 (atual)
+## Posição C159 (atual)
+
+C159: PR #168 mesclada c39eea8a48e27c66118ee2afbe161222d21acc3c. Cadastro: 7 rotas ativas, 2 pedidos/perfis habilitados, Radar staged disabled, quatro rotas sem pedido/perfil. Blogger API list confirma Móveis, Limpeza, Estilo, Cozinha, Vida Pet (ID 8052455848487624244, sem rota), Ar-Condicionado explicitamente excluído. Ampliação do diagnóstico C148 com --all-cms: uma restauração R2, contagem total de links armazenados por campanha (não prova de validade), amostras por site e GET CMS de todas as rotas, falhas isoladas, sem writes. Dois testes novos. CI e prova real pendentes; sem ativar sites.
+
+[Checkpoint C159](affiliate_hub_v31/CHECKPOINT_C159_COBERTURA_UNIVERSAL.md).
+
+## Posição C158
 
 C158: entrega automática Blogger comprovada no run agendado 45639927141, DRAFT 5901505853451174265, GET CMS e HTML idêntico R2, D1 USED, replay sem duplicata. Manual 45678855827 SUCCESS/draft_daily_cap_reached, sem POST adicional. C157 merge a53464bfe29e3eb48bd464e5a3ca59925bcc1b1e, 930 testes e 50 simulações PASS. C156 biblioteca 286152 produtos, 53 links preservados. LIVE pending_policy_approval. Cobertura de todos os sites ainda não homologada.
 

@@ -84,7 +84,7 @@ jobs:
           set -euo pipefail
           # Não fornecer flag de escrita; o módulo rejeita qualquer estado
           # com fonte CMS/D1/R2 incompleta, sem tentar publicar ou converter.
-          python -m affiliate_hub_v31.pilot_homologation --primary-site-key "$PRIMARY" --real-readonly --report-json v31_pilot_readonly_report.json
+          python -m affiliate_hub_v31.pilot_homologation --primary-site-key "$PRIMARY" --real-readonly --all-cms --report-json v31_pilot_readonly_report.json
       - name: Guardar recibo auditável e sanitizado, mesmo diante de bloqueio
         if: always()
         uses: actions/upload-artifact@v4
