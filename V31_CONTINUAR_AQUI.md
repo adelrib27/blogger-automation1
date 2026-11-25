@@ -17,6 +17,9 @@ Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_B
 
 ## Posição C154 (atual)
 
+C154: PR #162 mesclada (f0b5b18872a0a5a800e2f1da90c402020a163181), CI 45620945094 PASS 922 testes. Envelope READY Móveis recuperado do R2; SHA HTML e Ed25519 verificados contra âncora do verificador; 12 artigos sem marcador ou shortlink idêntico. Entrega ainda não autorizada por este diagnóstico: histórico agendado, estado atual e falha 404 do job precisam conciliação. Refresh corrigido, nova execução real pendente.
+
+
 C154 — PR #162: correção de dependência cryptography em cinco workflows; aguarda CI/merge e execução real do refresh. C153 runtime confirmado: 2 links convertidos e persistidos, run 45492088943. Casa #334 confirmado em DRAFT por CMS; hash envelope não verificado. Móveis READY shopee:1235923910:19299550912 sem consumo no D1, 7 drafts + 5 publicados sem ID literal; log deliver-draft indisponível (404). Não repetir POST até reconciliação. LIVE OFF, sem alterar cron.
 
 [Checkpoint C154](affiliate_hub_v31/CHECKPOINT_C154_RECUPERACAO_AUTOMACOES.md).
