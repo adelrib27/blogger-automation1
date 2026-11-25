@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Instalar cliente S3 para R2 (somente runtime)
-        run: python -m pip install 'boto3>=1.35,<2'
+        run: python -m pip install 'boto3>=1.35,<2' 'cryptography>=42'
       - name: Validar estrutura e testes offline
         run: |
           python -m compileall -q affiliate_hub_v31
