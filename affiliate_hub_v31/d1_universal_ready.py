@@ -201,6 +201,31 @@ class UniversalD1ReadyState:
             raise D1SafeError("d1_ready_job_untrusted")
         return rows[0]
 
+    def list_fresh_ready(self, *, site_key: str, campaign: str, now_epoch: int) -> list[dict]:
+        """Read the tenant's signed-work queue before ranking new offers."""
+        _params_site(site_key, campaign)
+        now = _clock(now_epoch)
+        rows = self._call("""
+          SELECT j.fingerprint,j.product_key,j.html_sha256,j.evidence_sha256
+          FROM v31_ready_jobs j JOIN v31_verified_evidence ev
+            ON ev.site_key=j.site_key AND ev.campaign=j.campaign
+            AND ev.product_key=j.product_key AND ev.evidence_sha256=j.evidence_sha256
+          WHERE j.site_key=? AND j.campaign=? AND j.status='READY'
+            AND ev.verified_epoch<=? AND ev.expires_epoch>?
+          ORDER BY j.created_epoch,j.fingerprint
+        """, (site_key,campaign,now,now))
+        seen = set()
+        for row in rows:
+            if (set(row) != {"fingerprint","product_key","html_sha256","evidence_sha256"}
+                    or not all(isinstance(row[k],str) and HEX_RE.fullmatch(row[k])
+                               for k in ("fingerprint","html_sha256","evidence_sha256"))
+                    or not isinstance(row["product_key"],str)
+                    or not SKU_RE.fullmatch(row["product_key"])
+                    or row["fingerprint"] in seen):
+                raise D1SafeError("d1_ready_queue_untrusted")
+            seen.add(row["fingerprint"])
+        return rows
+
     def ready_has_fresh_evidence(self, *, site_key: str, campaign: str,
                                  fingerprint: str, now_epoch: int) -> bool:
         _params_site(site_key, campaign)
