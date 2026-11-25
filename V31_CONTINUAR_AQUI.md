@@ -15,7 +15,13 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C155 (atual)
+## Posição C156 (atual)
+
+C156: catálogo recuperado em run 45626464263 SUCCESS, 286152 produtos (+82503), 53 links preservados, R2 CURRENT confirmado por GET (snapshot 25/11 13:48 UTC). Run Blogger 45627622648 recuperou mesmo READY e falhou em deliver-draft sem runner/logs; D1 READY, used_epoch null, sem lease confirmado depois. Encontrada dupla aquisição do mesmo grupo concurrency no workflow e job, hipótese forte de bloqueio de infraestrutura; removida só aquisição interna, trava global e D1 intactos. CI/merge e prova real pendentes; não rerun SHA anterior.
+
+[Checkpoint C156](affiliate_hub_v31/CHECKPOINT_C156_LOCK_ENTREGA.md).
+
+## Posição C155
 
 C155: PR #164 mesclada, diagnóstico READ_ONLY #45624408248 aprovado em runtime real: READY e evidência fresca, assinatura/envelope/binding/identidade PASS, 12 posts completos, 0 colisões, 0 marcadores, 0 cota usada. Não repetir job sem logs; execução nova do scheduler atual via dispatch explícito. Refresh corrigido ainda não rodou na main. Oito workflows adicionais com suite completa receberam cryptography e teste preventivo; CI/merge desta correção pendentes. LIVE OFF.
 
