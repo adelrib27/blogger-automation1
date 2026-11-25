@@ -31,6 +31,8 @@ class UniversalPilotTests(unittest.TestCase):
         self.db_path=Path(self.temp.name)/"offline.sqlite3"
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("CREATE TABLE synthetic_fixture(id INTEGER PRIMARY KEY)")
+            conn.execute("CREATE TABLE affiliate_links(product_key TEXT, campaign TEXT)")
+            conn.execute("INSERT INTO affiliate_links VALUES (?,?)", ("sku1","radarwp"))
         self.storage=FakeR2(self.db_path.read_bytes())
         self.routes=sites()
         self.request_modes={
@@ -272,6 +274,31 @@ class UniversalPilotTests(unittest.TestCase):
         output=json.dumps(self.real(),sort_keys=True)
         self.assertNotIn("https://s.shopee.com.br/",output)
         self.assertNotIn("app_secret",output)
+
+    def test_c159_all_cms_reads_every_active_site_with_one_snapshot(self):
+        seen=[]
+        def history(site):
+            seen.append(site)
+            return {"site_key":site,"keys":[],"slugs":[],"prose":[],"count":5}
+        result=self.real(all_cms=True,history_reader=history)
+        self.assertEqual(len(seen),7)
+        self.assertEqual(len(set(seen)),7)
+        self.assertEqual(self.storage.reads,1)
+        self.assertEqual(result["reports"][0]["cached_links_exact_campaign_total"],1)
+        self.assertTrue(all(x["cms_check"]=="AUTHENTICATED_GET_CONFIRMED" for x in result["reports"]))
+        self.assertFalse(result["automatic_live_authorized"])
+
+    def test_c159_failure_for_one_site_does_not_hide_others(self):
+        def history(site):
+            if site=="blogger_estilo":
+                raise ValueError("secret")
+            return {"site_key":site,"keys":[],"slugs":[],"prose":[],"count":5}
+        result=self.real(all_cms=True,history_reader=history)
+        self.assertEqual(result["checks"]["cms"],"BLOCKED_ONE_OR_MORE_CMS_GET")
+        self.assertEqual(result["status"],"READ_ONLY_SOURCE_CHECK_INCOMPLETE")
+        self.assertEqual(sum(x["cms_check"]=="AUTHENTICATED_GET_CONFIRMED" for x in result["reports"]),6)
+        self.assertNotIn("secret",json.dumps(result))
+        self.assertEqual(result["cms_writes"],0)
 
     def test_sql_queries_are_select_only(self):
         used=[]
