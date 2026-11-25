@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C154_RUNTIME_AUDIT",
-  "continuity_protocol_phase": "C154",
+  "last_checkpoint_phase": "C155_READONLY_DIAGNOSTIC",
+  "continuity_protocol_phase": "C155",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-25",
-  "last_updated_source": "C154 PR 162 runtime audit",
+  "last_updated_source": "C155 rerun failure reconciled; diagnostic staged",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C154_RECUPERACAO_AUTOMACOES.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C155_ENTREGA_RECUPERACAO.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C154",
+    "phase": "C155",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Recuperar workflows de catálogo e diagnóstico de entrega DRAFT sem operações duplicadas.",
-    "latest_verified_step": "C154: PR #162 mesclada (f0b5b18872a0a5a800e2f1da90c402020a163181), CI 45620945094 PASS 922 testes. Envelope READY Móveis recuperado do R2; SHA HTML e Ed25519 verificados contra âncora do verificador; 12 artigos sem marcador ou shortlink idêntico. Entrega ainda não autorizada por este diagnóstico: histórico agendado, estado atual e falha 404 do job precisam conciliação. Refresh corrigido, nova execução real pendente.",
-    "next_safe_step": "Revalidar D1 READY e histórico CMS inclusive agendados, obter diagnóstico de entrega e executar workflow universal somente com gates intactos; comprovar refresh real.",
-    "blocker": "Job deliver-draft sem logs/steps; dispatch não disponível no conector; refresh real após correção pendente.",
+    "objective": "Isolar causa de entrega Blogger e comprovar refresh real sem duplicação.",
+    "latest_verified_step": "C155: run 45542125840 tentativa 2 solicitada com sucesso via rerun job 138963418120; falhou novamente no novo job 139238956452, logs 404 e steps ausentes. RELEASE skipped. D1 permaneceu READY, sem lease/consumo, evidência fresca até 02/12 03:46 UTC, 0 tentativas DRAFT no dia. Não repetir terceira entrega. R2 CURRENT.json confirma snapshot 24/11 21:34 UTC; refresh novo não confirmado. Novo diagnóstico Blogger READ_ONLY em workflow próprio (sem cron, sem D1 writes ou POST CMS) para identificar estágio de D1, R2, assinatura, binding, identidade, marcador e colisão usando credenciais do mesmo runtime; trigger somente mudança do próprio arquivo na main ou dispatch. PR e CI pendentes.",
+    "next_safe_step": "Validar CI e merge da sondagem, ler recibo do diagnóstico e corrigir causa específica; testar refresh em main. Nunca repetir POST incerto.",
+    "blocker": "Dois jobs deliver-draft falharam sem logs; novo diagnóstico ainda não executado; refresh real aguarda execução.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "6567679a7e51820dd79f28c06dcd460c2f3958bc",
+    "base_main_sha": "43ee78c2247bb4553e8425fa7c2f80cbf69e1309",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -150,6 +150,7 @@
     ]
   },
   "next_priorities": [
+    "C155: conferir resultado da sondagem de entrega somente leitura e resolver causa exata; sem terceiro retry cego.",
     "C154: validar PR #162, refresh real e reconciliar READY Móveis sem POST duplicado. Casa #334 DRAFT confirmado.",
     "C153: auditar conversão regular independente da revisão factual; confirmar cache e reserva D1. Não repetir tentativa incerta.",
     "C152 SAFE dedup guard tested (PR #159): 56 Radar posts/drafts audited; still 0 actual E2E new DRAFT. Verify independent exact product source, affiliate cache, D1/R2, legacy shortlinks and semantic collisions before any CMS write.",
@@ -535,5 +536,17 @@
     "blogger_history_exact_shortlink_matches": 0,
     "blogger_history_marker_matches": 0,
     "refresh_real_after_fix_verified": false
+  },
+  "c155_delivery_recovery": {
+    "status": "RETRY_FAILED_READY_PRESERVED_READONLY_PROBE_STAGED",
+    "run": 45542125840,
+    "attempt": 2,
+    "failed_job": 139238956452,
+    "job_status": "READY",
+    "used_epoch": null,
+    "evidence_fresh": true,
+    "cms_write_verified": false,
+    "live_release_skipped": true,
+    "diagnostic_workflow": ".github/workflows/v31_ready_delivery_readonly.yml"
   }
 }
