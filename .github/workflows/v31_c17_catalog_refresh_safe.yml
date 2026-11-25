@@ -40,7 +40,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Cliente R2 privado sem credenciais Blogger ou WordPress
-        run: python -m pip install 'boto3>=1.35,<2'
+        run: python -m pip install 'boto3>=1.35,<2' 'cryptography>=42'
       - name: Regressão offline completa da biblioteca
         run: |
           python -m compileall -q affiliate_hub_v31
