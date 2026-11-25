@@ -38,8 +38,11 @@ class DummyState:
         self.cap=cap
         self.previous=previous
         self.jobs=0
+        self.fresh_ready=[]
     def count_draft_attempts_today(self, **kwargs):
         return self.cap
+    def list_fresh_ready(self, **kwargs):
+        return self.fresh_ready
     def get_job(self, **kwargs):
         self.jobs+=1
         return self.previous

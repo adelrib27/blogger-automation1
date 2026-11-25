@@ -17,7 +17,7 @@ from urllib.error import HTTPError
 from urllib.parse import urljoin, urlsplit
 from urllib.request import Request, build_opener
 
-from .article_commerce import _single_verified_offer
+from .article_commerce import _single_verified_offer, CommerceArticleError
 from .catalog import Catalog
 from .d1_http_runner import CloudflareD1HTTPRunner
 from .d1_universal_ready import UniversalD1ReadyState
@@ -34,7 +34,7 @@ from .site_launch_plan import preview_site_launch
 from .structured_review_source import catalog_gtin, gtin_facts
 from .manufacturer_review import (ManufacturerEvidenceError, source_page_allowed,
                                   verify_manufacturer_markdown)
-from .verified_supply import supply_profiles
+from .verified_supply import supply_profiles, route_allows_sku
 from .universal_evidence_ready import _fingerprint
 
 ANGLE = "guia de decisão com fatos verificados v1"
@@ -408,6 +408,47 @@ def _selection(catalog, route, request, policy, sku):
     yield from supply_profiles(catalog, route, policy, only_key=sku)
 
 
+def recover_fresh_ready(*, state, envelope, catalog, route, policy, prior_keys,
+                        prior_slugs, prior_prose, public_key_sha256, now_epoch):
+    """Recover already approved work without research or conversion.
+    
+    Current commercial eligibility, exact media/link, signed content, D1
+    evidence and CMS history still apply. The writer rechecks before POST.
+    """
+    tenant = {"site_key": route["site_key"], "campaign": route["campaign"]}
+    for job in state.list_fresh_ready(**tenant, now_epoch=now_epoch):
+        key = job["product_key"]
+        if hashlib.sha256(key.encode()).hexdigest() in prior_keys:
+            continue
+        if route["platform"] == "wordpress":
+            from .automatic_wordpress_drafts import _product_slug
+            if hashlib.sha256(_product_slug(route["site_key"], key).encode()).hexdigest() in prior_slugs:
+                continue
+        if not route_allows_sku(catalog, route, key):
+            continue
+        try:
+            _, image, affiliate = _single_verified_offer(
+                catalog, site_key=route["site_key"], product_key=key, verified_site_route=route)
+        except CommerceArticleError:
+            continue
+        stored = envelope.load(**tenant, html_sha256=job["html_sha256"],
+                               release_public_key_sha256=public_key_sha256)
+        review = stored["review"]
+        if (review["product_key"] != key
+                or review["evidence_sha256"] != job["evidence_sha256"]
+                or review["site_url"] != policy["home"]
+                or _fingerprint(key, review["primary_query"], review["angle"]) != job["fingerprint"]):
+            raise VerificationError("recovered_ready_binding_mismatch")
+        content = stored["html_content"]
+        if (f'href="{html.escape(affiliate)}"' not in content
+                or f'src="{html.escape(image)}"' not in content
+                or len(prose_hashes(content) & prior_prose) >= 2):
+            continue
+        return {"site_key": route["site_key"], "fingerprint": job["fingerprint"],
+                "public_key_sha256": public_key_sha256, "status": "READY"}
+    return None
+
+
 def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=False):
     _mark_stage("registered_site")
     registry = json.loads(PROFILE.read_text(encoding="utf-8"))
@@ -461,6 +502,15 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
             raise VerificationError("official_catalog_missing")
         _mark_stage("catalog_open")
         with Catalog(file) as catalog:
+            # Resume signed work before ranking or spending any research quota.
+            if not (pilot or probe or digest or cap_reached):
+                _mark_stage("d1_job_check")
+                recovered = recover_fresh_ready(
+                    state=state, envelope=envelope, catalog=catalog, route=route, policy=policy,
+                    prior_keys=prior_keys, prior_slugs=prior_slugs, prior_prose=prior_prose,
+                    public_key_sha256=public_key_sha256, now_epoch=int(utcnow().timestamp()))
+                if recovered is not None:
+                    return recovered
             rejected = []
             _mark_stage("candidate_selection")
             # Cache primeiro. Após esgotar os candidatos já convertidos,
@@ -491,6 +541,10 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 if existing and not probe and (existing["status"] == "USED"
                         or state.ready_has_fresh_evidence(**tenant, fingerprint=fingerprint,
                                                           now_epoch=int(utcnow().timestamp()))):
+                    # Regular READY recovery has already checked current scope,
+                    # media, link and history. Never bypass a rejection here.
+                    if existing["status"] == "READY" and not (pilot or digest):
+                        continue
                     envelope.load(**tenant, html_sha256=existing["html_sha256"],
                                   release_public_key_sha256=public_key_sha256)
                     return {"site_key": site_key, "fingerprint": fingerprint,

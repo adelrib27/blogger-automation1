@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C156_CATALOG_VERIFIED_LOCK_FIX",
-  "continuity_protocol_phase": "C156",
+  "last_checkpoint_phase": "C157_READY_RECOVERY_PRIORITY",
+  "continuity_protocol_phase": "C157",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-25",
-  "last_updated_source": "C156 actual dispatch evidence",
+  "last_updated_source": "C157 real scheduler result and ready priority repair",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C156_LOCK_ENTREGA.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C157_PRIORIDADE_READY.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C156",
+    "phase": "C157",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Restaurar entrega DRAFT universal corrigindo dupla aquisição da trava de concorrência.",
-    "latest_verified_step": "C156: catálogo recuperado em run 45626464263 SUCCESS, 286152 produtos (+82503), 53 links preservados, R2 CURRENT confirmado por GET (snapshot 25/11 13:48 UTC). Run Blogger 45627622648 recuperou mesmo READY e falhou em deliver-draft sem runner/logs; D1 READY, used_epoch null, sem lease confirmado depois. Encontrada dupla aquisição do mesmo grupo concurrency no workflow e job, hipótese forte de bloqueio de infraestrutura; removida só aquisição interna, trava global e D1 intactos. CI/merge e prova real pendentes; não rerun SHA anterior.",
-    "next_safe_step": "Validar CI e merge, confirmar execução nova do workflow corrigido na main e comprovar DRAFT por GET/hash/D1.",
-    "blocker": "Entrega falha antes de disponibilizar log; causa inferida da dupla trava, requer teste real.",
+    "objective": "Recuperar trabalho READY válido antes de nova pesquisa, sem bloquear biblioteca ou repetir conversões.",
+    "latest_verified_step": "C157: run 45630060213 terminou SUCCESS sem entrega (NO_NEW_OFFER/research_budget_exhausted). READY Buriti continua no D1; HTTP e SEARCH 3/3. Recuperação assinada agora consulta READY frescos por tenant antes do ranking e pesquisa; valida escopo/catálogo/cache/foto, envelope e binding, histórico e cap. Adicionada sondagem READ_ONLY no catálogo R2 atualizado. CI/merge/prova real pendentes; não repetir refresh ou alterar cota. LIVE OFF.",
+    "next_safe_step": "Validar CI e merge, verificar sondagem real do catálogo atual, depois executar DRAFT pelo workflow corrigido.",
+    "blocker": "Entrega não executada; cota de pesquisa esgotada antes da recuperação; prova real pendente.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "63bf73a4b27968623b14ddcd005b65cd56c2d982",
+    "base_main_sha": "e0b96d931fadb6840cc4583a55859f42f94a9790",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -149,10 +149,12 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45620945094",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45624408248",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45626464263",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45627622648"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45627622648",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45630060213"
     ]
   },
   "next_priorities": [
+    "C157: validar recuperação READY com catálogo vigente, sem nova pesquisa; comprovar entrega DRAFT pelo CMS.",
     "C156: concluir homologação de entrega com trava única; não repetir atualização do catálogo já comprovada.",
     "C155: conferir resultado da sondagem de entrega somente leitura e resolver causa exata; sem terceiro retry cego.",
     "C154: validar PR #162, refresh real e reconciliar READY Móveis sem POST duplicado. Casa #334 DRAFT confirmado.",
@@ -572,6 +574,16 @@
     "blogger_run": 45627622648,
     "blogger_ready_preserved": true,
     "duplicate_concurrency_found": true,
+    "live_changed": false
+  },
+  "c157_ready_priority": {
+    "status": "FIX_STAGED_CI_PENDING",
+    "scheduler_run": 45630060213,
+    "scheduler_conclusion": "success_no_draft",
+    "reason": "research_budget_exhausted",
+    "ready_fingerprint": "86f6170f329cf435fe9ee1898f602b43c185d5c2eb43667ecddd64c5402e70f6",
+    "http_used": 3,
+    "search_used": 3,
     "live_changed": false
   }
 }

@@ -53,7 +53,7 @@ jobs:
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
         run: |
           python - <<'PY'
-          import json, os, re, time
+          import json, os, re, time, tempfile
           from pathlib import Path
           from affiliate_hub_v31 import automatic_blogger_drafts as blogger
           from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
@@ -63,6 +63,10 @@ jobs:
           from affiliate_hub_v31.legacy_cms_collision import audit_candidate_history
           from affiliate_hub_v31.universal_evidence_ready import _fingerprint
           from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.autonomous_review import recover_fresh_ready, PROFILE
+          from affiliate_hub_v31.catalog import Catalog
+          from affiliate_hub_v31.independent_review import _official_storage
+          from affiliate_hub_v31.reviewed_draft_delivery import read_draft_history
           from affiliate_hub_v31.editorial_scope_validation import is_route_in_active_scope
 
           result = {"mode": "READ_ONLY", "cms_writes": 0, "d1_writes": 0, "r2_writes": 0, "stages": {}}
@@ -110,6 +114,16 @@ jobs:
               audit = audit_candidate_history(platform="blogger", posts=full, product_key=review["product_key"], article_title=review["article_title"])
               result["stages"][stage] = audit["status"]
               result["collisions"] = audit["collisions"]
+              stage = "ready_priority_current_catalog"
+              policy = json.loads(PROFILE.read_text(encoding="utf-8"))[site]
+              cms = read_draft_history(site)
+              with tempfile.TemporaryDirectory() as td:
+                  snapshot = Path(td) / "catalog.sqlite3"
+                  if not _official_storage().restore_to(snapshot):
+                      raise ValueError("probe_catalog_missing")
+                  with Catalog(snapshot) as catalog:
+                      picked = recover_fresh_ready(state=state, envelope=ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend.from_environment()), catalog=catalog, route=route, policy=policy, prior_keys=set(cms["keys"]), prior_slugs=set(cms["slugs"]), prior_prose=set(cms["prose"]), public_key_sha256=anchor, now_epoch=now)
+              result["stages"][stage] = "EXPECTED_READY" if picked and picked["fingerprint"] == fp else "OTHER_OR_NO_READY"
               result["status"] = "PREFLIGHT_REVIEW_ONLY"
           except Exception as exc:
               result["status"] = "BLOCKED"
