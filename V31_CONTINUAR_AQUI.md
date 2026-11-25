@@ -17,6 +17,9 @@ Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_B
 
 ## Posição C155 (atual)
 
+C155: PR #164 mesclada, diagnóstico READ_ONLY #45624408248 aprovado em runtime real: READY e evidência fresca, assinatura/envelope/binding/identidade PASS, 12 posts completos, 0 colisões, 0 marcadores, 0 cota usada. Não repetir job sem logs; execução nova do scheduler atual via dispatch explícito. Refresh corrigido ainda não rodou na main. Oito workflows adicionais com suite completa receberam cryptography e teste preventivo; CI/merge desta correção pendentes. LIVE OFF.
+
+
 C155: run 45542125840 tentativa 2 solicitada com sucesso via rerun job 138963418120; falhou novamente no novo job 139238956452, logs 404 e steps ausentes. RELEASE skipped. D1 permaneceu READY, sem lease/consumo, evidência fresca até 02/12 03:46 UTC, 0 tentativas DRAFT no dia. Não repetir terceira entrega. R2 CURRENT.json confirma snapshot 24/11 21:34 UTC; refresh novo não confirmado. Novo diagnóstico Blogger READ_ONLY em workflow próprio (sem cron, sem D1 writes ou POST CMS) para identificar estágio de D1, R2, assinatura, binding, identidade, marcador e colisão usando credenciais do mesmo runtime; trigger somente mudança do próprio arquivo na main ou dispatch. PR e CI pendentes.
 
 [Checkpoint C155](affiliate_hub_v31/CHECKPOINT_C155_ENTREGA_RECUPERACAO.md).

@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install private R2 dependency
-        run: python -m pip install 'boto3>=1.35,<2'
+        run: python -m pip install 'boto3>=1.35,<2' 'cryptography>=42'
       - name: Safe tests before any R2 index write
         run: |
           python -m compileall -q affiliate_hub_v31

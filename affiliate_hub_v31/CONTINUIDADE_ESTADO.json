@@ -88,9 +88,9 @@
     "phase": "C155",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
     "objective": "Isolar causa de entrega Blogger e comprovar refresh real sem duplicação.",
-    "latest_verified_step": "C155: run 45542125840 tentativa 2 solicitada com sucesso via rerun job 138963418120; falhou novamente no novo job 139238956452, logs 404 e steps ausentes. RELEASE skipped. D1 permaneceu READY, sem lease/consumo, evidência fresca até 02/12 03:46 UTC, 0 tentativas DRAFT no dia. Não repetir terceira entrega. R2 CURRENT.json confirma snapshot 24/11 21:34 UTC; refresh novo não confirmado. Novo diagnóstico Blogger READ_ONLY em workflow próprio (sem cron, sem D1 writes ou POST CMS) para identificar estágio de D1, R2, assinatura, binding, identidade, marcador e colisão usando credenciais do mesmo runtime; trigger somente mudança do próprio arquivo na main ou dispatch. PR e CI pendentes.",
-    "next_safe_step": "Validar CI e merge da sondagem, ler recibo do diagnóstico e corrigir causa específica; testar refresh em main. Nunca repetir POST incerto.",
-    "blocker": "Dois jobs deliver-draft falharam sem logs; novo diagnóstico ainda não executado; refresh real aguarda execução.",
+    "latest_verified_step": "C155: PR #164 mesclada, diagnóstico READ_ONLY #45624408248 aprovado em runtime real: READY e evidência fresca, assinatura/envelope/binding/identidade PASS, 12 posts completos, 0 colisões, 0 marcadores, 0 cota usada. Não repetir job sem logs; execução nova do scheduler atual via dispatch explícito. Refresh corrigido ainda não rodou na main. Oito workflows adicionais com suite completa receberam cryptography e teste preventivo; CI/merge desta correção pendentes. LIVE OFF.",
+    "next_safe_step": "Validar CI e merge dos oito workflows; disparar uma execução nova na main do refresh e do scheduler Móveis (DRAFT_ONLY), revalidar IDs/hash/D1.",
+    "blocker": "Conector GitHub não oferece workflow_dispatch; as duas tentativas do job anterior não geraram log. Necessário disparo atual pelo usuário ou cron.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -146,7 +146,8 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45483551446",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45542125840",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45503981414",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45620945094"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45620945094",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45624408248"
     ]
   },
   "next_priorities": [
@@ -538,7 +539,7 @@
     "refresh_real_after_fix_verified": false
   },
   "c155_delivery_recovery": {
-    "status": "RETRY_FAILED_READY_PRESERVED_READONLY_PROBE_STAGED",
+    "status": "READONLY_RUNTIME_PREFLIGHT_PASS_DELIVERY_PENDING",
     "run": 45542125840,
     "attempt": 2,
     "failed_job": 139238956452,
@@ -547,6 +548,13 @@
     "evidence_fresh": true,
     "cms_write_verified": false,
     "live_release_skipped": true,
-    "diagnostic_workflow": ".github/workflows/v31_ready_delivery_readonly.yml"
+    "diagnostic_workflow": ".github/workflows/v31_ready_delivery_readonly.yml",
+    "diagnostic_run": 45624408248,
+    "diagnostic_merge_sha": "84cff1cebc89e4104ad21ed8c8b529fa514d42fc",
+    "diagnostic_history_count": 12,
+    "diagnostic_collisions": 0,
+    "diagnostic_marker_count": 0,
+    "daily_attempts": 0,
+    "additional_dependency_workflows_fixed_in_branch": 8
   }
 }

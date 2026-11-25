@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install 'boto3>=1.35,<2'
+      - run: python -m pip install 'boto3>=1.35,<2' 'cryptography>=42'
       - name: Regressao antes de R2
         run: python -m unittest discover -s affiliate_hub_v31/tests -q
       - name: Buscar biblioteca universal por tema real — sem posts nem conversões
