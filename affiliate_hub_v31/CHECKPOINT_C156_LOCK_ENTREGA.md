@@ -1,0 +1,5 @@
+# C156 — catálogo recuperado e correção da trava de entrega
+
+2026-11-25. Base main 63bf73a4b27968623b14ddcd005b65cd56c2d982. PR 165 merge, CI 923 testes e 50 simulações. Proprietário executou dois dispatches explicitamente. Run 45626464263 SUCCESS: 203649 -> 286152 produtos (+82503), 53 links preservados, 13571 elegíveis, 272581 review, snapshot e sidecar gravados e relidos, zero publicação e GraphQL. Run 45627622648: autenticado e verificador PASS, mesmo fingerprint READY 86f6170f329cf435fe9ee1898f602b43c185d5c2eb43667ecddd64c5402e70f6; job 139252813677 falhou sem steps/logs, release skipped.
+
+Hipótese estrutural forte: workflow reutilizável v31_independent_review_draft.yml possui concurrency v31-editorial-catalog-single-writer no workflow inteiro e no job interno deliver-draft, que tenta adquirir a trava já mantida pelo próprio workflow. Remover apenas a trava interna redundante e preservar a trava global externa, cancel-in-progress false, lease D1, assinatura e gates CMS. Adicionar teste de regressão da estrutura. Não repetir execução sobre SHA antigo. CI/merge e prova real ainda pendentes. LIVE OFF.

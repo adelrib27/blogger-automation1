@@ -160,9 +160,8 @@ jobs:
     if: needs.independent-verifier.outputs.result != '' && fromJSON(needs.independent-verifier.outputs.result).status != 'NO_NEW_OFFER'
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
-    concurrency:
-      group: v31-editorial-catalog-single-writer
-      cancel-in-progress: false
+    # C156: a trava do workflow inteiro já cobre este job.
+    # Reentrar no mesmo grupo aqui impede o job de obter um runner.
     timeout-minutes: 10
     outputs:
       verified_draft: ${{ steps.deliver.outputs.verified_draft }}
