@@ -1,0 +1,134 @@
+name: V31 — diagnóstico de entrega READY (somente leitura)
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/v31_ready_delivery_readonly.yml']
+  workflow_dispatch:
+    inputs:
+      site_key:
+        type: string
+        required: true
+        description: Site Blogger real cadastrado
+      fingerprint:
+        type: string
+        required: true
+        description: Fingerprint D1 do READY
+      public_key_sha256:
+        type: string
+        required: true
+        description: Âncora SHA256 do recibo do verificador independente
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42' requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - name: Diagnosticar cada etapa sem lease, consumo ou POST CMS
+        env:
+          SITE: ${{ github.event_name == 'workflow_dispatch' && inputs.site_key || 'blogger_moveis_para_cada_canto' }}
+          FINGERPRINT: ${{ github.event_name == 'workflow_dispatch' && inputs.fingerprint || '86f6170f329cf435fe9ee1898f602b43c185d5c2eb43667ecddd64c5402e70f6' }}
+          ANCHOR: ${{ github.event_name == 'workflow_dispatch' && inputs.public_key_sha256 || 'c3e5fb0c389ae60340b70deeace19f4e62ce9150bebc1cde3884b3bda786d2e8' }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json, os, re, time
+          from pathlib import Path
+          from affiliate_hub_v31 import automatic_blogger_drafts as blogger
+          from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
+          from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
+          from affiliate_hub_v31.r2_private_ready_backend import R2PrivateReadyBackend
+          from affiliate_hub_v31.private_ready_envelope import ImmutablePrivateReadyEnvelope
+          from affiliate_hub_v31.legacy_cms_collision import audit_candidate_history
+          from affiliate_hub_v31.universal_evidence_ready import _fingerprint
+          from affiliate_hub_v31.routing import sites
+          from affiliate_hub_v31.editorial_scope_validation import is_route_in_active_scope
+
+          result = {"mode": "READ_ONLY", "cms_writes": 0, "d1_writes": 0, "r2_writes": 0, "stages": {}}
+          stage = "input"
+          try:
+              site, fp, anchor = (os.environ[k] for k in ("SITE", "FINGERPRINT", "ANCHOR"))
+              route = sites().get(site)
+              if not route or route["platform"] != "blogger" or not is_route_in_active_scope(route) or route["publish_enabled"] is not False:
+                  raise ValueError("probe_route_invalid")
+              if not all(re.fullmatch(r"[0-9a-f]{64}", v) for v in (fp, anchor)):
+                  raise ValueError("probe_digest_invalid")
+              tenant = {"site_key": site, "campaign": route["campaign"]}
+              stage = "d1_select"
+              state = UniversalD1ReadyState(CloudflareD1HTTPRunner.from_environment())
+              job = state.get_job(**tenant, fingerprint=fp)
+              if not job:
+                  raise ValueError("probe_job_missing")
+              result["stages"][stage] = job["status"]
+              stage = "evidence_freshness"
+              now = int(time.time())
+              result["stages"][stage] = state.ready_has_fresh_evidence(**tenant, fingerprint=fp, now_epoch=now)
+              result["daily_attempts"] = state.count_draft_attempts_today(**tenant, now_epoch=now)
+              stage = "r2_envelope"
+              stored = ImmutablePrivateReadyEnvelope(backend=R2PrivateReadyBackend.from_environment()).load(**tenant, html_sha256=job["html_sha256"], release_public_key_sha256=anchor)
+              result["stages"][stage] = "PASS"
+              stage = "job_binding"
+              review = stored["review"]
+              if review["product_key"] != job["product_key"] or review["evidence_sha256"] != job["evidence_sha256"] or _fingerprint(review["product_key"], review["primary_query"], review["angle"]) != fp:
+                  raise ValueError("probe_binding_invalid")
+              result["stages"][stage] = "PASS"
+              stage = "cms_identity"
+              service = blogger._get_blogger_service()
+              blog_id = route["identifier"]
+              if blogger.validate_remote_identity(route, service.blogs().get(blogId=blog_id).execute()) != review["site_url"]:
+                  raise ValueError("probe_identity_mismatch")
+              result["stages"][stage] = "PASS"
+              stage = "cms_marker_history"
+              marker = "v31-" + fp[:32]
+              history = blogger._list_posts(service, blog_id, label=marker)
+              result["stages"][stage] = sum(marker in (p.get("labels") or []) for p in history)
+              stage = "cms_full_history"
+              full = blogger._list_posts(service, blog_id, include_scheduled=True)
+              result["stages"][stage] = len(full)
+              stage = "legacy_collision"
+              audit = audit_candidate_history(platform="blogger", posts=full, product_key=review["product_key"], article_title=review["article_title"])
+              result["stages"][stage] = audit["status"]
+              result["collisions"] = audit["collisions"]
+              result["status"] = "PREFLIGHT_REVIEW_ONLY"
+          except Exception as exc:
+              result["status"] = "BLOCKED"
+              result["failed_stage"] = stage
+              result["exception_type"] = type(exc).__name__
+              msg = str(exc)
+              if re.fullmatch(r"(?:probe|blogger|reviewed|private_envelope|d1|r2|cms_legacy|legacy)_[a-z0-9_]{1,120}", msg):
+                  result["safe_reason"] = msg
+          report = json.dumps(result, sort_keys=True)
+          print(report, flush=True)
+          Path("v31_ready_delivery_probe.json").write_text(report, encoding="utf-8")
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as f:
+              print("### READY delivery READ_ONLY", report, sep="\n\n", file=f)
+          PY
+      - name: Preservar diagnóstico sanitizado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v31-ready-delivery-readonly-${{ github.run_id }}
+          path: v31_ready_delivery_probe.json
+          if-no-files-found: warn
+          retention-days: 14
