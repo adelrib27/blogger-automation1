@@ -88,9 +88,9 @@
     "phase": "C154",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
     "objective": "Recuperar workflows de catálogo e diagnóstico de entrega DRAFT sem operações duplicadas.",
-    "latest_verified_step": "C154 — PR #162: correção de dependência cryptography em cinco workflows; aguarda CI/merge e execução real do refresh. C153 runtime confirmado: 2 links convertidos e persistidos, run 45492088943. Casa #334 confirmado em DRAFT por CMS; hash envelope não verificado. Móveis READY shopee:1235923910:19299550912 sem consumo no D1, 7 drafts + 5 publicados sem ID literal; log deliver-draft indisponível (404). Não repetir POST até reconciliação. LIVE OFF, sem alterar cron.",
-    "next_safe_step": "Confirmar CI da PR 162 e merge; validar refresh real; conciliar envelope R2 do READY Móveis com histórico CMS e obter diagnóstico de entrega antes de retry. Confirmar hash do DRAFT Casa se envelope existir.",
-    "blocker": "Log do job deliver-draft 404, sem steps; refresh real após correção não executado; cron de hoje não observado no histórico disponível.",
+    "latest_verified_step": "C154: PR #162 mesclada (f0b5b18872a0a5a800e2f1da90c402020a163181), CI 45620945094 PASS 922 testes. Envelope READY Móveis recuperado do R2; SHA HTML e Ed25519 verificados contra âncora do verificador; 12 artigos sem marcador ou shortlink idêntico. Entrega ainda não autorizada por este diagnóstico: histórico agendado, estado atual e falha 404 do job precisam conciliação. Refresh corrigido, nova execução real pendente.",
+    "next_safe_step": "Revalidar D1 READY e histórico CMS inclusive agendados, obter diagnóstico de entrega e executar workflow universal somente com gates intactos; comprovar refresh real.",
+    "blocker": "Job deliver-draft sem logs/steps; dispatch não disponível no conector; refresh real após correção pendente.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -145,7 +145,8 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45492088943",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45483551446",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45542125840",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45503981414"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45503981414",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45620945094"
     ]
   },
   "next_priorities": [
@@ -509,7 +510,7 @@
     "runtime_run": 45492088943
   },
   "c154_runtime_audit": {
-    "status": "WORKFLOW_FIX_PR_PENDING_CI",
+    "status": "MERGED_CI_PASS_READY_ENVELOPE_VERIFIED",
     "pr": 162,
     "refresh_failure_run": 45483551446,
     "root_cause": "missing cryptography",
@@ -524,6 +525,15 @@
     "blogger_cms_drafts": 7,
     "blogger_cms_published": 5,
     "blogger_matching_literal": 0,
-    "live_changed": false
+    "live_changed": false,
+    "merge_sha": "f0b5b18872a0a5a800e2f1da90c402020a163181",
+    "ci_run": 45620945094,
+    "blogger_r2_envelope_verified": true,
+    "blogger_html_sha256_verified": true,
+    "blogger_ed25519_verified": true,
+    "blogger_public_key_anchor_verified": true,
+    "blogger_history_exact_shortlink_matches": 0,
+    "blogger_history_marker_matches": 0,
+    "refresh_real_after_fix_verified": false
   }
 }
