@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C152_SAFE",
-  "continuity_protocol_phase": "C152",
+  "last_checkpoint_phase": "C153_SAFE",
+  "continuity_protocol_phase": "C153",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-24",
-  "last_updated_source": "C152_RADAR_LEGACY_CMS_56_POSTS_READONLY_922_UNIT_TESTS_50_SIMULATIONS_NO_DRAFT",
+  "last_updated_source": "C153 PR 160 CI verified",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C152_AUDITORIA_LEGADA_SAFE_2026-11-24.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C153_CONVERSAO_INDEPENDENTE.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C152",
+    "phase": "C153",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Auditoria C152 com CMS Radar autenticado e 56 corpos RAW, módulo universal contra duplicação legada (SKU/URL direta/slug/título/ângulo), chamadas dos writers Blogger/WordPress revisado e diretos antes de AI ou POST. Produtos C151 ainda NÃO homologados, sem link radarwp cacheado, compatibilidade de modelo não atestada. LIVE desativado.",
-    "latest_verified_step": "GitHub HEAD main antes de mudanças e1a2fd180ce69e57f2ce3ee3e082c4618acaf8f9, compare identical. WordPress Radar remoto confirma 37 publish + 19 draft, 56/56 RAW não vazios (~517011 caracteres), 0 correspondências literais dos quatro itens; posts #138 e #260 sobre smartwatch requerem comparação de intenção. PR #159, CI SAFE #45446503885 (922 testes PASS/50 simulações PASS; Casa 24/24, Oficina 21/21, Radar 15/15 e cross-blog PASS), sem acesso de rede no CI. Nenhum novo DRAFT; nenhum CMS/D1/R2/Shopee write neste ciclo.",
-    "next_safe_step": "Rever CI final e merge somente da PR SAFE #159; confrontar D1/R2 atualizado em modo leitura; resolver URLs Shopee originais e compatibilidade fabricante/modelo/variante para produto Radar viável, incluindo links encurtados e duplicação semântica/intent. Após todos os gates, 1 conversão sob quota/campaign e DRAFT com GET+SHA. Blogger E2E real independente. LIVE continua desligado.",
-    "blocker": "Faltam evidência exata fabricante/SKU/variante/foto e prova de oferta Shopee da campanha radarwp; links encurtados legados ainda não reconciliados em todas as fontes. C152 valida mecanismo SAFE, NÃO um DRAFT E2E. Não converter, não habilitar Radar, não reativar antigos crons.",
+    "objective": "Separar cache afiliado da homologação editorial sem desarmar publicação.",
+    "latest_verified_step": "C153: fila comercial regular não depende de fonte factual, template ou revisão de artigo. Perfil factual é prioridade opcional, não veto. Mantêm-se moderação, origem, campanha real, escopo, cache, reserva D1 na fila diária e single writer; a recuperação pontual editorial continua restrita. LIVE e flags de DRAFT inalterados. PR #160 mesclada em 60db4b0eda1c216a6ed34e028d5e264d904807ef; CI 45448688104: 922 testes e 50 simulações PASS. Sem nova conversão real confirmada; dispatch indisponível no conector GitHub atual. A próxima execução regular deve ser auditada antes de qualquer retry.",
+    "next_safe_step": "Auditar execução regular de conversão, confirmar D1/R2 por SKU+campanha, sem retry de reserva antiga; homologar DRAFT separadamente.",
+    "blocker": "Conector GitHub não oferece dispatch; nenhuma conversão nova foi verificada. C152 DRAFT E2E permanece pendente.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "e1a2fd180ce69e57f2ce3ee3e082c4618acaf8f9",
+    "base_main_sha": "60db4b0eda1c216a6ed34e028d5e264d904807ef",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -138,10 +138,13 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45434983529",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45435212469",
       "https://github.com/adelrib27/blogger-automation1/pull/159",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45446503885"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45446503885",
+      "https://github.com/adelrib27/blogger-automation1/pull/160",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45448688104"
     ]
   },
   "next_priorities": [
+    "C153: auditar conversão regular independente da revisão factual; confirmar cache e reserva D1. Não repetir tentativa incerta.",
     "C152 SAFE dedup guard tested (PR #159): 56 Radar posts/drafts audited; still 0 actual E2E new DRAFT. Verify independent exact product source, affiliate cache, D1/R2, legacy shortlinks and semantic collisions before any CMS write.",
     "C149 concluída: não reativar 10 workflows antigos Radar; retomada agora somente dentro do V31 universal com GET CMS Radar e DRAFT factual, Loja mensal suspensa até sucessor universal.",
     "C148 Radar Tech piloto: resolver segredo GitHub WordPress por site sem compartilhar credencial no chat; repetir canário READ ONLY e só depois habilitar oferta/fonte independente para DRAFT.",
@@ -153,23 +156,17 @@
     "Manter SYSTEM_MASTER.md como documento arquitetural canônico e a política de publicação automática LIVE em pending_policy_approval."
   ],
   "latest_verified_checkpoint": {
-    "phase": "C152_SAFE",
-    "path": "affiliate_hub_v31/CHECKPOINT_C152_AUDITORIA_LEGADA_SAFE_2026-11-24.md",
-    "preview": "affiliate_hub_v31/CHECKPOINT_C152_PREVIEW_AUDITORIA_LEGADA_2026-11-24.md",
-    "pr_number": 159,
-    "ci_run": 45446503885,
+    "phase": "C153_SAFE",
+    "path": "affiliate_hub_v31/CHECKPOINT_C153_CONVERSAO_INDEPENDENTE.md",
+    "pr_number": 160,
+    "ci_run": 45448688104,
     "unit_tests_passed": 922,
     "unit_tests_failed": 0,
     "offline_simulations_passed": 50,
-    "cms_read_only_posts": 56,
-    "cms_reads_confirmed": true,
-    "cms_writes": 0,
-    "shopee_api_mutations": 0,
-    "r2_writes": 0,
-    "d1_writes": 0,
+    "real_conversion_verified": false,
     "real_draft_verified": false,
     "live_authorized": false,
-    "next_phase": "C152_E2E_SOURCE_AND_CONVERSION_PENDING"
+    "next_phase": "C153_COMMERCIAL_RUNTIME_VERIFICATION"
   },
   "continuity_contract": {
     "must_update_at_start": true,
@@ -495,5 +492,13 @@
       "github_code_and_docs": true
     },
     "next_action": "Read R2/D1 and exact Shopee listing and current manufacturer facts after CI, then repeat 50 sims for critical E2E and verify one DRAFT by authenticated GET+hash; never enable LIVE automatically"
+  },
+  "c153_commercial_independence": {
+    "status": "MERGED_CI_PASS_RUNTIME_PENDING",
+    "merge_sha": "60db4b0eda1c216a6ed34e028d5e264d904807ef",
+    "pr": 160,
+    "ci_run": 45448688104,
+    "real_conversion_verified": false,
+    "live_changed": false
   }
 }
