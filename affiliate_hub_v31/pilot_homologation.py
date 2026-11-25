@@ -204,7 +204,7 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                                 "cms_legacy_duplicate_checked": False,
                                 "eligible_for_draft_write": False,
                             })
-                        entry["primary_candidate_sample"] = sample
+                        entry["primary_candidate_sample" if entry["is_primary"] else "candidate_sample"] = sample
             finally:
                 db.close()
         check["r2"] = "READ_ONLY_CONFIRMED"
