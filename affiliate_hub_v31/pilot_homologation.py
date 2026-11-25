@@ -124,7 +124,7 @@ def _valid_d1_counts(rows) -> dict:
 def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                   storage=None, history_reader=None,
                   routes: dict | None = None, request_modes=None,
-                  reviewer_profiles=None) -> dict:
+                  reviewer_profiles=None, all_cms: bool = False) -> dict:
     """Read-only remoto: falha de qualquer fonte não libera artefatos."""
     blueprint = plan(primary=primary, routes=routes, request_modes=request_modes,
                      reviewer_profiles=reviewer_profiles)
@@ -174,7 +174,11 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                     entry["catalog_candidates_sample"] = result["catalog_candidates"]
                     entry["cached_links_exact_campaign_sample"] = result["cached_exact_campaign"]
                     entry["affiliate_link_verified_for_draft"] = False
-                    if entry["is_primary"]:
+                    if all_cms:
+                        entry["cached_links_exact_campaign_total"] = db.execute(
+                            "SELECT COUNT(*) FROM affiliate_links WHERE campaign=?",
+                            (entry["campaign"],)).fetchone()[0]
+                    if entry["is_primary"] or all_cms:
                         items = result.get("items", [])
                         if not isinstance(items, list) or len(items) > 4:
                             raise PilotAuditError("pilot_primary_sample_untrusted")
@@ -209,32 +213,41 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
     # Ações autenticadas feitas por outros conectores não comprovam que os
     # segredos de GitHub Actions estão configurados para o MESMO site.
     # Não mostrar nomes de usuário, tokens, corpos de erro ou URLs privadas.
-    missing_cms_credentials = False
-    if history_reader is None and registry[primary]["platform"] == "wordpress":
-        from .automatic_wordpress_drafts import credentials_for
-        try:
-            credentials_for(primary)
-        except Exception:
-            missing_cms_credentials = True
-            check["cms"] = "BLOCKED_CMS_SITE_CREDENTIALS_UNAVAILABLE"
-    if not missing_cms_credentials:
-        try:
-            read = read_draft_history if history_reader is None else history_reader
-            cms = read(primary)
-            if (not isinstance(cms, dict) or cms.get("site_key") != primary
-                    or type(cms.get("count")) is not int or cms["count"] < 0
-                    or not all(isinstance(cms.get(field), list)
-                               for field in ("keys", "slugs", "prose"))):
-                raise PilotAuditError("pilot_cms_history_untrusted")
-            rows[0]["cms_history_read"] = True
-            # _check_history devolve numero de slugs V31, e NAO o total
-            # de posts nem a revisao de possiveis duplicatas legadas.
-            rows[0]["cms_v31_prefixed_slugs_detected"] = cms["count"]
-            rows[0]["cms_legacy_duplicate_crosscheck"] = "NOT_PERFORMED"
-            # Histórico por si só NÃO equivale a DRAFT V31 confirmado.
-            check["cms"] = "AUTHENTICATED_GET_CONFIRMED"
-        except Exception:
-            check["cms"] = "BLOCKED_AUTHENTICATED_CMS_GET"
+    targets = rows if all_cms else rows[:1]
+    for entry in targets:
+        key = entry["site_key"]
+        status = "NOT_CHECKED"
+        missing_cms_credentials = False
+        if history_reader is None and registry[key]["platform"] == "wordpress":
+            from .automatic_wordpress_drafts import credentials_for
+            try:
+                credentials_for(key)
+            except Exception:
+                missing_cms_credentials = True
+                status = "BLOCKED_CMS_SITE_CREDENTIALS_UNAVAILABLE"
+        if not missing_cms_credentials:
+            try:
+                read = read_draft_history if history_reader is None else history_reader
+                cms = read(key)
+                if (not isinstance(cms, dict) or cms.get("site_key") != key
+                        or type(cms.get("count")) is not int or cms["count"] < 0
+                        or not all(isinstance(cms.get(field), list)
+                                   for field in ("keys", "slugs", "prose"))):
+                    raise PilotAuditError("pilot_cms_history_untrusted")
+                entry["cms_history_read"] = True
+                if registry[key]["platform"] == "wordpress":
+                    entry["cms_v31_prefixed_slugs_detected"] = cms["count"]
+                else:
+                    entry["cms_history_records_scanned"] = cms["count"]
+                entry["cms_legacy_duplicate_crosscheck"] = "NOT_PERFORMED"
+                status = "AUTHENTICATED_GET_CONFIRMED"
+            except Exception:
+                status = "BLOCKED_AUTHENTICATED_CMS_GET"
+        entry["cms_check"] = status
+    check["cms"] = ("AUTHENTICATED_GET_CONFIRMED"
+                    if all(x["cms_check"] == "AUTHENTICATED_GET_CONFIRMED" for x in targets)
+                    else targets[0]["cms_check"] if not all_cms
+                    else "BLOCKED_ONE_OR_MORE_CMS_GET")
     success = all(value in ("READ_ONLY_CONFIRMED", "AUTHENTICATED_GET_CONFIRMED")
                   for value in check.values())
     return {
@@ -253,12 +266,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Homologação universal SAFE do V31")
     parser.add_argument("--primary-site-key", default=DEFAULT_PRIMARY)
     parser.add_argument("--real-readonly", action="store_true")
+    parser.add_argument("--all-cms", action="store_true", help="GET de todas as rotas ativas; cache total por campanha")
     # C151: destino local fixo. Nunca aceitar nome arbitrario nem subir segredos.
     parser.add_argument("--report-json", choices=["v31_pilot_readonly_report.json"],
                         default=None)
     args = parser.parse_args()
     try:
-        output = (live_readonly(primary=args.primary_site_key)
+        output = (live_readonly(primary=args.primary_site_key, all_cms=args.all_cms)
                   if args.real_readonly else plan(primary=args.primary_site_key))
     except Exception:
         print("V31_PILOT_READINESS_FAILED_CLOSED")
