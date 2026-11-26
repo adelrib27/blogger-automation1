@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '47 */4 * * *'
     # Cadência curta somente quando habilitada para um site específico.
-    - cron: '2-57/5 * * * *'
+    - cron: '3-58/5 * * * *'
   workflow_dispatch:
     inputs:
       site_key:

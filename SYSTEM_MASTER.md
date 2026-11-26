@@ -59,6 +59,10 @@ O verificador C167 pode usar a página canônica declarada do fabricante quando 
 
 A janela do agendador usa D1 para selecionar site elegível antes de consumir R2/CMS e conserva prioridade de READY fresco. C168 também corrige o link interno do canário Radar de climatização. [Checkpoint C168](affiliate_hub_v31/CHECKPOINT_C168_CADENCIA_PRECHECK.md).
 
+## 1.9. C169 — prova DRAFT Radar
+
+Radar tem dois DRAFTs assinados e verificados no WordPress, #401 Tecnologia e #403 Ar-condicionado, com replay idêntico. Metadescrição v3 gravada e lida no #403. A cadência recorrente permanece em homologação e LIVE desativado. [Checkpoint C169](affiliate_hub_v31/CHECKPOINT_C169_HOMOLOGACAO_RADAR.md).
+
 ## 2. Arquitetura lógica
 
 ```text
