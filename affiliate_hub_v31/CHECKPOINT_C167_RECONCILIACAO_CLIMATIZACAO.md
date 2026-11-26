@@ -1,0 +1,3 @@
+# C167 — reconciliação do canário de Ar-condicionado
+
+26/11/2026. Retomada `V31-C167-RADAR-CLIMATIZACAO`. D1 oficial consultado antes da mudança: Radar 1 USED, 0 READY; SEARCH 2/3, HTTP 1/3, nenhum cooldown, 1 reserva existente para shopee:1009975506:47114871036. A C165 fez SEARCH do Samsung e não chegou ao scrape, pois o único HTTP pertence à C164. A ficha oficial exata foi confirmada independentemente e serve como endpoint confiável de fallback. Verificar cache da campanha antes do novo ciclo. C167 só aceita reaproveitar o link, com nova leitura de fonte e payload SEO v3. Nenhuma autorização LIVE.
