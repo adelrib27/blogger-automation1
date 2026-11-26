@@ -98,6 +98,25 @@ class CategoryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify_release(tampered,signature=sig,public_key=pub)
 
+    def test_signed_category_envelope_roundtrip_and_tamper(self):
+        from affiliate_hub_v31.private_ready_envelope import ImmutablePrivateReadyEnvelope, PrivateEnvelopeError
+        from affiliate_hub_v31.tests.test_c78_private_ready_envelope import FakeConditionalStore
+        backend=FakeConditionalStore()
+        env=ImmutablePrivateReadyEnvelope(backend=backend)
+        args=dict(site_key=ROUTE["site_key"],campaign=ROUTE["campaign"],product_key=SKU,site_url=ROUTE["identifier"],article_url=ROUTE["identifier"]+"test/",article_title=TITLE,primary_query="ar condicionado",angle="guia seguro",html_sha256=hashlib.sha256(HTML.encode()).hexdigest(),evidence_sha256="b"*64,seo_context_sha256="c"*64,reviewed_text_hashes=[])
+        payload=review_payload(**args,wordpress_category=BIND)
+        key,_,pub=configured_signing_keys(private_key="a"*64,receipt_key="b"*64)
+        att={"payload":payload,"signature":"c"*64}
+        sig=sign_release(att,private_key=key)
+        saved=env.save(site_key=ROUTE["site_key"],campaign=ROUTE["campaign"],product_key=SKU,content_html=HTML,attestation=att,independent_review_key=None,release_signature=sig,release_public_key=pub,embed_release_key=True)
+        params=dict(site_key=ROUTE["site_key"],campaign=ROUTE["campaign"],html_sha256=saved["html_sha256"],release_public_key_sha256=hashlib.sha256(bytes.fromhex(pub)).hexdigest())
+        self.assertEqual(env.load(**params)["review"]["wordpress_category"],BIND)
+        data=json.loads(backend.objects[saved["object_key"]])
+        data["attestation"]["payload"]["wordpress_category"]["id"]=3
+        backend.objects[saved["object_key"]]=json.dumps(data,sort_keys=True,ensure_ascii=False,separators=(",",":")).encode()
+        with self.assertRaises(PrivateEnvelopeError):
+            env.load(**params)
+
     def test_client_post_contains_categories(self):
         client=WordPressRestClient(base_url=ROUTE["identifier"],username="x",application_password="y")
         with patch.object(client,"_call",return_value={"id":42,"status":"draft"}) as call:
