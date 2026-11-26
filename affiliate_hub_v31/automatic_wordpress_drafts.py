@@ -487,12 +487,12 @@ def run(*,site_key:str,preview_topic:str|None=None,
     request=next((r for r in load_requests()
                   if r["site_key"]==site_key),None)
     if execute_draft:
-        from .wordpress_category_routing import category_map
-        if category_map(route) is not None:
-            raise WordPressAutoDraftError("wordpress_mapped_route_requires_signed_writer")
         if (request is None or request["platform"]!="wordpress"
             or request.get("enabled") is not True):
             raise WordPressAutoDraftError("enabled_owner_request_required")
+        from .wordpress_category_routing import category_map
+        if category_map(route) is not None:
+            raise WordPressAutoDraftError("wordpress_mapped_route_requires_signed_writer")
         topic=request["topic"]
         requested=request["articles"]
     else:
