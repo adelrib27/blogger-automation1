@@ -1,0 +1,33 @@
+name: V31 — categorias WordPress GET autenticado
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_wordpress_category_readonly.yml'
+      - 'affiliate_hub_v31/wordpress_category_routing.py'
+      - 'affiliate_hub_v31/wordpress_category_routes.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  category-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar mapa e ancestrais via GET, sem POST
+        env:
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          V31_RADAR_LEGACY_CMS_BRIDGE_ENABLED: 'true'
+          V31_RADAR_LEGACY_WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+          V31_RADAR_LEGACY_WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+        run: python -m affiliate_hub_v31.wordpress_category_routing
