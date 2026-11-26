@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C159_UNIVERSAL_READINESS_AUDIT",
-  "continuity_protocol_phase": "C159",
+  "last_checkpoint_phase": "C160_COMMERCIAL_ENROLLMENT",
+  "continuity_protocol_phase": "C160",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
-  "last_updated_date": "2026-11-25",
-  "last_updated_source": "C159 universal registered scope audit",
+  "last_updated_date": "2026-11-26",
+  "last_updated_source": "C160 independent commercial enrollment",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C159_COBERTURA_UNIVERSAL.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C160_CADASTRO_COMERCIAL_INDEPENDENTE.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C159",
+    "phase": "C160",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Auditar cobertura e prontidão real de todos os sites sem liberar publicações.",
-    "latest_verified_step": "C159: PR #168 mesclada c39eea8a48e27c66118ee2afbe161222d21acc3c. Cadastro: 7 rotas ativas, 2 pedidos/perfis habilitados, Radar staged disabled, quatro rotas sem pedido/perfil. Blogger API list confirma Móveis, Limpeza, Estilo, Cozinha, Vida Pet (ID 8052455848487624244, sem rota), Ar-Condicionado explicitamente excluído. Ampliação do diagnóstico C148 com --all-cms: uma restauração R2, contagem total de links armazenados por campanha (não prova de validade), amostras por site e GET CMS de todas as rotas, falhas isoladas, sem writes. Dois testes novos. CI e prova real pendentes; sem ativar sites.",
-    "next_safe_step": "Validar CI/merge, ler auditoria real de todos os sites, escolher próxima rota e preparar pedido/perfil sem alterar LIVE.",
-    "blocker": "Cinco rotas registradas não possuem pedido habilitado/perfil; Vida Pet não cadastrado; auditoria completa do runtime pendente.",
+    "objective": "Desacoplar abastecimento comercial das demandas e perfis editoriais e ampliar cadastro real.",
+    "latest_verified_step": "C160: cadastro comercial separado de enabled editorial por commercial_enabled opcional. Quatro demandas novas staged (Cozinha, Estilo, Limpeza, Oficina), Radar comercial true e editorial false; Móveis/Casa preservados. Sete campanhas na fila regular, cinco cache-only. Fallback comercial usa somente rota e SKU elegível/fonte segura/foto/URL oficial; D1 histórico por par campanha/SKU e reserva atômica preservados, cap global 3 e 2 por cron. Pilot/target permanecem editoriais. Auditoria C159 run 45697792398 D1/R2 PASS, CMS 6/7 (Oficina credencial GitHub ausente), 4 candidatos por rota. Run 45697192610 2 conversões verificadas. CI e novo dry-run R2 pendentes. Nenhum perfil factual inventado; Vida Pet não cadastrado; LIVE OFF.",
+    "next_safe_step": "Validar CI/merge, verificar dry-run real em R2 e conversão regular futura; preparar perfis com fontes independentes e resolver credencial Oficina; Vida Pet onboarding.",
+    "blocker": "Oficina GitHub sem credencial; cinco perfis editoriais ausentes; Vida Pet sem rota. Cache comercial não depende desses perfis.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "c39eea8a48e27c66118ee2afbe161222d21acc3c",
+    "base_main_sha": "062c49d54b304f2ea87507a844c3f45e19d00ecd",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -157,6 +157,7 @@
     ]
   },
   "next_priorities": [
+    "C160: validar cache regular independente de perfis, ampliar fontes confiáveis por site sem habilitar LIVE.",
     "C159: auditoria real de todos os sites; priorizar próximo cadastro com evidência e campanha correta.",
     "C158: Blogger piloto homologado; não repetir Buriti; expandir diagnóstico de cobertura universal com gates intactos.",
     "C157: validar recuperação READY com catálogo vigente, sem nova pesquisa; comprovar entrega DRAFT pelo CMS.",
@@ -613,6 +614,17 @@
     "enabled_requests": 2,
     "review_profiles": 2,
     "vida_pet_active_unregistered": true,
+    "live_changed": false
+  },
+  "c160_commercial_enrollment": {
+    "status": "INDEPENDENT_ENROLLMENT_STAGED",
+    "registered_active": 7,
+    "commercial_enrolled": 7,
+    "editorial_enabled": 2,
+    "commercial_only": 5,
+    "prior_runtime_audit": 45697792398,
+    "cms_get_pass": 6,
+    "cms_get_blocked": 1,
     "live_changed": false
   }
 }
