@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C171_COTA_DRAFT_OPCIONAL",
-  "continuity_protocol_phase": "C171",
+  "last_checkpoint_phase": "C172_PESQUISA_RADAR",
+  "continuity_protocol_phase": "C172",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-26",
-  "last_updated_source": "C171 cota diária DRAFT opcional",
+  "last_updated_source": "C172 pesquisa Radar sem cota diária interna",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C171_COTA_DRAFT_OPCIONAL.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C172_PESQUISA_RADAR.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C171",
+    "phase": "C172",
     "status": "EM_ANDAMENTO",
-    "objective": "Homologar a recorrência do Radar sem teto diário de rascunhos.",
-    "latest_verified_step": "C170 integrou o Radar ao cron piloto no minuto 42. C169 confirmou #401 e #403.",
-    "next_safe_step": "Verificar janela D1 real no Radar com o novo perfil e confrontar o próximo recibo de DRAFT com o WordPress.",
-    "blocker": "Novo DRAFT agendado depende de oportunidade verificável e disponibilidade de pesquisa.",
+    "objective": "Validar o fluxo universal Radar sem cota diária interna de pesquisa.",
+    "latest_verified_step": "C171 removeu o teto de DRAFT. Auditoria 45895258709 mostrou saldo Firecrawl e esgotamento apenas da cota interna do Radar.",
+    "next_safe_step": "Executar o workflow universal para Radar e conferir a entrega no WordPress e o evento schedule.",
+    "blocker": "Aguardando evidência de uma entrega real após a alteração de pesquisa.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "3c884688af87e3bd3ad748afa5a8c2ccb0c7164a",
+    "base_main_sha": "7fe7d80aa457434f3bd7ec539c645d28ad09fa9c",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -165,6 +165,7 @@
     ]
   },
   "next_priorities": [
+    "C172: confirmar o novo DRAFT e a recorrência Radar sem a cota interna de pesquisa.",
     "C171: confirmar no runtime que os DRAFTs anteriores não limitam a homologação do Radar.",
     "C170: validar cron isolado Radar sem alterar o destino do cron regular; LIVE OFF.",
     "C169: manter os DRAFTs #401 e #403, ampliar fontes e medir recorrência Radar antes de expandir. LIVE OFF.",

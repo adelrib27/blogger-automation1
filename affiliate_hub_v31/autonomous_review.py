@@ -589,6 +589,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 if recovered is not None:
                     return recovered
             rejected = []
+            research_cap = policy["daily_research_attempts"]
             _mark_stage("candidate_selection")
             # Cache primeiro. Após esgotar os candidatos já convertidos,
             # considerar UM SKU elegível sem link, durante o MESMO ciclo DRAFT.
@@ -683,7 +684,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                             and not code.startswith("external_fact_missing_"):
                         raise
                     rejected.append(code)
-                    if len(rejected) >= policy["daily_research_attempts"]:
+                    if research_cap is not None and len(rejected) >= research_cap:
                         return {"site_key": site_key, "status": "NO_NEW_OFFER",
                                 "reason": "no_new_offer_with_trusted_source",
                                 "candidates_with_source_rejected": len(rejected),
