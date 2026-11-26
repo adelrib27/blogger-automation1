@@ -1,0 +1,3 @@
+# C166 — metadescrição assinada e limites de execução
+
+26/11/2026. Retomada `V31-C166-SEO-CAPACIDADE`. Base `ed4faa05fd6f44682a987ae94842024951b9b6fa`. DRAFT Radar #401 confirmado com categoria 3 e replay. AIOSEO gerou descrição inicial pelo corpo. Foi aplicada somente a metadescrição via adaptador AIOSEO ao DRAFT #401, com leitura do campo e do head coincidentes. Automatizar a mesma operação no POST DRAFT inicial, vinculada à assinatura, verificar metadescrição nativa e AIOSEO no GET, preservar envelopes V1/V2 e evitar nova escrita em replay. Medir créditos do Firecrawl da própria chave do GitHub e estado D1 do Radar. LIVE OFF.
