@@ -70,8 +70,12 @@ def _attestation(attestation: dict, *, site_key: str, campaign: str,
     reviewed = attestation["payload"]
     html_sha = hashlib.sha256(content_html.encode("utf-8")).hexdigest()
     version = reviewed.get("version")
-    fields = REQUIRED_FIELDS | {"wordpress_category"} if version == 2 else REQUIRED_FIELDS
-    if (set(reviewed) != fields or type(version) is not int or version not in (1,2)
+    fields = REQUIRED_FIELDS
+    if version in (2, 3):
+        fields = fields | {"wordpress_category"}
+    if version == 3:
+        fields = fields | {"wordpress_seo"}
+    if (set(reviewed) != fields or type(version) is not int or version not in (1, 2, 3)
             or reviewed.get("site_key") != site_key
             or reviewed.get("campaign") != campaign
             or reviewed.get("product_key") != product_key
@@ -96,6 +100,7 @@ def _attestation(attestation: dict, *, site_key: str, campaign: str,
             seo_context_sha256=reviewed["seo_context_sha256"],
             reviewed_text_hashes=reviewed["reviewed_text_hashes"],
             wordpress_category=reviewed.get("wordpress_category"),
+            wordpress_seo=reviewed.get("wordpress_seo"),
         )
         if public_key is None:
             _check_review_signature(expected, attestation=attestation, key=key)

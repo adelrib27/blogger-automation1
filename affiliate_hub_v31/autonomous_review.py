@@ -678,7 +678,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     if len(rejected) >= policy["daily_research_attempts"]:
                         return {"site_key": site_key, "status": "NO_NEW_OFFER",
                                 "reason": "no_new_offer_with_trusted_source",
-                                "candidates_with_source_rejected": len(rejected)}
+                                "candidates_with_source_rejected": len(rejected),
+                                "rejection_reasons": sorted(set(rejected))}
                     continue
                 else:
                     break
@@ -689,7 +690,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 if rejected:
                     return {"site_key": site_key, "status": "NO_NEW_OFFER",
                             "reason": "no_new_offer_with_trusted_source",
-                            "candidates_with_source_rejected": len(rejected)}
+                            "candidates_with_source_rejected": len(rejected),
+                                "rejection_reasons": sorted(set(rejected))}
                 if sku is not None and not pilot:
                     raise VerificationError("product_has_no_trusted_source_profile")
                 return {"site_key": site_key, "status": "NO_NEW_OFFER",

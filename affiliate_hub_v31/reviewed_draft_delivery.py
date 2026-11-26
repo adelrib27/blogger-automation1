@@ -18,6 +18,7 @@ from .r2_private_ready_backend import R2PrivateReadyBackend
 from .routing import sites
 from .wordpress_category_routing import category_map, verify_remote_category, check_post_category
 from .editorial_cadence import draft_interval_seconds
+from .wordpress_editorial_seo import seo_adapter, verify_seo_readback
 from .legacy_cms_collision import audit_candidate_history
 from .universal_evidence_ready import _fingerprint
 
@@ -132,6 +133,9 @@ def _wordpress_draft(*, route, review, content, authorize, client):
     if not wordpress._verify_blog_url(settings.get("url", ""), site_url):
         raise ReviewedDraftError("reviewed_wordpress_site_mismatch")
     category_id = verify_remote_category(client, route, review.get("wordpress_category"))
+    seo = review.get("wordpress_seo")
+    if seo is not None and seo.get("adapter") != seo_adapter(route):
+        raise ReviewedDraftError("wordpress_seo_adapter_changed")
     product_key = review["product_key"]
     if set(blogger.KEY_PATTERN.findall(content)) != {product_key}:
         raise ReviewedDraftError("reviewed_wordpress_product_marker_mismatch")
@@ -155,11 +159,15 @@ def _wordpress_draft(*, route, review, content, authorize, client):
         if not authorize():
             return None
         extra = {"categories": [category_id]} if category_id is not None else {}
+        if seo is not None:
+            extra["seo"] = seo
         result = client.create_draft(title=review["article_title"],
                                      slug=slug, content=content, **extra)
         post_id = result.get("id")
     post = client.get_post(post_id)
     check_post_category(post, category_id)
+    if seo is not None:
+        verify_seo_readback(post, seo)
     if (post.get("id") != post_id or post.get("status") != "draft"
             or slug not in (post.get("slug"), post.get("generated_slug"))
             or (post.get("title") or {}).get("raw") != review["article_title"]

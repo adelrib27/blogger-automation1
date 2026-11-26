@@ -34,6 +34,7 @@ from .catalog import Catalog
 from .r2_state import R2State,verify_database
 from .routing import sites
 from .site_launch_plan import preview_site_launch
+from .wordpress_editorial_seo import draft_seo_fields
 from .site_request_queue import load_requests
 from .taxonomy import normalize
 from .legacy_cms_collision import audit_candidate_history
@@ -194,7 +195,8 @@ class WordPressRestClient:
             raise WordPressAutoDraftError("wordpress_category_identity_mismatch")
         return term
 
-    def create_draft(self,*,title:str,slug:str,content:str,categories:list[int]|None=None)->dict:
+    def create_draft(self,*,title:str,slug:str,content:str,categories:list[int]|None=None,
+                     seo:dict|None=None)->dict:
         if (not isinstance(title,str) or not 20<=len(title)<=110 or
             not isinstance(slug,str) or
             not re.fullmatch(r"v31-[a-f0-9]{12}-[0-9]+",slug) or
@@ -209,6 +211,8 @@ class WordPressRestClient:
             if not isinstance(categories,list) or len(categories)!=1 or type(categories[0]) is not int or categories[0]<=0:
                 raise WordPressAutoDraftError("wordpress_category_payload_invalid")
             body["categories"]=categories
+        if seo is not None:
+            body.update(draft_seo_fields(seo))
         result=self._call("POST","/wp-json/wp/v2/posts",body)
         if not isinstance(result,dict) or not isinstance(result.get("id"),int):
             raise WordPressAutoDraftError("draft_not_created")

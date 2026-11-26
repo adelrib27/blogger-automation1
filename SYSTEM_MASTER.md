@@ -47,6 +47,10 @@ C163 confirmou histórico CMS, campanha/cache e ausência de jobs Radar. C164 co
 
 C164 confirmou DRAFT Radar #401 e replay. C165 introduz descoberta por modelo exato no catálogo elegível, seleção de fonte do fabricante e um canário em Ar-condicionado com possibilidade de uma conversão protegida pelo D1. Radar ainda em piloto e LIVE desativado. [Evidências e retomada C165](affiliate_hub_v31/CHECKPOINT_C165_MODELOS_FONTES.md).
 
+## 1.6. C166 — SEO WordPress assinado e capacidade
+
+A C166 liga a metadescrição ao payload assinado v3 e verifica o campo nativo e o AIOSEO no GET. O DRAFT #401 está verificado, enquanto o canário de Ar-condicionado retornou NO_NEW_OFFER. A auditoria C166 mede o runtime e o cache antes de uma nova tentativa. [Checkpoint C166](affiliate_hub_v31/CHECKPOINT_C166_SEO_CAPACIDADE.md).
+
 ## 2. Arquitetura lógica
 
 ```text

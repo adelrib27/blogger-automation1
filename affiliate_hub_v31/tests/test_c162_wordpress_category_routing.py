@@ -62,6 +62,30 @@ class CategoryTests(unittest.TestCase):
         auth.assert_not_called()
         client.create_draft.assert_not_called()
 
+    def test_signed_seo_fields_are_validated_on_draft_and_replay(self):
+        from affiliate_hub_v31.wordpress_editorial_seo import draft_seo_fields
+
+        seo = {"adapter": "aioseo", "description":
+               "Confira medidas, capacidade e instalação com as informações do fabricante."}
+        review = {"site_url": ROUTE["identifier"], "product_key": SKU, "article_title": TITLE,
+                  "wordpress_category": BIND, "wordpress_seo": seo}
+        client = self.client()
+        post = client.get_post.return_value
+        post.update(excerpt={"raw": seo["description"]},
+                    aioseo_meta_data={"description": seo["description"]},
+                    aioseo_head_json={"description": seo["description"]})
+        authorize = Mock(return_value=True)
+        self.assertEqual(draft_seo_fields(seo)["aioseo_meta_data"]["description"], seo["description"])
+        self.assertEqual(_wordpress_draft(route=ROUTE, review=review, content=HTML,
+                                         authorize=authorize, client=client), "42")
+        self.assertEqual(client.create_draft.call_args.kwargs["seo"], seo)
+        client.list_posts.return_value = [post]
+        post["aioseo_head_json"] = {"description": "Outra descrição"}
+        with self.assertRaisesRegex(ValueError, "aioseo_readback"):
+            _wordpress_draft(route=ROUTE, review=review, content=HTML,
+                             authorize=authorize, client=client)
+        self.assertEqual(client.create_draft.call_count, 1)
+
     def test_category_sent_and_readback_checked(self):
         client=self.client()
         review={"site_url":ROUTE["identifier"],"product_key":SKU,"article_title":TITLE,"wordpress_category":BIND}
