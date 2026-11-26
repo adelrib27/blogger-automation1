@@ -563,8 +563,9 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
         public_key_sha256 = hashlib.sha256(bytes.fromhex(public_key)).hexdigest()
     tenant = {"site_key": site_key, "campaign": route["campaign"]}
     _mark_stage("draft_quota")
-    cap_reached = (not probe and state.count_draft_attempts_today(
-        **tenant, now_epoch=int(utcnow().timestamp())) >= policy["max_drafts_per_day"])
+    daily_cap = policy["max_drafts_per_day"]
+    cap_reached = (not probe and daily_cap is not None and state.count_draft_attempts_today(
+        **tenant, now_epoch=int(utcnow().timestamp())) >= daily_cap)
     interval = draft_interval_seconds(policy)
     if interval and not (probe or pilot or digest or cap_reached):
         latest = state.latest_draft_attempt(**tenant)

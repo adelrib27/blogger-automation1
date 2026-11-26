@@ -67,6 +67,10 @@ Radar tem dois DRAFTs assinados e verificados no WordPress, #401 Tecnologia e #4
 
 O agendador V31 tem uma janela horária para um piloto DRAFT indicado por `V31_AUTODRAFT_PILOT_SITE`. O Radar usa essa janela em homologação e o destino da agenda regular continua na variável própria. [Checkpoint C170](affiliate_hub_v31/CHECKPOINT_C170_RECORRENCIA_RADAR.md).
 
+## 1.11. C171 — cota diária DRAFT opcional
+
+O perfil Radar usa `max_drafts_per_day: null`. O intervalo, a evidência e a idempotência seguem na reserva D1. [Checkpoint C171](affiliate_hub_v31/CHECKPOINT_C171_COTA_DRAFT_OPCIONAL.md).
+
 ## 2. Arquitetura lógica
 
 ```text

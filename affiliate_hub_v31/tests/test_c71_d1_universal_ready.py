@@ -405,6 +405,32 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertFalse(self.store.has_research_capacity(site_key=B, campaign=C,
                                                           now_epoch=T, daily_cap=1))
 
+    def test_uncapped_draft_window_and_claim_keep_interval_and_prevent_replay(self):
+        from affiliate_hub_v31.editorial_cadence import draft_window_status
+
+        tenant = {"site_key": B, "campaign": C}
+        for lease in ("refill", "writer"):
+            self.assertTrue(self.store.acquire_lease(
+                **tenant, lease_name=lease, owner_nonce=NA, now_epoch=T, ttl_seconds=300))
+        for fingerprint, sku in zip((ONE, TWO), KEYS):
+            self.seed_sql_proof(sku)
+            self.assertTrue(self.store.reserve_ready(
+                **tenant, owner_nonce=NA, fingerprint=fingerprint, product_key=sku,
+                html_sha256=TWO, evidence_sha256=THREE, now_epoch=T))
+
+        self.assertTrue(self.store.consume_one(
+            **tenant, owner_nonce=NA, fingerprint=ONE, now_epoch=T, daily_cap=1))
+        config = {"draft_interval": "1m", "max_drafts_per_day": None, "daily_research_attempts": 1}
+        self.assertEqual(draft_window_status(
+            state=self.other, route=ROUTES[B], profile=config, now_epoch=T + 59), "WAITING_INTERVAL")
+        self.assertEqual(draft_window_status(
+            state=self.other, route=ROUTES[B], profile=config, now_epoch=T + 60), "DUE")
+        claim = dict(tenant, owner_nonce=NA, interval_seconds=60, fingerprint=TWO)
+        self.assertFalse(self.other.consume_one(**claim, daily_cap=1, now_epoch=T + 60))
+        self.assertFalse(self.other.consume_one(**claim, daily_cap=None, now_epoch=T + 59))
+        self.assertTrue(self.other.consume_one(**claim, daily_cap=None, now_epoch=T + 60))
+        self.assertFalse(self.other.consume_one(**claim, daily_cap=None, now_epoch=T + 120))
+
     def test_dispatch_defers_at_research_cap_but_preserves_fresh_ready(self):
         from affiliate_hub_v31.editorial_cadence import draft_window_status
 

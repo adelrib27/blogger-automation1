@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C170 (atual)
+## Posição C171 (atual)
+
+O perfil Radar usa `max_drafts_per_day: null`. O intervalo, a evidência e a idempotência seguem na reserva D1. [Checkpoint C171](affiliate_hub_v31/CHECKPOINT_C171_COTA_DRAFT_OPCIONAL.md).
+
+## Posição C170
 
 O agendador V31 tem uma janela horária para um piloto DRAFT indicado por `V31_AUTODRAFT_PILOT_SITE`. O Radar usa essa janela em homologação e o destino da agenda regular continua na variável própria. [Checkpoint C170](affiliate_hub_v31/CHECKPOINT_C170_RECORRENCIA_RADAR.md).
 
