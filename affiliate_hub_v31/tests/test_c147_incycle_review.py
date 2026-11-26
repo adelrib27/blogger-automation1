@@ -184,6 +184,14 @@ class InCycleReviewTests(unittest.TestCase):
         self.assertEqual(self.conversions,[MISSING])
         self.assertEqual(self.verified,[])
 
+    def test_previously_attempted_uncached_offer_does_not_block_next_offer(self):
+        self.offers = [(MISSING, dict(PROFILE)), (THIRD, dict(PROFILE))]
+        with patch.object(review, "has_conversion_attempt",
+                          side_effect=lambda _, product_key, **kw: product_key == MISSING):
+            result = review.run(site_key=SITE, history=self.history)
+        self.assertEqual(result["status"], "READY")
+        self.assertEqual(self.conversions, [THIRD])
+
     def test_prior_ready_job_without_cache_requires_reconciliation(self):
         self.offers=[(MISSING,dict(PROFILE))]
         self.state.previous={"status":"READY","html_sha256":"e"*64}

@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C169_RADAR_DRAFT_E2E_VERIFICADO",
-  "continuity_protocol_phase": "C169",
-  "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
+  "last_checkpoint_phase": "C170_RADAR_RECORRENCIA_DRAFT",
+  "continuity_protocol_phase": "C170",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-26",
-  "last_updated_source": "C169 recibos Radar 401 e 403",
+  "last_updated_source": "Auditoria D1 C169 e piloto recorrente isolado",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C169_HOMOLOGACAO_RADAR.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C170_RECORRENCIA_RADAR.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C169",
-    "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Consolidar os dois DRAFTs assinados do Radar e medir cadência em runtime.",
-    "latest_verified_step": "DRAFT #401 Tecnologia 3 e #403 Ar-condicionado 20 confirmados no WordPress e por replay do GitHub. #403 SEO v3 nativo/AIOSEO confirmado. D1 2 USED, zero READY; Samsung com uma única tentativa comercial.",
-    "next_safe_step": "Verificar janela D1 da auditoria C169. Para homologar recorrência, ampliar perfis exatos e observar novos ciclos somente Radar dentro das cotas. LIVE depende de autorização expressa.",
-    "blocker": "E2E de DRAFT concluído para as duas categorias do piloto. Recorrência de produção e cotas máximas de WordPress/Shopee ainda não certificadas.",
+    "phase": "C170",
+    "status": "EM_ANDAMENTO",
+    "objective": "Comprovar DRAFT recorrente agendado no Radar pelo motor universal.",
+    "latest_verified_step": "Auditoria 45879847269: DAILY_CAP, 2 USED, zero READY, HTTP 3/3 e SEARCH 4/4. C169 confirmou os DRAFTs #401 e #403.",
+    "next_safe_step": "Confirmar variável exclusiva do piloto e observar GitHub schedule. Após renovação das cotas, verificar DRAFT novo por GET autenticado e recibo, ou o motivo controlado para ausência de oferta.",
+    "blocker": "A prova de recorrência depende de um ciclo schedule com janela elegível e uma oferta aprovada.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "dc985f08a1ca95a203217b70482851ae95a4d32d",
+    "base_main_sha": "9e3fb3e511d64710cc8ddb0c713729ca8c537dc4",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -160,10 +160,12 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45877837796",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45878468830",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45878775929",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45879376367"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45879376367",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45879847269"
     ]
   },
   "next_priorities": [
+    "C170: validar cron isolado Radar sem alterar o destino do cron regular; LIVE OFF.",
     "C169: manter os DRAFTs #401 e #403, ampliar fontes e medir recorrência Radar antes de expandir. LIVE OFF.",
     "C168: fechar prova WordPress categoria 20 e metadescrição v3. Manter LIVE OFF.",
     "C167: confirmar DRAFT categoria 20, metadescrição v3, cache e replay; medir ciclo recorrente de Radar. LIVE OFF.",

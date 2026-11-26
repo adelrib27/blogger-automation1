@@ -63,6 +63,10 @@ A janela do agendador usa D1 para selecionar site elegível antes de consumir R2
 
 Radar tem dois DRAFTs assinados e verificados no WordPress, #401 Tecnologia e #403 Ar-condicionado, com replay idêntico. Metadescrição v3 gravada e lida no #403. A cadência recorrente permanece em homologação e LIVE desativado. [Checkpoint C169](affiliate_hub_v31/CHECKPOINT_C169_HOMOLOGACAO_RADAR.md).
 
+## 1.10. C170 — recorrência DRAFT
+
+O agendador V31 tem uma janela horária para um piloto DRAFT indicado por `V31_AUTODRAFT_PILOT_SITE`. O Radar usa essa janela em homologação e o destino da agenda regular continua na variável própria. [Checkpoint C170](affiliate_hub_v31/CHECKPOINT_C170_RECORRENCIA_RADAR.md).
+
 ## 2. Arquitetura lógica
 
 ```text
