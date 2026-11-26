@@ -20,6 +20,7 @@ from .r2_state import R2State
 from .reviewed_ready_promotion import _json_sha, _offer_in_same_html, review_payload
 from .routing import sites
 from .wordpress_category_routing import category_for_product
+from .wordpress_editorial_seo import seo_for_article
 from .site_request_queue import load_requests
 
 MAX_CANDIDATE_BYTES = 450_000
@@ -164,6 +165,7 @@ def prepare_review_payload(*, article: dict, catalog: Catalog, now: datetime) ->
         evidence_sha256=_json_sha(article["evidence_package"]),
         seo_context_sha256=_json_sha(seo_context), reviewed_text_hashes=hashes,
         wordpress_category=category_for_product(catalog, route, product_key),
+        wordpress_seo=seo_for_article(route, article["meta_description"]),
     )
 
 

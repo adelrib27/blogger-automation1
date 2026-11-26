@@ -26,6 +26,7 @@ from .final_fact_gate import FinalFactGateError, verify_final_html_facts
 from .future_blog_seo import FutureSEOError, audit_future_article
 from .routing import sites
 from .wordpress_category_routing import category_for_product, validate_binding
+from .wordpress_editorial_seo import seo_for_article, validate_seo_binding
 from .review_signatures import verify_public_attestation
 from .universal_evidence_ready import (
     UniversalReadyError, UniversalReadyPolicy, _fingerprint,
@@ -112,6 +113,7 @@ def review_payload(
     primary_query: str, angle: str, html_sha256: str,
     evidence_sha256: str, seo_context_sha256: str,
     reviewed_text_hashes: list[str], wordpress_category: dict | None = None,
+    wordpress_seo: dict | None = None,
 ) -> dict:
     """Construct *unsigned* material for an INDEPENDENT review service.
 
@@ -120,8 +122,14 @@ def review_payload(
     Merely calling this function is never a review or permission to publish.
     """
     binding = {} if wordpress_category is None else {"wordpress_category": validate_binding(wordpress_category)}
+    version = 2 if binding else 1
+    if wordpress_seo is not None:
+        if wordpress_category is None:
+            raise ReviewedReadyError("wordpress_seo_category_required")
+        binding["wordpress_seo"] = validate_seo_binding(wordpress_seo)
+        version = 3
     return {
-        "version": 2 if binding else 1, **binding,
+        "version": version, **binding,
         "site_key": site_key, "campaign": campaign,
         "product_key": product_key, "site_url": site_url,
         "article_url": article_url, "article_title": article_title,
@@ -242,6 +250,7 @@ def stage_reviewed_ready(
             angle=angle, html_sha256=html_sha, evidence_sha256=evidence_sha,
             seo_context_sha256=seo_sha, reviewed_text_hashes=hashes,
             wordpress_category=category_for_product(catalog, route, product_key),
+            wordpress_seo=seo_for_article(route, meta_description),
         )
         if independent_review_key is not None or release_public_key is None:
             _check_review_signature(
