@@ -15,7 +15,13 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C160 (atual)
+## Posição C161 (atual)
+
+C161: proprietário define Radar Tech BR piloto prioritário E2E universal; integrar outros um por vez somente após comprovação. Preservar acervo comercial independente e operações já homologadas. Radar GET 37 publish, 19 draft, 0 future; categorias 1 Guias de Compra (arquivo), 3 Tecnologia, 20 Ar-condicionado parent 3. D1 Radar zero READY/USED; pedido editorial OFF, sem perfil; três tentativas históricas proibidas de repetição. C160 dry-run real 45829122530 PASS 7 campanhas/5 cache-only, 2 candidatos, zero mutação. Defeito universal WordPress: POST não envia categories e GET não verifica hierarquia. Corrigir roteamento declarativo, assinatura/binding e replay; fontes confiáveis e cap adaptativo após medições. Cron atual 4h, GitHub mínimo 5min sujeito a atraso; cap Shopee 3/dia não é cota oficial. LIVE OFF até aprovação expressa. Nenhuma alteração de código, flags ou CMS neste diagnóstico.
+
+[Checkpoint C161](affiliate_hub_v31/CHECKPOINT_C161_RADAR_PILOTO_E2E.md).
+
+## Posição C160
 
 C160: cadastro comercial separado de enabled editorial por commercial_enabled opcional. Quatro demandas novas staged (Cozinha, Estilo, Limpeza, Oficina), Radar comercial true e editorial false; Móveis/Casa preservados. Sete campanhas na fila regular, cinco cache-only. Fallback comercial usa somente rota e SKU elegível/fonte segura/foto/URL oficial; D1 histórico por par campanha/SKU e reserva atômica preservados, cap global 3 e 2 por cron. Pilot/target permanecem editoriais. Auditoria C159 run 45697792398 D1/R2 PASS, CMS 6/7 (Oficina credencial GitHub ausente), 4 candidatos por rota. Run 45697192610 2 conversões verificadas. CI e novo dry-run R2 pendentes. Nenhum perfil factual inventado; Vida Pet não cadastrado; LIVE OFF.
 

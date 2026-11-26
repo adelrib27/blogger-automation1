@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C160_COMMERCIAL_ENROLLMENT",
-  "continuity_protocol_phase": "C160",
+  "last_checkpoint_phase": "C161_RADAR_PILOT_E2E_AUDIT",
+  "continuity_protocol_phase": "C161",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-26",
-  "last_updated_source": "C160 independent commercial enrollment",
+  "last_updated_source": "Owner-directed Radar-first architecture and authenticated audit",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C160_CADASTRO_COMERCIAL_INDEPENDENTE.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C161_RADAR_PILOTO_E2E.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C160",
+    "phase": "C161",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Desacoplar abastecimento comercial das demandas e perfis editoriais e ampliar cadastro real.",
-    "latest_verified_step": "C160: cadastro comercial separado de enabled editorial por commercial_enabled opcional. Quatro demandas novas staged (Cozinha, Estilo, Limpeza, Oficina), Radar comercial true e editorial false; Móveis/Casa preservados. Sete campanhas na fila regular, cinco cache-only. Fallback comercial usa somente rota e SKU elegível/fonte segura/foto/URL oficial; D1 histórico por par campanha/SKU e reserva atômica preservados, cap global 3 e 2 por cron. Pilot/target permanecem editoriais. Auditoria C159 run 45697792398 D1/R2 PASS, CMS 6/7 (Oficina credencial GitHub ausente), 4 candidatos por rota. Run 45697192610 2 conversões verificadas. CI e novo dry-run R2 pendentes. Nenhum perfil factual inventado; Vida Pet não cadastrado; LIVE OFF.",
-    "next_safe_step": "Validar CI/merge, verificar dry-run real em R2 e conversão regular futura; preparar perfis com fontes independentes e resolver credencial Oficina; Vida Pet onboarding.",
-    "blocker": "Oficina GitHub sem credencial; cinco perfis editoriais ausentes; Vida Pet sem rota. Cache comercial não depende desses perfis.",
+    "objective": "Homologar o fluxo universal completo primeiro no Radar Tech BR, incluindo categorias e cadência mensurada.",
+    "latest_verified_step": "C161: proprietário define Radar Tech BR piloto prioritário E2E universal; integrar outros um por vez somente após comprovação. Preservar acervo comercial independente e operações já homologadas. Radar GET 37 publish, 19 draft, 0 future; categorias 1 Guias de Compra (arquivo), 3 Tecnologia, 20 Ar-condicionado parent 3. D1 Radar zero READY/USED; pedido editorial OFF, sem perfil; três tentativas históricas proibidas de repetição. C160 dry-run real 45829122530 PASS 7 campanhas/5 cache-only, 2 candidatos, zero mutação. Defeito universal WordPress: POST não envia categories e GET não verifica hierarquia. Corrigir roteamento declarativo, assinatura/binding e replay; fontes confiáveis e cap adaptativo após medições. Cron atual 4h, GitHub mínimo 5min sujeito a atraso; cap Shopee 3/dia não é cota oficial. LIVE OFF até aprovação expressa. Nenhuma alteração de código, flags ou CMS neste diagnóstico.",
+    "next_safe_step": "C162: sondagem de SKU/cache/fonte Radar, roteamento hierárquico universal e contrato assinado com readback; depois DRAFT agendado e teste de cadência. Outros sites somente depois do piloto.",
+    "blocker": "Radar editorial disabled, perfil ausente, categoria não enviada pelo writer, fonte de SKU e quotas externas a verificar, LIVE não autorizado.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "062c49d54b304f2ea87507a844c3f45e19d00ecd",
+    "base_main_sha": "be8364889b730ca04aac322fa37ddb4b11a5503e",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -157,6 +157,7 @@
     ]
   },
   "next_priorities": [
+    "C161 owner priority: finish Radar Tech BR E2E first, category-aware universal scheduler, measure capacity, onboard other sites individually afterwards.",
     "C160: validar cache regular independente de perfis, ampliar fontes confiáveis por site sem habilitar LIVE.",
     "C159: auditoria real de todos os sites; priorizar próximo cadastro com evidência e campanha correta.",
     "C158: Blogger piloto homologado; não repetir Buriti; expandir diagnóstico de cobertura universal com gates intactos.",
@@ -625,6 +626,37 @@
     "prior_runtime_audit": 45697792398,
     "cms_get_pass": 6,
     "cms_get_blocked": 1,
+    "live_changed": false
+  },
+  "c161_radar_pilot": {
+    "status": "AUDIT_COMPLETE_CORRECTIONS_PENDING",
+    "site_key": "wordpress_radartechbr",
+    "campaign": "radarwp",
+    "published": 37,
+    "drafts": 19,
+    "future": 0,
+    "categories": [
+      {
+        "id": 1,
+        "parent": 0,
+        "role": "legacy_archive"
+      },
+      {
+        "id": 3,
+        "parent": 0,
+        "role": "technology"
+      },
+      {
+        "id": 20,
+        "parent": 3,
+        "role": "air_conditioning"
+      }
+    ],
+    "d1_ready": 0,
+    "d1_used": 0,
+    "editorial_enabled": false,
+    "commercial_enabled": true,
+    "wordpress_category_payload_missing": true,
     "live_changed": false
   }
 }
