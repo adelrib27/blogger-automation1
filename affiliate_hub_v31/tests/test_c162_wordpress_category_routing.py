@@ -36,12 +36,21 @@ class CategoryTests(unittest.TestCase):
 
     def test_category_selected_from_exact_product_taxonomy(self):
         catalog=Mock()
-        catalog.db.execute.return_value.fetchone.return_value=("climatizacao","ar_condicionado")
+        catalog.db.execute.return_value.fetchone.return_value= ("climatizacao", "ar_condicionado", "Ar Condicionado Split Samsung")
         with patch("affiliate_hub_v31.verified_supply.route_allows_sku",return_value=True):
             self.assertEqual(r.category_for_product(catalog,ROUTE,SKU),BIND)
-            catalog.db.execute.return_value.fetchone.return_value=("casa","decoracao")
+            catalog.db.execute.return_value.fetchone.return_value= ("casa", "decoracao", "Pote de vidro")
             with self.assertRaises(ValueError):
                 r.category_for_product(catalog,ROUTE,SKU)
+
+    def test_current_rules_reject_automotive_filter_from_legacy_catalog(self):
+        catalog = Mock()
+        catalog.db.execute.return_value.fetchone.return_value = (
+            "climatizacao", "ar_condicionado", "Filtro Do Ar Condicionado BYD Dolphin Wega",
+        )
+        with patch("affiliate_hub_v31.verified_supply.route_allows_sku", return_value=True):
+            with self.assertRaises(r.ExcludedCategoryProduct):
+                r.category_for_product(catalog, ROUTE, SKU)
 
     def test_hierarchy_rechecked_before_authorize(self):
         client=self.client()

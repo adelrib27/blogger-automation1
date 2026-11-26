@@ -243,7 +243,8 @@ class UniversalD1ReadyState:
 
     def consume_one(
         self, *, site_key: str, campaign: str, owner_nonce: str,
-        fingerprint: str, now_epoch: int, daily_cap: int = 100
+        fingerprint: str, now_epoch: int, daily_cap: int = 100,
+        interval_seconds: int = 0
     ) -> bool:
         """Apenas reserva USED, nunca publica. Prova ainda deve estar fresca
         e com hash original; o writer precisa de gate CMS separado."""
@@ -254,12 +255,18 @@ class UniversalD1ReadyState:
             raise D1SafeError("ready_fingerprint_invalid")
         if type(daily_cap) is not int or not 1 <= daily_cap <= 100:
             raise D1SafeError("draft_budget_invalid")
+        if type(interval_seconds) is not int or not 0 <= interval_seconds <= 2_147_483_647:
+            raise D1SafeError("draft_interval_invalid")
         rows = self._call("""
           UPDATE v31_ready_jobs SET status='USED',used_epoch=?
           WHERE site_key=? AND campaign=? AND fingerprint=? AND status='READY'
           AND (SELECT COUNT(*) FROM v31_ready_jobs AS attempts
                WHERE attempts.site_key=? AND attempts.campaign=?
                  AND attempts.used_epoch>=?) < ?
+          AND (?=0 OR NOT EXISTS (
+            SELECT 1 FROM v31_ready_jobs AS recent
+            WHERE recent.site_key=? AND recent.campaign=? AND recent.used_epoch>?
+          ))
           AND EXISTS (
             SELECT 1 FROM v31_verified_evidence AS ev
             WHERE ev.site_key=v31_ready_jobs.site_key
@@ -274,7 +281,8 @@ class UniversalD1ReadyState:
               AND owner_nonce=? AND expires_epoch>?
           )
           RETURNING fingerprint
-        """, (t,site_key,campaign,fingerprint,site_key,campaign,t-t%86400,daily_cap,t,t,
+        """, (t,site_key,campaign,fingerprint,site_key,campaign,t-t%86400,daily_cap,
+              interval_seconds,site_key,campaign,t-interval_seconds,t,t,
               site_key,campaign,owner_nonce,t))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint
 
@@ -288,6 +296,17 @@ class UniversalD1ReadyState:
                 or rows[0]["n"] < 0):
             raise D1SafeError("d1_count_untrusted")
         return rows[0]["n"]
+
+    def latest_draft_attempt(self, *, site_key: str, campaign: str) -> int | None:
+        _params_site(site_key, campaign)
+        rows = self._call("""
+          SELECT MAX(used_epoch) AS latest FROM v31_ready_jobs
+          WHERE site_key=? AND campaign=?
+        """, (site_key, campaign))
+        if len(rows) != 1 or "latest" not in rows[0]:
+            raise D1SafeError("draft_latest_attempt_untrusted")
+        value = rows[0]["latest"]
+        return None if value is None else _clock(value)
 
     def count_draft_attempts_today(self, *, site_key: str, campaign: str, now_epoch: int) -> int:
         _params_site(site_key, campaign)

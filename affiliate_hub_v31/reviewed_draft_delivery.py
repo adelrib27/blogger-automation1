@@ -16,7 +16,8 @@ from .d1_http_runner import CloudflareD1HTTPRunner
 from .private_ready_envelope import ImmutablePrivateReadyEnvelope
 from .r2_private_ready_backend import R2PrivateReadyBackend
 from .routing import sites
-from .wordpress_category_routing import verify_remote_category, check_post_category
+from .wordpress_category_routing import category_map, verify_remote_category, check_post_category
+from .editorial_cadence import draft_interval_seconds
 from .legacy_cms_collision import audit_candidate_history
 from .universal_evidence_ready import _fingerprint
 
@@ -31,6 +32,7 @@ def read_draft_history(site_key):
     route = sites().get(site_key)
     if not route or route.get("publish_enabled") is not False:
         raise ReviewedDraftError("reviewed_draft_route_invalid")
+    category_counts = {}
     if route["platform"] == "blogger":
         service = blogger._get_blogger_service()
         blog_id = route["identifier"]
@@ -54,6 +56,13 @@ def read_draft_history(site_key):
             and post["generated_slug"].startswith(prefix)
         })
         bodies = [wordpress._html_text(post) for post in history]
+        mapping = category_map(route)
+        if mapping is not None:
+            for binding in mapping.values():
+                category_id = binding["id"]
+                category_counts[str(category_id)] = sum(
+                    category_id in post.get("categories", []) for post in history
+                )
     else:
         raise ReviewedDraftError("reviewed_draft_route_invalid")
     keys = {key for body in bodies for key in blogger.KEY_PATTERN.findall(body)}
@@ -61,7 +70,7 @@ def read_draft_history(site_key):
              for mark in prose_hashes(body)}
     return {"site_key": site_key, "keys": sorted(hashlib.sha256(key.encode()).hexdigest() for key in keys),
             "slugs": sorted(hashlib.sha256(slug.encode()).hexdigest() for slug in slugs),
-            "prose": sorted(prose), "count": count}
+            "prose": sorted(prose), "count": count, "category_counts": category_counts}
 
 
 def _blogger_draft(*, route, review, marker, content, authorize, service):
@@ -169,7 +178,7 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
                           independent_review_key: bytes | None = None,
                           release_public_key: str | None = None,
                           release_public_key_sha256: str | None = None,
-                          daily_cap: int = 100,
+                          daily_cap: int = 100, interval_seconds: int = 0,
                           blogger_service=None, wordpress_client=None) -> dict:
     """Claim one POST through D1. After an ambiguous POST, replays only read CMS.
 
@@ -206,7 +215,8 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
                 return False
             if not state.consume_one(**tenant, owner_nonce=owner["owner_nonce"],
                                      fingerprint=fingerprint, now_epoch=int(time.time()),
-                                     daily_cap=daily_cap):
+                                     daily_cap=daily_cap,
+                                     **({"interval_seconds": interval_seconds} if interval_seconds else {})):
                 raise ReviewedDraftError("reviewed_draft_claim_denied")
             return True
 
@@ -241,13 +251,13 @@ def main() -> int:
     try:
         key_material = {}
         daily_cap = 100
+        from .autonomous_review import PROFILE
+        rules = json.loads(PROFILE.read_text(encoding="utf-8"))
         if args.autonomous:
             anchor = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_SHA256", "")
             if len(anchor) != 64:
                 raise ReviewedDraftError("reviewed_draft_public_key_anchor_missing")
             key_material["release_public_key_sha256"] = anchor
-            from .autonomous_review import PROFILE
-            rules = json.loads(PROFILE.read_text(encoding="utf-8"))
             daily_cap = rules[args.site_key]["max_drafts_per_day"]
         else:
             public_key = os.environ.get("V31_REVIEW_RELEASE_PUBLIC_KEY_HEX", "")
@@ -261,6 +271,7 @@ def main() -> int:
             envelope=ImmutablePrivateReadyEnvelope(
                 backend=R2PrivateReadyBackend.from_environment()),
             daily_cap=daily_cap,
+            interval_seconds=draft_interval_seconds(rules.get(args.site_key, {})),
             **key_material,
         )
     except ReviewedDraftError as error:

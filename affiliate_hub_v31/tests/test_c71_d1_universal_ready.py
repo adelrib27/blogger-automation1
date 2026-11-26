@@ -372,6 +372,28 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertEqual(self.other.count_draft_attempts_today(
             **tenant, now_epoch=T-T%86400+86400), 0)
 
+    def test_interval_is_atomic_and_uses_last_attempt_across_midnight(self):
+        from affiliate_hub_v31.editorial_cadence import draft_interval_seconds
+
+        tenant = {"site_key": B, "campaign": C}
+        self.assertEqual(draft_interval_seconds({"draft_interval": "2h"}), 7200)
+        interval = draft_interval_seconds({"draft_interval": "1m"})
+        now = T - T % 86400 + 86370
+        for lease in ("refill", "writer"):
+            self.assertTrue(self.store.acquire_lease(
+                **tenant, lease_name=lease, owner_nonce=NA, now_epoch=now, ttl_seconds=300))
+        for fingerprint, sku in zip((ONE, TWO), KEYS):
+            self.seed_sql_proof(sku, verified=now)
+            self.assertTrue(self.store.reserve_ready(
+                **tenant, owner_nonce=NA, fingerprint=fingerprint, product_key=sku,
+                html_sha256=TWO, evidence_sha256=THREE, now_epoch=now))
+        claim = dict(tenant, owner_nonce=NA, interval_seconds=interval, daily_cap=1)
+        self.assertIsNone(self.store.latest_draft_attempt(**tenant))
+        self.assertTrue(self.store.consume_one(**claim, fingerprint=ONE, now_epoch=now))
+        self.assertEqual(self.other.latest_draft_attempt(**tenant), now)
+        self.assertFalse(self.other.consume_one(**claim, fingerprint=TWO, now_epoch=now + 59))
+        self.assertTrue(self.other.consume_one(**claim, fingerprint=TWO, now_epoch=now + 60))
+
     def test_query_error_or_invalid_return_fails_closed(self):
         def broken(_sql,_params):
             raise RuntimeError("connection closed")

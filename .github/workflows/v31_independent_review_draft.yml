@@ -47,6 +47,8 @@ jobs:
       - id: read
         env:
           SITE: ${{ inputs.site_key }}
+          PILOT: ${{ inputs.pilot && 'true' || 'false' }}
+          PILOT_SKU: ${{ inputs.pilot_sku }}
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
@@ -67,7 +69,10 @@ jobs:
           from affiliate_hub_v31.site_request_queue import load_requests
           selected = os.environ["SITE"]
           profiles = json.loads(PROFILE.read_text(encoding="utf-8"))
-          if selected not in profiles or not any(r["site_key"] == selected for r in load_requests()):
+          policy = profiles.get(selected)
+          pilot = os.environ["PILOT"] == "true"
+          if (not policy or not any(r["site_key"] == selected for r in load_requests(pilot=pilot))
+              or pilot and (not policy.get("pilot_sku") or os.environ["PILOT_SKU"] != policy["pilot_sku"])):
               raise SystemExit("no_enabled_autonomous_site")
           try:
               history = read_draft_history(selected)

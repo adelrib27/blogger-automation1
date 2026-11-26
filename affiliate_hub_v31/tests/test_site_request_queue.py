@@ -105,7 +105,7 @@ class RequestQueueTests(unittest.TestCase):
             with self.assertRaises(RequestQueueError):
                 load_requests(self.folder)
         (self.folder/"desconhecido.json").unlink()
-        self._write("novo_blog_a",articles=25)
+        self._write("novo_blog_a",articles=0)
         with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES):
             with self.assertRaises(RequestQueueError):
                 load_requests(self.folder)
@@ -171,9 +171,17 @@ class RequestQueueTests(unittest.TestCase):
         self.assertEqual(report["publication_calls"],0)
         self.assertEqual(report["shopee_mutation_attempts"],0)
 
+    def test_larger_editorial_request_and_staged_pilot_are_independent(self):
+        self._write("novo_blog_a", articles=120, enabled=False, pilot_enabled=True,
+                    commercial_enabled=False)
+        with patch("affiliate_hub_v31.site_request_queue.sites", return_value=ROUTES):
+            self.assertEqual(load_requests(self.folder), [])
+            self.assertEqual(load_requests(self.folder, commercial=True), [])
+            self.assertEqual(load_requests(self.folder, pilot=True)[0]["articles"], 120)
+
     def test_invalid_types_do_not_mean_unlimited(self):
         with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES):
-            for bad in (False,True,0,25,"unlimited",-1):
+            for bad in (False,True,0,"unlimited",-1):
                 with self.subTest(bad=bad):
                     self._write("novo_blog_a",articles=bad)
                     with self.assertRaises(RequestQueueError):

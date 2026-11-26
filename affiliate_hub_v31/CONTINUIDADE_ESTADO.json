@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C162_SIGNED_WORDPRESS_CATEGORY",
-  "continuity_protocol_phase": "C162",
+  "last_checkpoint_phase": "C164_RADAR_DRAFT_CANARY",
+  "continuity_protocol_phase": "C164",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-26",
-  "last_updated_source": "C162 universal category binding",
+  "last_updated_source": "C164 canario Radar e cadencia",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C162_CATEGORIAS_ASSINADAS.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C164_CADENCIA_EDITORIAL.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C162",
+    "phase": "C164",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Corrigir categoria WordPress no fluxo assinado, comprovar GET e readback sem LIVE.",
-    "latest_verified_step": "C162: roteamento declarativo WordPress por site/taxonomia, Radar Tecnologia 3 e Ar-condicionado 20 parent3, sem Guias de Compra legado. Payload review v2 assina id/parent/slug/taxonomy_path; prepare e promotion recalculam pelo SKU no catálogo. Envelope v1 preservado para rotas sem mapa, v2 assinado e validado. Writer verifica configuração e ancestrais por GET antes da reserva, envia categories no POST, confirma GET e replay; writer direto bloqueado para rotas mapeadas. Workflow GET read-only após merge; 9 regressões novas (inclui adulteração, readback, replay, hierarquia). Sem ativar Radar, sem alterar CMS/cron/cotas/LIVE. CI e runtime GET pendentes. Distribuição inteligente e descoberta de novas categorias/fontes são próximas fases; novas rotas exigem mapeamento explícito verificado.",
-    "next_safe_step": "Validar CI/merge e GET real. C163: sondagem de SKU/cache/fontes Radar e seleção de oportunidade por categoria; preparar perfil e rollout DRAFT somente piloto.",
-    "blocker": "CI e GET real pendentes; Radar ainda sem demanda editorial habilitada/perfil e sem DRAFT assinado.",
+    "objective": "Homologar o DRAFT assinado no Radar Tech BR e validar cadência por site.",
+    "latest_verified_step": "C162 CI e GET confirmados. C163: 56 posts Radar, D1 sem jobs, quatro candidatos Tecnologia cache exato sem colisão, nenhum em Ar-condicionado.",
+    "next_safe_step": "Conferir canário C164 no GitHub, recibo DRAFT/replay WordPress e D1. Ampliar fontes autorizadas e executar canário de Ar-condicionado somente depois de validar SKU, evidência e link.",
+    "blocker": "DRAFT real ainda pendente do canário. Limites efetivos e repetição por categoria ainda não medidos.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "0f626b4e95a40b7bd149a1b1694c5e2838ca9417",
+    "base_main_sha": "4a335456d2cf3673b8a29f6c26d595e74b489c33",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -153,10 +153,13 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45630060213",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45639927141",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45678855827",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45632981124"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45632981124",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45841469809",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45876521366"
     ]
   },
   "next_priorities": [
+    "C164: confirmar DRAFT/replay Radar, Ar-condicionado e cadência com medidas reais, mantendo LIVE OFF.",
     "C162: validar categoria assinada e GET real; C163 descoberta de fontes e seleção Radar.",
     "C161 owner priority: finish Radar Tech BR E2E first, category-aware universal scheduler, measure capacity, onboard other sites individually afterwards.",
     "C160: validar cache regular independente de perfis, ampliar fontes confiáveis por site sem habilitar LIVE.",
