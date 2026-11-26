@@ -15,7 +15,13 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C159 (atual)
+## Posição C160 (atual)
+
+C160: cadastro comercial separado de enabled editorial por commercial_enabled opcional. Quatro demandas novas staged (Cozinha, Estilo, Limpeza, Oficina), Radar comercial true e editorial false; Móveis/Casa preservados. Sete campanhas na fila regular, cinco cache-only. Fallback comercial usa somente rota e SKU elegível/fonte segura/foto/URL oficial; D1 histórico por par campanha/SKU e reserva atômica preservados, cap global 3 e 2 por cron. Pilot/target permanecem editoriais. Auditoria C159 run 45697792398 D1/R2 PASS, CMS 6/7 (Oficina credencial GitHub ausente), 4 candidatos por rota. Run 45697192610 2 conversões verificadas. CI e novo dry-run R2 pendentes. Nenhum perfil factual inventado; Vida Pet não cadastrado; LIVE OFF.
+
+[Checkpoint C160](affiliate_hub_v31/CHECKPOINT_C160_CADASTRO_COMERCIAL_INDEPENDENTE.md).
+
+## Posição C159
 
 C159: PR #168 mesclada c39eea8a48e27c66118ee2afbe161222d21acc3c. Cadastro: 7 rotas ativas, 2 pedidos/perfis habilitados, Radar staged disabled, quatro rotas sem pedido/perfil. Blogger API list confirma Móveis, Limpeza, Estilo, Cozinha, Vida Pet (ID 8052455848487624244, sem rota), Ar-Condicionado explicitamente excluído. Ampliação do diagnóstico C148 com --all-cms: uma restauração R2, contagem total de links armazenados por campanha (não prova de validade), amostras por site e GET CMS de todas as rotas, falhas isoladas, sem writes. Dois testes novos. CI e prova real pendentes; sem ativar sites.
 
