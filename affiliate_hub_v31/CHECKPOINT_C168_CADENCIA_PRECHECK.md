@@ -1,0 +1,7 @@
+# C168 — cadência com pré-verificação D1
+
+26/11/2026. Retomada `V31-C168-RADAR-CADENCIA`. Base `00e21fa774a36a014343319b6186e14112bdb6d5`. O runtime mediu snapshot R2 de 1,69 GB e 21 s para baixar e verificar o alvo candidato. Pré-checar janela, cota diária e orçamento antes de recuperar o catálogo, preservando recuperação de READY válido e isolamento por campanha. Validar na mesma conta e sem antecipar novo cron do piloto. LIVE OFF.
+
+- A [execução C167](https://github.com/adelrib27/blogger-automation1/actions/runs/45878775929) avançou por oferta, imagem e fonte, mas parou em `related_public_article_unverified`. O link interno #29 tinha um slug de configuração incorreto. Corrigido para `/arctic-air-cooler-portatil-o-que-conferir-antes-de-comprar/` e confirmado por GET público. A guarda de link interno passa a rodar antes da pesquisa paga.
+- Recuperação do canário: uma única reserva adicional de SEARCH por claim atômico, apenas para piloto do perfil Radar em 26/11 UTC depois de atingir o teto padrão. Não zera o contador, mantém lease e cooldown, não muda HTTP, Shopee, outros sites ou os dias seguintes. Permissão de conversão permanece desligada para este teste.
+- O agendador usa checagem D1 somente leitura para opções de cadência configurada. Ele adia sites fora da janela, com teto diário atingido ou orçamento de pesquisa esgotado, preservando READY fresco e avaliando o próximo site elegível do rollout. Registra o motivo antes de iniciar WordPress, R2 e Firecrawl.

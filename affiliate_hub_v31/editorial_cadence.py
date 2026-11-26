@@ -14,3 +14,22 @@ def draft_interval_seconds(profile: dict) -> int:
     if seconds > 2_147_483_647:
         raise ValueError("draft_interval_invalid")
     return seconds
+
+
+def draft_window_status(*, state, route: dict, profile: dict, now_epoch: int) -> str:
+    """Inspect a configurable site's dispatch window without restoring R2."""
+    interval = draft_interval_seconds(profile)
+    if not interval:
+        return "DUE"
+    tenant = {"site_key": route["site_key"], "campaign": route["campaign"]}
+    if state.count_draft_attempts_today(**tenant, now_epoch=now_epoch) >= profile["max_drafts_per_day"]:
+        return "DAILY_CAP"
+    latest = state.latest_draft_attempt(**tenant)
+    if latest is not None and now_epoch < latest + interval:
+        return "WAITING_INTERVAL"
+    if state.list_fresh_ready(**tenant, now_epoch=now_epoch):
+        return "DUE"
+    if not state.has_research_capacity(
+            **tenant, now_epoch=now_epoch, daily_cap=profile["daily_research_attempts"]):
+        return "RESEARCH_BUDGET"
+    return "DUE"

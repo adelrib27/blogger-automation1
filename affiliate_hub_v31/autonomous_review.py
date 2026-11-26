@@ -257,14 +257,15 @@ def render_article(*, policy, profile, route, sku, title, image, affiliate, clai
             "used_evidence_ids": [fact["evidence_id"] for fact in evidence]}
 
 
-def _research(*, state, tenant, cap, callback):
+def _research(*, state, tenant, cap, callback, recovery_search=False):
     lease = {"lease_name": "firecrawl", "owner_nonce": token_hex(16)}
     clock = lambda: int(utcnow().timestamp())
     if not state.acquire_lease(**tenant, **lease, now_epoch=clock()):
         raise VerificationError("research_lease_busy")
     def paid(kind, fn):
+        extra = {"recovery_attempt": True} if recovery_search and kind == "SEARCH" else {}
         if not state.claim_search_budget(**tenant, owner_nonce=lease["owner_nonce"],
-                                         now_epoch=clock(), kind=kind, daily_cap=cap):
+                                         now_epoch=clock(), kind=kind, daily_cap=cap, **extra):
             raise VerificationError("research_budget_exhausted")
         try:
             return fn()
@@ -347,7 +348,7 @@ def discovered_manufacturer_facts(profile, token, paid):
     raise VerificationError("trusted_manufacturer_source_unavailable")
 
 
-def verify_offer(*, policy, profile, route, sku, catalog, state, token):
+def verify_offer(*, policy, profile, route, sku, catalog, state, token, recovery_search=False):
     title, image, affiliate = _single_verified_offer(catalog, site_key=route["site_key"],
                                                      product_key=sku, verified_site_route=route)
     if not all(marker in title.casefold() for marker in profile.get("catalog_identity", ())):
@@ -433,12 +434,12 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
             raise VerificationError("search_intent_unverified")
         return claims, hashlib.sha256(markdown.encode()).hexdigest(), payload_digest(search)
 
+    _mark_stage("related_article")
+    related = verified_related_post(policy, profile)
     _mark_stage("external_research")
     claims, source_hash, search_hash = _research(
         state=state, tenant={"site_key": route["site_key"], "campaign": route["campaign"]},
-        cap=policy["daily_research_attempts"], callback=fetch)
-    _mark_stage("related_article")
-    related = verified_related_post(policy, profile)
+        cap=policy["daily_research_attempts"], callback=fetch, recovery_search=recovery_search)
     _mark_stage("article_render")
     return render_article(policy=policy, profile=profile, route=route, sku=sku, title=title,
                           image=image, affiliate=affiliate, claims=claims, source_hash=source_hash,
@@ -658,9 +659,12 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                         raise VerificationError("on_demand_conversion_untrusted")
                 _mark_stage("offer_affiliate")
                 try:
+                    recovery = (pilot and policy.get("pilot_search_recovery_day_utc")
+                                == utcnow().date().isoformat())
                     article = verify_offer(policy=policy, profile=profile, route=route, sku=selected,
                                            catalog=catalog, state=state,
-                                           token=os.environ.get("FIRECRAWL_API_KEY", ""))
+                                           token=os.environ.get("FIRECRAWL_API_KEY", ""),
+                                           **({"recovery_search": True} if recovery else {}))
                     if len(prose_hashes(article["html_content"]) & prior_prose) >= 2:
                         raise VerificationError("article_prose_reused")
                 except VerificationError as error:

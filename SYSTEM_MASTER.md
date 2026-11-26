@@ -55,6 +55,10 @@ A C166 liga a metadescrição ao payload assinado v3 e verifica o campo nativo e
 
 O verificador C167 pode usar a página canônica declarada do fabricante quando a busca não oferece uma URL aceita. A origem e as provas exigidas continuam verificadas. A recuperação Radar reutiliza cache existente e testa a categoria 20 com SEO assinado. [Checkpoint C167](affiliate_hub_v31/CHECKPOINT_C167_RECONCILIACAO_CLIMATIZACAO.md).
 
+## 1.8. C168 — agendamento verifica D1 antes de restaurar R2
+
+A janela do agendador usa D1 para selecionar site elegível antes de consumir R2/CMS e conserva prioridade de READY fresco. C168 também corrige o link interno do canário Radar de climatização. [Checkpoint C168](affiliate_hub_v31/CHECKPOINT_C168_CADENCIA_PRECHECK.md).
+
 ## 2. Arquitetura lógica
 
 ```text

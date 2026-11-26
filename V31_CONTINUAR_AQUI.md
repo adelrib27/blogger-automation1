@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C167 (atual)
+## Posição C168 (atual)
+
+A janela do agendador usa D1 para selecionar site elegível antes de consumir R2/CMS e conserva prioridade de READY fresco. C168 também corrige o link interno do canário Radar de climatização. [Checkpoint C168](affiliate_hub_v31/CHECKPOINT_C168_CADENCIA_PRECHECK.md).
+
+## Posição C167
 
 O verificador C167 pode usar a página canônica declarada do fabricante quando a busca não oferece uma URL aceita. A origem e as provas exigidas continuam verificadas. A recuperação Radar reutiliza cache existente e testa a categoria 20 com SEO assinado. [Checkpoint C167](affiliate_hub_v31/CHECKPOINT_C167_RECONCILIACAO_CLIMATIZACAO.md).
 

@@ -394,6 +394,40 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertFalse(self.other.consume_one(**claim, fingerprint=TWO, now_epoch=now + 59))
         self.assertTrue(self.other.consume_one(**claim, fingerprint=TWO, now_epoch=now + 60))
 
+    def test_pilot_recovery_claim_uses_one_extra_search_without_resetting_ledger(self):
+        self.assertTrue(self.acquire(kind="firecrawl"))
+        params = dict(site_key=B, campaign=C, owner_nonce=NA, now_epoch=T,
+                      daily_cap=1, kind="SEARCH")
+        self.assertTrue(self.store.claim_search_budget(**params))
+        self.assertFalse(self.store.claim_search_budget(**params))
+        self.assertTrue(self.store.claim_search_budget(**params, recovery_attempt=True))
+        self.assertFalse(self.other.claim_search_budget(**params, recovery_attempt=True))
+        self.assertFalse(self.store.has_research_capacity(site_key=B, campaign=C,
+                                                          now_epoch=T, daily_cap=1))
+
+    def test_dispatch_defers_at_research_cap_but_preserves_fresh_ready(self):
+        from affiliate_hub_v31.editorial_cadence import draft_window_status
+
+        tenant = {"site_key": B, "campaign": C}
+        config = {"draft_interval": "1m", "max_drafts_per_day": 2, "daily_research_attempts": 1}
+
+        def status():
+            return draft_window_status(state=self.store, route=ROUTES[B], profile=config, now_epoch=T)
+
+        self.assertEqual(status(), "DUE")
+        day = NOW.date().isoformat()
+        self.store._query("""
+            INSERT INTO v31_search_budget(site_key,campaign,day_utc,kind,used,max_allowed)
+            VALUES (?,?,?,?,?,?)
+        """, (B, C, day, "SEARCH", 1, 1))
+        self.assertEqual(status(), "RESEARCH_BUDGET")
+        self.assertTrue(self.acquire())
+        self.seed_sql_proof()
+        self.assertTrue(self.store.reserve_ready(
+            **tenant, owner_nonce=NA, fingerprint=ONE, product_key=KEYS[0],
+            html_sha256=TWO, evidence_sha256=THREE, now_epoch=T))
+        self.assertEqual(status(), "DUE")
+
     def test_query_error_or_invalid_return_fails_closed(self):
         def broken(_sql,_params):
             raise RuntimeError("connection closed")

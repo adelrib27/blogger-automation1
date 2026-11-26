@@ -67,6 +67,7 @@ jobs:
         (vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all' ||
          vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED == 'true')))
     runs-on: ubuntu-latest
+    environment: v31-editorial-safe
     outputs:
       site: ${{ steps.site.outputs.site }}
     steps:
@@ -82,15 +83,23 @@ jobs:
         run: python -m affiliate_hub_v31.editorial_scope_validation --cases 50 --cycle-index ${{ github.run_number }}
       - id: site
         env:
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
           REQUESTED: ${{ inputs.site_key }}
           IS_SCHEDULE: ${{ github.event_name == 'schedule' && 'true' || 'false' }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
           V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
           V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
         run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
+          python - <<'PY'
           import json, os, time
+          from pathlib import Path
           from affiliate_hub_v31.autonomous_review import PROFILE
+          from affiliate_hub_v31.d1_http_runner import CloudflareD1HTTPRunner
+          from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
+          from affiliate_hub_v31.editorial_cadence import draft_window_status
+          from affiliate_hub_v31.routing import sites as site_routes
           from affiliate_hub_v31.site_request_queue import load_requests, autonomous_sites_for_writes
           settings = json.loads(PROFILE.read_text(encoding="utf-8"))
           registered = {r["site_key"] for r in load_requests() if r["site_key"] in settings}
@@ -101,10 +110,29 @@ jobs:
           preferred = os.environ["REQUESTED"]
           if not sites or (preferred and preferred not in sites):
               raise SystemExit("no_configured_site")
-          print("site=" + (preferred or sites[int(time.time()) // 14400 % len(sites)]))
+          now = int(time.time())
+          start = now // 14400 % len(sites)
+          ordered = [preferred] if preferred else sites[start:] + sites[:start]
+          selected = ""
+          routes = site_routes()
+          for key in ordered:
+              policy = settings[key]
+              if os.environ["IS_SCHEDULE"] == "true" and policy.get("draft_interval"):
+                  state = UniversalD1ReadyState(
+                      CloudflareD1HTTPRunner.from_environment(allow_mutations=False))
+                  status = draft_window_status(state=state, route=routes[key],
+                                               profile=policy, now_epoch=now)
+                  print(f"{key}: {status}")
+                  if status != "DUE":
+                      continue
+              selected = key
+              break
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              print("site=" + selected, file=output)
           PY
   draft:
     needs: choose-one
+    if: needs.choose-one.outputs.site != ''
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: ${{ needs.choose-one.outputs.site }}
@@ -156,7 +184,7 @@ jobs:
 
   audit:
     needs: [choose-one, draft, release]
-    if: always() && needs.choose-one.result == 'success'
+    if: always() && needs.choose-one.result == 'success' && needs.choose-one.outputs.site != ''
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     timeout-minutes: 5
