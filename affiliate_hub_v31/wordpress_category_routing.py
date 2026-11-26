@@ -93,3 +93,32 @@ def verify_remote_category(client,route,binding):
 def check_post_category(post,category_id):
     if category_id is not None and post.get("categories")!=[category_id]:
         raise ValueError("wordpress_category_readback_mismatch")
+
+
+def audit_registered_categories():
+    """Read-only authenticated preflight; no category or article creation."""
+    from .routing import sites
+    from .automatic_wordpress_drafts import WordPressRestClient, credentials_for
+    result=[]
+    for route in sites().values():
+        mapping=category_map(route)
+        if mapping is None:
+            continue
+        username,password=credentials_for(route["site_key"])
+        client=WordPressRestClient(base_url=route["identifier"],username=username,
+                                   application_password=password)
+        client.site_settings()
+        ids=sorted({verify_remote_category(client,route,v) for v in mapping.values()})
+        result.append({"site_key":route["site_key"],"category_ids":ids,"status":"GET_VERIFIED"})
+    if not result:
+        raise ValueError("wordpress_category_registry_empty")
+    return {"status":"CATEGORY_READ_ONLY_VERIFIED","sites":result,
+            "cms_writes":0,"publication_calls":0}
+
+
+if __name__=="__main__":
+    try:
+        print(json.dumps(audit_registered_categories(),sort_keys=True))
+    except Exception:
+        print("WORDPRESS_CATEGORY_READ_ONLY_FAILED_CLOSED")
+        raise SystemExit(1)
