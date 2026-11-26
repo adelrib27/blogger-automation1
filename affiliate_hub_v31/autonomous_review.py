@@ -29,7 +29,7 @@ from .review_signatures import approval_receipt, configured_signing_keys, payloa
 from .reviewed_ready_promotion import stage_reviewed_ready
 from .routing import sites
 from .site_request_queue import (VERIFIER_PROFILES as PROFILE, load_requests,
-                                 claim_conversion_attempt)
+                                 claim_conversion_attempt, has_conversion_attempt)
 from .on_demand_conversion import OnDemandConversionError, convert_for_review
 from .site_launch_plan import preview_site_launch
 from .structured_review_source import catalog_gtin, gtin_facts
@@ -636,6 +636,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                     if existing is not None:
                         raise VerificationError("on_demand_existing_job_missing_cache")
                     if not allow_on_demand or cap_reached or on_demand_attempted:
+                        continue
+                    if has_conversion_attempt(query, campaign=route["campaign"], product_key=selected):
                         continue
                     on_demand_attempted = True
                     _mark_stage("affiliate_conversion")

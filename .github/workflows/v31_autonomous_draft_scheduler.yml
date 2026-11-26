@@ -5,6 +5,8 @@ on:
     paths: ['.github/workflows/v31_autonomous_draft_scheduler.yml']
   schedule:
     - cron: '47 */4 * * *'
+    # Piloto DRAFT separado do destino da operação regular.
+    - cron: '42 * * * *'
     # Cadência curta somente quando habilitada para um site específico.
     - cron: '3-58/5 * * * *'
   workflow_dispatch:
@@ -61,11 +63,16 @@ jobs:
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'workflow_dispatch' ||
        (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE == 'true' &&
-        (github.event.schedule == '47 */4 * * *' ||
-         (vars.V31_AUTODRAFT_FAST_POLL == 'true' && vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all')) &&
+        ((github.event.schedule == '42 * * * *' &&
+          vars.V31_AUTODRAFT_PILOT_SITE != '' &&
+          vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all' &&
+          vars.V31_AUTODRAFT_PILOT_SITE != vars.V31_AUTODRAFT_ROLLOUT_SITE) ||
+         ((github.event.schedule == '47 */4 * * *' ||
+         (github.event.schedule == '3-58/5 * * * *' &&
+          vars.V31_AUTODRAFT_FAST_POLL == 'true' && vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all')) &&
         vars.V31_AUTODRAFT_ROLLOUT_SITE != '' &&
         (vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all' ||
-         vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED == 'true')))
+         vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED == 'true')))))
     runs-on: ubuntu-latest
     environment: v31-editorial-safe
     outputs:
@@ -88,9 +95,11 @@ jobs:
           V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
           REQUESTED: ${{ inputs.site_key }}
           IS_SCHEDULE: ${{ github.event_name == 'schedule' && 'true' || 'false' }}
+          IS_PILOT_SCHEDULE: ${{ github.event_name == 'schedule' && github.event.schedule == '42 * * * *' && 'true' || 'false' }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
           V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
           V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
+          V31_AUTODRAFT_PILOT_SITE: ${{ vars.V31_AUTODRAFT_PILOT_SITE }}
         run: |
           python - <<'PY'
           import json, os, time
@@ -100,14 +109,20 @@ jobs:
           from affiliate_hub_v31.d1_universal_ready import UniversalD1ReadyState
           from affiliate_hub_v31.editorial_cadence import draft_window_status
           from affiliate_hub_v31.routing import sites as site_routes
-          from affiliate_hub_v31.site_request_queue import load_requests, autonomous_sites_for_writes
+          from affiliate_hub_v31.site_request_queue import (
+              load_requests, autonomous_sites_for_writes, scheduled_draft_pilot,
+          )
           settings = json.loads(PROFILE.read_text(encoding="utf-8"))
           registered = {r["site_key"] for r in load_requests() if r["site_key"] in settings}
           # Manual canary is an explicit site choice; schedule may only
           # migrate routes granted by BOTH the arm and rollout variables.
-          sites = sorted(autonomous_sites_for_writes() if
-                         os.environ["IS_SCHEDULE"] == "true" else registered)
           preferred = os.environ["REQUESTED"]
+          if os.environ["IS_PILOT_SCHEDULE"] == "true":
+              preferred = scheduled_draft_pilot(settings)
+              sites = [preferred] if preferred else []
+          else:
+              sites = sorted(autonomous_sites_for_writes() if
+                             os.environ["IS_SCHEDULE"] == "true" else registered)
           if not sites or (preferred and preferred not in sites):
               raise SystemExit("no_configured_site")
           now = int(time.time())
@@ -142,6 +157,7 @@ jobs:
     needs: draft
     if: >-
       github.event_name == 'schedule' &&
+      github.event.schedule != '42 * * * *' &&
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
       vars.V31_AUTODRAFT_ACTIVE == 'true' &&

@@ -124,6 +124,28 @@ def reserved_pilot_sku(site_key: str) -> str | None:
     return sku if sku in rules.get("offers", {}) else None
 
 
+def scheduled_draft_pilot(profiles: dict) -> str:
+    """Select a single interval-enabled pilot outside the regular rollout."""
+    target = os.environ.get("V31_AUTODRAFT_PILOT_SITE", "")
+    regular = os.environ.get("V31_AUTODRAFT_ROLLOUT_SITE", "")
+    if (os.environ.get("V31_AUTODRAFT_ACTIVE") != "true"
+            or not target or regular in {"all", target}
+            or not profiles.get(target, {}).get("draft_interval")):
+        return ""
+    return target if any(
+        item["site_key"] == target and item.get("pilot_enabled") is True
+        for item in load_requests()
+    ) else ""
+
+
+def has_conversion_attempt(query, *, campaign: str, product_key: str) -> bool:
+    rows = query("""
+      SELECT 1 AS attempted FROM v31_shopee_conversion_attempts
+      WHERE campaign=? AND product_key=? LIMIT 1
+    """, (campaign, product_key))
+    return bool(rows)
+
+
 def claim_conversion_attempt(query, *, day_utc: str, campaign: str, product_key: str) -> bool:
     """Reserve a shared daily slot, but never reattempt this SKU+campaign on another day.
 

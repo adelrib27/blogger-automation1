@@ -1,10 +1,14 @@
 """C149: old Radar-only scheduled writers are gone; the V31 universal core stays."""
 import json
+import os
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from affiliate_hub_v31.routing import sites
-from affiliate_hub_v31.site_request_queue import load_requests
+from affiliate_hub_v31.site_request_queue import (
+    autonomous_sites_for_writes, load_requests, scheduled_draft_pilot,
+)
 from affiliate_hub_v31 import autonomous_review
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -69,13 +73,20 @@ class RetiredRadarWorkflowTests(unittest.TestCase):
         self.assertEqual(route["identifier"],"https://radartechbr.com.br/")
         self.assertIs(route["publish_enabled"],False)
 
-    def test_radar_staged_request_is_not_automatically_enabled(self):
-        path=ROOT/"affiliate_hub_v31/site_requests.d/wordpress_radartechbr.json"
-        req=json.loads(path.read_text(encoding="utf-8"))
-        self.assertEqual(req["site_key"],"wordpress_radartechbr")
-        self.assertIs(req["enabled"],False)
-        self.assertNotIn("wordpress_radartechbr",
-                         [r["site_key"] for r in load_requests()])
+    def test_scheduled_pilot_requires_its_own_target_and_keeps_regular_rollout(self):
+        radar = "wordpress_radartechbr"
+        regular = "blogger_moveis_para_cada_canto"
+        profiles = json.loads(autonomous_review.PROFILE.read_text(encoding="utf-8"))
+        self.assertIn(radar, [request["site_key"] for request in load_requests()])
+        with patch.dict(os.environ, {"V31_AUTODRAFT_ACTIVE": "true",
+                                     "V31_AUTODRAFT_ROLLOUT_SITE": regular}, clear=True):
+            self.assertEqual(scheduled_draft_pilot(profiles), "")
+            os.environ["V31_AUTODRAFT_PILOT_SITE"] = radar
+            self.assertEqual(scheduled_draft_pilot(profiles), radar)
+            self.assertEqual(autonomous_sites_for_writes(), {regular})
+            for overlapping in ("all", radar):
+                os.environ["V31_AUTODRAFT_ROLLOUT_SITE"] = overlapping
+                self.assertEqual(scheduled_draft_pilot(profiles), "")
 
     def test_universal_reviewer_still_shares_single_budget(self):
         from affiliate_hub_v31.site_request_queue import MAX_BUDGET

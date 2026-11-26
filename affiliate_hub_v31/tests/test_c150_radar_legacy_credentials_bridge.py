@@ -116,9 +116,9 @@ class RadarScopedCredentialsTests(unittest.TestCase):
         doc=json.loads((ROOT/"affiliate_hub_v31/EDITORIAL_LEGACY_RADAR_RETIREMENT_C149.json").read_text())
         self.assertTrue(all(not (ROOT/x["path"]).exists() for x in doc["retired_workflows"]))
 
-    def test_request_remains_disabled_and_live_requires_approval(self):
+    def test_radar_is_a_draft_pilot_and_live_requires_approval(self):
         req=json.loads((ROOT/"affiliate_hub_v31/site_requests.d/wordpress_radartechbr.json").read_text())
-        self.assertIs(req["enabled"],False)
+        self.assertIs(req["pilot_enabled"], True)
         policy=json.loads((ROOT/"affiliate_hub_v31/autonomous_live_policy.json").read_text())
         self.assertEqual(policy["activation"],"pending_policy_approval")
 

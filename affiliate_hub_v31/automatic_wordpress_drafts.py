@@ -616,8 +616,10 @@ def main()->int:
             print("AUTONOMOUS_DRAFT_ROUTE_USE_NEW_WORKFLOW")
             return 0
         if not site_key:
+            from .wordpress_category_routing import category_map
             requests=sorted(r["site_key"] for r in load_requests()
-                if r["platform"]=="wordpress" and r["site_key"] not in migrated)
+                if r["platform"]=="wordpress" and r["site_key"] not in migrated
+                and (not args.execute_draft or category_map(site_route(r["site_key"])) is None))
             if not requests:
                 print("V31_C60_NO_REAL_WORDPRESS_REQUESTS")
                 return 0
