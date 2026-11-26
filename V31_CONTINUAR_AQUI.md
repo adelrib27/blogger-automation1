@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C171 (atual)
+## Posição C172 (atual)
+
+A pesquisa do Radar segue sem cota diária interna, com contabilização no D1 e bloqueio HTTP 429. [Checkpoint C172](affiliate_hub_v31/CHECKPOINT_C172_PESQUISA_RADAR.md).
+
+## Posição C171
 
 O perfil Radar usa `max_drafts_per_day: null`. O intervalo, a evidência e a idempotência seguem na reserva D1. [Checkpoint C171](affiliate_hub_v31/CHECKPOINT_C171_COTA_DRAFT_OPCIONAL.md).
 

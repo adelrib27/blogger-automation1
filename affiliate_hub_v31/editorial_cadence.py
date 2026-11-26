@@ -30,7 +30,7 @@ def draft_window_status(*, state, route: dict, profile: dict, now_epoch: int) ->
         return "WAITING_INTERVAL"
     if state.list_fresh_ready(**tenant, now_epoch=now_epoch):
         return "DUE"
-    if not state.has_research_capacity(
-            **tenant, now_epoch=now_epoch, daily_cap=profile["daily_research_attempts"]):
-        return "RESEARCH_BUDGET"
+    research_cap = profile["daily_research_attempts"]
+    if not state.has_research_capacity(**tenant, now_epoch=now_epoch, daily_cap=research_cap):
+        return "RESEARCH_RATE_LIMIT" if research_cap is None else "RESEARCH_BUDGET"
     return "DUE"

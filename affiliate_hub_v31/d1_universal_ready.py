@@ -412,10 +412,10 @@ class UniversalD1ReadyState:
             return None
 
     def has_research_capacity(self, *, site_key: str, campaign: str,
-                              now_epoch: int, daily_cap: int) -> bool:
+                              now_epoch: int, daily_cap: int | None) -> bool:
         _params_site(site_key, campaign)
         now = _clock(now_epoch)
-        if type(daily_cap) is not int or daily_cap <= 0:
+        if daily_cap is not None and (type(daily_cap) is not int or not 1 <= daily_cap <= 100):
             raise D1SafeError("search_daily_cap_invalid")
         day = datetime.fromtimestamp(now, timezone.utc).date().isoformat()
         rows = self._call("""
@@ -430,12 +430,12 @@ class UniversalD1ReadyState:
                     or type(used) is not int or used < 0 or type(blocked) is not int or blocked < 0):
                 raise D1SafeError("search_budget_readback_untrusted")
             seen.add(kind)
-            available = available and used < daily_cap and blocked <= now
+            available = available and blocked <= now and (daily_cap is None or used < daily_cap)
         return available
 
     def claim_search_budget(
         self, *, site_key: str, campaign: str, owner_nonce: str,
-        now_epoch: int, kind: str, daily_cap: int, recovery_attempt: bool = False
+        now_epoch: int, kind: str, daily_cap: int | None, recovery_attempt: bool = False
     ) -> bool:
         """Uma reserva de tentativa atômica POR SITE/DIA, antes de HTTP pago.
         Não é cotação do fornecedor nem garantia de custo monetário.
@@ -443,7 +443,8 @@ class UniversalD1ReadyState:
         _params_site(site_key,campaign)
         _nonce(owner_nonce)
         t=_clock(now_epoch)
-        if kind not in ("SEARCH", "HTTP") or type(daily_cap) is not int or not 1 <= daily_cap <= 100:
+        if kind not in ("SEARCH", "HTTP") or (
+                daily_cap is not None and (type(daily_cap) is not int or not 1 <= daily_cap <= 100)):
             raise D1SafeError("search_budget_policy_invalid")
         if type(recovery_attempt) is not bool or recovery_attempt and kind != "SEARCH":
             raise D1SafeError("search_recovery_policy_invalid")
@@ -451,7 +452,7 @@ class UniversalD1ReadyState:
         rows=self._call("""
           INSERT INTO v31_search_budget
             (site_key,campaign,day_utc,kind,used,max_allowed,blocked_until_epoch)
-          SELECT ?,?,?,?,1,?,0
+          SELECT ?,?,?,?,1,COALESCE(?,1),0
           WHERE EXISTS (
             SELECT 1 FROM v31_ready_leases
             WHERE site_key=? AND campaign=? AND lease_name='firecrawl'
@@ -460,12 +461,14 @@ class UniversalD1ReadyState:
           ON CONFLICT(site_key,campaign,day_utc,kind) DO UPDATE SET
             used=v31_search_budget.used+1,
             max_allowed=MAX(v31_search_budget.max_allowed, v31_search_budget.used+1)
-          WHERE v31_search_budget.used < v31_search_budget.max_allowed + ?
-            AND v31_search_budget.blocked_until_epoch <= ?
-            AND v31_search_budget.max_allowed=excluded.max_allowed
+          WHERE v31_search_budget.blocked_until_epoch <= ?
+            AND (? IS NULL OR (
+              v31_search_budget.used < v31_search_budget.max_allowed + ?
+              AND v31_search_budget.max_allowed=excluded.max_allowed
+            ))
           RETURNING used
         """, (site_key,campaign,day,kind,daily_cap,
-              site_key,campaign,owner_nonce,t,int(recovery_attempt),t))
+              site_key,campaign,owner_nonce,t,t,daily_cap,int(recovery_attempt)))
         return len(rows) == 1 and isinstance(rows[0].get("used"), int)
 
     def block_search_on_429(

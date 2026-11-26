@@ -405,6 +405,23 @@ class D1ReadyLeaseTests(unittest.TestCase):
         self.assertFalse(self.store.has_research_capacity(site_key=B, campaign=C,
                                                           now_epoch=T, daily_cap=1))
 
+    def test_uncapped_research_continues_existing_ledger_and_respects_rate_limit(self):
+        tenant = {"site_key": B, "campaign": C}
+        self.assertTrue(self.acquire(kind="firecrawl"))
+        claim = dict(tenant, owner_nonce=NA, kind="SEARCH", now_epoch=T)
+        self.assertTrue(self.store.claim_search_budget(**claim, daily_cap=1))
+        self.assertFalse(self.other.has_research_capacity(**tenant, now_epoch=T, daily_cap=1))
+        self.assertTrue(self.other.has_research_capacity(**tenant, now_epoch=T, daily_cap=None))
+        self.assertFalse(self.other.claim_search_budget(
+            **dict(claim, owner_nonce=NB), daily_cap=None))
+        self.assertTrue(self.other.claim_search_budget(**claim, daily_cap=None))
+        self.assertEqual(self.store._query(
+            "SELECT used FROM v31_search_budget WHERE kind='SEARCH'", ()), [{"used": 2}])
+        self.assertEqual(self.store.block_search_on_429(
+            **tenant, owner_nonce=NA, now_epoch=T), 1)
+        self.assertFalse(self.other.has_research_capacity(**tenant, now_epoch=T, daily_cap=None))
+        self.assertFalse(self.other.claim_search_budget(**claim, daily_cap=None))
+
     def test_uncapped_draft_window_and_claim_keep_interval_and_prevent_replay(self):
         from affiliate_hub_v31.editorial_cadence import draft_window_status
 

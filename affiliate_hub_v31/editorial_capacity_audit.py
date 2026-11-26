@@ -70,6 +70,7 @@ def audit(site_key):
             profile=profiles.get(site_key, {}), now_epoch=int(now.timestamp()),
         )
         return {"jobs": jobs, "research_today": budget,
+                "configured_daily_research_cap": profiles.get(site_key, {}).get("daily_research_attempts"),
                 "conversion_attempts_today": conversions[0]["total"], "dispatch_window": window}
 
     def r2():
