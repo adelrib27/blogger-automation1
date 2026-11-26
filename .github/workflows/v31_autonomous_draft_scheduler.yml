@@ -5,8 +5,8 @@ on:
     paths: ['.github/workflows/v31_autonomous_draft_scheduler.yml']
   schedule:
     - cron: '47 */4 * * *'
-    # Piloto DRAFT separado do destino da operação regular.
-    - cron: '42 * * * *'
+    # Piloto DRAFT temporário a cada 10 minutos durante a homologação.
+    - cron: '2-52/10 * * * *'
     # Cadência curta somente quando habilitada para um site específico.
     - cron: '3-58/5 * * * *'
   workflow_dispatch:
@@ -63,7 +63,7 @@ jobs:
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'workflow_dispatch' ||
        (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE == 'true' &&
-        ((github.event.schedule == '42 * * * *' &&
+        ((github.event.schedule == '2-52/10 * * * *' &&
           vars.V31_AUTODRAFT_PILOT_SITE != '' &&
           vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all' &&
           vars.V31_AUTODRAFT_PILOT_SITE != vars.V31_AUTODRAFT_ROLLOUT_SITE) ||
@@ -95,7 +95,7 @@ jobs:
           V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
           REQUESTED: ${{ inputs.site_key }}
           IS_SCHEDULE: ${{ github.event_name == 'schedule' && 'true' || 'false' }}
-          IS_PILOT_SCHEDULE: ${{ github.event_name == 'schedule' && github.event.schedule == '42 * * * *' && 'true' || 'false' }}
+          IS_PILOT_SCHEDULE: ${{ github.event_name == 'schedule' && github.event.schedule == '2-52/10 * * * *' && 'true' || 'false' }}
           V31_AUTODRAFT_ACTIVE: ${{ vars.V31_AUTODRAFT_ACTIVE }}
           V31_AUTODRAFT_ROLLOUT_SITE: ${{ vars.V31_AUTODRAFT_ROLLOUT_SITE }}
           V31_AUTODRAFT_FULL_ROLLOUT_APPROVED: ${{ vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED }}
@@ -157,7 +157,7 @@ jobs:
     needs: draft
     if: >-
       github.event_name == 'schedule' &&
-      github.event.schedule != '42 * * * *' &&
+      github.event.schedule != '2-52/10 * * * *' &&
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
       vars.V31_AUTODRAFT_ACTIVE == 'true' &&
