@@ -23,7 +23,7 @@ from .r2_state import R2State,verify_database
 from .routing import sites
 from .editorial_scope_validation import is_route_in_active_scope
 from .site_launch_plan import preview_site_launch
-from .verified_supply import conversion_priority_keys
+from .verified_supply import conversion_priority_keys, route_supply_keys, route_allows_sku
 
 REQUESTS_DIR=Path(__file__).with_name("site_requests.d")
 VERIFIER_PROFILES=Path(__file__).with_name("autonomous_review_sources.json")
@@ -35,8 +35,10 @@ class RequestQueueError(ValueError):
     pass
 
 
-def load_requests(directory:Path=REQUESTS_DIR)->list[dict]:
-    """Valida pedidos reais, nunca inventa blog, nicho ou campanha."""
+def load_requests(directory:Path=REQUESTS_DIR, *, commercial:bool=False)->list[dict]:
+    """Editorial por padrão; cache regular tem autorização independente e explícita."""
+    if type(commercial) is not bool:
+        raise RequestQueueError("request_mode_invalid")
     if not directory.is_dir() or directory.is_symlink():
         raise RequestQueueError("request_directory_missing")
     files=sorted(directory.glob("*.json"))
@@ -53,7 +55,7 @@ def load_requests(directory:Path=REQUESTS_DIR)->list[dict]:
             doc=json.loads(path.read_text(encoding="utf-8"))
         except (OSError,ValueError,UnicodeError):
             raise RequestQueueError("request_invalid_json") from None
-        if not isinstance(doc,dict) or set(doc)!=required:
+        if not isinstance(doc,dict) or set(doc) not in (required, required | {"commercial_enabled"}):
             raise RequestQueueError("request_schema_invalid")
         key=doc["site_key"]
         if not isinstance(key,str) or not re.fullmatch(r"[a-z0-9_]{3,50}",key) or \
@@ -71,11 +73,15 @@ def load_requests(directory:Path=REQUESTS_DIR)->list[dict]:
             raise RequestQueueError("request_articles_invalid")
         if type(doc["enabled"]) is not bool:
             raise RequestQueueError("request_enabled_invalid")
-        if doc["enabled"]:
+        commercial_enabled=doc.get("commercial_enabled",doc["enabled"])
+        if type(commercial_enabled) is not bool:
+            raise RequestQueueError("request_commercial_enabled_invalid")
+        if doc["enabled"] or commercial_enabled:
             # C140: nenhuma rota antiga/excluída nem blog não autenticado entra
             # no conversor ou nos writers por engano. Vale para TODO nicho.
             if not is_route_in_active_scope(site):
                 raise RequestQueueError("site_outside_verified_active_scope")
+        if commercial_enabled if commercial else doc["enabled"]:
             entries.append(doc)
     return entries
 
@@ -144,14 +150,17 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                      ordinal:int|None=None, pilot_site_key:str|None=None,
                      target_site_key:str|None=None, target_product_key:str|None=None,
                      authenticated_cms_keys:list[str]|None=None,
-                     reserve_conversion=None)->dict:
+                     reserve_conversion=None, previously_attempted=None)->dict:
     if type(budget) is not int or not 1<=budget<=MAX_BUDGET:
         raise RequestQueueError("budget_invalid")
     if type(execute) is not bool:
         raise RequestQueueError("execute_invalid")
     if ordinal is not None and (type(ordinal) is not int or ordinal<0):
         raise RequestQueueError("rotation_invalid")
-    requests=_rotation(load_requests(directory),
+    regular = pilot_site_key is None and target_site_key is None and target_product_key is None
+    if previously_attempted is not None and not isinstance(previously_attempted, (set, frozenset)):
+        raise RequestQueueError("historical_attempts_invalid")
+    requests=_rotation(load_requests(directory, commercial=regular),
                        date.today().toordinal() if ordinal is None else ordinal)
     if (target_site_key is None) != (target_product_key is None):
         raise RequestQueueError("exact_target_site_and_sku_required")
@@ -194,7 +203,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
         verify_database(path)
         plans=[]
         selected=[]
-        attempted_keys=set()
+        attempted_keys=set(previously_attempted or ()) if regular else set()
         converted=[]
         before_campaign={}
         interrupted=False
@@ -248,17 +257,31 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 elif target_site_key is not None:
                     # Recuperação pontual do writer continua restrita ao SKU exato.
                     approved = []
+                # Cache-only sites can use eligible route supply without a
+                # textual editorial template or manufacturer-specific profile.
+                # Keep the actual route and independent product safety gates.
+                if regular and request.get("commercial_enabled") is True and not request["enabled"]:
+                    existing_keys = {item["product_key"] for item in approved}
+                    for sku in route_supply_keys(cat, route, limit_per_path=35):
+                        if sku not in existing_keys and not cat.cached_link(sku, campaign):
+                            row = cat.db.execute(
+                                "SELECT origin_url,image_url FROM products WHERE product_key=?", (sku,)).fetchone()
+                            if row and host_allowed(row[0]) and isinstance(row[1],str) and row[1].startswith("https://"):
+                                approved.append({"product_key":sku,"affiliate_status":"requires_conversion"})
+                                existing_keys.add(sku)
                 covered = {item["product_key"] for item in approved}
                 priority = [{"product_key": sku, "affiliate_status": "requires_conversion"}
                             for sku in preferred if sku not in covered]
                 approved = priority + approved
                 for item in approved:
                     key_product=item["product_key"]
-                    if (key_product not in attempted_keys and
+                    if ((campaign,key_product) not in attempted_keys and
                         item["affiliate_status"]=="requires_conversion" and
                         cat.for_conversion(key_product) is not None and
+                        route_allows_sku(cat,route,key_product) and
                         cat.cached_link(key_product,campaign) is None):
                         available.append((key_product,campaign))
+                        attempted_keys.add((campaign,key_product))
                 plans.append({"ready":ready,"eligible":len(available),
                               "review":plan["review_queue_count"]})
                 # Rodada equitativa: um SKU por blog antes da próxima rodada.
@@ -318,6 +341,8 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
             "mode":"SITE_REQUEST_QUEUE_LIVE_CACHE_ONLY" if execute else "DRY_RUN",
             "requests_active":len(requests),
             "requests_evaluated":len(plans),
+            "commercial_only_requests":sum(not r["enabled"] for r in requests),
+            "candidate_campaigns":sorted({campaign for _,campaign in queue}),
             "conversion_candidates":len(queue),
             "shopee_mutation_attempts":mutation_attempts,
             "conversion_reservations_denied":denied_attempts,
@@ -351,8 +376,14 @@ def main()->int:
                 raise RequestQueueError("cms_history_authenticated_read_required")
             cms_keys = history["keys"]
         reserve_conversion = None
+        previously_attempted = None
         if args.execute:
             query = CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
+            if not args.pilot_site_key and not args.target_site_key:
+                history_rows = query("SELECT campaign, product_key FROM v31_shopee_conversion_attempts", ())
+                if any(not isinstance(r,dict) or not isinstance(r.get("campaign"),str) or not isinstance(r.get("product_key"),str) for r in history_rows):
+                    raise RequestQueueError("historical_attempts_untrusted")
+                previously_attempted = {(r["campaign"],r["product_key"]) for r in history_rows}
             def reserve_conversion(campaign, product_key):
                 return claim_conversion_attempt(
                     query, day_utc=datetime.now(timezone.utc).date().isoformat(),
@@ -364,7 +395,7 @@ def main()->int:
             pilot_site_key=args.pilot_site_key, reserve_conversion=reserve_conversion,
             target_site_key=args.target_site_key,
             target_product_key=args.target_product_key,
-            authenticated_cms_keys=cms_keys)
+            authenticated_cms_keys=cms_keys, previously_attempted=previously_attempted)
         print("V31_C37_SITE_REQUEST_QUEUE_"+(
             "PARTIAL_API_INTERRUPTED" if result["api_interrupted"] else "PASS"))
         print(json.dumps(result,sort_keys=True))
