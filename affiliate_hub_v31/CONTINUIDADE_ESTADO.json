@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C161_RADAR_PILOT_E2E_AUDIT",
-  "continuity_protocol_phase": "C161",
+  "last_checkpoint_phase": "C162_SIGNED_WORDPRESS_CATEGORY",
+  "continuity_protocol_phase": "C162",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-26",
-  "last_updated_source": "Owner-directed Radar-first architecture and authenticated audit",
+  "last_updated_source": "C162 universal category binding",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C161_RADAR_PILOTO_E2E.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C162_CATEGORIAS_ASSINADAS.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C161",
+    "phase": "C162",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Homologar o fluxo universal completo primeiro no Radar Tech BR, incluindo categorias e cadência mensurada.",
-    "latest_verified_step": "C161: proprietário define Radar Tech BR piloto prioritário E2E universal; integrar outros um por vez somente após comprovação. Preservar acervo comercial independente e operações já homologadas. Radar GET 37 publish, 19 draft, 0 future; categorias 1 Guias de Compra (arquivo), 3 Tecnologia, 20 Ar-condicionado parent 3. D1 Radar zero READY/USED; pedido editorial OFF, sem perfil; três tentativas históricas proibidas de repetição. C160 dry-run real 45829122530 PASS 7 campanhas/5 cache-only, 2 candidatos, zero mutação. Defeito universal WordPress: POST não envia categories e GET não verifica hierarquia. Corrigir roteamento declarativo, assinatura/binding e replay; fontes confiáveis e cap adaptativo após medições. Cron atual 4h, GitHub mínimo 5min sujeito a atraso; cap Shopee 3/dia não é cota oficial. LIVE OFF até aprovação expressa. Nenhuma alteração de código, flags ou CMS neste diagnóstico.",
-    "next_safe_step": "C162: sondagem de SKU/cache/fonte Radar, roteamento hierárquico universal e contrato assinado com readback; depois DRAFT agendado e teste de cadência. Outros sites somente depois do piloto.",
-    "blocker": "Radar editorial disabled, perfil ausente, categoria não enviada pelo writer, fonte de SKU e quotas externas a verificar, LIVE não autorizado.",
+    "objective": "Corrigir categoria WordPress no fluxo assinado, comprovar GET e readback sem LIVE.",
+    "latest_verified_step": "C162: roteamento declarativo WordPress por site/taxonomia, Radar Tecnologia 3 e Ar-condicionado 20 parent3, sem Guias de Compra legado. Payload review v2 assina id/parent/slug/taxonomy_path; prepare e promotion recalculam pelo SKU no catálogo. Envelope v1 preservado para rotas sem mapa, v2 assinado e validado. Writer verifica configuração e ancestrais por GET antes da reserva, envia categories no POST, confirma GET e replay; writer direto bloqueado para rotas mapeadas. Workflow GET read-only após merge; 9 regressões novas (inclui adulteração, readback, replay, hierarquia). Sem ativar Radar, sem alterar CMS/cron/cotas/LIVE. CI e runtime GET pendentes. Distribuição inteligente e descoberta de novas categorias/fontes são próximas fases; novas rotas exigem mapeamento explícito verificado.",
+    "next_safe_step": "Validar CI/merge e GET real. C163: sondagem de SKU/cache/fontes Radar e seleção de oportunidade por categoria; preparar perfil e rollout DRAFT somente piloto.",
+    "blocker": "CI e GET real pendentes; Radar ainda sem demanda editorial habilitada/perfil e sem DRAFT assinado.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "be8364889b730ca04aac322fa37ddb4b11a5503e",
+    "base_main_sha": "0f626b4e95a40b7bd149a1b1694c5e2838ca9417",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -157,6 +157,7 @@
     ]
   },
   "next_priorities": [
+    "C162: validar categoria assinada e GET real; C163 descoberta de fontes e seleção Radar.",
     "C161 owner priority: finish Radar Tech BR E2E first, category-aware universal scheduler, measure capacity, onboard other sites individually afterwards.",
     "C160: validar cache regular independente de perfis, ampliar fontes confiáveis por site sem habilitar LIVE.",
     "C159: auditoria real de todos os sites; priorizar próximo cadastro com evidência e campanha correta.",
@@ -657,6 +658,17 @@
     "editorial_enabled": false,
     "commercial_enabled": true,
     "wordpress_category_payload_missing": true,
+    "live_changed": false
+  },
+  "c162_category_binding": {
+    "status": "STAGED",
+    "mapped_sites": 1,
+    "review_payload_version": 2,
+    "legacy_v1_preserved": true,
+    "radar_category_ids": [
+      3,
+      20
+    ],
     "live_changed": false
   }
 }

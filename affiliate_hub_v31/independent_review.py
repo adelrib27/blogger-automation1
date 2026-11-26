@@ -19,6 +19,7 @@ from .r2_private_ready_backend import ACCOUNT_ID, BUCKET, _error_response
 from .r2_state import R2State
 from .reviewed_ready_promotion import _json_sha, _offer_in_same_html, review_payload
 from .routing import sites
+from .wordpress_category_routing import category_for_product
 from .site_request_queue import load_requests
 
 MAX_CANDIDATE_BYTES = 450_000
@@ -162,6 +163,7 @@ def prepare_review_payload(*, article: dict, catalog: Catalog, now: datetime) ->
         angle=article["angle"], html_sha256=hashlib.sha256(html_content.encode("utf-8")).hexdigest(),
         evidence_sha256=_json_sha(article["evidence_package"]),
         seo_context_sha256=_json_sha(seo_context), reviewed_text_hashes=hashes,
+        wordpress_category=category_for_product(catalog, route, product_key),
     )
 
 

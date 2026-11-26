@@ -35,6 +35,10 @@ C161: proprietário define Radar Tech BR piloto prioritário E2E universal; inte
 
 O piloto é uma escolha de implantação, nunca uma dependência de código. A política de categoria deve ser declarativa por site, com hierarquia CMS verificada, seleção por oportunidade e cobertura, sem teto fixo de blogs/artigos. A frequência será dimensionada por evidência real de qualidade, cota e latência. [Auditoria C161](affiliate_hub_v31/CHECKPOINT_C161_RADAR_PILOTO_E2E.md).
 
+## 1.3. C162 — categoria WordPress assinada
+
+C162: roteamento declarativo WordPress por site/taxonomia, Radar Tecnologia 3 e Ar-condicionado 20 parent3, sem Guias de Compra legado. Payload review v2 assina id/parent/slug/taxonomy_path; prepare e promotion recalculam pelo SKU no catálogo. Envelope v1 preservado para rotas sem mapa, v2 assinado e validado. Writer verifica configuração e ancestrais por GET antes da reserva, envia categories no POST, confirma GET e replay; writer direto bloqueado para rotas mapeadas. Workflow GET read-only após merge; 9 regressões novas (inclui adulteração, readback, replay, hierarquia). Sem ativar Radar, sem alterar CMS/cron/cotas/LIVE. CI e runtime GET pendentes. Distribuição inteligente e descoberta de novas categorias/fontes são próximas fases; novas rotas exigem mapeamento explícito verificado.
+
 ## 2. Arquitetura lógica
 
 ```text
