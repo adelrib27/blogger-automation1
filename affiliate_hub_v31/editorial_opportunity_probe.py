@@ -11,7 +11,9 @@ from .legacy_cms_collision import audit_candidate_history
 from .r2_state import R2State
 from .routing import sites
 from .verified_supply import route_supply_keys
-from .wordpress_category_routing import category_for_product, category_map, verify_remote_category
+from .wordpress_category_routing import (
+    ExcludedCategoryProduct, category_for_product, category_map, verify_remote_category,
+)
 
 
 def inspect(site_key):
@@ -43,7 +45,10 @@ def inspect(site_key):
             raise ValueError("opportunity_catalog_missing")
         with Catalog(path) as catalog:
             for sku in route_supply_keys(catalog, route):
-                binding = category_for_product(catalog, route, sku)
+                try:
+                    binding = category_for_product(catalog, route, sku)
+                except ExcludedCategoryProduct:
+                    continue
                 bucket = buckets[binding["taxonomy_path"]]
                 bucket["inventory_sample"] += 1
                 title = catalog.db.execute("SELECT title FROM products WHERE product_key=?",

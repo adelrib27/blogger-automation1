@@ -5,6 +5,8 @@ on:
     paths: ['.github/workflows/v31_autonomous_draft_scheduler.yml']
   schedule:
     - cron: '47 */4 * * *'
+    # Cadência curta somente quando habilitada para um site específico.
+    - cron: '2-57/5 * * * *'
   workflow_dispatch:
     inputs:
       site_key:
@@ -19,6 +21,7 @@ jobs:
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'push' || (github.event_name == 'schedule' &&
+      github.event.schedule == '47 */4 * * *' &&
       (vars.V31_AUTODRAFT_ACTIVE != 'true' ||
        vars.V31_AUTODRAFT_ROLLOUT_SITE == '' ||
        (vars.V31_AUTODRAFT_ROLLOUT_SITE == 'all' &&
@@ -58,6 +61,8 @@ jobs:
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'workflow_dispatch' ||
        (github.event_name == 'schedule' && vars.V31_AUTODRAFT_ACTIVE == 'true' &&
+        (github.event.schedule == '47 */4 * * *' ||
+         (vars.V31_AUTODRAFT_FAST_POLL == 'true' && vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all')) &&
         vars.V31_AUTODRAFT_ROLLOUT_SITE != '' &&
         (vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all' ||
          vars.V31_AUTODRAFT_FULL_ROLLOUT_APPROVED == 'true')))

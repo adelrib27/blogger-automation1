@@ -1,0 +1,16 @@
+name: V31 C164 — canário DRAFT Radar Tech BR
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/v31_c164_radar_draft_canary.yml']
+permissions:
+  contents: read
+jobs:
+  canary:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/v31_independent_review_draft.yml
+    with:
+      site_key: wordpress_radartechbr
+      pilot: true
+      pilot_sku: shopee:1051446617:50211608450
+    secrets: inherit

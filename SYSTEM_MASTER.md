@@ -39,6 +39,10 @@ O piloto é uma escolha de implantação, nunca uma dependência de código. A p
 
 C162: roteamento declarativo WordPress por site/taxonomia, Radar Tecnologia 3 e Ar-condicionado 20 parent3, sem Guias de Compra legado. Payload review v2 assina id/parent/slug/taxonomy_path; prepare e promotion recalculam pelo SKU no catálogo. Envelope v1 preservado para rotas sem mapa, v2 assinado e validado. Writer verifica configuração e ancestrais por GET antes da reserva, envia categories no POST, confirma GET e replay; writer direto bloqueado para rotas mapeadas. Workflow GET read-only após merge; 9 regressões novas (inclui adulteração, readback, replay, hierarquia). Sem ativar Radar, sem alterar CMS/cron/cotas/LIVE. CI e runtime GET pendentes. Distribuição inteligente e descoberta de novas categorias/fontes são próximas fases; novas rotas exigem mapeamento explícito verificado.
 
+## 1.4. C164 — canário Radar e cadência
+
+C163 confirmou histórico CMS, campanha/cache e ausência de jobs Radar. C164 corrige exclusões de filtros automotivos, prioriza categorias menos cobertas entre candidatos com o mesmo estado de cache e valida intervalo por perfil no D1. Um canário de Soundcore Select 4 Go testa DRAFT no Radar sem ativar cron do piloto ou LIVE. Consulte o [checkpoint C164](affiliate_hub_v31/CHECKPOINT_C164_CADENCIA_EDITORIAL.md) e confirme o recibo antes de repetir.
+
 ## 2. Arquitetura lógica
 
 ```text

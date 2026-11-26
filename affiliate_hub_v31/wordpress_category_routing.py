@@ -3,6 +3,8 @@ import json
 import re
 from pathlib import Path
 
+from .taxonomy import excluded_for_niche
+
 CONFIG=Path(__file__).with_name("wordpress_category_routes.json")
 
 
@@ -56,6 +58,10 @@ def ancestors(mapping,binding):
     return chain
 
 
+class ExcludedCategoryProduct(ValueError):
+    """A legacy taxonomy row conflicts with the current product exclusions."""
+
+
 def category_for_product(catalog,route,product_key):
     mapping=category_map(route)
     if mapping is None:
@@ -63,10 +69,17 @@ def category_for_product(catalog,route,product_key):
     from .verified_supply import route_allows_sku
     if not route_allows_sku(catalog,route,product_key):
         raise ValueError("wordpress_category_sku_ineligible")
-    row=catalog.db.execute("SELECT category,niche FROM product_taxonomy WHERE product_key=? AND status='matched'",(product_key,)).fetchone()
-    if not row or "/".join(row) not in mapping:
+    row = catalog.db.execute("""
+        SELECT t.category, t.niche, p.title FROM product_taxonomy t
+        JOIN products p ON p.product_key=t.product_key
+        WHERE t.product_key=? AND t.status='matched'
+    """, (product_key,)).fetchone()
+    if not row or "/".join(row[:2]) not in mapping:
         raise ValueError("wordpress_category_unmapped")
-    return mapping["/".join(row)]
+    category, niche, title = row
+    if excluded_for_niche(title, category, niche):
+        raise ExcludedCategoryProduct("wordpress_category_product_excluded")
+    return mapping[f"{category}/{niche}"]
 
 
 def verify_remote_category(client,route,binding):

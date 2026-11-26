@@ -34,6 +34,7 @@ def summarize_draft_cycle(*, site_key: str, verification_receipt: str,
     if receipt and receipt.get("site_key") == site_key and status == "NO_NEW_OFFER" and not proof:
         outcome = {
             "research_budget_exhausted": "BLOCKED_RESEARCH_BUDGET",
+            "draft_interval_not_elapsed": "WAITING_EDITORIAL_INTERVAL",
             "draft_daily_cap_reached": "BLOCKED_DRAFT_DAILY_CAP",
             "site_quota_reached": "BLOCKED_SITE_ARTICLE_LIMIT",
             "pilot_offer_already_present": "NO_NEW_DRAFT_DUPLICATE_PREVENTED",

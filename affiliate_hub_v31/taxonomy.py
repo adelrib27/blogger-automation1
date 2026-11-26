@@ -65,6 +65,15 @@ def rules() -> tuple[str, tuple]:
     return version, tuple(compiled)
 
 
+def excluded_for_niche(title: str, category: str, niche: str) -> bool:
+    """Apply current exclusion rules to historical catalog classifications."""
+    _, compiled = rules()
+    normalized = normalize(title)
+    return any(pattern.search(normalized)
+               for cat, sub, _, excluded in compiled if (cat, sub) == (category, niche)
+               for pattern in excluded)
+
+
 def classify_title(title: str) -> Classification:
     version, compiled = rules()
     norm = normalize(title)

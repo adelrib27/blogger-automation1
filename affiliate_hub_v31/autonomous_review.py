@@ -19,6 +19,7 @@ from urllib.request import Request, build_opener
 
 from .article_commerce import _single_verified_offer, CommerceArticleError
 from .catalog import Catalog
+from .editorial_cadence import draft_interval_seconds
 from .d1_http_runner import CloudflareD1HTTPRunner
 from .d1_universal_ready import UniversalD1ReadyState
 from .independent_review import _NoRedirect, _official_storage, decode_candidate, prepare_review_payload, read_candidate
@@ -36,6 +37,7 @@ from .manufacturer_review import (ManufacturerEvidenceError, source_page_allowed
                                   verify_manufacturer_markdown)
 from .verified_supply import supply_profiles, route_allows_sku
 from .universal_evidence_ready import _fingerprint
+from .wordpress_category_routing import ExcludedCategoryProduct, category_for_product, category_map
 
 ANGLE = "guia de decisão com fatos verificados v1"
 SHOPEE = {"shopee.com.br", "www.shopee.com.br", "s.shopee.com.br"}
@@ -408,6 +410,25 @@ def _selection(catalog, route, request, policy, sku):
     yield from supply_profiles(catalog, route, policy, only_key=sku)
 
 
+def order_editorial_candidates(catalog, route, candidates, category_counts):
+    """Use campaign cache first and prefer the least covered mapped category."""
+    mapping = category_map(route)
+    priorities = []
+    for candidate in candidates:
+        sku, _ = candidate
+        coverage = 0
+        if mapping is not None:
+            try:
+                binding = category_for_product(catalog, route, sku)
+            except ExcludedCategoryProduct:
+                continue
+            coverage = category_counts.get(str(binding["id"]), 0)
+        missing_link = catalog.cached_link(sku, route["campaign"]) is None
+        priorities.append(((missing_link, coverage), candidate))
+    priorities.sort(key=lambda entry: entry[0])
+    return [candidate for _, candidate in priorities]
+
+
 def recover_fresh_ready(*, state, envelope, catalog, route, policy, prior_keys,
                         prior_slugs, prior_prose, public_key_sha256, now_epoch):
     """Recover already approved work without research or conversion.
@@ -454,7 +475,8 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
     registry = json.loads(PROFILE.read_text(encoding="utf-8"))
     policy = registry.get(site_key)
     route = sites().get(site_key)
-    request = next((item for item in load_requests() if item["site_key"] == site_key), None)
+    requests = load_requests(pilot=True) if pilot else load_requests()
+    request = next((item for item in requests if item["site_key"] == site_key), None)
     if (not policy or not route or route["publish_enabled"] is not False or not request
             or route["platform"] == "wordpress" and policy["home"] != route["identifier"]):
         raise VerificationError("autonomous_site_not_enabled")
@@ -495,6 +517,12 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
     _mark_stage("draft_quota")
     cap_reached = (not probe and state.count_draft_attempts_today(
         **tenant, now_epoch=int(utcnow().timestamp())) >= policy["max_drafts_per_day"])
+    interval = draft_interval_seconds(policy)
+    if interval and not (probe or pilot or digest or cap_reached):
+        latest = state.latest_draft_attempt(**tenant)
+        if latest is not None and int(utcnow().timestamp()) < latest + interval:
+            return {"site_key": site_key, "status": "NO_NEW_OFFER",
+                    "reason": "draft_interval_not_elapsed"}
     with tempfile.TemporaryDirectory(prefix="v31-autonomous-verify-") as tmp:
         file = Path(tmp) / "catalog.sqlite3"
         _mark_stage("r2_catalog_restore")
@@ -516,9 +544,10 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
             # Cache primeiro. Após esgotar os candidatos já convertidos,
             # considerar UM SKU elegível sem link, durante o MESMO ciclo DRAFT.
             # Revisão factual, assinaturas e gates continuam obrigatórios.
-            candidates = list(_selection(catalog, route, request, policy, sku))
-            candidates.sort(key=lambda entry: catalog.cached_link(
-                entry[0], route["campaign"]) is None)
+            candidates = order_editorial_candidates(
+                catalog, route, _selection(catalog, route, request, policy, sku),
+                history.get("category_counts", {}),
+            )
             on_demand_attempted = False
             allow_on_demand = (os.environ.get("V31_ON_DEMAND_CONVERSION") == "true"
                                and not pilot and not probe and digest is None)

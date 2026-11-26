@@ -298,5 +298,66 @@
       ]
     },
     "pilot_sku": "shopee:400124163:42079451217"
+  },
+  "wordpress_radartechbr": {
+    "home": "https://radartechbr.com.br/",
+    "daily_research_attempts": 3,
+    "max_drafts_per_day": 1,
+    "draft_interval": "4h",
+    "pilot_sku": "shopee:1051446617:50211608450",
+    "offers": {
+      "shopee:1051446617:50211608450": {
+        "catalog_identity": [
+          "soundcore",
+          "select 4 go"
+        ],
+        "source_url": "https://www.soundcore.com/products/a31x1021",
+        "identity": [
+          "soundcore select 4 go"
+        ],
+        "facts": [
+          [
+            "features",
+            "\\bip67\\b",
+            "A Soundcore informa classificação IP67 para o Select 4 Go."
+          ],
+          [
+            "capacity",
+            "(?:up to )?20\\s*hours",
+            "Segundo a Soundcore, a autonomia anunciada é de até 20 horas. Use esse valor como referência para comparar, pois o tempo de reprodução varia com o uso."
+          ]
+        ],
+        "name": "Soundcore Select 4 Go",
+        "query": "Soundcore Select 4 Go",
+        "cluster": "caixa-de-som-bluetooth",
+        "advice": [
+          [
+            "Pense em onde vai usar a caixa",
+            "Escolha o cenário mais comum antes de comparar modelos. Em uma mesa pequena, o espaço ao lado dos outros aparelhos pesa mais. Para levar no bolso da mochila, vale comparar as dimensões da ficha com o compartimento onde você costuma guardar os acessórios."
+          ],
+          [
+            "Compare a bateria com a sua rotina",
+            "Some os períodos de uso entre as oportunidades de recarga. Se pretende usar a caixa durante uma viagem, inclua na conta o tempo de espera e os trechos onde poderá recarregar. Compare autonomia e tamanho em conjunto para decidir se faz sentido carregar uma caixa maior."
+          ],
+          [
+            "Confira modelo, cor e conteúdo da oferta",
+            "Abra a variação desejada na Shopee e compare o nome do modelo da ficha com a identificação na oferta. Se as fotos mostram mais de uma caixa ou acessórios avulsos, confirme com o vendedor a quantidade e o que vem incluído antes de finalizar."
+          ],
+          [
+            "Verifique como vai levar e guardar",
+            "Pense no caminho entre casa e o local de uso. Meça o espaço na bolsa com os outros objetos já dentro e veja se ainda dá para tirar a caixa com facilidade. Se for usar perto de água, leia os cuidados indicados no manual antes de levar o aparelho."
+          ],
+          [
+            "Decida o que você prioriza ao ouvir",
+            "Para fala, música de fundo ou uso em grupo, compare opções nas condições em que você pretende ouvir. Considere onde a caixa vai ficar, a distância de quem ouve e o ruído do ambiente. Vale verificar se é possível experimentar um modelo antes de decidir."
+          ]
+        ],
+        "related": [
+          "https://radartechbr.com.br/caixa-de-som-bluetooth-portatil-para-uso-em-qualquer-lugar/",
+          "Caixa de som bluetooth portátil para uso em qualquer lugar"
+        ],
+        "related_wordpress_id": 290
+      }
+    }
   }
 }

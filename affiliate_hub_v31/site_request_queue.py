@@ -35,9 +35,9 @@ class RequestQueueError(ValueError):
     pass
 
 
-def load_requests(directory:Path=REQUESTS_DIR, *, commercial:bool=False)->list[dict]:
+def load_requests(directory:Path=REQUESTS_DIR, *, commercial:bool=False, pilot:bool=False)->list[dict]:
     """Editorial por padrão; cache regular tem autorização independente e explícita."""
-    if type(commercial) is not bool:
+    if type(commercial) is not bool or type(pilot) is not bool or (commercial and pilot):
         raise RequestQueueError("request_mode_invalid")
     if not directory.is_dir() or directory.is_symlink():
         raise RequestQueueError("request_directory_missing")
@@ -55,7 +55,8 @@ def load_requests(directory:Path=REQUESTS_DIR, *, commercial:bool=False)->list[d
             doc=json.loads(path.read_text(encoding="utf-8"))
         except (OSError,ValueError,UnicodeError):
             raise RequestQueueError("request_invalid_json") from None
-        if not isinstance(doc,dict) or set(doc) not in (required, required | {"commercial_enabled"}):
+        if (not isinstance(doc, dict) or not required <= set(doc)
+                or set(doc) - required - {"commercial_enabled", "pilot_enabled"}):
             raise RequestQueueError("request_schema_invalid")
         key=doc["site_key"]
         if not isinstance(key,str) or not re.fullmatch(r"[a-z0-9_]{3,50}",key) or \
@@ -69,19 +70,23 @@ def load_requests(directory:Path=REQUESTS_DIR, *, commercial:bool=False)->list[d
         topic=doc["topic"]
         if not isinstance(topic,str) or not topic.strip() or len(topic)>160:
             raise RequestQueueError("request_topic_invalid")
-        if doc["articles"] is not None and (type(doc["articles"]) is not int or not 1<=doc["articles"]<=24):
+        if doc["articles"] is not None and (type(doc["articles"]) is not int or doc["articles"] < 1):
             raise RequestQueueError("request_articles_invalid")
         if type(doc["enabled"]) is not bool:
             raise RequestQueueError("request_enabled_invalid")
         commercial_enabled=doc.get("commercial_enabled",doc["enabled"])
         if type(commercial_enabled) is not bool:
             raise RequestQueueError("request_commercial_enabled_invalid")
-        if doc["enabled"] or commercial_enabled:
+        pilot_enabled = doc.get("pilot_enabled", False)
+        if type(pilot_enabled) is not bool:
+            raise RequestQueueError("request_pilot_enabled_invalid")
+        if doc["enabled"] or commercial_enabled or pilot_enabled:
             # C140: nenhuma rota antiga/excluída nem blog não autenticado entra
             # no conversor ou nos writers por engano. Vale para TODO nicho.
             if not is_route_in_active_scope(site):
                 raise RequestQueueError("site_outside_verified_active_scope")
-        if commercial_enabled if commercial else doc["enabled"]:
+        selected = commercial_enabled if commercial else doc["enabled"] or (pilot and pilot_enabled)
+        if selected:
             entries.append(doc)
     return entries
 
@@ -218,7 +223,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
                 campaign=route["campaign"]
                 plan=preview_site_launch(
                     cat,topic=request["topic"],platform=request["platform"],
-                    site_key=key,max_items=(24 if request["articles"] is None else request["articles"]),max_per_shop=1, commercial_only=True)
+                    site_key=key,max_items=min(24, request["articles"] or 24),max_per_shop=1, commercial_only=True)
                 if not plan["registered_site"] or plan["can_publish"] is not False:
                     raise RequestQueueError("request_plan_unsafe")
                 before_campaign[campaign]=cat.db.execute(
