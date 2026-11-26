@@ -110,6 +110,49 @@ class RequestQueueTests(unittest.TestCase):
             with self.assertRaises(RequestQueueError):
                 load_requests(self.folder)
 
+    def test_c160_independent_commercial_enrollment(self):
+        self._write("novo_blog_a",enabled=False,commercial_enabled=True)
+        self._write("novo_blog_b",enabled=True,commercial_enabled=False)
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES):
+            self.assertEqual([r["site_key"] for r in load_requests(self.folder)],["novo_blog_b"])
+            self.assertEqual([r["site_key"] for r in load_requests(self.folder,commercial=True)],["novo_blog_a"])
+            self._write("novo_blog_a",enabled=False,commercial_enabled="true")
+            with self.assertRaises(RequestQueueError):
+                load_requests(self.folder,commercial=True)
+
+    def test_c160_cache_only_route_still_needs_verified_active_scope(self):
+        self._write("novo_blog_a",enabled=False,commercial_enabled=True)
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.is_route_in_active_scope",return_value=False):
+            with self.assertRaisesRegex(RequestQueueError,"site_outside_verified_active_scope"):
+                load_requests(self.folder,commercial=True)
+
+    def test_c160_commercial_only_no_editorial_profile_and_history_skip(self):
+        self._write("novo_blog_a",enabled=False,commercial_enabled=True)
+        self._write("novo_blog_b",enabled=False,commercial_enabled=True)
+        report={"registered_site":True,"can_publish":False,"cached_for_campaign":0,
+                "review_queue_count":0,"approved_catalog_candidates":[]}
+        calls=[]
+        def convert(cat,sku,campaign,app_id,app_secret):
+            calls.append((campaign,sku))
+            url="https://s.shopee.com.br/"+campaign
+            cat.cache_link(sku,campaign,url)
+            return url,True
+        with patch("affiliate_hub_v31.site_request_queue.sites",return_value=ROUTES), \
+             patch("affiliate_hub_v31.site_request_queue.preview_site_launch",side_effect=lambda *a,**k: dict(report,approved_catalog_candidates=[])), \
+             patch("affiliate_hub_v31.site_request_queue.route_supply_keys",side_effect=lambda *a,**k: iter(["shopee:100:1","shopee:100:2"])), \
+             patch("affiliate_hub_v31.site_request_queue.convert_one",side_effect=convert):
+            result=process_requests(self.storage,directory=self.folder,budget=2,execute=True,
+                app_id="app",app_secret="secret",ordinal=0,
+                reserve_conversion=lambda *_:True,
+                previously_attempted={("campanha_a","shopee:100:1")})
+            self.assertEqual(load_requests(self.folder),[])
+        self.assertEqual(calls,[("campanha_a","shopee:100:2"),("campanha_b","shopee:100:1")])
+        self.assertEqual(result["commercial_only_requests"],2)
+        self.assertEqual(result["converted"],2)
+        self.assertEqual(result["publication_calls"],0)
+        self.assertTrue(result["r2_snapshot_saved_and_verified"])
+
     def test_articles_null_is_continuous_but_r2_batch_is_24(self):
         self._write("novo_blog_a", articles=None)
         amounts=[]
