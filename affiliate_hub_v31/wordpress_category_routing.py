@@ -30,10 +30,30 @@ def category_map(route):
         raise ValueError("wordpress_category_route_incomplete")
     result={path:validate_binding({**value,"taxonomy_path":path})
             for path,value in mapping.items()}
-    if any(v["parent"] and not any(p["id"]==v["parent"] and p["parent"]==0
-                                   for p in result.values()) for v in result.values()):
-        raise ValueError("wordpress_category_parent_unmapped")
+    for value in result.values():
+        ancestors(result,value)
     return result
+
+
+def ancestors(mapping,binding):
+    """Every parent must be known and consistent; reject cyclic hierarchies."""
+    terms={}
+    for value in mapping.values():
+        identity={k:value[k] for k in ("id","parent","slug")}
+        if value["id"] in terms and terms[value["id"]]!=identity:
+            raise ValueError("wordpress_category_id_conflict")
+        terms[value["id"]]=identity
+    chain=[]
+    seen={binding["id"]}
+    parent=binding["parent"]
+    while parent:
+        if parent in seen or parent not in terms:
+            raise ValueError("wordpress_category_parent_unmapped_or_cyclic")
+        seen.add(parent)
+        term=terms[parent]
+        chain.append(term)
+        parent=term["parent"]
+    return chain
 
 
 def category_for_product(catalog,route,product_key):
@@ -65,8 +85,8 @@ def verify_remote_category(client,route,binding):
                 or any(term.get(k)!=expected[k] for k in ("id","parent","slug"))):
             raise ValueError("wordpress_category_remote_drift")
     check(binding)
-    if binding["parent"]:
-        check(next(v for v in mapping.values() if v["id"]==binding["parent"] and v["parent"]==0))
+    for parent in ancestors(mapping,binding):
+        check(parent)
     return binding["id"]
 
 
