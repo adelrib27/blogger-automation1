@@ -22,7 +22,8 @@ def draft_window_status(*, state, route: dict, profile: dict, now_epoch: int) ->
     if not interval:
         return "DUE"
     tenant = {"site_key": route["site_key"], "campaign": route["campaign"]}
-    if state.count_draft_attempts_today(**tenant, now_epoch=now_epoch) >= profile["max_drafts_per_day"]:
+    daily_cap = profile["max_drafts_per_day"]
+    if daily_cap is not None and state.count_draft_attempts_today(**tenant, now_epoch=now_epoch) >= daily_cap:
         return "DAILY_CAP"
     latest = state.latest_draft_attempt(**tenant)
     if latest is not None and now_epoch < latest + interval:

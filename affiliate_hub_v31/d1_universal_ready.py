@@ -243,7 +243,7 @@ class UniversalD1ReadyState:
 
     def consume_one(
         self, *, site_key: str, campaign: str, owner_nonce: str,
-        fingerprint: str, now_epoch: int, daily_cap: int = 100,
+        fingerprint: str, now_epoch: int, daily_cap: int | None = 100,
         interval_seconds: int = 0
     ) -> bool:
         """Apenas reserva USED, nunca publica. Prova ainda deve estar fresca
@@ -253,16 +253,16 @@ class UniversalD1ReadyState:
         t = _clock(now_epoch)
         if not isinstance(fingerprint, str) or not HEX_RE.fullmatch(fingerprint):
             raise D1SafeError("ready_fingerprint_invalid")
-        if type(daily_cap) is not int or not 1 <= daily_cap <= 100:
+        if daily_cap is not None and (type(daily_cap) is not int or not 1 <= daily_cap <= 100):
             raise D1SafeError("draft_budget_invalid")
         if type(interval_seconds) is not int or not 0 <= interval_seconds <= 2_147_483_647:
             raise D1SafeError("draft_interval_invalid")
         rows = self._call("""
           UPDATE v31_ready_jobs SET status='USED',used_epoch=?
           WHERE site_key=? AND campaign=? AND fingerprint=? AND status='READY'
-          AND (SELECT COUNT(*) FROM v31_ready_jobs AS attempts
+          AND (? IS NULL OR (SELECT COUNT(*) FROM v31_ready_jobs AS attempts
                WHERE attempts.site_key=? AND attempts.campaign=?
-                 AND attempts.used_epoch>=?) < ?
+                 AND attempts.used_epoch>=?) < ?)
           AND (?=0 OR NOT EXISTS (
             SELECT 1 FROM v31_ready_jobs AS recent
             WHERE recent.site_key=? AND recent.campaign=? AND recent.used_epoch>?
@@ -281,7 +281,7 @@ class UniversalD1ReadyState:
               AND owner_nonce=? AND expires_epoch>?
           )
           RETURNING fingerprint
-        """, (t,site_key,campaign,fingerprint,site_key,campaign,t-t%86400,daily_cap,
+        """, (t,site_key,campaign,fingerprint,daily_cap,site_key,campaign,t-t%86400,daily_cap,
               interval_seconds,site_key,campaign,t-interval_seconds,t,t,
               site_key,campaign,owner_nonce,t))
         return len(rows) == 1 and rows[0].get("fingerprint") == fingerprint

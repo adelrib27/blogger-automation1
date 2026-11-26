@@ -186,7 +186,7 @@ def deliver_reviewed_draft(*, site_key: str, fingerprint: str,
                           independent_review_key: bytes | None = None,
                           release_public_key: str | None = None,
                           release_public_key_sha256: str | None = None,
-                          daily_cap: int = 100, interval_seconds: int = 0,
+                          daily_cap: int | None = 100, interval_seconds: int = 0,
                           blogger_service=None, wordpress_client=None) -> dict:
     """Claim one POST through D1. After an ambiguous POST, replays only read CMS.
 
