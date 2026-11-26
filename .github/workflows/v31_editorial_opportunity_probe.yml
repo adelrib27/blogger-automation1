@@ -1,0 +1,49 @@
+name: V31 — inventário editorial piloto somente leitura
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/v31_editorial_opportunity_probe.yml']
+  workflow_dispatch:
+    inputs:
+      site_key:
+        description: Site WordPress registrado
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  inventory:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.36,<2'
+      - name: Consultar oportunidades no WordPress, R2 e D1
+        env:
+          V31_WORDPRESS_SITE_CREDENTIALS_JSON: ${{ secrets.V31_WORDPRESS_SITE_CREDENTIALS_JSON }}
+          V31_RADAR_LEGACY_CMS_BRIDGE_ENABLED: 'true'
+          V31_RADAR_LEGACY_WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+          V31_RADAR_LEGACY_WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+          SITE: ${{ inputs.site_key || 'wordpress_radartechbr' }}
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          CASA_WORDPRESS_USERNAME: ${{ secrets.CASA_WORDPRESS_USERNAME }}
+          CASA_WORDPRESS_APP_PASSWORD: ${{ secrets.CASA_WORDPRESS_APP_PASSWORD }}
+        run: python -m affiliate_hub_v31.editorial_opportunity_probe --site-key "$SITE" --report editorial-opportunities.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: editorial-opportunities
+          path: editorial-opportunities.json
+          retention-days: 3
