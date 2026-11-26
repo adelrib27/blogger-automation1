@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C166 (atual)
+## Posição C167 (atual)
+
+O verificador C167 pode usar a página canônica declarada do fabricante quando a busca não oferece uma URL aceita. A origem e as provas exigidas continuam verificadas. A recuperação Radar reutiliza cache existente e testa a categoria 20 com SEO assinado. [Checkpoint C167](affiliate_hub_v31/CHECKPOINT_C167_RECONCILIACAO_CLIMATIZACAO.md).
+
+## Posição C166
 
 A C166 liga a metadescrição ao payload assinado v3 e verifica o campo nativo e o AIOSEO no GET. O DRAFT #401 está verificado, enquanto o canário de Ar-condicionado retornou NO_NEW_OFFER. A auditoria C166 mede o runtime e o cache antes de uma nova tentativa. [Checkpoint C166](affiliate_hub_v31/CHECKPOINT_C166_SEO_CAPACIDADE.md).
 

@@ -305,7 +305,6 @@
     "max_drafts_per_day": 2,
     "draft_interval": "5m",
     "pilot_sku": "shopee:1009975506:47114871036",
-    "pilot_allow_conversion": true,
     "offers": {
       "shopee:1051446617:50211608450": {
         "catalog_identity": [
@@ -373,7 +372,8 @@
           {
             "host": "www.samsung.com",
             "path_prefix": "/br/air-conditioners/wall-mount/",
-            "path_model": "f ar60h12d1aw"
+            "path_model": "f ar60h12d1aw",
+            "canonical_url": "https://www.samsung.com/br/air-conditioners/wall-mount/air-conditioner-split-inverter-windfree-ai-pro-12000-btus-f-ar60h12d1aw/"
           },
           {
             "host": "shop.samsung.com",
@@ -399,6 +399,7 @@
           ]
         ],
         "name": "Samsung WindFree AI Pro 12.000 BTU",
+        "meta_description": "Confira capacidade, tensão e cuidados de instalação do Samsung WindFree AI Pro de 12.000 BTU antes de escolher a oferta para o seu cômodo.",
         "query": "Samsung WindFree AI Pro AR60H12D1AWNAZ 12000 220 V",
         "cluster": "ar-condicionado",
         "advice": [
