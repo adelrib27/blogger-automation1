@@ -186,7 +186,15 @@ class WordPressRestClient:
             raise WordPressAutoDraftError("wordpress_post_identity_mismatch")
         return post
 
-    def create_draft(self,*,title:str,slug:str,content:str)->dict:
+    def get_category(self,category_id:int)->dict:
+        if type(category_id) is not int or category_id<=0 or not self.authenticated:
+            raise WordPressAutoDraftError("wordpress_category_get_invalid")
+        term=self._call("GET",f"/wp-json/wp/v2/categories/{category_id}?context=edit")
+        if not isinstance(term,dict) or term.get("id")!=category_id:
+            raise WordPressAutoDraftError("wordpress_category_identity_mismatch")
+        return term
+
+    def create_draft(self,*,title:str,slug:str,content:str,categories:list[int]|None=None)->dict:
         if (not isinstance(title,str) or not 20<=len(title)<=110 or
             not isinstance(slug,str) or
             not re.fullmatch(r"v31-[a-f0-9]{12}-[0-9]+",slug) or
@@ -197,6 +205,10 @@ class WordPressRestClient:
             raise WordPressAutoDraftError("draft_payload_invalid")
         body={"title":title,"slug":slug,"status":"draft",
               "content":content,"comment_status":"closed"}
+        if categories is not None:
+            if not isinstance(categories,list) or len(categories)!=1 or type(categories[0]) is not int or categories[0]<=0:
+                raise WordPressAutoDraftError("wordpress_category_payload_invalid")
+            body["categories"]=categories
         result=self._call("POST","/wp-json/wp/v2/posts",body)
         if not isinstance(result,dict) or not isinstance(result.get("id"),int):
             raise WordPressAutoDraftError("draft_not_created")
@@ -475,6 +487,9 @@ def run(*,site_key:str,preview_topic:str|None=None,
     request=next((r for r in load_requests()
                   if r["site_key"]==site_key),None)
     if execute_draft:
+        from .wordpress_category_routing import category_map
+        if category_map(route) is not None:
+            raise WordPressAutoDraftError("wordpress_mapped_route_requires_signed_writer")
         if (request is None or request["platform"]!="wordpress"
             or request.get("enabled") is not True):
             raise WordPressAutoDraftError("enabled_owner_request_required")
