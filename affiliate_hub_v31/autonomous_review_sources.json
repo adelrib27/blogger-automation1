@@ -302,9 +302,10 @@
   "wordpress_radartechbr": {
     "home": "https://radartechbr.com.br/",
     "daily_research_attempts": 3,
-    "max_drafts_per_day": 1,
-    "draft_interval": "4h",
-    "pilot_sku": "shopee:1051446617:50211608450",
+    "max_drafts_per_day": 2,
+    "draft_interval": "5m",
+    "pilot_sku": "shopee:1009975506:47114871036",
+    "pilot_allow_conversion": true,
     "offers": {
       "shopee:1051446617:50211608450": {
         "catalog_identity": [
@@ -358,6 +359,72 @@
         ],
         "related_wordpress_id": 290
       }
-    }
+    },
+    "model_profiles": [
+      {
+        "catalog_lookup": "ar60h12d1awnaz",
+        "catalog_identity": [
+          "samsung",
+          "windfree ai pro",
+          "ar60h12d1awnaz",
+          "220v"
+        ],
+        "manufacturer_pages": [
+          {
+            "host": "www.samsung.com",
+            "path_prefix": "/br/air-conditioners/wall-mount/",
+            "path_model": "f ar60h12d1aw"
+          },
+          {
+            "host": "shop.samsung.com",
+            "path_prefix": "/br/ar-condicionado-",
+            "path_model": "ar60h12d1awnaz"
+          }
+        ],
+        "manufacturer_title_identity": "windfree ai pro",
+        "identity": [
+          "windfree ai pro",
+          "f-ar60h12d1aw"
+        ],
+        "facts": [
+          [
+            "capacity",
+            "\\b12[.,]?000\\s*btu(?:\\s*/\\s*h|s)?\\b",
+            "A Samsung informa capacidade nominal de refrigeração de 12.000 BTU/h para o modelo."
+          ],
+          [
+            "compatibility",
+            "\\b1\\s*/\\s*220\\s*/\\s*60\\b",
+            "A ficha da Samsung indica alimentação de 220 V e frequência de 60 Hz."
+          ]
+        ],
+        "name": "Samsung WindFree AI Pro 12.000 BTU",
+        "query": "Samsung WindFree AI Pro AR60H12D1AWNAZ 12000 220 V",
+        "cluster": "ar-condicionado",
+        "advice": [
+          [
+            "Dimensione o aparelho para o ambiente",
+            "Anote a área do cômodo, a incidência de sol e a quantidade de pessoas que costumam usar o espaço. Leve essas informações a um instalador para confirmar a capacidade indicada para o seu ambiente antes de escolher o aparelho."
+          ],
+          [
+            "Confira a infraestrutura do imóvel",
+            "Confirme com o profissional a tensão disponível e a infraestrutura necessária. Mostre os locais previstos para as unidades interna e externa. Em apartamento, pergunte ao condomínio onde é permitido colocar a condensadora e como deve ser feito o dreno."
+          ],
+          [
+            "Compare a oferta pelo modelo completo",
+            "Copie o código do anúncio e compare com a ficha da Samsung. A linha tem modelos de outras capacidades. Confira os códigos das duas unidades e pergunte ao vendedor o que está incluído na compra e quais serviços precisam ser contratados."
+          ],
+          [
+            "Planeje a instalação antes da entrega",
+            "Peça ao instalador para avaliar onde o ar vai circular e como será feito o acesso para manutenção. Alinhe o dia de instalação com a entrega e guarde as informações sobre a oferta e o serviço em locais separados."
+          ]
+        ],
+        "related": [
+          "https://radartechbr.com.br/arctic-air-cooler-portatil-o-que-conferir-antes-da-compra/",
+          "Arctic Air Cooler portátil: o que vale conferir"
+        ],
+        "related_wordpress_id": 29
+      }
+    ]
   }
 }

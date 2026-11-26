@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 
 from affiliate_hub_v31.autonomous_review import (
-    VerificationError, checked_claims, extract_text, prose_hashes, verified_related_post, verify_affiliate_target,
+    VerificationError, checked_claims, discovered_manufacturer_facts, extract_text, prose_hashes, verified_related_post, verify_affiliate_target,
 )
 from affiliate_hub_v31.independent_review import IndependentReviewError
 from affiliate_hub_v31.structured_review_source import catalog_gtin, gtin_facts
@@ -26,6 +26,32 @@ class IndependentFactTests(unittest.TestCase):
                        good.replace("vidro", "acrílico")):
             with self.assertRaises(VerificationError):
                 checked_claims(self.profile, source)
+
+    def test_discovery_uses_exact_manufacturer_path_and_rejects_redirects(self):
+        trusted = "https://maker.example/catalog/model-ab123/"
+        profile = {**self.profile, "query": "Marca Exemplar AB123",
+                   "manufacturer_pages": [{"host": "maker.example",
+                                           "path_prefix": "/catalog/", "path_model": "ab123"}],
+                   "manufacturer_title_identity": "modelo ab123"}
+        search = {"web": [{"url": "https://other.example/catalog/model-ab123/"},
+                          {"url": "https://maker.example/catalog/model-ab1234/"},
+                          {"url": trusted}]}
+        good = "Marca Exemplar Modelo AB123. Largura: 30 cm. Material: vidro."
+        for resolved in (trusted, "https://maker.example/catalog/model-ab124/"):
+            with self.subTest(resolved=resolved), patch(
+                    "affiliate_hub_v31.autonomous_review.firecrawl", return_value=search), patch(
+                    "affiliate_hub_v31.autonomous_review.scrape_source", return_value={
+                        "metadata": {"url": resolved, "title": "Marca Exemplar Modelo AB123"},
+                        "markdown": good,
+                    }) as scrape:
+                paid = lambda kind, fetch: fetch()
+                if resolved == trusted:
+                    facts, _, _ = discovered_manufacturer_facts(profile, "fixture", paid)
+                    self.assertEqual(len(facts), 2)
+                else:
+                    with self.assertRaisesRegex(VerificationError, "trusted_manufacturer_source"):
+                        discovered_manufacturer_facts(profile, "fixture", paid)
+                scrape.assert_called_once_with(trusted, "fixture")
 
     def test_configured_wordpress_reference_requires_exact_published_post(self):
         home = "https://casa.example/"

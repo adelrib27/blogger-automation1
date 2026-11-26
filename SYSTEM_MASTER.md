@@ -43,6 +43,10 @@ C162: roteamento declarativo WordPress por site/taxonomia, Radar Tecnologia 3 e 
 
 C163 confirmou histórico CMS, campanha/cache e ausência de jobs Radar. C164 corrige exclusões de filtros automotivos, prioriza categorias menos cobertas entre candidatos com o mesmo estado de cache e valida intervalo por perfil no D1. Um canário de Soundcore Select 4 Go testa DRAFT no Radar sem ativar cron do piloto ou LIVE. Consulte o [checkpoint C164](affiliate_hub_v31/CHECKPOINT_C164_CADENCIA_EDITORIAL.md) e confirme o recibo antes de repetir.
 
+## 1.5. C165 — descoberta por modelo
+
+C164 confirmou DRAFT Radar #401 e replay. C165 introduz descoberta por modelo exato no catálogo elegível, seleção de fonte do fabricante e um canário em Ar-condicionado com possibilidade de uma conversão protegida pelo D1. Radar ainda em piloto e LIVE desativado. [Evidências e retomada C165](affiliate_hub_v31/CHECKPOINT_C165_MODELOS_FONTES.md).
+
 ## 2. Arquitetura lógica
 
 ```text

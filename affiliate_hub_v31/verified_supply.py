@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 from .catalog import Catalog
-from .manufacturer_review import models_for_catalog_title
+from .manufacturer_review import has_phrase, models_for_catalog_title
 from .source_policy_gate import source_safe_for_use
 
 PROFILE = Path(__file__).with_name("autonomous_review_sources.json")
@@ -94,6 +94,11 @@ def dynamic_profile(catalog: Catalog, route: dict, policy: dict, sku: str):
     if not row:
         return None
     title, description = str(row[0]), str(row[1] or "")
+    templates = [entry for entry in policy.get("model_profiles", [])
+                 if all(has_phrase(title, marker) for marker in entry["catalog_identity"])]
+    if templates:
+        # Conflicting configured identities must be resolved by an editor.
+        return dict(templates[0]) if len(templates) == 1 else None
     template = dict(policy.get("structured_template") or {})
     if not template.get("advice") or not template.get("cluster"):
         return None
@@ -127,6 +132,21 @@ def dynamic_profile(catalog: Catalog, route: dict, policy: dict, sku: str):
     return profile
 
 
+def configured_model_keys(catalog: Catalog, policy: dict):
+    """Search eligible catalog records by configured model even beyond the browsing sample."""
+    for profile in policy.get("model_profiles", []):
+        code = profile["catalog_lookup"]
+        for (key,) in catalog.db.execute("""
+            SELECT p.product_key
+            FROM products p
+            JOIN product_taxonomy t ON t.product_key=p.product_key
+            WHERE p.moderation='eligible' AND t.status='matched'
+              AND instr(lower(p.title), ?) > 0
+            ORDER BY p.product_key
+        """, (code,)):
+            yield key
+
+
 def supply_profiles(catalog: Catalog, route: dict, policy: dict, *,
                     only_key: str | None = None):
     """Registered manual profiles first, then automatic catalog/model profiles.
@@ -135,8 +155,11 @@ def supply_profiles(catalog: Catalog, route: dict, policy: dict, *,
     selector*. The independent verifier must still require campaign link.
     """
     static = policy.get("offers", {})
-    keys = ([only_key] if only_key is not None else
-            [*static, *route_supply_keys(catalog, route)])
+    from itertools import chain
+
+    keys = ([only_key] if only_key is not None else chain(
+        static, configured_model_keys(catalog, policy), route_supply_keys(catalog, route),
+    ))
     seen = set()
     for key in keys:
         if not isinstance(key, str) or key in seen:

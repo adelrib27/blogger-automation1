@@ -138,7 +138,7 @@ jobs:
           V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
           V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
           # C147: somente neste verifier SAFE, depois do GET CMS e antes
-          # do DRAFT. Sem conversão em probe/pilot; limite global é do D1.
+          # do DRAFT. Canário usa cache, salvo opt-in declarado no perfil.
           V31_ON_DEMAND_CONVERSION: 'true'
           V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
           V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}

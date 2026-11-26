@@ -33,7 +33,7 @@ from .site_request_queue import (VERIFIER_PROFILES as PROFILE, load_requests,
 from .on_demand_conversion import OnDemandConversionError, convert_for_review
 from .site_launch_plan import preview_site_launch
 from .structured_review_source import catalog_gtin, gtin_facts
-from .manufacturer_review import (ManufacturerEvidenceError, source_page_allowed,
+from .manufacturer_review import (ManufacturerEvidenceError, has_phrase, source_page_allowed,
                                   verify_manufacturer_markdown)
 from .verified_supply import supply_profiles, route_allows_sku
 from .universal_evidence_ready import _fingerprint
@@ -302,6 +302,50 @@ def verified_related_post(policy, profile):
     return {"url": url, "title": anchor, "status": "publish", "cluster_id": profile["cluster"]}
 
 
+def discovered_manufacturer_facts(profile, token, paid):
+    sources = profile["manufacturer_pages"]
+    search = paid("SEARCH", lambda: firecrawl("search", token, {
+        "query": profile["query"], "limit": 6, "sources": [{"type": "web"}], "country": "BR",
+    }))
+    hits = search.get("web", [])
+    if not isinstance(hits, list):
+        raise VerificationError("trusted_manufacturer_source_unavailable")
+    attempted = set()
+    for hit in hits:
+        if not isinstance(hit, dict) or not isinstance(hit.get("url"), str):
+            continue
+        url = hit["url"]
+        try:
+            parsed = _url(url, {source["host"] for source in sources})
+        except ValueError:
+            continue
+        if parsed.query or not any(
+            parsed.hostname == source["host"] and
+            parsed.path.startswith(source["path_prefix"]) and
+            has_phrase(parsed.path, source["path_model"])
+            for source in sources
+        ) or url in attempted:
+            continue
+        attempted.add(url)
+        found = paid("HTTP", lambda: scrape_source(url, token))
+        metadata = found.get("metadata")
+        markdown = found.get("markdown")
+        if not isinstance(metadata, dict) or not isinstance(markdown, str):
+            continue
+        if (metadata.get("url") or metadata.get("sourceURL")) != url:
+            continue
+        headline = str(metadata.get("title") or "")
+        if not has_phrase(headline, profile["manufacturer_title_identity"]):
+            continue
+        try:
+            claims = checked_claims(profile, markdown)
+        except VerificationError:
+            continue
+        profile["source_url"] = url
+        return claims, hashlib.sha256(markdown.encode()).hexdigest(), payload_digest(search)
+    raise VerificationError("trusted_manufacturer_source_unavailable")
+
+
 def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     title, image, affiliate = _single_verified_offer(catalog, site_key=route["site_key"],
                                                      product_key=sku, verified_site_route=route)
@@ -313,6 +357,8 @@ def verify_offer(*, policy, profile, route, sku, catalog, state, token):
     image_hash = verify_image(image)
 
     def fetch(paid):
+        if "manufacturer_pages" in profile:
+            return discovered_manufacturer_facts(profile, token, paid)
         if "manufacturer_identity" in profile:
             identity = profile["manufacturer_identity"]
             search = paid("SEARCH", lambda: firecrawl("search", token, {
@@ -494,7 +540,7 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
     storage = _official_storage()
     sku = None
     if pilot:
-        if pilot_sku != policy.get("pilot_sku") or pilot_sku not in policy["offers"] or digest:
+        if not pilot_sku or pilot_sku != policy.get("pilot_sku") or digest:
             raise VerificationError("pilot_requires_registered_offer")
         sku = pilot_sku
     elif digest:
@@ -548,9 +594,12 @@ def run(*, site_key, history, digest=None, pilot=False, pilot_sku=None, probe=Fa
                 catalog, route, _selection(catalog, route, request, policy, sku),
                 history.get("category_counts", {}),
             )
+            if pilot and not candidates:
+                raise VerificationError("pilot_requires_registered_offer")
             on_demand_attempted = False
             allow_on_demand = (os.environ.get("V31_ON_DEMAND_CONVERSION") == "true"
-                               and not pilot and not probe and digest is None)
+                               and not probe and digest is None
+                               and (not pilot or policy.get("pilot_allow_conversion") is True))
             for selected, profile in candidates:
                 if route["platform"] == "wordpress":
                     from .automatic_wordpress_drafts import _product_slug
