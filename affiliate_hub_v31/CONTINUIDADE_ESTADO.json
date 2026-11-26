@@ -88,13 +88,13 @@
     "phase": "C172",
     "status": "EM_ANDAMENTO",
     "objective": "Validar o fluxo universal Radar sem cota diária interna de pesquisa.",
-    "latest_verified_step": "C171 removeu o teto de DRAFT. Auditoria 45895258709 mostrou saldo Firecrawl e esgotamento apenas da cota interna do Radar.",
-    "next_safe_step": "Executar o workflow universal para Radar e conferir a entrega no WordPress e o evento schedule.",
-    "blocker": "Aguardando evidência de uma entrega real após a alteração de pesquisa.",
+    "latest_verified_step": "Execução manual do agendador universal 45897356609 aprovou e entregou o DRAFT #404 no Radar. WordPress confirmou status draft e categoria 20. A pesquisa excedeu o teto antigo no mesmo UTC.",
+    "next_safe_step": "Conferir um evento schedule do piloto no minuto 42 e seu recibo, preservando o LIVE desativado.",
+    "blocker": "Entrega manual verificada. O GitHub ainda não registrou evento schedule posterior à ativação do piloto na última consulta.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "7fe7d80aa457434f3bd7ec539c645d28ad09fa9c",
+    "base_main_sha": "5e5f822d5445151988e83f55e78753286417265d",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -161,11 +161,12 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45878468830",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45878775929",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45879376367",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45879847269"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45879847269",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45897356609"
     ]
   },
   "next_priorities": [
-    "C172: confirmar o novo DRAFT e a recorrência Radar sem a cota interna de pesquisa.",
+    "C172: confirmar o evento schedule Radar. DRAFT #404 entregue e verificado pelo fluxo manual.",
     "C171: confirmar no runtime que os DRAFTs anteriores não limitam a homologação do Radar.",
     "C170: validar cron isolado Radar sem alterar o destino do cron regular; LIVE OFF.",
     "C169: manter os DRAFTs #401 e #403, ampliar fontes e medir recorrência Radar antes de expandir. LIVE OFF.",
