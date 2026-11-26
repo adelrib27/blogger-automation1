@@ -246,7 +246,10 @@ def render_article(*, policy, profile, route, sku, title, image, affiliate, clai
             "article_url": urljoin(site_url, path), "article_title": title_for_post,
             "angle": ANGLE, "intent": "buying_guide",
             "primary_query": profile["query"], "cluster_id": profile["cluster"],
-            "meta_description": f'Compare {profile["name"]}, as medidas do ambiente e os critérios práticos antes de escolher a oferta.',
+            "meta_description": profile.get(
+                "meta_description",
+                f'Compare {profile["name"]}, as medidas do ambiente e os critérios práticos antes de escolher a oferta.',
+            ),
             "html_content": "\n".join(parts), "published_posts": [related] if related else [],
             "keyword_evidence": {"source": "serp_research", "query": profile["query"],
                                  "observed_utc": checked, "response_sha256": search_hash},
@@ -310,11 +313,10 @@ def discovered_manufacturer_facts(profile, token, paid):
     hits = search.get("web", [])
     if not isinstance(hits, list):
         raise VerificationError("trusted_manufacturer_source_unavailable")
-    attempted = set()
-    for hit in hits:
-        if not isinstance(hit, dict) or not isinstance(hit.get("url"), str):
-            continue
-        url = hit["url"]
+    urls = [hit["url"] for hit in hits
+            if isinstance(hit, dict) and isinstance(hit.get("url"), str)]
+    urls.extend(source["canonical_url"] for source in sources if source.get("canonical_url"))
+    for url in dict.fromkeys(urls):
         try:
             parsed = _url(url, {source["host"] for source in sources})
         except ValueError:
@@ -324,9 +326,8 @@ def discovered_manufacturer_facts(profile, token, paid):
             parsed.path.startswith(source["path_prefix"]) and
             has_phrase(parsed.path, source["path_model"])
             for source in sources
-        ) or url in attempted:
+        ):
             continue
-        attempted.add(url)
         found = paid("HTTP", lambda: scrape_source(url, token))
         metadata = found.get("metadata")
         markdown = found.get("markdown")

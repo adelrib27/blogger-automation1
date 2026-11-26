@@ -51,6 +51,10 @@ C164 confirmou DRAFT Radar #401 e replay. C165 introduz descoberta por modelo ex
 
 A C166 liga a metadescrição ao payload assinado v3 e verifica o campo nativo e o AIOSEO no GET. O DRAFT #401 está verificado, enquanto o canário de Ar-condicionado retornou NO_NEW_OFFER. A auditoria C166 mede o runtime e o cache antes de uma nova tentativa. [Checkpoint C166](affiliate_hub_v31/CHECKPOINT_C166_SEO_CAPACIDADE.md).
 
+## 1.7. C167 — fonte oficial de fallback
+
+O verificador C167 pode usar a página canônica declarada do fabricante quando a busca não oferece uma URL aceita. A origem e as provas exigidas continuam verificadas. A recuperação Radar reutiliza cache existente e testa a categoria 20 com SEO assinado. [Checkpoint C167](affiliate_hub_v31/CHECKPOINT_C167_RECONCILIACAO_CLIMATIZACAO.md).
+
 ## 2. Arquitetura lógica
 
 ```text

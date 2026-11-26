@@ -53,6 +53,21 @@ class IndependentFactTests(unittest.TestCase):
                         discovered_manufacturer_facts(profile, "fixture", paid)
                 scrape.assert_called_once_with(trusted, "fixture")
 
+    def test_canonical_source_fallback_requires_the_same_exact_model_and_facts(self):
+        url = "https://maker.example/catalog/model-ab123/"
+        profile = {**self.profile, "query": "Marca Exemplar AB123",
+                   "manufacturer_pages": [{"host": "maker.example", "path_prefix": "/catalog/",
+                                           "path_model": "ab123", "canonical_url": url}],
+                   "manufacturer_title_identity": "modelo ab123"}
+        with patch("affiliate_hub_v31.autonomous_review.firecrawl", return_value={"web": []}), patch(
+                "affiliate_hub_v31.autonomous_review.scrape_source", return_value={
+                    "metadata": {"url": url, "title": "Marca Exemplar Modelo AB123"},
+                    "markdown": "Marca Exemplar Modelo AB123. Largura: 30 cm. Material: vidro.",
+                }) as scrape:
+            facts, _, _ = discovered_manufacturer_facts(profile, "fixture", lambda kind, fetch: fetch())
+        self.assertEqual(len(facts), 2)
+        scrape.assert_called_once_with(url, "fixture")
+
     def test_configured_wordpress_reference_requires_exact_published_post(self):
         home = "https://casa.example/"
         url = home + "vasos/"

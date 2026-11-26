@@ -1,0 +1,7 @@
+# C167 — reconciliação do canário de Ar-condicionado
+
+26/11/2026. Retomada `V31-C167-RADAR-CLIMATIZACAO`. D1 oficial consultado antes da mudança: Radar 1 USED, 0 READY; SEARCH 2/3, HTTP 1/3, nenhum cooldown, 1 reserva existente para shopee:1009975506:47114871036. A C165 fez SEARCH do Samsung e não chegou ao scrape, pois o único HTTP pertence à C164. A ficha oficial exata foi confirmada independentemente e serve como endpoint confiável de fallback. Verificar cache da campanha antes do novo ciclo. C167 só aceita reaproveitar o link, com nova leitura de fonte e payload SEO v3. Nenhuma autorização LIVE.
+
+A recuperação faz uma busca por intenção e usa a ficha canônica somente como fallback, com a mesma guarda HTTPS/domínio/caminho/modelo e conteúdo fresco. O pedido piloto permanece isolado. O tratamento de SEO usa metadescrição assinada com readback nativo/AIOSEO. Validar recibo, status D1, categoria e reexecução antes de fechar a etapa.
+
+[Auditoria C166](https://github.com/adelrib27/blogger-automation1/actions/runs/45878468830) confirmou, em produção protegida: link Samsung em cache de `radarwp` resolve ao SKU exato; D1 tem 1 tentativa Shopee, SEARCH 2/3 e HTTP 1/3; Firecrawl da chave do GitHub tem 301/1.000 créditos; WordPress 37 publish, 20 draft e 0 future; R2 1.686.626.304 bytes no snapshot. Restauração e teste do destino levaram 21 s. Programação frequente precisa de seleção D1 barata antes de restaurar esse volume.
