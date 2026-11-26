@@ -15,7 +15,13 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C161 (atual)
+## Posição C162 (atual)
+
+C162: roteamento declarativo WordPress por site/taxonomia, Radar Tecnologia 3 e Ar-condicionado 20 parent3, sem Guias de Compra legado. Payload review v2 assina id/parent/slug/taxonomy_path; prepare e promotion recalculam pelo SKU no catálogo. Envelope v1 preservado para rotas sem mapa, v2 assinado e validado. Writer verifica configuração e ancestrais por GET antes da reserva, envia categories no POST, confirma GET e replay; writer direto bloqueado para rotas mapeadas. Workflow GET read-only após merge; 9 regressões novas (inclui adulteração, readback, replay, hierarquia). Sem ativar Radar, sem alterar CMS/cron/cotas/LIVE. CI e runtime GET pendentes. Distribuição inteligente e descoberta de novas categorias/fontes são próximas fases; novas rotas exigem mapeamento explícito verificado.
+
+[Checkpoint C162](affiliate_hub_v31/CHECKPOINT_C162_CATEGORIAS_ASSINADAS.md).
+
+## Posição C161
 
 C161: proprietário define Radar Tech BR piloto prioritário E2E universal; integrar outros um por vez somente após comprovação. Preservar acervo comercial independente e operações já homologadas. Radar GET 37 publish, 19 draft, 0 future; categorias 1 Guias de Compra (arquivo), 3 Tecnologia, 20 Ar-condicionado parent 3. D1 Radar zero READY/USED; pedido editorial OFF, sem perfil; três tentativas históricas proibidas de repetição. C160 dry-run real 45829122530 PASS 7 campanhas/5 cache-only, 2 candidatos, zero mutação. Defeito universal WordPress: POST não envia categories e GET não verifica hierarquia. Corrigir roteamento declarativo, assinatura/binding e replay; fontes confiáveis e cap adaptativo após medições. Cron atual 4h, GitHub mínimo 5min sujeito a atraso; cap Shopee 3/dia não é cota oficial. LIVE OFF até aprovação expressa. Nenhuma alteração de código, flags ou CMS neste diagnóstico.
 
