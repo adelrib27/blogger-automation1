@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C167_RADAR_CLIMATIZACAO",
-  "continuity_protocol_phase": "C167",
+  "last_checkpoint_phase": "C168_RADAR_CADENCIA_PRECHECK",
+  "continuity_protocol_phase": "C168",
   "continuity_status": "PRONTO_PARA_PROXIMA_ETAPA",
   "last_updated_date": "2026-11-26",
-  "last_updated_source": "C167 reconciliar fonte Samsung e cache",
+  "last_updated_source": "C168 pré-checagem D1 e correção de link interno",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C167_RECONCILIACAO_CLIMATIZACAO.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C168_CADENCIA_PRECHECK.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C167",
+    "phase": "C168",
     "status": "PRONTO_PARA_PROXIMA_ETAPA",
-    "objective": "Entregar DRAFT de Ar-condicionado com fonte oficial, cache existente e SEO assinado.",
-    "latest_verified_step": "D1 Radar 1 USED, 0 READY, 2/3 SEARCH, 1/3 HTTP e 1 reserva Samsung. C165 não chamou o writer. Fonte exata foi confirmada externamente.",
-    "next_safe_step": "Conferir C167 em runtime, DRAFT/replay e recibo D1. Se entregue, medir uma rodada agendada controlada do Radar.",
-    "blocker": "Rascunho de Ar-condicionado e operação recorrente ainda não comprovados.",
+    "objective": "Confirmar entrega da categoria 20 e evitar transferência R2 quando a cadência proíbe novo trabalho.",
+    "latest_verified_step": "C167 passou fonte Samsung e parou antes de criação por slug do link interno #29; rota pública correta confirmada por GET. C166 mediu cache e destino, 301 créditos Firecrawl e R2 1,69 GB.",
+    "next_safe_step": "Verificar recibo C168, DRAFT e SEO no CMS, reconciliar D1 e confirmar a posição operacional antes de habilitar processamento recorrente.",
+    "blocker": "DRAFT de Ar-condicionado e recorrência do agendamento ainda pendentes de execução.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "2d95d5f05e4547a339e9b4a5cf8fb89b5e39168c",
+    "base_main_sha": "00e21fa774a36a014343319b6186e14112bdb6d5",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -157,10 +157,13 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45841469809",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45876521366",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45877249628",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45877837796"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45877837796",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45878468830",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45878775929"
     ]
   },
   "next_priorities": [
+    "C168: fechar prova WordPress categoria 20 e metadescrição v3. Manter LIVE OFF.",
     "C167: confirmar DRAFT categoria 20, metadescrição v3, cache e replay; medir ciclo recorrente de Radar. LIVE OFF.",
     "C166: localizar motivo C165, obter DRAFT categoria 20 com SEO assinado e medir recorrência sem LIVE.",
     "C165: confirmar canário categoria 20, corrigir descrição CMS e medir recorrência Radar antes de expandir. LIVE OFF.",
