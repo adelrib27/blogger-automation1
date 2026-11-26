@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C168 (atual)
+## Posição C169 (atual)
+
+Radar tem dois DRAFTs assinados e verificados no WordPress, #401 Tecnologia e #403 Ar-condicionado, com replay idêntico. Metadescrição v3 gravada e lida no #403. A cadência recorrente permanece em homologação e LIVE desativado. [Checkpoint C169](affiliate_hub_v31/CHECKPOINT_C169_HOMOLOGACAO_RADAR.md).
+
+## Posição C168
 
 A janela do agendador usa D1 para selecionar site elegível antes de consumir R2/CMS e conserva prioridade de READY fresco. C168 também corrige o link interno do canário Radar de climatização. [Checkpoint C168](affiliate_hub_v31/CHECKPOINT_C168_CADENCIA_PRECHECK.md).
 

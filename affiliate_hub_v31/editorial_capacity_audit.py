@@ -11,6 +11,8 @@ from .autonomous_review import PROFILE, _read, verify_affiliate_target, Verifica
 from .catalog import Catalog
 from .automatic_wordpress_drafts import WordPressRestClient, credentials_for
 from .d1_http_runner import CloudflareD1HTTPRunner
+from .d1_universal_ready import UniversalD1ReadyState
+from .editorial_cadence import draft_window_status
 from .r2_state import R2State
 from .routing import sites
 
@@ -18,7 +20,9 @@ from .routing import sites
 def audit(site_key):
     route = sites()[site_key]
     campaign = route["campaign"]
-    day = datetime.now(timezone.utc).date().isoformat()
+    now = datetime.now(timezone.utc)
+    day = now.date().isoformat()
+    profiles = json.loads(PROFILE.read_text(encoding="utf-8"))
     report = {"site_key": site_key, "day_utc": day, "writes": 0, "services": {}}
 
     def measure(service, callback):
@@ -61,7 +65,12 @@ def audit(site_key):
                        "WHERE site_key=? AND campaign=? AND day_utc=? ORDER BY kind", (*tenant, day))
         conversions = query("SELECT COUNT(*) AS total FROM v31_shopee_conversion_attempts "
                             "WHERE campaign=? AND day_utc=?", (campaign, day))
-        return {"jobs": jobs, "research_today": budget, "conversion_attempts_today": conversions[0]["total"]}
+        window = draft_window_status(
+            state=UniversalD1ReadyState(query), route=route,
+            profile=profiles.get(site_key, {}), now_epoch=int(now.timestamp()),
+        )
+        return {"jobs": jobs, "research_today": budget,
+                "conversion_attempts_today": conversions[0]["total"], "dispatch_window": window}
 
     def r2():
         storage = R2State.from_env()
@@ -72,7 +81,7 @@ def audit(site_key):
         return {"snapshot_bytes": response["ContentLength"]}
 
     def offer():
-        profile = json.loads(PROFILE.read_text(encoding="utf-8"))[site_key]
+        profile = profiles[site_key]
         sku = profile["pilot_sku"]
         storage = R2State.from_env()
         with tempfile.TemporaryDirectory() as tmp:
