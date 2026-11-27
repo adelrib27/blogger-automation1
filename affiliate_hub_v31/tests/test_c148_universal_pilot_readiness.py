@@ -64,7 +64,7 @@ class UniversalPilotTests(unittest.TestCase):
         inspector=kw.pop("sample_provider", None)
         args.update(kw)
         if inspector is None:
-            inspector=lambda catalog,route:{"catalog_candidates":2,
+            inspector=lambda catalog,route,**kwargs:{"catalog_candidates":2,
                                            "cached_exact_campaign":1,
                                            "items":[]}
         with patch.object(m,"inspect_campaign_cache",side_effect=inspector), \
@@ -176,6 +176,16 @@ class UniversalPilotTests(unittest.TestCase):
         self.assertEqual(result["reports"][0]["cached_links_exact_campaign_sample"],1)
         self.assertEqual(result["new_drafts_proven"],0)
         self.assertEqual(self.storage.writes,0)
+
+    def test_c179_audit_accepts_expanded_budget_but_rejects_over_cap(self):
+        from affiliate_hub_v31.site_request_queue import MAX_BUDGET
+        for count, expected in ((MAX_BUDGET, "READ_ONLY_CONFIRMED"),
+                                (MAX_BUDGET + 1, "BLOCKED_D1_SELECT")):
+            def query(statement, params):
+                if "v31_shopee_conversion_attempts" in statement:
+                    return [{"total": count}]
+                return [{"status": "USED", "total": 1}]
+            self.assertEqual(self.real(query=query)["checks"]["d1"], expected)
 
     def test_real_d1_failure_still_zero_writes(self):
         result=self.real(query=lambda a,b: (_ for _ in ()).throw(RuntimeError("token")))

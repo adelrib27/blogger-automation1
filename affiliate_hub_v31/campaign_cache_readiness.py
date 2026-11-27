@@ -33,14 +33,15 @@ class CampaignCacheAuditError(ValueError):
 
 
 def inspect_campaign_cache(catalog: Catalog, route: dict,
-                           *, limit: int = MAX_RESULTS) -> dict:
+                           *, limit: int = MAX_RESULTS, cached_only: bool = False) -> dict:
     if (not isinstance(route, dict) or route.get("platform") not in ("blogger", "wordpress")
             or route.get("publish_enabled") is not False
             or not isinstance(route.get("campaign"), str)
             or not re.fullmatch(r"[a-z0-9_-]{1,32}", route["campaign"])
             or not isinstance(route.get("allowed_niches"), list)
             or not isinstance(route.get("site_key"), str)
-            or type(limit) is not int or not 1 <= limit <= MAX_RESULTS):
+            or type(limit) is not int or not 1 <= limit <= MAX_RESULTS
+            or type(cached_only) is not bool):
         raise CampaignCacheAuditError("safe_editorial_route_required")
     campaign = route["campaign"]
     seen = set()
@@ -58,9 +59,10 @@ def inspect_campaign_cache(catalog: Catalog, route: dict,
              ON a.product_key=p.product_key AND a.campaign=?
            WHERE p.moderation='eligible' AND t.status='matched'
              AND t.category=? AND t.niche=?
-           ORDER BY p.last_seen_utc DESC LIMIT ?
+             AND (?=0 OR a.product_key IS NOT NULL)
+           ORDER BY p.last_seen_utc DESC, p.product_key LIMIT ?
         """
-        for row in catalog.db.execute(query, (campaign, cat, niche, MAX_SCAN_PER_NICHE)):
+        for row in catalog.db.execute(query, (campaign, cat, niche, int(cached_only), MAX_SCAN_PER_NICHE)):
             sku, title, origin, image, shop, item, affiliate, proven, updated = row
             if (sku in seen or not isinstance(sku, str) or
                     not SKU.fullmatch(sku) or

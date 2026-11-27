@@ -1,0 +1,4 @@
+# C179 — preparação de perfis de revisão por rota
+Código V31-C179-REVIEW-20261127. Base main 52396f7ba3e796e3026c410bc5be1f52e5767bce. C178 comprovou fila comercial 46071220811 e GET 7/7 no job 140766554215 do run 46076841121.
+Quatro rotas comerciais ainda STAGED_DISABLED: Oficina (8 links), Cozinha (1), Estilo (1), Limpeza (1). A amostra C148 atual prioriza recência, não cache exato. Apenas Cozinha mostrou SKU já convertido; não inventar correspondência de modelo/fonte. 
+Achado: C148 ainda rejeita >3 reservas diárias por campanha, embora C176 use MAX_BUDGET=10. Corrigir dependência e testar limites. Adicionar amostra separada, somente links da própria campanha, mantendo as validações de origem/taxonomia/moderação e sem expor URLs. Rodar CI, 50 simulações e auditoria GET/SELECT na main. Selecionar perfis só com identidade/fatos exatos; nenhum piloto armado nesta fase. LIVE OFF, READY Casa #314 bloqueado, tombstones preservados.
