@@ -90,7 +90,7 @@
     "objective": "Concluir homologação operacional universal e separar entrega DRAFT de liberação LIVE.",
     "latest_verified_step": "Schedule 46058071209: DRAFT_VERIFIED #406 e replay/hash idênticos; SELECT D1 confirma USED. Blogger C158 homologado. Monitor C136 falhou fechado.",
     "next_safe_step": "Validar PR da ponte Radar no monitor C136, executar auditoria read-only de todos os USED e reconciliar READY Casa; só depois ampliar sites e preparar LIVE sob autorização específica.",
-    "blocker": "Monitor C136 falhou, cobertura por site incompleta, ambiente LIVE e política específica ainda não homologados.",
+    "blocker": "Monitor C136 falhou, cobertura por site incompleta, ambiente LIVE e política específica ainda não homologados. Fila comercial 46062938131 falhou; três slots D1 ocupados.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -165,7 +165,9 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45897356609",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/46058071209",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45945506302",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/46028580097"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46028580097",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46062938131",
+      "https://github.com/adelrib27/blogger-automation1/pull/192"
     ]
   },
   "next_priorities": [
@@ -719,6 +721,13 @@
     "configured_sites": 3,
     "missing_profile_or_request": 4,
     "missing_route": 1,
-    "live_changed": false
+    "live_changed": false,
+    "pr": 192,
+    "commercial_run": 46062938131,
+    "commercial_status": "FAILURE_REQUEST_QUEUE_ERROR_CAUSE_UNPROVEN",
+    "commercial_dry_run_candidates": 2,
+    "conversion_slots_used_today_utc": 3,
+    "conversion_slots_max": 3,
+    "do_not_retry": true
   }
 }
