@@ -364,6 +364,22 @@ class WordPressUniversalDraftTests(unittest.TestCase):
                           "application_password": "test-legacy-secret"}
                 }))
 
+    def test_oficina_json_preserves_casa_credentials_and_isolation(self):
+        oficina = "wordpress_oficina_garagem"
+        mapping = {
+            oficina: {"username": "oficina_editor", "application_password": "test-oficina"},
+        }
+        with patch.dict(os.environ, {
+            "CASA_WORDPRESS_USERNAME": "casa_editor",
+            "CASA_WORDPRESS_APP_PASSWORD": "test-casa",
+            "V31_WORDPRESS_SITE_CREDENTIALS_JSON": json.dumps(mapping),
+        }):
+            self.assertEqual(m.credentials_for(KEY), ("casa_editor", "test-casa"))
+            self.assertEqual(m.credentials_for(oficina), ("oficina_editor", "test-oficina"))
+            with self.assertRaisesRegex(m.WordPressAutoDraftError,
+                                        "wordpress_site_credentials_missing"):
+                m.credentials_for(KEY, raw=json.dumps({**mapping, KEY: {}}))
+
     def test_ai_rewrites_rejected_wordpress_text_before_first_post(self):
         wp=FakeWP()
         rejected=[paras()[0]]*8
