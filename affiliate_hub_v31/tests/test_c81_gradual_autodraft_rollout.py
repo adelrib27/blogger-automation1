@@ -101,6 +101,21 @@ class PhasedAutoDraftRolloutTests(unittest.TestCase):
         reusable = (root / "v31_independent_review_draft.yml").read_text(encoding="utf-8")
         self.assertIn("group: v31-editorial-catalog-single-writer", reusable)
 
+    def test_pilot_fallback_uses_regular_schedule_and_cannot_release(self):
+        root = Path(__file__).resolve().parents[2] / ".github" / "workflows"
+        scheduler = (root / "v31_autonomous_draft_scheduler.yml").read_text(encoding="utf-8")
+        fallback = scheduler.split("\n  choose-pilot-fallback:\n", 1)[1]
+        self.assertIn("needs: audit", fallback)
+        self.assertIn("github.event_name == 'schedule'", fallback)
+        self.assertIn("github.event.schedule == '47 */4 * * *'", fallback)
+        self.assertIn("scheduled_draft_pilot(profiles)", fallback)
+        self.assertIn("from_environment(allow_mutations=False)", fallback)
+        self.assertIn('if status == "DUE":', fallback)
+        self.assertIn("uses: ./.github/workflows/v31_independent_review_draft.yml", fallback)
+        release = scheduler.split("\n  release:\n", 1)[1].split("\n  audit:\n", 1)[0]
+        self.assertIn("needs: draft", release)
+        self.assertNotIn("pilot-fallback", release)
+
 
 if __name__ == "__main__":
     unittest.main()

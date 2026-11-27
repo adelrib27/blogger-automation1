@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C173_CRON_TEMPORARIO_RADAR",
-  "continuity_protocol_phase": "C173",
+  "last_checkpoint_phase": "C174_AGENDAMENTO_RESILIENTE",
+  "continuity_protocol_phase": "C174",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-26",
-  "last_updated_source": "C173 cadência temporária do Radar",
+  "last_updated_source": "C174 segunda oportunidade de agendamento para o piloto DRAFT",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C173_CRON_TEMPORARIO_RADAR.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C174_AGENDAMENTO_RESILIENTE.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C172",
+    "phase": "C174",
     "status": "EM_ANDAMENTO",
-    "objective": "Validar o fluxo universal Radar sem cota diária interna de pesquisa.",
-    "latest_verified_step": "Execução manual do agendador universal 45897356609 aprovou e entregou o DRAFT #404 no Radar. WordPress confirmou status draft e categoria 20. A pesquisa excedeu o teto antigo no mesmo UTC.",
-    "next_safe_step": "Conferir um evento schedule do piloto no minuto 42 e seu recibo, preservando o LIVE desativado.",
-    "blocker": "Entrega manual verificada. O GitHub ainda não registrou evento schedule posterior à ativação do piloto na última consulta.",
+    "objective": "Comprovar o disparo automático do piloto DRAFT pelo cron próprio ou após o ciclo regular.",
+    "latest_verified_step": "O WordPress confirmou os DRAFTs #401, #403 e #404 do Radar. A execução regular 45901514576 confirmou a seleção de Móveis para Cada Canto. O push C173 auditou os três recibos do Radar.",
+    "next_safe_step": "Conferir um evento schedule com seleção do piloto e seu resultado. Quando houver DRAFT, confirmar ID e status remoto antes de ajustar o cron de homologação.",
+    "blocker": "O aceite operacional depende de um evento automático entregue pelo GitHub Actions.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "5e5f822d5445151988e83f55e78753286417265d",
+    "base_main_sha": "32ab73d41876f4afbf50e84cadfe16a1b61a7ed8",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -166,6 +166,7 @@
     ]
   },
   "next_priorities": [
+    "C174: comprovar a execução agendada do piloto e registrar o resultado editorial, com LIVE desativado.",
     "C172: confirmar o evento schedule Radar. DRAFT #404 entregue e verificado pelo fluxo manual.",
     "C171: confirmar no runtime que os DRAFTs anteriores não limitam a homologação do Radar.",
     "C170: validar cron isolado Radar sem alterar o destino do cron regular; LIVE OFF.",

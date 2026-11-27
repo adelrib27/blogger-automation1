@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C172 (atual)
+## Posição C174 (atual)
+
+O piloto DRAFT tem uma segunda oportunidade após o ciclo regular agendado, com pré-checagem D1 e o mesmo escritor universal. A homologação exige o evento automático e o resultado editorial. [Checkpoint C174](affiliate_hub_v31/CHECKPOINT_C174_AGENDAMENTO_RESILIENTE.md).
+
+## Posição C172
 
 A pesquisa do Radar segue sem cota diária interna, com contabilização no D1 e bloqueio HTTP 429. [Checkpoint C172](affiliate_hub_v31/CHECKPOINT_C172_PESQUISA_RADAR.md).
 
