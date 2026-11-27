@@ -1,0 +1,5 @@
+# V31 — Expansão comercial autorizada (27/11/2026)
+Código: V31-BUDGET10-20261127. Base main 9fbee8c281b020f5a3512d6e9fefc838d351f587; PR 192 merged após CI 46063495908 success.
+Proprietário autorizou ampliar 3 para 10 ou 20 tentativas/dia. Decisão: cap operacional 10, fila regular até 8, 2 slots disponíveis para fallback editorial; teto estrutural SQL 20 para evolução posterior controlada. Sem elevar cotas externas ou garantir conversões.
+D1 SELECT: 22 reservas históricas, 3 legadas com ambos campos NULL; máximo slot 3. SQL real CHECK 1..3. As reservas anônimas não podem ser convertidas em pares inventados; preservá-las e contabilizá-las no dia, ignorar somente na lista de pares identificados. O erro histórico do conversor rejeita essas linhas. Não repetir par conhecido.
+Plano: migração SQL atômica preservando histórico e constraints; código global 10; fila 8; conversor manual usa mesma reserva D1; testes de limite, slots históricos e duplicação. CI antes de deploy/migração; não alterar CMS, LIVE ou cadência editorial. Monitor C136 pós-merge run 46063857102 em andamento. 
