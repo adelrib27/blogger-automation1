@@ -3,11 +3,11 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C177_READY_RECONCILIATION",
-  "continuity_protocol_phase": "C177",
+  "last_checkpoint_phase": "C178_COMMERCIAL_QUEUE_VERIFIED",
+  "continuity_protocol_phase": "C178",
   "continuity_status": "BLOQUEADO",
   "last_updated_date": "2026-11-27",
-  "last_updated_source": "C176 deployed and D1 migration verified; C177 read-only reconciliation",
+  "last_updated_source": "C178 fila comercial comprovada e correção de isolamento de credenciais integrada",
   "start_here": "SYSTEM_MASTER.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
@@ -85,16 +85,16 @@
     }
   },
   "active_work": {
-    "phase": "C177",
+    "phase": "C178",
     "status": "BLOQUEADO",
-    "objective": "Confirmar READY remanescente sem escrita e validar execução comercial ampliada.",
-    "latest_verified_step": "C176 implantada: 959/50, 22/22 D1, cap10. C136 8/8. C177 PR194 merged, C135 confirmou colisão #314; R2/D1 PASS, 6/7 CMS.",
-    "next_safe_step": "Usar Work para disparar somente nova execução da fila comercial na main, verificar R2 e D1; configurar credencial Oficina no ambiente protegido sem expor valores, repetir canário. Preservar READY #314 bloqueado e LIVE OFF.",
-    "blocker": "Conector GitHub sem workflow_dispatch; Oficina sem credencial no runtime; C135 confirmou HTML conflitante no #314. Não repetir operações antigas.",
+    "objective": "Homologar o V31 em DRAFT por rota com evidência real.",
+    "latest_verified_step": "Fila 46071220811: 7 conversões em 6 campanhas, D1 10/10 e R2 CURRENT confirmado. PR 195 integrada após 960 testes e 50 simulações.",
+    "next_safe_step": "Cadastrar senha de aplicação Oficina no ambiente v31-editorial-safe, executar C148 na main e confirmar 7/7 CMS autenticados. Preservar histórico e seguir homologação DRAFT das rotas restantes.",
+    "blocker": "A Oficina exige login e cadastro manual da credencial de aplicação no ambiente protegido. READY Casa #314 em conflito. LIVE aguarda autorização específica.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "27792e84f77b452a5e71ab70fa45662ab9985429",
+    "base_main_sha": "c3f2c2e455775f0de369acd123e09fe4193ae99b",
     "branch": "main",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
@@ -174,12 +174,14 @@
       "https://github.com/adelrib27/blogger-automation1/pull/194",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/46064344980",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/46064408922",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/46064247485"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46064247485",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46071220811",
+      "https://github.com/adelrib27/blogger-automation1/pull/195",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46071402276"
     ]
   },
   "next_priorities": [
-    "Work: dispatch new commercial queue on main, check current quota, conversion receipts and R2 exact cache; never rerun old SHA.",
-    "Work: provision site-scoped Oficina WordPress application credentials in protected GitHub environment; verify GET.",
+    "Cadastrar credencial de aplicação Oficina no ambiente protegido e confirmar C148 7/7. A fila comercial real 46071220811 já foi verificada em D1/R2.",
     "Keep Casa #314 conflict blocked; no write or USED promotion without exact proof.",
     "Onboard remaining routes/profiles with exact source, then LIVE only after specific authorization."
   ],
@@ -783,5 +785,17 @@
       "estilo": 0,
       "limpeza": 0
     }
+  },
+  "c178_commercial_queue_verified": {
+    "continuity_code": "V31-C178-COMERCIAL-46071220811",
+    "run_id": 46071220811,
+    "converted": 7,
+    "campaigns": 6,
+    "attempts_day_utc": 10,
+    "reservations_denied": 1,
+    "r2_verified": true,
+    "publication_calls": 0,
+    "oficina_cms_runtime_verified": false,
+    "credentials_isolation_pr": 195
   }
 }
