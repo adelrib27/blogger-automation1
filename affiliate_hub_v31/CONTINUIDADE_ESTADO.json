@@ -5,9 +5,9 @@
   "branch": "main",
   "last_checkpoint_phase": "C178_COMMERCIAL_QUEUE_VERIFIED",
   "continuity_protocol_phase": "C178",
-  "continuity_status": "BLOQUEADO",
+  "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-27",
-  "last_updated_source": "C178 fila comercial comprovada e correção de isolamento de credenciais integrada",
+  "last_updated_source": "C178 C148 confirmou autenticação de 7/7 CMS",
   "start_here": "SYSTEM_MASTER.md",
   "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
@@ -86,11 +86,11 @@
   },
   "active_work": {
     "phase": "C178",
-    "status": "BLOQUEADO",
+    "status": "EM_ANDAMENTO",
     "objective": "Homologar o V31 em DRAFT por rota com evidência real.",
-    "latest_verified_step": "Fila 46071220811: 7 conversões em 6 campanhas, D1 10/10 e R2 CURRENT confirmado. PR 195 integrada após 960 testes e 50 simulações. C148 46074228914 confirmou 4 Blogger e R2/D1; três WordPress bloqueados na validação local.",
-    "next_safe_step": "Corrigir o valor JSON da Oficina no segredo protegido já cadastrado, executar C148 na main e confirmar 7/7 CMS autenticados.",
-    "blocker": "O canário 46074228914 recebeu o segredo mas barrou a validação local de credenciais dos três WordPress. O padrão aponta para formato/estrutura inválida no JSON, sem inspeção do segredo. READY Casa #314 em conflito. LIVE aguarda autorização específica.",
+    "latest_verified_step": "Fila 46071220811 comprovada em D1/R2. C148 46076841121 confirmou 7/7 CMS autenticados, incluindo Oficina, com zero escritas.",
+    "next_safe_step": "Prosseguir com a homologação editorial DRAFT por rota. Oficina, Cozinha, Estilo e Limpeza ainda estão em STAGED_DISABLED e sem perfil de revisão.",
+    "blocker": "DRAFT por rota pendente para quatro sites em STAGED_DISABLED. READY Casa #314 em conflito. LIVE aguarda autorização específica.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -178,11 +178,12 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/46071220811",
       "https://github.com/adelrib27/blogger-automation1/pull/195",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/46071402276",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/46074228914"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46074228914",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46076841121"
     ]
   },
   "next_priorities": [
-    "Corrigir o valor JSON do segredo da Oficina e confirmar C148 7/7. A fila 46071220811 já foi verificada em D1/R2.",
+    "Prosseguir com a homologação DRAFT por rota. C148 confirmou 7/7 CMS e a fila 46071220811 já foi verificada.",
     "Keep Casa #314 conflict blocked; no write or USED promotion without exact proof.",
     "Onboard remaining routes/profiles with exact source, then LIVE only after specific authorization."
   ],
@@ -796,15 +797,16 @@
     "reservations_denied": 1,
     "r2_verified": true,
     "publication_calls": 0,
-    "oficina_cms_runtime_verified": false,
+    "oficina_cms_runtime_verified": true,
     "credentials_isolation_pr": 195,
     "credential_canary": {
-      "run_id": 46074228914,
-      "authenticated_blogger_sites": 4,
-      "credential_validation_blocked_wordpress_sites": 3,
-      "secret_present": true,
+      "run_id": 46076841121,
+      "authenticated_cms_sites": 7,
+      "wordpress_sites": 3,
+      "blogger_sites": 4,
+      "d1_readonly": true,
       "r2_readonly": true,
-      "d1_readonly": true
+      "cms_writes": 0
     }
   }
 }
