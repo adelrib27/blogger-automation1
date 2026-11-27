@@ -209,7 +209,10 @@ jobs:
 
   pilot-fallback-draft:
     needs: choose-pilot-fallback
-    if: needs.choose-pilot-fallback.outputs.site != ''
+    if: >-
+      always() && !cancelled() &&
+      needs.choose-pilot-fallback.result == 'success' &&
+      needs.choose-pilot-fallback.outputs.site != ''
     uses: ./.github/workflows/v31_independent_review_draft.yml
     with:
       site_key: ${{ needs.choose-pilot-fallback.outputs.site }}
