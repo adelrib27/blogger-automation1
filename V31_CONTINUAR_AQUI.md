@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição C174 (atual)
+## Posição atual — homologação final (27/11/2026)
+
+Código `V31-FINAL-AUDIT-46058071209`. O Radar #406 foi entregue por schedule 46058071209 e confirmado com o mesmo hash no replay; SELECT D1 confirmou USED. Blogger C158 já provou DRAFT agendado. A correção de configuração do monitor C136 está em revisão; cobertura por site e LIVE ainda não homologados. [Checkpoint atual](affiliate_hub_v31/CHECKPOINT_V31_FINAL_AUDIT_2026-11-27.md). Não repetir POST, não restaurar workflows Radar legados nem alterar LIVE.
+
+## Posição C174 (histórica)
 
 O piloto DRAFT tem uma segunda oportunidade após o ciclo regular agendado, com pré-checagem D1 e o mesmo escritor universal. A homologação exige o evento automático e o resultado editorial. [Checkpoint C174](affiliate_hub_v31/CHECKPOINT_C174_AGENDAMENTO_RESILIENTE.md).
 
