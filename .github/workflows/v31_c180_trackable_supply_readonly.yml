@@ -1,0 +1,36 @@
+name: V31 C180 - descoberta rastreavel no catalogo SAFE
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v31_c180_trackable_supply_readonly.yml'
+      - 'affiliate_hub_v31/trackable_supply.py'
+      - 'affiliate_hub_v31/trackable_supply_hints.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v31-c180-trackable-supply-readonly
+  cancel-in-progress: false
+jobs:
+  catalog-readonly:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: v31-editorial-safe
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'boto3>=1.36,<2' 'cryptography>=42'
+      - run: python -m unittest affiliate_hub_v31.tests.test_c180_trackable_supply -v
+      - name: R2 GET and SQLite read-only, no Shopee or CMS credentials
+        env:
+          V31_EDITORIAL_R2_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_EDITORIAL_R2_BUCKET: ${{ vars.V31_EDITORIAL_R2_BUCKET }}
+          V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}
+          V31_EDITORIAL_R2_SECRET_ACCESS_KEY: ${{ secrets.V31_EDITORIAL_R2_SECRET_ACCESS_KEY }}
+        run: python -m affiliate_hub_v31.trackable_supply
