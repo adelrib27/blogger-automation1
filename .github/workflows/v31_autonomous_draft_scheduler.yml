@@ -153,7 +153,8 @@ jobs:
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
       github.event_name == 'schedule' &&
-      github.event.schedule == '47 */4 * * *' &&
+      (github.event.schedule == '47 */4 * * *' ||
+       (github.event.schedule == '3-58/5 * * * *' && vars.V31_AUTODRAFT_FAST_POLL != 'true')) &&
       vars.V31_AUTODRAFT_ACTIVE == 'true' &&
       vars.V31_AUTODRAFT_PILOT_SITE != '' &&
       vars.V31_AUTODRAFT_ROLLOUT_SITE != 'all' &&

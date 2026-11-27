@@ -689,5 +689,11 @@
       20
     ],
     "live_changed": false
+  },
+  "c175_pilot_schedule": {
+    "code": "V31-C175-PILOTO-CRON",
+    "run_skipped": 45925743501,
+    "change": "Checar janela D1 do piloto também no cron curto quando FAST_POLL estiver desativado.",
+    "acceptance": "Evento schedule, recibo e ID remoto em draft."
   }
 }
