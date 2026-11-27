@@ -226,10 +226,13 @@ jobs:
     secrets: inherit
 
   release:
-    needs: draft
+    needs: [choose-one, draft]
     if: >-
       github.event_name == 'schedule' &&
-      github.event.schedule != '2-52/10 * * * *' &&
+      (github.event.schedule != '2-52/10 * * * *' ||
+       (vars.V31_AUTOLIVE_PILOT_SITE != '' &&
+        vars.V31_AUTOLIVE_PILOT_SITE == vars.V31_AUTODRAFT_PILOT_SITE &&
+        vars.V31_AUTOLIVE_PILOT_SITE == needs.choose-one.outputs.site)) &&
       github.repository == 'adelrib27/blogger-automation1' &&
       github.ref == 'refs/heads/main' &&
       vars.V31_AUTODRAFT_ACTIVE == 'true' &&

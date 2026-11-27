@@ -11,3 +11,5 @@ Código de continuidade `V31-RADAR-20261127-LIVE`.
 Conectar o cron dedicado do piloto ao liberador já existente, condicionado a autorização explícita por site, flag geral, agendamento na main e recibo do mesmo ciclo. Preservar o comportamento da cadência regular e manter o fallback de DRAFT. O Python continua exigindo política aprovada pelo hash, prova assinada, evidência fresca, deduplicação e readback.
 
 A efetiva ativação do Radar depende de comprovar entrega automática, provisionar as credenciais do ambiente dedicado e aprovar a configuração aplicável que inclui o Radar. O estado executável da política e a flag geral permanecem desativados nesta etapa.
+
+O código do cron piloto requer `V31_AUTOLIVE_PILOT_SITE=wordpress_radartechbr` além da flag geral, da política e do seu hash. A opção deve permanecer ausente enquanto a homologação estiver pendente. Os 10 testes focados e as 50 simulações passaram localmente.
