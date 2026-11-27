@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C178_COMMERCIAL_QUEUE_VERIFIED",
-  "continuity_protocol_phase": "C178",
+  "last_checkpoint_phase": "C179_REVIEW_ENROLLMENT",
+  "continuity_protocol_phase": "C179",
   "continuity_status": "EM_ANDAMENTO",
   "last_updated_date": "2026-11-27",
-  "last_updated_source": "C178 C148 confirmou autenticação de 7/7 CMS",
+  "last_updated_source": "C179 cached candidate audit and residual quota correction",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C179_REVIEW_ENROLLMENT_2026-11-27.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,17 +85,17 @@
     }
   },
   "active_work": {
-    "phase": "C178",
+    "phase": "C179",
     "status": "EM_ANDAMENTO",
-    "objective": "Homologar o V31 em DRAFT por rota com evidência real.",
-    "latest_verified_step": "Fila 46071220811 comprovada em D1/R2. C148 46076841121 confirmou 7/7 CMS autenticados, incluindo Oficina, com zero escritas.",
-    "next_safe_step": "Prosseguir com a homologação editorial DRAFT por rota. Oficina, Cozinha, Estilo e Limpeza ainda estão em STAGED_DISABLED e sem perfil de revisão.",
-    "blocker": "DRAFT por rota pendente para quatro sites em STAGED_DISABLED. READY Casa #314 em conflito. LIVE aguarda autorização específica.",
+    "objective": "Preparar homologação DRAFT por rota utilizando candidatos com cache exato e fatos externos verificáveis.",
+    "latest_verified_step": "C178 7/7 CMS GET; fila 46071220811 7 conversões confirmadas R2; C179 PR196 em CI.",
+    "next_safe_step": "CI C179, merge e auditoria C148 para inventário exato; selecionar fontes e perfis independentes sem armar LIVE.",
+    "blocker": "Quatro perfis pendentes; Casa READY #314 em conflito; LIVE aguarda autorização específica.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "c3f2c2e455775f0de369acd123e09fe4193ae99b",
-    "branch": "main",
+    "base_main_sha": "52396f7ba3e796e3026c410bc5be1f52e5767bce",
+    "branch": "fix/v31-c179-review-enrollment-20261127",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -183,6 +183,7 @@
     ]
   },
   "next_priorities": [
+    "C179: CI e auditoria de cache exato por campanha, preparar quatro perfis com fonte factual.",
     "Prosseguir com a homologação DRAFT por rota. C148 confirmou 7/7 CMS e a fila 46071220811 já foi verificada.",
     "Keep Casa #314 conflict blocked; no write or USED promotion without exact proof.",
     "Onboard remaining routes/profiles with exact source, then LIVE only after specific authorization."
@@ -799,7 +800,7 @@
     "publication_calls": 0,
     "oficina_cms_runtime_verified": true,
     "credentials_isolation_pr": 195,
-    "credential_canary": {
+    "cms_auth_canary": {
       "run_id": 46076841121,
       "authenticated_cms_sites": 7,
       "wordpress_sites": 3,
@@ -808,5 +809,15 @@
       "r2_readonly": true,
       "cms_writes": 0
     }
+  },
+  "c179_review_enrollment": {
+    "status": "STAGED",
+    "pr": 196,
+    "base_main": "52396f7ba3e796e3026c410bc5be1f52e5767bce",
+    "cms_confirmed": 7,
+    "commercial_converted": 7,
+    "ci_first_failure": "continuity_secret_field_prohibited (metadata field name only)",
+    "fix": "rename credential_canary to cms_auth_canary, preserve value, no relaxation of guard",
+    "live_changed": false
   }
 }
