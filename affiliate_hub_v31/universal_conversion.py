@@ -4,7 +4,7 @@ Não depende de shadow.d, keywords de 3 WordPress ou temas previstos.
 Tema vem da solicitação do novo blog; a campanha só é obtida da rota
 AUTÊNTICA do blog já criado. Um blog hipotético nunca recebe link.
 
-DRY_RUN por padrão; apenas --execute gera URLs oficiais, global 1–3
+DRY_RUN por padrão; apenas --execute gera URLs oficiais, global 1–10
 mutações Shopee, com verificação por chave+campanha após salvar o R2.
 Nenhum publicador é acionado.
 """
@@ -15,6 +15,7 @@ import json
 import os
 import tempfile
 from pathlib import Path
+from datetime import datetime, timezone
 
 from .catalog import Catalog, host_allowed
 from .converter import ConversionError, convert_one
@@ -22,7 +23,10 @@ from .r2_state import R2State, verify_database
 from .routing import sites
 from .site_launch_plan import preview_site_launch
 
-MAX_MUTATIONS_PER_RUN = 3
+from .site_request_queue import MAX_BUDGET, claim_conversion_attempt
+from .d1_http_runner import CloudflareD1HTTPRunner, D1HTTPError
+
+MAX_MUTATIONS_PER_RUN = MAX_BUDGET
 
 
 class UniversalConversionError(ValueError):
@@ -60,11 +64,13 @@ def _candidates(catalog: Catalog, *, site_key: str, topic: str,
 def convert_for_registered_blog(
     storage: R2State, *, site_key: str, topic: str,
     budget: int=1, execute: bool=False,
-    app_id: str="", app_secret: str="",
+    app_id: str="", app_secret: str="", reserve_conversion=None,
 ) -> dict:
     """Sem credencial de site real, sem conversão; nunca inventar campanha."""
     if execute and (not app_id.strip() or not app_secret.strip()):
         raise UniversalConversionError("shopee_credentials_missing")
+    if execute and not callable(reserve_conversion):
+        raise UniversalConversionError("shared_d1_reservation_required")
     with tempfile.TemporaryDirectory(prefix="v31-universal-conv-") as folder:
         path=Path(folder)/"snapshot.sqlite3"
         if not storage.restore_to(path):
@@ -74,12 +80,23 @@ def convert_for_registered_blog(
         created_keys=[]
         interrupted=False
         attempts=0
+        denied=0
         with Catalog(path) as cat:
             before_stat=cat.stats()
             campaign,keys=_candidates(
                 cat,site_key=site_key,topic=topic,budget=budget)
             if execute:
                 for key in keys:
+                    try:
+                        reserved = reserve_conversion(campaign, key)
+                    except D1HTTPError:
+                        interrupted=True
+                        break
+                    if type(reserved) is not bool:
+                        raise UniversalConversionError("shared_d1_reservation_untrusted")
+                    if not reserved:
+                        denied+=1
+                        continue
                     attempts+=1
                     try:
                         _,created=convert_one(cat,key,campaign,app_id,app_secret)
@@ -121,6 +138,7 @@ def convert_for_registered_blog(
             "campaign_taken_only_from_site_registry":True,
             "candidate_count":len(keys),
             "shopee_mutation_attempts":attempts,
+            "conversion_reservations_denied":denied,
             "converted":len(created_keys),
             "api_interrupted":interrupted,
             "r2_snapshot_saved_and_verified":saved,
@@ -139,11 +157,16 @@ def main()->int:
     p.add_argument("--execute",action="store_true")
     args=p.parse_args()
     try:
+        reserve = None
+        if args.execute:
+            query = CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
+            def reserve(campaign, key):
+                return claim_conversion_attempt(query, day_utc=datetime.now(timezone.utc).date().isoformat(), campaign=campaign, product_key=key)
         report=convert_for_registered_blog(
             R2State.from_env(),site_key=args.site_key,
             topic=args.topic,budget=args.budget,execute=args.execute,
             app_id=os.getenv("V31_EDITORIAL_SHOPEE_APP_ID",""),
-            app_secret=os.getenv("V31_EDITORIAL_SHOPEE_APP_SECRET",""))
+            app_secret=os.getenv("V31_EDITORIAL_SHOPEE_APP_SECRET",""), reserve_conversion=reserve)
         print("V31_UNIVERSAL_CONVERTER_"+(
             "API_INTERRUPTED" if report["api_interrupted"] else "PASS"))
         print(json.dumps(report,ensure_ascii=False,sort_keys=True))

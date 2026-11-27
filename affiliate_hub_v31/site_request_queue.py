@@ -2,7 +2,7 @@
 
 Qualquer blog registrado pode ter um pedido com o tema informado quando
 ele foi criado. Um cron independente das três lojas WordPress verifica R2,
-seleciona somente produtos aprovados e converte 0–3 URLs oficiais na campanha
+seleciona somente produtos aprovados e converte 0–10 URLs oficiais na campanha
 real de cada site; nunca chama publicadores nem manipula métricas.
 """
 from __future__ import annotations
@@ -28,7 +28,7 @@ from .verified_supply import conversion_priority_keys, route_supply_keys, route_
 REQUESTS_DIR=Path(__file__).with_name("site_requests.d")
 VERIFIER_PROFILES=Path(__file__).with_name("autonomous_review_sources.json")
 MAX_REQUESTS=500
-MAX_BUDGET=3
+MAX_BUDGET=10
 
 
 class RequestQueueError(ValueError):
@@ -172,7 +172,7 @@ def claim_conversion_attempt(query, *, day_utc: str, campaign: str, product_key:
 
 
 def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
-                     budget:int=3,execute:bool=False,
+                     budget:int=MAX_BUDGET,execute:bool=False,
                      app_id:str="",app_secret:str="",
                      ordinal:int|None=None, pilot_site_key:str|None=None,
                      target_site_key:str|None=None, target_product_key:str|None=None,
@@ -384,7 +384,7 @@ def process_requests(storage:R2State, *, directory:Path=REQUESTS_DIR,
 
 def main()->int:
     p=argparse.ArgumentParser(description="V31 — pedidos reais por nicho aberto, 0 posts")
-    p.add_argument("--budget",type=int,default=3)
+    p.add_argument("--budget",type=int,default=MAX_BUDGET)
     p.add_argument("--execute",action="store_true")
     p.add_argument("--pilot-site-key")
     p.add_argument("--target-site-key")
@@ -407,7 +407,7 @@ def main()->int:
         if args.execute:
             query = CloudflareD1HTTPRunner.from_environment(allow_mutations=True)
             if not args.pilot_site_key and not args.target_site_key:
-                history_rows = query("SELECT campaign, product_key FROM v31_shopee_conversion_attempts", ())
+                history_rows = query("SELECT campaign, product_key FROM v31_shopee_conversion_attempts WHERE campaign IS NOT NULL AND product_key IS NOT NULL", ())
                 if any(not isinstance(r,dict) or not isinstance(r.get("campaign"),str) or not isinstance(r.get("product_key"),str) for r in history_rows):
                     raise RequestQueueError("historical_attempts_untrusted")
                 previously_attempted = {(r["campaign"],r["product_key"]) for r in history_rows}
@@ -427,6 +427,13 @@ def main()->int:
             "PARTIAL_API_INTERRUPTED" if result["api_interrupted"] else "PASS"))
         print(json.dumps(result,sort_keys=True))
         return 4 if result["api_interrupted"] else 0
+    except (RequestQueueError, D1HTTPError) as exc:
+        # Only static error identifiers defined by our code; never print raw provider errors.
+        code = str(exc)
+        if not re.fullmatch(r"[a-z][a-z0-9_]{1,80}", code):
+            code = "unclassified"
+        print("V31_C37_SITE_REQUEST_QUEUE_FAILED_"+type(exc).__name__+"_"+code)
+        return 3
     except Exception as exc:
         print("V31_C37_SITE_REQUEST_QUEUE_FAILED_"+type(exc).__name__)
         return 3

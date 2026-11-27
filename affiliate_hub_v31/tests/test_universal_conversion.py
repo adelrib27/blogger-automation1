@@ -94,7 +94,7 @@ class UniversalConverterTests(unittest.TestCase):
             result=convert_for_registered_blog(
                 self.storage,site_key="novo_site_real",
                 topic="air fryer",budget=3,execute=True,
-                app_id="123",app_secret="new-secret")
+                app_id="123",app_secret="new-secret",reserve_conversion=lambda *_: True)
         self.assertEqual(called,[("shopee:11:101","nova_campanha")])
         self.assertEqual(result["converted"],1)
         self.assertTrue(result["r2_snapshot_saved_and_verified"])
@@ -119,10 +119,10 @@ class UniversalConverterTests(unittest.TestCase):
                     site_key="futuro_nao_registrado",topic="air fryer")
         self.assertEqual(self.storage.writes,0)
 
-    def test_mutation_budget_rejects_more_than_three_and_no_topic(self):
+    def test_mutation_budget_rejects_more_than_ten_and_no_topic(self):
         with patch("affiliate_hub_v31.universal_conversion.sites",
                    return_value={"novo_site_real":ROUTE}):
-            for bad in (0,4,-1,True,"3"):
+            for bad in (0,11,-1,True,"3"):
                 with self.subTest(bad=bad),self.assertRaises(UniversalConversionError):
                     convert_for_registered_blog(self.storage,
                         site_key="novo_site_real",topic="air fryer",budget=bad)
@@ -130,6 +130,17 @@ class UniversalConverterTests(unittest.TestCase):
                 convert_for_registered_blog(self.storage,
                     site_key="novo_site_real",topic="  ")
         self.assertEqual(self.storage.writes,0)
+
+    def test_shared_reservation_denial_never_calls_shopee(self):
+        with patch("affiliate_hub_v31.universal_conversion.sites", return_value={"novo_site_real":ROUTE}), \
+             patch("affiliate_hub_v31.universal_conversion.preview_site_launch", side_effect=self._plan), \
+             patch("affiliate_hub_v31.universal_conversion.convert_one") as call:
+            result=convert_for_registered_blog(self.storage,site_key="novo_site_real",topic="air fryer",
+                execute=True,app_id="fixture",app_secret="fixture",reserve_conversion=lambda *_:False)
+            call.assert_not_called()
+            self.assertEqual(result["conversion_reservations_denied"],1)
+            self.assertEqual(result["shopee_mutation_attempts"],0)
+            self.assertEqual(self.storage.writes,0)
 
     def test_execute_without_shopee_key_fails_without_R2_write(self):
         with self.assertRaises(UniversalConversionError):

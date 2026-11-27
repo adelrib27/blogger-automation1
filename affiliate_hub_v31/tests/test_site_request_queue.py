@@ -237,7 +237,7 @@ class RequestQueueTests(unittest.TestCase):
             self.assertEqual(r["conversion_candidates"],1)
             self.assertEqual(r["converted"],0)
             self.assertEqual(self.storage.saved,0)
-            for bad in (0,4,True,"3"):
+            for bad in (0,11,True,"3"):
                 with self.subTest(bad=bad),self.assertRaises(RequestQueueError):
                     process_requests(self.storage,directory=self.folder,budget=bad)
 
@@ -257,6 +257,11 @@ class RequestQueueTests(unittest.TestCase):
         self.assertFalse(claim("campanha_a", "shopee:100:1"))
         self.assertTrue(claim("campanha_b", "shopee:100:1"))
         self.assertTrue(claim("campanha_b", "shopee:100:2"))
+        migration = schema.with_name("c176_shopee_conversion_budget_expand.sql")
+        state.executescript(migration.read_text(encoding="utf-8"))
+        for item in range(3,10):
+            self.assertTrue(claim("campanha_b", f"shopee:100:{item}"))
+        self.assertEqual(state.execute("SELECT COUNT(*) FROM v31_shopee_conversion_attempts").fetchone()[0],10)
         self.assertFalse(claim("campanha_a", "shopee:100:3"))
         # C149: a reserva antiga existe mesmo se o shortlink nao foi
         # persistido no R2. Nunca repetir automaticamente em outro dia.
@@ -264,6 +269,25 @@ class RequestQueueTests(unittest.TestCase):
         # Outro SKU e outra campanha continuam independentes.
         self.assertTrue(claim("campanha_a", "shopee:100:3", day="2026-11-22"))
         self.assertTrue(claim("campanha_c", "shopee:100:1", day="2026-11-22"))
+
+    def test_migration_preserves_anonymous_slots_and_exact_history(self):
+        schema = Path(__file__).resolve().parents[1] / "migrations"
+        state = sqlite3.connect(self.root / "migration.sqlite3", isolation_level=None)
+        self.addCleanup(state.close)
+        state.executescript((schema / "c81_shopee_conversion_budget.sql").read_text())
+        original = [("2026-11-27", 1, None, None),
+                    ("2026-11-27", 2, "radarwp", "shopee:11:101"),
+                    ("2026-11-27", 3, None, None)]
+        state.executemany("INSERT INTO v31_shopee_conversion_attempts VALUES (?,?,?,?)", original)
+        state.executescript((schema / "c176_shopee_conversion_budget_expand.sql").read_text())
+        self.assertEqual(state.execute("SELECT * FROM v31_shopee_conversion_attempts ORDER BY slot").fetchall(), original)
+        q = lambda sql,args: state.execute(sql,args).fetchall()
+        self.assertFalse(claim_conversion_attempt(q, day_utc="2026-11-28", campaign="radarwp", product_key="shopee:11:101"))
+        for item in range(7):
+            self.assertTrue(claim_conversion_attempt(q, day_utc="2026-11-27", campaign="other", product_key=f"shopee:22:{item+1}"))
+        self.assertFalse(claim_conversion_attempt(q, day_utc="2026-11-27", campaign="other", product_key="shopee:22:8"))
+        with self.assertRaises(sqlite3.IntegrityError):
+            state.execute("INSERT INTO v31_shopee_conversion_attempts VALUES ('2026-11-28',21,NULL,NULL)")
 
     def test_historical_radarwp_conversion_cannot_be_retried_across_days(self):
         schema = Path(__file__).resolve().parents[1] / "migrations" / "c81_shopee_conversion_budget.sql"
