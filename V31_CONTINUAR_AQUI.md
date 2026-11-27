@@ -17,7 +17,7 @@ Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_B
 
 ## Posição atual — C177 conciliação READY (27/11/2026)
 
-Código `V31-C177-READY-20261127`. C176 PR #193 já mesclada, D1 22/22 preservado, limite operacional 10, C136 8/8 confirmados. Próximo: auditoria C135 e conversão real em execução nova. [Checkpoint](affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md).
+Código `V31-C177-READY-20261127`. C176 PR #193 já mesclada, D1 22/22 preservado, limite operacional 10, C136 8/8 confirmados. C135 já confirmou conflito HTML com #314, sem escrita; C148 confirmou 6/7 CMS, falta acesso Oficina. Próximo: Work para nova execução comercial na main e credencial Oficina. [Checkpoint](affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md).
 
 ## Posição anterior — C176 expansão comercial (27/11/2026)
 
