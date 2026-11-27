@@ -18,3 +18,8 @@ Corrigir exclusivamente as referências da ponte Radar no monitor GET/SELECT, se
 3. Homologar LIVE com política e hash específicos, ambiente protegido, autorização explícita, teste fail-closed e recibo de publicação; manter OFF até isso.
 4. Verificar a fila comercial e refresh de catálogo recentes, Loja mensal se ainda exigida, antes de declarar escopo integral entregue.
 Sem mutação operacional iniciada nesta retomada; edição GitHub somente. Nenhum dado privado ou segredo no checkpoint.
+
+## Complemento: fila comercial, 27/11
+- Run [46062938131](https://github.com/adelrib27/blogger-automation1/actions/runs/46062938131) terminou FAILURE. Dry-run PASS: 7 pedidos avaliados, 2 candidatos (cozinhasemcomp/oficinawp), 23 ready_review_jobs, 0 mutações. Execução retornou RequestQueueError (motivo detalhado não registrado).
+- SELECT D1 atual: os três slots do dia UTC 27/11 estão ocupados por radarwp. Não aumentar cota, não reexecutar conversor e não inferir conversão de uma reserva. Diagnosticar a classe de erro por código sanitizado e reconciliar R2 antes de próximo ciclo.
+- PR de correção C136: https://github.com/adelrib27/blogger-automation1/pull/192. Merge bloqueado por ausência de CI confirmado; nenhuma alteração da main por esta auditoria.
