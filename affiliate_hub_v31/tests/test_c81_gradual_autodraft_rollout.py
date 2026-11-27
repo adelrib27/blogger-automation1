@@ -113,8 +113,24 @@ class PhasedAutoDraftRolloutTests(unittest.TestCase):
         self.assertIn('if status == "DUE":', fallback)
         self.assertIn("uses: ./.github/workflows/v31_independent_review_draft.yml", fallback)
         release = scheduler.split("\n  release:\n", 1)[1].split("\n  audit:\n", 1)[0]
-        self.assertIn("needs: draft", release)
+        self.assertIn("needs: [choose-one, draft]", release)
         self.assertNotIn("pilot-fallback", release)
+
+    def test_dedicated_pilot_schedule_requires_site_specific_live_opt_in(self):
+        root = Path(__file__).resolve().parents[2] / ".github" / "workflows"
+        scheduler = (root / "v31_autonomous_draft_scheduler.yml").read_text(encoding="utf-8")
+        release = scheduler.split("\n  release:\n", 1)[1].split("\n  audit:\n", 1)[0]
+        for required in (
+            "github.event_name == 'schedule'",
+            "github.event.schedule != '2-52/10 * * * *' ||",
+            "vars.V31_AUTOLIVE_PILOT_SITE != ''",
+            "vars.V31_AUTOLIVE_PILOT_SITE == vars.V31_AUTODRAFT_PILOT_SITE",
+            "vars.V31_AUTOLIVE_PILOT_SITE == needs.choose-one.outputs.site",
+            "vars.V31_AUTOLIVE_ACTIVE == 'true'",
+            "needs.draft.outputs.verified_draft != ''",
+            "environment: v31-autonomous-live",
+        ):
+            self.assertIn(required, release)
 
 
 if __name__ == "__main__":
