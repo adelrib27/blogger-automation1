@@ -443,20 +443,24 @@ def _radar_scoped_legacy_credentials(site_key: str, *, raw_was_explicit: bool):
     return user, password
 
 
+def _casa_scoped_legacy_credentials(site_key: str) -> tuple[str, str] | None:
+    if site_key != "wordpress_casa_decoracao":
+        return None
+    username = os.getenv("CASA_WORDPRESS_USERNAME", "")
+    password = os.getenv("CASA_WORDPRESS_APP_PASSWORD", "")
+    if username.strip() and password.strip():
+        return username, password
+    return None
+
+
 def credentials_for(site_key:str,*,raw:str|None=None)->tuple[str,str]:
-    # O JSON universal continua primário; ponte apenas para Radar ausente.
-    # Nunca logar credencial ou redirecionar conexão para outro site.
+    # O JSON por site tem prioridade. Credenciais legadas são locais à rota.
     secret=raw if raw is not None else os.getenv(
         "V31_WORDPRESS_SITE_CREDENTIALS_JSON","")
     if not secret:
-        # Ponte estrita: o Casa WordPress real já possui credenciais legadas
-        # separadas no Environment GitHub (C62). Não propagar para outro
-        # domínio: sites futuros usam SEMPRE o JSON universal por site.
-        if site_key == "wordpress_casa_decoracao":
-            legacy_user = os.getenv("CASA_WORDPRESS_USERNAME", "")
-            legacy_password = os.getenv("CASA_WORDPRESS_APP_PASSWORD", "")
-            if legacy_user.strip() and legacy_password.strip():
-                return legacy_user, legacy_password
+        casa_credentials = _casa_scoped_legacy_credentials(site_key)
+        if casa_credentials is not None:
+            return casa_credentials
         legacy = _radar_scoped_legacy_credentials(
             site_key, raw_was_explicit=raw is not None)
         if legacy is not None:
@@ -469,7 +473,10 @@ def credentials_for(site_key:str,*,raw:str|None=None)->tuple[str,str]:
     if not isinstance(mapping,dict):
         raise WordPressAutoDraftError("wordpress_credentials_schema_invalid")
     config=mapping.get(site_key)
-    if config is None and site_key not in mapping:
+    if site_key not in mapping:
+        casa_credentials = _casa_scoped_legacy_credentials(site_key)
+        if casa_credentials is not None:
+            return casa_credentials
         legacy = _radar_scoped_legacy_credentials(
             site_key, raw_was_explicit=raw is not None)
         if legacy is not None:
