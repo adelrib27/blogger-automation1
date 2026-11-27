@@ -473,3 +473,8 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 7. **Continuar:** o estado curto aponta para o trabalho atual e não transforma hipóteses, previews ou `SUCCESS` genérico em entregas concluídas.
 
 **Princípio final:** o V31 é um único motor editorial universal. Cada site participa por identidade comprovada, campanha própria e aplicação uniforme de qualidade, segurança, SEO e idempotência. O acervo é cumulativo; a criação de DRAFTs é controlada; a publicação LIVE não é implícita; e a fonte mestre descreve somente aquilo que o código e as evidências atuais permitem afirmar.
+
+
+## Atualização operacional — 27/11/2026
+
+As descrições C148–C152 acima são históricas, não flags atuais. O piloto Radar está enabled e pilot_enabled no registro vigente. O Blogger Móveis provou schedule com DRAFT 5901505853451174265 no run 45639927141. O Radar provou schedule 46058071209 com DRAFT #406, GET/hash e replay idêntico; SELECT D1 confirmou USED em 27/11. Isso homologa o fluxo automático de DRAFT nas duas plataformas, não cada rota, nem LIVE. O monitor C136 precisa passar após ajuste da ponte Radar já escopada; seu run 45945506302 falhou fechado. C133 46028580097: 3 de 8 destinos prioritários configurados, 4 sem perfil/pedido completo e 1 sem rota. O limite e a cadência são declarativos por perfil, inclusive null para o piloto Radar conforme C171; não confundir com cotas externas ou de conversão. LIVE permanece pending_policy_approval, sem autorização implícita. O checkpoint atual e o JSON governam a retomada; preservam-se os 24 tombstones, a biblioteca independente, a não duplicação e o motor universal.
