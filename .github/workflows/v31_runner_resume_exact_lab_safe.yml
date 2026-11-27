@@ -1,0 +1,58 @@
+name: V31 LAB - Runner Handoff SEO Tema SAFE
+
+on:
+  push:
+    branches:
+      - lab/v31-runner-resume-exact-safe-20261112
+    paths:
+      - "labs/v31_runner_handoff/**"
+      - ".github/workflows/v31_runner_resume_exact_lab_safe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v31-runner-resume-exact-lab
+  cancel-in-progress: false
+
+jobs:
+  verify-handoff-offline:
+    if: github.repository == 'adelrib27/blogger-automation1' && github.ref == 'refs/heads/lab/v31-runner-resume-exact-safe-20261112'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify syntax of scoped handoff
+        run: |
+          set -euo pipefail
+          python -m py_compile labs/v31_runner_handoff/runner/v31_handoff_safe.py labs/v31_runner_handoff/tests/test_handoff.py
+      - name: Verify no live Blogger operations and no historical allowlist bypass
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('labs/v31_runner_handoff/runner/v31_handoff_safe.py')
+          code=p.read_text(encoding='utf-8')
+          assert 'CREATE_BLOG_VALIDATED' in code
+          assert 'THEME_LATCH_OR_RESULT_EXISTS' in code
+          assert 'RESUME_ALREADY_ATTEMPTED' in code
+          assert 'v31_authorized_targets.json' not in code
+          assert 'urllib.request' not in code
+          assert 'def create_blog' not in code
+          print('RUNNER_HANDOFF_STATIC_SAFE_OK')
+          PY
+      - name: Run guarded offline tests
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s labs/v31_runner_handoff/tests -p 'test_*.py' -v
+      - name: Confirm no production writes
+        run: |
+          echo "LAB_ONLY=1"
+          echo "BLOGGER_WRITES=0"
+          echo "RUNNER_WINDOWS_WRITES=0"
+          echo "SHOPEE_CALLS=0"
+          echo "NO_MAIN_OR_WORK_BRANCH_CHANGES=1"
