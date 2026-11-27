@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição atual — C176 expansão comercial (27/11/2026)
+## Posição atual — C177 conciliação READY (27/11/2026)
+
+Código `V31-C177-READY-20261127`. C176 PR #193 já mesclada, D1 22/22 preservado, limite operacional 10, C136 8/8 confirmados. Próximo: auditoria C135 e conversão real em execução nova. [Checkpoint](affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md).
+
+## Posição anterior — C176 expansão comercial (27/11/2026)
 
 Código `V31-BUDGET10-20261127`. PR #192 mesclada após CI. C176 amplia limite interno de 3 para 10/dia com fila regular 8 e schema preparado para 20; preserva histórico e corrige registros anônimos. [Checkpoint](affiliate_hub_v31/CHECKPOINT_V31_CONVERSION_BUDGET_10_2026-11-27.md). CI e migração D1 devem preceder deploy; LIVE OFF.
 
