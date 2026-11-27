@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição atual — C177 conciliação READY (27/11/2026)
+## Posição atual — C178 fila comercial comprovada (27/11/2026)
+
+Código `V31-C178-COMERCIAL-46071220811`. Fila `46071220811` concluiu com 7 conversões, D1 10/10 e snapshot R2 verificado. PR 195 integrada com isolamento das credenciais Casa/Oficina. Após configurar a credencial Oficina no ambiente protegido, retomar pelo canário C148. [Checkpoint](affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md#retomada-c178--fila-comercial-comprovada-e-acesso-oficina-pendente).
+
+## Posição anterior — C177 conciliação READY (27/11/2026)
 
 Código `V31-C177-READY-20261127`. C176 PR #193 já mesclada, D1 22/22 preservado, limite operacional 10, C136 8/8 confirmados. C135 já confirmou conflito HTML com #314, sem escrita; C148 confirmou 6/7 CMS, falta acesso Oficina. Próximo: Work para nova execução comercial na main e credencial Oficina. [Checkpoint](affiliate_hub_v31/CHECKPOINT_C177_READY_RECONCILIATION_2026-11-27.md).
 
