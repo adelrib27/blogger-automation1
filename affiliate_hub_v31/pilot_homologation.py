@@ -24,7 +24,7 @@ from .editorial_scope_validation import is_route_in_active_scope
 from .r2_state import R2State, verify_database
 from .reviewed_draft_delivery import read_draft_history
 from .routing import sites
-from .site_request_queue import REQUESTS_DIR, VERIFIER_PROFILES, load_requests
+from .site_request_queue import MAX_BUDGET, REQUESTS_DIR, VERIFIER_PROFILES, load_requests
 
 DEFAULT_PRIMARY = "wordpress_radartechbr"  # ordem da auditoria, nunca writer
 SAFE_STATUSES = frozenset({"READY", "USED"})
@@ -149,7 +149,7 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                 "WHERE campaign=? AND day_utc=?", (entry["campaign"], today))
             if (not isinstance(attempts, list) or len(attempts) != 1
                     or type(attempts[0].get("total")) is not int
-                    or not 0 <= attempts[0]["total"] <= 3):
+                    or not 0 <= attempts[0]["total"] <= MAX_BUDGET):
                 raise PilotAuditError("pilot_affiliate_attempts_untrusted")
             entry["d1_ready_jobs"] = counts.get("READY", 0)
             entry["d1_used_jobs"] = counts.get("USED", 0)
@@ -175,6 +175,26 @@ def live_readonly(*, primary: str = DEFAULT_PRIMARY, query=None,
                     entry["cached_links_exact_campaign_sample"] = result["cached_exact_campaign"]
                     entry["affiliate_link_verified_for_draft"] = False
                     if all_cms:
+                        exact = inspect_campaign_cache(catalog, registry[entry["site_key"]], cached_only=True)
+                        cached_items = exact.get("items", [])
+                        if not isinstance(cached_items, list) or len(cached_items) > 4:
+                            raise PilotAuditError("pilot_cached_sample_untrusted")
+                        entry["exact_cached_candidate_sample"] = []
+                        for item in cached_items:
+                            sku = item.get("product_key") if isinstance(item, dict) else None
+                            title = item.get("title") if isinstance(item, dict) else None
+                            if (not isinstance(sku, str) or not re.fullmatch(r"shopee:[0-9]+:[0-9]+", sku)
+                                    or not isinstance(title, str) or not 1 <= len(title) <= 145
+                                    or item.get("cached_for_exact_campaign") is not True):
+                                raise PilotAuditError("pilot_cached_sample_untrusted")
+                            title = re.sub(r"[\x00-\x1f\x7f]", " ", title).strip()
+                            if not title:
+                                raise PilotAuditError("pilot_cached_sample_untrusted")
+                            entry["exact_cached_candidate_sample"].append({
+                                "product_key": sku, "title": title,
+                                "cached_for_exact_campaign": True,
+                                "manufacturer_facts_verified": False,
+                                "eligible_for_draft_write": False})
                         entry["cached_links_exact_campaign_total"] = db.execute(
                             "SELECT COUNT(*) FROM affiliate_links WHERE campaign=?",
                             (entry["campaign"],)).fetchone()[0]

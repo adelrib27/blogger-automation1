@@ -71,6 +71,17 @@ class C137CampaignCacheReadOnlyTests(unittest.TestCase):
         x = self.inspect()
         self.assertEqual(x["cached_exact_campaign"], 0)
 
+    def test_cached_only_excludes_uncached_and_other_campaign(self):
+        with Catalog(self.path) as c:
+            c.cache_link(SKU, "outrocamp", LINK)
+            with patch.object(m, "source_safe_for_use", return_value=True):
+                self.assertEqual(m.inspect_campaign_cache(c, ROUTE, cached_only=True)["items"], [])
+                c.cache_link(SKU, CAMPAIGN, LINK)
+                x = m.inspect_campaign_cache(c, ROUTE, cached_only=True)
+                self.assertEqual(x["cached_exact_campaign"], 1)
+                self.assertFalse(x["items"][0]["eligible_for_draft_write"])
+                self.assertNotIn(LINK, str(x))
+
     def test_invalid_link_in_database_fails_closed(self):
         with Catalog(self.path) as c:
             c.cache_link(SKU, CAMPAIGN, LINK)
