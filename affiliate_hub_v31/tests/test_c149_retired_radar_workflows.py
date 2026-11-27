@@ -90,7 +90,9 @@ class RetiredRadarWorkflowTests(unittest.TestCase):
 
     def test_universal_reviewer_still_shares_single_budget(self):
         from affiliate_hub_v31.site_request_queue import MAX_BUDGET
-        self.assertEqual(MAX_BUDGET,3)
+        self.assertEqual(MAX_BUDGET,10)
+        self.assertIn("claim_conversion_attempt",
+                      (ROOT/"affiliate_hub_v31/universal_conversion.py").read_text(encoding="utf-8"))
         self.assertIn("claim_conversion_attempt",
                       (ROOT/"affiliate_hub_v31/autonomous_review.py").read_text(encoding="utf-8"))
 
