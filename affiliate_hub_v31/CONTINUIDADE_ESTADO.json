@@ -88,9 +88,9 @@
     "phase": "C178",
     "status": "BLOQUEADO",
     "objective": "Homologar o V31 em DRAFT por rota com evidência real.",
-    "latest_verified_step": "Fila 46071220811: 7 conversões em 6 campanhas, D1 10/10 e R2 CURRENT confirmado. PR 195 integrada após 960 testes e 50 simulações.",
-    "next_safe_step": "Cadastrar senha de aplicação Oficina no ambiente v31-editorial-safe, executar C148 na main e confirmar 7/7 CMS autenticados. Preservar histórico e seguir homologação DRAFT das rotas restantes.",
-    "blocker": "A Oficina exige login e cadastro manual da credencial de aplicação no ambiente protegido. READY Casa #314 em conflito. LIVE aguarda autorização específica.",
+    "latest_verified_step": "Fila 46071220811: 7 conversões em 6 campanhas, D1 10/10 e R2 CURRENT confirmado. PR 195 integrada após 960 testes e 50 simulações. C148 46074228914 confirmou 4 Blogger e R2/D1; três WordPress bloqueados na validação local.",
+    "next_safe_step": "Corrigir o valor JSON da Oficina no segredo protegido já cadastrado, executar C148 na main e confirmar 7/7 CMS autenticados.",
+    "blocker": "O canário 46074228914 recebeu o segredo mas barrou a validação local de credenciais dos três WordPress. O padrão aponta para formato/estrutura inválida no JSON, sem inspeção do segredo. READY Casa #314 em conflito. LIVE aguarda autorização específica.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
@@ -177,11 +177,12 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/46064247485",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/46071220811",
       "https://github.com/adelrib27/blogger-automation1/pull/195",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/46071402276"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46071402276",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46074228914"
     ]
   },
   "next_priorities": [
-    "Cadastrar credencial de aplicação Oficina no ambiente protegido e confirmar C148 7/7. A fila comercial real 46071220811 já foi verificada em D1/R2.",
+    "Corrigir o valor JSON do segredo da Oficina e confirmar C148 7/7. A fila 46071220811 já foi verificada em D1/R2.",
     "Keep Casa #314 conflict blocked; no write or USED promotion without exact proof.",
     "Onboard remaining routes/profiles with exact source, then LIVE only after specific authorization."
   ],
@@ -796,6 +797,14 @@
     "r2_verified": true,
     "publication_calls": 0,
     "oficina_cms_runtime_verified": false,
-    "credentials_isolation_pr": 195
+    "credentials_isolation_pr": 195,
+    "credential_canary": {
+      "run_id": 46074228914,
+      "authenticated_blogger_sites": 4,
+      "credential_validation_blocked_wordpress_sites": 3,
+      "secret_present": true,
+      "r2_readonly": true,
+      "d1_readonly": true
+    }
   }
 }
