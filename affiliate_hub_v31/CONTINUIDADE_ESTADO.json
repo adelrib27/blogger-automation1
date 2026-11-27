@@ -3,13 +3,13 @@
   "project": "V31 Hub Editorial Shopee — Blogger & WordPress",
   "repository": "adelrib27/blogger-automation1",
   "branch": "main",
-  "last_checkpoint_phase": "C174_AGENDAMENTO_RESILIENTE",
-  "continuity_protocol_phase": "C174",
+  "last_checkpoint_phase": "V31_FINAL_AUDIT_20261127",
+  "continuity_protocol_phase": "V31_FINAL_AUDIT",
   "continuity_status": "EM_ANDAMENTO",
-  "last_updated_date": "2026-11-26",
-  "last_updated_source": "C174 segunda oportunidade de agendamento para o piloto DRAFT",
+  "last_updated_date": "2026-11-27",
+  "last_updated_source": "Schedule Radar #406 confirmado; auditoria final e ajuste C136 em branch",
   "start_here": "SYSTEM_MASTER.md",
-  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_C174_AGENDAMENTO_RESILIENTE.md",
+  "checkpoint_detail": "affiliate_hub_v31/CHECKPOINT_V31_FINAL_AUDIT_2026-11-27.md",
   "mission": "Motor editorial universal Blogger+WordPress, biblioteca Shopee, evidências, SEO, DRAFTs idempotentes. Blog Vida Pet Prática é BLOGGER CMS ATIVO real e NÃO a metodologia universal C69; ainda requer V31 onboarding da rota/campanha. 24 Blogger excluídos preservados. LIVE OFF.",
   "source_of_truth": {
     "current_scope_file": "affiliate_hub_v31/EDITORIAL_ACTIVE_SCOPE_POLICY.json",
@@ -85,17 +85,17 @@
     }
   },
   "active_work": {
-    "phase": "C174",
+    "phase": "V31_FINAL_AUDIT",
     "status": "EM_ANDAMENTO",
-    "objective": "Comprovar o disparo automático do piloto DRAFT pelo cron próprio ou após o ciclo regular.",
-    "latest_verified_step": "O WordPress confirmou os DRAFTs #401, #403 e #404 do Radar. A execução regular 45901514576 confirmou a seleção de Móveis para Cada Canto. O push C173 auditou os três recibos do Radar.",
-    "next_safe_step": "Conferir um evento schedule com seleção do piloto e seu resultado. Quando houver DRAFT, confirmar ID e status remoto antes de ajustar o cron de homologação.",
-    "blocker": "O aceite operacional depende de um evento automático entregue pelo GitHub Actions.",
+    "objective": "Concluir homologação operacional universal e separar entrega DRAFT de liberação LIVE.",
+    "latest_verified_step": "Schedule 46058071209: DRAFT_VERIFIED #406 e replay/hash idênticos; SELECT D1 confirma USED. Blogger C158 homologado. Monitor C136 falhou fechado.",
+    "next_safe_step": "Validar PR da ponte Radar no monitor C136, executar auditoria read-only de todos os USED e reconciliar READY Casa; só depois ampliar sites e preparar LIVE sob autorização específica.",
+    "blocker": "Monitor C136 falhou, cobertura por site incompleta, ambiente LIVE e política específica ainda não homologados. Fila comercial 46062938131 falhou; três slots D1 ocupados.",
     "mutation_in_progress": false,
     "remote_operation_in_progress": false,
     "rollback_needed": false,
-    "base_main_sha": "32ab73d41876f4afbf50e84cadfe16a1b61a7ed8",
-    "branch": "main",
+    "base_main_sha": "f5efb68e899fba739f7e4d771e6cf6ce13ac1a47",
+    "branch": "fix/v31-final-audit-20261127",
     "evidence_links": [
       "https://github.com/adelrib27/blogger-automation1/pull/146",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45300132547",
@@ -162,52 +162,29 @@
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45878775929",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45879376367",
       "https://github.com/adelrib27/blogger-automation1/actions/runs/45879847269",
-      "https://github.com/adelrib27/blogger-automation1/actions/runs/45897356609"
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45897356609",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46058071209",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/45945506302",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46028580097",
+      "https://github.com/adelrib27/blogger-automation1/actions/runs/46062938131",
+      "https://github.com/adelrib27/blogger-automation1/pull/192"
     ]
   },
   "next_priorities": [
-    "C174: comprovar a execução agendada do piloto e registrar o resultado editorial, com LIVE desativado.",
-    "C172: confirmar o evento schedule Radar. DRAFT #404 entregue e verificado pelo fluxo manual.",
-    "C171: confirmar no runtime que os DRAFTs anteriores não limitam a homologação do Radar.",
-    "C170: validar cron isolado Radar sem alterar o destino do cron regular; LIVE OFF.",
-    "C169: manter os DRAFTs #401 e #403, ampliar fontes e medir recorrência Radar antes de expandir. LIVE OFF.",
-    "C168: fechar prova WordPress categoria 20 e metadescrição v3. Manter LIVE OFF.",
-    "C167: confirmar DRAFT categoria 20, metadescrição v3, cache e replay; medir ciclo recorrente de Radar. LIVE OFF.",
-    "C166: localizar motivo C165, obter DRAFT categoria 20 com SEO assinado e medir recorrência sem LIVE.",
-    "C165: confirmar canário categoria 20, corrigir descrição CMS e medir recorrência Radar antes de expandir. LIVE OFF.",
-    "C164: confirmar DRAFT/replay Radar, Ar-condicionado e cadência com medidas reais, mantendo LIVE OFF.",
-    "C162: validar categoria assinada e GET real; C163 descoberta de fontes e seleção Radar.",
-    "C161 owner priority: finish Radar Tech BR E2E first, category-aware universal scheduler, measure capacity, onboard other sites individually afterwards.",
-    "C160: validar cache regular independente de perfis, ampliar fontes confiáveis por site sem habilitar LIVE.",
-    "C159: auditoria real de todos os sites; priorizar próximo cadastro com evidência e campanha correta.",
-    "C158: Blogger piloto homologado; não repetir Buriti; expandir diagnóstico de cobertura universal com gates intactos.",
-    "C157: validar recuperação READY com catálogo vigente, sem nova pesquisa; comprovar entrega DRAFT pelo CMS.",
-    "C156: concluir homologação de entrega com trava única; não repetir atualização do catálogo já comprovada.",
-    "C155: conferir resultado da sondagem de entrega somente leitura e resolver causa exata; sem terceiro retry cego.",
-    "C154: validar PR #162, refresh real e reconciliar READY Móveis sem POST duplicado. Casa #334 DRAFT confirmado.",
-    "C153: auditar conversão regular independente da revisão factual; confirmar cache e reserva D1. Não repetir tentativa incerta.",
-    "C152 SAFE dedup guard tested (PR #159): 56 Radar posts/drafts audited; still 0 actual E2E new DRAFT. Verify independent exact product source, affiliate cache, D1/R2, legacy shortlinks and semantic collisions before any CMS write.",
-    "C149 concluída: não reativar 10 workflows antigos Radar; retomada agora somente dentro do V31 universal com GET CMS Radar e DRAFT factual, Loja mensal suspensa até sucessor universal.",
-    "C148 Radar Tech piloto: resolver segredo GitHub WordPress por site sem compartilhar credencial no chat; repetir canário READ ONLY e só depois habilitar oferta/fonte independente para DRAFT.",
-    "Preservar bloqueio integral dos 24 IDs Blogger, incluindo pontes entre branches, e não alterar a exclusão do blog Ar-Condicionado sem Dúvidas.",
-    "Manter auditoria diária D1 USED + GET CMS por demanda real, contabilizando apenas DRAFT_VERIFIED com SKU/hash exatos; sem inferir criação de artigo a partir de job.",
-    "Investigar falha segura da verificação independente de fontes/cotas/timeout na fila DRAFT com diagnósticos sanitizados e sem POST ou consumo duplicado.",
-    "Reconciliar READY Casa com DRAFT #314, preservar Casa #321 e Móveis, não produzir rascunhos duplicados.",
-    "Concluir onboarding do Blogger Vida Pet Prática apenas após prova de rota e campanha Shopee; aplicar motor universal sem exceções por nicho.",
-    "Manter SYSTEM_MASTER.md como documento arquitetural canônico e a política de publicação automática LIVE em pending_policy_approval."
+    "Validar correção C136 com CI e novo GET/SELECT protegido; reconciliar todos os USED e Casa READY sem duplicar #314.",
+    "Confirmar fila de conversão e refresh R2 recentes, preservar catálogo cumulativo e orçamento.",
+    "Completar perfis e credenciais por destino; Vida Pet requer rota e campanha verificadas.",
+    "Validar política LIVE, ambiente dedicado, hash, autorização explícita e liberação controlada; manter OFF até autorização."
   ],
   "latest_verified_checkpoint": {
-    "phase": "C153_SAFE",
-    "path": "affiliate_hub_v31/CHECKPOINT_C153_CONVERSAO_INDEPENDENTE.md",
-    "pr_number": 160,
-    "ci_run": 45448688104,
-    "unit_tests_passed": 922,
-    "unit_tests_failed": 0,
-    "offline_simulations_passed": 50,
-    "real_conversion_verified": false,
-    "real_draft_verified": false,
+    "phase": "RADAR_SCHEDULE_DRAFT_VERIFIED",
+    "path": "affiliate_hub_v31/CHECKPOINT_RADAR_AGENDADOR_2026-11-27.md",
+    "automatic_run_id": 46058071209,
+    "automatic_draft_id": 406,
+    "replay_verified": true,
+    "d1_status": "USED",
     "live_authorized": false,
-    "next_phase": "C153_COMMERCIAL_RUNTIME_VERIFICATION"
+    "next_phase": "V31_FINAL_AUDIT"
   },
   "continuity_contract": {
     "must_update_at_start": true,
@@ -697,12 +674,17 @@
     "acceptance": "Evento schedule, recibo e ID remoto em draft."
   },
   "radar_schedule_validation_20261127": {
-    "code": "V31-RADAR-20261127-405",
+    "code": "V31-RADAR-SCHEDULE-46058071209",
     "checkpoint": "affiliate_hub_v31/CHECKPOINT_RADAR_AGENDADOR_2026-11-27.md",
     "fix_pr": 187,
     "manual_run_id": 46013016909,
     "manual_draft_id": 405,
-    "automatic_status": "SCHEDULE_VERIFIER_CONFIRMED_DRAFT_PENDING"
+    "automatic_status": "SCHEDULE_DRAFT_VERIFIED_REPLAY_CONFIRMED",
+    "automatic_run_id": 46058071209,
+    "automatic_draft_id": 406,
+    "html_sha256": "68f5b60808d1b287fd909191f3cdedd9ddb6341469a96e44ebe8188dad062dc6",
+    "d1_status": "USED",
+    "live_skipped": true
   },
   "radar_editorial_recovery_20261127": {
     "code": "V31-RADAR-20261127-ORIGINALIDADE",
@@ -712,7 +694,7 @@
     "scheduled_rejection": "article_prose_reused",
     "legacy_duplicate_wordpress_id": 355,
     "replacement_profile": "Motorola Moto Watch Fit",
-    "next_step": "Confirmar novo schedule com DRAFT_VERIFIED e GET autenticado. LIVE depende de homologação e da política configurada para o Radar."
+    "next_step": "Novo schedule 46058071209 já confirmou DRAFT_VERIFIED #406; validar monitor e política LIVE."
   },
   "radar_live_preparation_20261127": {
     "code": "V31-RADAR-20261127-LIVE",
@@ -721,6 +703,31 @@
     "github_environment_id": 28775494561,
     "official_d1_ledger_applied": true,
     "live_active": false,
-    "next_step": "Verificar o primeiro DRAFT automático no CMS e provisionar credenciais do ambiente protegido. Conferir política, hash e opt-in específico antes de ativar."
+    "next_step": "DRAFT automático #406 comprovado; provisionamento ambiente protegido, política específica e autorização LIVE ainda pendentes."
+  },
+  "final_audit_20261127": {
+    "code": "V31-FINAL-AUDIT-46058071209",
+    "used_jobs": {
+      "radar": 5,
+      "moveis": 2,
+      "casa": 1
+    },
+    "casa_ready": 1,
+    "monitor_run": 45945506302,
+    "monitor_outcome": "FAILED_CLOSED_CAUSE_NOT_FULLY_PROVEN",
+    "monitor_fix": "STAGED_SCOPED_RADAR_BRIDGE",
+    "readiness_run": 46028580097,
+    "priority_sites": 8,
+    "configured_sites": 3,
+    "missing_profile_or_request": 4,
+    "missing_route": 1,
+    "live_changed": false,
+    "pr": 192,
+    "commercial_run": 46062938131,
+    "commercial_status": "FAILURE_REQUEST_QUEUE_ERROR_CAUSE_UNPROVEN",
+    "commercial_dry_run_candidates": 2,
+    "conversion_slots_used_today_utc": 3,
+    "conversion_slots_max": 3,
+    "do_not_retry": true
   }
 }
