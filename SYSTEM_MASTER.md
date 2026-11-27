@@ -71,6 +71,10 @@ O agendador V31 tem uma janela horária para um piloto DRAFT indicado por `V31_A
 
 O perfil Radar usa `max_drafts_per_day: null`. O intervalo, a evidência e a idempotência seguem na reserva D1. [Checkpoint C171](affiliate_hub_v31/CHECKPOINT_C171_COTA_DRAFT_OPCIONAL.md).
 
+## 1.12. C174 — segunda oportunidade de agendamento DRAFT
+
+O piloto mantém o cron próprio e também pode rodar após a execução regular agendada. O segundo caminho consulta D1 antes de chamar o escritor universal de DRAFT, usa a mesma rota configurada do piloto e espera o ciclo regular terminar para evitar disputar o escritor com ele. O piloto fica fora do job de liberação pública em ambos os caminhos. [Checkpoint C174](affiliate_hub_v31/CHECKPOINT_C174_AGENDAMENTO_RESILIENTE.md).
+
 ## 2. Arquitetura lógica
 
 ```text
