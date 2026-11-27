@@ -7,7 +7,7 @@ on:
         required: true
         type: choice
         default: signing
-        options: [signing, storage, readiness, blogger, wordpress]
+        options: [signing, storage, readiness, blogger, wordpress, oficina]
 permissions:
   contents: read
 jobs:
@@ -173,4 +173,12 @@ jobs:
       site_key: wordpress_casa_decoracao
       pilot: true
       pilot_sku: shopee:400124163:42079451217
+    secrets: inherit
+  oficina:
+    if: inputs.task == 'oficina' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/v31_independent_review_draft.yml
+    with:
+      site_key: wordpress_oficina_garagem
+      pilot: true
+      pilot_sku: shopee:1027399414:22499152341
     secrets: inherit
