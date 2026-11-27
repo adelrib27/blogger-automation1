@@ -11,10 +11,10 @@ on:
         required: true
         type: string
       budget:
-        description: 'Maximo global 1 a 3 links Shopee nesta execucao'
+        description: 'Maximo global 1 a 10 links Shopee nesta execucao'
         required: true
         type: choice
-        options: ['1','2','3']
+        options: ['1','2','3','4','5','6','7','8','9','10']
         default: '1'
       confirm_conversion:
         description: 'Confirmo criar links oficiais SOMENTE para a campanha real deste blog; sem publicar'
@@ -68,6 +68,10 @@ jobs:
           V31_SITE: ${{ inputs.site_key }}
           V31_TOPIC: ${{ inputs.topic }}
           V31_BUDGET: ${{ inputs.budget }}
+          V31_D1_ACCOUNT_ID: ${{ vars.V31_EDITORIAL_R2_ACCOUNT_ID }}
+          V31_D1_DATABASE_ID: 9bfce7a4-6167-4bfc-a65e-a74c1a34f064
+          V31_D1_API_TOKEN: ${{ secrets.V31_D1_API_TOKEN }}
+          V31_D1_SAFE_WRITES_ENABLED: V31_D1_SAFE_SQL_ONLY
           V31_EDITORIAL_SHOPEE_APP_ID: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_ID }}
           V31_EDITORIAL_SHOPEE_APP_SECRET: ${{ secrets.V31_EDITORIAL_SHOPEE_APP_SECRET }}
           V31_EDITORIAL_R2_ACCESS_KEY_ID: ${{ secrets.V31_EDITORIAL_R2_ACCESS_KEY_ID }}

@@ -15,7 +15,11 @@ O motor universal possui **7 rotas editoriais cadastradas**: quatro Blogger (Mó
 
 Os **24 IDs indisponíveis** descritos em `affiliate_hub_v31/EDITORIAL_DELETED_BLOGGER_TOMBSTONES_C143.json` permanecem bloqueados. O sistema não tenta reativá-los nem recriar seus writers, crons ou campanhas.
 
-## Posição atual — homologação final (27/11/2026)
+## Posição atual — C176 expansão comercial (27/11/2026)
+
+Código `V31-BUDGET10-20261127`. PR #192 mesclada após CI. C176 amplia limite interno de 3 para 10/dia com fila regular 8 e schema preparado para 20; preserva histórico e corrige registros anônimos. [Checkpoint](affiliate_hub_v31/CHECKPOINT_V31_CONVERSION_BUDGET_10_2026-11-27.md). CI e migração D1 devem preceder deploy; LIVE OFF.
+
+## Posição anterior — homologação final (27/11/2026)
 
 Código `V31-FINAL-AUDIT-46058071209`. O Radar #406 foi entregue por schedule 46058071209 e confirmado com o mesmo hash no replay; SELECT D1 confirmou USED. Blogger C158 já provou DRAFT agendado. A correção de configuração do monitor C136 está em revisão; cobertura por site e LIVE ainda não homologados. [Checkpoint atual](affiliate_hub_v31/CHECKPOINT_V31_FINAL_AUDIT_2026-11-27.md). Não repetir POST, não restaurar workflows Radar legados nem alterar LIVE.
 

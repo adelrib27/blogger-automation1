@@ -478,3 +478,8 @@ O arquivo `requirements.txt` da raiz não é a lista exaustiva das dependências
 ## Atualização operacional — 27/11/2026
 
 As descrições C148–C152 acima são históricas, não flags atuais. O piloto Radar está enabled e pilot_enabled no registro vigente. O Blogger Móveis provou schedule com DRAFT 5901505853451174265 no run 45639927141. O Radar provou schedule 46058071209 com DRAFT #406, GET/hash e replay idêntico; SELECT D1 confirmou USED em 27/11. Isso homologa o fluxo automático de DRAFT nas duas plataformas, não cada rota, nem LIVE. O monitor C136 precisa passar após ajuste da ponte Radar já escopada; seu run 45945506302 falhou fechado. C133 46028580097: 3 de 8 destinos prioritários configurados, 4 sem perfil/pedido completo e 1 sem rota. O limite e a cadência são declarativos por perfil, inclusive null para o piloto Radar conforme C171; não confundir com cotas externas ou de conversão. LIVE permanece pending_policy_approval, sem autorização implícita. O checkpoint atual e o JSON governam a retomada; preservam-se os 24 tombstones, a biblioteca independente, a não duplicação e o motor universal.
+
+
+## C176 — Expansão de orçamento comercial autorizada
+
+Limite global operacional passa a 10 reservas D1/dia UTC; fila regular até 8 por ciclo, fallback mantém máximo de uma conversão por artigo. O novo schema admite até 20 slots, sem liberar 20 no código. Migração preserva reservas legadas NULL/NULL; elas contam para o dia, mas não representam pares conhecidos. Conversor manual também exige reserva D1. Sem alterar cotas externas, publicação ou direitos de CMS. A ativação depende de CI e migração D1 verificada.
