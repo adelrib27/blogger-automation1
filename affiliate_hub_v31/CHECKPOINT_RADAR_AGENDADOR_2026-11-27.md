@@ -1,13 +1,12 @@
 # V31 — Validação do agendador Radar Tech BR
 
-Código de continuidade `V31-RADAR-20261127-405`.
+Código histórico `V31-RADAR-20261127-405`.
 
 - O [evento schedule original](https://github.com/adelrib27/blogger-automation1/actions/runs/45983768245) selecionou o Radar com `DUE` e produziu o output `site`, mas pulou `pilot-fallback-draft`.
 - O [PR #187](https://github.com/adelrib27/blogger-automation1/pull/187) ajustou a avaliação de status em `pilot-fallback-draft`. A condição exige que a execução não tenha sido cancelada, que `choose-pilot-fallback` tenha concluído com sucesso e que exista um site selecionado.
-- Em 27/11/2026 às 11h07 (Brasília), a [execução manual 46013016909](https://github.com/adelrib27/blogger-automation1/actions/runs/46013016909) selecionou o Radar, concluiu a verificação independente e registrou `DRAFT_VERIFIED` para o WordPress #405. O recibo está no [log de entrega](https://github.com/adelrib27/blogger-automation1/actions/runs/46013016909/job/140554642268). A etapa LIVE foi pulada.
-- A validação automática segue pendente. O workflow está ativo e a consulta em 27/11 ainda não mostrou um evento `schedule` depois da integração do PR #187.
+- Em 27/11/2026 às 11h07 (Brasília), a [execução manual 46013016909](https://github.com/adelrib27/blogger-automation1/actions/runs/46013016909) selecionou o Radar, concluiu a verificação independente e registrou `DRAFT_VERIFIED` para o WordPress #405. O recibo está no [log de entrega](https://github.com/adelrib27/blogger-automation1/actions/runs/46013016909/job/140554642268). A etapa LIVE foi pulada. Essa execução não conta como comprovação automática.
 
-## Evento schedule após o PR #187
+## Primeiro evento schedule após o PR #187
 
 A [execução automática 46026800956](https://github.com/adelrib27/blogger-automation1/actions/runs/46026800956), iniciada em 27/11/2026 às 12h39 (Brasília), comprovou o caminho corrigido até o escritor:
 
@@ -18,8 +17,16 @@ A [execução automática 46026800956](https://github.com/adelrib27/blogger-auto
 - `VERIFIED_DRAFT` permaneceu vazio, `draft / deliver-draft` foi pulado e não houve `DRAFT_VERIFIED`;
 - `release`/LIVE permaneceu pulado.
 
-A correção do disparo automático está comprovada, mas a validação ponta a ponta ainda não está concluída porque o guard de deduplicação rejeitou o único candidato antes da escrita no WordPress.
+## Validação automática ponta a ponta concluída
 
-## Retomada
+Código de continuidade final: `V31-RADAR-SCHEDULE-46058071209`.
 
-Consultar o [histórico do agendador](https://github.com/adelrib27/blogger-automation1/actions/workflows/v31_autonomous_draft_scheduler.yml) filtrado pelo evento `schedule` após 27/11/2026 às 09h45 (Brasília). Nas próximas execuções em que o Radar estiver `DUE`, verificar se um candidato novo ultrapassa o guard de deduplicação. Para confirmar criação automática ponta a ponta, exigir `DRAFT_VERIFIED` com o ID do WordPress. O recibo #405 é da execução manual. Preservar deduplicação, cadência e LIVE desativado.
+A [execução automática 46058071209](https://github.com/adelrib27/blogger-automation1/actions/runs/46058071209), iniciada em 27/11/2026 às 16h38 (Brasília), confirmou todo o fluxo:
+
+- o [job de seleção pelo D1](https://github.com/adelrib27/blogger-automation1/actions/runs/46058071209/job/140705324473) registrou `pilot_fallback: wordpress_radartechbr: DUE`;
+- o [verificador independente](https://github.com/adelrib27/blogger-automation1/actions/runs/46058071209/job/140705594321) concluiu com recibo `READY`;
+- o [escritor e verificador final](https://github.com/adelrib27/blogger-automation1/actions/runs/46058071209/job/140706348518) registrou `DRAFT_VERIFIED` com `draft_id: "406"`;
+- o hash verificado do HTML foi `68f5b60808d1b287fd909191f3cdedd9ddb6341469a96e44ebe8188dad062dc6`;
+- o job `release`/LIVE permaneceu pulado.
+
+O DRAFT automático #406 é evidência nova e independente da execução manual #46013016909 e do DRAFT #405. A validação solicitada está concluída; a checagem recorrente pode permanecer pausada.
